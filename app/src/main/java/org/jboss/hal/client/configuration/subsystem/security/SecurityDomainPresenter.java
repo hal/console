@@ -24,14 +24,11 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -44,8 +41,9 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.ResourceCheck;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -66,6 +64,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.token.NameTokens.SECURITY_DOMAIN;
 
 public class SecurityDomainPresenter
@@ -94,17 +93,17 @@ public class SecurityDomainPresenter
     private String securityDomain;
 
     @Inject
-    public SecurityDomainPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            @Footer final Provider<Progress> progress,
-            final MetadataRegistry metadataRegistry,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public SecurityDomainPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            @Footer Provider<Progress> progress,
+            MetadataRegistry metadataRegistry,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.dispatcher = dispatcher;
         this.crud = crud;
@@ -182,26 +181,23 @@ public class SecurityDomainPresenter
 
     void addModule(Module module) {
         // first check for (and add if necessary) the intermediate singleton
+        // then add the final resource
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
-        Function[] functions = new Function[]{
+        series(progress.get(), new FlowContext(),
                 new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext)),
-                (Function<FunctionContext>) control -> {
+                control -> {
                     int status = control.getContext().pop();
                     if (status == 200) {
                         control.proceed();
                     } else {
                         Operation operation = new Operation.Builder(singletonTemplate.resolve(statementContext), ADD)
                                 .build();
-                        dispatcher.execute(operation, result -> control.proceed());
+                        dispatcher.executeInFlow(control, operation, result -> control.proceed());
                     }
-                }
-        };
-
-        // then add the final resource
-        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                new SuccessfulOutcome(getEventBus(), resources) {
+                })
+                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                     @Override
-                    public void onSuccess(final FunctionContext context) {
+                    public void onSuccess(FlowContext context) {
                         AddressTemplate metadataTemplate = SECURITY_DOMAIN_TEMPLATE
                                 .append(module.singleton)
                                 .append(module.resource + "=*");
@@ -218,7 +214,7 @@ public class SecurityDomainPresenter
                                 });
                         dialog.show();
                     }
-                }, functions);
+                });
     }
 
     void saveModule(Form<NamedNode> form, Map<String, Object> changedValues, Module module) {

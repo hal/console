@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
@@ -27,15 +28,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -46,8 +44,10 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -69,6 +69,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
+import static org.jboss.hal.flow.Flow.series;
 
 public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresenter.MyView, JmsQueuePresenter.MyProxy> {
 
@@ -94,7 +95,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
-    private final Progress progress;
+    private final Provider<Progress> progress;
     private final Resources resources;
     private final Map<String, Boolean> showAll;
     private String deployment;
@@ -111,7 +112,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
             MetadataRegistry metadataRegistry,
             Dispatcher dispatcher,
             StatementContext statementContext,
-            @Footer Progress progress,
+            @Footer Provider<Progress> progress,
             Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
@@ -155,31 +156,31 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
 
         } else {
             ResourceAddress address = queueAddress();
-            Function<FunctionContext> count = control -> {
+            Step<FlowContext> count = control -> {
                 Operation operation = new Operation.Builder(address, COUNT_MESSAGES).build();
-                dispatcher.executeInFunction(control, operation, result -> {
+                dispatcher.executeInFlow(control, operation, result -> {
                     control.getContext().set(MESSAGES_COUNT, result.asLong());
                     control.proceed();
                 });
             };
-            Function<FunctionContext> list = control -> {
+            Step<FlowContext> list = control -> {
                 long messages = control.getContext().get(MESSAGES_COUNT);
                 if (messages > MESSAGES_THRESHOLD) {
                     control.getContext().set(MESSAGES, emptyList());
                     control.proceed();
                 } else {
                     Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    dispatcher.executeInFlow(control, operation, result -> {
                         control.getContext().set(MESSAGES,
                                 result.asList().stream().map(JmsMessage::new).collect(toList()));
                         control.proceed();
                     });
                 }
             };
-            new Async<FunctionContext>(progress).waterfall(new FunctionContext(),
-                    new SuccessfulOutcome(getEventBus(), resources) {
+            series(progress.get(), new FlowContext(), count, list)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                         @Override
-                        public void onSuccess(FunctionContext context) {
+                        public void onSuccess(FlowContext context) {
                             long count = context.get(MESSAGES_COUNT);
                             List<JmsMessage> messages = context.get(MESSAGES);
                             if (count > MESSAGES_THRESHOLD) {
@@ -190,7 +191,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                                 getView().showAll(messages);
                             }
                         }
-                    }, count, list);
+                    });
         }
     }
 

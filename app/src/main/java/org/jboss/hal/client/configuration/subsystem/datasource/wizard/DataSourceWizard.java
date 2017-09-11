@@ -20,7 +20,6 @@ import java.util.List;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceColumn;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
@@ -34,6 +33,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;

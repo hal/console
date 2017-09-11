@@ -17,18 +17,17 @@ package org.jboss.hal.dmr.dispatch;
 
 import java.util.function.Predicate;
 
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
-import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
+import static org.jboss.hal.flow.Flow.interval;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
 public class TimeoutHandler {
@@ -60,13 +59,13 @@ public class TimeoutHandler {
     }
 
 
-    private static final int PERIOD = 500;
+    private static final int INTERVAL = 500;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
 
     private final Dispatcher dispatcher;
     private final int timeout; // in seconds
 
-    public TimeoutHandler(final Dispatcher dispatcher, final int timeout) {
+    public TimeoutHandler(Dispatcher dispatcher, int timeout) {
         this.dispatcher = dispatcher;
         this.timeout = timeout;
     }
@@ -74,7 +73,7 @@ public class TimeoutHandler {
     /**
      * Executes the operation until it successfully returns.
      */
-    public void execute(final Operation operation, final Callback callback) {
+    public void execute(Operation operation, Callback callback) {
         if (operation instanceof Composite) {
             execute((Composite) operation, (Predicate<CompositeResult>) null, callback);
         } else {
@@ -86,18 +85,25 @@ public class TimeoutHandler {
      * Executes the operation until the operation successfully returns and the precondition is met. The precondition
      * receives the result of the operation.
      */
-    public void execute(final Operation operation, final Predicate<ModelNode> predicate, final Callback callback) {
-        new Async<TimeoutContext>().whilst(new TimeoutContext(),
-                (context) -> !timeout(context) && !context.conditionSatisfied,
-                new Outcome<TimeoutContext>() {
+    public void execute(Operation operation, Predicate<ModelNode> predicate, Callback callback) {
+        interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
+                context -> timeout(context) || context.conditionSatisfied,
+                control -> dispatcher.execute(operation,
+                        result -> {
+                            control.getContext().conditionSatisfied = predicate == null || predicate.test(result);
+                            control.proceed();
+                        },
+                        (op, failure) -> control.proceed(),
+                        (op, exception) -> control.proceed()))
+                .subscribe(new Outcome<TimeoutContext>() {
                     @Override
-                    public void onFailure(final TimeoutContext context) {
+                    public void onError(TimeoutContext context, Throwable error) {
                         logger.error("Operation {} ran into an error: {}", operation.asCli());
                         callback.onTimeout();
                     }
 
                     @Override
-                    public void onSuccess(final TimeoutContext context) {
+                    public void onSuccess(TimeoutContext context) {
                         if (timeout(context)) {
                             logger.warn("Operation {} ran into a timeout after {} seconds", operation.asCli(), timeout);
                             callback.onTimeout();
@@ -105,40 +111,16 @@ public class TimeoutHandler {
                             callback.onSuccess();
                         }
                     }
-                },
-                control -> dispatcher.execute(operation,
-                        result -> control.getContext().conditionSatisfied = predicate == null || predicate.test(result),
-                        NOOP_FAILED_CALLBACK,
-                        NOOP_EXCEPTIONAL_CALLBACK),
-                PERIOD);
+                });
     }
 
     /**
      * Executes the composite operation until the operation successfully returns and the precondition is met.
      * The precondition receives the composite result of the operation.
      */
-    public void execute(final Composite composite, final Predicate<CompositeResult> predicate,
-            final Callback callback) {
-        new Async<TimeoutContext>().whilst(new TimeoutContext(),
-                (context) -> !timeout(context) && !context.conditionSatisfied,
-                new Outcome<TimeoutContext>() {
-                    @Override
-                    public void onFailure(final TimeoutContext context) {
-                        logger.error("Composite operation {} ran into an error", composite.asCli());
-                        callback.onTimeout();
-                    }
-
-                    @Override
-                    public void onSuccess(final TimeoutContext context) {
-                        if (timeout(context)) {
-                            logger.warn("Composite operation {} ran into a timeout after {} seconds", composite.asCli(),
-                                    timeout);
-                            callback.onTimeout();
-                        } else {
-                            callback.onSuccess();
-                        }
-                    }
-                },
+    public void execute(Composite composite, Predicate<CompositeResult> predicate, Callback callback) {
+        interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
+                context -> timeout(context) || context.conditionSatisfied,
                 control -> dispatcher.execute(composite,
                         (CompositeResult result) -> {
                             if (predicate != null) {
@@ -148,10 +130,28 @@ public class TimeoutHandler {
                                         .map(stepResult -> !stepResult.isFailure())
                                         .allMatch(flag -> true);
                             }
+                            control.proceed();
                         },
-                        NOOP_FAILED_CALLBACK,
-                        NOOP_EXCEPTIONAL_CALLBACK),
-                PERIOD);
+                        (op, failure) -> control.proceed(),
+                        (op, exception) -> control.proceed()))
+                .subscribe(new Outcome<TimeoutContext>() {
+                    @Override
+                    public void onError(TimeoutContext context, Throwable error) {
+                        logger.error("Composite operation {} ran into an error", composite.asCli());
+                        callback.onTimeout();
+                    }
+
+                    @Override
+                    public void onSuccess(TimeoutContext context) {
+                        if (timeout(context)) {
+                            logger.warn("Composite operation {} ran into a timeout after {} seconds", composite.asCli(),
+                                    timeout);
+                            callback.onTimeout();
+                        } else {
+                            callback.onSuccess();
+                        }
+                    }
+                });
     }
 
     private boolean timeout(TimeoutContext timeoutContext) {

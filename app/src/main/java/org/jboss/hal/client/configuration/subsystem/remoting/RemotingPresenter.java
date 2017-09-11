@@ -24,15 +24,12 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -40,12 +37,13 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.ResourceCheck;
-import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -64,6 +62,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTING;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.flow.Flow.series;
 
 public class RemotingPresenter
         extends MbuiPresenter<RemotingPresenter.MyView, RemotingPresenter.MyProxy>
@@ -104,18 +103,18 @@ public class RemotingPresenter
     SelectionAwareStatementContext selectedHttpConnectorContext;
 
     @Inject
-    public RemotingPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final PropertiesOperations propertiesOperations,
-            final Dispatcher dispatcher,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            @Footer final Provider<Progress> progress,
-            final Resources resources) {
+    public RemotingPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            PropertiesOperations propertiesOperations,
+            Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
 
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
@@ -442,32 +441,29 @@ public class RemotingPresenter
     private void failSafeCreatePolicy(String type, AddressTemplate securityTemplate, AddressTemplate policyTemplate,
             StatementContext statementContext) {
 
-        Function[] functions = new Function[]{
+        series(progress.get(), new FlowContext(),
                 new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext)),
-                (Function<FunctionContext>) control -> {
+                control -> {
                     int status = control.getContext().pop();
                     if (status == 200) {
                         control.proceed();
                     } else {
                         Operation operation = new Operation.Builder(securityTemplate.resolve(statementContext), ADD)
                                 .build();
-                        dispatcher.execute(operation, result -> control.proceed());
+                        dispatcher.executeInFlow(control, operation, result -> control.proceed());
                     }
                 },
-                (Function<FunctionContext>) control -> {
+                control -> {
                     Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
-                    dispatcher.execute(operation, result -> control.proceed());
-                }
-        };
-
-        new Async<FunctionContext>(progress.get())
-                .waterfall(new FunctionContext(), new SuccessfulOutcome(getEventBus(), resources) {
+                    dispatcher.executeInFlow(control, operation, result -> control.proceed());
+                })
+                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                     @Override
-                    public void onSuccess(final FunctionContext context) {
+                    public void onSuccess(FlowContext context) {
                         MessageEvent.fire(getEventBus(),
                                 Message.success(resources.messages().addSingleResourceSuccess(type)));
                         reload();
                     }
-                }, functions);
+                });
     }
 }

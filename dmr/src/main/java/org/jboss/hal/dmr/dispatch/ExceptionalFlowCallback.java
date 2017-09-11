@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
+package org.jboss.hal.dmr.dispatch;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 
-class MacroOperationFunction implements Function<FunctionContext> {
+public class ExceptionalFlowCallback<C extends FlowContext> implements Dispatcher.ExceptionCallback {
 
-    private final Dispatcher dispatcher;
-    private final Operation operation;
+    private final Control<C> control;
 
-    MacroOperationFunction(final Dispatcher dispatcher, final Operation operation) {
-        this.dispatcher = dispatcher;
-        this.operation = operation;
-    }
+    ExceptionalFlowCallback(final Control<C> control) {this.control = control;}
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
-        dispatcher.executeInFunction(control, operation, result -> control.proceed());
+    public void onException(final Operation operation, final Throwable exception) {
+        control.abort(exception.getMessage());
     }
 }

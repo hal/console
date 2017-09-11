@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dispatch;
+package org.jboss.hal.flow;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.Operation;
+import rx.SingleSubscriber;
 
-public class FailedFunctionCallback<C extends FunctionContext> implements Dispatcher.FailedCallback {
-
-    private final Control<C> control;
-
-    FailedFunctionCallback(final Control<C> control) {this.control = control;}
+public abstract class Outcome<C> extends SingleSubscriber<C> {
 
     @Override
-    public void onFailed(final Operation operation, final String failure) {
-        control.getContext().failed(failure);
-        control.abort();
+    @SuppressWarnings("unchecked")
+    public final void onError(Throwable error) {
+        if (error instanceof FlowException) {
+            onError((C) ((FlowException) error).context, error);
+        } else {
+            onError(null, error);
+        }
     }
+
+    public abstract void onError(C context, Throwable error);
 }

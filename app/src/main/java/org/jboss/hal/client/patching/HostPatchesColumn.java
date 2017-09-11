@@ -23,12 +23,6 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -49,6 +43,11 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
@@ -63,13 +62,14 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.single;
 
 @Column(Ids.PATCHING_DOMAIN)
 @Requires(value = "/host=*/core-service=patching")
 public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostActionEvent.HostActionHandler,
         HostResultEvent.HostResultHandler {
 
-    public static class AvailableHosts implements Function<FunctionContext> {
+    public static class AvailableHosts implements Step<FlowContext> {
 
         private Dispatcher dispatcher;
 
@@ -78,7 +78,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(final Control<FlowContext> control) {
 
             ResourceAddress hostAddress = new ResourceAddress()
                     .add(HOST, "*");
@@ -97,7 +97,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                     .build();
             Composite composite = new Composite(opHosts, opPatches);
 
-            dispatcher.execute(composite, (CompositeResult result) -> {
+            dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
 
                 ModelNode availableHosts = result.step(0).get(RESULT);
                 List<ModelNode> hostPatchingResults = result.step(1).get(RESULT).asList();
@@ -112,16 +112,16 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                             String hostName = p.getValue().asString();
 
                             // as we navigate on each host, retrieve the patching attributes from hostPatchingResults
-                            hostPatchingResults.forEach(hostPatchingResult -> {
-                                hostPatchingResult.get(ADDRESS).asPropertyList().forEach(pp -> {
-                                    if (HOST.equals(pp.getName()) && pp.getValue().asString().equals(hostName)) {
-                                        // add the core-service=patching attributes to a sub-resource
-                                        // this exists only in memory for HAL purposes to show them in the view
-                                        hostNode.get(RESULT).get(CORE_SERVICE_PATCHING)
-                                                .set(hostPatchingResult.get(RESULT));
-                                    }
-                                });
-                            });
+                            hostPatchingResults.forEach(hostPatchingResult -> hostPatchingResult.get(ADDRESS)
+                                    .asPropertyList()
+                                    .forEach(pp -> {
+                                        if (HOST.equals(pp.getName()) && pp.getValue().asString().equals(hostName)) {
+                                            // add the core-service=patching attributes to a sub-resource
+                                            // this exists only in memory for HAL purposes to show them in the view
+                                            hostNode.get(RESULT).get(CORE_SERVICE_PATCHING)
+                                                    .set(hostPatchingResult.get(RESULT));
+                                        }
+                                    }));
                             hostPatchesNode.get(hostName).set(hostNode.get(RESULT));
                         }
                     });
@@ -145,39 +145,37 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
 
     @Inject
-    public HostPatchesColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final ColumnActionFactory columnActionFactory,
-            final HostActions hostActions,
-            final Resources resources) {
+    public HostPatchesColumn(Finder finder,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            ColumnActionFactory columnActionFactory,
+            HostActions hostActions,
+            Resources resources) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.PATCHING_DOMAIN, Names.HOSTS)
 
                 .columnAction(columnActionFactory.refresh(Ids.HOST_REFRESH))
 
-                .itemsProvider((context, callback) ->
-                        new Async<FunctionContext>(progress.get()).waterfall(
-                                new FunctionContext(),
-                                new Outcome<FunctionContext>() {
-                                    @Override
-                                    public void onFailure(final FunctionContext context) {
-                                        callback.onFailure(context.getException());
-                                    }
+                .itemsProvider((context, callback) -> single(progress.get(), new FlowContext(),
+                        new AvailableHosts(dispatcher))
+                        .subscribe(new Outcome<FlowContext>() {
+                            @Override
+                            public void onError(FlowContext context, Throwable error) {
+                                callback.onFailure(error);
+                            }
 
-                                    @Override
-                                    public void onSuccess(final FunctionContext context) {
-                                        List<NamedNode> hosts = context.get(HOSTS);
-                                        callback.onSuccess(hosts);
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                List<NamedNode> hosts = context.get(HOSTS);
+                                callback.onSuccess(hosts);
 
-                                        // Restore pending visualization
-                                        hosts.stream()
-                                                .filter(item -> hostActions.isPending(namedNodeToHost(item)))
-                                                .forEach(item -> ItemMonitor.startProgress(Ids.host(item.getName())));
-                                    }
-                                },
-                                new AvailableHosts(dispatcher)))
+                                // Restore pending visualization
+                                hosts.stream()
+                                        .filter(item -> hostActions.isPending(namedNodeToHost(item)))
+                                        .forEach(item -> ItemMonitor.startProgress(Ids.host(item.getName())));
+                            }
+                        }))
 
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getName())))
                 .onPreview(item -> new HostPatchesPreview(hostActions, item, resources))

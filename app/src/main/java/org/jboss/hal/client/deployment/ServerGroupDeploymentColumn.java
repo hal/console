@@ -24,22 +24,15 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.core.deployment.Content;
-import org.jboss.hal.core.deployment.Deployment.Status;
-import org.jboss.hal.client.deployment.DeploymentFunctions.AddServerGroupDeployment;
-import org.jboss.hal.client.deployment.DeploymentFunctions.AddUnmanagedDeployment;
-import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
-import org.jboss.hal.client.deployment.DeploymentFunctions.LoadContent;
-import org.jboss.hal.client.deployment.DeploymentFunctions.LoadDeploymentsFromRunningServer;
-import org.jboss.hal.client.deployment.DeploymentFunctions.ReadServerGroupDeployments;
-import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
+import org.jboss.hal.client.deployment.DeploymentSteps.AddServerGroupDeployment;
+import org.jboss.hal.client.deployment.DeploymentSteps.AddUnmanagedDeployment;
+import org.jboss.hal.client.deployment.DeploymentSteps.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentSteps.LoadContent;
+import org.jboss.hal.client.deployment.DeploymentSteps.LoadDeploymentsFromRunningServer;
+import org.jboss.hal.client.deployment.DeploymentSteps.ReadServerGroupDeployments;
+import org.jboss.hal.client.deployment.DeploymentSteps.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.dialog.DeployContentDialog2;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
@@ -47,6 +40,9 @@ import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.SuccessfulOutcome;
+import org.jboss.hal.core.deployment.Content;
+import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -58,14 +54,16 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
+import org.jboss.hal.core.runtime.TopologySteps.RunningServersQuery;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -85,12 +83,14 @@ import org.jboss.hal.spi.Requires;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_TEMPLATE;
-import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
+import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.single;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /** The deployments of a server group. */
@@ -157,30 +157,25 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_DEPLOYMENT_REFRESH));
 
-        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> {
-            Function[] functions = new Function[]{
-                    new ReadServerGroupDeployments(environment, dispatcher, statementContext.selectedServerGroup()),
-                    new RunningServersQuery(environment, dispatcher,
-                            new ModelNode().set(SERVER_GROUP, statementContext.selectedServerGroup())),
-                    new LoadDeploymentsFromRunningServer(environment, dispatcher)
-            };
+        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> series(progress.get(),
+                new FlowContext(),
+                new ReadServerGroupDeployments(environment, dispatcher, statementContext.selectedServerGroup()),
+                new RunningServersQuery(environment, dispatcher,
+                        new ModelNode().set(SERVER_GROUP, statementContext.selectedServerGroup())),
+                new LoadDeploymentsFromRunningServer(environment, dispatcher))
+                .subscribe(new Outcome<FlowContext>() {
+                    @Override
+                    public void onError(FlowContext context, Throwable error) {
+                        callback.onFailure(error);
+                    }
 
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getException());
-                        }
-
-                        @Override
-                        public void onSuccess(final FunctionContext context) {
-                            List<ServerGroupDeployment> serverGroupDeployments = context
-                                    .get(DeploymentFunctions.SERVER_GROUP_DEPLOYMENTS);
-                            callback.onSuccess(serverGroupDeployments);
-                        }
-                    }, functions);
-
-        };
+                    @Override
+                    public void onSuccess(FlowContext context) {
+                        List<ServerGroupDeployment> serverGroupDeployments = context
+                                .get(DeploymentSteps.SERVER_GROUP_DEPLOYMENTS);
+                        callback.onSuccess(serverGroupDeployments);
+                    }
+                });
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
@@ -290,7 +285,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
     public void attach() {
         super.attach();
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentFunctions.uploadAndDeploy(this, environment, dispatcher, eventBus, progress,
+            setOnDrop(event -> DeploymentSteps.uploadAndDeploy(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, statementContext.selectedServerGroup(), resources));
         }
     }
@@ -313,43 +308,41 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     wzd.showProgress(resources.constants().deploymentInProgress(),
                             resources.messages().deploymentInProgress(name));
 
-                    Function[] functions = {
+                    series(progress.get(), new FlowContext(),
                             new CheckDeployment(dispatcher, name),
                             new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false),
                             new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
-                                    statementContext.selectedServerGroup())
-                    };
-                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                            new Outcome<FunctionContext>() {
+                                    statementContext.selectedServerGroup()))
+                            .subscribe(new Outcome<FlowContext>() {
                                 @Override
-                                public void onFailure(final FunctionContext functionContext) {
+                                public void onError(FlowContext context, Throwable error) {
                                     wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name), functionContext.getError());
+                                            resources.messages().deploymentError(name), error.getMessage());
                                 }
 
                                 @Override
-                                public void onSuccess(final FunctionContext functionContext) {
+                                public void onSuccess(FlowContext context) {
                                     refresh(Ids.serverGroupDeployment(statementContext.selectedServerGroup(), name));
                                     wzd.showSuccess(resources.constants().deploymentSuccessful(),
                                             resources.messages().deploymentSuccessful(name),
                                             resources.messages().view(Names.DEPLOYMENT),
                                             cxt -> { /* nothing to do, content is already selected */ });
                                 }
-                            }, functions);
+                            });
                 })
                 .build();
         wizard.show();
     }
 
     private void addDeploymentFromContentRepository() {
-        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+        Outcome<FlowContext> outcome = new Outcome<FlowContext>() {
             @Override
-            public void onFailure(final FunctionContext context) {
-                MessageEvent.fire(eventBus, Message.error(resources.messages().loadContentError(), context.getError()));
+            public void onError(FlowContext context, Throwable error) {
+                MessageEvent.fire(eventBus, Message.error(resources.messages().loadContentError(), error.getMessage()));
             }
 
             @Override
-            public void onSuccess(final FunctionContext context) {
+            public void onSuccess(FlowContext context) {
                 // extract content which is not deployed on statementContext.selectedServerGroup()
                 String serverGroup = statementContext.selectedServerGroup();
                 List<Content> content = context.pop();
@@ -389,8 +382,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 }
             }
         };
-        new Async<FunctionContext>(progress.get())
-                .single(new FunctionContext(), outcome, new LoadContent(dispatcher));
+        single(progress.get(), new FlowContext(), new LoadContent(dispatcher)).subscribe(outcome);
     }
 
     private void addUnmanaged() {
@@ -400,17 +392,17 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     if (model != null) {
                         String serverGroup = statementContext.selectedServerGroup();
                         String runtimeName = model.get(RUNTIME_NAME).asString();
-                        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                                new SuccessfulOutcome(eventBus, resources) {
+                        series(progress.get(), new FlowContext(),
+                                new AddUnmanagedDeployment(dispatcher, name, model),
+                                new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup))
+                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                                     @Override
-                                    public void onSuccess(final FunctionContext context) {
+                                    public void onSuccess(FlowContext context) {
                                         refresh(Ids.serverGroupDeployment(serverGroup, name));
                                         MessageEvent.fire(eventBus, Message.success(resources.messages()
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                                     }
-                                },
-                                new AddUnmanagedDeployment(dispatcher, name, model),
-                                new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup));
+                                });
                     }
                 });
         dialog.show();

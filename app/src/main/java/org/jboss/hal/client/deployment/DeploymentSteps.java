@@ -27,18 +27,12 @@ import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.File;
 import elemental2.dom.FileList;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologySteps;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
@@ -47,6 +41,11 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -60,24 +59,25 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 
 /** Deployment related functions */
-class DeploymentFunctions {
+class DeploymentSteps {
 
     static final String SERVER_GROUP_DEPLOYMENTS = "deploymentFunctions.serverGroupDeployments";
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentFunctions.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentSteps.class);
 
 
     /**
      * Loads the contents form the content repository and pushes a {@code List<Content>} onto the context stack.
      */
-    static class LoadContent implements Function<FunctionContext> {
+    static class LoadContent implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final String serverGroup;
 
-        LoadContent(final Dispatcher dispatcher) {
+        LoadContent(Dispatcher dispatcher) {
             this(dispatcher, "*");
         }
 
@@ -85,13 +85,13 @@ class DeploymentFunctions {
          * @param dispatcher  the dispatcher
          * @param serverGroup use "*" to find deployments on any server group
          */
-        LoadContent(final Dispatcher dispatcher, final String serverGroup) {
+        LoadContent(Dispatcher dispatcher, String serverGroup) {
             this.dispatcher = dispatcher;
             this.serverGroup = serverGroup;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Operation contentOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
@@ -102,7 +102,7 @@ class DeploymentFunctions {
                     .param(INCLUDE_RUNTIME, true)
                     .build();
 
-            dispatcher.executeInFunction(control, new Composite(contentOp, deploymentsOp), (CompositeResult result) -> {
+            dispatcher.executeInFlow(control, new Composite(contentOp, deploymentsOp), (CompositeResult result) -> {
                 Map<String, Content> contentByName = new HashMap<>();
                 List<Property> properties = result.step(0).get(RESULT).asPropertyList();
                 for (Property property : properties) {
@@ -130,23 +130,22 @@ class DeploymentFunctions {
 
     /**
      * Reads the deployments of the specified server group. Stores the list in the context under the key {@link
-     * DeploymentFunctions#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if
+     * DeploymentSteps#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if
      * running in standalone mode.
      */
-    static class ReadServerGroupDeployments implements Function<FunctionContext> {
+    static class ReadServerGroupDeployments implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
         private final String serverGroup;
         private final String deployment;
 
-        ReadServerGroupDeployments(final Environment environment, final Dispatcher dispatcher,
-                final String serverGroup) {
+        ReadServerGroupDeployments(Environment environment, Dispatcher dispatcher, String serverGroup) {
             this(environment, dispatcher, serverGroup, null);
         }
 
-        ReadServerGroupDeployments(final Environment environment, final Dispatcher dispatcher,
-                final String serverGroup, final String deployment) {
+        ReadServerGroupDeployments(Environment environment, Dispatcher dispatcher, String serverGroup,
+                String deployment) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.serverGroup = serverGroup;
@@ -154,7 +153,7 @@ class DeploymentFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
                 control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
@@ -168,7 +167,7 @@ class DeploymentFunctions {
                     Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    dispatcher.executeInFlow(control, operation, result -> {
                         List<ServerGroupDeployment> serverGroupDeployments = Lists
                                 .newArrayList(new ServerGroupDeployment(serverGroup, result));
                         control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
@@ -182,7 +181,7 @@ class DeploymentFunctions {
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    dispatcher.executeInFlow(control, operation, result -> {
                         List<ServerGroupDeployment> serverGroupDeployments = result.asPropertyList().stream()
                                 .map(property -> new ServerGroupDeployment(serverGroup, property.getValue()))
                                 .collect(toList());
@@ -198,7 +197,7 @@ class DeploymentFunctions {
     /**
      * Deploys the specified content to the specified server group. The deployment is not enable on the server group.
      */
-    static class AddServerGroupDeployment implements Function<FunctionContext> {
+    static class AddServerGroupDeployment implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -206,8 +205,7 @@ class DeploymentFunctions {
         private final String runtimeName;
         private final String serverGroup;
 
-        AddServerGroupDeployment(final Environment environment, final Dispatcher dispatcher, final String name,
-                final String runtimeName, final String serverGroup) {
+        AddServerGroupDeployment(Environment environment, Dispatcher dispatcher, String name, String runtimeName, String serverGroup) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.name = name;
@@ -216,7 +214,7 @@ class DeploymentFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
                 control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
@@ -230,7 +228,7 @@ class DeploymentFunctions {
                         .param(RUNTIME_NAME, runtimeName)
                         .param(ENABLED, false)
                         .build();
-                dispatcher.executeInFunction(control, operation, result -> control.proceed());
+                dispatcher.executeInFlow(control, operation, result -> control.proceed());
             }
         }
     }
@@ -238,29 +236,29 @@ class DeploymentFunctions {
 
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
-     * {@link org.jboss.hal.core.runtime.TopologyFunctions#RUNNING_SERVERS}. Expects the list of deployments under the
+     * {@link TopologySteps#RUNNING_SERVERS}. Expects the list of deployments under the
      * key {@link #SERVER_GROUP_DEPLOYMENTS} in the context. Updates all matching deployments with the deployments from
      * the running server.
      */
-    static class LoadDeploymentsFromRunningServer implements Function<FunctionContext> {
+    static class LoadDeploymentsFromRunningServer implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        LoadDeploymentsFromRunningServer(final Environment environment, final Dispatcher dispatcher) {
+        LoadDeploymentsFromRunningServer(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
 
             } else {
                 List<ServerGroupDeployment> serverGroupDeployments = control.getContext()
-                        .get(DeploymentFunctions.SERVER_GROUP_DEPLOYMENTS);
-                List<Server> runningServers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
+                        .get(DeploymentSteps.SERVER_GROUP_DEPLOYMENTS);
+                List<Server> runningServers = control.getContext().get(TopologySteps.RUNNING_SERVERS);
                 if (serverGroupDeployments != null && runningServers != null &&
                         !serverGroupDeployments.isEmpty() && !runningServers.isEmpty()) {
 
@@ -271,7 +269,7 @@ class DeploymentFunctions {
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE, true)
                             .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    dispatcher.executeInFlow(control, operation, result -> {
 
                         Map<String, Deployment> deploymentsByName = result.asPropertyList().stream()
                                 .map(property -> new Deployment(referenceServer, property.getValue()))
@@ -293,22 +291,22 @@ class DeploymentFunctions {
      * Checks whether a deployment with the given name exists and pushes {@code 200} to the context stack if it exists,
      * {@code 404} otherwise.
      */
-    static class CheckDeployment implements Function<FunctionContext> {
+    static class CheckDeployment implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final String name;
 
-        CheckDeployment(final Dispatcher dispatcher, final String name) {
+        CheckDeployment(Dispatcher dispatcher, String name) {
             this.dispatcher = dispatcher;
             this.name = name;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
-            dispatcher.executeInFunction(control, operation, result -> {
+            dispatcher.executeInFlow(control, operation, result -> {
                 Set<String> names = result.asList().stream().map(ModelNode::asString).collect(toSet());
                 if (names.contains(name)) {
                     control.getContext().push(200);
@@ -326,10 +324,10 @@ class DeploymentFunctions {
      * context. If no status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the
      * deployment is replaced.
      * <p>
-     * The function puts an {@link UploadStatistics} under the key {@link DeploymentFunctions#UPLOAD_STATISTICS}
+     * The function puts an {@link UploadStatistics} under the key {@link DeploymentSteps#UPLOAD_STATISTICS}
      * into the context.
      */
-    static class UploadOrReplace implements Function<FunctionContext> {
+    static class UploadOrReplace implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -338,8 +336,7 @@ class DeploymentFunctions {
         private final File file;
         private final boolean enabled;
 
-        UploadOrReplace(final Environment environment, final Dispatcher dispatcher,
-                final String name, final String runtimeName, final File file, final boolean enabled) {
+        UploadOrReplace(Environment environment, Dispatcher dispatcher, String name, String runtimeName, File file, boolean enabled) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.name = name;
@@ -349,7 +346,7 @@ class DeploymentFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             boolean replace;
             Operation.Builder builder;
 
@@ -415,37 +412,36 @@ class DeploymentFunctions {
     /**
      * Adds an unmanaged deployment.
      */
-    static class AddUnmanagedDeployment implements Function<FunctionContext> {
+    static class AddUnmanagedDeployment implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final String name;
         private final ModelNode payload;
 
-        AddUnmanagedDeployment(final Dispatcher dispatcher, final String name, final ModelNode payload) {
+        AddUnmanagedDeployment(Dispatcher dispatcher, String name, ModelNode payload) {
             this.dispatcher = dispatcher;
             this.name = name;
             this.payload = payload;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Operation operation = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
                     .payload(payload)
                     .build();
-            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+            dispatcher.executeInFlow(control, operation, result -> control.proceed());
         }
     }
 
 
-    private static class UploadOutcome<T> implements Outcome<FunctionContext> {
+    private static class UploadOutcome<T> extends Outcome<FlowContext> {
 
         private final FinderColumn<T> column;
         private final EventBus eventBus;
         private final Resources resources;
         private final FileList files;
 
-        private UploadOutcome(final FinderColumn<T> column, final EventBus eventBus, final FileList files,
-                final Resources resources) {
+        private UploadOutcome(FinderColumn<T> column, EventBus eventBus, FileList files, Resources resources) {
             this.column = column;
             this.eventBus = eventBus;
             this.resources = resources;
@@ -453,13 +449,12 @@ class DeploymentFunctions {
         }
 
         @Override
-        public void onFailure(final FunctionContext context) {
-            MessageEvent
-                    .fire(eventBus, Message.error(resources.messages().deploymentOpFailed(files.getLength())));
+        public void onError(FlowContext context, Throwable throwable) {
+            MessageEvent.fire(eventBus, Message.error(resources.messages().deploymentOpFailed(files.getLength())));
         }
 
         @Override
-        public void onSuccess(final FunctionContext context) {
+        public void onSuccess(FlowContext context) {
             UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
             if (statistics != null) {
                 eventBus.fireEvent(new MessageEvent(statistics.getMessage()));
@@ -474,52 +469,50 @@ class DeploymentFunctions {
     /**
      * Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode.
      */
-    static <T> void upload(final FinderColumn<T> column, final Environment environment, final Dispatcher dispatcher,
-            final EventBus eventBus, final Provider<Progress> progress, final FileList files,
-            final Resources resources) {
+    static <T> void upload(FinderColumn<T> column, Environment environment, Dispatcher dispatcher,
+            EventBus eventBus, Provider<Progress> progress, FileList files,
+            Resources resources) {
         if (files.getLength() > 0) {
 
             StringBuilder builder = new StringBuilder();
-            List<Function> functions = new ArrayList<>();
+            List<Step<FlowContext>> steps = new ArrayList<>();
 
             for (int i = 0; i < files.getLength(); i++) {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
-                functions.add(new CheckDeployment(dispatcher, filename));
-                functions.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
+                steps.add(new CheckDeployment(dispatcher, filename));
+                steps.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new UploadOutcome<>(column, eventBus, files, resources),
-                    functions.toArray(new Function[functions.size()]));
+            series(progress.get(), new FlowContext(), steps)
+                    .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
     }
 
     /**
      * Uploads a content and deploys it to a server group.
      */
-    static <T> void uploadAndDeploy(final FinderColumn<T> column, final Environment environment,
-            final Dispatcher dispatcher, final EventBus eventBus, final Provider<Progress> progress,
-            final FileList files, final String serverGroup, final Resources resources) {
+    static <T> void uploadAndDeploy(FinderColumn<T> column, Environment environment,
+            Dispatcher dispatcher, EventBus eventBus, Provider<Progress> progress,
+            FileList files, String serverGroup, Resources resources) {
         if (files.getLength() > 0) {
 
             StringBuilder builder = new StringBuilder();
-            List<Function> functions = new ArrayList<>();
+            List<Step<FlowContext>> steps = new ArrayList<>();
 
             for (int i = 0; i < files.getLength(); i++) {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
-                functions.add(new CheckDeployment(dispatcher, filename));
-                functions.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
-                functions.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
+                steps.add(new CheckDeployment(dispatcher, filename));
+                steps.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
+                steps.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
             }
 
             logger.debug("About to upload and deploy {} file(s): {} to server group {}",
                     files.getLength(), builder.toString(), serverGroup);
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new UploadOutcome<>(column, eventBus, files, resources),
-                    functions.toArray(new Function[functions.size()]));
+            series(progress.get(), new FlowContext(), steps)
+                    .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
     }
 }

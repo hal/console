@@ -13,33 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr;
+package org.jboss.hal.core;
 
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.hal.resources.Messages;
+import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-/** An outcome implementation which has a default implementation for the {@link Outcome#onFailure(Object)} method. */
-public abstract class SuccessfulOutcome implements Outcome<FunctionContext> {
+/** An outcome implementation which has a default implementation for the {@link Outcome#onError(Throwable)} method. */
+public abstract class SuccessfulOutcome<C> extends Outcome<C> {
 
     private final EventBus eventBus;
     private final Resources resources;
 
-    protected SuccessfulOutcome(final EventBus eventBus, final Resources resources) {
+    protected SuccessfulOutcome(EventBus eventBus, Resources resources) {
         this.eventBus = eventBus;
         this.resources = resources;
     }
 
-    /**
-     * Emits a error message using the {@link Messages#lastOperationFailed()} error message.
-     */
+    /** Emits a error message using the {@link org.jboss.hal.resources.Messages#lastOperationFailed()} error message. */
     @Override
-    public void onFailure(final FunctionContext context) {
-        MessageEvent
-                .fire(eventBus, Message.error(resources.messages().lastOperationFailed(), context.getError()));
+    public void onError(C context, Throwable throwable) {
+        MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed(), throwable.getMessage()));
     }
 }

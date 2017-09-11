@@ -18,9 +18,9 @@ package org.jboss.hal.core;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.deployment.DeploymentResources;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
@@ -40,10 +40,10 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerUrlStorage;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.core.ui.UIRegistry;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.GinModule;
-import org.jboss.hal.core.elytron.CredentialReference;
 
 @GinModule
 public class CoreModule extends AbstractGinModule {

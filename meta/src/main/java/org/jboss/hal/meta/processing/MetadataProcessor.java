@@ -26,15 +26,13 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -50,6 +48,8 @@ import org.slf4j.LoggerFactory;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.single;
 
 /**
  * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link
@@ -88,13 +88,13 @@ public class MetadataProcessor {
 
     @Inject
     @JsIgnore
-    public MetadataProcessor(final Environment environment,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final RequiredResources requiredResources,
-            final MetadataRegistry metadataRegistry,
-            final SecurityContextRegistry securityContextRegistry,
-            final ResourceDescriptionRegistry resourceDescriptionRegistry) {
+    public MetadataProcessor(Environment environment,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            RequiredResources requiredResources,
+            MetadataRegistry metadataRegistry,
+            SecurityContextRegistry securityContextRegistry,
+            ResourceDescriptionRegistry resourceDescriptionRegistry) {
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
         this.requiredResources = requiredResources;
@@ -105,7 +105,7 @@ public class MetadataProcessor {
     }
 
     @JsIgnore
-    public void process(final String id, final Progress progress, final AsyncCallback<Void> callback) {
+    public void process(String id, Progress progress, AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
         logger.debug("Process required resources {} for id {}", resources, id);
         if (resources.isEmpty()) {
@@ -119,7 +119,7 @@ public class MetadataProcessor {
     }
 
     @JsIgnore
-    public void lookup(final AddressTemplate template, Progress progress, final MetadataCallback callback) {
+    public void lookup(AddressTemplate template, Progress progress, MetadataCallback callback) {
         logger.debug("Lookup metadata for {}", template);
         processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
             @Override
@@ -135,8 +135,8 @@ public class MetadataProcessor {
         });
     }
 
-    private void processInternal(final Set<AddressTemplate> templates, final boolean recursive, final Progress progress,
-            final AsyncCallback<Void> callback) {
+    private void processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress,
+            AsyncCallback<Void> callback) {
         LookupResult lookupResult = lookup.check(templates, recursive);
         if (lookupResult.allPresent()) {
             logger.debug("All metadata have been already processed -> callback.onSuccess(null)");
@@ -148,8 +148,8 @@ public class MetadataProcessor {
             List<Operation> operations = rrdOps.create(lookupResult, false);
             List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
             List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
-            List<RrdFunction> functions = composites.stream()
-                    .map(composite -> new RrdFunction(securityContextRegistry, resourceDescriptionRegistry,
+            List<RrdStep> steps = composites.stream()
+                    .map(composite -> new RrdStep(securityContextRegistry, resourceDescriptionRegistry,
                             dispatcher, composite, false))
                     .collect(toList());
 
@@ -160,37 +160,36 @@ public class MetadataProcessor {
             // the GWT compiler will crash with an ArrayIndexOutOfBoundsException!
             List<Composite> optionalComposites = new ArrayList<>();
             optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operation)));
-            List<RrdFunction> optionalFunctions = optionalComposites.stream()
-                    .map(composite -> new RrdFunction(securityContextRegistry, resourceDescriptionRegistry,
+            List<RrdStep> optionalSteps = optionalComposites.stream()
+                    .map(composite -> new RrdStep(securityContextRegistry, resourceDescriptionRegistry,
                             dispatcher, composite, true))
                     .collect(toList());
 
             logger.debug("About to execute {} composite operations", composites.size() + optionalComposites.size());
-            Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+            Outcome<FlowContext> outcome = new Outcome<FlowContext>() {
                 @Override
-                public void onFailure(final FunctionContext context) {
-                    logger.debug("Failed to process metadata: {}", context.getError());
-                    callback.onFailure(context.getException());
+                public void onError(FlowContext context, Throwable error) {
+                    logger.debug("Failed to process metadata: {}", error.getMessage());
+                    callback.onFailure(error);
                 }
 
                 @Override
-                public void onSuccess(final FunctionContext context) {
+                public void onSuccess(FlowContext context) {
                     logger.debug("Successfully processed metadata");
                     callback.onSuccess(null);
                 }
             };
 
-            List<RrdFunction> allFunctions = new ArrayList<>();
-            allFunctions.addAll(functions);
-            allFunctions.addAll(optionalFunctions);
-            if (functions.size() == 1) {
-                new Async<FunctionContext>(progress).single(new FunctionContext(), outcome, allFunctions.get(0));
+            List<RrdStep> allSteps = new ArrayList<>();
+            allSteps.addAll(steps);
+            allSteps.addAll(optionalSteps);
+            if (steps.size() == 1) {
+                single(progress, new FlowContext(), allSteps.get(0)).subscribe(outcome);
             } else {
                 // Unfortunately we cannot use Async.parallel() here unless someone finds a way
                 // to unambiguously map parallel r-r-d operations to their results (multiple "step-1" results)
                 //noinspection SuspiciousToArrayCall
-                new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
-                        (Function[]) allFunctions.toArray(new RrdFunction[allFunctions.size()]));
+                series(progress, new FlowContext(), allSteps).subscribe(outcome);
             }
         }
     }

@@ -25,11 +25,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -38,9 +35,10 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -54,6 +52,7 @@ import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
+import static org.jboss.hal.flow.Flow.series;
 
 public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView, JmxPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -79,16 +78,16 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
     private final Resources resources;
 
     @Inject
-    public JmxPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final Dispatcher dispatcher,
-            @Footer final Provider<Progress> progress,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext, final Resources resources) {
+    public JmxPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            Dispatcher dispatcher,
+            @Footer Provider<Progress> progress,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext, final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.dispatcher = dispatcher;
@@ -120,25 +119,22 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
         crud.readRecursive(JMX_TEMPLATE, result -> getView().update(result));
     }
 
-    void saveAuditLog(final Map<String, Object> changedValues, final boolean changedHandler,
-            final List<String> handler) {
+    void saveAuditLog(Map<String, Object> changedValues, boolean changedHandler, List<String> handler) {
         if (!changedHandler) {
             crud.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::reload);
         } else {
             changedValues.remove(HANDLER);
             Metadata metadata = metadataRegistry.lookup(AUDIT_LOG_TEMPLATE);
-            Function[] functions = {
-                    new HandlerFunctions.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
-                    new HandlerFunctions.ReadHandlers(dispatcher, statementContext),
-                    new HandlerFunctions.MergeHandler(dispatcher, statementContext, new HashSet<>(handler))
-            };
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new SuccessfulOutcome(getEventBus(), resources) {
+            series(progress.get(), new FlowContext(),
+                    new HandlerSteps.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
+                    new HandlerSteps.ReadHandlers(dispatcher, statementContext),
+                    new HandlerSteps.MergeHandler(dispatcher, statementContext, new HashSet<>(handler)))
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                         @Override
-                        public void onSuccess(final FunctionContext context) {
+                        public void onSuccess(FlowContext context) {
                             reload();
                         }
-                    }, functions);
+                    });
         }
     }
 }

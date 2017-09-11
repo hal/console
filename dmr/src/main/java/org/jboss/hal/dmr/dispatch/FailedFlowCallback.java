@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.dmr.dispatch;
 
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 
-/** Interface for bootstrap functions. */
-public interface BootstrapFunction extends Function<FunctionContext> {
+public class FailedFlowCallback<C extends FlowContext> implements Dispatcher.FailedCallback {
 
-    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);
+    private final Control<C> control;
 
-    @NonNls
-    String name();
+    FailedFlowCallback(final Control<C> control) {this.control = control;}
 
-    default void logStart() {
-        logger.info("{}: Start", name());
-    }
-
-    default void logDone() {
-        logger.info("{}: Done", name());
+    @Override
+    public void onFailed(final Operation operation, final String failure) {
+        control.abort(failure);
     }
 }

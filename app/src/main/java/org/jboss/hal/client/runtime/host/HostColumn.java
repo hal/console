@@ -24,10 +24,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
@@ -40,7 +36,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologySteps;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActionEvent;
 import org.jboss.hal.core.runtime.host.HostActionEvent.HostActionHandler;
@@ -54,6 +50,9 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -73,6 +72,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
@@ -136,29 +136,27 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .build());
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
-        ItemsProvider<Host> itemsProvider = (context, callback) ->
-                new Async<FunctionContext>(progress.get()).waterfall(
-                        new FunctionContext(),
-                        new Outcome<FunctionContext>() {
-                            @Override
-                            public void onFailure(final FunctionContext context) {
-                                callback.onFailure(context.getException());
-                            }
+        ItemsProvider<Host> itemsProvider = (context, callback) -> series(progress.get(), new FlowContext(),
+                new TopologySteps.HostsWithServerConfigs(environment, dispatcher),
+                new TopologySteps.HostsStartedServers(environment, dispatcher))
+                .subscribe(new Outcome<FlowContext>() {
+                    @Override
+                    public void onError(FlowContext context, Throwable error) {
+                        callback.onFailure(error);
+                    }
 
-                            @Override
-                            public void onSuccess(final FunctionContext context) {
-                                List<Host> hosts = context.get(TopologyFunctions.HOSTS);
-                                callback.onSuccess(hosts);
+                    @Override
+                    public void onSuccess(FlowContext context) {
+                        List<Host> hosts = context.get(TopologySteps.HOSTS);
+                        callback.onSuccess(hosts);
 
-                                // Restore pending visualization
-                                hosts.stream()
-                                        .filter(hostActions::isPending)
-                                        .forEach(host -> ItemMonitor
-                                                .startProgress(Ids.host(host.getAddressName())));
-                            }
-                        },
-                        new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
-                        new TopologyFunctions.HostsStartedServers(environment, dispatcher));
+                        // Restore pending visualization
+                        hosts.stream()
+                                .filter(hostActions::isPending)
+                                .forEach(host -> ItemMonitor
+                                        .startProgress(Ids.host(host.getAddressName())));
+                    }
+                });
         setItemsProvider(itemsProvider);
 
         setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<Host>>() {
@@ -294,12 +292,14 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     }
 
     private void pruneExpired() {
-        DialogFactory.showConfirmation(resources.constants().pruneExpired(), resources.messages().pruneExpiredQuestion(),
+        DialogFactory.showConfirmation(resources.constants().pruneExpired(),
+                resources.messages().pruneExpiredQuestion(),
                 () -> prune(PRUNE_EXPIRED));
     }
 
     private void pruneDisconnected() {
-        DialogFactory.showConfirmation(resources.constants().pruneDisconnected(), resources.messages().pruneDisconnectedQuestion(),
+        DialogFactory.showConfirmation(resources.constants().pruneDisconnected(),
+                resources.messages().pruneDisconnectedQuestion(),
                 () -> prune(PRUNE_DISCONNECTED));
     }
 

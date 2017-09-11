@@ -22,7 +22,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.spi.Footer;

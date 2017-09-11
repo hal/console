@@ -29,12 +29,6 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.tree.Node;
@@ -48,6 +42,11 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -67,18 +66,20 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
-import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
+import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
+import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -111,14 +112,14 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
 
-    private class OpenNodeFunction implements Function<FunctionContext> {
+    private class OpenNodeStep implements Step<FlowContext> {
 
         private final String id;
 
-        private OpenNodeFunction(final String id) {this.id = id;}
+        private OpenNodeStep(String id) {this.id = id;}
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (tree.api().getNode(id) != null) {
                 tree.api().openNode(id, control::proceed);
             } else {
@@ -158,12 +159,12 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     // ------------------------------------------------------ ui setup
 
     @Inject
-    public ModelBrowser(final CrudOperations crud,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final Resources resources) {
+    public ModelBrowser(CrudOperations crud,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            Resources resources) {
         this.crud = crud;
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
@@ -293,22 +294,21 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             FilterInfo previousFilter = filterStack.pop();
             filter(filterStack.isEmpty() ? FilterInfo.ROOT : filterStack.peek());
 
-            List<OpenNodeFunction> functions = previousFilter.parents.stream()
-                    .map(OpenNodeFunction::new)
+            List<OpenNodeStep> steps = previousFilter.parents.stream()
+                    .map(OpenNodeStep::new)
                     .collect(toList());
-            Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-                @Override
-                public void onFailure(final FunctionContext context) {
-                    logger.debug("Failed to restore selection {}", previousFilter.parents);
-                }
+            series(progress.get(), new FlowContext(), steps)
+                    .subscribe(new Outcome<FlowContext>() {
+                        @Override
+                        public void onError(FlowContext context, Throwable error) {
+                            logger.debug("Failed to restore selection {}", previousFilter.parents);
+                        }
 
-                @Override
-                public void onSuccess(final FunctionContext context) {
-                    tree.select(previousFilter.node.id, false);
-                }
-            };
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                    functions.toArray(new Function[functions.size()]));
+                        @Override
+                        public void onSuccess(FlowContext context) {
+                            tree.select(previousFilter.node.id, false);
+                        }
+                    });
         }
     }
 

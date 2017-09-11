@@ -39,20 +39,20 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.OperationMode;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.ManagementModel;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -63,7 +63,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * version. Executes the {@code :whoami} operation to get the current user / roles.
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class ReadEnvironment implements BootstrapFunction {
+public class ReadEnvironment implements BootstrapStep {
 
     private final Dispatcher dispatcher;
     private final Environment environment;
@@ -80,7 +80,7 @@ public class ReadEnvironment implements BootstrapFunction {
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
+    public void execute(Control<FlowContext> control) {
         logStart();
 
         List<Operation> ops = new ArrayList<>();
@@ -90,7 +90,7 @@ public class ReadEnvironment implements BootstrapFunction {
                 .build());
         ops.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
 
-        dispatcher.executeInFunction(control, new Composite(ops),
+        dispatcher.executeInFlow(control, new Composite(ops),
                 (CompositeResult result) -> {
                     // server info
                     logger.debug("{}: Parse root resource", name());

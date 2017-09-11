@@ -19,12 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import javax.inject.Provider;
 
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.server.Server;
@@ -33,6 +27,11 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Messages;
@@ -44,18 +43,19 @@ import static org.jboss.hal.client.patching.PatchesColumn.PATCHING_TEMPLATE;
 import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
 import static org.jboss.hal.client.patching.wizard.PatchState.ROLLBACK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.single;
 
 public class RollbackWizard {
 
-    static class RollbackFunction implements Function<FunctionContext> {
+    static class RollbackStep implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private StatementContext statementContext;
         private ServerActions serverActions;
         private PatchContext patchContext;
 
-        RollbackFunction(final StatementContext statementContext, final Dispatcher dispatcher,
-                final ServerActions serverActions, final PatchContext patchContext) {
+        RollbackStep(StatementContext statementContext, Dispatcher dispatcher,
+                ServerActions serverActions, PatchContext patchContext) {
 
             this.statementContext = statementContext;
             this.dispatcher = dispatcher;
@@ -64,7 +64,7 @@ public class RollbackWizard {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
 
             if (patchContext.restartServers) {
                 for (Property serverProp : patchContext.servers) {
@@ -90,19 +90,9 @@ public class RollbackWizard {
             Operation operation = opBuilder.build();
 
             dispatcher.execute(operation,
-                    result -> {
-                        control.proceed();
-                    },
-
-                    (op, failure) -> {
-                        control.getContext().failed(failure);
-                        control.abort();
-                    },
-
-                    (op, exception) -> {
-                        control.getContext().failed(exception);
-                        control.abort();
-                    });
+                    result -> control.proceed(),
+                    (op, failure) -> control.abort(failure),
+                    (op, exception) -> control.abort(exception.getMessage()));
         }
     }
 
@@ -117,10 +107,9 @@ public class RollbackWizard {
     private ServerActions serverActions;
     private Callback callback;
 
-    public RollbackWizard(final Resources resources, final Environment environment, final String patchId,
-            final Metadata metadata,
-            final StatementContext statementContext, final Dispatcher dispatcher, final Provider<Progress> progress,
-            final ServerActions serverActions, Callback callback) {
+    public RollbackWizard(Resources resources, Environment environment, String patchId, Metadata metadata,
+            StatementContext statementContext, Dispatcher dispatcher, Provider<Progress> progress,
+            ServerActions serverActions, Callback callback) {
 
         this.resources = resources;
         this.environment = environment;
@@ -135,67 +124,66 @@ public class RollbackWizard {
 
     public void show() {
         Messages messages = resources.messages();
-        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(resources.constants().rollback(), new PatchContext());
+        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(resources.constants().rollback(),
+                new PatchContext());
 
         checkServersState(servers -> {
             if (servers != null) {
                 wb.addStep(CHECK_SERVERS, new CheckRunningServersStep(resources, servers,
                         statementContext.selectedHost()));
             }
-            wb.addStep(ROLLBACK, new RollbackStep(metadata, resources, statementContext.selectedHost(), patchId))
+            wb.addStep(ROLLBACK, new org.jboss.hal.client.patching.wizard.RollbackStep(metadata, resources,
+                    statementContext.selectedHost(), patchId))
 
-            .onBack((context, currentState) -> {
-                PatchState previous = null;
-                switch (currentState) {
-                    case CHECK_SERVERS:
-                        break;
-                    case ROLLBACK:
-                        previous = CHECK_SERVERS;
-                        break;
-                }
-                return previous;
-            })
-            .onNext((context, currentState) -> {
-                PatchState next = null;
-                switch (currentState) {
-                    case CHECK_SERVERS:
-                        next = ROLLBACK;
-                        break;
-                    case ROLLBACK:
-                        break;
-                }
-                return next;
-            })
+                    .onBack((context, currentState) -> {
+                        PatchState previous = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                break;
+                            case ROLLBACK:
+                                previous = CHECK_SERVERS;
+                                break;
+                        }
+                        return previous;
+                    })
+                    .onNext((context, currentState) -> {
+                        PatchState next = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                next = ROLLBACK;
+                                break;
+                            case ROLLBACK:
+                                break;
+                        }
+                        return next;
+                    })
 
-            .stayOpenAfterFinish()
-            .onFinish((wzd, context) -> {
-                String name = context.patchId;
-                wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
+                    .stayOpenAfterFinish()
+                    .onFinish((wzd, context) -> {
+                        String name = context.patchId;
+                        wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
 
-                Function[] functions = {
-                        new RollbackFunction(statementContext, dispatcher, serverActions, context)
-                };
-                new Async<FunctionContext>(progress.get()).waterfall(
-                        new FunctionContext(),
-                        new Outcome<FunctionContext>() {
-                            @Override
-                            public void onFailure(final FunctionContext functionContext) {
-                                wzd.showError(resources.constants().rollbackError(),
-                                        messages.rollbackError(functionContext.getError()),
-                                        functionContext.getError());
-                            }
+                        single(progress.get(), new FlowContext(),
+                                new RollbackStep(statementContext, dispatcher, serverActions, context))
+                                .subscribe(new Outcome<FlowContext>() {
+                                    @Override
+                                    public void onError(FlowContext context, Throwable error) {
+                                        wzd.showError(resources.constants().rollbackError(),
+                                                messages.rollbackError(error.getMessage()),
+                                                error.getMessage());
+                                    }
 
-                            @Override
-                            public void onSuccess(final FunctionContext functionContext) {
-                                callback.execute();
-                                wzd.showSuccess(
-                                        resources.constants().rollbackSuccessful(),
-                                        messages.rollbackSucessful(name),
-                                        messages.view(Names.PATCH),
-                                        cxt -> { /* nothing to do, content is already selected */ });
-                            }
-                        }, functions);
-            });
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        callback.execute();
+                                        wzd.showSuccess(
+                                                resources.constants().rollbackSuccessful(),
+                                                messages.rollbackSucessful(name),
+                                                messages.view(Names.PATCH),
+                                                cxt -> { /* nothing to do, content is already selected */ });
+                                    }
+                                });
+                    });
             Wizard<PatchContext, PatchState> wizard = wb.build();
             wizard.show();
         });
@@ -207,7 +195,6 @@ public class RollbackWizard {
      * from failing.
      */
     private void checkServersState(Dispatcher.SuccessCallback<List<Property>> callback) {
-
         if (environment.isStandalone()) {
             callback.onSuccess(null);
         } else {

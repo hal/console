@@ -115,6 +115,7 @@
         <module>core</module>
         <module>config</module>
         <module>dmr</module>
+        <module>flow</module>
         <module>fraction</module>
         <module>json</module>
         <module>meta</module>

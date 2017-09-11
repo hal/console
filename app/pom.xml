@@ -51,6 +51,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-json</artifactId>
         </dependency>
         <dependency>
@@ -75,10 +79,6 @@
         </dependency>
 
         <!-- GWT -->
-        <dependency>
-            <groupId>org.jboss.gwt.flow</groupId>
-            <artifactId>flow</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.jboss.gwt.elemento</groupId>
             <artifactId>elemento-core</artifactId>

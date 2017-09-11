@@ -17,10 +17,6 @@ package org.jboss.hal.client.configuration;
 
 import java.util.List;
 
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.autocomplete.AutoComplete;
 import org.jboss.hal.ballroom.autocomplete.NamesResultProcessor;
 import org.jboss.hal.ballroom.autocomplete.Options;
@@ -28,12 +24,15 @@ import org.jboss.hal.ballroom.autocomplete.OptionsBuilder;
 import org.jboss.hal.ballroom.autocomplete.StringRenderer;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologySteps;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
@@ -44,6 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.flow.Flow.single;
 
 /**
  * Special auto complete class for paths. In standalone mode or in case there's no selected profile the paths are read
@@ -69,29 +69,29 @@ public class PathsAutoComplete extends AutoComplete {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();
         } else {
-            new Async<FunctionContext>(Progress.NOOP).single(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
-                            logger.error("Unable to update operation for paths type-ahead: " +
-                                    "Error reading running servers: {}", context.getError());
-                            operation = defaultOperation();
-                        }
+            single(Progress.NOOP, new FlowContext(),
+                    new TopologySteps.RunningServersQuery(environment, dispatcher,
+                            new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())))
+            .subscribe(new Outcome<FlowContext>() {
+                @Override
+                public void onError(FlowContext context, Throwable error) {
+                    logger.error("Unable to update operation for paths type-ahead: " +
+                            "Error reading running servers: {}", error.getMessage());
+                    operation = defaultOperation();
+                }
 
-                        @Override
-                        public void onSuccess(final FunctionContext context) {
-                            List<Server> servers = context.get(TopologyFunctions.RUNNING_SERVERS);
-                            if (!servers.isEmpty() && servers.get(0).isStarted()) {
-                                operation = new Operation.Builder(servers.get(0).getServerAddress(),
-                                        READ_CHILDREN_NAMES_OPERATION
-                                ).param(CHILD_TYPE, "path").build();
-                            } else {
-                                operation = defaultOperation();
-                            }
-                        }
-                    },
-                    new TopologyFunctions.RunningServersQuery(environment, dispatcher,
-                            new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
+                @Override
+                public void onSuccess(FlowContext context) {
+                    List<Server> servers = context.get(TopologySteps.RUNNING_SERVERS);
+                    if (!servers.isEmpty() && servers.get(0).isStarted()) {
+                        operation = new Operation.Builder(servers.get(0).getServerAddress(),
+                                READ_CHILDREN_NAMES_OPERATION
+                        ).param(CHILD_TYPE, "path").build();
+                    } else {
+                        operation = defaultOperation();
+                    }
+                }
+            });
         }
     }
 

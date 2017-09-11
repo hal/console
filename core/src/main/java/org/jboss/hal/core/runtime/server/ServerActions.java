@@ -30,10 +30,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -49,8 +45,8 @@ import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
-import org.jboss.hal.core.runtime.server.ServerUrlFunctions.ReadSocketBinding;
-import org.jboss.hal.core.runtime.server.ServerUrlFunctions.ReadSocketBindingGroup;
+import org.jboss.hal.core.runtime.server.ServerUrlSteps.ReadSocketBinding;
+import org.jboss.hal.core.runtime.server.ServerUrlSteps.ReadSocketBindingGroup;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
@@ -60,6 +56,9 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
 import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
 import org.jboss.hal.dmr.dispatch.TimeoutHandler;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -87,10 +86,11 @@ import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
-import static org.jboss.hal.core.runtime.server.ServerUrlFunctions.URL_KEY;
+import static org.jboss.hal.core.runtime.server.ServerUrlSteps.URL_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -666,21 +666,21 @@ public class ServerActions {
             callback.onSuccess(serverUrl);
 
         } else {
-            new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
+            series(Progress.NOOP, new FlowContext(),
+                    new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
+                    new ReadSocketBinding(standalone, host, server, dispatcher))
+                    .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onFailure(FunctionContext context) {
-                            logger.error(context.getError());
-                            callback.onFailure(context.getException());
+                        public void onError(FlowContext context, Throwable error) {
+                            logger.error(error.getMessage());
+                            callback.onFailure(error);
                         }
 
                         @Override
-                        public void onSuccess(FunctionContext context) {
+                        public void onSuccess(FlowContext context) {
                             callback.onSuccess(context.get(URL_KEY));
                         }
-                    },
-                    new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
-                    new ReadSocketBinding(standalone, host, server, dispatcher));
+                    });
         }
     }
 
@@ -742,9 +742,6 @@ public class ServerActions {
         });
     }
 
-    private void saveUrl(Server server, String url) {
-    }
-
 
     // ------------------------------------------------------ helper methods
 
@@ -789,7 +786,9 @@ public class ServerActions {
 
     private Predicate<ModelNode> checkServerConfigStatus(ServerConfigStatus first, ServerConfigStatus... rest) {
         return result -> {
-            ServerConfigStatus status = asEnumValue(result, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED);
+            //noinspection Convert2MethodRef (method reference leads to an error!)
+            ServerConfigStatus status = asEnumValue(result, name -> ServerConfigStatus.valueOf(name),
+                    ServerConfigStatus.UNDEFINED);
             return EnumSet.of(first, rest).contains(status);
         };
     }
@@ -809,6 +808,7 @@ public class ServerActions {
     }
 
     private Predicate<ModelNode> checkSuspendState(SuspendState statusToReach) {
-        return result -> statusToReach == asEnumValue(result, SuspendState::valueOf, SuspendState.UNDEFINED);
+        //noinspection Convert2MethodRef (method reference leads to an error!)
+        return result -> statusToReach == asEnumValue(result, name -> SuspendState.valueOf(name), SuspendState.UNDEFINED);
     }
 }

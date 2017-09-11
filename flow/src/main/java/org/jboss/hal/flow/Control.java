@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dispatch;
+package org.jboss.hal.flow;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.Operation;
+/** Execution control handle passed into functions */
+public interface Control<C> {
 
-public class ExceptionalFunctionCallback<C extends FunctionContext> implements Dispatcher.ExceptionCallback {
+    void proceed();
 
-    private final Control<C> control;
+    void abort(String error);
 
-    ExceptionalFunctionCallback(final Control<C> control) {this.control = control;}
-
-    @Override
-    public void onException(final Operation operation, final Throwable exception) {
-        control.getContext().failed(exception);
-        control.abort();
-    }
+    C getContext();
 }

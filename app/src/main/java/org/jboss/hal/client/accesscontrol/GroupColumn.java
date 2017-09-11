@@ -19,11 +19,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;

@@ -31,7 +31,6 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import jsinterop.base.JsPropertyMapOfAny;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -46,6 +45,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -139,12 +139,12 @@ public class CrudOperations {
 
     @Inject
     @JsIgnore
-    public CrudOperations(final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public CrudOperations(EventBus eventBus,
+            Dispatcher dispatcher,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            StatementContext statementContext,
+            Resources resources) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataProcessor = metadataProcessor;

@@ -17,19 +17,19 @@ package org.jboss.hal.core.runtime.server;
 
 import java.util.Optional;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** Umbrella class for functions to read the server URL */
-class ServerUrlFunctions {
+class ServerUrlSteps {
 
     private static final String SOCKET_BINDING_GROUP_KEY = "socket-binding-group";
     static final String URL_KEY = "url";
@@ -43,7 +43,7 @@ class ServerUrlFunctions {
      * domain mode it reads the {@code socket-binding-group} attribute of the selected group in the statement
      * context.</p>
      */
-    static class ReadSocketBindingGroup implements Function<FunctionContext> {
+    static class ReadSocketBindingGroup implements Step<FlowContext> {
 
         private final boolean standalone;
         private final String serverGroup;
@@ -56,15 +56,14 @@ class ServerUrlFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (standalone) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                         .build();
-                dispatcher.executeInFunction(control, operation, result -> {
+                dispatcher.executeInFlow(control, operation, result -> {
                     if (result.asList().isEmpty()) {
-                        control.getContext().failed("ReadSocketBindingGroup: No socket binding groups defined");
-                        control.abort();
+                        control.abort("ReadSocketBindingGroup: No socket binding groups defined"); //NON-NLS
                     } else {
                         String sbg = result.asList().get(0).asString();
                         control.getContext().set(SOCKET_BINDING_GROUP_KEY, sbg);
@@ -77,7 +76,7 @@ class ServerUrlFunctions {
                 Operation operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                         .param(NAME, SOCKET_BINDING_GROUP)
                         .build();
-                dispatcher.executeInFunction(control, operation, result -> {
+                dispatcher.executeInFlow(control, operation, result -> {
                     control.getContext().set(SOCKET_BINDING_GROUP_KEY, result.asString());
                     control.proceed();
                 });
@@ -90,7 +89,7 @@ class ServerUrlFunctions {
      * Checks whether there's a {@code http} or {@code https} socket binding and puts the name of that socket binding
      * into the context. Aborts otherwise. Expects the name of the socket binding group in the context.
      */
-    static class ReadSocketBinding implements Function<FunctionContext> {
+    static class ReadSocketBinding implements Step<FlowContext> {
 
         private final boolean standalone;
         private final String host;
@@ -106,7 +105,7 @@ class ServerUrlFunctions {
 
         @Override
         @SuppressWarnings("HardCodedStringLiteral")
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             String sbg = control.getContext().get(SOCKET_BINDING_GROUP_KEY);
             if (sbg != null) {
                 ResourceAddress address = new ResourceAddress();
@@ -118,7 +117,7 @@ class ServerUrlFunctions {
                         .param(CHILD_TYPE, SOCKET_BINDING)
                         .param(INCLUDE_RUNTIME, true)
                         .build();
-                dispatcher.executeInFunction(control, operation, result -> {
+                dispatcher.executeInFlow(control, operation, result -> {
                     Optional<Property> optional = result.asPropertyList().stream()
                             .filter(p -> p.getName().startsWith("http"))
                             .sorted(comparing(Property::getName))
@@ -136,18 +135,15 @@ class ServerUrlFunctions {
                             control.getContext().set(URL_KEY, new ServerUrl(url.toString(), false));
                             control.proceed();
                         } else {
-                            control.getContext()
-                                    .failed("ReadSocketBinding: No address defined for " + sbg + " / " + property.getName());
-                            control.abort();
+                            control.abort("ReadSocketBinding: No address defined for " +
+                                    sbg + " / " + property.getName());
                         }
                     } else {
-                        control.getContext().failed("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
-                        control.abort();
+                        control.abort("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
                     }
                 });
             } else {
-                control.getContext().failed("ReadSocketBinding: No socket binding group in context");
-                control.abort();
+                control.abort("ReadSocketBinding: No socket binding group in context");
             }
         }
     }
