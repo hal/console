@@ -116,9 +116,6 @@ public class Dispatcher implements RecordingHandler {
     }
 
 
-    static final FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {/* noop */};
-    static final ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {/* noop */};
-
     static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
     static final String APPLICATION_JSON = "application/json";
 

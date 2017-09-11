@@ -786,7 +786,9 @@ public class ServerActions {
 
     private Predicate<ModelNode> checkServerConfigStatus(ServerConfigStatus first, ServerConfigStatus... rest) {
         return result -> {
-            ServerConfigStatus status = asEnumValue(result, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED);
+            //noinspection Convert2MethodRef (method reference leads to an error!)
+            ServerConfigStatus status = asEnumValue(result, name -> ServerConfigStatus.valueOf(name),
+                    ServerConfigStatus.UNDEFINED);
             return EnumSet.of(first, rest).contains(status);
         };
     }
@@ -806,6 +808,7 @@ public class ServerActions {
     }
 
     private Predicate<ModelNode> checkSuspendState(SuspendState statusToReach) {
-        return result -> statusToReach == asEnumValue(result, SuspendState::valueOf, SuspendState.UNDEFINED);
+        //noinspection Convert2MethodRef (method reference leads to an error!)
+        return result -> statusToReach == asEnumValue(result, name -> SuspendState.valueOf(name), SuspendState.UNDEFINED);
     }
 }

@@ -27,8 +27,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
-import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
 import static org.jboss.hal.flow.Flow.interval;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
@@ -89,11 +87,14 @@ public class TimeoutHandler {
      */
     public void execute(Operation operation, Predicate<ModelNode> predicate, Callback callback) {
         interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
-                context -> !timeout(context) && !context.conditionSatisfied,
+                context -> timeout(context) || context.conditionSatisfied,
                 control -> dispatcher.execute(operation,
-                        result -> control.getContext().conditionSatisfied = predicate == null || predicate.test(result),
-                        NOOP_FAILED_CALLBACK,
-                        NOOP_EXCEPTIONAL_CALLBACK))
+                        result -> {
+                            control.getContext().conditionSatisfied = predicate == null || predicate.test(result);
+                            control.proceed();
+                        },
+                        (op, failure) -> control.proceed(),
+                        (op, exception) -> control.proceed()))
                 .subscribe(new Outcome<TimeoutContext>() {
                     @Override
                     public void onError(TimeoutContext context, Throwable error) {
@@ -119,7 +120,7 @@ public class TimeoutHandler {
      */
     public void execute(Composite composite, Predicate<CompositeResult> predicate, Callback callback) {
         interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
-                context -> !timeout(context) && !context.conditionSatisfied,
+                context -> timeout(context) || context.conditionSatisfied,
                 control -> dispatcher.execute(composite,
                         (CompositeResult result) -> {
                             if (predicate != null) {
@@ -129,9 +130,10 @@ public class TimeoutHandler {
                                         .map(stepResult -> !stepResult.isFailure())
                                         .allMatch(flag -> true);
                             }
+                            control.proceed();
                         },
-                        NOOP_FAILED_CALLBACK,
-                        NOOP_EXCEPTIONAL_CALLBACK))
+                        (op, failure) -> control.proceed(),
+                        (op, exception) -> control.proceed()))
                 .subscribe(new Outcome<TimeoutContext>() {
                     @Override
                     public void onError(TimeoutContext context, Throwable error) {
