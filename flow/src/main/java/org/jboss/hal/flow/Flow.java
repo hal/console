@@ -15,24 +15,23 @@
  */
 package org.jboss.hal.flow;
 
+import static java.util.Arrays.asList;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-
 import rx.Observable;
 import rx.Single;
-
-import static java.util.Arrays.asList;
 
 /**
  * Collection of static methods to execute async operations in order or until a condition is met. Uses RxGWT to
  * orchestrate the async operations.
  */
-public class Flow {
+public interface Flow {
 
     /** Executes a single step. Useful if you already have a step implementation which you want to re-use. */
-    public static <C> Single<C> single(Progress progress, C context, Step<C> step) {
-        return fromControl(context, step)
+    static <C> Single<C> single(Progress progress, C context, Step<C> step) {
+        return step.call(context)
                 .doOnSubscribe(progress::reset)
                 .doOnSuccess(n -> progress.finish())
                 .doOnError(e -> progress.finish());
@@ -40,41 +39,29 @@ public class Flow {
 
     /** Executes multiple steps in order. */
     @SafeVarargs
-    public static <C> Single<C> series(Progress progress, C context, Step<C>... step) {
+    static <C> Single<C> series(Progress progress, C context, Step<C>... step) {
         return series(progress, context, asList(step));
     }
 
     /** Executes multiple steps in order. */
-    public static <C> Single<C> series(Progress progress, C context, Collection<? extends Step<C>> steps) {
+    static <C> Single<C> series(Progress progress, C context, Collection<? extends Step<C>> steps) {
         assert !steps.isEmpty();
         return Observable.from(steps)
+                .flatMapSingle(f -> f.call(context), false, 1)
                 .doOnSubscribe(() -> progress.reset(steps.size()))
-                .concatMap(f -> fromControl(context, f).toObservable())
                 .doOnNext(n -> progress.tick())
                 .doOnTerminate(progress::finish)
-                .doOnError(e -> progress.finish())
-                .last().toSingle();
+                .lastOrDefault(context).toSingle();
     }
 
     /** Executes a steps until a condition is met. */
-    public static <C> Single<C> interval(Progress progress, C context, int interval, Predicate<C> until,
-            Step<C> step) {
+    static <C> Single<C> interval(Progress progress, C context, int interval, Predicate<C> until, Step<C> step) {
         return Observable.interval(interval, TimeUnit.MILLISECONDS)
+                .flatMapSingle(n -> step.call(context))
+                .takeUntil(until::test)
                 .doOnSubscribe(progress::reset)
-                .flatMapSingle(n -> fromControl(context, step))
                 .doOnNext(n -> progress.tick())
                 .doOnTerminate(progress::finish)
-                .doOnError(e -> progress.finish())
-                .takeUntil(until::test)
-                .last().toSingle();
-    }
-
-    private static <C> Single<C> fromControl(C context, Step<C> producer) {
-        return Single.fromEmitter(emitter -> producer.execute(context, new Control() {
-            // @formatter:off
-            @Override public void proceed() { emitter.onSuccess(context); }
-            @Override public void abort(String error) { emitter.onError(new FlowException(error, context)); }
-            // @formatter:on
-        }));
+                .lastOrDefault(context).toSingle();
     }
 }
