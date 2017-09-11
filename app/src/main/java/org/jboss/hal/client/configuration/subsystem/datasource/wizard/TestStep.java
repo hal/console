@@ -32,6 +32,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.StatementContext;
@@ -139,7 +140,7 @@ class TestStep extends WizardStep<Context, State> {
         });
 
         series(progress.get(), new FlowContext(), steps)
-                .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
+                .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext flowContext, Throwable error) {
                         String title = flowContext.get(WIZARD_TITLE);

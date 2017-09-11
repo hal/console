@@ -27,7 +27,6 @@ public class FailedFlowCallback<C extends FlowContext> implements Dispatcher.Fai
 
     @Override
     public void onFailed(final Operation operation, final String failure) {
-        control.getContext().failed(failure);
-        control.abort();
+        control.abort(failure);
     }
 }

@@ -25,7 +25,6 @@ import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import jsinterop.annotations.JsIgnore;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -37,6 +36,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -68,13 +68,13 @@ public class ComplexAttributeOperations {
     private final Resources resources;
 
     @Inject
-    public ComplexAttributeOperations(final CrudOperations crud,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public ComplexAttributeOperations(CrudOperations crud,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            StatementContext statementContext,
+            Resources resources) {
         this.crud = crud;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;

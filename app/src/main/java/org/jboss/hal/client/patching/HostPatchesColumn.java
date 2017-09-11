@@ -45,6 +45,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.AddressTemplate;
@@ -158,7 +159,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
                 .itemsProvider((context, callback) -> single(progress.get(), new FlowContext(),
                         new AvailableHosts(dispatcher))
-                        .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
+                        .subscribe(new Outcome<FlowContext>() {
                             @Override
                             public void onError(FlowContext context, Throwable error) {
                                 callback.onFailure(error);

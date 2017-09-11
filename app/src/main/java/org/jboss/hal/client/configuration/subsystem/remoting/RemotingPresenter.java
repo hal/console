@@ -43,6 +43,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -92,7 +93,7 @@ public class RemotingPresenter
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
-    private final Provider<org.jboss.hal.flow.Progress> progress;
+    private final Provider<Progress> progress;
     private final Resources resources;
 
     private ModelNode payload;
@@ -112,7 +113,7 @@ public class RemotingPresenter
             FinderPathFactory finderPathFactory,
             MetadataRegistry metadataRegistry,
             StatementContext statementContext,
-            @Footer Provider<org.jboss.hal.flow.Progress> progress,
+            @Footer Provider<Progress> progress,
             Resources resources) {
 
         super(eventBus, view, myProxy, finder);

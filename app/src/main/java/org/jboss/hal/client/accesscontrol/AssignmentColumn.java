@@ -46,6 +46,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -72,7 +73,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
-    private final Provider<org.jboss.hal.flow.Progress> progress;
+    private final Provider<Progress> progress;
     private final User currentUser;
     private final AccessControl accessControl;
     private final Resources resources;
@@ -82,7 +83,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             final ItemActionFactory itemActionFactory,
             final Dispatcher dispatcher,
             final EventBus eventBus,
-            final @Footer Provider<org.jboss.hal.flow.Progress> progress,
+            final @Footer Provider<Progress> progress,
             final User currentUser,
             final AccessControl accessControl,
             final AccessControlTokens tokens,

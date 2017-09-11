@@ -30,11 +30,11 @@ import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.proxy.DefaultPlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.StatementContext.Tuple;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.Resources;
@@ -69,14 +69,14 @@ public class HalPlaceManager extends DefaultPlaceManager {
     private boolean firstRequest;
 
     @Inject
-    public HalPlaceManager(final EventBus eventBus,
-            final TokenFormatter tokenFormatter,
-            @DefaultPlace final String defaultPlaceNameToken,
-            @ErrorPlace final String errorPlaceNameToken,
-            @UnauthorizedPlace final String unauthorizedPlaceNameToken,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final Resources resources) {
+    public HalPlaceManager(EventBus eventBus,
+            TokenFormatter tokenFormatter,
+            @DefaultPlace String defaultPlaceNameToken,
+            @ErrorPlace String errorPlaceNameToken,
+            @UnauthorizedPlace String unauthorizedPlaceNameToken,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
         super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken,
                 new PlaceHistoryHandler.DefaultHistorian());
         this.metadataProcessor = metadataProcessor;

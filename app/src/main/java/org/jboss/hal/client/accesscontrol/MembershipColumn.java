@@ -63,6 +63,7 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /** Shows the members (principals) of the selected role (the reverse of the {@link AssignmentColumn}. */
@@ -242,7 +243,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
         return column -> {
             Role role = findRole(getFinder().getContext().getPath());
             if (role != null) {
-                Flow.series(progress.get(), new FlowContext(), new CheckRoleMapping(dispatcher, role),
+                series(progress.get(), new FlowContext(), new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new AddAssignment(dispatcher, role, principal, include))
                 .subscribe(new org.jboss.hal.core.SuccessfulOutcome<FlowContext>(eventBus, resources) {

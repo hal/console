@@ -63,6 +63,7 @@ import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLA
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 
 class PrincipalColumn extends FinderColumn<Principal> {
 
@@ -214,7 +215,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
         collectSteps(steps, type, name, true, model, INCLUDE);
         collectSteps(steps, type, name, false, model, EXCLUDE);
         if (!steps.isEmpty()) {
-            Flow.series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), steps)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
                         public void onSuccess(FlowContext context) {

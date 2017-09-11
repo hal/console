@@ -32,7 +32,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Flow;
+import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Step;
@@ -48,6 +48,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 
 /**
  * Many resources store properties in form of a sub resource similar to:
@@ -86,7 +87,7 @@ public class PropertiesOperations {
         }
 
         @Override
-        public void execute(org.jboss.hal.flow.Control<FlowContext> control) {
+        public void execute(Control<FlowContext> control) {
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, psr)
                     .build();
@@ -122,7 +123,7 @@ public class PropertiesOperations {
         }
 
         @Override
-        public void execute(org.jboss.hal.flow.Control<FlowContext> control) {
+        public void execute(Control<FlowContext> control) {
             Set<String> existingProperties = control.getContext().pop();
             Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
             Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();
@@ -340,7 +341,7 @@ public class PropertiesOperations {
             Composite operations, String psr, Map<String, String> properties, Callback callback) {
 
         // TODO Check if the steps can be replaced with a composite operation
-        Flow.series(progress.get(), new FlowContext(),
+        series(progress.get(), new FlowContext(),
                 control -> {
                     if (operations.isEmpty()) {
                         control.proceed();

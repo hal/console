@@ -40,6 +40,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -89,7 +90,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                                 : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
                         new JdbcDriverSteps.ReadRuntime(environment, dispatcher),
                         new JdbcDriverSteps.CombineDriverResults())
-                        .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
+                        .subscribe(new Outcome<FlowContext>() {
                             @Override
                             public void onError(FlowContext context, Throwable error) {
                                 callback.onFailure(error);

@@ -27,7 +27,6 @@ public class ExceptionalFlowCallback<C extends FlowContext> implements Dispatche
 
     @Override
     public void onException(final Operation operation, final Throwable exception) {
-        control.getContext().failed(exception);
-        control.abort();
+        control.abort(exception.getMessage());
     }
 }

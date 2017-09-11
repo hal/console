@@ -52,6 +52,7 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 public class ServerPresenter
@@ -184,7 +185,7 @@ public class ServerPresenter
             }
         };
 
-        Flow.series(progress.get(), new FlowContext(), serverConfigFn, serverRuntimeFn)
+        series(progress.get(), new FlowContext(), serverConfigFn, serverRuntimeFn)
                 .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                     @Override
                     public void onSuccess(FlowContext context) {

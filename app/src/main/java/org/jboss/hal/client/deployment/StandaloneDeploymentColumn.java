@@ -50,6 +50,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
@@ -251,7 +252,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             new CheckDeployment(dispatcher, name),
                             new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
                                     context.enabled))
-                            .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
+                            .subscribe(new Outcome<FlowContext>() {
                                 @Override
                                 public void onError(FlowContext context, Throwable error) {
                                     wzd.showError(resources.constants().deploymentError(),

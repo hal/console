@@ -42,8 +42,10 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -117,7 +119,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         private OpenNodeStep(String id) {this.id = id;}
 
         @Override
-        public void execute(org.jboss.hal.flow.Control<FlowContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (tree.api().getNode(id) != null) {
                 tree.api().openNode(id, control::proceed);
             } else {
@@ -133,7 +135,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     private final CrudOperations crud;
     private MetadataProcessor metadataProcessor;
-    private Provider<org.jboss.hal.flow.Progress> progress;
+    private Provider<Progress> progress;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Resources resources;
@@ -159,7 +161,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     @Inject
     public ModelBrowser(CrudOperations crud,
             MetadataProcessor metadataProcessor,
-            @Footer Provider<org.jboss.hal.flow.Progress> progress,
+            @Footer Provider<Progress> progress,
             Dispatcher dispatcher,
             EventBus eventBus,
             Resources resources) {

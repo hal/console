@@ -56,8 +56,8 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
 import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
 import org.jboss.hal.dmr.dispatch.TimeoutHandler;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
@@ -90,6 +90,7 @@ import static org.jboss.hal.core.runtime.server.ServerUrlSteps.URL_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -665,10 +666,10 @@ public class ServerActions {
             callback.onSuccess(serverUrl);
 
         } else {
-            Flow.series(Progress.NOOP, new FlowContext(),
+            series(Progress.NOOP, new FlowContext(),
                     new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
                     new ReadSocketBinding(standalone, host, server, dispatcher))
-                    .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
+                    .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {
                             logger.error(error.getMessage());

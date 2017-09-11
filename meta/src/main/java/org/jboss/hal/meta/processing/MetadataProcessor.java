@@ -135,8 +135,7 @@ public class MetadataProcessor {
         });
     }
 
-    private void processInternal(Set<AddressTemplate> templates, boolean recursive,
-            Progress progress,
+    private void processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress,
             AsyncCallback<Void> callback) {
         LookupResult lookupResult = lookup.check(templates, recursive);
         if (lookupResult.allPresent()) {

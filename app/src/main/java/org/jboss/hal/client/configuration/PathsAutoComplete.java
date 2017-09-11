@@ -31,6 +31,8 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
@@ -67,10 +69,10 @@ public class PathsAutoComplete extends AutoComplete {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();
         } else {
-            single(org.jboss.hal.flow.Progress.NOOP, new FlowContext(),
+            single(Progress.NOOP, new FlowContext(),
                     new TopologySteps.RunningServersQuery(environment, dispatcher,
                             new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())))
-            .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
+            .subscribe(new Outcome<FlowContext>() {
                 @Override
                 public void onError(FlowContext context, Throwable error) {
                     logger.error("Unable to update operation for paths type-ahead: " +

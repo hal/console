@@ -27,6 +27,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -63,7 +64,7 @@ public class RollbackWizard {
         }
 
         @Override
-        public void execute(org.jboss.hal.flow.Control<FlowContext> control) {
+        public void execute(Control<FlowContext> control) {
 
             if (patchContext.restartServers) {
                 for (Property serverProp : patchContext.servers) {

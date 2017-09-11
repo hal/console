@@ -25,7 +25,6 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -36,12 +35,13 @@ import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerConfigStatus;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.dispatch.TimeoutHandler;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -149,12 +149,12 @@ public class ServerGroupActions {
     private final Map<String, ServerGroup> pendingServerGroups;
 
     @Inject
-    public ServerGroupActions(final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final ServerActions serverActions,
-            final Resources resources) {
+    public ServerGroupActions(EventBus eventBus,
+            Dispatcher dispatcher,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            ServerActions serverActions,
+            Resources resources) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataProcessor = metadataProcessor;

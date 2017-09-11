@@ -33,6 +33,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -90,7 +91,7 @@ public class DataSourceWizard {
             EventBus eventBus,
             StatementContext statementContext,
             Environment environment,
-            Provider<org.jboss.hal.flow.Progress> progress,
+            Provider<Progress> progress,
             Resources resources,
             DataSourceTemplates templates,
             List<DataSource> dataSources,

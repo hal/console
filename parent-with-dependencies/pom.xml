@@ -39,7 +39,6 @@
         <compile-testing.version>0.10</compile-testing.version>
         <elemental.version>1.0.0-beta-1</elemental.version>
         <elemento.version>HEAD-SNAPSHOT</elemento.version>
-        <flow.version>0.1.3</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>22.0</guava.version>
         <gwt.version>2.8.1</gwt.version>

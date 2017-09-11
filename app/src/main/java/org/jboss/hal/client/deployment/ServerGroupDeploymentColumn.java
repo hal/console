@@ -61,7 +61,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -309,7 +308,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     wzd.showProgress(resources.constants().deploymentInProgress(),
                             resources.messages().deploymentInProgress(name));
 
-                    Flow.series(progress.get(), new FlowContext(),
+                    series(progress.get(), new FlowContext(),
                             new CheckDeployment(dispatcher, name),
                             new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false),
                             new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,

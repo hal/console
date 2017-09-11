@@ -32,7 +32,6 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.Macros;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -45,6 +44,7 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static elemental2.dom.DomGlobal.alert;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.flow.Flow.series;
 
 public class MacroEditorPresenter
         extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
@@ -132,7 +132,7 @@ public class MacroEditorPresenter
         List<MacroOperationStep> steps = macro.getOperations().stream()
                 .map(operation -> new MacroOperationStep(dispatcher, operation)).collect(toList());
         getView().disableMacro(macro);
-        Flow.series(progress.get(), new FlowContext(), steps)
+        series(progress.get(), new FlowContext(), steps)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {

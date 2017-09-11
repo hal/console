@@ -24,7 +24,6 @@ import org.jboss.hal.client.ExceptionHandler;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.functions.BootstrapSteps;
 import org.jboss.hal.config.Endpoints;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -34,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
+import static org.jboss.hal.flow.Flow.series;
 
 public class HalBootstrapper implements Bootstrapper {
 
@@ -66,7 +66,7 @@ public class HalBootstrapper implements Bootstrapper {
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            Flow.series(Progress.NOOP, new FlowContext(), bootstrapFunctions.functions())
+            series(Progress.NOOP, new FlowContext(), bootstrapFunctions.functions())
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onSuccess(FlowContext context) {
