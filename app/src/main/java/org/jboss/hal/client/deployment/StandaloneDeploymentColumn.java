@@ -25,9 +25,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.deployment.DeploymentSteps.AddUnmanagedDeployment;
-import org.jboss.hal.client.deployment.DeploymentSteps.CheckDeployment;
-import org.jboss.hal.client.deployment.DeploymentSteps.UploadOrReplace;
+import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;
+import org.jboss.hal.client.deployment.DeploymentTasks.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
@@ -224,7 +224,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     public void attach() {
         super.attach();
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentSteps.upload(this, environment, dispatcher, eventBus, progress,
+            setOnDrop(event -> DeploymentTasks.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources
             ));
         }

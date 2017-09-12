@@ -24,7 +24,7 @@ import org.jboss.hal.ballroom.autocomplete.OptionsBuilder;
 import org.jboss.hal.ballroom.autocomplete.StringRenderer;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
@@ -70,7 +70,7 @@ public class PathsAutoComplete extends AutoComplete {
             operation = defaultOperation();
         } else {
             single(Progress.NOOP, new FlowContext(),
-                    new TopologySteps.RunningServersQuery(environment, dispatcher,
+                    new TopologyTasks.RunningServersQuery(environment, dispatcher,
                             new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())))
             .subscribe(new Outcome<FlowContext>() {
                 @Override
@@ -82,7 +82,7 @@ public class PathsAutoComplete extends AutoComplete {
 
                 @Override
                 public void onSuccess(FlowContext context) {
-                    List<Server> servers = context.get(TopologySteps.RUNNING_SERVERS);
+                    List<Server> servers = context.get(TopologyTasks.RUNNING_SERVERS);
                     if (!servers.isEmpty() && servers.get(0).isStarted()) {
                         operation = new Operation.Builder(servers.get(0).getServerAddress(),
                                 READ_CHILDREN_NAMES_OPERATION

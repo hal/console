@@ -34,7 +34,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -84,12 +84,12 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
         super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER, Names.JDBC_DRIVER)
 
                 .itemsProvider((context, callback) -> series(progress.get(), new FlowContext(),
-                        new JdbcDriverSteps.ReadConfiguration(crud),
-                        new TopologySteps.RunningServersQuery(environment, dispatcher, environment.isStandalone()
+                        new JdbcDriverTasks.ReadConfiguration(crud),
+                        new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
                                 ? null
                                 : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
-                        new JdbcDriverSteps.ReadRuntime(environment, dispatcher),
-                        new JdbcDriverSteps.CombineDriverResults())
+                        new JdbcDriverTasks.ReadRuntime(environment, dispatcher),
+                        new JdbcDriverTasks.CombineDriverResults())
                         .subscribe(new Outcome<FlowContext>() {
                             @Override
                             public void onError(FlowContext context, Throwable error) {
@@ -98,7 +98,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
                             @Override
                             public void onSuccess(FlowContext context) {
-                                callback.onSuccess(context.get(JdbcDriverSteps.DRIVERS));
+                                callback.onSuccess(context.get(JdbcDriverTasks.DRIVERS));
                             }
                         }))
                 .withFilter()

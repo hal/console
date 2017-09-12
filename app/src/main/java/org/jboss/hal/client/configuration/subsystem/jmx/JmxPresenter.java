@@ -126,9 +126,9 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
             changedValues.remove(HANDLER);
             Metadata metadata = metadataRegistry.lookup(AUDIT_LOG_TEMPLATE);
             series(progress.get(), new FlowContext(),
-                    new HandlerSteps.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
-                    new HandlerSteps.ReadHandlers(dispatcher, statementContext),
-                    new HandlerSteps.MergeHandler(dispatcher, statementContext, new HashSet<>(handler)))
+                    new HandlerTasks.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
+                    new HandlerTasks.ReadHandlers(dispatcher, statementContext),
+                    new HandlerTasks.MergeHandler(dispatcher, statementContext, new HashSet<>(handler)))
                     .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                         @Override
                         public void onSuccess(FlowContext context) {

@@ -30,14 +30,14 @@ import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/** Steps related to principals, roles and assignments. */
-final class AccessControlSteps {
+/** Tasks related to principals, roles and assignments. */
+final class AccessControlTasks {
 
     /**
      * Checks whether a role mapping for a given role exists and pushes {@code 200} to the context stack if it exists,
@@ -55,7 +55,7 @@ final class AccessControlSteps {
      * Adds a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise.
      * Expects an integer status code at the top of the context stack which is used to call the predicate.
      */
-    static class AddRoleMapping implements Step<FlowContext> {
+    static class AddRoleMapping implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -89,7 +89,7 @@ final class AccessControlSteps {
      * Modifies the include-all flag of a role-mapping. Please make sure that the role-mapping exists before using this
      * function. Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class ModifyIncludeAll implements Step<FlowContext> {
+    static class ModifyIncludeAll implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -116,7 +116,7 @@ final class AccessControlSteps {
      * Removes a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise.
      * Expects an integer status code at the top of the context stack which is used to call the predicate.
      */
-    static class RemoveRoleMapping implements Step<FlowContext> {
+    static class RemoveRoleMapping implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -150,7 +150,7 @@ final class AccessControlSteps {
      * Adds an assignment to a role-mapping. Please make sure that the role-mapping exists before using this function.
      * Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class AddAssignment implements Step<FlowContext> {
+    static class AddAssignment implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -183,7 +183,7 @@ final class AccessControlSteps {
      * Removes assignments from a role-mapping. Please make sure that the role-mapping exists before using this
      * function. Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class RemoveAssignments implements Step<FlowContext> {
+    static class RemoveAssignments implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final List<Assignment> assignments;
@@ -218,7 +218,7 @@ final class AccessControlSteps {
     /**
      * Adds a scoped role.
      */
-    static class AddScopedRole implements Step<FlowContext> {
+    static class AddScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role.Type type;
@@ -246,7 +246,7 @@ final class AccessControlSteps {
     /**
      * Modifies a scoped role.
      */
-    static class ModifyScopedRole implements Step<FlowContext> {
+    static class ModifyScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -273,7 +273,7 @@ final class AccessControlSteps {
     /**
      * Removes a scoped role.
      */
-    static class RemoveScopedRole implements Step<FlowContext> {
+    static class RemoveScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -292,6 +292,6 @@ final class AccessControlSteps {
     }
 
 
-    private AccessControlSteps() {
+    private AccessControlTasks() {
     }
 }

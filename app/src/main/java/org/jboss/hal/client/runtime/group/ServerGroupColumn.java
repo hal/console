@@ -32,7 +32,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent.ServerGroupActionHandler;
@@ -88,8 +88,8 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 .columnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH))
 
                 .itemsProvider((context, callback) -> series(progress.get(), new FlowContext(),
-                        new TopologySteps.ServerGroupsWithServerConfigs(environment, dispatcher),
-                        new TopologySteps.ServerGroupsStartedServers(environment, dispatcher))
+                        new TopologyTasks.ServerGroupsWithServerConfigs(environment, dispatcher),
+                        new TopologyTasks.ServerGroupsStartedServers(environment, dispatcher))
                         .subscribe(new Outcome<FlowContext>() {
                             @Override
                             public void onError(FlowContext context, Throwable error) {
@@ -98,7 +98,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
                             @Override
                             public void onSuccess(FlowContext context) {
-                                List<ServerGroup> serverGroups = context.get(TopologySteps.SERVER_GROUPS);
+                                List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
                                 callback.onSuccess(serverGroups);
                             }
                         }))

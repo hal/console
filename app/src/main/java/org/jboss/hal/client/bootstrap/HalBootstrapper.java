@@ -22,7 +22,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental2.dom.Event;
 import org.jboss.hal.client.ExceptionHandler;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
-import org.jboss.hal.client.bootstrap.functions.BootstrapSteps;
+import org.jboss.hal.client.bootstrap.functions.BootstrapTasks;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
@@ -42,14 +42,14 @@ public class HalBootstrapper implements Bootstrapper {
     private final PlaceManager placeManager;
     private final EndpointManager endpointManager;
     private final Endpoints endpoints;
-    private final BootstrapSteps bootstrapFunctions;
+    private final BootstrapTasks bootstrapFunctions;
     private final ExceptionHandler exceptionHandler;
 
     @Inject
     public HalBootstrapper(PlaceManager placeManager,
             EndpointManager endpointManager,
             Endpoints endpoints,
-            BootstrapSteps bootstrapFunctions,
+            BootstrapTasks bootstrapFunctions,
             ExceptionHandler exceptionHandler) {
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;

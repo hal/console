@@ -18,7 +18,7 @@ package org.jboss.hal.dmr;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -26,7 +26,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * Function which checks whether a given resource exists. Pushes {@code 200} onto the context stack if it exists,
  * {@code 404} otherwise.
  */
-public class ResourceCheck implements Step<FlowContext> {
+public class ResourceCheck implements Task<FlowContext> {
 
     private final Dispatcher dispatcher;
     private final ResourceAddress address;

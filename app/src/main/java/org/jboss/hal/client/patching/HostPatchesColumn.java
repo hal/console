@@ -47,7 +47,7 @@ import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
@@ -69,7 +69,7 @@ import static org.jboss.hal.flow.Flow.single;
 public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostActionEvent.HostActionHandler,
         HostResultEvent.HostResultHandler {
 
-    public static class AvailableHosts implements Step<FlowContext> {
+    public static class AvailableHosts implements Task<FlowContext> {
 
         private Dispatcher dispatcher;
 

@@ -26,13 +26,13 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.deployment.DeploymentSteps.AddServerGroupDeployment;
-import org.jboss.hal.client.deployment.DeploymentSteps.AddUnmanagedDeployment;
-import org.jboss.hal.client.deployment.DeploymentSteps.CheckDeployment;
-import org.jboss.hal.client.deployment.DeploymentSteps.LoadContent;
-import org.jboss.hal.client.deployment.DeploymentSteps.LoadDeploymentsFromRunningServer;
-import org.jboss.hal.client.deployment.DeploymentSteps.ReadServerGroupDeployments;
-import org.jboss.hal.client.deployment.DeploymentSteps.UploadOrReplace;
+import org.jboss.hal.client.deployment.DeploymentTasks.AddServerGroupDeployment;
+import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;
+import org.jboss.hal.client.deployment.DeploymentTasks.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentTasks.LoadContent;
+import org.jboss.hal.client.deployment.DeploymentTasks.LoadDeploymentsFromRunningServer;
+import org.jboss.hal.client.deployment.DeploymentTasks.ReadServerGroupDeployments;
+import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.dialog.DeployContentDialog2;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
@@ -54,7 +54,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologySteps.RunningServersQuery;
+import org.jboss.hal.core.runtime.TopologyTasks.RunningServersQuery;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -172,7 +172,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     @Override
                     public void onSuccess(FlowContext context) {
                         List<ServerGroupDeployment> serverGroupDeployments = context
-                                .get(DeploymentSteps.SERVER_GROUP_DEPLOYMENTS);
+                                .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
                         callback.onSuccess(serverGroupDeployments);
                     }
                 });
@@ -285,7 +285,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
     public void attach() {
         super.attach();
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentSteps.uploadAndDeploy(this, environment, dispatcher, eventBus, progress,
+            setOnDrop(event -> DeploymentTasks.uploadAndDeploy(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, statementContext.selectedServerGroup(), resources));
         }
     }

@@ -63,7 +63,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * version. Executes the {@code :whoami} operation to get the current user / roles.
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class ReadEnvironment implements BootstrapStep {
+public class ReadEnvironment implements BootstrapTask {
 
     private final Dispatcher dispatcher;
     private final Environment environment;

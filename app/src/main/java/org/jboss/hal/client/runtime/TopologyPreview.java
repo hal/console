@@ -52,7 +52,7 @@ import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent.ServerGroupActionHandler;
@@ -298,8 +298,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         double timeoutHandle = setTimeout((o) -> Elements.setVisible(loadingSection, true),
                 UIConstants.MEDIUM_TIMEOUT);
         series(progress.get(), new FlowContext(),
-                new TopologySteps.Topology(environment, dispatcher),
-                new TopologySteps.TopologyStartedServers(environment, dispatcher))
+                new TopologyTasks.Topology(environment, dispatcher),
+                new TopologyTasks.TopologyStartedServers(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {
@@ -315,9 +315,9 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         Elements.setVisible(loadingSection, false);
                         Elements.removeChildrenFrom(topologySection);
 
-                        List<Host> hosts = context.get(TopologySteps.HOSTS);
-                        List<ServerGroup> serverGroups = context.get(TopologySteps.SERVER_GROUPS);
-                        List<Server> servers = context.get(TopologySteps.SERVERS);
+                        List<Host> hosts = context.get(TopologyTasks.HOSTS);
+                        List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
+                        List<Server> servers = context.get(TopologyTasks.SERVERS);
 
                         topologySection.appendChild(buildTable(hosts, serverGroups, servers));
                         Elements.setVisible(topologySection, true);
@@ -349,10 +349,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private void updateServer(Server server) {
         series(progress.get(), new FlowContext(),
                 // TODO Include function to read server boot errors
-                new TopologySteps.HostWithServerConfigs(server.getHost(), dispatcher),
-                new TopologySteps.HostStartedServers(dispatcher),
-                new TopologySteps.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
-                new TopologySteps.ServerGroupStartedServers(dispatcher))
+                new TopologyTasks.HostWithServerConfigs(server.getHost(), dispatcher),
+                new TopologyTasks.HostStartedServers(dispatcher),
+                new TopologyTasks.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
+                new TopologyTasks.ServerGroupStartedServers(dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {
@@ -363,8 +363,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
                     @Override
                     public void onSuccess(FlowContext context) {
-                        Host host = context.get(TopologySteps.HOST);
-                        ServerGroup serverGroup = context.get(TopologySteps.SERVER_GROUP);
+                        Host host = context.get(TopologyTasks.HOST);
+                        ServerGroup serverGroup = context.get(TopologyTasks.SERVER_GROUP);
                         if (host != null && serverGroup != null) {
                             // Does not matter where we take the updated server from (must be included in both
                             // host and server group)

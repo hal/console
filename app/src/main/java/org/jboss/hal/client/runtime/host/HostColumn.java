@@ -36,7 +36,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActionEvent;
 import org.jboss.hal.core.runtime.host.HostActionEvent.HostActionHandler;
@@ -137,8 +137,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
         ItemsProvider<Host> itemsProvider = (context, callback) -> series(progress.get(), new FlowContext(),
-                new TopologySteps.HostsWithServerConfigs(environment, dispatcher),
-                new TopologySteps.HostsStartedServers(environment, dispatcher))
+                new TopologyTasks.HostsWithServerConfigs(environment, dispatcher),
+                new TopologyTasks.HostsStartedServers(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {
@@ -147,7 +147,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
                     @Override
                     public void onSuccess(FlowContext context) {
-                        List<Host> hosts = context.get(TopologySteps.HOSTS);
+                        List<Host> hosts = context.get(TopologyTasks.HOSTS);
                         callback.onSuccess(hosts);
 
                         // Restore pending visualization

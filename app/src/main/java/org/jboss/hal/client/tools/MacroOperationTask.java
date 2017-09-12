@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.tools;
 
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.hal.flow.Task;
 
-/** Interface for bootstrap functions. */
-public interface BootstrapStep extends Step<FlowContext> {
+class MacroOperationTask implements Task<FlowContext> {
 
-    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapStep.class);
+    private final Dispatcher dispatcher;
+    private final Operation operation;
 
-    @NonNls
-    String name();
-
-    default void logStart() {
-        logger.info("{}: Start", name());
+    MacroOperationTask(Dispatcher dispatcher, Operation operation) {
+        this.dispatcher = dispatcher;
+        this.operation = operation;
     }
 
-    default void logDone() {
-        logger.info("{}: Done", name());
+    @Override
+    public void execute(FlowContext context, Control control) {
+        dispatcher.executeInFlow(control, operation, result -> control.proceed());
     }
 }

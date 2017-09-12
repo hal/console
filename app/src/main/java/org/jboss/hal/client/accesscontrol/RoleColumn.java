@@ -29,14 +29,14 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SwitchItem;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.AddRoleMapping;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.AddScopedRole;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.CheckRoleMapping;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.ModifyIncludeAll;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.ModifyScopedRole;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.RemoveAssignments;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.RemoveRoleMapping;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.RemoveScopedRole;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddScopedRole;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.CheckRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.ModifyIncludeAll;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.ModifyScopedRole;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.RemoveAssignments;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.RemoveRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.RemoveScopedRole;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.RolesChangedEvent;
@@ -56,7 +56,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -289,17 +289,17 @@ public class RoleColumn extends FinderColumn<Role> {
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, typeaheadTemplate));
 
         new AddResourceDialog(resources.messages().addResourceTitle(typeName), form, (name, model) -> {
-            List<Step<FlowContext>> steps = new ArrayList<>();
-            steps.add(new AddScopedRole(dispatcher, type, name, model));
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(new AddScopedRole(dispatcher, type, name, model));
             if (model.hasDefined(INCLUDE_ALL) && model.get(INCLUDE_ALL).asBoolean()) {
                 // We only need the role name in the functions,
                 // so it's ok to setup a transient role w/o the other attributes.
                 Role transientRole = new Role(name, null, type, null);
-                steps.add(new CheckRoleMapping(dispatcher, transientRole));
-                steps.add(new AddRoleMapping(dispatcher, transientRole, status -> status == 404));
-                steps.add(new ModifyIncludeAll(dispatcher, transientRole, true));
+                tasks.add(new CheckRoleMapping(dispatcher, transientRole));
+                tasks.add(new AddRoleMapping(dispatcher, transientRole, status -> status == 404));
+                tasks.add(new ModifyIncludeAll(dispatcher, transientRole, true));
             }
-            series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -376,14 +376,14 @@ public class RoleColumn extends FinderColumn<Role> {
             boolean includesAll = (boolean) changedValues.getOrDefault(INCLUDE_ALL, false);
             changedValues.remove(INCLUDE_ALL); // must not be in changedValues when calling ModifyScopedRole
 
-            List<Step<FlowContext>> steps = new ArrayList<>();
-            steps.add(new ModifyScopedRole(dispatcher, role, changedValues, metadata));
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(new ModifyScopedRole(dispatcher, role, changedValues, metadata));
             if (hasIncludesAll) {
-                steps.add(new CheckRoleMapping(dispatcher, role));
-                steps.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
-                steps.add(new ModifyIncludeAll(dispatcher, role, includesAll));
+                tasks.add(new CheckRoleMapping(dispatcher, role));
+                tasks.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
+                tasks.add(new ModifyIncludeAll(dispatcher, role, includesAll));
             }
-            series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -402,16 +402,16 @@ public class RoleColumn extends FinderColumn<Role> {
     // ------------------------------------------------------ remove roles
 
     private void removeScopedRole(Role role, final String type) {
-        List<Step<FlowContext>> steps = new ArrayList<>();
+        List<Task<FlowContext>> tasks = new ArrayList<>();
         List<Assignment> assignments = accessControl.assignments().byRole(role).collect(toList());
         if (!assignments.isEmpty()) {
-            steps.add(new RemoveAssignments(dispatcher, assignments));
+            tasks.add(new RemoveAssignments(dispatcher, assignments));
         }
-        steps.add(new CheckRoleMapping(dispatcher, role));
-        steps.add(new RemoveRoleMapping(dispatcher, role, status -> status == 200));
-        steps.add(new RemoveScopedRole(dispatcher, role));
+        tasks.add(new CheckRoleMapping(dispatcher, role));
+        tasks.add(new RemoveRoleMapping(dispatcher, role, status -> status == 200));
+        tasks.add(new RemoveScopedRole(dispatcher, role));
 
-        series(progress.get(), new FlowContext(), steps)
+        series(progress.get(), new FlowContext(), tasks)
                 .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                     @Override
                     public void onSuccess(FlowContext context) {

@@ -49,7 +49,7 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
@@ -67,7 +67,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -197,7 +197,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         this.resources = resources;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
-            Step<FlowContext> serverConfigsFn;
+            Task<FlowContext> serverConfigsFn;
             boolean browseByHosts = BrowseByColumn.browseByHosts(context);
 
             if (browseByHosts) {
@@ -212,7 +212,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         List<Server> servers = result.asPropertyList().stream()
                                 .map(property -> new Server(statementContext.selectedHost(), property))
                                 .collect(toList());
-                        flowContext.set(TopologySteps.SERVERS, servers);
+                        flowContext.set(TopologyTasks.SERVERS, servers);
                         control.proceed();
                     });
                 };
@@ -233,14 +233,14 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     return new Server(host, modelNode.get(RESULT));
                                 })
                                 .collect(toList());
-                        flowContext.set(TopologySteps.SERVERS, servers);
+                        flowContext.set(TopologyTasks.SERVERS, servers);
                         control.proceed();
                     });
                 };
             }
 
             series(progress.get(), new FlowContext(),
-                    serverConfigsFn, new TopologySteps.TopologyStartedServers(environment, dispatcher))
+                    serverConfigsFn, new TopologyTasks.TopologyStartedServers(environment, dispatcher))
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {
@@ -249,7 +249,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
                         @Override
                         public void onSuccess(FlowContext context) {
-                            List<Server> servers = context.get(TopologySteps.SERVERS);
+                            List<Server> servers = context.get(TopologyTasks.SERVERS);
                             if (servers == null) {
                                 servers = Collections.emptyList();
                             }

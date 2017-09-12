@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.flow;
 
-import static java.util.Arrays.asList;
-
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+
 import rx.Observable;
 import rx.Single;
+
+import static java.util.Arrays.asList;
 
 /**
  * Collection of static methods to execute async operations in order or until a condition is met. Uses RxGWT to
@@ -29,35 +30,35 @@ import rx.Single;
  */
 public interface Flow {
 
-    /** Executes a single step. Useful if you already have a step implementation which you want to re-use. */
-    static <C> Single<C> single(Progress progress, C context, Step<C> step) {
-        return step.call(context)
+    /** Executes a single task. Useful if you already have a task implementation which you want to re-use. */
+    static <C> Single<C> single(Progress progress, C context, Task<C> task) {
+        return task.call(context)
                 .doOnSubscribe(progress::reset)
                 .doOnSuccess(n -> progress.finish())
                 .doOnError(e -> progress.finish());
     }
 
-    /** Executes multiple steps in order. */
+    /** Executes multiple tasks in order. */
     @SafeVarargs
-    static <C> Single<C> series(Progress progress, C context, Step<C>... step) {
-        return series(progress, context, asList(step));
+    static <C> Single<C> series(Progress progress, C context, Task<C>... task) {
+        return series(progress, context, asList(task));
     }
 
-    /** Executes multiple steps in order. */
-    static <C> Single<C> series(Progress progress, C context, Collection<? extends Step<C>> steps) {
-        assert !steps.isEmpty();
-        return Observable.from(steps)
+    /** Executes multiple tasks in order. */
+    static <C> Single<C> series(Progress progress, C context, Collection<? extends Task<C>> tasks) {
+        assert !tasks.isEmpty();
+        return Observable.from(tasks)
                 .flatMapSingle(f -> f.call(context), false, 1)
-                .doOnSubscribe(() -> progress.reset(steps.size()))
+                .doOnSubscribe(() -> progress.reset(tasks.size()))
                 .doOnNext(n -> progress.tick())
                 .doOnTerminate(progress::finish)
                 .lastOrDefault(context).toSingle();
     }
 
-    /** Executes a steps until a condition is met. */
-    static <C> Single<C> interval(Progress progress, C context, int interval, Predicate<C> until, Step<C> step) {
+    /** Executes a task until a condition is met. */
+    static <C> Single<C> interval(Progress progress, C context, int interval, Predicate<C> until, Task<C> task) {
         return Observable.interval(interval, TimeUnit.MILLISECONDS)
-                .flatMapSingle(n -> step.call(context))
+                .flatMapSingle(n -> task.call(context))
                 .takeUntil(until::test)
                 .doOnSubscribe(progress::reset)
                 .doOnNext(n -> progress.tick())

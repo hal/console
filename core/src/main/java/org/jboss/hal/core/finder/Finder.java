@@ -41,7 +41,7 @@ import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Footer;
@@ -65,11 +65,11 @@ import static org.jboss.hal.resources.Ids.FINDER;
  */
 public class Finder implements IsElement, Attachable {
 
-    private class SelectStep implements Step<FlowContext> {
+    private class SelectTask implements Task<FlowContext> {
 
         private final FinderSegment segment;
 
-        private SelectStep(FinderSegment segment) {
+        private SelectTask(FinderSegment segment) {
             this.segment = segment;
         }
 
@@ -79,7 +79,7 @@ public class Finder implements IsElement, Attachable {
                 @Override
                 public void onFailure(Throwable throwable) {
                     //noinspection HardCodedStringLiteral
-                    control.abort("Error in Finder.SelectStep: Unable to append column '" +
+                    control.abort("Error in Finder.SelectTask: Unable to append column '" +
                                     segment.getColumnId() + "'");
                 }
 
@@ -99,18 +99,18 @@ public class Finder implements IsElement, Attachable {
                 control.proceed();
             } else {
                 //noinspection HardCodedStringLiteral
-                control.abort("Error in Finder.SelectStep: Unable to select item '" +
+                control.abort("Error in Finder.SelectTask: Unable to select item '" +
                         segment.getItemId() + "' in column '" + segment.getColumnId() + "'");
             }
         }
     }
 
 
-    private class RefreshStep implements Step<FlowContext> {
+    private class RefreshTask implements Task<FlowContext> {
 
         private final FinderSegment segment;
 
-        private RefreshStep(FinderSegment segment) {
+        private RefreshTask(FinderSegment segment) {
             this.segment = segment;
         }
 
@@ -143,7 +143,7 @@ public class Finder implements IsElement, Attachable {
                 control.proceed();
             } else {
                 //noinspection HardCodedStringLiteral
-                control.abort("Error in Finder.RefreshStep: Unable to select item '" +
+                control.abort("Error in Finder.RefreshTask: Unable to select item '" +
                         segment.getItemId() + "' in column '" + segment.getColumnId() + "'");
             }
         }
@@ -486,10 +486,10 @@ public class Finder implements IsElement, Attachable {
     public void refresh(FinderPath path) {
         if (!path.isEmpty()) {
 
-            List<RefreshStep> steps = stream(path.spliterator(), false)
-                    .map(segment -> new RefreshStep(new FinderSegment(segment.getColumnId(), segment.getItemId())))
+            List<RefreshTask> tasks = stream(path.spliterator(), false)
+                    .map(segment -> new RefreshTask(new FinderSegment(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {}
@@ -553,10 +553,10 @@ public class Finder implements IsElement, Attachable {
                 }
             }
 
-            List<SelectStep> steps = stream(path.spliterator(), false)
-                    .map(segment -> new SelectStep(new FinderSegment(segment.getColumnId(), segment.getItemId())))
+            List<SelectTask> tasks = stream(path.spliterator(), false)
+                    .map(segment -> new SelectTask(new FinderSegment(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), tasks)
             .subscribe(new Outcome<FlowContext>() {
                 @Override
                 public void onError(FlowContext context, Throwable error) {

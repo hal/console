@@ -24,7 +24,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -34,7 +34,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
@@ -95,10 +95,10 @@ class TestStep extends WizardStep<Context, State> {
     private void testConnection() {
         Context context = wizard().getContext();
 
-        List<Step<FlowContext>> steps = new ArrayList<>();
+        List<Task<FlowContext>> tasks = new ArrayList<>();
         if (!context.isCreated()) {
             // add data source
-            steps.add((flowContext, control) -> dispatcher.executeInFlow(control, addOperation(context, statementContext),
+            tasks.add((flowContext, control) -> dispatcher.executeInFlow(control, addOperation(context, statementContext),
                     (CompositeResult result) -> {
                         context.setCreated(true);
                         control.proceed();
@@ -111,12 +111,12 @@ class TestStep extends WizardStep<Context, State> {
         }
 
         // check running server(s)
-        steps.add(new TopologySteps.RunningServersQuery(
+        tasks.add(new TopologyTasks.RunningServersQuery(
                 environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
 
         // test connection
-        steps.add((flowContext, control) -> {
-            List<Server> servers = flowContext.get(TopologySteps.RUNNING_SERVERS);
+        tasks.add((flowContext, control) -> {
+            List<Server> servers = flowContext.get(TopologyTasks.RUNNING_SERVERS);
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);
                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
@@ -139,7 +139,7 @@ class TestStep extends WizardStep<Context, State> {
             }
         });
 
-        series(progress.get(), new FlowContext(), steps)
+        series(progress.get(), new FlowContext(), tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext flowContext, Throwable error) {

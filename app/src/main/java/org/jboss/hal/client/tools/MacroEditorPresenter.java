@@ -129,10 +129,10 @@ public class MacroEditorPresenter
     }
 
     void play(Macro macro) {
-        List<MacroOperationStep> steps = macro.getOperations().stream()
-                .map(operation -> new MacroOperationStep(dispatcher, operation)).collect(toList());
+        List<MacroOperationTask> tasks = macro.getOperations().stream()
+                .map(operation -> new MacroOperationTask(dispatcher, operation)).collect(toList());
         getView().disableMacro(macro);
-        series(progress.get(), new FlowContext(), steps)
+        series(progress.get(), new FlowContext(), tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {

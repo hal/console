@@ -20,16 +20,16 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RrdStep implements Step<FlowContext> {
+class RrdTask implements Task<FlowContext> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdStep.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdTask.class);
 
     private final SecurityContextRegistry securityContextRegistry;
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
@@ -37,7 +37,7 @@ class RrdStep implements Step<FlowContext> {
     private final Composite composite;
     private final boolean optional;
 
-    RrdStep(SecurityContextRegistry securityContextRegistry,
+    RrdTask(SecurityContextRegistry securityContextRegistry,
             ResourceDescriptionRegistry resourceDescriptionRegistry,
             Dispatcher dispatcher,
             Composite composite,

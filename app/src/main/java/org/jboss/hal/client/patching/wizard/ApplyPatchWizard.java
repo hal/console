@@ -31,7 +31,7 @@ import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Messages;
@@ -48,7 +48,7 @@ import static org.jboss.hal.flow.Flow.single;
 
 public class ApplyPatchWizard {
 
-    static class UploadPatch implements Step<FlowContext> {
+    static class UploadPatch implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private StatementContext statementContext;

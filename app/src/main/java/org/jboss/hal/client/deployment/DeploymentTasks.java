@@ -32,7 +32,7 @@ import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
@@ -45,7 +45,7 @@ import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -62,17 +62,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
 /** Deployment related functions */
-class DeploymentSteps {
+class DeploymentTasks {
 
     static final String SERVER_GROUP_DEPLOYMENTS = "deploymentFunctions.serverGroupDeployments";
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentSteps.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
 
 
     /**
      * Loads the contents form the content repository and pushes a {@code List<Content>} onto the context stack.
      */
-    static class LoadContent implements Step<FlowContext> {
+    static class LoadContent implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final String serverGroup;
@@ -130,10 +130,10 @@ class DeploymentSteps {
 
     /**
      * Reads the deployments of the specified server group. Stores the list in the context under the key {@link
-     * DeploymentSteps#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if
+     * DeploymentTasks#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if
      * running in standalone mode.
      */
-    static class ReadServerGroupDeployments implements Step<FlowContext> {
+    static class ReadServerGroupDeployments implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -197,7 +197,7 @@ class DeploymentSteps {
     /**
      * Deploys the specified content to the specified server group. The deployment is not enable on the server group.
      */
-    static class AddServerGroupDeployment implements Step<FlowContext> {
+    static class AddServerGroupDeployment implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -236,11 +236,11 @@ class DeploymentSteps {
 
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
-     * {@link TopologySteps#RUNNING_SERVERS}. Expects the list of deployments under the
+     * {@link TopologyTasks#RUNNING_SERVERS}. Expects the list of deployments under the
      * key {@link #SERVER_GROUP_DEPLOYMENTS} in the context. Updates all matching deployments with the deployments from
      * the running server.
      */
-    static class LoadDeploymentsFromRunningServer implements Step<FlowContext> {
+    static class LoadDeploymentsFromRunningServer implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -257,8 +257,8 @@ class DeploymentSteps {
 
             } else {
                 List<ServerGroupDeployment> serverGroupDeployments = context
-                        .get(DeploymentSteps.SERVER_GROUP_DEPLOYMENTS);
-                List<Server> runningServers = context.get(TopologySteps.RUNNING_SERVERS);
+                        .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
+                List<Server> runningServers = context.get(TopologyTasks.RUNNING_SERVERS);
                 if (serverGroupDeployments != null && runningServers != null &&
                         !serverGroupDeployments.isEmpty() && !runningServers.isEmpty()) {
 
@@ -291,7 +291,7 @@ class DeploymentSteps {
      * Checks whether a deployment with the given name exists and pushes {@code 200} to the context stack if it exists,
      * {@code 404} otherwise.
      */
-    static class CheckDeployment implements Step<FlowContext> {
+    static class CheckDeployment implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final String name;
@@ -324,10 +324,10 @@ class DeploymentSteps {
      * context. If no status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the
      * deployment is replaced.
      * <p>
-     * The function puts an {@link UploadStatistics} under the key {@link DeploymentSteps#UPLOAD_STATISTICS}
+     * The function puts an {@link UploadStatistics} under the key {@link DeploymentTasks#UPLOAD_STATISTICS}
      * into the context.
      */
-    static class UploadOrReplace implements Step<FlowContext> {
+    static class UploadOrReplace implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -412,7 +412,7 @@ class DeploymentSteps {
     /**
      * Adds an unmanaged deployment.
      */
-    static class AddUnmanagedDeployment implements Step<FlowContext> {
+    static class AddUnmanagedDeployment implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final String name;
@@ -475,17 +475,17 @@ class DeploymentSteps {
         if (files.getLength() > 0) {
 
             StringBuilder builder = new StringBuilder();
-            List<Step<FlowContext>> steps = new ArrayList<>();
+            List<Task<FlowContext>> tasks = new ArrayList<>();
 
             for (int i = 0; i < files.getLength(); i++) {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
-                steps.add(new CheckDeployment(dispatcher, filename));
-                steps.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
+                tasks.add(new CheckDeployment(dispatcher, filename));
+                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
-            series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), tasks)
                     .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
     }
@@ -499,19 +499,19 @@ class DeploymentSteps {
         if (files.getLength() > 0) {
 
             StringBuilder builder = new StringBuilder();
-            List<Step<FlowContext>> steps = new ArrayList<>();
+            List<Task<FlowContext>> tasks = new ArrayList<>();
 
             for (int i = 0; i < files.getLength(); i++) {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
-                steps.add(new CheckDeployment(dispatcher, filename));
-                steps.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
-                steps.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
+                tasks.add(new CheckDeployment(dispatcher, filename));
+                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
+                tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
             }
 
             logger.debug("About to upload and deploy {} file(s): {} to server group {}",
                     files.getLength(), builder.toString(), serverGroup);
-            series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), tasks)
                     .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
     }

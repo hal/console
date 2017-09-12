@@ -46,7 +46,7 @@ import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -112,11 +112,11 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
 
-    private class OpenNodeStep implements Step<FlowContext> {
+    private class OpenNodeTask implements Task<FlowContext> {
 
         private final String id;
 
-        private OpenNodeStep(String id) {this.id = id;}
+        private OpenNodeTask(String id) {this.id = id;}
 
         @Override
         public void execute(FlowContext context, Control control) {
@@ -294,10 +294,10 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             FilterInfo previousFilter = filterStack.pop();
             filter(filterStack.isEmpty() ? FilterInfo.ROOT : filterStack.peek());
 
-            List<OpenNodeStep> steps = previousFilter.parents.stream()
-                    .map(OpenNodeStep::new)
+            List<OpenNodeTask> tasks = previousFilter.parents.stream()
+                    .map(OpenNodeTask::new)
                     .collect(toList());
-            series(progress.get(), new FlowContext(), steps)
+            series(progress.get(), new FlowContext(), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {

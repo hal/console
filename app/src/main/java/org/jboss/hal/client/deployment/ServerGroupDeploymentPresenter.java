@@ -25,8 +25,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.deployment.DeploymentSteps.LoadDeploymentsFromRunningServer;
-import org.jboss.hal.client.deployment.DeploymentSteps.ReadServerGroupDeployments;
+import org.jboss.hal.client.deployment.DeploymentTasks.LoadDeploymentsFromRunningServer;
+import org.jboss.hal.client.deployment.DeploymentTasks.ReadServerGroupDeployments;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.Finder;
@@ -36,7 +36,7 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologySteps.RunningServersQuery;
+import org.jboss.hal.core.runtime.TopologyTasks.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -141,7 +141,7 @@ public class ServerGroupDeploymentPresenter extends
                     @Override
                     public void onSuccess(FlowContext context) {
                         List<ServerGroupDeployment> serverGroupDeployments = context
-                                .get(DeploymentSteps.SERVER_GROUP_DEPLOYMENTS);
+                                .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
                         if (!serverGroupDeployments.isEmpty()) {
                             ServerGroupDeployment serverGroupDeployment = serverGroupDeployments.get(0);
                             getView().update(serverGroup, serverGroupDeployment);

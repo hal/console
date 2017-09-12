@@ -18,18 +18,18 @@ package org.jboss.hal.client.bootstrap.functions;
 import javax.inject.Inject;
 
 /** Simple wrapper around an ordered array of HAL's bootstrap functions. */
-public class BootstrapSteps {
+public class BootstrapTasks {
 
-    private final BootstrapStep[] functions;
+    private final BootstrapTask[] functions;
 
     @Inject
-    public BootstrapSteps(final ReadEnvironment readEnvironment,
+    public BootstrapTasks(final ReadEnvironment readEnvironment,
             final ReadAuthentication readAuthentication,
             final FindDomainController findDomainController,
             final RegisterStaticCapabilities registerStaticCapabilities,
             final LoadSettings loadSettings,
             final ReadExtensions readExtensions) {
-        this.functions = new BootstrapStep[]{
+        this.functions = new BootstrapTask[]{
                 readEnvironment,
                 readAuthentication,
                 findDomainController,
@@ -39,7 +39,7 @@ public class BootstrapSteps {
         };
     }
 
-    public BootstrapStep[] functions() {
+    public BootstrapTask[] functions() {
         return functions;
     }
 }

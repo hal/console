@@ -20,7 +20,7 @@ import com.google.inject.Singleton;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointStorage;
 import org.jboss.hal.client.bootstrap.functions.LoadSettings;
-import org.jboss.hal.client.bootstrap.functions.BootstrapSteps;
+import org.jboss.hal.client.bootstrap.functions.BootstrapTasks;
 import org.jboss.hal.client.bootstrap.functions.FindDomainController;
 import org.jboss.hal.client.bootstrap.functions.ReadAuthentication;
 import org.jboss.hal.client.bootstrap.functions.ReadEnvironment;
@@ -42,6 +42,6 @@ public class BootstrapModule extends AbstractGinModule {
         bind(ReadAuthentication.class).in(Singleton.class);
         bind(FindDomainController.class).in(Singleton.class);
         bind(RegisterStaticCapabilities.class).in(Singleton.class);
-        bind(BootstrapSteps.class).in(Singleton.class);
+        bind(BootstrapTasks.class).in(Singleton.class);
     }
 }

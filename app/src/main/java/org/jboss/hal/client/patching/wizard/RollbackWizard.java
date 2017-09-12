@@ -31,7 +31,7 @@ import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Messages;
@@ -47,14 +47,14 @@ import static org.jboss.hal.flow.Flow.single;
 
 public class RollbackWizard {
 
-    static class RollbackStep implements Step<FlowContext> {
+    static class RollbackTask implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private StatementContext statementContext;
         private ServerActions serverActions;
         private PatchContext patchContext;
 
-        RollbackStep(StatementContext statementContext, Dispatcher dispatcher,
+        RollbackTask(StatementContext statementContext, Dispatcher dispatcher,
                 ServerActions serverActions, PatchContext patchContext) {
 
             this.statementContext = statementContext;
@@ -164,7 +164,7 @@ public class RollbackWizard {
                         wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
 
                         single(progress.get(), new FlowContext(),
-                                new RollbackStep(statementContext, dispatcher, serverActions, context))
+                                new RollbackTask(statementContext, dispatcher, serverActions, context))
                                 .subscribe(new Outcome<FlowContext>() {
                                     @Override
                                     public void onError(FlowContext context, Throwable error) {

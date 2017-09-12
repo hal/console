@@ -148,8 +148,8 @@ public class MetadataProcessor {
             List<Operation> operations = rrdOps.create(lookupResult, false);
             List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
             List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
-            List<RrdStep> steps = composites.stream()
-                    .map(composite -> new RrdStep(securityContextRegistry, resourceDescriptionRegistry,
+            List<RrdTask> tasks = composites.stream()
+                    .map(composite -> new RrdTask(securityContextRegistry, resourceDescriptionRegistry,
                             dispatcher, composite, false))
                     .collect(toList());
 
@@ -160,8 +160,8 @@ public class MetadataProcessor {
             // the GWT compiler will crash with an ArrayIndexOutOfBoundsException!
             List<Composite> optionalComposites = new ArrayList<>();
             optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operation)));
-            List<RrdStep> optionalSteps = optionalComposites.stream()
-                    .map(composite -> new RrdStep(securityContextRegistry, resourceDescriptionRegistry,
+            List<RrdTask> optionalTasks = optionalComposites.stream()
+                    .map(composite -> new RrdTask(securityContextRegistry, resourceDescriptionRegistry,
                             dispatcher, composite, true))
                     .collect(toList());
 
@@ -180,16 +180,16 @@ public class MetadataProcessor {
                 }
             };
 
-            List<RrdStep> allSteps = new ArrayList<>();
-            allSteps.addAll(steps);
-            allSteps.addAll(optionalSteps);
-            if (steps.size() == 1) {
-                single(progress, new FlowContext(), allSteps.get(0)).subscribe(outcome);
+            List<RrdTask> allTasks = new ArrayList<>();
+            allTasks.addAll(tasks);
+            allTasks.addAll(optionalTasks);
+            if (tasks.size() == 1) {
+                single(progress, new FlowContext(), allTasks.get(0)).subscribe(outcome);
             } else {
                 // Unfortunately we cannot use Async.parallel() here unless someone finds a way
                 // to unambiguously map parallel r-r-d operations to their results (multiple "step-1" results)
                 //noinspection SuspiciousToArrayCall
-                series(progress, new FlowContext(), allSteps).subscribe(outcome);
+                series(progress, new FlowContext(), allTasks).subscribe(outcome);
             }
         }
     }

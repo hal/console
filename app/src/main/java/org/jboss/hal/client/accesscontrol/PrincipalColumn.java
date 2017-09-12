@@ -28,9 +28,9 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.AddAssignment;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.AddRoleMapping;
-import org.jboss.hal.client.accesscontrol.AccessControlSteps.CheckRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddAssignment;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.CheckRoleMapping;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.SuccessfulOutcome;
@@ -46,10 +46,9 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -211,11 +210,11 @@ class PrincipalColumn extends FinderColumn<Principal> {
     }
 
     private void addPrincipal(final Principal.Type type, final String name, final ModelNode model) {
-        List<Step<FlowContext>> steps = new ArrayList<>();
-        collectSteps(steps, type, name, true, model, INCLUDE);
-        collectSteps(steps, type, name, false, model, EXCLUDE);
-        if (!steps.isEmpty()) {
-            series(progress.get(), new FlowContext(), steps)
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        collectTasks(tasks, type, name, true, model, INCLUDE);
+        collectTasks(tasks, type, name, false, model, EXCLUDE);
+        if (!tasks.isEmpty()) {
+            series(progress.get(), new FlowContext(), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -230,7 +229,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
         }
     }
 
-    private void collectSteps(List<Step<FlowContext>> steps, Principal.Type type, String name,
+    private void collectTasks(List<Task<FlowContext>> tasks, Principal.Type type, String name,
             boolean include, ModelNode modelNode, String attribute) {
         String realm = modelNode.hasDefined(REALM) ? modelNode.get(REALM).asString() : null;
         String resourceName = Principal.buildResourceName(type, name, realm);
@@ -241,9 +240,9 @@ class PrincipalColumn extends FinderColumn<Principal> {
                     .map(nameNode -> accessControl.roles().get(Ids.role(nameNode.asString())))
                     .forEach(role -> {
                         if (role != null) {
-                            steps.add(new CheckRoleMapping(dispatcher, role));
-                            steps.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
-                            steps.add(new AddAssignment(dispatcher, role, principal, include));
+                            tasks.add(new CheckRoleMapping(dispatcher, role));
+                            tasks.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
+                            tasks.add(new AddAssignment(dispatcher, role, principal, include));
                         }
                     });
         }

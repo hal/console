@@ -35,7 +35,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -74,7 +74,7 @@ import static org.jboss.hal.flow.Flow.series;
  */
 public class PropertiesOperations {
 
-    private static class ReadProperties implements Step<FlowContext> {
+    private static class ReadProperties implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final ResourceAddress address;
@@ -107,7 +107,7 @@ public class PropertiesOperations {
     }
 
 
-    private static class MergeProperties implements Step<FlowContext> {
+    private static class MergeProperties implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final ResourceAddress address;

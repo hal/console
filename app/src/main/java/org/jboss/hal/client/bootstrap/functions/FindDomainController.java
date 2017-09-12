@@ -32,7 +32,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 /** Reads the domain controller. Only executed in domain mode. Depends on {@link ReadEnvironment}. */
-public class FindDomainController implements BootstrapStep {
+public class FindDomainController implements BootstrapTask {
 
     private final Dispatcher dispatcher;
     private final Environment environment;

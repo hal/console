@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.flow;
 
-/** Interface to reflect progress for flow steps. */
+/** Interface to reflect progress of a flow. */
 public interface Progress {
 
     void reset();

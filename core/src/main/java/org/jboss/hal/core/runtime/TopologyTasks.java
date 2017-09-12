@@ -37,7 +37,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -53,8 +53,8 @@ import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
-/** Set of steps to read runtime data like running server of a specific server group. */
-public class TopologySteps {
+/** Set of tasks to read runtime data like running server of a specific server group. */
+public class TopologyTasks {
 
     public static final String SERVER_GROUP = "topologyFunctions.serverGroup";
     public static final String SERVER_GROUPS = "topologyFunctions.serverGroups";
@@ -64,7 +64,7 @@ public class TopologySteps {
     public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
     private static final String NO_SERVER_BOOT_ERRORS = "No second step containing the boot errors for server {}";
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologySteps.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
 
     private static final ResourceAddress ALL_SERVER_CONFIGS = new ResourceAddress()
             .add(ModelDescriptionConstants.HOST, "*")
@@ -115,7 +115,7 @@ public class TopologySteps {
      * resource attributes attributes.
      * </ul>
      */
-    public static class Topology implements Step<FlowContext> {
+    public static class Topology implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -176,7 +176,7 @@ public class TopologySteps {
      * Adds the {@code server} resource attributes and the server bootstrap errors for started servers. Expects a list
      * of servers in the context as provided by {@link Topology}.
      */
-    public static class TopologyStartedServers implements Step<FlowContext> {
+    public static class TopologyStartedServers implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -208,7 +208,7 @@ public class TopologySteps {
      * <p>
      * The list of hosts is available in the context under the key {@link #HOSTS}.
      */
-    public static class HostsWithServerConfigs implements Step<FlowContext> {
+    public static class HostsWithServerConfigs implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -249,7 +249,7 @@ public class TopologySteps {
      * Reads the {@code server} resource attributes for started servers across connected hosts. Expects a list of hosts
      * in the context as provided by {@link HostsWithServerConfigs}.
      */
-    public static class HostsStartedServers implements Step<FlowContext> {
+    public static class HostsStartedServers implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -278,7 +278,7 @@ public class TopologySteps {
      * <p>
      * The host is available in the context under the key {@link #HOST}.
      */
-    public static class HostWithServerConfigs implements Step<FlowContext> {
+    public static class HostWithServerConfigs implements Task<FlowContext> {
 
         private final String hostName;
         private final Dispatcher dispatcher;
@@ -316,7 +316,7 @@ public class TopologySteps {
      * Reads the {@code server} resource attributes for started servers of a host. Expects the host in the context
      * as provided by {@link HostWithServerConfigs}.
      */
-    public static class HostStartedServers implements Step<FlowContext> {
+    public static class HostStartedServers implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
 
@@ -390,7 +390,7 @@ public class TopologySteps {
      * <p>
      * The list of server groups is available in the context under the key {@link #SERVER_GROUPS}.
      */
-    public static class ServerGroupsWithServerConfigs implements Step<FlowContext> {
+    public static class ServerGroupsWithServerConfigs implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -429,7 +429,7 @@ public class TopologySteps {
      * Reads the {@code server} resource attributes for started servers across server groups. Expects a list of server
      * groups in the context as provided by {@link ServerGroupsWithServerConfigs}.
      */
-    public static class ServerGroupsStartedServers implements Step<FlowContext> {
+    public static class ServerGroupsStartedServers implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -457,7 +457,7 @@ public class TopologySteps {
      * <p>
      * The server group is available in the context under the key {@link #SERVER_GROUP}.
      */
-    public static class ServerGroupWithServerConfigs implements Step<FlowContext> {
+    public static class ServerGroupWithServerConfigs implements Task<FlowContext> {
 
         private final String serverGroupName;
         private final Dispatcher dispatcher;
@@ -501,7 +501,7 @@ public class TopologySteps {
      * Reads the {@code server} resource attributes for started servers of a server groups. Expects the server group in
      * the context as provided by {@link ServerGroupWithServerConfigs}.
      */
-    public static class ServerGroupStartedServers implements Step<FlowContext> {
+    public static class ServerGroupStartedServers implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
 
@@ -526,10 +526,10 @@ public class TopologySteps {
 
     /**
      * Returns a list of running servers which satisfy the specified query. Stores the list in the context under
-     * the key {@link TopologySteps#RUNNING_SERVERS}. Stores an empty list if there are no running servers or if
+     * the key {@link TopologyTasks#RUNNING_SERVERS}. Stores an empty list if there are no running servers or if
      * running in standalone mode.
      */
-    public static class RunningServersQuery implements Step<FlowContext> {
+    public static class RunningServersQuery implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;

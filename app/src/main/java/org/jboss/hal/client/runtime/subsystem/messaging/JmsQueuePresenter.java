@@ -47,7 +47,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -156,14 +156,14 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
 
         } else {
             ResourceAddress address = queueAddress();
-            Step<FlowContext> count = (context, control) -> {
+            Task<FlowContext> count = (context, control) -> {
                 Operation operation = new Operation.Builder(address, COUNT_MESSAGES).build();
                 dispatcher.executeInFlow(control, operation, result -> {
                     context.set(MESSAGES_COUNT, result.asLong());
                     control.proceed();
                 });
             };
-            Step<FlowContext> list = (context, control) -> {
+            Task<FlowContext> list = (context, control) -> {
                 long messages = context.get(MESSAGES_COUNT);
                 if (messages > MESSAGES_THRESHOLD) {
                     context.set(MESSAGES, emptyList());

@@ -38,7 +38,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologySteps;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -49,7 +49,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -227,7 +227,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void prepareWizard(final boolean xa) {
-        Step<FlowContext> readDataSources =
+        Task<FlowContext> readDataSources =
                 (context, control) -> crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE,
                         children -> {
                             List<DataSource> dataSources = children.stream()
@@ -238,12 +238,12 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         series(progress.get(), new FlowContext(),
                 readDataSources,
-                new JdbcDriverSteps.ReadConfiguration(crud),
-                new TopologySteps.RunningServersQuery(environment, dispatcher, environment.isStandalone()
+                new JdbcDriverTasks.ReadConfiguration(crud),
+                new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
                         ? null
                         : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
-                new JdbcDriverSteps.ReadRuntime(environment, dispatcher),
-                new JdbcDriverSteps.CombineDriverResults())
+                new JdbcDriverTasks.ReadRuntime(environment, dispatcher),
+                new JdbcDriverTasks.CombineDriverResults())
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {
@@ -253,7 +253,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     @Override
                     public void onSuccess(FlowContext context) {
                         List<DataSource> dataSources = context.get(DATASOURCES);
-                        List<JdbcDriver> drivers = context.get(JdbcDriverSteps.DRIVERS);
+                        List<JdbcDriver> drivers = context.get(JdbcDriverTasks.DRIVERS);
                         showWizard(dataSources, drivers, xa);
                     }
                 });

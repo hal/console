@@ -41,7 +41,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -138,7 +138,7 @@ public class ServerPresenter
 
     @Override
     protected void reload() {
-        Step<FlowContext> serverConfigFn = (context, control) -> {
+        Task<FlowContext> serverConfigFn = (context, control) -> {
             ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
             Operation serverOp = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
@@ -168,7 +168,7 @@ public class ServerPresenter
                         control.proceed();
                     });
         };
-        Step<FlowContext> serverRuntimeFn = (context, control) -> {
+        Task<FlowContext> serverRuntimeFn = (context, control) -> {
             Server server = context.get(SERVER_KEY);
             if (!serverActions.isPending(server) && server.isRunning()) {
                 ResourceAddress address = SERVER_RUNTIME_TEMPLATE.resolve(statementContext);

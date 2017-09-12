@@ -48,7 +48,7 @@ import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -175,7 +175,7 @@ public class DestinationPresenter
                     .resolve(statementContext);
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
-            Step<FlowContext> add = (context, control) -> {
+            Task<FlowContext> add = (context, control) -> {
                 Operation addSecuritySetting = new Operation.Builder(securitySettingAddress, ADD).build();
                 Operation addRole = new Operation.Builder(roleAddress, ADD).payload(model).build();
 
@@ -244,7 +244,7 @@ public class DestinationPresenter
                     resources.messages().removeConfirmationTitle(Names.SECURITY_SETTING),
                     resources.messages().removeConfirmationQuestion(combinedName),
                     () -> {
-                        Step<FlowContext> removeRole = (context, control) -> {
+                        Task<FlowContext> removeRole = (context, control) -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .append(ROLE + "=" + roleName)
@@ -253,7 +253,7 @@ public class DestinationPresenter
                             dispatcher.executeInFlow(control, operation, result -> control.proceed());
                         };
 
-                        Step<FlowContext> readRemainingRoles = (context, control) -> {
+                        Task<FlowContext> readRemainingRoles = (context, control) -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .resolve(statementContext);
@@ -266,7 +266,7 @@ public class DestinationPresenter
                             });
                         };
 
-                        Step<FlowContext> removeSecuritySetting = (context, control) -> {
+                        Task<FlowContext> removeSecuritySetting = (context, control) -> {
                             List<ModelNode> roles = context.pop();
                             if (roles.isEmpty()) {
                                 ResourceAddress address = SELECTED_SERVER_TEMPLATE

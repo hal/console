@@ -23,13 +23,13 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** Umbrella class for functions to read the server URL */
-class ServerUrlSteps {
+class ServerUrlTasks {
 
     private static final String SOCKET_BINDING_GROUP_KEY = "socket-binding-group";
     static final String URL_KEY = "url";
@@ -43,7 +43,7 @@ class ServerUrlSteps {
      * domain mode it reads the {@code socket-binding-group} attribute of the selected group in the statement
      * context.</p>
      */
-    static class ReadSocketBindingGroup implements Step<FlowContext> {
+    static class ReadSocketBindingGroup implements Task<FlowContext> {
 
         private final boolean standalone;
         private final String serverGroup;
@@ -89,7 +89,7 @@ class ServerUrlSteps {
      * Checks whether there's a {@code http} or {@code https} socket binding and puts the name of that socket binding
      * into the context. Aborts otherwise. Expects the name of the socket binding group in the context.
      */
-    static class ReadSocketBinding implements Step<FlowContext> {
+    static class ReadSocketBinding implements Task<FlowContext> {
 
         private final boolean standalone;
         private final String host;

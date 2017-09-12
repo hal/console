@@ -31,7 +31,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 
@@ -39,9 +39,9 @@ import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-class HandlerSteps {
+class HandlerTasks {
 
-    static class SaveAuditLog implements Step<FlowContext> {
+    static class SaveAuditLog implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
@@ -70,7 +70,7 @@ class HandlerSteps {
     }
 
 
-    static class ReadHandlers implements Step<FlowContext> {
+    static class ReadHandlers implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
@@ -103,7 +103,7 @@ class HandlerSteps {
     }
 
 
-    static class MergeHandler implements Step<FlowContext> {
+    static class MergeHandler implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;

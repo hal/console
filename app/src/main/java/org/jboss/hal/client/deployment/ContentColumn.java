@@ -28,10 +28,10 @@ import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.deployment.DeploymentSteps.AddUnmanagedDeployment;
-import org.jboss.hal.client.deployment.DeploymentSteps.CheckDeployment;
-import org.jboss.hal.client.deployment.DeploymentSteps.LoadContent;
-import org.jboss.hal.client.deployment.DeploymentSteps.UploadOrReplace;
+import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;
+import org.jboss.hal.client.deployment.DeploymentTasks.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentTasks.LoadContent;
+import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.dialog.DeployContentDialog1;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
@@ -274,7 +274,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 Constraint.executable(CONTENT_TEMPLATE, ADD));
         if (JsHelper.supportsAdvancedUpload() &&
                 AuthorisationDecision.from(environment, securityContextRegistry).isAllowed(deployConstraints)) {
-            setOnDrop(event -> DeploymentSteps.upload(this, environment, dispatcher, eventBus, progress,
+            setOnDrop(event -> DeploymentTasks.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources));
         }
     }
