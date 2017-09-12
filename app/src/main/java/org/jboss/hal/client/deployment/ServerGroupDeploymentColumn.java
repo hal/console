@@ -90,7 +90,6 @@ import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.flow.Flow.single;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /** The deployments of a server group. */
@@ -157,8 +156,8 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_DEPLOYMENT_REFRESH));
 
-        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> series(progress.get(),
-                new FlowContext(),
+        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> series(
+                new FlowContext(progress.get()),
                 new ReadServerGroupDeployments(environment, dispatcher, statementContext.selectedServerGroup()),
                 new RunningServersQuery(environment, dispatcher,
                         new ModelNode().set(SERVER_GROUP, statementContext.selectedServerGroup())),
@@ -308,7 +307,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     wzd.showProgress(resources.constants().deploymentInProgress(),
                             resources.messages().deploymentInProgress(name));
 
-                    series(progress.get(), new FlowContext(),
+                    series(new FlowContext(progress.get()),
                             new CheckDeployment(dispatcher, name),
                             new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false),
                             new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
@@ -382,7 +381,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 }
             }
         };
-        single(progress.get(), new FlowContext(), new LoadContent(dispatcher)).subscribe(outcome);
+        series(new FlowContext(progress.get()), new LoadContent(dispatcher)).subscribe(outcome);
     }
 
     private void addUnmanaged() {
@@ -392,7 +391,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     if (model != null) {
                         String serverGroup = statementContext.selectedServerGroup();
                         String runtimeName = model.get(RUNTIME_NAME).asString();
-                        series(progress.get(), new FlowContext(),
+                        series(new FlowContext(progress.get()),
                                 new AddUnmanagedDeployment(dispatcher, name, model),
                                 new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup))
                                 .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {

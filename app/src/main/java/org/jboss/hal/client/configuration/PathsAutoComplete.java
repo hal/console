@@ -32,7 +32,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
-import org.jboss.hal.flow.Progress;
 import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
@@ -43,7 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
-import static org.jboss.hal.flow.Flow.single;
+import static org.jboss.hal.flow.Flow.series;
 
 /**
  * Special auto complete class for paths. In standalone mode or in case there's no selected profile the paths are read
@@ -69,7 +68,7 @@ public class PathsAutoComplete extends AutoComplete {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();
         } else {
-            single(Progress.NOOP, new FlowContext(),
+            series(new FlowContext(),
                     new TopologyTasks.RunningServersQuery(environment, dispatcher,
                             new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())))
             .subscribe(new Outcome<FlowContext>() {

@@ -30,39 +30,41 @@ import static java.util.Arrays.asList;
  */
 public interface Flow {
 
-    /** Executes a single task. Useful if you already have a task implementation which you want to re-use. */
-    static <C> Single<C> single(Progress progress, C context, Task<C> task) {
-        return task.call(context)
-                .doOnSubscribe(progress::reset)
-                .doOnSuccess(n -> progress.finish())
-                .doOnError(e -> progress.finish());
-    }
-
     /** Executes multiple tasks in order. */
     @SafeVarargs
-    static <C> Single<C> series(Progress progress, C context, Task<C>... task) {
-        return series(progress, context, asList(task));
+    static <C extends FlowContext> Single<C> series(C context, Task<C>... task) {
+        return series(context, asList(task));
     }
 
     /** Executes multiple tasks in order. */
-    static <C> Single<C> series(Progress progress, C context, Collection<? extends Task<C>> tasks) {
-        assert !tasks.isEmpty();
+    static <C extends FlowContext> Single<C> series(C context, Collection<? extends Task<C>> tasks) {
         return Observable.from(tasks)
                 .flatMapSingle(f -> f.call(context), false, 1)
-                .doOnSubscribe(() -> progress.reset(tasks.size()))
-                .doOnNext(n -> progress.tick())
-                .doOnTerminate(progress::finish)
+                .doOnSubscribe(() -> context.progress.reset(tasks.size()))
+                .doOnNext(n -> context.progress.tick())
+                .doOnTerminate(context.progress::finish)
                 .lastOrDefault(context).toSingle();
     }
 
-    /** Executes a task until a condition is met. */
-    static <C> Single<C> interval(Progress progress, C context, int interval, Predicate<C> until, Task<C> task) {
-        return Observable.interval(interval, TimeUnit.MILLISECONDS)
-                .flatMapSingle(n -> task.call(context))
-                .takeUntil(until::test)
-                .doOnSubscribe(progress::reset)
-                .doOnNext(n -> progress.tick())
-                .doOnTerminate(progress::finish)
+    /** Executes a tasks until a condition is met. */
+    static <C extends IntervalContext<C>> Single<C> interval(C context) {
+        return Observable.interval(context.interval, TimeUnit.MILLISECONDS)
+                .flatMapSingle(n -> context.task.call(context))
+                .takeUntil(context.until::test)
+                .doOnSubscribe(context.progress::reset)
+                .doOnNext(n -> context.progress.tick())
+                .doOnTerminate(context.progress::finish)
                 .lastOrDefault(context).toSingle();
+    }
+
+    class IntervalContext<T extends IntervalContext> extends FlowContext {
+        public final int interval;
+        public final Predicate<T> until;
+        public final Task<T> task;
+        public IntervalContext(int interval, Predicate<T> until, Task<T> task) {
+            this.interval = interval;
+            this.until = until;
+            this.task = task;
+        }
     }
 }

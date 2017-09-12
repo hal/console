@@ -666,7 +666,7 @@ public class ServerActions {
             callback.onSuccess(serverUrl);
 
         } else {
-            series(Progress.NOOP, new FlowContext(),
+            series(new FlowContext(),
                     new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
                     new ReadSocketBinding(standalone, host, server, dispatcher))
                     .subscribe(new Outcome<FlowContext>() {

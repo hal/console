@@ -489,7 +489,7 @@ public class Finder implements IsElement, Attachable {
             List<RefreshTask> tasks = stream(path.spliterator(), false)
                     .map(segment -> new RefreshTask(new FinderSegment(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            series(progress.get(), new FlowContext(), tasks)
+            series(new FlowContext(progress.get()), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {}
@@ -556,7 +556,7 @@ public class Finder implements IsElement, Attachable {
             List<SelectTask> tasks = stream(path.spliterator(), false)
                     .map(segment -> new SelectTask(new FinderSegment(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            series(progress.get(), new FlowContext(), tasks)
+            series(new FlowContext(progress.get()), tasks)
             .subscribe(new Outcome<FlowContext>() {
                 @Override
                 public void onError(FlowContext context, Throwable error) {

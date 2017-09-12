@@ -62,7 +62,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.flow.Flow.single;
+import static org.jboss.hal.flow.Flow.series;
 
 @Column(Ids.PATCHING_DOMAIN)
 @Requires(value = "/host=*/core-service=patching")
@@ -157,7 +157,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
                 .columnAction(columnActionFactory.refresh(Ids.HOST_REFRESH))
 
-                .itemsProvider((context, callback) -> single(progress.get(), new FlowContext(),
+                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
                         new AvailableHosts(dispatcher))
                         .subscribe(new Outcome<FlowContext>() {
                             @Override

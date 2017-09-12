@@ -299,7 +299,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 tasks.add(new AddRoleMapping(dispatcher, transientRole, status -> status == 404));
                 tasks.add(new ModifyIncludeAll(dispatcher, transientRole, true));
             }
-            series(progress.get(), new FlowContext(), tasks)
+            series(new FlowContext(progress.get()), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -330,7 +330,7 @@ public class RoleColumn extends FinderColumn<Role> {
         modelNode.get(INCLUDE_ALL).set(role.isIncludeAll());
         new ModifyResourceDialog(resources.messages().modifyResourceTitle(resources.constants().role()),
                 form, (frm, changedValues) ->
-                series(progress.get(), new FlowContext(),
+                series(new FlowContext(progress.get()),
                         new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new ModifyIncludeAll(dispatcher, role, frm.getModel().get(INCLUDE_ALL).asBoolean()))
@@ -383,7 +383,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 tasks.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
                 tasks.add(new ModifyIncludeAll(dispatcher, role, includesAll));
             }
-            series(progress.get(), new FlowContext(), tasks)
+            series(new FlowContext(progress.get()), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -411,7 +411,7 @@ public class RoleColumn extends FinderColumn<Role> {
         tasks.add(new RemoveRoleMapping(dispatcher, role, status -> status == 200));
         tasks.add(new RemoveScopedRole(dispatcher, role));
 
-        series(progress.get(), new FlowContext(), tasks)
+        series(new FlowContext(progress.get()), tasks)
                 .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                     @Override
                     public void onSuccess(FlowContext context) {

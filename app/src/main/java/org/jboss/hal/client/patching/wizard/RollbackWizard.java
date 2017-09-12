@@ -43,7 +43,7 @@ import static org.jboss.hal.client.patching.PatchesColumn.PATCHING_TEMPLATE;
 import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
 import static org.jboss.hal.client.patching.wizard.PatchState.ROLLBACK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.flow.Flow.single;
+import static org.jboss.hal.flow.Flow.series;
 
 public class RollbackWizard {
 
@@ -163,7 +163,7 @@ public class RollbackWizard {
                         String name = context.patchId;
                         wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
 
-                        single(progress.get(), new FlowContext(),
+                        series(new FlowContext(progress.get()),
                                 new RollbackTask(statementContext, dispatcher, serverActions, context))
                                 .subscribe(new Outcome<FlowContext>() {
                                     @Override

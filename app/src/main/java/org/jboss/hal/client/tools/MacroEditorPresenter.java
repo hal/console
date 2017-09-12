@@ -132,7 +132,7 @@ public class MacroEditorPresenter
         List<MacroOperationTask> tasks = macro.getOperations().stream()
                 .map(operation -> new MacroOperationTask(dispatcher, operation)).collect(toList());
         getView().disableMacro(macro);
-        series(progress.get(), new FlowContext(), tasks)
+        series(new FlowContext(progress.get()), tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {

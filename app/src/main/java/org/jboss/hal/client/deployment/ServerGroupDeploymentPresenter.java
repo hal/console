@@ -127,7 +127,7 @@ public class ServerGroupDeploymentPresenter extends
 
     @Override
     protected void reload() {
-        series(progress.get(), new FlowContext(),
+        series(new FlowContext(progress.get()),
                 new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment),
                 new RunningServersQuery(environment, dispatcher, new ModelNode().set(SERVER_GROUP, serverGroup)),
                 new LoadDeploymentsFromRunningServer(environment, dispatcher))

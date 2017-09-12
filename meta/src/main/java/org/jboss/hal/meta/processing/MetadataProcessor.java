@@ -49,7 +49,6 @@ import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.flow.Flow.single;
 
 /**
  * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link
@@ -183,14 +182,10 @@ public class MetadataProcessor {
             List<RrdTask> allTasks = new ArrayList<>();
             allTasks.addAll(tasks);
             allTasks.addAll(optionalTasks);
-            if (tasks.size() == 1) {
-                single(progress, new FlowContext(), allTasks.get(0)).subscribe(outcome);
-            } else {
-                // Unfortunately we cannot use Async.parallel() here unless someone finds a way
-                // to unambiguously map parallel r-r-d operations to their results (multiple "step-1" results)
-                //noinspection SuspiciousToArrayCall
-                series(progress, new FlowContext(), allTasks).subscribe(outcome);
-            }
+            // Unfortunately we cannot use Async.parallel() here unless someone finds a way
+            // to unambiguously map parallel r-r-d operations to their results (multiple "step-1" results)
+            //noinspection SuspiciousToArrayCall
+            series(new FlowContext(progress), allTasks).subscribe(outcome);
         }
     }
 

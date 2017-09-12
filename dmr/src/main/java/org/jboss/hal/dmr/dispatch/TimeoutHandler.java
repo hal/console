@@ -15,19 +15,19 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import java.util.function.Predicate;
+import static org.jboss.hal.flow.Flow.interval;
 
+import java.util.function.Predicate;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.flow.Flow.IntervalContext;
 import org.jboss.hal.flow.Outcome;
-import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.jboss.hal.flow.Flow.interval;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
 public class TimeoutHandler {
@@ -44,20 +44,6 @@ public class TimeoutHandler {
          */
         void onTimeout();
     }
-
-
-    private static class TimeoutContext {
-
-        final long start;
-        boolean conditionSatisfied;
-
-        TimeoutContext() {
-            this.start = System.currentTimeMillis();
-            this.conditionSatisfied = false;
-            logger.debug("Start timeout handler @ {}", start); //NON-NLS
-        }
-    }
-
 
     private static final int INTERVAL = 500;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
@@ -86,7 +72,7 @@ public class TimeoutHandler {
      * receives the result of the operation.
      */
     public void execute(Operation operation, Predicate<ModelNode> predicate, Callback callback) {
-        interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
+        interval(new TimeoutContext(INTERVAL,
                 context -> timeout(context) || context.conditionSatisfied,
                 (context, control) -> dispatcher.execute(operation,
                         result -> {
@@ -94,7 +80,7 @@ public class TimeoutHandler {
                             control.proceed();
                         },
                         (op, failure) -> control.proceed(),
-                        (op, exception) -> control.proceed()))
+                        (op, exception) -> control.proceed())))
                 .subscribe(new Outcome<TimeoutContext>() {
                     @Override
                     public void onError(TimeoutContext context, Throwable error) {
@@ -119,7 +105,7 @@ public class TimeoutHandler {
      * The precondition receives the composite result of the operation.
      */
     public void execute(Composite composite, Predicate<CompositeResult> predicate, Callback callback) {
-        interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
+        interval(new TimeoutContext(INTERVAL,
                 context -> timeout(context) || context.conditionSatisfied,
                 (context, control) -> dispatcher.execute(composite,
                         (CompositeResult result) -> {
@@ -133,7 +119,7 @@ public class TimeoutHandler {
                             control.proceed();
                         },
                         (op, failure) -> control.proceed(),
-                        (op, exception) -> control.proceed()))
+                        (op, exception) -> control.proceed())))
                 .subscribe(new Outcome<TimeoutContext>() {
                     @Override
                     public void onError(TimeoutContext context, Throwable error) {
@@ -154,8 +140,17 @@ public class TimeoutHandler {
                 });
     }
 
-    private boolean timeout(TimeoutContext timeoutContext) {
-        long elapsed = (System.currentTimeMillis() - timeoutContext.start) / 1000;
+    static final class TimeoutContext extends IntervalContext<TimeoutContext> {
+        public final long start = System.currentTimeMillis();
+        public boolean conditionSatisfied = false;
+        public TimeoutContext(int interval, Predicate<TimeoutContext> until, Step<TimeoutContext> step) {
+            super(interval, until, step);
+        }
+        public long elapsed() { return (System.currentTimeMillis() - start) / 1000L; }
+    }
+
+    private boolean timeout(TimeoutContext context) {
+        long elapsed = context.elapsed();
         logger.debug("Checking elapsed > timeout ({} > {})", elapsed, timeout);
         return elapsed > timeout;
     }

@@ -177,7 +177,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                     });
                 }
             };
-            series(progress.get(), new FlowContext(), count, list)
+            series(new FlowContext(progress.get()), count, list)
                     .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                         @Override
                         public void onSuccess(FlowContext context) {

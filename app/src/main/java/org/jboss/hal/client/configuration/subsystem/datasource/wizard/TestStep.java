@@ -139,7 +139,7 @@ class TestStep extends WizardStep<Context, State> {
             }
         });
 
-        series(progress.get(), new FlowContext(), tasks)
+        series(new FlowContext(progress.get()), tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext flowContext, Throwable error) {

@@ -297,7 +297,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             List<OpenNodeTask> tasks = previousFilter.parents.stream()
                     .map(OpenNodeTask::new)
                     .collect(toList());
-            series(progress.get(), new FlowContext(), tasks)
+            series(new FlowContext(progress.get()), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {

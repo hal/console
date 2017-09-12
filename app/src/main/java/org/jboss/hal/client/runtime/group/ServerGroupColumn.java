@@ -87,7 +87,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                         AddressTemplate.of("/server-group=*"), Ids::serverGroup))
                 .columnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH))
 
-                .itemsProvider((context, callback) -> series(progress.get(), new FlowContext(),
+                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
                         new TopologyTasks.ServerGroupsWithServerConfigs(environment, dispatcher),
                         new TopologyTasks.ServerGroupsStartedServers(environment, dispatcher))
                         .subscribe(new Outcome<FlowContext>() {

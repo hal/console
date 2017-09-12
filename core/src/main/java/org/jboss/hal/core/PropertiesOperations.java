@@ -341,7 +341,7 @@ public class PropertiesOperations {
             Composite operations, String psr, Map<String, String> properties, Callback callback) {
 
         // TODO Check if the steps can be replaced with a composite operation
-        series(progress.get(), new FlowContext(),
+        series(new FlowContext(progress.get()),
                 (context, control) -> {
                     if (operations.isEmpty()) {
                         control.proceed();
