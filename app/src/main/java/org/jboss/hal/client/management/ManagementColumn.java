@@ -49,10 +49,6 @@ public class ManagementColumn extends StaticItemColumn {
                         .onPreview(new ManagementInterfacePreview(crud, statementContext))
                         .build(),
 
-                new StaticItem.Builder(Names.CONFIGURATION_CHANGES)
-                        .action(itemActionFactory.view(NameTokens.CONFIGURATION_CHANGES))
-                        .build(),
-
                 new StaticItem.Builder(Names.EXTENSIONS)
                         .nextColumn(Ids.EXTENSION)
                         .onPreview(new PreviewContent(Names.EXTENSIONS, resources.previews().managementExtensions()))

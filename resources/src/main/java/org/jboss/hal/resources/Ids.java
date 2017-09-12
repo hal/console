@@ -119,6 +119,7 @@ public interface Ids {
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
     String CONFIGURATION = "configuration";
+    String CONFIGURATION_CHANGES = "configuration-changes";
     String CONFIGURATION_SUBSYSTEM = "css";
     String CONTENT = "content";
     String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);

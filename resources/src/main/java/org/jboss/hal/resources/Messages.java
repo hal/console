@@ -40,6 +40,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     String activeRoles(String roles);
+    SafeHtml addConfigurationChangesQuestion(String host);
     SafeHtml addHaPolicy();
     SafeHtml addResourceError(String name, String cause);
     SafeHtml addResourceSuccess(String type, String name);
@@ -294,6 +295,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
+    SafeHtml removeConfigurationChangesQuestion(String host);
     SafeHtml removeCurrentUserError();
     SafeHtml removeExtensionQuestion();
     SafeHtml removeExtensionSuccess();

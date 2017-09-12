@@ -39,6 +39,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     //@formatter:off
     String abandoned();
     String aborted();
+    String accessMechanism();
     String accessType();
     String action();
     String active();
@@ -85,6 +86,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String committed();
     String completed();
     String completedExecutions();
+    String composite();
+    String configurationChanges();
+    String configurationChangesNotEnabled();
     String connectedTo();
     String connection();
     String connections();
@@ -118,6 +122,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String details();
     String directory();
     String disable();
+    String disableConfigurationChanges();
     String disabled();
     String disconnected();
     String disconnectedUpper();
@@ -131,6 +136,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String editURL();
     String enable();
+    String enableConfigurationChanges();
     String enabled();
     String enableDeployment();
     String enableRbac();
@@ -350,6 +356,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String opened();
     String openInExternalWindow();
     String openInModelBrowser();
+    String operationDate();
     String operationFailed();
     String operationMode();
     String operationSuccessful();
@@ -357,6 +364,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operations();
     String or();
     String orDragItHere();
+    String outcome();
     String output();
 
     String patchError();
@@ -396,6 +404,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String reload();
     String reloadRequired();
     String reloadStandaloneTooltip();
+    String remoteAddress();
     String remove();
     String rename();
     String replace();
