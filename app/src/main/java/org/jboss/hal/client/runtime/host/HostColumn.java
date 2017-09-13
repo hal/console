@@ -22,6 +22,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -99,6 +100,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             CrudOperations crud,
             EventBus eventBus,
             StatementContext statementContext,
+            ItemMonitor itemMonitor,
+            PlaceManager placeManager,
             @Footer Provider<Progress> progress,
             ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
@@ -245,6 +248,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 if (item.isConnected()) {
                     PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
                             .with(HOST, item.getAddressName()).build();
+                    PlaceRequest placeRequestConfChanges = new PlaceRequest.Builder()
+                            .nameToken(NameTokens.CONFIGURATION_CHANGES)
+                            .with(HOST, item.getAddressName()).build();
                     List<ItemAction<Host>> actions = new ArrayList<>();
                     actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
                     if (!hostActions.isPending(item)) {
@@ -257,6 +263,14 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                 .title(resources.constants().restart())
                                 .handler(hostActions::restart)
                                 .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
+                                .build());
+                        actions.add(new ItemAction.Builder<Host>()
+                                .title(resources.constants().configurationChanges())
+                                .handler(itemMonitor.monitorPlaceRequest(
+                                        Ids.build(Ids.host(item.getAddressName()), Ids.CONFIGURATION_CHANGES),
+                                        placeRequestConfChanges.getNameToken(),
+                                        () -> placeManager.revealPlace(placeRequestConfChanges)))
+                                .constraint(Constraint.executable(hostTemplate(item), CONFIGURATION_CHANGES))
                                 .build());
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                     }

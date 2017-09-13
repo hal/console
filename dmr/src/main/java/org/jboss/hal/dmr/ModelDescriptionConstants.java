@@ -49,6 +49,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_CONSTRAINTS = "access-constraints";
     String ACCESS_CONTROL = "access-control";
     String ACCESS_LOG = "access-log";
+    String ACCESS_MECHANISM = "access-mechanism";
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
     String ACTION = "action";
@@ -148,6 +149,7 @@ public interface ModelDescriptionConstants {
     String CONFIGURABLE_SASL_SERVER_FACTORY = "configurable-sasl-server-factory";
     String CONFIGURATION = "configuration";
     String CONNECTED = "connected";
+    String CONFIGURATION_CHANGES = "configuration-changes";
     String CONNECTION_COUNT = "connection-count";
     String CONNECTION_LIMIT_HIGH_WATER_MARK = "connection-limit-high-water-mark";
     String CONNECTION_LIMIT_LOW_WATER_MARK = "connection-limit-low-water-mark";
@@ -219,6 +221,7 @@ public interface ModelDescriptionConstants {
     String DISCONNECTED = "disconnected";
     String DISCOVERY_GROUP = "discovery-group";
     String DIVERT = "divert";
+    String DOMAIN_UUID = "domain-uuid";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
     String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
@@ -378,6 +381,7 @@ public interface ModelDescriptionConstants {
     String LICENSE = "license";
     String LINES = "lines";
     String LIST_ADD_OPERATION = "list-add";
+    String LIST_CHANGES_OPERATION = "list-changes";
     String LIST_MESSAGES = "list-messages";
     String LIST_REMOVE_OPERATION = "list-remove";
     String LISTENER = "listener";
@@ -465,6 +469,7 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_TRANSACTIONS = "number-of-transactions";
     String OP = "operation";
     String OPERATION = "operation";
+    String OPERATION_DATE = "operation-date";
     String OPERATION_HEADERS = "operation-headers";
     String OPERATIONS = "operations";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
@@ -570,6 +575,7 @@ public interface ModelDescriptionConstants {
     String RELOAD_REQUIRED = "reload-required";
     String RELOAD_SERVERS = "reload-servers";
     String REMOTE = "remote";
+    String REMOTE_ADDRESS = "remote-address";
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_COMMAND = "remote-command";
     String REMOTE_CONNECTOR = "remote-connector";

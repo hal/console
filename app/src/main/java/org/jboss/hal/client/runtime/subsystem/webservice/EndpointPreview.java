@@ -117,6 +117,10 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
 
     @Override
     public void update(final DeploymentResource item) {
+        // the endpoint name (last value of address) contains %3A character separator
+        // however the dispatcher.execute call performs a http call, then the url is encoded, the %3A becomes %253A
+        // in the endpointa name, causing a HTTP 500 address not found.
+        // Then, read the parent resoource and interate over the endpoint results to match the endpoint name.
         String endpointName = item.getAddress().lastValue();
         Operation operation = new Operation.Builder(item.getAddress().getParent(), READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, ENDPOINT)
