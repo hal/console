@@ -25,7 +25,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
-import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
 import org.jboss.hal.core.Strings;
@@ -183,19 +182,19 @@ public class DestinationColumn extends FinderColumn<Destination> {
 
             @Override
             public HTMLElement getIcon() {
-                switch (item.type) {
-                    case JMS_QUEUE:
-                        HTMLElement icon = Icons.custom(fontAwesome("long-arrow-right"));
-                        if (item.isPaused()) {
-                            icon.style.color = PatternFly.colors.black400;
-                        }
-                        return icon;
-                    case JMS_TOPIC:
-                        return Icons.custom(fontAwesome("arrows"));
-                    case QUEUE:
-                        return Icons.custom(fontAwesome("cog"));
-                    default:
-                        return Icons.unknown();
+                if (item.isPaused()) {
+                    return Icons.paused();
+                } else {
+                    switch (item.type) {
+                        case JMS_QUEUE:
+                            return Icons.custom(fontAwesome("long-arrow-right"));
+                        case JMS_TOPIC:
+                            return Icons.custom(fontAwesome("arrows"));
+                        case QUEUE:
+                            return Icons.custom(fontAwesome("cog"));
+                        default:
+                            return Icons.unknown();
+                    }
                 }
             }
 

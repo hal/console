@@ -223,7 +223,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 if (!item.isConnected()) {
                     return Icons.disconnected();
                 } else if (hostActions.isPending(item)) {
-                    return Icons.unknown();
+                    return Icons.pending();
                 } else if (item.isAdminMode() || item.isStarting()) {
                     return Icons.disabled();
                 } else if (item.needsReload() || item.needsRestart()) {

@@ -36,7 +36,7 @@ class ServerIcon implements Function<Server, HTMLElement> {
         ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
             @Override
             protected void onPending(final Server server) {
-                element[0] = Icons.unknown();
+                element[0] = Icons.pending();
             }
 
             @Override
@@ -56,12 +56,12 @@ class ServerIcon implements Function<Server, HTMLElement> {
 
             @Override
             protected void onStarting(final Server server) {
-                element[0] = Icons.disabled();
+                element[0] = Icons.pending();
             }
 
             @Override
             protected void onSuspended(final Server server) {
-                element[0] = Icons.pause();
+                element[0] = Icons.paused();
             }
 
             @Override

@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
-import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -146,16 +145,14 @@ public class EjbColumn extends FinderColumn<EjbNode> {
 
             @Override
             public HTMLElement getIcon() {
-                if (hasTimer(item)) {
+                if (!item.isDeliveryActive()) {
+                    return Icons.paused();
+                } else if (hasTimer(item)) {
                     return Icons.custom(pfIcon("history"));
                 } else {
                     switch (item.type) {
                         case MDB:
-                            HTMLElement icon = Icons.custom(fontAwesome("exchange"));
-                            if (!item.isDeliveryActive()) {
-                                icon.style.color = PatternFly.colors.black400;
-                            }
-                            return icon;
+                            return Icons.custom(fontAwesome("exchange"));
                         case SINGLETON:
                             return Icons.custom(fontAwesome("cube"));
                         case STATEFUL:

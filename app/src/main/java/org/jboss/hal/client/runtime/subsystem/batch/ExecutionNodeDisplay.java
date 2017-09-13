@@ -83,7 +83,7 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
                 builder.css(pfIcon(errorCircleO), listHalIconError);
                 break;
             case UNKNOWN:
-                builder.css(fontAwesome(questionsCircleO));
+                builder.css(pfIcon("help"));
                 break;
         }
         return builder.asElement();

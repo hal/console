@@ -286,7 +286,7 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
-    String pauseCircle = "pause-circle-o";
+    String paused = "paused";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
@@ -312,8 +312,6 @@ public interface CSS {
     String pullLeft = "pull-left";
     String pullRight = "pull-right";
     String pulse = "pulse";
-
-    String questionsCircleO = "question-circle-o";
 
     String radio = "radio";
     String rbacHidden = "rbac-hidden";
