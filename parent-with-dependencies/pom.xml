@@ -127,11 +127,6 @@
                 <version>${rx.gwt}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.gwt.flow</groupId>
-                <artifactId>flow</artifactId>
-                <version>${flow.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.gwt.elemento</groupId>
                 <artifactId>elemento-core</artifactId>
                 <version>${elemento.version}</version>

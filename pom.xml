@@ -131,7 +131,7 @@
 
     <build>
         <pluginManagement>
-            <!-- All plugins ordered by short name -->
+            <!-- plugins ordered by artifactId -->
             <plugins>
                 <plugin>
                     <groupId>io.fabric8</groupId>
@@ -205,6 +205,26 @@
 
     <profiles>
         <profile>
+            <id>docker</id>
+            <modules>
+                <module>docker</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <gwt.draftCompile>false</gwt.draftCompile>
+                <gwt.namespace>PACKAGE</gwt.namespace>
+                <!--
+                    Do not optimize: It will wipe out code which actually must not be erased.
+                    TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
+                -->
+                <gwt.optimize>0</gwt.optimize>
+                <gwt.style>OBFUSCATED</gwt.style>
+                <grunt-task>prod</grunt-task>
+            </properties>
+        </profile>
+        <profile>
             <id>release</id>
             <build>
                 <plugins>
@@ -230,26 +250,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>docker</id>
-            <modules>
-                <module>docker</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <gwt.draftCompile>false</gwt.draftCompile>
-                <gwt.namespace>PACKAGE</gwt.namespace>
-                <!--
-                    Do not optimize: It will wipe out code which actually must not be erased.
-                    TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
-                -->
-                <gwt.optimize>0</gwt.optimize>
-                <gwt.style>OBFUSCATED</gwt.style>
-                <grunt-task>prod</grunt-task>
-            </properties>
         </profile>
         <profile>
             <id>theme-eap</id>
