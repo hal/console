@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.fraction;
+package org.wildfly.swarm.hal;
 
 public interface HalProperties {
-
-    String CONTEXT = "swarm.management.hal.context";
+    String DEFAULT_CONTEXT = "/hal";
 }

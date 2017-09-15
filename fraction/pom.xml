@@ -32,6 +32,7 @@
     <description>WildFly Swarm fraction for HAL.next</description>
 
     <properties>
+        <swarm.fraction.stability>experimental</swarm.fraction.stability>
         <swarm.fraction.tags>Web,Management</swarm.fraction.tags>
     </properties>
 
@@ -39,7 +40,7 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-console</artifactId>
-            <classifier>resources</classifier>
+            <type>war</type>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -82,26 +83,6 @@
                         <goals>
                             <goal>process</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>hal-resources</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeGroupIds>org.jboss.hal</includeGroupIds>
-                            <includeArtifactIds>hal-console</includeArtifactIds>
-                            <includeClassifiers>resources</includeClassifiers>
-                            <outputDirectory>${project.build.directory}/classes/modules/org/jboss/hal/main/
-                            </outputDirectory>
-                            <stripVersion>true</stripVersion>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

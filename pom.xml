@@ -100,7 +100,7 @@
         <plugin.frontend.version>1.4</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-8</plugin.gwt.version>
         <plugin.processor.version>3.2.0</plugin.processor.version>
-        <plugin.swarm.version>40</plugin.swarm.version>
+        <plugin.swarm.version>60</plugin.swarm.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

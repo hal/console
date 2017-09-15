@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.fraction;
+package org.wildfly.swarm.hal;
 
+import org.wildfly.swarm.config.runtime.AttributeDocumentation;
+import org.wildfly.swarm.spi.api.Defaultable;
 import org.wildfly.swarm.spi.api.Fraction;
 import org.wildfly.swarm.spi.api.annotations.Configurable;
 
-@Configurable("swarm.management-hal")
+import static org.wildfly.swarm.hal.HalProperties.DEFAULT_CONTEXT;
+
+@Configurable("swarm.hal")
 public class HalFraction implements Fraction<HalFraction> {
 
-    private static final String DEFAULT_CONTEXT = "/hal";
-
-    private String context = DEFAULT_CONTEXT;
+    @AttributeDocumentation("Web context path of the console. Should start with a slash e.g. '/hal'.")
+    private Defaultable<String> context = Defaultable.string(DEFAULT_CONTEXT);
 
     public HalFraction() {
-        contextRoot(DEFAULT_CONTEXT);
+        this.context.set(DEFAULT_CONTEXT);
     }
 
-    public HalFraction contextRoot(String context) {
-        this.context = context;
-        return this;
-    }
-
-    public String contextRoot() {
-        return context;
+    public String context() {
+        return context.get();
     }
 }

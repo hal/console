@@ -59,7 +59,7 @@
         <validation.version>1.0.0.GA</validation.version>
         <wildfly.version>11.0.0.Alpha1-SNAPSHOT</wildfly.version>
         <wildfly-core.version>3.0.0.Beta38</wildfly-core.version>
-        <wildfly-swarm.version>2017.7.0</wildfly-swarm.version>
+        <wildfly-swarm.version>2017.9.5</wildfly-swarm.version>
     </properties>
 
     <!-- Do not declare any build settings here! Declare them in hal-parent. -->
