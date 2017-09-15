@@ -38,18 +38,16 @@ public class HalDeploymentProducer {
 
     @Produces
     public Archive halConsole() throws Exception {
-        WARArchive war = ShrinkWrap.create(WARArchive.class, DEPLOYMENT);
+        WARArchive war = ShrinkWrap.create(WARArchive.class, DEPLOYMENT)
+                .setContextRoot(fraction.context());
         lookup.artifact(GAV, DEPLOYMENT)
-                .getContent()
+                .getContent(path -> path.get().startsWith(INTERNAL_CONTEXT_ROOT))
                 .forEach((path, content) -> {
                     if (content.getAsset() != null) {
-                        String newPath = path.get().startsWith(INTERNAL_CONTEXT_ROOT)
-                                ? path.get().substring(INTERNAL_CONTEXT_ROOT.length())
-                                : path.get();
-                        war.add(content.getAsset(), newPath);
+                        String relocated = path.get().substring(INTERNAL_CONTEXT_ROOT.length());
+                        war.add(content.getAsset(), relocated);
                     }
                 });
-        war.setContextRoot(fraction.context());
         return war;
     }
 }
