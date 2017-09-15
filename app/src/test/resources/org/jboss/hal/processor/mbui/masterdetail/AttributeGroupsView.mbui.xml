@@ -23,7 +23,7 @@
                 <column name="name"/>
             </columns>
         </table>
-        <form id="form" title="Form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}">
+        <form id="form" title="Form" auto-save="true" reset="true" name-resolver="${form.getModel().getName()}">
             <attributes>
                 <group id="group-1" title="Group 1">
                     <attribute name="foo"/>

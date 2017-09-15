@@ -23,7 +23,7 @@
             <sub-item id="ejb-configuration-item" title="Container">
                 <metadata address="/{selected.profile}/subsystem=ejb3">
                     <h1>Container</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <form id="ejb-configuration-form" title="Container" auto-save="true" reset="true"/>
                 </metadata>
             </sub-item>
@@ -31,39 +31,39 @@
             <sub-item id="ejb-thread-pool-item" title="Thread Pool">
                 <metadata address="/{selected.profile}/subsystem=ejb3/thread-pool=*">
                     <h1>Thread Pool</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="ejb-thread-pool-table" title="Thread Pool" form-ref="ejb-thread-pool-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="ejb-thread-pool-form" title="Thread Pool" auto-save="true" reset="true"
-                          name-resolver="{{form.getModel().getName()}}"/>
+                          name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
 
             <sub-item id="ejb-remoting-profile-item" title="Remoting Profile">
                 <metadata address="/{selected.profile}/subsystem=ejb3/remoting-profile=*">
                     <h1>Remoting Profile</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="ejb-remoting-profile-table" title="Remoting Profile"
                            form-ref="ejb-remoting-profile-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="ejb-remoting-profile-form" title="Remoting Profile" auto-save="true" reset="true"
-                          name-resolver="{{form.getModel().getName()}}"/>
+                          name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
         </item>
@@ -71,19 +71,19 @@
         <item id="ejb-bean-pool-item" title="Bean Pool" icon="pficon pficon-repository">
             <metadata address="/{selected.profile}/subsystem=ejb3/strict-max-bean-instance-pool=*">
                 <h1>Bean Pool</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="ejb-bean-pool-table" title="Bean Pool" form-ref="ejb-bean-pool-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="ejb-bean-pool-form" title="Bean Pool" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
 
@@ -92,26 +92,26 @@
             <sub-item id="ejb-cache-item" title="Cache">
                 <metadata address="/{selected.profile}/subsystem=ejb3/cache=*">
                     <h1>Cache</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="ejb-cache-table" title="Cache" form-ref="ejb-cache-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="ejb-cache-form" title="Cache" auto-save="true" reset="true"
-                          name-resolver="{{form.getModel().getName()}}"/>
+                          name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
 
             <sub-item id="ejb-passivation-item" title="Passivation">
                 <metadata address="/{selected.profile}/subsystem=ejb3/passivation-store=*">
                     <h1>Passivation</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="ejb-passivation-table" title="Passivation" form-ref="ejb-passivation-form">
                         <actions>
                             <action handler-ref="add-resource">
@@ -129,14 +129,14 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="ejb-passivation-form" title="Passivation" auto-save="true" reset="true"
-                          name-resolver="{{form.getModel().getName()}}"/>
+                          name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
         </item>
@@ -146,7 +146,7 @@
             <sub-item id="ejb-service-async-item" title="Async">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=async">
                     <h1>Async</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <form id="ejb-service-async-form" title="Async" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="thread-pool-name">
@@ -166,7 +166,7 @@
             <sub-item id="ejb-service-iiop-item" title="IIOP">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=iiop">
                     <h1>IIOP</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <form id="ejb-service-iiop-form" title="IIOP" auto-save="true" reset="true"/>
                 </metadata>
             </sub-item>
@@ -174,7 +174,7 @@
             <sub-item id="ejb-service-remote-item" title="Remote">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=remote">
                     <h1>Remote</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <form id="ejb-service-remote-form" title="Remote" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="cluster">
@@ -207,7 +207,7 @@
             <sub-item id="ejb-service-timer-item" title="Timer">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=timer-service">
                     <h1>Timer</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <form id="ejb-service-timer-form" title="Timer" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="default-data-store">
@@ -236,20 +236,20 @@
         <item id="ejb-mdb-delivery-group-item" title="MDB Delivery" icon="fa fa-inbox">
             <metadata address="/{selected.profile}/subsystem=ejb3/mdb-delivery-group=*">
                 <h1>MDB Delivery Group</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="ejb-mdb-delivery-group-table" title="MDB Delivery Group"
                        form-ref="ejb-mdb-delivery-group-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="ejb-mdb-delivery-group-form" title="MDB Delivery Group" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
     </vertical-navigation>

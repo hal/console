@@ -20,7 +20,7 @@
         <h1>Table</h1>
         <table id="table">
             <actions>
-                <action title="Foo" handler="{{presenter.reload()}}" constraint="remove"/>
+                <action title="Foo" handler="${presenter.reload()}" constraint="remove"/>
             </actions>
             <columns>
                 <column name="name"/>

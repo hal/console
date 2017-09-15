@@ -30,10 +30,10 @@ public class Attribute {
     Attribute(final String name, final String provider, final String formItem,
             final String validationHandler, final String suggestHandler) {
         this.name = name;
-        this.provider = Handlebars.stripHandlebar(provider);
-        this.formItem = Handlebars.stripHandlebar(formItem);
-        this.validationHandler = Handlebars.stripHandlebar(validationHandler);
-        this.suggestHandler = Handlebars.stripHandlebar(suggestHandler);
+        this.provider = ExpressionParser.stripExpression(provider);
+        this.formItem = ExpressionParser.stripExpression(formItem);
+        this.validationHandler = ExpressionParser.stripExpression(validationHandler);
+        this.suggestHandler = ExpressionParser.stripExpression(suggestHandler);
         this.suggestHandlerTemplates = new ArrayList<>();
     }
 

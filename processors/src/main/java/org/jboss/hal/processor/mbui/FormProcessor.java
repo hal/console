@@ -56,7 +56,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             if (title == null) {
                 title = new LabelBuilder().label(template.lastName());
             }
-            if (nameResolver != null && !Handlebars.isExpression(nameResolver)) {
+            if (nameResolver != null && !ExpressionParser.isExpression(nameResolver)) {
                 processor.error(field, "Name resolver in form#%s has to be an expression.", selector);
             }
             if ("*".equals(template.lastValue()) && nameResolver == null) {
@@ -65,7 +65,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             }
 
         } else if (!Strings.isNullOrEmpty(onSave)) {
-            if (!Handlebars.isExpression(onSave)) {
+            if (!ExpressionParser.isExpression(onSave)) {
                 processor.error(field, "on-save handler in form#%s has to be an expression.", selector);
             }
         }

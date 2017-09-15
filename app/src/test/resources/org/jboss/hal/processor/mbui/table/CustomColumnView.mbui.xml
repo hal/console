@@ -21,7 +21,7 @@
         <table id="table">
             <columns>
                 <column name="name"/>
-                <column name="foo" value='{{"foo"}}'/>
+                <column name="foo" value='${"foo"}'/>
             </columns>
         </table>
     </metadata>

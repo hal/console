@@ -29,21 +29,21 @@
 
                 <metadata address="/{selected.profile}/subsystem=elytron/add-prefix-role-mapper=*">
                     <h1>Add Prefix Role Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-add-prefix-role-mapper-table" title="Add Prefix Role Mapper"
                            form-ref="mappers-decoders-add-prefix-role-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-add-prefix-role-mapper-form" title="Add Prefix Role Mapper"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -54,21 +54,21 @@
 
                 <metadata address="/{selected.profile}/subsystem=elytron/add-suffix-role-mapper=*">
                     <h1>Add Suffix Role Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-add-suffix-role-mapper-table" title="Add Suffix Role Mapper"
                            form-ref="mappers-decoders-add-suffix-role-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-add-suffix-role-mapper-form" title="Add Suffix Role Mapper"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -79,21 +79,21 @@
 
                 <metadata address="/{selected.profile}/subsystem=elytron/aggregate-role-mapper=*">
                     <h1>Aggregate Role Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-aggregate-role-mapper-table" title="Aggregate Role Mapper"
                            form-ref="mappers-decoders-aggregate-role-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-aggregate-role-mapper-form" title="Aggregate Role Mapper"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -104,21 +104,21 @@
 
                 <metadata address="/{selected.profile}/subsystem=elytron/constant-role-mapper=*">
                     <h1>Constant Role Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-constant-role-mapper-table" title="Constant Role Mapper"
                            form-ref="mappers-decoders-constant-role-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-constant-role-mapper-form" title="Constant Role Mapper"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -129,21 +129,21 @@
 
                 <metadata address="/{selected.profile}/subsystem=elytron/custom-role-mapper=*">
                     <h1>Custom Role Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-custom-role-mapper-table" title="Custom Role Mapper"
                            form-ref="mappers-decoders-custom-role-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-custom-role-mapper-form" title="Custom Role Mapper"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -154,21 +154,21 @@
 
                 <metadata address="/{selected.profile}/subsystem=elytron/logical-role-mapper=*">
                     <h1>Logical Role Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-logical-role-mapper-table" title="Logical Role Mapper"
                            form-ref="mappers-decoders-logical-role-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-logical-role-mapper-form" title="Logical Role Mapper"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -187,20 +187,20 @@
             <sub-item id="mappers-decoders-custom-permission-mapper-item" title="Custom Permission Mapper">
                 <metadata address="/{selected.profile}/subsystem=elytron/custom-permission-mapper=*">
                     <h1>Custom Permission Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-custom-permission-mapper-table" title="Custom Permission Mapper"
                            form-ref="mappers-decoders-custom-permission-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-custom-permission-mapper-form" title="Custom Permission Mapper" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -209,20 +209,20 @@
             <sub-item id="mappers-decoders-logical-permission-mapper-item" title="Logical Permission Mapper">
                 <metadata address="/{selected.profile}/subsystem=elytron/logical-permission-mapper=*">
                     <h1>Logical Permission Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-logical-permission-mapper-table" title="Logical Permission Mapper"
                            form-ref="mappers-decoders-logical-permission-mapper-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-logical-permission-mapper-form" title="Logical Permission Mapper" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -239,21 +239,21 @@
             <sub-item id="mappers-decoders-aggregate-principal-decoder-item" title="Aggregate Principal Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/aggregate-principal-decoder=*">
                     <h1>Aggregate Principal Decoder</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-aggregate-principal-decoder-table" title="Aggregate Principal Decoder"
                            form-ref="mappers-decoders-aggregate-principal-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-aggregate-principal-decoder-form" title="Aggregate Principal Decoder"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -262,21 +262,21 @@
             <sub-item id="mappers-decoders-concatenating-principal-decoder-item" title="Concatenating Principal Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/concatenating-principal-decoder=*">
                     <h1>Concatenating Principal Decoder</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-concatenating-principal-decoder-table" title="Concatenating Principal Decoder"
                            form-ref="mappers-decoders-concatenating-principal-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-concatenating-principal-decoder-form" title="Concatenating Principal Decoder"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -285,21 +285,21 @@
             <sub-item id="mappers-decoders-constant-principal-decoder-item" title="Constant Principal Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/constant-principal-decoder=*">
                     <h1>Constant Principal Decoder</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-constant-principal-decoder-table" title="Constant Principal Decoder"
                            form-ref="mappers-decoders-constant-principal-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-constant-principal-decoder-form" title="Constant Principal Decoder"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -308,21 +308,21 @@
             <sub-item id="mappers-decoders-custom-principal-decoder-item" title="Custom Principal Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/custom-principal-decoder=*">
                     <h1>Custom Principal Decoder</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-custom-principal-decoder-table" title="Custom Principal Decoder"
                            form-ref="mappers-decoders-custom-principal-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-custom-principal-decoder-form" title="Custom Principal Decoder"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -331,21 +331,21 @@
             <sub-item id="mappers-decoders-x500-attribute-principal-decoder-item" title="X500 Attribute Principal Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/x500-attribute-principal-decoder=*">
                     <h1>X500 Attribute Principal Decoder</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-x500-attribute-principal-decoder-table" title="X500 Attribute Principal Decoder"
                            form-ref="mappers-decoders-x500-attribute-principal-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-x500-attribute-principal-decoder-form" title="X500 Attribute Principal Decoder"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -362,21 +362,21 @@
             <sub-item id="mappers-decoders-custom-role-decoder-item" title="Custom Role Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/custom-role-decoder=*">
                     <h1>Custom Role Decoder</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-custom-role-decoder-table" title="Custom Role Decoder"
                            form-ref="mappers-decoders-custom-role-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-custom-role-decoder-form" title="Custom Role Decoder"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>
@@ -385,21 +385,21 @@
             <sub-item id="mappers-decoders-simple-role-decoder-item" title="Simple Role Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/simple-role-decoder=*">
                     <h1>Simple Role Decoder</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="mappers-decoders-simple-role-decoder-table" title="Simple Role Decoder"
                            form-ref="mappers-decoders-simple-role-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="mappers-decoders-simple-role-decoder-form" title="Simple Role Decoder"
                           auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                          name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
                     </form>

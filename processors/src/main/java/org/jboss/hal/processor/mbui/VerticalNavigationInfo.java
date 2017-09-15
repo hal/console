@@ -39,7 +39,7 @@ public class VerticalNavigationInfo extends MbuiElementInfo {
         Item(final String id, final String title, final String icon) {
             this.id = id;
             this.name = LOWER_HYPHEN.to(LOWER_CAMEL, id);
-            this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+            this.title = ExpressionParser.templateSafeValue(title); // title can be a simple value or an expression
             this.icon = icon;
             this.content = new ArrayList<>();
             this.subItems = new ArrayList<>();

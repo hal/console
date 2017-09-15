@@ -52,7 +52,7 @@ public final class ${context.subclass} extends ${context.base} {
     <#list context.metadataInfos as metadataInfo>
     private final Metadata ${metadataInfo.name};
     </#list>
-    private final Map<String, HTMLElement> handlebarElements;
+    private final Map<String, HTMLElement> expressionElements;
 
     @Inject
     @SuppressWarnings("unchecked")
@@ -66,7 +66,7 @@ public final class ${context.subclass} extends ${context.base} {
         AddressTemplate ${metadataInfo.name}Template = AddressTemplate.of("${metadataInfo.template}");
         this.${metadataInfo.name} = mbuiContext.metadataRegistry().lookup(${metadataInfo.name}Template);
         </#list>
-        this.handlebarElements = new HashMap<>();
+        this.expressionElements = new HashMap<>();
 
         <#list context.forms as form>
             <#if form.groups?has_content>
@@ -309,7 +309,7 @@ public final class ${context.subclass} extends ${context.base} {
                     </#list>
             .asElement();
                     <#list primaryItem.htmlContent as htmlContent>
-        handlebarElements.put("${htmlContent.name}", ${htmlContent.name});
+        expressionElements.put("${htmlContent.name}", ${htmlContent.name});
                     </#list>
         ${context.verticalNavigation.name}.addPrimary("${primaryItem.id}", ${primaryItem.title}<#if primaryItem.icon??>, "${primaryItem.icon}"</#if>, ${primaryItem.name}Element);
                 <#elseif primaryItem.subItems?has_content>
@@ -331,7 +331,7 @@ public final class ${context.subclass} extends ${context.base} {
                             </#list>
             .asElement();
                             <#list subItem.htmlContent as htmlContent>
-        handlebarElements.put("${htmlContent.name}", ${htmlContent.name});
+        expressionElements.put("${htmlContent.name}", ${htmlContent.name});
                             </#list>
         ${context.verticalNavigation.name}.addSecondary("${primaryItem.id}", "${subItem.id}", ${subItem.title}, ${subItem.name}Element);
                         </#if>
@@ -360,7 +360,7 @@ public final class ${context.subclass} extends ${context.base} {
                 </#list>)
             .asElement();
                 <#list context.htmlContent as htmlContent>
-        handlebarElements.put("${htmlContent.name}", ${htmlContent.name});
+        expressionElements.put("${htmlContent.name}", ${htmlContent.name});
                 </#list>
             <#else>
         HTMLElement root = row()
@@ -407,7 +407,7 @@ public final class ${context.subclass} extends ${context.base} {
                 <#list primaryItem.content as content>
                     <#if content.html??>
                         <#list content.handlebars?keys as handlebar>
-        TemplateUtil.replaceHandlebar(handlebarElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+        TemplateUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
                         </#list>
                     </#if>
                 </#list>
@@ -415,7 +415,7 @@ public final class ${context.subclass} extends ${context.base} {
                     <#list subItem.content as content>
                         <#if content.html??>
                             <#list content.handlebars?keys as handlebar>
-        TemplateUtil.replaceHandlebar(handlebarElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+        TemplateUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
                             </#list>
                         </#if>
                     </#list>
@@ -425,7 +425,7 @@ public final class ${context.subclass} extends ${context.base} {
             <#list context.content as content>
                 <#if content.html??>
                     <#list content.handlebars?keys as handlebar>
-        TemplateUtil.replaceHandlebar(handlebarElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+        TemplateUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
                     </#list>
                 </#if>
             </#list>

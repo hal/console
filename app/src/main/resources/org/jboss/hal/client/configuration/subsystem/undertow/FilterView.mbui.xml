@@ -21,25 +21,25 @@
         <item id="undertow-custom-filter-item" title="Custom Filter" icon="fa fa-file-o">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/custom-filter=*">
                 <h1>Custom Filter</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-custom-filter-table" title="Custom Filter" form-ref="undertow-custom-filter-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="undertow-custom-filter-form" title="Custom Filter" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="class-name"/>
                         <attribute name="module"/>
                         <attribute name="parameters"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -48,25 +48,25 @@
         <item id="undertow-error-page-item" title="Error Page" icon="fa fa-bug">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/error-page=*">
                 <h1>Error Page</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-error-page-table" title="Error Page" form-ref="undertow-error-page-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="code"/>
                     </columns>
                 </table>
                 <form id="undertow-error-page-form" title="Error Page" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="code"/>
                         <attribute name="path"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -75,26 +75,26 @@
         <item id="undertow-expression-filter-item" title="Expression Filter" icon="fa fa-terminal">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/expression-filter=*">
                 <h1>Expression Filter</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-expression-filter-table" title="Expression Filter"
                        form-ref="undertow-expression-filter-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="expression"/>
                     </columns>
                 </table>
                 <form id="undertow-expression-filter-form" title="Expression Filter" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="expression"/>
                         <attribute name="module"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -103,21 +103,21 @@
         <item id="undertow-gzip-item" title="GZip" icon="fa fa-archive">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/gzip=*">
                 <h1>GZip</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-gzip-table" title="GZip">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
-                <form id="undertow-gzip-form" title="GZip" on-save="{{noop()}}" reset="{{noop()}}">
+                <form id="undertow-gzip-form" title="GZip" on-save="${noop()}" reset="${noop()}">
                     <attributes>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -126,20 +126,20 @@
         <item id="undertow-mod-cluster-item" title="Mod Cluster Filter" icon="pficon pficon-cluster">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/mod-cluster=*">
                 <h1>Mod Cluster</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-mod-cluster-table" title="Mod Cluster" form-ref="undertow-mod-cluster-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="management-socket-binding"/>
                     </columns>
                 </table>
                 <form id="undertow-mod-cluster-form" title="Mod Cluster" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <!-- TODO Add attributes groups. Add suggest handler for socket bindings and worker -->
                         <attribute name="advertise-frequency"/>
@@ -170,7 +170,7 @@
                         <attribute name="use-alias"/>
                         <attribute name="worker"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -179,25 +179,25 @@
         <item id="undertow-request-limit-item" title="Request Limit" icon="fa fa-ban">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/request-limit=*">
                 <h1>Request Limit</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-request-limit-table" title="Request Limit" form-ref="undertow-request-limit-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="max-concurrent-requests"/>
                     </columns>
                 </table>
                 <form id="undertow-request-limit-form" title="Request Limit" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="max-concurrent-requests"/>
                         <attribute name="queue-size"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -206,29 +206,29 @@
         <item id="undertow-response-header-item" title="Response Header" icon="fa fa-exchange">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/response-header=*">
                 <h1>Response Header</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-response-header-table" title="Response Header"
                        form-ref="undertow-response-header-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addResponseHeader()}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeResponseHeader(table.selectedRow())}}" scope="selected"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addResponseHeader()}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.removeResponseHeader(table.selectedRow())}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value='{{row.get("header-name").asString()}}'/>
-                        <column name="value" value='{{row.get("header-value").asString()}}'/>
+                        <column name="name" value='${row.get("header-name").asString()}'/>
+                        <column name="value" value='${row.get("header-value").asString()}'/>
                     </columns>
                 </table>
                 <form id="undertow-response-header-form" title="Response Header"
-                      on-save="{{presenter.saveResponseHeader(form, changedValues)}}"
-                      prepare-reset="{{presenter.resetResponseHeader(form)}}">
+                      on-save="${presenter.saveResponseHeader(form, changedValues)}"
+                      prepare-reset="${presenter.resetResponseHeader(form)}">
                     <attributes>
                         <attribute name="header-name"/>
                         <attribute name="header-value"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -237,25 +237,25 @@
         <item id="undertow-rewrite-item" title="Rewrite" icon="fa fa-refresh">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/rewrite=*">
                 <h1>Rewrite</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-rewrite-table" title="Rewrite" form-ref="undertow-rewrite-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="target"/>
                     </columns>
                 </table>
                 <form id="undertow-rewrite-form" title="Rewrite" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="redirect"/>
                         <attribute name="target"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}'/>
                     </attributes>
                 </form>
             </metadata>

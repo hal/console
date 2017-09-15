@@ -23,9 +23,9 @@
         <item id="logging-profile-root-logger-item" title="Root Logger" icon="fa fa-sitemap">
             <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/root-logger=ROOT">
                 <h1 id="logging-profile-root-logger-header">Root Logger</h1>
-                <p id="logging-profile-root-logger-description">{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-profile-root-logger-form" on-save="{{saveRootLogger(form, changedValues)}}"
-                      prepare-reset="{{resetRootLogger(form)}}">
+                <p id="logging-profile-root-logger-description">${metadata.getDescription().getDescription()}</p>
+                <form id="logging-profile-root-logger-form" on-save="${saveRootLogger(form, changedValues)}"
+                      prepare-reset="${resetRootLogger(form)}">
                     <attributes>
                         <attribute name="level"/>
                         <attribute name="handlers"/>
@@ -42,13 +42,13 @@
         <item id="logging-profile-categories-item" title="Categories" icon="pficon pficon-repository">
             <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/logger=*">
                 <h1>Categories</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="logging-profile-categories-table" title="Category"
                        form-ref="logging-profile-categories-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addLogger()}}"
+                        <action title="${mbuiContext.resources().constants().add()}" handler="${addLogger()}"
                                 constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}" handler="{{removeLogger(table)}}"
+                        <action title="${mbuiContext.resources().constants().remove()}" handler="${removeLogger(table)}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -56,8 +56,8 @@
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-profile-categories-form" on-save="{{saveLogger(form, changedValues)}}"
-                      prepare-reset="{{resetLogger(form)}}">
+                <form id="logging-profile-categories-form" on-save="${saveLogger(form, changedValues)}"
+                      prepare-reset="${resetLogger(form)}">
                     <attributes>
                         <attribute name="category"/>
                         <attribute name="level"/>
@@ -77,13 +77,13 @@
             <sub-item id="logging-profile-handler-console-item" title="Console Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*">
                     <h1>Console Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-console-table" form-ref="logging-profile-handler-console-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addConsoleHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeConsoleHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addConsoleHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeConsoleHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -92,8 +92,8 @@
                         </columns>
                     </table>
                     <form id="logging-profile-handler-console-form"
-                          on-save="{{saveConsoleHandler(form, changedValues)}}"
-                          prepare-reset="{{resetConsoleHandler(form)}}">
+                          on-save="${saveConsoleHandler(form, changedValues)}"
+                          prepare-reset="${resetConsoleHandler(form)}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="target"/>
@@ -124,24 +124,24 @@
             <sub-item id="logging-profile-handler-file-item" title="File Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*">
                     <h1>File Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-file-table" form-ref="logging-profile-handler-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addFileHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeFileHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addFileHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeFileHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
-                            <column name="file" value="{{Logging.getFilename(row)}}"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-file-form" on-save="{{saveFileHandler(form, changedValues)}}"
-                          prepare-reset="{{resetFileHandler(form)}}">
+                    <form id="logging-profile-handler-file-form" on-save="${saveFileHandler(form, changedValues)}"
+                          prepare-reset="${resetFileHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="{{new FileFormItem()}}"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
@@ -172,26 +172,26 @@
                 <metadata
                         address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*">
                     <h1>Periodic Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-periodic-rotating-file-table"
                            form-ref="logging-profile-handler-periodic-rotating-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addPeriodicHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removePeriodicHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addPeriodicHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removePeriodicHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
-                            <column name="file" value="{{Logging.getFilename(row)}}"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
                         </columns>
                     </table>
                     <form id="logging-profile-handler-periodic-rotating-file-form"
-                          on-save="{{savePeriodicHandler(form, changedValues)}}"
-                          prepare-reset="{{resetPeriodicHandler(form)}}">
+                          on-save="${savePeriodicHandler(form, changedValues)}"
+                          prepare-reset="${resetPeriodicHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="{{new FileFormItem()}}"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
@@ -223,26 +223,26 @@
                 <metadata
                         address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*">
                     <h1>Periodic Size Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-periodic-size-rotating-file-table"
                            form-ref="logging-profile-handler-periodic-size-rotating-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addPeriodicSizeHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removePeriodicSizeHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addPeriodicSizeHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removePeriodicSizeHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
-                            <column name="file" value="{{Logging.getFilename(row)}}"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
                         </columns>
                     </table>
                     <form id="logging-profile-handler-periodic-size-rotating-file-form"
-                          on-save="{{savePeriodicSizeHandler(form, changedValues)}}"
-                          prepare-reset="{{resetPeriodicSizeHandler(form)}}">
+                          on-save="${savePeriodicSizeHandler(form, changedValues)}"
+                          prepare-reset="${resetPeriodicSizeHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="{{new FileFormItem()}}"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>
@@ -277,25 +277,25 @@
                 <metadata
                         address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*">
                     <h1>Size Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-size-rotating-file-table"
                            form-ref="logging-profile-handler-size-rotating-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addSizeHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeSizeHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addSizeHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeSizeHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
-                            <column name="file" value="{{Logging.getFilename(row)}}"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
                         </columns>
                     </table>
                     <form id="logging-profile-handler-size-rotating-file-form"
-                          on-save="{{saveSizeHandler(form, changedValues)}}" prepare-reset="{{resetSizeHandler(form)}}">
+                          on-save="${saveSizeHandler(form, changedValues)}" prepare-reset="${resetSizeHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="{{new FileFormItem()}}"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>
@@ -329,21 +329,21 @@
             <sub-item id="logging-profile-handler-async-item" title="Async Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*">
                     <h1>Async Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-async-table" form-ref="logging-profile-handler-async-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addAsyncHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeAsyncHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addAsyncHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeAsyncHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-async-form" on-save="{{saveAsyncHandler(form, changedValues)}}"
-                          prepare-reset="{{resetAsyncHandler(form)}}">
+                    <form id="logging-profile-handler-async-form" on-save="${saveAsyncHandler(form, changedValues)}"
+                          prepare-reset="${resetAsyncHandler(form)}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="subhandlers">
@@ -376,21 +376,21 @@
             <sub-item id="logging-profile-handler-custom-item" title="Custom Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*">
                     <h1>Custom Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-custom-table" form-ref="logging-profile-handler-custom-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addCustomHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeCustomHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addCustomHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeCustomHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-custom-form" on-save="{{saveCustomHandler(form, changedValues)}}"
-                          prepare-reset="{{resetCustomHandler(form)}}">
+                    <form id="logging-profile-handler-custom-form" on-save="${saveCustomHandler(form, changedValues)}"
+                          prepare-reset="${resetCustomHandler(form)}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="module"/>
@@ -422,23 +422,23 @@
             <sub-item id="logging-profile-handler-syslog-item" title="Syslog Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*">
                     <h1>Syslog Handler</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-handler-syslog-table" form-ref="logging-profile-handler-syslog-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addSyslogHandler()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeSyslogHandler(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addSyslogHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeSyslogHandler(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <!-- syslog handlers don't have a name attribute,
                             so we need to provide a value using NamedNode.getName() -->
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-syslog-form" on-save="{{saveSyslogHandler(form, changedValues)}}"
-                          prepare-reset="{{resetSyslogHandler(form)}}">
+                    <form id="logging-profile-handler-syslog-form" on-save="${saveSyslogHandler(form, changedValues)}"
+                          prepare-reset="${resetSyslogHandler(form)}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="syslog-format"/>
@@ -462,25 +462,25 @@
             <sub-item id="logging-profile-formatter-pattern-item" title="Pattern Formatter">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*">
                     <h1>Pattern Formatter</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-formatter-pattern-table"
                            form-ref="logging-profile-formatter-pattern-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addPatternFormatter()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removePatternFormatter(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addPatternFormatter()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removePatternFormatter(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <!-- log formatter don't have a name attribute,
                             so we need to provide a value using NamedNode.getName() -->
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                             <column name="pattern"/>
                         </columns>
                     </table>
                     <form id="logging-profile-formatter-pattern-form"
-                          on-save="{{savePatternFormatter(form, changedValues)}}"
-                          prepare-reset="{{resetPatternFormatter(form)}}">
+                          on-save="${savePatternFormatter(form, changedValues)}"
+                          prepare-reset="${resetPatternFormatter(form)}">
                         <attributes>
                             <attribute name="color-map"/>
                             <attribute name="pattern"/>
@@ -496,23 +496,23 @@
             <sub-item id="logging-profile-formatter-custom-item" title="Custom Formatter">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*">
                     <h1>Custom Formatter</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="logging-profile-formatter-custom-table" form-ref="logging-profile-formatter-custom-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addCustomFormatter()}}" constraint="add"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeCustomFormatter(table)}}" scope="selected" constraint="remove"/>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addCustomFormatter()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeCustomFormatter(table)}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <!-- custom formatter don't have a name attribute,
                             so we need to provide a value using NamedNode.getName() -->
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="logging-profile-formatter-custom-form"
-                          on-save="{{saveCustomFormatter(form, changedValues)}}"
-                          prepare-reset="{{resetCustomFormatter(form)}}">
+                          on-save="${saveCustomFormatter(form, changedValues)}"
+                          prepare-reset="${resetCustomFormatter(form)}">
                         <attributes>
                             <attribute name="class"/>
                             <attribute name="module"/>

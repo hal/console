@@ -67,12 +67,12 @@ public class DataTableInfo extends MbuiElementInfo {
 
         public Action(final String handler, final String title, final String scope, final String constraint,
                 final String nameResolver) {
-            this.handler = Handlebars.stripHandlebar(handler);
+            this.handler = ExpressionParser.stripExpression(handler);
             this.handlerRef = HandlerRef.referenceFor(handler);
-            this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+            this.title = ExpressionParser.templateSafeValue(title); // title can be a simple value or an expression
             this.scope = scope != null ? Scope.fromSelector(scope) : null;
             this.constraint = constraint;
-            this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
+            this.nameResolver = ExpressionParser.stripExpression(nameResolver); // name resolver has to be an expression
             this.attributes = new ArrayList<>();
         }
 
@@ -160,7 +160,7 @@ public class DataTableInfo extends MbuiElementInfo {
 
         Column(final String name, final String value) {
             this.name = name;
-            this.value = Handlebars.stripHandlebar(value); // value has to be an expression
+            this.value = ExpressionParser.stripExpression(value); // value has to be an expression
         }
 
         public String getName() {
@@ -185,7 +185,7 @@ public class DataTableInfo extends MbuiElementInfo {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
-        this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+        this.title = ExpressionParser.templateSafeValue(title); // title can be a simple value or an expression
         this.columns = new ArrayList<>();
         this.actions = new ArrayList<>();
     }

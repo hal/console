@@ -18,29 +18,29 @@
 <view>
     <metadata address="/path=*">
         <h1>Paths</h1>
-        <p>{{metadata.getDescription().getDescription()}}</p>
+        <p>${metadata.getDescription().getDescription()}</p>
         <table id="path-table" form-ref="path-form">
             <actions>
                 <action handler-ref="add-resource">
                     <attributes>
                         <attribute name="name"
-                                   validation-handler='{{new org.jboss.hal.ballroom.form.BlacklistValidation("jboss.home", "user.home", "user.dir", "java.home", "jboss.server.base.dir")}}'/>
+                                   validation-handler='${new org.jboss.hal.ballroom.form.BlacklistValidation("jboss.home", "user.home", "user.dir", "java.home", "jboss.server.base.dir")}'/>
                         <attribute name="path"/>
-                        <attribute name="relative-to" suggest-handler="{{new PathsAutoComplete()}}"/>
+                        <attribute name="relative-to" suggest-handler="${new PathsAutoComplete()}"/>
                     </attributes>
                 </action>
-                <action handler-ref="remove-resource" scope="selected" name-resolver="{{table.selectedRow().getName()}}"/>
+                <action handler-ref="remove-resource" scope="selected" name-resolver="${table.selectedRow().getName()}"/>
             </actions>
             <columns>
                 <column name="name"/>
                 <column name="path"/>
             </columns>
         </table>
-        <form id="path-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}">
+        <form id="path-form" auto-save="true" reset="true" name-resolver="${form.getModel().getName()}">
             <attributes>
                 <attribute name="name"/>
                 <attribute name="path"/>
-                <attribute name="relative-to" suggest-handler="{{new PathsAutoComplete()}}"/>
+                <attribute name="relative-to" suggest-handler="${new PathsAutoComplete()}"/>
             </attributes>
         </form>
     </metadata>

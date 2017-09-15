@@ -20,10 +20,10 @@
         <item id="security-domain-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=security/security-domain=*">
                 <h1>Configuration</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <form id="security-domain-configuration-form" title="Configuration"
-                      on-save="{{presenter.saveSecurityDomain(changedValues)}}"
-                      prepare-reset="{{presenter.resetSecurityDomain(form)}}"/>
+                      on-save="${presenter.saveSecurityDomain(changedValues)}"
+                      prepare-reset="${presenter.resetSecurityDomain(form)}"/>
             </metadata>
         </item>
 
@@ -31,23 +31,23 @@
             <metadata
                     address="/{selected.profile}/subsystem=security/security-domain=*/authentication=classic/login-module=*">
                 <h1>Authentication Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="security-domain-authentication-table" title="Authentication Module"
                        form-ref="security-domain-authentication-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addClassicAuthenticationModule()}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(table, Module.AUTHENTICATION)}}" scope="selected"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addClassicAuthenticationModule()}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.removeModule(table, Module.AUTHENTICATION)}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="security-domain-authentication-form" title="Authentication Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHENTICATION)}}"
-                      prepare-reset="{{presenter.resetModule(form, Module.AUTHENTICATION)}}"/>
+                      on-save="${presenter.saveModule(form, changedValues, Module.AUTHENTICATION)}"
+                      prepare-reset="${presenter.resetModule(form, Module.AUTHENTICATION)}"/>
             </metadata>
         </item>
 
@@ -55,23 +55,23 @@
             <metadata
                     address="/{selected.profile}/subsystem=security/security-domain=*/authorization=classic/policy-module=*">
                 <h1>Authorization Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="security-domain-authorization-table" title="Authorization Module"
                        form-ref="security-domain-authorization-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.AUTHORIZATION)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(table, Module.AUTHORIZATION)}}" scope="selected"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addModule(Module.AUTHORIZATION)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.removeModule(table, Module.AUTHORIZATION)}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="security-domain-authorization-form" title="Authorization Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHORIZATION)}}"
-                      prepare-reset="{{presenter.resetModule(form, Module.AUTHORIZATION)}}"/>
+                      on-save="${presenter.saveModule(form, changedValues, Module.AUTHORIZATION)}"
+                      prepare-reset="${presenter.resetModule(form, Module.AUTHORIZATION)}"/>
             </metadata>
         </item>
 
@@ -79,46 +79,46 @@
             <metadata
                     address="/{selected.profile}/subsystem=security/security-domain=*/audit=classic/provider-module=*">
                 <h1>Audit Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="security-domain-audit-table" title="Provider Module"
                        form-ref="security-domain-audit-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.AUDIT)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(table, Module.AUDIT)}}" scope="selected"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addModule(Module.AUDIT)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.removeModule(table, Module.AUDIT)}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="security-domain-audit-form" title="Audit Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.AUDIT)}}"
-                      prepare-reset="{{presenter.resetModule(form, Module.AUDIT)}}"/>
+                      on-save="${presenter.saveModule(form, changedValues, Module.AUDIT)}"
+                      prepare-reset="${presenter.resetModule(form, Module.AUDIT)}"/>
             </metadata>
         </item>
 
         <item id="security-domain-acl-item" title="ACL" icon="fa fa-lock">
             <metadata address="/{selected.profile}/subsystem=security/security-domain=*/acl=classic/acl-module=*">
                 <h1>ACL Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="security-domain-acl-table" title="ACL Module"
                        form-ref="security-domain-acl-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.ACL)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(table, Module.ACL)}}" scope="selected"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addModule(Module.ACL)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.removeModule(table, Module.ACL)}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="security-domain-acl-form" title="ACL Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.ACL)}}"
-                      prepare-reset="{{presenter.resetModule(form, Module.ACL)}}"/>
+                      on-save="${presenter.saveModule(form, changedValues, Module.ACL)}"
+                      prepare-reset="${presenter.resetModule(form, Module.ACL)}"/>
             </metadata>
         </item>
 
@@ -126,23 +126,23 @@
             <metadata
                     address="/{selected.profile}/subsystem=security/security-domain=*/mapping=classic/mapping-module=*">
                 <h1>Mapping Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="security-domain-mapping-table" title="Mapping Module"
                        form-ref="security-domain-mapping-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.MAPPING)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(table, Module.MAPPING)}}" scope="selected"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addModule(Module.MAPPING)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.removeModule(table, Module.MAPPING)}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="security-domain-mapping-form" title="Mapping Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.MAPPING)}}"
-                      prepare-reset="{{presenter.resetModule(form, Module.MAPPING)}}"/>
+                      on-save="${presenter.saveModule(form, changedValues, Module.MAPPING)}"
+                      prepare-reset="${presenter.resetModule(form, Module.MAPPING)}"/>
             </metadata>
         </item>
 
@@ -150,23 +150,23 @@
             <metadata
                     address="/{selected.profile}/subsystem=security/security-domain=*/identity-trust=classic/trust-module=*">
                 <h1>Trust Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="security-domain-trust-table" title="Trust Module"
                        form-ref="security-domain-trust-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.TRUST)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(table, Module.TRUST)}}" scope="selected"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addModule(Module.TRUST)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.removeModule(table, Module.TRUST)}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="security-domain-trust-form" title="Trust Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.TRUST)}}"
-                      prepare-reset="{{presenter.resetModule(form, Module.TRUST)}}"/>
+                      on-save="${presenter.saveModule(form, changedValues, Module.TRUST)}"
+                      prepare-reset="${presenter.resetModule(form, Module.TRUST)}"/>
             </metadata>
         </item>
     </vertical-navigation>

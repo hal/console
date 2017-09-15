@@ -43,7 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 public final class Mbui_FormItemProviderView extends FormItemProviderView {
 
     private final Metadata metadata0;
-    private final Map<String, HTMLElement> handlebarElements;
+    private final Map<String, HTMLElement> expressionElements;
 
     @Inject
     @SuppressWarnings("unchecked")
@@ -52,7 +52,7 @@ public final class Mbui_FormItemProviderView extends FormItemProviderView {
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
-        this.handlebarElements = new HashMap<>();
+        this.expressionElements = new HashMap<>();
 
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .include("foo")
@@ -71,7 +71,7 @@ public final class Mbui_FormItemProviderView extends FormItemProviderView {
                         .add(form)
                 )
                 .asElement();
-        handlebarElements.put("html0", html0);
+        expressionElements.put("html0", html0);
 
         registerAttachable(form);
 

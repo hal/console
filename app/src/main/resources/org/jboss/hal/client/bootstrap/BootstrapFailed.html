@@ -52,14 +52,14 @@
                                 <code>add-user.sh</code> script within the bin folder of your installation and enter the requested information.
                             </p>
                         </li>
-                        <li data-element="allowedOriginServer"><p>Check that the management endpoint at <a href="{{endpoints().dmr()}}" target="_blank">{{endpoints().dmr()}}</a> is available.</p></li>
-                        <li data-element="allowedOriginConfig"><p>Make sure you've added {{org.jboss.hal.config.Endpoints.getBaseUrl()}} as <strong>allowed origin</strong> and reload the server. Use one of of the following CLI commands to add allowed origins:</p>
+                        <li data-element="allowedOriginServer"><p>Check that the management endpoint at <a href="${endpoints().dmr()}}" target="_blank">{{endpoints().dmr()}</a> is available.</p></li>
+                        <li data-element="allowedOriginConfig"><p>Make sure you've added ${org.jboss.hal.config.Endpoints.getBaseUrl()} as <strong>allowed origin</strong> and reload the server. Use one of of the following CLI commands to add allowed origins:</p>
                             <ul>
                                 <li><p>Standalone:</p>
-                                    <pre>/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value={{org.jboss.hal.config.Endpoints.getBaseUrl()}}</pre>
+                                    <pre>/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=${org.jboss.hal.config.Endpoints.getBaseUrl()}</pre>
                                 </li>
                                 <li><p>Domain:</p>
-                                    <pre>/host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value={{org.jboss.hal.config.Endpoints.getBaseUrl()}}</pre>
+                                    <pre>/host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=${org.jboss.hal.config.Endpoints.getBaseUrl()}</pre>
                                 </li>
                             </ul>
                         </li>

@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-final class Handlebars {
+final class ExpressionParser {
 
-    private final static Pattern PATTERN = Pattern.compile("\\{\\{(.*?)\\}\\}");
+    private final static Pattern PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
 
-    private Handlebars() {}
+    private ExpressionParser() {}
 
     static Map<String, String> parse(String input) {
         if (input != null) {
@@ -34,7 +34,7 @@ final class Handlebars {
             while (matcher.find()) {
                 String match = matcher.group();
                 validate(match);
-                matches.put(match, stripHandlebar(match));
+                matches.put(match, stripExpression(match));
             }
             return matches;
         }
@@ -44,22 +44,22 @@ final class Handlebars {
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private static void validate(final String pattern) {
         if (!isExpression(pattern)) {
-            throw new IllegalArgumentException("Invalid handlebar pattern: " + pattern);
+            throw new IllegalArgumentException("Invalid expression: " + pattern);
         }
-        if (pattern.lastIndexOf("{{") != 0 || pattern.indexOf("}}") != pattern.length() - 2) {
-            throw new IllegalArgumentException("Invalid handlebar pattern: " + pattern);
+        if (pattern.lastIndexOf("${") != 0 || pattern.indexOf("}") != pattern.length() - 1) {
+            throw new IllegalArgumentException("Invalid expression: " + pattern);
         }
     }
 
 
     static boolean isExpression(String value) {
-        return value != null && value.startsWith("{{") && value.endsWith("}}");
+        return value != null && value.startsWith("${") && value.endsWith("}");
     }
 
-    static String stripHandlebar(String pattern) {
+    static String stripExpression(String pattern) {
         if (isExpression(pattern)) {
-            int start = "{{".length();
-            int end = pattern.length() - "}}".length();
+            int start = "${".length();
+            int end = pattern.length() - "}".length();
             return pattern.substring(start, end);
         }
         return pattern;
@@ -67,7 +67,7 @@ final class Handlebars {
 
     static String templateSafeValue(final String value) {
         if (value != null) {
-            return isExpression(value) ? stripHandlebar(value) : "\"" + value + "\"";
+            return isExpression(value) ? stripExpression(value) : "\"" + value + "\"";
         }
         return null;
     }

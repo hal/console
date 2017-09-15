@@ -94,7 +94,7 @@ public class Content {
         this.reference = reference;
         this.name = "html" + counter; //NON-NLS
         this.html = html;
-        this.handlebars = Handlebars.parse(html);
+        this.handlebars = ExpressionParser.parse(html);
         counter++;
     }
 

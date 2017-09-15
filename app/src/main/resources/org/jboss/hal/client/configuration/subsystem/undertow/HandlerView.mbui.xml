@@ -21,20 +21,20 @@
         <item id="undertow-file-handler-item" title="File Handler" icon="fa fa-file-text-o">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=handler/file=*">
                 <h1>File Handler</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-file-handler-table" title="File Handler" form-ref="undertow-file-handler-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="path"/>
                     </columns>
                 </table>
                 <form id="undertow-file-handler-form" title="File Handler" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="cache-buffer-size"/>
                         <attribute name="cache-buffers"/>
@@ -44,7 +44,7 @@
                         <attribute name="path"/>
                         <attribute name="safe-symlink-paths"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisHandler())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisHandler())}'/>
                     </attributes>
                 </form>
             </metadata>
@@ -53,19 +53,19 @@
         <item id="undertow-reverse-proxy-item" title="Reverse Proxy" icon="fa fa-undo">
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=handler/reverse-proxy=*">
                 <h1>Reverse Proxy</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="undertow-reverse-proxy-table" title="Reverse Proxy" form-ref="undertow-reverse-proxy-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="undertow-reverse-proxy-form" title="Reverse Proxy" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="cached-connections-per-thread"/>
                         <attribute name="connection-idle-timeout"/>
@@ -76,7 +76,7 @@
                         <attribute name="request-queue-size"/>
                         <attribute name="session-cookie-names"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisHandler())}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisHandler())}'/>
                     </attributes>
                 </form>
             </metadata>

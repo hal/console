@@ -18,6 +18,6 @@
 <view>
     <metadata address="/subsystem=foo">
         <h1>Form</h1>
-        <form id="form" title="Form" auto-save="true" prepare-reset="{{presenter.resetForm(form)}}"/>
+        <form id="form" title="Form" auto-save="true" prepare-reset="${presenter.resetForm(form)}"/>
     </metadata>
 </view>

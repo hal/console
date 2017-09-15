@@ -18,7 +18,7 @@
 <view>
     <metadata address="/{selected.profile}/subsystem=elytron">
         <h1>Elytron Configuration</h1>
-        <p>{{metadata.getDescription().getDescription()}}</p>
+        <p>${metadata.getDescription().getDescription()}</p>
         <form id="elytron-global-settings-form" title="Elytron Configuration" auto-save="true">
 
         </form>

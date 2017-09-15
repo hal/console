@@ -20,9 +20,9 @@
         <item id="host-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.host}">
                 <h1 id="host-configuration-title"/>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <form id="host-configuration-form" title="Host Configuration"
-                      on-save="{{presenter.saveHost(form, changedValues)}}" reset="true" include-runtime="true">
+                      on-save="${presenter.saveHost(form, changedValues)}" reset="true" include-runtime="true">
                     <attributes>
                         <attribute name="name"/>
                         <attribute name="organization"/>
@@ -46,95 +46,95 @@
         <item id="host-interface-item" title="Interfaces" icon="fa fa-exchange">
             <metadata address="/{selected.host}/interface=*">
                 <h1>Interfaces</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="host-interface-table" form-ref="host-interface-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
                         <column name="name"/>
                     </columns>
                 </table>
                 <form id="host-interface-form" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
 
         <item id="host-jvm-item" title="JVMs" icon="fa fa-coffee">
             <metadata address="/{selected.host}/jvm=*">
                 <h1>JVMs</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="host-jvm-table" form-ref="host-jvm-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
-                <form id="host-jvm-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="host-jvm-form" auto-save="true" reset="true" name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
 
         <item id="host-path-item" title="Paths" icon="fa fa-folder-open">
             <metadata address="/{selected.host}/path=*">
                 <h1>Paths</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="host-path-table" form-ref="host-path-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
                         <column name="name"/>
                         <column name="path"/>
                     </columns>
                 </table>
-                <form id="host-path-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="host-path-form" auto-save="true" reset="true" name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
 
         <item id="host-socket-binding-group-item" title="Socket Binding Groups" icon="fa fa-object-group">
             <metadata address="/{selected.host}/socket-binding-group=*">
                 <h1>Socket Binding Groups</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="host-socket-binding-group-table" form-ref="host-socket-binding-group-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
                         <column name="name"/>
                     </columns>
                 </table>
                 <form id="host-socket-binding-group-form" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
 
         <item id="host-system-property-item" title="System Properties" icon="fa fa-list-ul">
             <metadata address="/{selected.host}/system-property=*">
                 <h1>System Properties</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="host-system-property-table" form-ref="host-system-property-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="value"/>
                     </columns>
                 </table>
                 <form id="host-system-property-form" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
     </vertical-navigation>

@@ -43,7 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 public final class Mbui_HandlebarsView extends HandlebarsView {
 
     private final Metadata metadata0;
-    private final Map<String, HTMLElement> handlebarElements;
+    private final Map<String, HTMLElement> expressionElements;
 
     @Inject
     @SuppressWarnings("unchecked")
@@ -52,17 +52,17 @@ public final class Mbui_HandlebarsView extends HandlebarsView {
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
-        this.handlebarElements = new HashMap<>();
+        this.expressionElements = new HashMap<>();
 
         HTMLElement html0;
         HTMLElement root = row()
                 .add(column()
                         .add(html0 = div()
-                                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Handlebars</h1><p>Current time: {{org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}}</p>"))
+                                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Handlebars</h1><p>Current time: ${org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}</p>"))
                                 .asElement())
                 )
                 .asElement();
-        handlebarElements.put("html0", html0);
+        expressionElements.put("html0", html0);
 
         initElement(root);
     }
@@ -71,6 +71,6 @@ public final class Mbui_HandlebarsView extends HandlebarsView {
     public void attach() {
         super.attach();
 
-        TemplateUtil.replaceHandlebar(handlebarElements.get("html0"), "{{org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}}", String.valueOf(org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())));
+        TemplateUtil.replaceExpression(expressionElements.get("html0"), "${org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}", String.valueOf(org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())));
     }
 }

@@ -18,7 +18,7 @@
 <view>
     <metadata address="/{selected.profile}/subsystem=request-controller">
         <h1>Request Controller</h1>
-        <p>{{metadata.getDescription().getDescription()}}</p>
+        <p>${metadata.getDescription().getDescription()}</p>
         <form id="request-controller-form" title="Request Controller" auto-save="true" reset="true"/>
     </metadata>
 </view>

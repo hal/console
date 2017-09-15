@@ -70,7 +70,7 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
                             selector);
                 }
                 if (handler != null) {
-                    if (!Handlebars.isExpression(handler)) {
+                    if (!ExpressionParser.isExpression(handler)) {
                         processor.error(field,
                                 "Invalid handler \"%s\" in data-table#%s: handler has to be an expression.", handler,
                                 selector);
@@ -93,7 +93,7 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
                                     "Attributes are only processed for \"%s\".",
                             handlerRef, selector, HandlerRef.ADD_RESOURCE.name());
                 }
-                if (nameResolver != null && !Handlebars.isExpression(nameResolver)) {
+                if (nameResolver != null && !ExpressionParser.isExpression(nameResolver)) {
                     processor.error(field, "Name resolver in data-table#%s has to be an expression.", selector);
                 }
                 if (HandlerRef.REMOVE_RESOURCE.getRef().equals(handlerRef) &&
@@ -138,7 +138,7 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
                             xmlAsString(columnElement), selector);
                 }
                 if (value != null) {
-                    if (!Handlebars.isExpression(value)) {
+                    if (!ExpressionParser.isExpression(value)) {
                         processor.error(field,
                                 "Invalid column \"%s\" in data-table#%s: value has to be an expression.",
                                 xmlAsString(columnElement), selector);

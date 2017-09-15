@@ -43,7 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 public final class Mbui_AddWithAttributesView extends AddWithAttributesView {
 
     private final Metadata metadata0;
-    private final Map<String, HTMLElement> handlebarElements;
+    private final Map<String, HTMLElement> expressionElements;
 
     @Inject
     @SuppressWarnings("unchecked")
@@ -52,7 +52,7 @@ public final class Mbui_AddWithAttributesView extends AddWithAttributesView {
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
-        this.handlebarElements = new HashMap<>();
+        this.expressionElements = new HashMap<>();
 
         table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Foo",
@@ -69,7 +69,7 @@ public final class Mbui_AddWithAttributesView extends AddWithAttributesView {
                         .add(table)
                 )
                 .asElement();
-        handlebarElements.put("html0", html0);
+        expressionElements.put("html0", html0);
 
         registerAttachable(table);
 

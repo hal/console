@@ -18,18 +18,18 @@
 <view>
     <metadata address="/{selected.profile}/subsystem=undertow/buffer-cache=*">
         <h1>Buffer Cache</h1>
-        <p>{{metadata.getDescription().getDescription()}}</p>
+        <p>${metadata.getDescription().getDescription()}</p>
         <table id="buffer-cache-table" title="Buffer Cache" form-ref="buffer-cache-form">
             <actions>
                 <action handler-ref="add-resource"/>
                 <action handler-ref="remove-resource" scope="selected"
-                        name-resolver="{{table.selectedRow().getName()}}"/>
+                        name-resolver="${table.selectedRow().getName()}"/>
             </actions>
             <columns>
-                <column name="name" value="{{row.getName()}}"/>
+                <column name="name" value="${row.getName()}"/>
             </columns>
         </table>
         <form id="buffer-cache-form" title="Buffer Cache" auto-save="true" reset="true"
-              name-resolver="{{form.getModel().getName()}}"/>
+              name-resolver="${form.getModel().getName()}"/>
     </metadata>
 </view>

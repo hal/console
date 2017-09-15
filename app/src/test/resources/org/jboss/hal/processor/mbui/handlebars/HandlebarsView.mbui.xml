@@ -18,6 +18,6 @@
 <view>
     <metadata address="/subsystem=foo">
         <h1>Handlebars</h1>
-        <p>Current time: {{org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}}</p>
+        <p>Current time: ${org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}</p>
     </metadata>
 </view>

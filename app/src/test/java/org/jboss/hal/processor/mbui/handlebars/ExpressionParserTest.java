@@ -20,7 +20,7 @@ import org.jboss.hal.processor.mbui.MbuiViewProcessorTest;
 import org.junit.Test;
 
 @SuppressWarnings("DuplicateStringLiteralInspection")
-public class HandlebarsTest extends MbuiViewProcessorTest {
+public class ExpressionParserTest extends MbuiViewProcessorTest {
 
     @Test
     public void handlebars() {

@@ -20,18 +20,18 @@
         <item id="resource-adapter-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=resource-adapters/resource-adapter=*">
                 <h1>Configuration</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <form id="resource-adapter-configuration-form" title="Configuration"
-                      on-save="{{saveConfiguration(form, changedValues)}}"
-                      prepare-reset="{{resetConfiguration(form)}}">
+                      on-save="${saveConfiguration(form, changedValues)}"
+                      prepare-reset="${resetConfiguration(form)}">
                     <attributes>
                         <group id="resource-adapter-configuration-attributes"
-                               title="{{mbuiContext.resources().constants().attributes()}}">
+                               title="${mbuiContext.resources().constants().attributes()}">
                             <attribute name="archive"/>
                             <attribute name="beanvalidationgroups"/>
                             <attribute name="bootstrap-context"/>
                             <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
+                                    form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}'/>
                             <attribute name="module"/>
                             <attribute name="statistics-enabled"/>
                             <attribute name="transaction-support"/>
@@ -43,10 +43,10 @@
                             <attribute name="wm-security-default-principal"/>
                             <attribute name="wm-security-domain"/>
                             <attribute
-                                    form-item='{{new MappingsItem("wm-security-mapping-groups", mbuiContext.resources().messages())}}'/>
+                                    form-item='${new MappingsItem("wm-security-mapping-groups", mbuiContext.resources().messages())}'/>
                             <attribute name="wm-security-mapping-required"/>
                             <attribute
-                                    form-item='{{new MappingsItem("wm-security-mapping-users", mbuiContext.resources().messages())}}'/>
+                                    form-item='${new MappingsItem("wm-security-mapping-users", mbuiContext.resources().messages())}'/>
                         </group>
                     </attributes>
                 </form>
@@ -58,25 +58,25 @@
             <metadata
                     address="/{selected.profile}/subsystem=resource-adapters/resource-adapter=*/connection-definitions=*">
                 <h1>Connection Definitions</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="resource-adapter-connection-definition-table" title="Connection Definition"
                        form-ref="resource-adapter-connection-definition-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{addConnectionDefinition()}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{removeConnectionDefinition(table)}}" scope="selected" constraint="remove"/>
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${addConnectionDefinition()}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${removeConnectionDefinition(table)}" scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="resource-adapter-connection-definition-form" title="Connection Definition"
-                      on-save="{{saveConnectionDefinition(form, changedValues)}}"
-                      prepare-reset="{{resetConnectionDefinition(form)}}">
+                      on-save="${saveConnectionDefinition(form, changedValues)}"
+                      prepare-reset="${resetConnectionDefinition(form)}">
                     <attributes>
                         <group id="resource-adapter-connection-definition-attributes"
-                               title="{{mbuiContext.resources().constants().attributes()}}">
+                               title="${mbuiContext.resources().constants().attributes()}">
                             <exclude>
                                 <group id="resource-adapter-connection-definition-pool"/>
                                 <group id="resource-adapter-connection-definition-security"/>
@@ -84,10 +84,10 @@
                                 <group id="resource-adapter-connection-definition-validation"/>
                             </exclude>
                             <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
+                                    form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}'/>
                         </group>
                         <group id="resource-adapter-connection-definition-pool"
-                               title="{{mbuiContext.resources().constants().pool()}}">
+                               title="${mbuiContext.resources().constants().pool()}">
                             <attribute name="min-pool-size"/>
                             <attribute name="max-pool-size"/>
                             <attribute name="initial-pool-size"/>
@@ -101,7 +101,7 @@
                             <attribute name="capacity-incrementer-properties"/>
                         </group>
                         <group id="resource-adapter-connection-definition-security"
-                               title="{{mbuiContext.resources().constants().security()}}">
+                               title="${mbuiContext.resources().constants().security()}">
                             <attribute name="elytron-enabled"/>
                             <attribute name="authentication-context"/>
                             <attribute name="authentication-context-and-application"/>
@@ -110,7 +110,7 @@
                             <attribute name="security-domain-and-application"/>
                         </group>
                         <group id="resource-adapter-connection-definition-recovery"
-                               title="{{mbuiContext.resources().constants().recovery()}}">
+                               title="${mbuiContext.resources().constants().recovery()}">
                             <attribute name="no-recovery"/>
                             <attribute name="recovery-username"/>
                             <attribute name="recovery-password"/>
@@ -121,7 +121,7 @@
                             <attribute name="recovery-plugin-properties"/>
                         </group>
                         <group id="resource-adapter-connection-definition-validation"
-                               title="{{mbuiContext.resources().constants().validation()}}">
+                               title="${mbuiContext.resources().constants().validation()}">
                             <attribute name="background-validation"/>
                             <attribute name="background-validation-millis"/>
                             <attribute name="validate-on-match"/>
@@ -134,26 +134,26 @@
         <item id="resource-adapter-admin-object-item" title="Admin Objects" icon="fa fa-lock">
             <metadata address="/{selected.profile}/subsystem=resource-adapters/resource-adapter=*/admin-objects=*">
                 <h1>Admin Objects</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="resource-adapter-admin-object-table" title="Admin Object"
                        form-ref="resource-adapter-admin-object-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addAdminObject()}}"
+                        <action title="${mbuiContext.resources().constants().add()}" handler="${addAdminObject()}"
                                 constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{removeAdminObject(table)}}" scope="selected" constraint="remove"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${removeAdminObject(table)}" scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="resource-adapter-admin-object-form" title="Admin Object"
-                      on-save="{{saveAdminObject(form, changedValues)}}"
-                      prepare-reset="{{resetAdminObject(form)}}">
+                      on-save="${saveAdminObject(form, changedValues)}"
+                      prepare-reset="${resetAdminObject(form)}">
                     <attributes>
                         <attribute name="class-name"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
+                                form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}'/>
                         <attribute name="enabled"/>
                         <attribute name="jndi-name"/>
                         <attribute name="use-java-context"/>
