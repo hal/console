@@ -73,7 +73,7 @@ public class Accordion implements IsElement {
                                         .aria(UIConstants.EXPANDED, String.valueOf(firstPanel))
                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                                         .textContent(title))))
-                .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : "").aria("labelledby", headerId)
+                .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : null).aria("labelledby", headerId)
                         .add(body = div().css(panelBody).asElement()))
                 .asElement();
 

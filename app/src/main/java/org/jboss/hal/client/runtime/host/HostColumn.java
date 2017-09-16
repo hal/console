@@ -71,6 +71,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
+import static org.jboss.hal.client.runtime.host.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -270,7 +271,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                         Ids.build(Ids.host(item.getAddressName()), Ids.CONFIGURATION_CHANGES),
                                         placeRequestConfChanges.getNameToken(),
                                         () -> placeManager.revealPlace(placeRequestConfChanges)))
-                                .constraint(Constraint.executable(hostTemplate(item), CONFIGURATION_CHANGES))
+                                .constraint(Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, CONFIGURATION_CHANGES))
                                 .build());
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                     }

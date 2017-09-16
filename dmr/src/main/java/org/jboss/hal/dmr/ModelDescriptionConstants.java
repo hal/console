@@ -291,6 +291,7 @@ public interface ModelDescriptionConstants {
     String HA_POLICY = "ha-policy";
     String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
+    String HAL_LENGTH = "hal-length";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";

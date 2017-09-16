@@ -20,11 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Splitter;
+import com.google.gwt.core.client.GWT;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.UIConstants;
@@ -34,26 +37,43 @@ import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/** An item inside a {@link ListView}. */
+/**
+ * An item inside a {@link ListView}.
+ */
 class ListItem<T> implements IsElement {
-
-    private final HTMLElement root;
-    private final Map<String, HTMLElement> actions;
 
     final String id;
     final T item;
     final HTMLInputElement checkbox;
+    private final HTMLElement root;
+    private final Map<String, HTMLElement> actions;
+    private final Constants CONSTANTS = GWT.create(Constants.class);
+
 
     ListItem(ListView<T> listView, T item, boolean checkbox, ItemDisplay<T> display, String[] contentWidths) {
         this.id = display.getId();
         this.item = item;
         this.actions = new HashMap<>();
+        String idLongPanel = id + "-panel";
 
         // root & checkbox
         HTMLElement container;
-        root = div().id(id).css(listPfItem)
-                .add(container = div().css(listPfContainer).asElement())
-                .asElement();
+        if (display.hideDescriptionWhenLarge()) {
+            root = div().id(id).css(listPfItem, listPfHeader)
+                    .add(a("#" + idLongPanel)
+                            .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
+                            .data("parent", "#" + this.id)
+                            .aria(UIConstants.CONTROLS, idLongPanel)
+                            .attr(UIConstants.ROLE, UIConstants.BUTTON)
+                            .add(container = div().css(listPfContainer)
+                                    .asElement()))
+                    .asElement();
+        } else {
+            root = div().id(id).css(listPfItem)
+                    .add(container = div().css(listPfContainer).asElement())
+                    .asElement();
+
+        }
         if (checkbox) {
             container.appendChild(div().css(listPfSelect)
                     .add(this.checkbox = input(InputType.checkbox)
@@ -108,20 +128,52 @@ class ListItem<T> implements IsElement {
         } else {
             title.appendChild(h(3, Names.NOT_AVAILABLE).asElement());
         }
+
+        // logic to display the description content
         if (display.getDescriptionElements() != null ||
                 display.getDescriptionHtml() != null ||
                 display.getDescription() != null) {
             HTMLElement description;
             mainContent.appendChild(description = div().css(listPfDescription)
                     .asElement());
+
+            HTMLDivElement textContentElem = div().id(idLongPanel).css(listPfContainer, listPfContainerLong)
+                    .asElement();
+            if (display.hideDescriptionWhenLarge()) {
+                description.textContent = CONSTANTS.messageLarge();
+            }
+
             if (display.getDescriptionElements() != null) {
-                for (HTMLElement element : display.getDescriptionElements().asElements()) {
-                    description.appendChild(element);
+
+                if (display.hideDescriptionWhenLarge()) {
+                    for (HTMLElement element : display.getDescriptionElements().asElements()) {
+                        textContentElem.appendChild(element);
+                    }
+                } else {
+                    for (HTMLElement element : display.getDescriptionElements().asElements()) {
+                        description.appendChild(element);
+                    }
                 }
+
             } else if (display.getDescriptionHtml() != null) {
-                description.innerHTML = display.getDescriptionHtml().asString();
+
+                if (display.hideDescriptionWhenLarge()) {
+                    textContentElem.innerHTML = display.getDescriptionHtml().asString();
+                } else {
+                    description.innerHTML = display.getDescriptionHtml().asString();
+                }
+
             } else if (display.getDescription() != null) {
-                description.textContent = display.getDescription();
+
+                if (display.hideDescriptionWhenLarge()) {
+                    textContentElem.textContent = display.getDescription();
+                } else {
+                    description.textContent = display.getDescription();
+                }
+            }
+
+            if (display.hideDescriptionWhenLarge()) {
+                root.appendChild(textContentElem);
             }
         }
         if (display.getAdditionalInfoElements() != null ||

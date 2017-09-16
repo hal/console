@@ -309,6 +309,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String membershipOfRole();
     String message();
     String messages();
+    String messageLarge();
     String milliseconds();
     String minimum();
     String minute();

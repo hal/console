@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.runtime.host.configurationchanges;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
@@ -26,18 +25,23 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ConfigurationChange extends NamedNode {
 
     private Boolean composite;
-    private List<ModelNode> changes = new ArrayList<>();
 
     public ConfigurationChange(ModelNode model) {
-        super(model.get(DOMAIN_UUID).asString(), model);
+        super(model.hasDefined(DOMAIN_UUID) ? model.get(DOMAIN_UUID).asString() : model.get(OPERATION_DATE).asString(), model);
 
         model.get(OPERATIONS).asList().forEach(nestedNode -> {
             composite = nestedNode.get(OPERATION).asString().equals(COMPOSITE);
         });
+        int length = get(OPERATIONS).asString().length();
+        get(HAL_LENGTH).set(length);
     }
 
     String getOperationDate() {
         return get(OPERATION_DATE).asString();
+    }
+
+    int getOperationsLength() {
+        return get(HAL_LENGTH).asInt();
     }
 
     String getAccessMechanism() {
@@ -67,6 +71,7 @@ public class ConfigurationChange extends NamedNode {
         } else {
             changes = get(OPERATIONS).asList();
         }
+
         return changes;
     }
 

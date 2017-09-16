@@ -146,6 +146,7 @@ public interface CSS {
 
     String grey = "grey";
 
+    String halConfChangesAdditionalInfo = "hal-conf-changes-additional-info";
     String halExecutionDuration = "hal-execution-duration";
     String halExecutionTime = "hal-execution-time";
     String halFormLabel = "hal-form-label";
@@ -204,10 +205,12 @@ public interface CSS {
     String listPfActions = "list-pf-actions";
     String listPfAdditionalContent = "list-pf-additional-content";
     String listPfContainer = "list-pf-container";
+    String listPfContainerLong = "list-pf-container-long";
     String listPfContent = "list-pf-content";
     String listPfContentFlex = "list-pf-content-flex";
     String listPfContentWrapper = "list-pf-content-wrapper";
     String listPfDescription = "list-pf-description";
+    String listPfHeader = "list-pf-header";
     String listPfIcon = "list-pf-icon";
     String listPfIconBordered = "list-pf-icon-bordered";
     String listPfIconSmall = "list-pf-icon-small";

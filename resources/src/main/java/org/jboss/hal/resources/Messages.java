@@ -295,7 +295,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
-    SafeHtml removeConfigurationChangesQuestion(String host);
+    SafeHtml removeConfigurationChangesQuestion(String type, String name);
     SafeHtml removeCurrentUserError();
     SafeHtml removeExtensionQuestion();
     SafeHtml removeExtensionSuccess();

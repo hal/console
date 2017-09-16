@@ -53,6 +53,7 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.hal.client.runtime.host.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -72,7 +73,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     public StandaloneServerColumn(Finder finder, EventBus eventBus, Dispatcher dispatcher,
             FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
             ServerActions serverActions, PlaceManager placeManager, Places places,
-            Resources resources) {
+            Resources resources, ItemMonitor itemMonitor) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -150,6 +151,14 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                                 actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest,
                                         Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
                             }
+                            PlaceRequest placeRequestConfChanges = new PlaceRequest.Builder()
+                                    .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
+                            actions.add(new ItemAction.Builder<Server>()
+                                    .title(resources.constants().configurationChanges())
+                                    .handler(itemMonitor.monitorPlaceRequest(Ids.CONFIGURATION_CHANGES, placeRequestConfChanges.getNameToken(),
+                                            () -> placeManager.revealPlace(placeRequestConfChanges)))
+                                    .constraint(Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, CONFIGURATION_CHANGES))
+                                    .build());
                         }
                         return actions;
                     }

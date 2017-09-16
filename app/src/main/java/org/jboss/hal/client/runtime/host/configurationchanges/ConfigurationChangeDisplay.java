@@ -82,19 +82,29 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
     @SuppressWarnings("HardCodedStringLiteral")
     public SafeHtml getDescriptionHtml() {
         SafeHtmlBuilder html = new SafeHtmlBuilder();
+        if (hideDescriptionWhenLarge()) {
+            html.append(SafeHtmlUtils.fromTrustedString("<pre class=\""+ formControlStatic + " " + wrap+ "\">"));
+        }
         item.changes().forEach(m -> {
             String op = m.get(OPERATION).asString();
             ResourceAddress address = new ResourceAddress(m.get(ADDRESS));
-            html.append(SafeHtmlUtils.fromTrustedString(resources.constants().operation() + ": <strong>" + op + "</strong>&nbsp;&nbsp;&nbsp;&nbsp;"));
-            html.append(SafeHtmlUtils.fromTrustedString(resources.constants().address() + ": <strong>" + address + "</strong><br/>"));
+            html.append(SafeHtmlUtils.fromTrustedString(
+                    resources.constants().operation() + ": <strong>" + op + "</strong>&nbsp;&nbsp;&nbsp;&nbsp;"));
+            html.append(SafeHtmlUtils.fromTrustedString(
+                    resources.constants().address() + ": <strong>" + address + "</strong><br/>"));
             HTMLPreElement elem = pre().css(formControlStatic, wrap).asElement();
             m.asPropertyList().forEach(prop -> {
-                boolean allowedProperties = !(prop.getName().equals(OPERATION) || prop.getName().equals(ADDRESS) || prop.getName().equals(OPERATION_HEADERS));
+                boolean allowedProperties = !(prop.getName().equals(OPERATION) || prop.getName()
+                        .equals(ADDRESS) || prop.getName().equals(OPERATION_HEADERS));
                 if (allowedProperties) {
-                    html.append(SafeHtmlUtils.fromTrustedString("&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + ": " + prop.getValue() + "<br/>"));
+                    html.append(SafeHtmlUtils.fromTrustedString(
+                            "&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + ": " + prop.getValue() + "<br/>"));
                 }
             });
         });
+        if (hideDescriptionWhenLarge()) {
+            html.append(SafeHtmlUtils.fromTrustedString("</pre>"));
+        }
         return html.toSafeHtml();
     }
 
@@ -102,7 +112,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
     @SuppressWarnings("HardCodedStringLiteral")
     public HasElements getAdditionalInfoElements() {
         ElementsBuilder elements = elements();
-        elements.add(div().css(halExecutionTime)
+        elements.add(div().css(halConfChangesAdditionalInfo)
                 .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
 
                         .appendEscaped(resources.constants().accessMechanism() + ": ")
@@ -120,10 +130,17 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
     }
 
     @Override
+    public int getDescriptionLength() {
+        return item.getOperationsLength();
+    }
+
+    @Override
     public List<ItemAction<ConfigurationChange>> actions() {
         List<ItemAction<ConfigurationChange>> actions = new ArrayList<>();
         String id = Ids.build(Ids.CONFIGURATION_CHANGES, item.getName(), "view");
         actions.add(new ItemAction<>(id, resources.constants().view(), presenter::viewRawChange));
         return actions;
     }
+
+
 }

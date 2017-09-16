@@ -21,11 +21,13 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLPreElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -34,6 +36,7 @@ import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -49,9 +52,12 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.pre;
-import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
+import static org.jboss.hal.ballroom.dialog.Dialog.Size.LARGE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.formControlStatic;
+import static org.jboss.hal.resources.CSS.px;
 import static org.jboss.hal.resources.CSS.wrap;
 import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
 import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
@@ -70,9 +76,10 @@ public class ConfigurationChangesPresenter
     }
 
     final static String CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/subsystem=core-management/service=configuration-changes";
-    final static AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(CONFIGURATION_CHANGES_ADDRESS);
+    public final static AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(CONFIGURATION_CHANGES_ADDRESS);
     final static AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of("/{selected.host}/subsystem=core-management");
 
+    private Environment environment;
     // @formatter:on
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
@@ -86,6 +93,7 @@ public class ConfigurationChangesPresenter
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final Environment environment,
             final FinderPathFactory finderPathFactory,
             final Dispatcher dispatcher,
             final MetadataRegistry metadataRegistry,
@@ -93,6 +101,7 @@ public class ConfigurationChangesPresenter
             final CrudOperations crud,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
+        this.environment = environment;
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
@@ -109,9 +118,15 @@ public class ConfigurationChangesPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.runtimeHostPath()
-                .append("core-service", Ids.CONFIGURATION_CHANGES, "Core Service",
-                        resources.constants().configurationChanges());
+        FinderPath root;
+        if (statementContext.selectedHost() != null) {
+            root = finderPathFactory.runtimeHostPath();
+        } else {
+            root = finderPathFactory.runtimeServerPath();
+        }
+        return root.append("core-service", Ids.CONFIGURATION_CHANGES, "Core Service",
+                resources.constants().configurationChanges());
+
     }
 
     @Override
@@ -161,8 +176,14 @@ public class ConfigurationChangesPresenter
     }
 
     void disable() {
+        String type = HOST;
+        String name =  statementContext.selectedHost();
+        if (environment.isStandalone()) {
+            type = Names.STANDALONE_SERVER;
+            name = Server.STANDALONE.getName();
+        }
         DialogFactory.showConfirmation(resources.constants().configurationChanges(),
-                resources.messages().removeConfigurationChangesQuestion(statementContext.selectedHost()),
+                resources.messages().removeConfigurationChangesQuestion(type, name),
                 () -> {
                     ResourceAddress address = CONFIGURATION_CHANGES_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(address, REMOVE)
@@ -177,12 +198,17 @@ public class ConfigurationChangesPresenter
 
         HTMLElement content = div()
                 .add(elem)
+                .style("overflow: scroll")
                 .asElement();
+
+        int maxheight = applicationHeight() - 6 * MARGIN_BIG;
+        content.style.maxHeight = CSSProperties.MaxHeightUnionType.of(px(maxheight));
 
         Dialog dialog = new Dialog.Builder(resources.constants().configurationChanges())
                 .primary(resources.constants().close(), () -> true)
                 .closeOnEsc(true)
-                .size(MEDIUM)
+                .closeIcon(true)
+                .size(LARGE)
                 .add(content)
                 .build();
         dialog.show();
