@@ -16,9 +16,6 @@
 package org.jboss.hal.flow;
 
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-
 import rx.Observable;
 import rx.Single;
 
@@ -44,27 +41,5 @@ public interface Flow {
                 .doOnNext(n -> context.progress.tick())
                 .doOnTerminate(context.progress::finish)
                 .lastOrDefault(context).toSingle();
-    }
-
-    /** Executes a tasks until a condition is met. */
-    static <C extends IntervalContext<C>> Single<C> interval(C context) {
-        return Observable.interval(context.interval, TimeUnit.MILLISECONDS)
-                .flatMapSingle(n -> context.task.call(context))
-                .takeUntil(context.until::test)
-                .doOnSubscribe(context.progress::reset)
-                .doOnNext(n -> context.progress.tick())
-                .doOnTerminate(context.progress::finish)
-                .lastOrDefault(context).toSingle();
-    }
-
-    class IntervalContext<T extends IntervalContext> extends FlowContext {
-        public final int interval;
-        public final Predicate<T> until;
-        public final Task<T> task;
-        public IntervalContext(int interval, Predicate<T> until, Task<T> task) {
-            this.interval = interval;
-            this.until = until;
-            this.task = task;
-        }
     }
 }

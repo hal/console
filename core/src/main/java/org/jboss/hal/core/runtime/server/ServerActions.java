@@ -15,6 +15,71 @@
  */
 package org.jboss.hal.core.runtime.server;
 
+import static elemental2.dom.DomGlobal.setTimeout;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.hal.core.runtime.RunningState.RUNNING;
+import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
+import static org.jboss.hal.core.runtime.server.ServerUrlTasks.URL_KEY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTO_START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BLOCKING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JVM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KILL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_BOOT_ERRORS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_DEFAULT_INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SYSTEM_PROPERTY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMEOUT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_AUTO_START_WITH_SERVER_STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
+import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
+import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
+import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatOperationUntil;
+import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
+import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.marginLeft5;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
+
+import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
+import elemental2.dom.HTMLElement;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -23,12 +88,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import com.google.common.base.Strings;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
@@ -55,7 +114,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
 import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
-import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -76,30 +134,12 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static elemental2.dom.DomGlobal.setTimeout;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.hal.core.runtime.RunningState.RUNNING;
-import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
-import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
-import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
-import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
-import static org.jboss.hal.core.runtime.server.ServerUrlTasks.URL_KEY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
-import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
-import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.marginLeft5;
-import static org.jboss.hal.resources.CSS.pfIcon;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
-import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
+import rx.CompletableSubscriber;
+import rx.Subscription;
 
 public class ServerActions {
 
-    private class ServerTimeoutCallback implements TimeoutHandler.Callback {
+    private class ServerTimeoutCallback implements CompletableSubscriber {
 
         private final Server server;
         private final Action action;
@@ -112,7 +152,7 @@ public class ServerActions {
         }
 
         @Override
-        public void onSuccess() {
+        public void onCompleted() {
             // TODO Check for server boot errors
             if (Action.isStarting(action)) {
                 ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
@@ -131,9 +171,10 @@ public class ServerActions {
         }
 
         @Override
-        public void onTimeout() {
+        public void onError(Throwable e) {
             finish(server, Result.TIMEOUT, Message.error(resources.messages().serverTimeout(server.getName())));
         }
+        @Override public void onSubscribe(Subscription d) {}
     }
 
 
@@ -382,12 +423,12 @@ public class ServerActions {
                 Operation ping = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION).build();
                 dispatcher.execute(operation,
 
-                        result -> new TimeoutHandler(dispatcher, SERVER_RESTART_TIMEOUT)
-                                .execute(ping, new TimeoutHandler.Callback() {
-                                    @Override
-                                    public void onSuccess() {
+                        result -> repeatUntilTimeout(dispatcher, SERVER_RESTART_TIMEOUT, ping)
+                                .subscribe(new CompletableSubscriber() {
+                                    @Override public void onSubscribe(Subscription d) {}
+                                    @Override public void onCompleted() {
                                         // wait a little bit before event handlers try to use the restarted server
-                                        setTimeout((o) -> {
+                                        setTimeout((o1) -> {
                                             pendingDialog.close();
                                             finish(Server.STANDALONE, Result.SUCCESS, Message.success(
                                                     resources.messages()
@@ -395,8 +436,7 @@ public class ServerActions {
                                         }, 666);
                                     }
 
-                                    @Override
-                                    public void onTimeout() {
+                                    @Override public void onError(Throwable e) {
                                         pendingDialog.close();
                                         DialogFactory.buildBlocking(title,
                                                 resources.messages().restartStandaloneTimeout(server.getName()))
@@ -418,11 +458,10 @@ public class ServerActions {
         DialogFactory.showConfirmation(title, question, () -> {
 
             prepare(server, action);
-            dispatcher.execute(operation,
-                    result -> new TimeoutHandler(dispatcher, timeout).execute(
-                            server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
-                            server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
-                            new ServerTimeoutCallback(server, action, successMessage)),
+            dispatcher.execute(operation, result -> repeatOperationUntil(dispatcher, timeout,
+                    server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
+                    server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED)
+                    ).subscribe(new ServerTimeoutCallback(server, action, successMessage)),
                     new ServerFailedCallback(server, errorMessage),
                     new ServerExceptionCallback(server, errorMessage));
 
@@ -460,13 +499,10 @@ public class ServerActions {
                                             SUSPEND)
                                             .param(TIMEOUT, timeout)
                                             .build();
-                                    dispatcher.execute(operation,
-                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                    readSuspendState(server),
-                                                    checkSuspendState(SUSPENDED),
-                                                    new ServerTimeoutCallback(server, Action.SUSPEND,
-                                                            resources.messages()
-                                                                    .suspendServerSuccess(server.getName()))),
+                                    dispatcher.execute(operation, result -> repeatOperationUntil(dispatcher, uiTimeout,
+                                            readSuspendState(server), checkSuspendState(SUSPENDED))
+                                                    .subscribe(new ServerTimeoutCallback(server, Action.SUSPEND,
+                                                            resources.messages().suspendServerSuccess(server.getName()))),
                                             new ServerFailedCallback(server,
                                                     resources.messages().suspendServerError(server.getName())),
                                             new ServerExceptionCallback(server,
@@ -499,11 +535,10 @@ public class ServerActions {
         prepare(server, Action.RESUME);
         ResourceAddress address = server.isStandalone() ? server.getServerAddress() : server.getServerConfigAddress();
         Operation operation = new Operation.Builder(address, RESUME).build();
-        dispatcher.execute(operation,
-                result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
-                        server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
-                        server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
-                        new ServerTimeoutCallback(server, Action.RESUME,
+        dispatcher.execute(operation, result -> repeatOperationUntil(dispatcher, SERVER_START_TIMEOUT,
+                server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
+                server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED)
+                ).subscribe(new ServerTimeoutCallback(server, Action.RESUME,
                                 resources.messages().resumeServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().resumeServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().resumeServerError(server.getName())));
@@ -536,12 +571,10 @@ public class ServerActions {
                                             .param(TIMEOUT, timeout)
                                             .param(BLOCKING, false)
                                             .build();
-                                    dispatcher.execute(operation,
-                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                    readServerConfigStatus(server),
-                                                    checkServerConfigStatus(STOPPED, DISABLED),
-                                                    new ServerTimeoutCallback(server, Action.STOP,
-                                                            resources.messages().stopServerSuccess(server.getName()))),
+                                    dispatcher.execute(operation, result -> repeatOperationUntil(dispatcher, uiTimeout,
+                                            readServerConfigStatus(server), checkServerConfigStatus(STOPPED, DISABLED)
+                                            ).subscribe(new ServerTimeoutCallback(server, Action.STOP,
+                                                    resources.messages().stopServerSuccess(server.getName()))),
                                             new ServerFailedCallback(server,
                                                     resources.messages().stopServerError(server.getName())),
                                             new ServerExceptionCallback(server,
@@ -576,10 +609,9 @@ public class ServerActions {
         Operation operation = new Operation.Builder(server.getServerConfigAddress(), STOP)
                 .param(BLOCKING, false)
                 .build();
-        dispatcher.execute(operation, result -> new TimeoutHandler(dispatcher, SERVER_STOP_TIMEOUT).execute(
-                readServerConfigStatus(server),
-                checkServerConfigStatus(STOPPED, DISABLED),
-                new ServerTimeoutCallback(server, Action.STOP,
+        dispatcher.execute(operation, result -> repeatOperationUntil(dispatcher, SERVER_STOP_TIMEOUT,
+                readServerConfigStatus(server), checkServerConfigStatus(STOPPED, DISABLED)
+                ).subscribe(new ServerTimeoutCallback(server, Action.STOP,
                         resources.messages().stopServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().stopServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().stopServerError(server.getName())));
@@ -592,11 +624,10 @@ public class ServerActions {
                     prepare(server, Action.KILL);
                     Operation operation = new Operation.Builder(server.getServerConfigAddress(), KILL).build();
                     dispatcher.execute(operation,
-                            result -> new TimeoutHandler(dispatcher, SERVER_KILL_TIMEOUT).execute(
-                                    readServerConfigStatus(server),
-                                    checkServerConfigStatus(STOPPED, DISABLED),
-                                    new ServerTimeoutCallback(server, Action.KILL,
-                                            resources.messages().killServerSuccess(server.getName()))),
+                            result -> repeatOperationUntil(dispatcher, SERVER_KILL_TIMEOUT,
+                                    readServerConfigStatus(server), checkServerConfigStatus(STOPPED, DISABLED)
+                            ).subscribe(new ServerTimeoutCallback(server, Action.KILL,
+                                    resources.messages().killServerSuccess(server.getName()))),
                             new ServerFailedCallback(server,
                                     resources.messages().killServerError(server.getName())),
                             new ServerExceptionCallback(server,
@@ -610,11 +641,10 @@ public class ServerActions {
                 .param(BLOCKING, false)
                 .build();
         dispatcher.execute(operation,
-                result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
-                        readServerConfigStatus(server),
-                        checkServerConfigStatus(STARTED),
-                        new ServerTimeoutCallback(server, Action.START,
-                                resources.messages().startServerSuccess(server.getName()))),
+                result -> repeatOperationUntil(dispatcher, SERVER_START_TIMEOUT,
+                        readServerConfigStatus(server), checkServerConfigStatus(STARTED)
+                ).subscribe(new ServerTimeoutCallback(server, Action.START,
+                        resources.messages().startServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().startServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().startServerError(server.getName())));
     }

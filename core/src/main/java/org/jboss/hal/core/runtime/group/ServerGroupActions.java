@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.runtime.group;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +24,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -40,7 +39,6 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -54,21 +52,37 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.CompletableSubscriber;
+import rx.Subscription;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.core.runtime.Action.RESUME;
 import static org.jboss.hal.core.runtime.SuspendState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BLOCKING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMEOUT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
+import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatCompositeUntil;
 
 /** TODO Fire events for the servers of a server group as well. */
 public class ServerGroupActions {
 
-    private class ServerGroupTimeoutCallback implements TimeoutHandler.Callback {
+    private class ServerGroupTimeoutCallback implements CompletableSubscriber {
 
         private final ServerGroup serverGroup;
         private final List<Server> servers;
@@ -82,15 +96,16 @@ public class ServerGroupActions {
         }
 
         @Override
-        public void onSuccess() {
+        public void onCompleted() {
             finish(serverGroup, servers, Result.SUCCESS, Message.success(successMessage));
         }
 
         @Override
-        public void onTimeout() {
+        public void onError(Throwable e) {
             finish(serverGroup, servers, Result.TIMEOUT,
                     Message.error(resources.messages().serverGroupTimeout(serverGroup.getName())));
         }
+        @Override public void onSubscribe(Subscription d) {}
     }
 
 
@@ -191,11 +206,9 @@ public class ServerGroupActions {
         if (!startedServers.isEmpty()) {
             DialogFactory.showConfirmation(title, question, () -> {
                 prepare(serverGroup, startedServers, action);
-                dispatcher.execute(operation,
-                        result -> new TimeoutHandler(dispatcher, timeout(serverGroup, action)).execute(
-                                readServerConfigStatus(startedServers),
-                                checkServerConfigStatus(startedServers.size(), STARTED),
-                                new ServerGroupTimeoutCallback(serverGroup, startedServers, successMessage)),
+                dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, action),
+                        readServerConfigStatus(startedServers), checkServerConfigStatus(startedServers.size(), STARTED))
+                                .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers, successMessage)),
                         new ServerGroupFailedCallback(serverGroup, startedServers, errorMessage),
                         new ServerGroupExceptionCallback(serverGroup, startedServers, errorMessage));
             });
@@ -227,17 +240,14 @@ public class ServerGroupActions {
                                 int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
 
                                 prepare(serverGroup, startedServers, Action.SUSPEND);
-                                Operation operation = new Operation.Builder(serverGroup.getAddress(), SUSPEND_SERVERS
-                                )
+                                Operation operation = new Operation.Builder(serverGroup.getAddress(), SUSPEND_SERVERS)
                                         .param(TIMEOUT, timeout)
                                         .build();
-                                dispatcher.execute(operation,
-                                        result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                readSuspendState(startedServers),
-                                                checkSuspendState(startedServers.size(), SUSPENDED),
-                                                new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                        resources.messages().suspendServerGroupSuccess(
-                                                                serverGroup.getName()))),
+                                dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, uiTimeout,
+                                        readSuspendState(startedServers),
+                                        checkSuspendState(startedServers.size(), SUSPENDED))
+                                                .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                                        resources.messages().suspendServerGroupSuccess(serverGroup.getName()))),
                                         new ServerGroupFailedCallback(serverGroup, startedServers, resources
                                                 .messages().suspendServerGroupError(serverGroup.getName())),
                                         new ServerGroupExceptionCallback(serverGroup, startedServers, resources
@@ -267,13 +277,11 @@ public class ServerGroupActions {
     public void resume(ServerGroup serverGroup) {
         List<Server> suspendedServers = serverGroup.getServers(Server::isSuspended);
         if (!suspendedServers.isEmpty()) {
-            prepare(serverGroup, suspendedServers, Action.RESUME);
+            prepare(serverGroup, suspendedServers, RESUME);
             Operation operation = new Operation.Builder(serverGroup.getAddress(), RESUME_SERVERS).build();
-            dispatcher.execute(operation,
-                    result -> new TimeoutHandler(dispatcher, timeout(serverGroup, Action.RESUME)).execute(
-                            readSuspendState(suspendedServers),
-                            checkSuspendState(suspendedServers.size(), RUNNING),
-                            new ServerGroupTimeoutCallback(serverGroup, suspendedServers,
+            dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, RESUME),
+                    readSuspendState(suspendedServers), checkSuspendState(suspendedServers.size(), RUNNING))
+                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, suspendedServers,
                                     resources.messages().resumeServerGroupSuccess(serverGroup.getName()))),
                     new ServerGroupFailedCallback(serverGroup, suspendedServers,
                             resources.messages().resumeServerGroupError(serverGroup.getName())),
@@ -313,14 +321,11 @@ public class ServerGroupActions {
                                         .param(TIMEOUT, timeout)
                                         .param(BLOCKING, false)
                                         .build();
-                                dispatcher.execute(operation,
-                                        result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                readServerConfigStatus(startedServers),
-                                                checkServerConfigStatus(startedServers.size(),
-                                                        STOPPED, DISABLED),
-                                                new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                        resources.messages().stopServerGroupSuccess(
-                                                                serverGroup.getName()))),
+                                dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, uiTimeout,
+                                        readServerConfigStatus(startedServers),
+                                        checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
+                                                .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                                        resources.messages().stopServerGroupSuccess(serverGroup.getName()))),
                                         new ServerGroupFailedCallback(serverGroup, startedServers, resources
                                                 .messages().stopServerGroupError(serverGroup.getName())),
                                         new ServerGroupExceptionCallback(serverGroup, startedServers, resources
@@ -355,10 +360,9 @@ public class ServerGroupActions {
                     .param(BLOCKING, false)
                     .build();
             dispatcher.execute(operation,
-                    result -> new TimeoutHandler(dispatcher, timeout(serverGroup, Action.START)).execute(
-                            readServerConfigStatus(downServers),
-                            checkServerConfigStatus(downServers.size(), STARTED),
-                            new ServerGroupTimeoutCallback(serverGroup, downServers,
+                    result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, Action.START),
+                            readServerConfigStatus(downServers), checkServerConfigStatus(downServers.size(), STARTED))
+                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, downServers,
                                     resources.messages().startServerGroupSuccess(serverGroup.getName()))),
                     new ServerGroupFailedCallback(serverGroup, downServers,
                             resources.messages().startServerGroupError(serverGroup.getName())),
