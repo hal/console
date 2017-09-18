@@ -15,17 +15,17 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import javax.inject.Inject;
-
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.File;
 import elemental2.dom.FormData;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.XMLHttpRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import javax.inject.Inject;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -77,18 +77,19 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 public class Dispatcher implements RecordingHandler {
 
     @FunctionalInterface
-    public interface SuccessCallback<T> {
+    public interface OperationCallback {
 
-        void onSuccess(T result);
+        void onSuccess(ModelNode result);
     }
 
 
     @FunctionalInterface
-    public interface OperationCallback extends SuccessCallback<ModelNode> {}
+    public interface CompositeCallback {
 
+        void onSuccess(CompositeResult result);
 
-    @FunctionalInterface
-    public interface CompositeCallback extends SuccessCallback<CompositeResult> {}
+        default OperationCallback adapt() { return result -> onSuccess(new CompositeResult(result)); }
+    }
 
 
     @FunctionalInterface
@@ -174,18 +175,18 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public void execute(Composite composite, CompositeCallback callback) {
-        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback.adapt(), failedCallback, exceptionCallback);
     }
 
     @JsIgnore
     public void execute(Composite composite, CompositeCallback callback, FailedCallback failedCallback) {
-        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback.adapt(), failedCallback, exceptionCallback);
     }
 
     @JsIgnore
     public void execute(Composite composite, CompositeCallback callback, FailedCallback failedCallback,
             ExceptionCallback exceptionCallback) {
-        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback.adapt(), failedCallback, exceptionCallback);
     }
 
 
@@ -193,14 +194,14 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public void executeInFlow(Control control, Composite composite, CompositeCallback callback) {
-        dmr(composite, payload -> payload.get(RESULT), callback, new FailedFlowCallback<>(control),
+        dmr(composite, payload -> payload.get(RESULT), callback.adapt(), new FailedFlowCallback<>(control),
                 new ExceptionalFlowCallback<>(control));
     }
 
     @JsIgnore
     public void executeInFlow(Control control, Composite composite, CompositeCallback callback,
             FailedCallback failedCallback) {
-        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
+        dmr(composite, payload -> payload.get(RESULT), callback.adapt(), failedCallback,
                 new ExceptionalFlowCallback<>(control));
     }
 
@@ -259,7 +260,7 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ dmr
 
-    private <T> void dmr(Operation operation, Function<ModelNode, ModelNode> getResult, SuccessCallback<T> callback,
+    private void dmr(Operation operation, Function<ModelNode, ModelNode> getResult, OperationCallback callback,
             FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
@@ -351,7 +352,7 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ download
 
     @JsIgnore
-    public void download(Operation operation, SuccessCallback<String> successCallback) {
+    public void download(Operation operation, Consumer<String> successCallback) {
         Operation downloadOperation = runAs(operation);
         String url = downloadUrl(downloadOperation);
         XMLHttpRequest request = newXhr(url, GET, downloadOperation, exceptionCallback, xhr -> {
@@ -359,7 +360,7 @@ public class Dispatcher implements RecordingHandler {
             String responseText = xhr.responseText;
 
             if (status == 200) {
-                successCallback.onSuccess(responseText);
+                successCallback.accept(responseText);
             } else {
                 handleErrorCodes(url, status, downloadOperation, exceptionCallback);
             }
@@ -427,8 +428,8 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ xhr
 
-    private <T> XMLHttpRequest newDmrXhr(String url, HttpMethod method, Operation operation,
-            PayloadProcessor payloadProcessor, Function<ModelNode, ModelNode> getResult, SuccessCallback<T> callback,
+    private XMLHttpRequest newDmrXhr(String url, HttpMethod method, Operation operation,
+            PayloadProcessor payloadProcessor, Function<ModelNode, ModelNode> getResult, OperationCallback callback,
             FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         return newXhr(url, method, operation, exceptionCallback, xhr -> {
             int status = (int) xhr.status;
@@ -456,14 +457,7 @@ public class Dispatcher implements RecordingHandler {
                         }
                     }
                     ModelNode result = getResult.apply(payload);
-                    if (operation instanceof Composite && callback instanceof CompositeCallback) {
-                        ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
-                    } else if (callback instanceof OperationCallback) {
-                        ((OperationCallback) callback).onSuccess(result);
-                    } else {
-                        exceptionCallback.onException(operation,
-                                new DispatchException("Wrong combination of operation and callback.", 500));
-                    }
+                    callback.onSuccess(result);
                 } else {
                     failedCallback.onFailed(operation, payload.getFailureDescription());
                 }
@@ -619,7 +613,7 @@ public class Dispatcher implements RecordingHandler {
     public void jsExecuteComposite(Composite composite,
             @EsParam("function(result: CompositeResult)") JsCompositeCallback callback) {
         CompositeCallback cc = callback::onSuccess;
-        dmr(composite, payload -> payload.get(RESULT), cc, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), cc.adapt(), failedCallback, exceptionCallback);
     }
 
     /**

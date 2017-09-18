@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import elemental2.core.Array;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
+import java.util.function.Consumer;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -457,7 +458,7 @@ class BrowseContentElement implements IsElement, Attachable {
         }
     }
 
-    private void loadContent(ContentEntry contentEntry, Dispatcher.SuccessCallback<String> successCallback) {
+    private void loadContent(ContentEntry contentEntry, Consumer<String> successCallback) {
         if (!contentEntry.directory) {
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
             Operation operation = new Operation.Builder(address, READ_CONTENT)
