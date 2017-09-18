@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.core.runtime.host;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -56,14 +57,7 @@ import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
@@ -254,23 +248,27 @@ public class HostActions {
         BlockingDialog pendingDialog = DialogFactory.buildLongRunning(title, pendingMessage);
         pendingDialog.show();
 
-        dispatcher.execute(operation,
-                result -> repeatUntilTimeout(dispatcher, timeout, ping(host)).subscribe(new CompletableSubscriber() {
-                    @Override public void onSubscribe(Subscription d) {}
-                    @Override public void onCompleted() {
-                        // wait a little bit before event handlers try to use the reloaded / restarted domain controller
-                        setTimeout((o) -> {
-                            pendingDialog.close();
-                            finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                        }, 666);
-                    }
+        dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
+                        .subscribe(new CompletableSubscriber() {
+                            @Override
+                            public void onSubscribe(Subscription d) {}
 
-                    @Override public void onError(Throwable e) {
-                        pendingDialog.close();
-                        DialogFactory.buildBlocking(title, timeoutMessage).show();
-                        finish(host, servers, Result.TIMEOUT, null);
-                    }
-                }),
+                            @Override
+                            public void onCompleted() {
+                                // wait a little bit before event handlers try to use the reloaded / restarted domain controller
+                                setTimeout((o) -> {
+                                    pendingDialog.close();
+                                    finish(host, servers, Result.SUCCESS, Message.success(successMessage));
+                                }, 666);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                pendingDialog.close();
+                                DialogFactory.buildBlocking(title, timeoutMessage).show();
+                                finish(host, servers, Result.TIMEOUT, null);
+                            }
+                        }),
                 new HostFailedCallback(host, servers, errorMessage),
                 new HostExceptionCallback(host, servers, errorMessage));
     }
@@ -279,12 +277,16 @@ public class HostActions {
             SafeHtml successMessage, SafeHtml errorMessage, SafeHtml timeoutMessage) {
         dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
                         .subscribe(new CompletableSubscriber() {
-                            @Override public void onSubscribe(Subscription d) {}
-                            @Override public void onCompleted() {
+                            @Override
+                            public void onSubscribe(Subscription d) {}
+
+                            @Override
+                            public void onCompleted() {
                                 finish(host, servers, Result.SUCCESS, Message.success(successMessage));
                             }
 
-                            @Override public void onError(Throwable e) {
+                            @Override
+                            public void onError(Throwable e) {
                                 finish(host, servers, Result.TIMEOUT, Message.error(timeoutMessage));
                             }
                         }),

@@ -36,9 +36,7 @@ public interface TimeoutHandler {
     int INTERVAL = 500;
     Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
 
-    /**
-     * Executes the operation until it successfully returns.
-     */
+    /** Executes the operation until it successfully returns. */
     static Completable repeatUntilTimeout(Dispatcher dispatcher, int timeout, Operation operation) {
         return operation instanceof Composite
                 ? TimeoutHandler.repeatCompositeUntil(dispatcher, timeout, (Composite) operation, null)
@@ -49,10 +47,11 @@ public interface TimeoutHandler {
      * Executes the operation until the operation successfully returns and the precondition is met. The precondition
      * receives the result of the operation.
      */
+    @SuppressWarnings("HardCodedStringLiteral")
     static Completable repeatOperationUntil(Dispatcher dispatcher, int timeout, Operation operation,
             @Nullable Predicate<ModelNode> until) {
         Single<ModelNode> execution = Single.fromEmitter(em -> dispatcher.execute(operation, em::onSuccess,
-                (op, fail) -> em.onError(new RuntimeException("Dispatched failure: " + fail)),
+                (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
                 (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
         if (until == null) until = r -> !r.isFailure(); // default: until success
 
@@ -72,10 +71,11 @@ public interface TimeoutHandler {
      * Executes the composite operation until the operation successfully returns and the precondition is met.
      * The precondition receives the composite result of the operation.
      */
+    @SuppressWarnings("HardCodedStringLiteral")
     static Completable repeatCompositeUntil(Dispatcher dispatcher, int timeout, Composite composite,
             @Nullable Predicate<CompositeResult> until) {
         Single<CompositeResult> execution = Single.fromEmitter(em -> dispatcher.execute(composite, em::onSuccess,
-                (op, fail) -> em.onError(new RuntimeException("Dispatched failure: " + fail)),
+                (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
                 (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
         if (until == null) until = r -> r.stream().noneMatch(ModelNode::isFailure); // default: until success
 

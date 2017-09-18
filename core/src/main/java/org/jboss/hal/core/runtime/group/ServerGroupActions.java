@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.core.runtime.group;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +22,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Provider;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -62,19 +63,7 @@ import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.BLOCKING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.START_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMEOUT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatCompositeUntil;
@@ -105,7 +94,9 @@ public class ServerGroupActions {
             finish(serverGroup, servers, Result.TIMEOUT,
                     Message.error(resources.messages().serverGroupTimeout(serverGroup.getName())));
         }
-        @Override public void onSubscribe(Subscription d) {}
+
+        @Override
+        public void onSubscribe(Subscription d) {}
     }
 
 

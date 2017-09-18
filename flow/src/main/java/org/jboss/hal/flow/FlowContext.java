@@ -19,8 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-/** General purpose context to be used inside a flow. Provides a stack and a map for sharing data between tasks. */
+/**
+ * General purpose context to be used inside a flow. Provides a {@linkplain Progress progress indicator}, a stack and a
+ * map for sharing data between tasks.
+ */
 public class FlowContext {
+
     public final Progress progress;
     private final Stack<Object> stack;
     private final Map<String, Object> data;
