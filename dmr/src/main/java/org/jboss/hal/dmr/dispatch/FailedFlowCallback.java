@@ -19,7 +19,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 
-public class FailedFlowCallback<C extends FlowContext> implements Dispatcher.FailedCallback {
+public class FailedFlowCallback<C extends FlowContext> implements Dispatcher.OnFail {
 
     private final Control control;
 
