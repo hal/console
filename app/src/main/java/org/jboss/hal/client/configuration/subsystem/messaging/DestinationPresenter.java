@@ -188,7 +188,7 @@ public class DestinationPresenter
                 }
             };
 
-            series(progress.get(), new FlowContext(), check, add)
+            series(new FlowContext(progress.get()), check, add)
                     .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -279,7 +279,7 @@ public class DestinationPresenter
                             }
                         };
 
-                        series(progress.get(), new FlowContext(),
+                        series(new FlowContext(progress.get()),
                                 removeRole, readRemainingRoles, removeSecuritySetting)
                                 .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                                     @Override

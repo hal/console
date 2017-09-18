@@ -83,7 +83,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
         super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER, Names.JDBC_DRIVER)
 
-                .itemsProvider((context, callback) -> series(progress.get(), new FlowContext(),
+                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
                         new JdbcDriverTasks.ReadConfiguration(crud),
                         new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
                                 ? null

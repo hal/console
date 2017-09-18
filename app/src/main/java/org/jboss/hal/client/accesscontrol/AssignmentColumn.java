@@ -235,7 +235,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
         return column -> {
             Principal principal = findPrincipal(getFinder().getContext().getPath());
             if (principal != null) {
-                series(progress.get(), new FlowContext(),
+                series(new FlowContext(progress.get()),
                         new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new AddAssignment(dispatcher, role, principal, include))

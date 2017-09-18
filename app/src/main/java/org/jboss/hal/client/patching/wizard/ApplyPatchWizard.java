@@ -44,7 +44,7 @@ import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
 import static org.jboss.hal.client.patching.wizard.PatchState.CONFIGURE;
 import static org.jboss.hal.client.patching.wizard.PatchState.UPLOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.flow.Flow.single;
+import static org.jboss.hal.flow.Flow.series;
 
 public class ApplyPatchWizard {
 
@@ -164,7 +164,7 @@ public class ApplyPatchWizard {
                         String name = context.file.name;
                         wzd.showProgress(resources.constants().patchInProgress(), messages.patchInProgress(name));
 
-                        single(progress.get(), new FlowContext(),
+                        series(new FlowContext(progress.get()),
                                 new UploadPatch(statementContext, dispatcher, serverActions, context))
                                 .subscribe(new Outcome<FlowContext>() {
                                     @Override

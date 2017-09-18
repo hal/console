@@ -66,7 +66,7 @@ public class HalBootstrapper implements Bootstrapper {
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            series(Progress.NOOP, new FlowContext(), bootstrapFunctions.functions())
+            series(new FlowContext(), bootstrapFunctions.functions())
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onSuccess(FlowContext context) {

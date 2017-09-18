@@ -239,7 +239,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 };
             }
 
-            series(progress.get(), new FlowContext(),
+            series(new FlowContext(progress.get()),
                     serverConfigsFn, new TopologyTasks.TopologyStartedServers(environment, dispatcher))
                     .subscribe(new Outcome<FlowContext>() {
                         @Override

@@ -75,7 +75,6 @@ import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.flow.Flow.single;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -248,7 +247,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                     wzd.showProgress(resources.constants().deploymentInProgress(),
                             resources.messages().deploymentInProgress(name));
 
-                    series(progress.get(), new FlowContext(),
+                    series(new FlowContext(progress.get()),
                             new CheckDeployment(dispatcher, name),
                             new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
                                     context.enabled))
@@ -276,7 +275,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private void addUnmanaged() {
         Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
-                (name, model) -> single(progress.get(), new FlowContext(),
+                (name, model) -> series(new FlowContext(progress.get()),
                         new AddUnmanagedDeployment(dispatcher, name, model))
                         .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                             @Override

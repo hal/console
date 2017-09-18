@@ -50,7 +50,6 @@ import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Message;
@@ -155,14 +154,14 @@ public class Dispatcher implements RecordingHandler {
 
         this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.failedCallback = (operation, failure) -> {
-            logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
+            logger.error("Dispatcher failed: {}, operation: {}", failure, operation.asCli());
             if (!pendingLifecycleAction) {
                 eventBus.fireEvent(
                         new MessageEvent(Message.error(resources.messages().lastOperationFailed(), failure)));
             }
         };
         this.exceptionCallback = (operation, t) -> {
-            logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
+            logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation.asCli());
             if (!pendingLifecycleAction) {
                 eventBus.fireEvent(
                         new MessageEvent(Message.error(resources.messages().lastOperationException(), t.getMessage())));
@@ -189,16 +188,18 @@ public class Dispatcher implements RecordingHandler {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
+
+    // ------------------------------------------------------ execute composite in flow
+
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control control, Composite composite,
-            CompositeCallback callback) {
+    public void executeInFlow(Control control, Composite composite, CompositeCallback callback) {
         dmr(composite, payload -> payload.get(RESULT), callback, new FailedFlowCallback<>(control),
                 new ExceptionalFlowCallback<>(control));
     }
 
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control control, Composite composite,
-            CompositeCallback callback, FailedCallback failedCallback) {
+    public void executeInFlow(Control control, Composite composite, CompositeCallback callback,
+            FailedCallback failedCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
                 new ExceptionalFlowCallback<>(control));
     }
@@ -239,16 +240,18 @@ public class Dispatcher implements RecordingHandler {
         dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
+
+    // ------------------------------------------------------ execute operation in flow
+
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control control, Operation operation,
-            OperationCallback callback) {
+    public void executeInFlow(Control control, Operation operation, OperationCallback callback) {
         dmr(operation, payload -> payload.get(RESULT), callback, new FailedFlowCallback<>(control),
                 new ExceptionalFlowCallback<>(control));
     }
 
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control control, Operation operation,
-            OperationCallback callback, FailedCallback failedCallback) {
+    public void executeInFlow(Control control, Operation operation, OperationCallback callback,
+            FailedCallback failedCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback,
                 new ExceptionalFlowCallback<>(control));
     }

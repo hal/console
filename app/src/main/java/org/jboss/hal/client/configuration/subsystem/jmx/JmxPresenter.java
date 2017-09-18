@@ -125,7 +125,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
         } else {
             changedValues.remove(HANDLER);
             Metadata metadata = metadataRegistry.lookup(AUDIT_LOG_TEMPLATE);
-            series(progress.get(), new FlowContext(),
+            series(new FlowContext(progress.get()),
                     new HandlerTasks.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
                     new HandlerTasks.ReadHandlers(dispatcher, statementContext),
                     new HandlerTasks.MergeHandler(dispatcher, statementContext, new HashSet<>(handler)))

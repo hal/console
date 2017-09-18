@@ -242,7 +242,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
         return column -> {
             Role role = findRole(getFinder().getContext().getPath());
             if (role != null) {
-                series(progress.get(), new FlowContext(), new CheckRoleMapping(dispatcher, role),
+                series(new FlowContext(progress.get()), new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new AddAssignment(dispatcher, role, principal, include))
                 .subscribe(new org.jboss.hal.core.SuccessfulOutcome<FlowContext>(eventBus, resources) {

@@ -441,7 +441,7 @@ public class RemotingPresenter
     private void failSafeCreatePolicy(String type, AddressTemplate securityTemplate, AddressTemplate policyTemplate,
             StatementContext statementContext) {
 
-        series(progress.get(), new FlowContext(),
+        series(new FlowContext(progress.get()),
                 new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext)),
                 (context, control) -> {
                     int status = context.pop();

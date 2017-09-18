@@ -214,7 +214,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
         collectTasks(tasks, type, name, true, model, INCLUDE);
         collectTasks(tasks, type, name, false, model, EXCLUDE);
         if (!tasks.isEmpty()) {
-            series(progress.get(), new FlowContext(), tasks)
+            series(new FlowContext(progress.get()), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
                         public void onSuccess(FlowContext context) {

@@ -184,7 +184,7 @@ public class ServerPresenter
             }
         };
 
-        series(progress.get(), new FlowContext(), serverConfigFn, serverRuntimeFn)
+        series(new FlowContext(progress.get()), serverConfigFn, serverRuntimeFn)
                 .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                     @Override
                     public void onSuccess(FlowContext context) {

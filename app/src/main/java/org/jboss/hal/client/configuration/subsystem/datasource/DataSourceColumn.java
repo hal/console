@@ -236,7 +236,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                             control.proceed();
                         });
 
-        series(progress.get(), new FlowContext(),
+        series(new FlowContext(progress.get()),
                 readDataSources,
                 new JdbcDriverTasks.ReadConfiguration(crud),
                 new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()

@@ -140,7 +140,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .build());
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
-        ItemsProvider<Host> itemsProvider = (context, callback) -> series(progress.get(), new FlowContext(),
+        ItemsProvider<Host> itemsProvider = (context, callback) -> series(new FlowContext(progress.get()),
                 new TopologyTasks.HostsWithServerConfigs(environment, dispatcher),
                 new TopologyTasks.HostsStartedServers(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {

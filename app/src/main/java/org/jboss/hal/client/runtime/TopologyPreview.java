@@ -297,7 +297,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         // show the loading indicator if the dmr operation takes too long
         double timeoutHandle = setTimeout((o) -> Elements.setVisible(loadingSection, true),
                 UIConstants.MEDIUM_TIMEOUT);
-        series(progress.get(), new FlowContext(),
+        series(new FlowContext(progress.get()),
                 new TopologyTasks.Topology(environment, dispatcher),
                 new TopologyTasks.TopologyStartedServers(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
@@ -347,7 +347,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void updateServer(Server server) {
-        series(progress.get(), new FlowContext(),
+        series(new FlowContext(progress.get()),
                 // TODO Include function to read server boot errors
                 new TopologyTasks.HostWithServerConfigs(server.getHost(), dispatcher),
                 new TopologyTasks.HostStartedServers(dispatcher),

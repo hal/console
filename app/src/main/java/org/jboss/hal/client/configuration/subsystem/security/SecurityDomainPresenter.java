@@ -183,7 +183,7 @@ public class SecurityDomainPresenter
         // first check for (and add if necessary) the intermediate singleton
         // then add the final resource
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
-        series(progress.get(), new FlowContext(),
+        series(new FlowContext(progress.get()),
                 new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext)),
                 (context, control) -> {
                     int status = context.pop();
