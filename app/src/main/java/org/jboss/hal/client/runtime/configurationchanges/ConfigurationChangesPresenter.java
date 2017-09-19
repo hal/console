@@ -75,9 +75,9 @@ public class ConfigurationChangesPresenter extends
     }
     // @formatter:on
 
-    private static final String CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/subsystem=core-management/service=configuration-changes";
+    private static final String CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
     private static final AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of(
-            "/{selected.host}/subsystem=core-management");
+            "{selected.host}/subsystem=core-management");
     public static final AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             CONFIGURATION_CHANGES_ADDRESS);
 

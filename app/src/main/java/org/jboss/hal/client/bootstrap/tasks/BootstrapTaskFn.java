@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Task;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Single;
+import rx.functions.Func1;
 
 /** Interface for bootstrap functions. */
-public interface BootstrapTask extends Task<FlowContext> {
+public interface BootstrapTaskFn extends Func1<FlowContext, Single<FlowContext>> {
 
-    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapTask.class);
+    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapTaskFn.class);
 
     @NonNls
     String name();

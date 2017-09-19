@@ -33,7 +33,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import java.util.ArrayList;
 import java.util.List;

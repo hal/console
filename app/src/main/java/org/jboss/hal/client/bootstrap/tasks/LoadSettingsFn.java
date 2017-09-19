@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
+import rx.Single;
 
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.config.Settings.Key.LOCALE;
@@ -32,19 +32,19 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * Loads the settings. Please make sure this is the last bootstrap function. This function loads the run-as role which
  * is then used by the dispatcher. But all previous bootstrap functions must not have a run-as role in the dispatcher.
  */
-public class LoadSettings implements BootstrapTask {
+public class LoadSettingsFn implements BootstrapTaskFn {
 
     private final Environment environment;
     private final Settings settings;
 
     @Inject
-    public LoadSettings(Environment environment, Settings settings) {
+    public LoadSettingsFn(Environment environment, Settings settings) {
         this.environment = environment;
         this.settings = settings;
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
+    public Single<FlowContext> call(FlowContext context) {
         logStart();
 
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
@@ -53,7 +53,7 @@ public class LoadSettings implements BootstrapTask {
         settings.load(RUN_AS, null);
 
         logDone();
-        control.proceed();
+        return Single.just(context);
     }
 
     @Override

@@ -57,12 +57,16 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Single;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.dispatch.DispatchException.causedBy;
+import static org.jboss.hal.dmr.dispatch.DispatchException.failedOperation;
+import static org.jboss.hal.dmr.dispatch.DispatchException.statusError;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.ACCEPT;
@@ -167,7 +171,7 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public void execute(Composite operations, Consumer<CompositeResult> success, OnFail fail, OnError error) {
-        dmr(operations, payloadres -> success.accept(compositeResult(payloadres)), fail, error);
+        dmr(operations, payload -> success.accept(compositeResult(payload)), fail, error);
     }
 
 
@@ -183,6 +187,16 @@ public class Dispatcher implements RecordingHandler {
     public void executeInFlow(Control control, Composite operations, Consumer<CompositeResult> success, OnFail fail) {
         dmr(operations, payload -> success.accept(compositeResult(payload)), fail,
                 new ExceptionalFlowCallback<>(control));
+    }
+
+
+    // ------------------------------------------------------ execute composite in RX
+
+    @JsIgnore
+    public Single<CompositeResult> executeInRx(Composite operations) {
+        return Single.fromEmitter(emitter -> execute(operations, emitter::onSuccess,
+                (op, failure) -> emitter.onError(failedOperation(failure, op)),
+                (op, exception) -> emitter.onError(causedBy(exception, op))));
     }
 
     private CompositeResult compositeResult(ModelNode payload) { return new CompositeResult(payload.get(RESULT)); }
@@ -217,6 +231,16 @@ public class Dispatcher implements RecordingHandler {
     @JsIgnore
     public void executeInFlow(Control control, Operation operation, Consumer<ModelNode> success, OnFail fail) {
         dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, new ExceptionalFlowCallback<>(control));
+    }
+
+
+    // ------------------------------------------------------ execute composite in RX
+
+    @JsIgnore
+    public Single<ModelNode> executeInRx(Operation operation) {
+        return Single.fromEmitter(emitter -> execute(operation, emitter::onSuccess,
+                (op, failure) -> emitter.onError(failedOperation(failure, op)),
+                (op, exception) -> emitter.onError(causedBy(exception, op))));
     }
 
 
@@ -439,30 +463,33 @@ public class Dispatcher implements RecordingHandler {
         return xhr;
     }
 
-    private void handleErrorCodes(String url, int status, Operation operation, OnError exceptionCallback) {
+    private void handleErrorCodes(String url, int status, Operation operation, OnError onError) {
         switch (status) {
             case 0:
-                exceptionCallback.onException(operation,
-                        new DispatchException("The response for '" + url + "' could not be processed.", status));
+                onError.onException(operation,
+                        statusError(status, "The response for '" + url + "' could not be processed.",
+                                operation));
                 break;
             case 401:
             case 403:
-                exceptionCallback.onException(operation, new DispatchException("Authentication required.", status));
+                onError.onException(operation, statusError(status, "Authentication required.", operation));
                 break;
             case 404:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Management interface at '" + url + "' not found.", status));
+                onError.onException(operation,
+                        statusError(status, "Management interface at '" + url + "' not found.", operation));
                 break;
             case 500:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Internal Server Error for '" + operation.asCli() + "'.", status));
+                onError.onException(operation,
+                        statusError(status, "Internal Server Error for '" + operation.asCli() + "'.",
+                                operation));
                 break;
             case 503:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Service temporarily unavailable. Is the server still booting?", status));
+                onError.onException(operation,
+                        statusError(status, "Service temporarily unavailable. Is the server still booting?",
+                                operation));
                 break;
             default:
-                exceptionCallback.onException(operation, new DispatchException("Unexpected status code.", status));
+                onError.onException(operation, statusError(status, "Unexpected status code.", operation));
                 break;
         }
     }

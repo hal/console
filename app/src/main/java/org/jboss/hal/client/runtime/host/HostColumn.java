@@ -262,7 +262,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                 .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
                                 .build());
                         if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
-                            // Use ItemMonitor?
                             PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
                                     .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),

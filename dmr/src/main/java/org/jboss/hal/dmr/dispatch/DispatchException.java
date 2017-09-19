@@ -15,20 +15,42 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import org.jboss.hal.dmr.Operation;
+import org.jetbrains.annotations.NonNls;
+
 /**
  * @author Heiko Braun
  * @date 9/17/13
  */
-public class DispatchException extends Exception {
+public class DispatchException extends RuntimeException {
+
+    static DispatchException statusError(int statusCode, @NonNls String message, Operation operation) {
+        return new DispatchException(statusCode, message, operation, null);
+    }
+
+    public static DispatchException failedOperation(@NonNls String message, Operation operation) {
+        return new DispatchException(500, message, operation, null);
+    }
+
+    static DispatchException causedBy(Throwable throwable, Operation operation) {
+        return new DispatchException(500, throwable.getMessage(), operation, throwable);
+    }
+
 
     private final int statusCode;
+    private final Operation operation;
 
-    DispatchException(String message, int statusCode) {
-        super(message + " Status Code " + statusCode);
+    private DispatchException(int statusCode, String message, Operation operation, Throwable throwable) {
+        super(message + " Status Code " + statusCode, throwable);
         this.statusCode = statusCode;
+        this.operation = operation;
     }
 
     public int getStatusCode() {
         return statusCode;
+    }
+
+    public Operation getOperation() {
+        return operation;
     }
 }

@@ -16,8 +16,10 @@
 package org.jboss.hal.flow;
 
 import java.util.Collection;
+
 import rx.Observable;
 import rx.Single;
+import rx.functions.Func1;
 
 import static java.util.Arrays.asList;
 
@@ -35,6 +37,16 @@ public interface Flow {
 
     /** Executes multiple tasks in order. */
     static <C extends FlowContext> Single<C> series(C context, Collection<? extends Task<C>> tasks) {
+        return Observable.from(tasks)
+                .flatMapSingle(f -> f.call(context), false, 1)
+                .doOnSubscribe(() -> context.progress.reset(tasks.size()))
+                .doOnNext(n -> context.progress.tick())
+                .doOnTerminate(context.progress::finish)
+                .lastOrDefault(context).toSingle();
+    }
+
+    /** Executes multiple tasks in order. */
+    static <C extends FlowContext> Single<C> seriesRx(C context, Collection<? extends Func1<C, Single<C>>> tasks) {
         return Observable.from(tasks)
                 .flatMapSingle(f -> f.call(context), false, 1)
                 .doOnSubscribe(() -> context.progress.reset(tasks.size()))
