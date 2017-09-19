@@ -16,8 +16,11 @@
 package org.jboss.hal.flow;
 
 import java.util.Collection;
+
+import rx.Completable;
 import rx.Observable;
 import rx.Single;
+import rx.functions.Func1;
 
 import static java.util.Arrays.asList;
 
@@ -29,15 +32,15 @@ public interface Flow {
 
     /** Executes multiple tasks in order. */
     @SafeVarargs
-    static <C extends FlowContext> Single<C> series(C context, Task<C>... task) {
+    static Single<FlowContext> series(FlowContext context, Func1<FlowContext, Completable>... task) {
         return series(context, asList(task));
     }
 
     /** Executes multiple tasks in order. */
-    static <C extends FlowContext> Single<C> series(C context, Collection<? extends Task<C>> tasks) {
-        return Observable.from(tasks)
-                .flatMapSingle(f -> f.call(context), false, 1)
-                .doOnSubscribe(() -> context.progress.reset(tasks.size()))
+    static Single<FlowContext> series(FlowContext context, Collection<? extends Func1<FlowContext, Completable>> task) {
+        return Observable.from(task)
+                .flatMapSingle(f -> f.call(context).toSingleDefault(context), false, 1)
+                .doOnSubscribe(() -> context.progress.reset(task.size()))
                 .doOnNext(n -> context.progress.tick())
                 .doOnTerminate(context.progress::finish)
                 .lastOrDefault(context).toSingle();

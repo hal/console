@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -443,7 +444,7 @@ public class RemotingPresenter
 
         series(new FlowContext(progress.get()),
                 new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext)),
-                (context, control) -> {
+                (Task<FlowContext>) (context, control) -> {
                     int status = context.pop();
                     if (status == 200) {
                         control.proceed();
@@ -453,7 +454,7 @@ public class RemotingPresenter
                         dispatcher.executeInFlow(control, operation, result -> control.proceed());
                     }
                 },
-                (context, control) -> {
+                (Task<FlowContext>) (context, control) -> {
                     Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
                     dispatcher.executeInFlow(control, operation, result -> control.proceed());
                 })

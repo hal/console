@@ -342,7 +342,7 @@ public class PropertiesOperations {
 
         // TODO Check if the steps can be replaced with a composite operation
         series(new FlowContext(progress.get()),
-                (context, control) -> {
+                (Task<FlowContext>) (context, control) -> {
                     if (operations.isEmpty()) {
                         control.proceed();
                     } else {

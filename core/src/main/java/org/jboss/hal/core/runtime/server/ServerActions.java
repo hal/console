@@ -58,7 +58,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.Dispatcher.OnError;
 import org.jboss.hal.dmr.dispatch.Dispatcher.OnFail;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
@@ -95,7 +94,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatOperationUntil;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
-import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -670,21 +668,15 @@ public class ServerActions {
             callback.onSuccess(serverUrl);
 
         } else {
-            series(new FlowContext(),
-                    new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
-                    new ReadSocketBinding(standalone, host, server, dispatcher))
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            logger.error(error.getMessage());
-                            callback.onFailure(error);
-                        }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            callback.onSuccess(context.get(URL_KEY));
-                        }
-                    });
+            FlowContext taskContext = new FlowContext();
+            new ReadSocketBindingGroup(standalone, serverGroup, dispatcher).call(taskContext)
+                    .andThen(new ReadSocketBinding(standalone, host, server, dispatcher).call(taskContext))
+                    .doOnError(e -> {
+                        logger.error(e.getMessage());
+                        callback.onFailure(e);
+                    })
+                    .doOnTerminate(() -> callback.onSuccess(taskContext.get(URL_KEY)))
+                    .subscribe();
         }
     }
 
