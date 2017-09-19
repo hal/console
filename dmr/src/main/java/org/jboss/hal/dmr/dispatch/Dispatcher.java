@@ -57,6 +57,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Single;
+import rx.SingleSubscriber;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
@@ -205,6 +207,11 @@ public class Dispatcher implements RecordingHandler {
         dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, error);
     }
 
+    @JsIgnore
+    public Single<ModelNode> execute(Operation operation) {
+        return dmr(operation).map(payload -> payload.get(RESULT));
+    }
+
 
     // ------------------------------------------------------ execute operation in flow
 
@@ -223,27 +230,37 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ dmr
 
     private void dmr(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        String url;
-        HttpMethod method;
-        Operation dmrOperation = runAs(operation);
+        dmr(operation).subscribe(new SingleSubscriber<ModelNode>() {
+            @Override public void onSuccess(ModelNode modelNode) {
+                success.accept(modelNode);
+            }
+            @Override public void onError(Throwable ex) {
+                if (ex instanceof DispatchFailure) fail.onFailed(operation, ex.getMessage());
+                else error.onException(operation, ex);
+            }
+        });
+    }
 
-        if (GetOperation.isSupported(dmrOperation.getName())) {
-            url = operationUrl(dmrOperation);
-            method = GET;
-        } else {
-            url = endpoints.dmr();
-            method = POST;
-        }
-
-        XMLHttpRequest xhr = newDmrXhr(url, method, dmrOperation, new DmrPayloadProcessor(), success, fail, error);
-        xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
-        xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
-        if (method == GET) {
-            xhr.send();
-        } else {
-            xhr.send(dmrOperation.toBase64String());
-        }
-        recordOperation(operation);
+    @JsIgnore
+    public Single<ModelNode> dmr(Operation operation) {
+        Operation dmrOperation = runAs(operation); // runAs might mutate the operation, so do it synchronously
+        boolean get = GetOperation.isSupported(dmrOperation.getName());
+        String url = get ? operationUrl(dmrOperation) : endpoints.dmr();
+        HttpMethod method = get ? GET : POST;
+        // ^-- those eager fields are useful if you don't want to evaluate it on each Single subscription
+        return Single.fromEmitter(emitter -> {
+            // in general, code inside the RX type should be able to be executed multiple times and always returns
+            // the same result, so you should be careful to not mutate anything (like the operation). This is useful
+            // for example if you use the retry operator that will try again (subscribe again) if it fails.
+            XMLHttpRequest xhr = newDmrXhr(url, method, dmrOperation, new DmrPayloadProcessor(), emitter::onSuccess,
+                    (op, fail) -> emitter.onError(new DispatchFailure(operation, fail)),
+                    (op, error) -> emitter.onError(error));
+            xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+            xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
+            if (get) xhr.send();
+            else xhr.send(dmrOperation.toBase64String());
+            recordOperation(operation);
+        });
     }
 
 
@@ -439,30 +456,32 @@ public class Dispatcher implements RecordingHandler {
         return xhr;
     }
 
-    private void handleErrorCodes(String url, int status, Operation operation, OnError exceptionCallback) {
+    private void handleErrorCodes(String url, int status, Operation operation, OnError error) {
         switch (status) {
             case 0:
-                exceptionCallback.onException(operation,
-                        new DispatchException("The response for '" + url + "' could not be processed.", status));
+                error.onException(operation, new DispatchError(operation,
+                        "The response for '" + url + "' could not be processed.", status));
                 break;
             case 401:
             case 403:
-                exceptionCallback.onException(operation, new DispatchException("Authentication required.", status));
+                error.onException(operation, new DispatchError(operation,
+                        "Authentication required.", status));
                 break;
             case 404:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Management interface at '" + url + "' not found.", status));
+                error.onException(operation, new DispatchError(operation,
+                        "Management interface at '" + url + "' not found.", status));
                 break;
             case 500:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Internal Server Error for '" + operation.asCli() + "'.", status));
+                error.onException(operation, new DispatchError(operation,
+                        "Internal Server Error for '" + operation.asCli() + "'.", status));
                 break;
             case 503:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Service temporarily unavailable. Is the server still booting?", status));
+                error.onException(operation, new DispatchError(operation,
+                        "Service temporarily unavailable. Is the server still booting?", status));
                 break;
             default:
-                exceptionCallback.onException(operation, new DispatchException("Unexpected status code.", status));
+                error.onException(operation, new DispatchError(operation,
+                        "Unexpected status code.", status));
                 break;
         }
     }

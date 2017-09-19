@@ -15,20 +15,17 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-/**
- * @author Heiko Braun
- * @date 9/17/13
- */
-public class DispatchException extends Exception {
+import org.jboss.hal.dmr.Operation;
 
-    private final int statusCode;
+public class DispatchFailure extends Exception {
+    private final Operation operation;
 
-    DispatchException(String message, int statusCode) {
-        super(message + " Status Code " + statusCode);
-        this.statusCode = statusCode;
+    DispatchFailure(Operation operation, String message) {
+        super(message);
+        this.operation = operation;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public Operation getOperation() {
+        return operation;
     }
 }
