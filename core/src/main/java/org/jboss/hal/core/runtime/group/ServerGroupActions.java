@@ -100,7 +100,7 @@ public class ServerGroupActions {
     }
 
 
-    private class ServerGroupFailedCallback implements Dispatcher.FailedCallback {
+    private class ServerGroupFailedCallback implements Dispatcher.OnFail {
 
         private final ServerGroup serverGroup;
         private final List<Server> servers;
@@ -120,7 +120,7 @@ public class ServerGroupActions {
     }
 
 
-    private class ServerGroupExceptionCallback implements Dispatcher.ExceptionCallback {
+    private class ServerGroupExceptionCallback implements Dispatcher.OnError {
 
         private final ServerGroup serverGroup;
         private final List<Server> servers;

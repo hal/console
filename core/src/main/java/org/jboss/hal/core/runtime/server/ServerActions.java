@@ -53,8 +53,8 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
-import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
+import org.jboss.hal.dmr.dispatch.Dispatcher.OnError;
+import org.jboss.hal.dmr.dispatch.Dispatcher.OnFail;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -143,7 +143,7 @@ public class ServerActions {
     }
 
 
-    private class ServerFailedCallback implements FailedCallback {
+    private class ServerFailedCallback implements OnFail {
 
         private final Server server;
         private final SafeHtml errorMessage;
@@ -160,7 +160,7 @@ public class ServerActions {
     }
 
 
-    private class ServerExceptionCallback implements ExceptionCallback {
+    private class ServerExceptionCallback implements OnError {
 
         private final Server server;
         private final SafeHtml errorMessage;
@@ -266,7 +266,7 @@ public class ServerActions {
                                 .param(RECURSIVE, true)
                                 .build();
 
-                        dispatcher.execute(opReadServer, new Dispatcher.OperationCallback() {
+                        dispatcher.execute(opReadServer, new Dispatcher.OnSuccess() {
                             @Override
                             public void onSuccess(final ModelNode newServerModel) {
 
