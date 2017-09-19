@@ -112,31 +112,37 @@ class TestStep extends WizardStep<Context, State> {
 
         // check running server(s)
         tasks.add(new TopologyTasks.RunningServersQuery(
-                environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
+                environment, dispatcher, environment.isStandalone()
+                        ? null
+                        : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
 
         // test connection
         tasks.add((flowContext, control) -> {
             List<Server> servers = flowContext.get(TopologyTasks.RUNNING_SERVERS);
+            ResourceAddress address = null;
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);
-                ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
-                        .add(DATA_SOURCE, context.dataSource.getName());
-                Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
-                dispatcher.executeInFlow(control, operation,
-                        result -> control.proceed(),
-                        (op, failure) -> {
-                            flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
-                            flowContext.set(WIZARD_TEXT,
-                                    resources.messages().testConnectionError(context.dataSource.getName()));
-                            control.abort(failure);
-                        });
-
+                address = server.getServerAddress();
+            } else if (environment.isStandalone()) {
+                address = new ResourceAddress();
             } else {
                 flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
                 flowContext.set(WIZARD_TEXT,
                         SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
                 control.abort("no running servers"); //NON-NLS
+                return;
             }
+            address.add(SUBSYSTEM, DATASOURCES)
+                    .add(context.dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE, context.dataSource.getName());
+            Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
+            dispatcher.executeInFlow(control, operation,
+                result -> control.proceed(),
+                (op, failure) -> {
+                    flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
+                    flowContext.set(WIZARD_TEXT,
+                            resources.messages().testConnectionError(context.dataSource.getName()));
+                    control.abort(failure);
+                });
         });
 
         series(new FlowContext(progress.get()), tasks)
