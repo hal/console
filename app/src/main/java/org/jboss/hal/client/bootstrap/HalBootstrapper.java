@@ -25,15 +25,13 @@ import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.functions.BootstrapTasks;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
-import org.jboss.hal.flow.Progress;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.hal.flow.Flow.series;
 
 public class HalBootstrapper implements Bootstrapper {
 
@@ -66,24 +64,20 @@ public class HalBootstrapper implements Bootstrapper {
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            series(new FlowContext(), bootstrapFunctions.functions())
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            LoadingPanel.get().off();
-                            logger.info("Bootstrap finished");
-                            placeManager.revealCurrentPlace();
-                            exceptionHandler.afterBootstrap();
-                        }
-
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            LoadingPanel.get().off();
-                            logger.error("Bootstrap error: {}", error.getMessage());
-                            document.body.appendChild(
-                                    BootstrapFailed.create(error.getMessage(), endpoints).asElement());
-                        }
-                    });
+            FlowContext bootstrappingContext = new FlowContext();
+            Observable.from(bootstrapFunctions.functions())
+                    .flatMapCompletable(task -> task.call(bootstrappingContext), false, 1)
+                    .doOnTerminate(() -> LoadingPanel.get().off())
+                    .doOnCompleted(() -> {
+                        logger.info("Bootstrap finished");
+                        placeManager.revealCurrentPlace();
+                        exceptionHandler.afterBootstrap();
+                    })
+                    .doOnError(e -> {
+                        logger.error("Bootstrap error: {}", e.getMessage());
+                        document.body.appendChild(BootstrapFailed.create(e.getMessage(), endpoints).asElement());
+                    })
+                    .subscribe();
         });
     }
 }
