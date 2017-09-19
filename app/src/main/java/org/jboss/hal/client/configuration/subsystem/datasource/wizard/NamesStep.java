@@ -57,6 +57,12 @@ class NamesStep extends WizardStep<Context, State> {
                     wizard().getContext().dataSource.update(form.getModel());
                 })
                 .build();
+
+        form.getFormItem(JNDI_NAME).addValidationHandler(value ->
+                value.toString().matches("java:(jboss)?/.*") ? ValidationResult.OK
+                    : ValidationResult.invalid("JNDI name has to start with java:/ or java:jboss/")
+        );
+
         registerAttachable(form);
     }
 
