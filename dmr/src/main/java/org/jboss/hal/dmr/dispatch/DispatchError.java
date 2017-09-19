@@ -18,32 +18,27 @@ package org.jboss.hal.dmr.dispatch;
 import org.jboss.hal.dmr.Operation;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author Heiko Braun
- * @date 9/17/13
- */
-public class DispatchException extends RuntimeException {
-
-    static DispatchException statusError(int statusCode, @NonNls String message, Operation operation) {
-        return new DispatchException(statusCode, message, operation, null);
-    }
-
-    public static DispatchException failedOperation(@NonNls String message, Operation operation) {
-        return new DispatchException(500, message, operation, null);
-    }
-
-    static DispatchException causedBy(Throwable throwable, Operation operation) {
-        return new DispatchException(500, throwable.getMessage(), operation, throwable);
-    }
-
+/** Exception caused by a communication error or another exception not directly related to the DMR operation. */
+public class DispatchError extends RuntimeException {
 
     private final int statusCode;
     private final Operation operation;
 
-    private DispatchException(int statusCode, String message, Operation operation, Throwable throwable) {
-        super(message + " Status Code " + statusCode, throwable);
+    public DispatchError(Throwable throwable, Operation operation) {
+        super(throwable);
+        this.statusCode = 500;
+        this.operation = operation;
+    }
+
+    public DispatchError(int statusCode, @NonNls String message, Operation operation) {
+        super(message);
         this.statusCode = statusCode;
         this.operation = operation;
+    }
+
+    @Override
+    public String toString() {
+        return "DispatchError(" + statusCode + ": " + getMessage() + ")";
     }
 
     public int getStatusCode() {

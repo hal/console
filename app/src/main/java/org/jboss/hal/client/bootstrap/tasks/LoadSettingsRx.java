@@ -32,13 +32,13 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * Loads the settings. Please make sure this is the last bootstrap function. This function loads the run-as role which
  * is then used by the dispatcher. But all previous bootstrap functions must not have a run-as role in the dispatcher.
  */
-public class LoadSettingsFn implements BootstrapTaskFn {
+public class LoadSettingsRx implements BootstrapTaskRx {
 
     private final Environment environment;
     private final Settings settings;
 
     @Inject
-    public LoadSettingsFn(Environment environment, Settings settings) {
+    public LoadSettingsRx(Environment environment, Settings settings) {
         this.environment = environment;
         this.settings = settings;
     }

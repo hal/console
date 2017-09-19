@@ -46,6 +46,11 @@ public interface Flow {
     }
 
     /** Executes multiple tasks in order. */
+    static <C extends FlowContext> Single<C> seriesRx(C context, Func1<C, Single<C>>... task) {
+        return seriesRx(context, asList(task));
+    }
+
+    /** Executes multiple tasks in order. */
     static <C extends FlowContext> Single<C> seriesRx(C context, Collection<? extends Func1<C, Single<C>>> tasks) {
         return Observable.from(tasks)
                 .flatMapSingle(f -> f.call(context), false, 1)

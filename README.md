@@ -10,6 +10,7 @@ Fresh start of the HAL management console using the latest frameworks / librarie
 - Prepare for GWT 3.x / J2CL
 - Latest GWTP build
 - PatternFly
+- RxGWT
 
 ## Motivation
 

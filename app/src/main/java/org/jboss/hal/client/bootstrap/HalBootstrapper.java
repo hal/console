@@ -23,16 +23,17 @@ import elemental2.dom.Event;
 import org.jboss.hal.client.ExceptionHandler;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
+import org.jboss.hal.client.bootstrap.tasks.BootstrapTasksRx;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.SingleSubscriber;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.seriesRx;
 
 public class HalBootstrapper implements Bootstrapper {
 
@@ -42,6 +43,7 @@ public class HalBootstrapper implements Bootstrapper {
     private final EndpointManager endpointManager;
     private final Endpoints endpoints;
     private final BootstrapTasks bootstrapFunctions;
+    private final BootstrapTasksRx bootstrapFunctionsRx;
     private final ExceptionHandler exceptionHandler;
 
     @Inject
@@ -49,11 +51,13 @@ public class HalBootstrapper implements Bootstrapper {
             EndpointManager endpointManager,
             Endpoints endpoints,
             BootstrapTasks bootstrapFunctions,
+            BootstrapTasksRx bootstrapFunctionsRx,
             ExceptionHandler exceptionHandler) {
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;
         this.endpoints = endpoints;
         this.bootstrapFunctions = bootstrapFunctions;
+        this.bootstrapFunctionsRx = bootstrapFunctionsRx;
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -65,6 +69,7 @@ public class HalBootstrapper implements Bootstrapper {
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
+/*
             series(new FlowContext(), bootstrapFunctions.functions())
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
@@ -77,6 +82,26 @@ public class HalBootstrapper implements Bootstrapper {
 
                         @Override
                         public void onError(FlowContext context, Throwable error) {
+                            LoadingPanel.get().off();
+                            logger.error("Bootstrap error: {}", error.getMessage());
+                            document.body.appendChild(
+                                    BootstrapFailed.create(error.getMessage(), endpoints).asElement());
+                        }
+                    });
+*/
+
+            seriesRx(new FlowContext(), bootstrapFunctionsRx.functions())
+                    .subscribe(new SingleSubscriber<FlowContext>() {
+                        @Override
+                        public void onSuccess(FlowContext context) {
+                            LoadingPanel.get().off();
+                            logger.info("Bootstrap finished");
+                            placeManager.revealCurrentPlace();
+                            exceptionHandler.afterBootstrap();
+                        }
+
+                        @Override
+                        public void onError(Throwable error) {
                             LoadingPanel.get().off();
                             logger.error("Bootstrap error: {}", error.getMessage());
                             document.body.appendChild(

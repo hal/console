@@ -19,13 +19,20 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointStorage;
-import org.jboss.hal.client.bootstrap.tasks.LoadSettings;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
+import org.jboss.hal.client.bootstrap.tasks.BootstrapTasksRx;
 import org.jboss.hal.client.bootstrap.tasks.FindDomainController;
+import org.jboss.hal.client.bootstrap.tasks.FindDomainControllerRx;
+import org.jboss.hal.client.bootstrap.tasks.LoadSettings;
+import org.jboss.hal.client.bootstrap.tasks.LoadSettingsRx;
 import org.jboss.hal.client.bootstrap.tasks.ReadAuthentication;
+import org.jboss.hal.client.bootstrap.tasks.ReadAuthenticationRx;
 import org.jboss.hal.client.bootstrap.tasks.ReadEnvironment;
+import org.jboss.hal.client.bootstrap.tasks.ReadEnvironmentRx;
 import org.jboss.hal.client.bootstrap.tasks.ReadExtensions;
+import org.jboss.hal.client.bootstrap.tasks.ReadExtensionsRx;
 import org.jboss.hal.client.bootstrap.tasks.RegisterStaticCapabilities;
+import org.jboss.hal.client.bootstrap.tasks.RegisterStaticCapabilitiesRx;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
@@ -37,11 +44,18 @@ public class BootstrapModule extends AbstractGinModule {
         bind(EndpointStorage.class).in(Singleton.class);
 
         bind(LoadSettings.class).in(Singleton.class);
+        bind(LoadSettingsRx.class).in(Singleton.class);
         bind(ReadEnvironment.class).in(Singleton.class);
+        bind(ReadEnvironmentRx.class).in(Singleton.class);
         bind(ReadExtensions.class).in(Singleton.class);
+        bind(ReadExtensionsRx.class).in(Singleton.class);
         bind(ReadAuthentication.class).in(Singleton.class);
+        bind(ReadAuthenticationRx.class).in(Singleton.class);
         bind(FindDomainController.class).in(Singleton.class);
+        bind(FindDomainControllerRx.class).in(Singleton.class);
         bind(RegisterStaticCapabilities.class).in(Singleton.class);
+        bind(RegisterStaticCapabilitiesRx.class).in(Singleton.class);
         bind(BootstrapTasks.class).in(Singleton.class);
+        bind(BootstrapTasksRx.class).in(Singleton.class);
     }
 }

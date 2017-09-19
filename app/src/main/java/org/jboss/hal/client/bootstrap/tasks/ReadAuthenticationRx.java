@@ -64,7 +64,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * scoped role scoped to a slave host).
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class ReadAuthenticationFn implements BootstrapTaskFn {
+public class ReadAuthenticationRx implements BootstrapTaskRx {
 
     private static final AddressTemplate AUTHENTICATION_TEMPLATE = AddressTemplate.of(
             "/core-service=management/access=authorization");
@@ -74,7 +74,7 @@ public class ReadAuthenticationFn implements BootstrapTaskFn {
     private final StatementContext statementContext;
 
     @Inject
-    public ReadAuthenticationFn(Dispatcher dispatcher, Environment environment, StatementContext statementContext) {
+    public ReadAuthenticationRx(Dispatcher dispatcher, Environment environment, StatementContext statementContext) {
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.statementContext = statementContext;
@@ -89,7 +89,7 @@ public class ReadAuthenticationFn implements BootstrapTaskFn {
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE_DEPTH, 1)
                 .build();
-        return dispatcher.executeInRx(operation)
+        return dispatcher.execute(operation)
                 .map(result -> {
                     // provider
                     AccessControlProvider accessControlProvider = asEnumValue(result, PROVIDER,

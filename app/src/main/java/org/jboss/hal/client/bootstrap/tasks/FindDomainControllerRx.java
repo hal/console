@@ -22,7 +22,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.DispatchException;
+import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import rx.Single;
@@ -33,13 +33,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 /** Reads the domain controller. Only executed in domain mode. Depends on {@link ReadEnvironment}. */
-public class FindDomainControllerFn implements BootstrapTaskFn {
+public class FindDomainControllerRx implements BootstrapTaskRx {
 
     private final Dispatcher dispatcher;
     private final Environment environment;
 
     @Inject
-    public FindDomainControllerFn(Dispatcher dispatcher, Environment environment) {
+    public FindDomainControllerRx(Dispatcher dispatcher, Environment environment) {
         this.dispatcher = dispatcher;
         this.environment = environment;
     }
@@ -54,13 +54,13 @@ public class FindDomainControllerFn implements BootstrapTaskFn {
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, HOST)
                     .build();
-            return dispatcher.executeInRx(operation)
+            return dispatcher.execute(operation)
                     .map(result -> {
                         String firstHost = null;
                         String domainController = null;
                         List<Property> properties = result.asPropertyList();
                         if (properties.isEmpty()) {
-                            throw DispatchException.failedOperation("No hosts found!", operation);
+                            throw new DispatchFailure("No hosts found!", operation);
 
                         } else {
                             for (Property property : properties) {
