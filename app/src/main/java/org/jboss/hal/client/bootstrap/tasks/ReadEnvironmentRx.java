@@ -83,14 +83,14 @@ public class ReadEnvironmentRx implements BootstrapTaskRx {
     public Single<FlowContext> call(FlowContext context) {
         logStart();
 
-        List<Operation> ops = new ArrayList<>();
-        ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
+        List<Operation> operations = new ArrayList<>();
+        operations.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build());
-        ops.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
+        operations.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
 
-        return dispatcher.execute(new Composite(ops))
+        return dispatcher.execute(new Composite(operations))
                 .map((CompositeResult result) -> {
                     // server info
                     logger.debug("{}: Parse root resource", name());
