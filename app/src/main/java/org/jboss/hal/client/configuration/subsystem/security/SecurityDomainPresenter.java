@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -185,7 +186,7 @@ public class SecurityDomainPresenter
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
         series(new FlowContext(progress.get()),
                 new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext)),
-                (context, control) -> {
+                (Task<FlowContext>) (context, control) -> {
                     int status = context.pop();
                     if (status == 200) {
                         control.proceed();
