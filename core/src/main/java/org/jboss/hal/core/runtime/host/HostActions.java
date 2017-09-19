@@ -63,7 +63,7 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class HostActions {
 
-    private class HostFailedCallback implements Dispatcher.FailedCallback {
+    private class HostFailedCallback implements Dispatcher.OnFail {
 
         private final Host host;
         private final List<Server> servers;
@@ -82,7 +82,7 @@ public class HostActions {
     }
 
 
-    private class HostExceptionCallback implements Dispatcher.ExceptionCallback {
+    private class HostExceptionCallback implements Dispatcher.OnError {
 
         private final Host host;
         private final List<Server> servers;

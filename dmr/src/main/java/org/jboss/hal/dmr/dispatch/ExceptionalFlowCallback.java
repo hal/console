@@ -19,7 +19,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 
-public class ExceptionalFlowCallback<C extends FlowContext> implements Dispatcher.ExceptionCallback {
+public class ExceptionalFlowCallback<C extends FlowContext> implements Dispatcher.OnError {
 
     private final Control control;
 

@@ -20,6 +20,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -48,13 +49,14 @@ import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.core.runtime.server.ServerUrlTasks.ReadSocketBinding;
 import org.jboss.hal.core.runtime.server.ServerUrlTasks.ReadSocketBindingGroup;
 import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
-import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
+import org.jboss.hal.dmr.dispatch.Dispatcher.OnError;
+import org.jboss.hal.dmr.dispatch.Dispatcher.OnFail;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -143,7 +145,7 @@ public class ServerActions {
     }
 
 
-    private class ServerFailedCallback implements FailedCallback {
+    private class ServerFailedCallback implements OnFail {
 
         private final Server server;
         private final SafeHtml errorMessage;
@@ -160,7 +162,7 @@ public class ServerActions {
     }
 
 
-    private class ServerExceptionCallback implements ExceptionCallback {
+    private class ServerExceptionCallback implements OnError {
 
         private final Server server;
         private final SafeHtml errorMessage;
@@ -266,9 +268,9 @@ public class ServerActions {
                                 .param(RECURSIVE, true)
                                 .build();
 
-                        dispatcher.execute(opReadServer, new Dispatcher.OperationCallback() {
+                        dispatcher.execute(opReadServer, new Consumer<ModelNode>() {
                             @Override
-                            public void onSuccess(final ModelNode newServerModel) {
+                            public void accept(ModelNode newServerModel) {
 
                                 String newServerName = nameItem.getValue();
                                 // set the chosen group in the model
@@ -297,7 +299,7 @@ public class ServerActions {
                                 createOperation(comp, SYSTEM_PROPERTY, newServerModel, newServerModelAddress);
                                 createOperation(comp, SSL, newServerModel, newServerModelAddress);
 
-                                dispatcher.execute(comp, (Dispatcher.CompositeCallback) result -> {
+                                dispatcher.execute(comp, (CompositeResult result) -> {
                                     MessageEvent.fire(eventBus, Message.success(
                                             resources.messages()
                                                     .addResourceSuccess(Names.SERVER, newServerName)));
@@ -329,7 +331,6 @@ public class ServerActions {
                                     });
                                 }
                             }
-
                         });
                     });
                     dialog.show();

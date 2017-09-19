@@ -17,6 +17,7 @@ package org.jboss.hal.client.patching.wizard;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.inject.Provider;
 
 import org.jboss.hal.ballroom.wizard.Wizard;
@@ -194,9 +195,9 @@ public class RollbackWizard {
      * It is a good practice to apply/rollback a patch to a stopped server to prevent application and internal services
      * from failing.
      */
-    private void checkServersState(Dispatcher.SuccessCallback<List<Property>> callback) {
+    private void checkServersState(Consumer<List<Property>> callback) {
         if (environment.isStandalone()) {
-            callback.onSuccess(null);
+            callback.accept(null);
         } else {
 
             String host = statementContext.selectedHost();
@@ -219,9 +220,9 @@ public class RollbackWizard {
                     }
                 }
                 if (anyServerStarted) {
-                    callback.onSuccess(servers);
+                    callback.accept(servers);
                 } else {
-                    callback.onSuccess(null);
+                    callback.accept(null);
                 }
             });
         }
