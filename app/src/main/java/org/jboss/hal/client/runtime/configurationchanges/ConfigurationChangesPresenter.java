@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.host.configurationchanges;
+package org.jboss.hal.client.runtime.configurationchanges;
 
 import javax.inject.Inject;
 
@@ -56,14 +56,13 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.LARGE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.token.NameTokens.CONFIGURATION_CHANGES;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.px;
 import static org.jboss.hal.resources.CSS.wrap;
 import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
 
-public class ConfigurationChangesPresenter
-        extends
+public class ConfigurationChangesPresenter extends
         ApplicationFinderPresenter<ConfigurationChangesPresenter.MyView, ConfigurationChangesPresenter.MyProxy> {
 
     // @formatter:off
@@ -74,13 +73,15 @@ public class ConfigurationChangesPresenter
     public interface MyView extends HalView, HasPresenter<ConfigurationChangesPresenter> {
         void update(ModelNode model);
     }
+    // @formatter:on
 
-    final static String CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/subsystem=core-management/service=configuration-changes";
-    public final static AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(CONFIGURATION_CHANGES_ADDRESS);
-    final static AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of("/{selected.host}/subsystem=core-management");
+    private static final String CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/subsystem=core-management/service=configuration-changes";
+    private static final AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of(
+            "/{selected.host}/subsystem=core-management");
+    public static final AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
+            CONFIGURATION_CHANGES_ADDRESS);
 
     private Environment environment;
-    // @formatter:on
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -118,31 +119,23 @@ public class ConfigurationChangesPresenter
 
     @Override
     public FinderPath finderPath() {
-        FinderPath root;
-        if (statementContext.selectedHost() != null) {
-            root = finderPathFactory.runtimeHostPath();
-        } else {
-            root = finderPathFactory.runtimeServerPath();
-        }
-        return root.append("core-service", Ids.CONFIGURATION_CHANGES, "Core Service",
-                resources.constants().configurationChanges());
-
+        return environment.isStandalone() ? finderPathFactory.runtimeServerPath() : finderPathFactory.runtimeHostPath();
     }
 
     @Override
     protected void reload() {
-        ResourceAddress address1 = CORE_MANAGEMENT_TEMPLATE.resolve(statementContext);
-        Operation operation1 = new Operation.Builder(address1, READ_CHILDREN_NAMES_OPERATION)
+        ResourceAddress coreAddress = CORE_MANAGEMENT_TEMPLATE.resolve(statementContext);
+        Operation coreOperation = new Operation.Builder(coreAddress, READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, SERVICE)
                 .build();
-        dispatcher.execute(operation1, result -> {
-            boolean configurationChangesEnabled = result.asList().size() > 0;
+        dispatcher.execute(coreOperation, coreResult -> {
+            boolean configurationChangesEnabled = coreResult.asList().size() > 0;
 
             if (configurationChangesEnabled) {
-                ResourceAddress address = CONFIGURATION_CHANGES_TEMPLATE.resolve(statementContext);
-                Operation operation = new Operation.Builder(address, LIST_CHANGES_OPERATION)
+                ResourceAddress ccAddress = CONFIGURATION_CHANGES_TEMPLATE.resolve(statementContext);
+                Operation ccOperation = new Operation.Builder(ccAddress, LIST_CHANGES_OPERATION)
                         .build();
-                dispatcher.execute(operation, result2 -> getView().update(result2));
+                dispatcher.execute(ccOperation, ccResult -> getView().update(ccResult));
             } else {
                 getView().update(new ModelNode());
             }
@@ -151,7 +144,7 @@ public class ConfigurationChangesPresenter
 
     void launchAdd() {
         Metadata metadata = metadataRegistry.lookup(CONFIGURATION_CHANGES_TEMPLATE);
-        String id = Ids.build(ADD_SUFFIX, CONFIGURATION_CHANGES, FORM_SUFFIX);
+        String id = Ids.build(Ids.CONFIGURATION_CHANGES, ADD_SUFFIX);
         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, ADD)
                 .build();
         ModelNode changeModel = new ModelNode();
@@ -177,7 +170,7 @@ public class ConfigurationChangesPresenter
 
     void disable() {
         String type = HOST;
-        String name =  statementContext.selectedHost();
+        String name = statementContext.selectedHost();
         if (environment.isStandalone()) {
             type = Names.STANDALONE_SERVER;
             name = Server.STANDALONE.getName();
@@ -198,7 +191,7 @@ public class ConfigurationChangesPresenter
 
         HTMLElement content = div()
                 .add(elem)
-                .style("overflow: scroll")
+                .style("overflow: scroll") //NON-NLS
                 .asElement();
 
         int maxheight = applicationHeight() - 6 * MARGIN_BIG;

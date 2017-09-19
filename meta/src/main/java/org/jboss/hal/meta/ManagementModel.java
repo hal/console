@@ -55,6 +55,17 @@ public class ManagementModel {
     }
 
     /**
+     * Checks support for configuration changes as defined
+     * by {@code {selected.host}/subsystem=core-management/service=configuration-changes}.
+     *
+     * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
+     * equal {@code 5.0.0}
+     */
+    public static boolean supportsConfigurationChanges(Version version) {
+        return ensureVersion(version, V_5_0_0);
+    }
+
+    /**
      * Checks support for the resource {@code /subsystem=ejb3/application-security-domain=*}.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or

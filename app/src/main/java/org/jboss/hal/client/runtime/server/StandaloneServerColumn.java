@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -53,7 +54,7 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
-import static org.jboss.hal.client.runtime.host.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -65,7 +66,6 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     static final String MANAGEMENT_ADDRESS = "/core-service=management";
     private static final AddressTemplate MANAGEMENT_TEMPLATE = AddressTemplate.of(MANAGEMENT_ADDRESS);
 
-
     private final Finder finder;
     private FinderPath refreshPath;
 
@@ -73,7 +73,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     public StandaloneServerColumn(Finder finder, EventBus eventBus, Dispatcher dispatcher,
             FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
             ServerActions serverActions, PlaceManager placeManager, Places places,
-            Resources resources, ItemMonitor itemMonitor) {
+            Resources resources) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -151,14 +151,13 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                                 actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest,
                                         Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
                             }
-                            PlaceRequest placeRequestConfChanges = new PlaceRequest.Builder()
-                                    .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
-                            actions.add(new ItemAction.Builder<Server>()
-                                    .title(resources.constants().configurationChanges())
-                                    .handler(itemMonitor.monitorPlaceRequest(Ids.CONFIGURATION_CHANGES, placeRequestConfChanges.getNameToken(),
-                                            () -> placeManager.revealPlace(placeRequestConfChanges)))
-                                    .constraint(Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, CONFIGURATION_CHANGES))
-                                    .build());
+                            if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                                // Use ItemMonitor?
+                                PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
+                                        .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
+                                actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
+                                        ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                            }
                         }
                         return actions;
                     }

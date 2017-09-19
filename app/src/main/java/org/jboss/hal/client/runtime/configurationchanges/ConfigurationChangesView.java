@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.host.configurationchanges;
+package org.jboss.hal.client.runtime.configurationchanges;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -34,9 +32,12 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
-import static org.jboss.hal.client.runtime.host.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.Ids.CONFIGURATION_CHANGES;
 
 public class ConfigurationChangesView extends HalViewImpl implements ConfigurationChangesPresenter.MyView {
 
@@ -66,7 +67,7 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
                 .secondaryAction(resources.constants().disableConfigurationChanges(), () -> presenter.disable())
                 .build();
 
-        String actionIdDisable = Ids.build(Ids.CONFIGURATION_CHANGES, REMOVE);
+        String actionIdDisable = Ids.build(CONFIGURATION_CHANGES, REMOVE);
         Constants constants = resources.constants();
         Toolbar.Action disableAction = new Toolbar.Action(actionIdDisable, constants.disable(),
                 () -> presenter.disable());
@@ -76,17 +77,20 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
                 .toolbarAttribute(new Toolbar.Attribute<>(OUTCOME, constants.outcome(),
                         (node, filter) -> node.getOutcome().toLowerCase().equals(filter.toLowerCase()),
                         comparing(ConfigurationChange::getOutcome)))
-                .toolbarAttribute(new Toolbar.Attribute<>(ACCESS_MECHANISM, constants.accessMechanism(),
-                        (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
-                        comparing(ConfigurationChange::getAccessMechanism)))
+                .toolbarAttribute(new Toolbar.Attribute<>(OPERATION, resources.constants().operation(),
+                        (model, filter) -> model.getOperationNames().contains(filter), null))
                 .toolbarAttribute(new Toolbar.Attribute<>(OPERATION_DATE, constants.operationDate(),
-                        (node, filter) -> node.getOperationDate().contains(filter),
-                        comparing(ConfigurationChange::getOperationDate)))
+                        null, comparing(ConfigurationChange::getOperationDate)))
+                .toolbarAttribute(new Toolbar.Attribute<>(ADDRESS, resources.constants().address(),
+                        (model, filter) -> model.getAddressSegments().contains(filter), null))
                 .toolbarAttribute(new Toolbar.Attribute<>(REMOTE_ADDRESS, constants.remoteAddress(),
                         (node, filter) -> node.getRemoteAddress().toLowerCase().contains(filter.toLowerCase()),
                         comparing(ConfigurationChange::getRemoteAddress)))
+                .toolbarAttribute(new Toolbar.Attribute<>(ACCESS_MECHANISM, constants.accessMechanism(),
+                        (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
+                        comparing(ConfigurationChange::getAccessMechanism)))
                 .toolbarAction(disableAction)
-                .toolbarAction(new Toolbar.Action(Ids.build(Ids.CONFIGURATION_CHANGES, Ids.REFRESH_SUFFIX),
+                .toolbarAction(new Toolbar.Action(Ids.build(CONFIGURATION_CHANGES, Ids.REFRESH_SUFFIX),
                         constants.reload(), () -> presenter.reload()))
                 .noItems(constants.noItems(), messages.noItems())
                 .emptyState(empty, emptyState)
@@ -104,18 +108,14 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
     @Override
     public void update(ModelNode model) {
         if (model.isDefined()) {
-            List<ConfigurationChange> changes = new ArrayList<>();
-            model.asList().forEach(n -> {
-                changes.add(new ConfigurationChange(n));
-            });
+            List<ConfigurationChange> changes = model.asList().stream().map(ConfigurationChange::new).collect(toList());
             dataProvider.update(changes);
             if (changes.isEmpty()) {
                 listView.showEmptyState(empty);
             }
         } else {
-            dataProvider.update(Collections.emptyList());
+            dataProvider.update(emptyList());
             listView.showEmptyState(notEnabled);
         }
-
     }
 }

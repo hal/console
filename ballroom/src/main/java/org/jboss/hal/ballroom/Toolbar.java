@@ -300,7 +300,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
             for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); i++) {
                 Action action = iterator.next();
                 String actionId = Ids.build(Ids.TOOLBAR, "action", action.id);
-                if (i < 2) {
+                if (i < 3) {
                     actionsContainer.appendChild(button()
                             .css(btn, btnDefault)
                             .id(actionId)
@@ -308,7 +308,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .on(click, e -> action.callback.execute())
                             .apply(b -> b.type = UIConstants.BUTTON)
                             .asElement());
-                    if (i == 1) {
+                    if (i == 2) {
                         actionsContainer.appendChild(div().css(dropdown, btnGroup, dropdownKebabPf)
                                 .add(button().css(btn, btnLink, dropdownToggle)
                                         .id(Ids.TOOLBAR_ACTION_DROPDOWN)

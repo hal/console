@@ -17,19 +17,17 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.shared.DateTimeFormat;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeDate;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 
 class ExecutionNode extends NamedNode {
 
     enum BatchStatus {STARTED, STOPPED, COMPLETED, FAILED, ABANDONED, UNKNOWN}
-
-    private static final DateTimeFormat ISO_8601 = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.ISO_8601);
 
     private final int executionId;
     private final int instanceId;
@@ -61,15 +59,15 @@ class ExecutionNode extends NamedNode {
     }
 
     Date getCreateTime() {
-        return getOrDefault(this, CREATE_TIME, () -> ISO_8601.parse(get(CREATE_TIME).asString()), null);
+        return failSafeDate(this, CREATE_TIME);
     }
 
     Date getStartTime() {
-        return getOrDefault(this, START_TIME, () -> ISO_8601.parse(get(START_TIME).asString()), null);
+        return failSafeDate(this, START_TIME);
     }
 
     Date getEndTime() {
-        return getOrDefault(this, END_TIME, () -> ISO_8601.parse(get(END_TIME).asString()), null);
+        return failSafeDate(this, END_TIME);
     }
 
     long getDuration() {
@@ -77,6 +75,6 @@ class ExecutionNode extends NamedNode {
     }
 
     Date getLastUpdatedTime() {
-        return getOrDefault(this, LAST_UPDATED_TIME, () -> ISO_8601.parse(get(LAST_UPDATED_TIME).asString()), null);
+        return failSafeDate(this, LAST_UPDATED_TIME);
     }
 }

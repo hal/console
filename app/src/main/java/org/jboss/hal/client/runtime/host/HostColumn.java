@@ -22,7 +22,6 @@ import javax.inject.Provider;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -55,6 +54,7 @@ import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
@@ -70,8 +70,8 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
-import static org.jboss.hal.client.runtime.host.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -82,7 +82,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
-    static final AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
+    private static final AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
 
     static AddressTemplate hostTemplate(Host host) {
         return AddressTemplate.of("/host=" + host.getAddressName());
@@ -101,8 +101,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             CrudOperations crud,
             EventBus eventBus,
             StatementContext statementContext,
-            ItemMonitor itemMonitor,
-            PlaceManager placeManager,
             @Footer Provider<Progress> progress,
             ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
@@ -247,10 +245,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             @Override
             public List<ItemAction<Host>> actions() {
                 if (item.isConnected()) {
-                    PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
-                            .with(HOST, item.getAddressName()).build();
-                    PlaceRequest placeRequestConfChanges = new PlaceRequest.Builder()
-                            .nameToken(NameTokens.CONFIGURATION_CHANGES)
+                    PlaceRequest placeRequest = new PlaceRequest.Builder()
+                            .nameToken(NameTokens.HOST_CONFIGURATION)
                             .with(HOST, item.getAddressName()).build();
                     List<ItemAction<Host>> actions = new ArrayList<>();
                     actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
@@ -265,14 +261,13 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                 .handler(hostActions::restart)
                                 .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
                                 .build());
-                        actions.add(new ItemAction.Builder<Host>()
-                                .title(resources.constants().configurationChanges())
-                                .handler(itemMonitor.monitorPlaceRequest(
-                                        Ids.build(Ids.host(item.getAddressName()), Ids.CONFIGURATION_CHANGES),
-                                        placeRequestConfChanges.getNameToken(),
-                                        () -> placeManager.revealPlace(placeRequestConfChanges)))
-                                .constraint(Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, CONFIGURATION_CHANGES))
-                                .build());
+                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                            // Use ItemMonitor?
+                            PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
+                                    .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
+                            actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
+                                    ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                        }
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                     }
                     return actions;

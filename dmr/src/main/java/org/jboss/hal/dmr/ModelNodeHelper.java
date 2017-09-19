@@ -17,6 +17,7 @@ package org.jboss.hal.dmr;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -25,6 +26,8 @@ import java.util.function.Supplier;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -41,9 +44,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
  * parameter separated by "/" to get a deeply nested data.
  */
 @JsType
-public final class ModelNodeHelper {
+public class ModelNodeHelper {
 
     private static final String ENCODED_SLASH = "%2F";
+    private static final DateTimeFormat ISO_8601 = GWT.isScript() ? DateTimeFormat.getFormat(
+            DateTimeFormat.PredefinedFormat.ISO_8601) : null;
 
     @JsIgnore
     public static String encodeValue(String value) {
@@ -63,7 +68,7 @@ public final class ModelNodeHelper {
      *
      * @return The nested node or an empty / undefined model node
      */
-    public static ModelNode failSafeGet(final ModelNode modelNode, final String path) {
+    public static ModelNode failSafeGet(ModelNode modelNode, String path) {
         ModelNode undefined = new ModelNode();
 
         if (Strings.emptyToNull(path) != null) {
@@ -95,26 +100,36 @@ public final class ModelNodeHelper {
      *
      * @return the boolean value or false.
      */
-    public static boolean failSafeBoolean(final ModelNode modelNode, final String path) {
+    public static boolean failSafeBoolean(ModelNode modelNode, String path) {
         ModelNode attribute = failSafeGet(modelNode, path);
         return attribute.isDefined() && attribute.asBoolean();
     }
 
     @JsIgnore
-    public static List<ModelNode> failSafeList(final ModelNode modelNode, final String path) {
+    public static Date failSafeDate(ModelNode modelNode, String path) {
+        ModelNode attribute = failSafeGet(modelNode, path);
+        if (attribute.isDefined()) {
+            try {
+                return ISO_8601.parse(attribute.asString());
+            } catch (IllegalArgumentException ignore) { }
+        }
+        return null;
+    }
+
+    @JsIgnore
+    public static List<ModelNode> failSafeList(ModelNode modelNode, String path) {
         ModelNode result = failSafeGet(modelNode, path);
         return result.isDefined() ? result.asList() : Collections.emptyList();
     }
 
     @JsIgnore
-    public static List<Property> failSafePropertyList(final ModelNode modelNode, final String path) {
+    public static List<Property> failSafePropertyList(ModelNode modelNode, String path) {
         ModelNode result = failSafeGet(modelNode, path);
         return result.isDefined() ? result.asPropertyList() : Collections.emptyList();
     }
 
     @JsIgnore
-    public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Supplier<T> supplier,
-            T defaultValue) {
+    public static <T> T getOrDefault(ModelNode modelNode, String attribute, Supplier<T> supplier, T defaultValue) {
         T result = defaultValue;
         if (modelNode != null && modelNode.hasDefined(attribute)) {
             try {
@@ -149,8 +164,8 @@ public final class ModelNodeHelper {
      * {@code LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.get(attribute).asString())}.
      */
     @JsIgnore
-    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final String attribute,
-            final Function<String, E> valueOf, final E defaultValue) {
+    public static <E extends Enum<E>> E asEnumValue(ModelNode modelNode, String attribute, Function<String, E> valueOf,
+            E defaultValue) {
         if (modelNode.hasDefined(attribute)) {
             return asEnumValue(modelNode.get(attribute), valueOf, defaultValue);
         }
@@ -158,8 +173,7 @@ public final class ModelNodeHelper {
     }
 
     @JsIgnore
-    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final Function<String, E> valueOf,
-            final E defaultValue) {
+    public static <E extends Enum<E>> E asEnumValue(ModelNode modelNode, Function<String, E> valueOf, E defaultValue) {
         E value = defaultValue;
         String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.asString());
         try {
@@ -172,7 +186,7 @@ public final class ModelNodeHelper {
      * The reverse operation to {@link #asEnumValue(ModelNode, String, Function, Enum)}.
      */
     @JsIgnore
-    public static <E extends Enum<E>> String asAttributeValue(final E enumValue) {
+    public static <E extends Enum<E>> String asAttributeValue(E enumValue) {
         return UPPER_UNDERSCORE.to(LOWER_HYPHEN, enumValue.name());
     }
 
@@ -234,7 +248,7 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafeList")
     @EsReturn("ModelNode[]")
-    public static ModelNode[] jsFailSafeList(final ModelNode modelNode, final String path) {
+    public static ModelNode[] jsFailSafeList(ModelNode modelNode, String path) {
         List<ModelNode> nodes = failSafeList(modelNode, path);
         return nodes.toArray(new ModelNode[nodes.size()]);
     }
@@ -250,7 +264,7 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafePropertyList")
     @EsReturn("Property[]")
-    public static Property[] jsFailSafePropertyList(final ModelNode modelNode, final String path) {
+    public static Property[] jsFailSafePropertyList(ModelNode modelNode, String path) {
         List<Property> properties = failSafePropertyList(modelNode, path);
         return properties.toArray(new Property[properties.size()]);
     }

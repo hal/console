@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.host.configurationchanges;
+package org.jboss.hal.client.runtime.configurationchanges;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,22 +26,19 @@ import elemental2.dom.HTMLPreElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.elements;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.pre;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION_HEADERS;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Ids.CONFIGURATION_CHANGES;
 
 class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
 
@@ -75,7 +72,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
 
     @Override
     public String getTitle() {
-        return resources.constants().operationDate() + ": " + item.getOperationDate().replace('T', ' ');
+        return resources.constants().operationDate() + ": " + Format.mediumDateTime(item.getOperationDate());
     }
 
     @Override
@@ -89,7 +86,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
             String op = m.get(OPERATION).asString();
             ResourceAddress address = new ResourceAddress(m.get(ADDRESS));
             html.append(SafeHtmlUtils.fromTrustedString(
-                    resources.constants().operation() + ": <strong>" + op + "</strong>&nbsp;&nbsp;&nbsp;&nbsp;"));
+                    resources.constants().operation() + ": <strong>" + op + "</strong><br/>"));
             html.append(SafeHtmlUtils.fromTrustedString(
                     resources.constants().address() + ": <strong>" + address + "</strong><br/>"));
             HTMLPreElement elem = pre().css(formControlStatic, wrap).asElement();
@@ -114,7 +111,6 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
         ElementsBuilder elements = elements();
         elements.add(div().css(halConfChangesAdditionalInfo)
                 .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
-
                         .appendEscaped(resources.constants().accessMechanism() + ": ")
                         .appendEscaped(item.getAccessMechanism())
                         .appendHtmlConstant("<br/>")
@@ -124,7 +120,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
                         .appendHtmlConstant("<br/>")
 
                         .appendEscaped(resources.constants().composite() + ": ")
-                        .appendEscaped("" + item.isComposite())
+                        .appendEscaped(String.valueOf(item.isComposite()))
                         .toSafeHtml())));
         return elements;
     }
@@ -137,7 +133,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
     @Override
     public List<ItemAction<ConfigurationChange>> actions() {
         List<ItemAction<ConfigurationChange>> actions = new ArrayList<>();
-        String id = Ids.build(Ids.CONFIGURATION_CHANGES, item.getName(), "view");
+        String id = Ids.build(CONFIGURATION_CHANGES, item.getName(), "view");
         actions.add(new ItemAction<>(id, resources.constants().view(), presenter::viewRawChange));
         return actions;
     }

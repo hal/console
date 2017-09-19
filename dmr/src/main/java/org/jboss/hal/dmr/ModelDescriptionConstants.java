@@ -149,7 +149,6 @@ public interface ModelDescriptionConstants {
     String CONFIGURABLE_SASL_SERVER_FACTORY = "configurable-sasl-server-factory";
     String CONFIGURATION = "configuration";
     String CONNECTED = "connected";
-    String CONFIGURATION_CHANGES = "configuration-changes";
     String CONNECTION_COUNT = "connection-count";
     String CONNECTION_LIMIT_HIGH_WATER_MARK = "connection-limit-high-water-mark";
     String CONNECTION_LIMIT_LOW_WATER_MARK = "connection-limit-low-water-mark";

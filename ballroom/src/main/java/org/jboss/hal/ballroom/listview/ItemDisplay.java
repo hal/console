@@ -78,18 +78,12 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return null;
     }
 
-    /**
-     * The length of the description content. Override this method to control when the display content
-     *
-     */
+    /** The length of the description content. Override this method to control when the display content */
     default int getDescriptionLength() {
         return -1;
     }
 
-    /**
-     * The maximum allowed length of the description content to be displayed by default.
-     *
-     */
+    /** The maximum allowed length of the description content to be displayed by default. */
     default int getMaxDescriptionLength() {
         return 600;
     }
