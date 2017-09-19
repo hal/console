@@ -35,13 +35,13 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -224,24 +224,21 @@ public class TransactionPresenter
             composite = new Composite(undefineUuid, writeSocketBinding);
         }
 
-        dispatcher.execute(composite, new Dispatcher.CompositeCallback() {
-            @Override
-            public void onSuccess(final CompositeResult result) {
+        dispatcher.execute(composite, (CompositeResult result) -> {
 
-                ModelNode writeSocketResult = result.step(0);
-                ModelNode undefineUuidResult = result.step(1);
+            ModelNode writeSocketResult = result.step(0);
+            ModelNode undefineUuidResult = result.step(1);
 
-                boolean failed = writeSocketResult.isFailure() || undefineUuidResult.isFailure();
-                if (failed) {
-                    String failMessage = writeSocketBinding.isFailure() ? writeSocketBinding.getFailureDescription()
-                            : undefineUuidResult.getFailureDescription();
-                    MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().transactionUnableSetProcessId(), failMessage));
-                } else {
-                    MessageEvent.fire(getEventBus(),
-                            Message.success(resources.messages().modifySingleResourceSuccess("Process")));
-                    reload();
-                }
+            boolean failed = writeSocketResult.isFailure() || undefineUuidResult.isFailure();
+            if (failed) {
+                String failMessage = writeSocketBinding.isFailure() ? writeSocketBinding.getFailureDescription()
+                        : undefineUuidResult.getFailureDescription();
+                MessageEvent.fire(getEventBus(),
+                        Message.error(resources.messages().transactionUnableSetProcessId(), failMessage));
+            } else {
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().modifySingleResourceSuccess("Process")));
+                reload();
             }
         });
     }
