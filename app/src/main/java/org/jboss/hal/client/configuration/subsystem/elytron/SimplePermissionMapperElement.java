@@ -92,7 +92,8 @@ public class SimplePermissionMapperElement
                         table -> presenter.addPermissionMappings(selectedSimplePermissionMapper)))
                 .button(tableButtonFactory.remove(pmMetadata.getTemplate(),
                         table -> presenter.removePermissionMappings(selectedSimplePermissionMapper, pmIndex)))
-                // there are three attributes, none are required=true, so we must display all of them
+                // there are four attributes, none are required=true, so we must display all of them
+                .column(MATCH_ALL, (cell, type, row, meta) -> extractValue(row, MATCH_ALL))
                 .column(PRINCIPALS, (cell, type, row, meta) -> extractValue(row, PRINCIPALS))
                 .column(ROLES, (cell, type, row, meta) -> extractValue(row, ROLES))
                 .column(PERMISSIONS, (cell, type, row, meta) -> extractPermissionsString(row))

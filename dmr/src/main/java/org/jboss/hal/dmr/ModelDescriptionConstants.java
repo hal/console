@@ -413,6 +413,7 @@ public interface ModelDescriptionConstants {
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
+    String MATCH_ALL = "match-all";
     String MAX = "max";
     String MAX_ACTIVE_SESSIONS = "max-active-sessions";
     String MAX_PROCESSING_TIME = "max-processing-time";
