@@ -52,6 +52,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Completable;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
@@ -69,9 +70,7 @@ class DeploymentTasks {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
 
 
-    /**
-     * Loads the contents form the content repository and pushes a {@code List<Content>} onto the context stack.
-     */
+    /** Loads the contents form the content repository and pushes a {@code List<Content>} onto the context stack. */
     static class LoadContent implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
@@ -91,7 +90,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Operation contentOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
@@ -102,7 +101,7 @@ class DeploymentTasks {
                     .param(INCLUDE_RUNTIME, true)
                     .build();
 
-            dispatcher.executeInFlow(control, new Composite(contentOp, deploymentsOp), (CompositeResult result) -> {
+            return dispatcher.execute(new Composite(contentOp, deploymentsOp)).doOnSuccess((CompositeResult result) -> {
                 Map<String, Content> contentByName = new HashMap<>();
                 List<Property> properties = result.step(0).get(RESULT).asPropertyList();
                 for (Property property : properties) {
@@ -122,8 +121,7 @@ class DeploymentTasks {
                     }
                 }
                 context.push(new ArrayList<>(contentByName.values()));
-                control.proceed();
-            });
+            }).toCompletable();
         }
     }
 
@@ -153,11 +151,13 @@ class DeploymentTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
+            Completable completable;
+
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
                 context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
-                control.proceed();
+                completable = Completable.complete();
 
             } else {
                 if (deployment != null) {
@@ -167,12 +167,11 @@ class DeploymentTasks {
                     Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.executeInFlow(control, operation, result -> {
+                    completable = dispatcher.execute(operation).doOnSuccess(result -> {
                         List<ServerGroupDeployment> serverGroupDeployments = Lists
                                 .newArrayList(new ServerGroupDeployment(serverGroup, result));
                         context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
-                        control.proceed();
-                    });
+                    }).toCompletable();
 
                 } else {
                     // read all deployments
@@ -181,22 +180,20 @@ class DeploymentTasks {
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.executeInFlow(control, operation, result -> {
+                    completable = dispatcher.execute(operation).doOnSuccess(result -> {
                         List<ServerGroupDeployment> serverGroupDeployments = result.asPropertyList().stream()
                                 .map(property -> new ServerGroupDeployment(serverGroup, property.getValue()))
                                 .collect(toList());
                         context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
-                        control.proceed();
-                    });
+                    }).toCompletable();
                 }
             }
+            return completable;
         }
     }
 
 
-    /**
-     * Deploys the specified content to the specified server group. The deployment is not enable on the server group.
-     */
+    /** Deploys the specified content to the specified server group. The deployment is not enable on the server group. */
     static class AddServerGroupDeployment implements Task<FlowContext> {
 
         private final Environment environment;
@@ -205,7 +202,8 @@ class DeploymentTasks {
         private final String runtimeName;
         private final String serverGroup;
 
-        AddServerGroupDeployment(Environment environment, Dispatcher dispatcher, String name, String runtimeName, String serverGroup) {
+        AddServerGroupDeployment(Environment environment, Dispatcher dispatcher, String name, String runtimeName,
+                String serverGroup) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.name = name;
@@ -214,11 +212,11 @@ class DeploymentTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
                 context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
-                control.proceed();
+                return Completable.complete();
 
             } else {
                 ResourceAddress address = new ResourceAddress()
@@ -228,7 +226,7 @@ class DeploymentTasks {
                         .param(RUNTIME_NAME, runtimeName)
                         .param(ENABLED, false)
                         .build();
-                dispatcher.executeInFlow(control, operation, result -> control.proceed());
+                return dispatcher.execute(operation).toCompletable();
             }
         }
     }
@@ -236,9 +234,9 @@ class DeploymentTasks {
 
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
-     * {@link TopologyTasks#RUNNING_SERVERS}. Expects the list of deployments under the
-     * key {@link #SERVER_GROUP_DEPLOYMENTS} in the context. Updates all matching deployments with the deployments from
-     * the running server.
+     * {@link TopologyTasks#RUNNING_SERVERS}. Expects the list of deployments under the key {@link
+     * #SERVER_GROUP_DEPLOYMENTS} in the context. Updates all matching deployments with the deployments from the running
+     * server.
      */
     static class LoadDeploymentsFromRunningServer implements Task<FlowContext> {
 
@@ -251,11 +249,9 @@ class DeploymentTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
-            if (environment.isStandalone()) {
-                control.proceed();
-
-            } else {
+        public Completable call(FlowContext context) {
+            Completable completable = Completable.complete();
+            if (!environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = context
                         .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
                 List<Server> runningServers = context.get(TopologyTasks.RUNNING_SERVERS);
@@ -269,20 +265,16 @@ class DeploymentTasks {
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE, true)
                             .build();
-                    dispatcher.executeInFlow(control, operation, result -> {
-
+                    completable = dispatcher.execute(operation).doOnSuccess(result -> {
                         Map<String, Deployment> deploymentsByName = result.asPropertyList().stream()
                                 .map(property -> new Deployment(referenceServer, property.getValue()))
                                 .collect(toMap(Deployment::getName, identity()));
                         serverGroupDeployments.forEach(
                                 sgd -> sgd.setDeployment(deploymentsByName.get(sgd.getName())));
-                        control.proceed();
-                    });
-
-                } else {
-                    control.proceed();
+                    }).toCompletable();
                 }
             }
+            return completable;
         }
     }
 
@@ -302,19 +294,20 @@ class DeploymentTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
-            dispatcher.executeInFlow(control, operation, result -> {
-                Set<String> names = result.asList().stream().map(ModelNode::asString).collect(toSet());
-                if (names.contains(name)) {
-                    context.push(200);
-                } else {
-                    context.push(404);
-                }
-                control.proceed();
-            });
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> {
+                        Set<String> names = result.asList().stream().map(ModelNode::asString).collect(toSet());
+                        if (names.contains(name)) {
+                            context.push(200);
+                        } else {
+                            context.push(404);
+                        }
+                    })
+                    .toCompletable();
         }
     }
 
@@ -336,7 +329,8 @@ class DeploymentTasks {
         private final File file;
         private final boolean enabled;
 
-        UploadOrReplace(Environment environment, Dispatcher dispatcher, String name, String runtimeName, File file, boolean enabled) {
+        UploadOrReplace(Environment environment, Dispatcher dispatcher, String name, String runtimeName, File file,
+                boolean enabled) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.name = name;
@@ -409,9 +403,7 @@ class DeploymentTasks {
     }
 
 
-    /**
-     * Adds an unmanaged deployment.
-     */
+    /** Adds an unmanaged deployment. */
     static class AddUnmanagedDeployment implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
@@ -425,11 +417,11 @@ class DeploymentTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Operation operation = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
                     .payload(payload)
                     .build();
-            dispatcher.executeInFlow(control, operation, result -> control.proceed());
+            return dispatcher.execute(operation).toCompletable();
         }
     }
 

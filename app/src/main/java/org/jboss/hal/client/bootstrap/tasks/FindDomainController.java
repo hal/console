@@ -23,8 +23,10 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.FlowContext;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
@@ -33,6 +35,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCE
 
 /** Reads the domain controller. Only executed in domain mode. Depends on {@link ReadEnvironment}. */
 public class FindDomainController implements BootstrapTask {
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(FindDomainController.class);
 
     private final Dispatcher dispatcher;
     private final Environment environment;
@@ -44,54 +48,45 @@ public class FindDomainController implements BootstrapTask {
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
-        logStart();
+    public Completable call() {
         if (environment.isStandalone()) {
-            logDone();
-            control.proceed();
-
+            return Completable.complete();
         } else {
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, HOST)
                     .build();
-            dispatcher.execute(operation, result -> {
-                String firstHost = null;
-                String domainController = null;
-                List<Property> properties = result.asPropertyList();
-                if (properties.isEmpty()) {
-                    // TODO Is this possible?
-                    control.abort("No hosts found!"); //NON-NLS
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> {
+                        String firstHost = null;
+                        String domainController = null;
+                        List<Property> properties = result.asPropertyList();
+                        if (properties.isEmpty()) {
+                            throw new RuntimeException("No hosts found!");
 
-                } else {
-                    for (Property property : properties) {
-                        if (firstHost == null) {
-                            firstHost = property.getName();
+                        } else {
+                            for (Property property : properties) {
+                                if (firstHost == null) {
+                                    firstHost = property.getName();
+                                }
+                                if (property.getValue().get(MASTER).isDefined() && property.getValue()
+                                        .get(MASTER)
+                                        .asBoolean()) {
+                                    domainController = property.getName();
+                                    break;
+                                }
+                            }
+                            if (domainController != null) {
+                                environment.setDomainController(domainController);
+                            } else {
+                                // HAL-1309: If the user belongs to a host scoped role which is scoped to a slave,
+                                // there might be no domain controller
+                                logger.warn("No domain controller found! Use first host as replacement: '{}'",
+                                        firstHost);
+                                environment.setDomainController(firstHost);
+                            }
                         }
-                        if (property.getValue().get(MASTER).isDefined() && property.getValue()
-                                .get(MASTER)
-                                .asBoolean()) {
-                            domainController = property.getName();
-                            break;
-                        }
-                    }
-                    if (domainController != null) {
-                        environment.setDomainController(domainController);
-                    } else {
-                        // HAL-1309: If the user belongs to a host scoped role which is scoped to a slave,
-                        // there might be no domain controller
-                        logger.warn("{}: No domain controller found! Use first host as replacement: '{}'", name(),
-                                firstHost);
-                        environment.setDomainController(firstHost);
-                    }
-                    logDone();
-                    control.proceed();
-                }
-            });
+                    })
+                    .toCompletable();
         }
-    }
-
-    @Override
-    public String name() {
-        return "Bootstrap[FindDomainController]";
     }
 }

@@ -21,9 +21,9 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
+import rx.Completable;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -56,30 +56,30 @@ class ServerUrlTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (standalone) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                         .build();
-                dispatcher.executeInFlow(control, operation, result -> {
-                    if (result.asList().isEmpty()) {
-                        control.abort("ReadSocketBindingGroup: No socket binding groups defined"); //NON-NLS
-                    } else {
-                        String sbg = result.asList().get(0).asString();
-                        context.set(SOCKET_BINDING_GROUP_KEY, sbg);
-                        control.proceed();
-                    }
-                });
-
+                return dispatcher.execute(operation)
+                        .doOnSuccess(result -> {
+                            if (result.asList().isEmpty()) {
+                                throw new RuntimeException(
+                                        "ReadSocketBindingGroup: No socket binding groups defined"); //NON-NLS
+                            } else {
+                                String sbg = result.asList().get(0).asString();
+                                context.set(SOCKET_BINDING_GROUP_KEY, sbg);
+                            }
+                        })
+                        .toCompletable();
             } else {
                 ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup);
                 Operation operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                         .param(NAME, SOCKET_BINDING_GROUP)
                         .build();
-                dispatcher.executeInFlow(control, operation, result -> {
-                    context.set(SOCKET_BINDING_GROUP_KEY, result.asString());
-                    control.proceed();
-                });
+                return dispatcher.execute(operation)
+                        .doOnSuccess(result -> context.set(SOCKET_BINDING_GROUP_KEY, result.asString()))
+                        .toCompletable();
             }
         }
     }
@@ -104,8 +104,9 @@ class ServerUrlTasks {
         }
 
         @Override
-        @SuppressWarnings("HardCodedStringLiteral")
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
+            Completable completable;
+
             String sbg = context.get(SOCKET_BINDING_GROUP_KEY);
             if (sbg != null) {
                 ResourceAddress address = new ResourceAddress();
@@ -117,7 +118,7 @@ class ServerUrlTasks {
                         .param(CHILD_TYPE, SOCKET_BINDING)
                         .param(INCLUDE_RUNTIME, true)
                         .build();
-                dispatcher.executeInFlow(control, operation, result -> {
+                completable = dispatcher.execute(operation).doOnSuccess(result -> {
                     Optional<Property> optional = result.asPropertyList().stream()
                             .filter(p -> p.getName().startsWith("http"))
                             .sorted(comparing(Property::getName))
@@ -133,18 +134,19 @@ class ServerUrlTasks {
                                 url.append(":").append(property.getValue().get(BOUND_PORT).asInt());
                             }
                             context.set(URL_KEY, new ServerUrl(url.toString(), false));
-                            control.proceed();
                         } else {
-                            control.abort("ReadSocketBinding: No address defined for " +
-                                    sbg + " / " + property.getName());
+                            throw new RuntimeException(
+                                    "ReadSocketBinding: No address defined for " + sbg + " / " + property.getName());
                         }
                     } else {
-                        control.abort("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
+                        throw new RuntimeException("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
                     }
-                });
+                }).toCompletable();
             } else {
-                control.abort("ReadSocketBinding: No socket binding group in context");
+                completable = Completable.error(
+                        new RuntimeException("ReadSocketBinding: No socket binding group in context"));
             }
+            return completable;
         }
     }
 }

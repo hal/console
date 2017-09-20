@@ -459,31 +459,31 @@ public class Dispatcher implements RecordingHandler {
         return xhr;
     }
 
-    private void handleErrorCodes(String url, int status, Operation operation, OnError onError) {
+    private void handleErrorCodes(String url, int status, Operation operation, OnError error) {
         switch (status) {
             case 0:
-                onError.onException(operation, new DispatchError(status,
+                error.onException(operation, new DispatchError(status,
                         "The response for '" + url + "' could not be processed.", operation));
                 break;
             case 401:
             case 403:
-                onError.onException(operation, new DispatchError(status,
+                error.onException(operation, new DispatchError(status,
                         "Authentication required.", operation));
                 break;
             case 404:
-                onError.onException(operation, new DispatchError(status,
+                error.onException(operation, new DispatchError(status,
                         "Management interface at '" + url + "' not found.", operation));
                 break;
             case 500:
-                onError.onException(operation, new DispatchError(status,
+                error.onException(operation, new DispatchError(status,
                         "Internal Server Error for '" + operation.asCli() + "'.", operation));
                 break;
             case 503:
-                onError.onException(operation, new DispatchError(status,
+                error.onException(operation, new DispatchError(status,
                         "Service temporarily unavailable. Is the server still booting?", operation));
                 break;
             default:
-                onError.onException(operation, new DispatchError(status,
+                error.onException(operation, new DispatchError(status,
                         "Unexpected status code.", operation));
                 break;
         }

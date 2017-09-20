@@ -22,16 +22,15 @@ import java.util.function.Predicate;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
+import rx.Completable;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -68,19 +67,16 @@ final class AccessControlTasks {
         }
 
         @Override
-        @SuppressWarnings("Duplicates")
-        public void execute(FlowContext context, Control control) {
-            if (context.emptyStack()) {
-                control.proceed();
-            } else {
+        public Completable call(FlowContext context) {
+            Completable result = Completable.complete();
+            if (!context.emptyStack()) {
                 Integer status = context.pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), ADD).build();
-                    dispatcher.executeInFlow(control, operation, result -> control.proceed());
-                } else {
-                    control.proceed();
+                    result = dispatcher.execute(operation).toCompletable();
                 }
             }
+            return result;
         }
     }
 
@@ -102,12 +98,12 @@ final class AccessControlTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), WRITE_ATTRIBUTE_OPERATION)
                     .param(NAME, INCLUDE_ALL)
                     .param(VALUE, includeAll)
                     .build();
-            dispatcher.executeInFlow(control, operation, result -> control.proceed());
+            return dispatcher.execute(operation).toCompletable();
         }
     }
 
@@ -129,25 +125,21 @@ final class AccessControlTasks {
         }
 
         @Override
-        @SuppressWarnings("Duplicates")
-        public void execute(FlowContext context, Control control) {
-            if (context.emptyStack()) {
-                control.proceed();
-            } else {
+        public Completable call(FlowContext context) {
+            if (!context.emptyStack()) {
                 Integer status = context.pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), REMOVE).build();
-                    dispatcher.executeInFlow(control, operation, result -> control.proceed());
-                } else {
-                    control.proceed();
+                    return dispatcher.execute(operation).toCompletable();
                 }
             }
+            return Completable.complete();
         }
     }
 
 
     /**
-     * Adds an assignment to a role-mapping. Please make sure that the role-mapping exists before using this function.
+     * Adds an assignment to a role-mapping. Please make sure that the role-mapping exists before using this task.
      * Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
     static class AddAssignment implements Task<FlowContext> {
@@ -165,7 +157,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             ResourceAddress address = AddressTemplates.roleMapping(role)
                     .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
             Operation.Builder builder = new Operation.Builder(address, ADD)
@@ -174,7 +166,7 @@ final class AccessControlTasks {
             if (principal.getRealm() != null) {
                 builder.param(REALM, principal.getRealm());
             }
-            dispatcher.executeInFlow(control, builder.build(), result -> control.proceed());
+            return dispatcher.execute(builder.build()).toCompletable();
         }
     }
 
@@ -194,14 +186,15 @@ final class AccessControlTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
+            Completable completable;
             if (assignments.isEmpty()) {
-                control.proceed();
+                completable = Completable.complete();
             } else if (assignments.size() == 1) {
                 Assignment assignment = assignments.get(0);
                 ResourceAddress address = AddressTemplates.assignment(assignment);
                 Operation operation = new Operation.Builder(address, REMOVE).build();
-                dispatcher.execute(operation, result -> control.proceed());
+                completable = dispatcher.execute(operation).toCompletable();
             } else {
                 List<Operation> operations = assignments.stream()
                         .map(assignment -> {
@@ -209,15 +202,14 @@ final class AccessControlTasks {
                             return new Operation.Builder(address, REMOVE).build();
                         })
                         .collect(toList());
-                dispatcher.execute(new Composite(operations), (CompositeResult result) -> control.proceed());
+                completable = dispatcher.execute(new Composite(operations)).toCompletable();
             }
+            return completable;
         }
     }
 
 
-    /**
-     * Adds a scoped role.
-     */
+    /** Adds a scoped role. */
     static class AddScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
@@ -233,19 +225,17 @@ final class AccessControlTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(new Role(name, null, type, null));
             Operation operation = new Operation.Builder(address, ADD)
                     .payload(payload)
                     .build();
-            dispatcher.executeInFlow(control, operation, result -> control.proceed());
+            return dispatcher.execute(operation).toCompletable();
         }
     }
 
 
-    /**
-     * Modifies a scoped role.
-     */
+    /** Modifies a scoped role. */
     static class ModifyScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
@@ -262,10 +252,10 @@ final class AccessControlTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new OperationFactory().fromChangeSet(address, changedValues, metadata);
-            dispatcher.executeInFlow(control, operation, result -> control.proceed());
+            return dispatcher.execute(operation).toCompletable();
         }
     }
 
@@ -284,10 +274,10 @@ final class AccessControlTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new Operation.Builder(address, REMOVE).build();
-            dispatcher.executeInFlow(control, operation, result -> control.proceed());
+            return dispatcher.execute(operation).toCompletable();
         }
     }
 

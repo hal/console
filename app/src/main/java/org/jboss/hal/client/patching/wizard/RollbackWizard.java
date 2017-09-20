@@ -28,7 +28,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -39,6 +38,7 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
+import rx.Completable;
 
 import static org.jboss.hal.client.patching.PatchesColumn.PATCHING_TEMPLATE;
 import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
@@ -65,7 +65,7 @@ public class RollbackWizard {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
 
             if (patchContext.restartServers) {
                 for (Property serverProp : patchContext.servers) {
@@ -90,10 +90,7 @@ public class RollbackWizard {
             }
             Operation operation = opBuilder.build();
 
-            dispatcher.execute(operation,
-                    result -> control.proceed(),
-                    (op, failure) -> control.abort(failure),
-                    (op, exception) -> control.abort(exception.getMessage()));
+            return dispatcher.execute(operation).toCompletable();
         }
     }
 

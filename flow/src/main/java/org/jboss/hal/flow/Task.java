@@ -15,22 +15,8 @@
  */
 package org.jboss.hal.flow;
 
-import rx.Single;
+import rx.Completable;
 import rx.functions.Func1;
 
-/** Encapsulates one work item inside a flow */
-public interface Task<C> extends Func1<C, Single<C>> {
-
-    /**
-     * Execute the task. Please make sure that you <strong>always</strong> call either {@link Control#proceed()} or
-     * {@link Control#abort(String)}.
-     */
-    void execute(C context, Control control);
-
-    @Override default Single<C> call(C ctx) {
-        return Single.fromEmitter(emitter -> execute(ctx, new Control() {
-            @Override public void proceed() { emitter.onSuccess(ctx); }
-            @Override public void abort(String error) { emitter.onError(new FlowException(error, ctx)); }
-        }));
-    }
-}
+/** Marker interface for one work item inside a flow */
+public interface Task<C> extends Func1<C, Completable> {}

@@ -17,9 +17,9 @@ package org.jboss.hal.client.tools;
 
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
+import rx.Completable;
 
 class MacroOperationTask implements Task<FlowContext> {
 
@@ -32,7 +32,7 @@ class MacroOperationTask implements Task<FlowContext> {
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
-        dispatcher.executeInFlow(control, operation, result -> control.proceed());
+    public Completable call(FlowContext context) {
+        return dispatcher.execute(operation).toCompletable();
     }
 }

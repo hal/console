@@ -15,10 +15,11 @@
  */
 package org.jboss.hal.dmr;
 
+import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
+import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -37,16 +38,15 @@ public class ResourceCheck implements Task<FlowContext> {
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
+    public Completable call(FlowContext context) {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
-        dispatcher.executeInFlow(control, operation,
-                result -> {
-                    context.push(200);
-                    control.proceed();
-                },
-                (op, failure) -> {
-                    context.push(404);
-                    control.proceed();
-                });
+        return dispatcher.execute(operation)
+                .doOnSuccess(result -> context.push(200))
+                .doOnError(throwable -> {
+                    if (throwable instanceof DispatchFailure) {
+                        context.push(404);
+                    }
+                })
+                .toCompletable();
     }
 }

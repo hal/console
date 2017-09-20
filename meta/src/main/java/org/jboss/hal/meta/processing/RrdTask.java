@@ -18,7 +18,6 @@ package org.jboss.hal.meta.processing;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
@@ -26,6 +25,8 @@ import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Completable;
+import rx.functions.Action1;
 
 class RrdTask implements Task<FlowContext> {
 
@@ -50,30 +51,24 @@ class RrdTask implements Task<FlowContext> {
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
-        dispatcher.executeInFlow(control, composite,
-                (CompositeResult compositeResult) -> {
-                    try {
-                        RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
-                        rrdResult.securityContexts.forEach((address, securityContext) -> {
-                            logger.debug("Add security context for {}", address);
-                            securityContextRegistry.add(address, securityContext);
-                        });
-                        rrdResult.resourceDescriptions.forEach((address, resourceDescription) -> {
-                            logger.debug("Add resource description for {}", address);
-                            resourceDescriptionRegistry.add(address, resourceDescription);
-                        });
-                        control.proceed();
-                    } catch (ParserException e) {
-                        control.abort(e.getMessage());
-                    }
-                },
-                (operation, failure) -> {
+    public Completable call(FlowContext context) {
+        dispatcher.execute(composite)
+                .doOnSuccess((CompositeResult compositeResult) -> {
+                    RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
+                    rrdResult.securityContexts.forEach((address, securityContext) -> {
+                        logger.debug("Add security context for {}", address);
+                        securityContextRegistry.add(address, securityContext);
+                    });
+                    rrdResult.resourceDescriptions.forEach((address, resourceDescription) -> {
+                        logger.debug("Add resource description for {}", address);
+                        resourceDescriptionRegistry.add(address, resourceDescription);
+                    });
+                })
+                .doOnError(throwable -> {
                     if (optional) {
-                        logger.debug("Ignore errors on optional resource operation {}", operation.asCli());
-                        control.proceed(); // ignore errors on optional resources!
+                        logger.debug("Ignore errors on optional resource operation {}", composite.asCli());
                     } else {
-                        control.abort(failure);
+                        throw new RuntimeException(throwable);
                     }
                 });
     }
