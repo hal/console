@@ -56,6 +56,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+import rx.Completable;
 
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
@@ -185,14 +186,14 @@ public class SecurityDomainPresenter
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
         series(new FlowContext(progress.get()),
                 new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext)),
-                (context, control) -> {
+                context -> {
                     int status = context.pop();
                     if (status == 200) {
-                        control.proceed();
+                        return Completable.complete();
                     } else {
                         Operation operation = new Operation.Builder(singletonTemplate.resolve(statementContext), ADD)
                                 .build();
-                        dispatcher.executeInFlow(control, operation, result -> control.proceed());
+                        return dispatcher.execute(operation).toCompletable();
                     }
                 })
                 .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {

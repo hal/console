@@ -201,17 +201,6 @@ public class Dispatcher implements RecordingHandler {
         return dmr(operation).map(payload -> payload.get(RESULT));
     }
 
-    @JsIgnore
-    public void executeInFlow(Control control, Operation operation, Consumer<ModelNode> success) {
-        dmr(operation, payload -> success.accept(payload.get(RESULT)),
-                new FailedFlowCallback<>(control), new ExceptionalFlowCallback<>(control));
-    }
-
-    @JsIgnore
-    public void executeInFlow(Control control, Operation operation, Consumer<ModelNode> success, OnFail fail) {
-        dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, new ExceptionalFlowCallback<>(control));
-    }
-
 
     // ------------------------------------------------------ dmr
 
