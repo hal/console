@@ -202,29 +202,28 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             if (browseByHosts) {
                 processAddColumnAction(statementContext.selectedHost());
-                serverConfigsFn = (flowContext, control) -> {
+                serverConfigsFn = flowContext -> {
                     ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, SERVER_CONFIG)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.executeInFlow(control, operation, result -> {
+                    return dispatcher.execute(operation).doOnSuccess(result -> {
                         List<Server> servers = result.asPropertyList().stream()
                                 .map(property -> new Server(statementContext.selectedHost(), property))
                                 .collect(toList());
                         flowContext.set(TopologyTasks.SERVERS, servers);
-                        control.proceed();
-                    });
+                    }).toCompletable();
                 };
 
             } else {
-                serverConfigsFn = (flowContext, control) -> {
+                serverConfigsFn = flowContext -> {
                     ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
                             .resolve(statementContext);
                     Operation operation = new Operation.Builder(serverConfigAddress, QUERY)
                             .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
                             .build();
-                    dispatcher.executeInFlow(control, operation, result -> {
+                    return dispatcher.execute(operation).doOnSuccess(result -> {
                         List<Server> servers = result.asList().stream()
                                 .filter(modelNode -> !modelNode.isFailure())
                                 .map(modelNode -> {
@@ -234,8 +233,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 })
                                 .collect(toList());
                         flowContext.set(TopologyTasks.SERVERS, servers);
-                        control.proceed();
-                    });
+                    }).toCompletable();
                 };
             }
 

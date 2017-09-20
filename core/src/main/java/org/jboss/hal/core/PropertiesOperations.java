@@ -27,7 +27,6 @@ import javax.inject.Provider;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -332,13 +331,9 @@ public class PropertiesOperations {
 
         // TODO Check if the steps can be replaced with a composite operation
         series(new FlowContext(progress.get()),
-                (context, control) -> {
-                    if (operations.isEmpty()) {
-                        control.proceed();
-                    } else {
-                        dispatcher.executeInFlow(control, operations, (CompositeResult result) -> control.proceed());
-                    }
-                },
+                context -> operations.isEmpty()
+                        ? Completable.complete()
+                        : dispatcher.execute(operations).toCompletable(),
                 new ReadProperties(dispatcher, address, psr),
                 new MergeProperties(dispatcher, address, psr, properties))
                 .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {

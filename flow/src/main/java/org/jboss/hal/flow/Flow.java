@@ -37,9 +37,9 @@ public interface Flow {
     /** Executes multiple tasks in order. */
     static <C extends FlowContext> Single<C> series(C context, Collection<? extends Task<C>> tasks) {
         return Observable.from(tasks)
-                .flatMapSingle(f -> f.call(context), false, 1)
+                .flatMapSingle(task -> task.call(context).toSingleDefault(context), false, 1)
                 .doOnSubscribe(() -> context.progress.reset(tasks.size()))
-                .doOnNext(n -> context.progress.tick())
+                .doOnNext(c -> c.progress.tick())
                 .doOnTerminate(context.progress::finish)
                 .lastOrDefault(context).toSingle();
     }

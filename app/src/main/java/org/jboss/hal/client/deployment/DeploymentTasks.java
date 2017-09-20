@@ -41,7 +41,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -340,7 +339,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             boolean replace;
             Operation.Builder builder;
 
@@ -365,8 +364,8 @@ class DeploymentTasks {
             Operation operation = builder.build();
             operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
 
-            dispatcher.upload(file, operation,
-                    result -> {
+            return dispatcher.upload(file, operation)
+                    .doOnSuccess(result -> {
                         UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
                         if (statistics == null) {
                             statistics = new UploadStatistics(environment);
@@ -377,28 +376,16 @@ class DeploymentTasks {
                         } else {
                             statistics.recordReplaced(name);
                         }
-                        control.proceed();
-                    },
-
-                    (op, failure) -> {
+                    })
+                    .doOnError(throwable -> {
                         UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
                         if (statistics == null) {
                             statistics = new UploadStatistics(environment);
                             context.set(UPLOAD_STATISTICS, statistics);
                         }
                         statistics.recordFailed(name);
-                        control.proceed();
-                    },
-
-                    (op, exception) -> {
-                        UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
-                        if (statistics == null) {
-                            statistics = new UploadStatistics(environment);
-                            context.set(UPLOAD_STATISTICS, statistics);
-                        }
-                        statistics.recordFailed(name);
-                        control.proceed();
-                    });
+                    })
+                    .toCompletable();
         }
     }
 

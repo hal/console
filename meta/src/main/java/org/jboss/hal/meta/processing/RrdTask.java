@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
-import rx.functions.Action1;
 
 class RrdTask implements Task<FlowContext> {
 
@@ -52,7 +51,7 @@ class RrdTask implements Task<FlowContext> {
 
     @Override
     public Completable call(FlowContext context) {
-        dispatcher.execute(composite)
+        return dispatcher.execute(composite)
                 .doOnSuccess((CompositeResult compositeResult) -> {
                     RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
                     rrdResult.securityContexts.forEach((address, securityContext) -> {
@@ -70,6 +69,7 @@ class RrdTask implements Task<FlowContext> {
                     } else {
                         throw new RuntimeException(throwable);
                     }
-                });
+                })
+                .toCompletable();
     }
 }

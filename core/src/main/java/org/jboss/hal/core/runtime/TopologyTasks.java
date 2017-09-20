@@ -35,7 +35,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Ids;
@@ -260,7 +259,7 @@ public class TopologyTasks {
         @Override
         public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
-                Completable.complete();
+                return Completable.complete();
             } else {
                 List<Host> hosts = context.get(HOSTS);
                 List<Host> connectedHosts = hosts.stream().filter(Host::isConnected).collect(toList());

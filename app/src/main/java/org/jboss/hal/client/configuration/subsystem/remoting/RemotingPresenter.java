@@ -56,6 +56,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+import rx.Completable;
 
 import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
@@ -443,19 +444,19 @@ public class RemotingPresenter
 
         series(new FlowContext(progress.get()),
                 new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext)),
-                (context, control) -> {
+                context -> {
                     int status = context.pop();
                     if (status == 200) {
-                        control.proceed();
+                        return Completable.complete();
                     } else {
                         Operation operation = new Operation.Builder(securityTemplate.resolve(statementContext), ADD)
                                 .build();
-                        dispatcher.executeInFlow(control, operation, result -> control.proceed());
+                        return dispatcher.execute(operation).toCompletable();
                     }
                 },
-                (context, control) -> {
+                context -> {
                     Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
-                    dispatcher.executeInFlow(control, operation, result -> control.proceed());
+                    return dispatcher.execute(operation).toCompletable();
                 })
                 .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                     @Override

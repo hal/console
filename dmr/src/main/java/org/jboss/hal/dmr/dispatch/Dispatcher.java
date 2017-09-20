@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.File;
 import elemental2.dom.FormData;
-import elemental2.dom.HTMLInputElement;
 import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -177,18 +176,6 @@ public class Dispatcher implements RecordingHandler {
         return dmr(operations).map(this::compositeResult);
     }
 
-    @JsIgnore
-    public void executeInFlow(Control control, Composite operations, Consumer<CompositeResult> success) {
-        dmr(operations, payload -> success.accept(compositeResult(payload)),
-                new FailedFlowCallback<>(control), new ExceptionalFlowCallback<>(control));
-    }
-
-    @JsIgnore
-    public void executeInFlow(Control control, Composite operations, Consumer<CompositeResult> success, OnFail fail) {
-        dmr(operations, payload -> success.accept(compositeResult(payload)), fail,
-                new ExceptionalFlowCallback<>(control));
-    }
-
     private CompositeResult compositeResult(ModelNode payload) { return new CompositeResult(payload.get(RESULT)); }
 
 
@@ -270,20 +257,10 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ upload
 
     @JsIgnore
-    public void upload(File file, Operation operation, Consumer<ModelNode> success) {
-        upload(file, operation, success, failedCallback, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(File file, Operation operation, Consumer<ModelNode> success, OnFail fail) {
-        upload(file, operation, success, fail, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(File file, Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
+    public Single<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
         FormData formData = createFormData(file, uploadOperation.toBase64String());
-        uploadFormData(formData, uploadOperation, success, fail, error);
+        return uploadFormData(formData, uploadOperation).map(payload -> payload.get(RESULT));
     }
 
     private native FormData createFormData(File file, String operation) /*-{
@@ -293,37 +270,15 @@ public class Dispatcher implements RecordingHandler {
         return formData;
     }-*/;
 
-    @JsIgnore
-    public void upload(HTMLInputElement fileInput, Operation operation, Consumer<ModelNode> success) {
-        upload(fileInput, operation, success, failedCallback, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(HTMLInputElement fileInput, Operation operation, Consumer<ModelNode> callback, OnFail fail) {
-        upload(fileInput, operation, callback, fail, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(HTMLInputElement fileInput, Operation operation, Consumer<ModelNode> success, OnFail fail,
-            OnError error) {
-        Operation uploadOperation = runAs(operation);
-        FormData formData = createFormData(fileInput, uploadOperation.toBase64String());
-        uploadFormData(formData, uploadOperation, success, fail, error);
-    }
-
-    private native FormData createFormData(HTMLInputElement fileInput, String operation) /*-{
-        var formData = new $wnd.FormData();
-        formData.append(fileInput.name, fileInput.files[0]);
-        formData.append("operation", new Blob([operation], {type: "application/dmr-encoded"}));
-        return formData;
-    }-*/;
-
-    private void uploadFormData(FormData formData, Operation operation, Consumer<ModelNode> success, OnFail fail,
-            OnError error) {
-        XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
-                res -> success.accept(res.get(RESULT)), fail, error);
-        xhr.send(formData);
-        // Uploads are not supported in macros!
+    private Single<ModelNode> uploadFormData(FormData formData, Operation operation) {
+        return Single.fromEmitter(emitter -> {
+            XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
+                    emitter::onSuccess,
+                    (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
+                    (op, error) -> emitter.onError(error));
+            xhr.send(formData);
+            // Uploads are not supported in macros!
+        });
     }
 
 

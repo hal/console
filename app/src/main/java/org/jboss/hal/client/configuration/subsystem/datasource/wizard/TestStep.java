@@ -37,6 +37,7 @@ import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
+import rx.Completable;
 
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -98,16 +99,13 @@ class TestStep extends WizardStep<Context, State> {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         if (!context.isCreated()) {
             // add data source
-            tasks.add((flowContext, control) -> dispatcher.executeInFlow(control, addOperation(context, statementContext),
-                    (CompositeResult result) -> {
-                        context.setCreated(true);
-                        control.proceed();
-                    },
-                    (op, failure) -> {
+            tasks.add(flowContext -> dispatcher.execute(addOperation(context, statementContext))
+                    .doOnSuccess((CompositeResult result) -> context.setCreated(true))
+                    .doOnError(throwable -> {
                         flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
                         flowContext.set(WIZARD_TEXT, resources.messages().dataSourceAddError());
-                        control.abort(failure);
-                    }));
+                    })
+                    .toCompletable());
         }
 
         // check running server(s)
@@ -115,27 +113,24 @@ class TestStep extends WizardStep<Context, State> {
                 environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
 
         // test connection
-        tasks.add((flowContext, control) -> {
+        tasks.add(flowContext -> {
             List<Server> servers = flowContext.get(TopologyTasks.RUNNING_SERVERS);
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);
                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
                         .add(DATA_SOURCE, context.dataSource.getName());
                 Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
-                dispatcher.executeInFlow(control, operation,
-                        result -> control.proceed(),
-                        (op, failure) -> {
-                            flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
-                            flowContext.set(WIZARD_TEXT,
-                                    resources.messages().testConnectionError(context.dataSource.getName()));
-                            control.abort(failure);
-                        });
+                return dispatcher.execute(operation).doOnError(throwable -> {
+                    flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
+                    flowContext.set(WIZARD_TEXT,
+                            resources.messages().testConnectionError(context.dataSource.getName()));
+                }).toCompletable();
 
             } else {
                 flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
                 flowContext.set(WIZARD_TEXT,
                         SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
-                control.abort("no running servers"); //NON-NLS
+                return Completable.error(new RuntimeException("no running servers")); //NON-NLS
             }
         });
 

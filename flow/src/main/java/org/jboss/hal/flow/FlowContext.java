@@ -25,9 +25,9 @@ import java.util.Stack;
  */
 public class FlowContext {
 
-    public final Progress progress;
     private final Stack<Object> stack;
     private final Map<String, Object> data;
+    final Progress progress;
 
     public FlowContext() {
         this(Progress.NOOP);
