@@ -48,11 +48,11 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
+import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 public class ServerPresenter
         extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
@@ -77,8 +77,7 @@ public class ServerPresenter
             INTERFACE_ADDRESS,
             JVM_ADDRESS,
             PATH_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS,
-            OPTIONAL + SERVER_RUNTIME_ADDRESS},
+            SYSTEM_PROPERTY_ADDRESS},
             recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
@@ -138,7 +137,7 @@ public class ServerPresenter
 
     @Override
     protected void reload() {
-        Task<FlowContext> serverConfigFn = (context, control) -> {
+        Task<FlowContext> serverConfigFn = context -> {
             ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
             Operation serverOp = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
@@ -159,28 +158,26 @@ public class ServerPresenter
                     .param(CHILD_TYPE, SYSTEM_PROPERTY)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            dispatcher.executeInFlow(control,
-                    new Composite(serverOp, interfacesOp, jvmsOp, pathsOp, systemPropertiesOp),
-                    (CompositeResult result) -> {
+            return dispatcher.execute(new Composite(serverOp, interfacesOp, jvmsOp, pathsOp, systemPropertiesOp))
+                    .doOnSuccess((CompositeResult result) -> {
                         Server server = new Server(statementContext.selectedHost(), result.step(0).get(RESULT));
                         context.set(SERVER_KEY, server);
                         context.set(SERVER_CONFIG_KEY, result);
-                        control.proceed();
-                    });
+                    })
+                    .toCompletable();
         };
-        Task<FlowContext> serverRuntimeFn = (context, control) -> {
+        Task<FlowContext> serverRuntimeFn = context -> {
             Server server = context.get(SERVER_KEY);
             if (!serverActions.isPending(server) && server.isRunning()) {
                 ResourceAddress address = SERVER_RUNTIME_TEMPLATE.resolve(statementContext);
                 Operation serverRuntimeOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                         .param(INCLUDE_RUNTIME, true)
                         .build();
-                dispatcher.executeInFlow(control, serverRuntimeOp, result -> {
-                    context.set(SERVER_RUNTIME_KEY, result);
-                    control.proceed();
-                });
+                return dispatcher.execute(serverRuntimeOp)
+                        .doOnSuccess(result -> context.set(SERVER_RUNTIME_KEY, result))
+                        .toCompletable();
             } else {
-                control.proceed();
+                return Completable.complete();
             }
         };
 

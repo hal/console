@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import javax.inject.Inject;
 
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
-import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.FlowContext;
+import rx.Completable;
 
 public class ReadExtensions implements BootstrapTask {
 
@@ -35,18 +34,11 @@ public class ReadExtensions implements BootstrapTask {
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
-        logStart();
+    public Completable call() {
         // TODO Load server side extensions from /core-service=management/console-extension=*
         for (InstalledExtension extension : extensionStorage.list()) {
             extensionRegistry.inject(extension.getFqScript(), extension.getFqStylesheets());
         }
-        logDone();
-        control.proceed();
-    }
-
-    @Override
-    public String name() {
-        return "Bootstrap[ReadExtensions]";
+        return Completable.complete();
     }
 }

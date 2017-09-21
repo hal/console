@@ -32,9 +32,9 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
+import rx.Completable;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
@@ -61,14 +61,13 @@ class JdbcDriverTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
-            crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, JDBC_DRIVER, children -> {
+        public Completable call(FlowContext context) {
+            return crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, JDBC_DRIVER).doOnSuccess(children -> {
                 List<JdbcDriver> drivers = children.stream()
                         .map(JdbcDriver::new)
                         .collect(toList());
                 context.set(CONFIGURATION_DRIVERS, drivers);
-                control.proceed();
-            });
+            }).toCompletable();
         }
     }
 
@@ -90,17 +89,18 @@ class JdbcDriverTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
+            Completable completable = Completable.complete();
+
             if (environment.isStandalone()) {
                 ResourceAddress address = new ResourceAddress().add(SUBSYSTEM, DATASOURCES);
                 Operation operation = new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
-                dispatcher.executeInFlow(control, operation, result -> {
+                completable = dispatcher.execute(operation).doOnSuccess(result -> {
                     List<JdbcDriver> drivers = result.asList().stream()
                             .map(modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode))
                             .collect(toList());
                     context.set(RUNTIME_DRIVERS, drivers);
-                    control.proceed();
-                });
+                }).toCompletable();
 
             } else {
                 List<Server> servers = context.get(TopologyTasks.RUNNING_SERVERS);
@@ -111,39 +111,38 @@ class JdbcDriverTasks {
                                 return new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
                             })
                             .collect(toList());
-                    dispatcher.executeInFlow(control, new Composite(operations), (CompositeResult result) -> {
-                        List<JdbcDriver> drivers = new ArrayList<>();
-                        for (ModelNode step : result) {
-                            if (!step.isFailure()) {
-                                // for each server we get the list of installed drivers
-                                for (ModelNode modelNode : step.get(RESULT).asList()) {
-                                    drivers.add(new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode));
+                    completable = dispatcher.execute(new Composite(operations))
+                            .doOnSuccess((CompositeResult result) -> {
+                                List<JdbcDriver> drivers = new ArrayList<>();
+                                for (ModelNode step : result) {
+                                    if (!step.isFailure()) {
+                                        // for each server we get the list of installed drivers
+                                        for (ModelNode modelNode : step.get(RESULT).asList()) {
+                                            drivers.add(
+                                                    new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode));
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        context.set(RUNTIME_DRIVERS, drivers);
-                        control.proceed();
-                    });
-
-                } else {
-                    control.proceed();
+                                context.set(RUNTIME_DRIVERS, drivers);
+                            })
+                            .toCompletable();
                 }
             }
+            return completable;
         }
     }
 
 
     /**
-     * Combines and sorts the results form {@link ReadConfiguration} and {@link
-     * ReadRuntime} with a preference for runtime drivers over configuration drivers.
+     * Combines and sorts the results form {@link ReadConfiguration} and {@link ReadRuntime} with a preference for
+     * runtime drivers over configuration drivers.
      * <p>
-     * Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverTasks#DRIVERS} into the
-     * context.
+     * Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverTasks#DRIVERS} into the context.
      */
     static class CombineDriverResults implements Task<FlowContext> {
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Map<String, JdbcDriver> map = new HashMap<>();
             List<JdbcDriver> configDrivers = context.get(JdbcDriverTasks.CONFIGURATION_DRIVERS);
             List<JdbcDriver> runtimeDrivers = context.get(JdbcDriverTasks.RUNTIME_DRIVERS);
@@ -160,7 +159,7 @@ class JdbcDriverTasks {
             List<JdbcDriver> drivers = new ArrayList<>(map.values());
             drivers.sort(Comparator.comparing(JdbcDriver::getName));
             context.set(DRIVERS, drivers);
-            control.proceed();
+            return Completable.complete();
         }
     }
 }

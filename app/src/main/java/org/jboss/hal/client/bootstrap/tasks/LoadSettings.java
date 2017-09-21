@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
-import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.FlowContext;
+import rx.Completable;
 
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.config.Settings.Key.LOCALE;
@@ -44,20 +43,11 @@ public class LoadSettings implements BootstrapTask {
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
-        logStart();
-
+    public Completable call() {
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);
         settings.load(PAGE_SIZE, Settings.DEFAULT_PAGE_SIZE);
         settings.load(RUN_AS, null);
-
-        logDone();
-        control.proceed();
-    }
-
-    @Override
-    public String name() {
-        return "Bootstrap[LoadSettings]";
+        return Completable.complete();
     }
 }

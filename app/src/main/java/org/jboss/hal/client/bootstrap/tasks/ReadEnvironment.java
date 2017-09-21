@@ -33,7 +33,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +51,8 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.ManagementModel;
+import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
@@ -70,19 +69,14 @@ public class ReadEnvironment implements BootstrapTask {
     private final User user;
 
     @Inject
-    public ReadEnvironment(
-            Dispatcher dispatcher,
-            Environment environment,
-            User user) {
+    public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user) {
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.user = user;
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
-        logStart();
-
+    public Completable call() {
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
@@ -90,10 +84,9 @@ public class ReadEnvironment implements BootstrapTask {
                 .build());
         ops.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
 
-        dispatcher.executeInFlow(control, new Composite(ops),
-                (CompositeResult result) -> {
+        return dispatcher.execute(new Composite(ops))
+                .doOnSuccess((CompositeResult result) -> {
                     // server info
-                    logger.debug("{}: Parse root resource", name());
                     ModelNode node = result.step(0).get(RESULT);
                     environment.setInstanceInfo(node.get(PRODUCT_NAME).asString(),
                             node.get(PRODUCT_VERSION).asString(),
@@ -115,7 +108,6 @@ public class ReadEnvironment implements BootstrapTask {
                     }
 
                     // user info
-                    logger.debug("{}: Parse whoami data", name());
                     ModelNode whoami = result.step(1).get(RESULT);
                     String username = whoami.get("identity").get("username").asString();
                     user.setName(username);
@@ -126,14 +118,7 @@ public class ReadEnvironment implements BootstrapTask {
                             user.addRole(new Role(roleName));
                         }
                     }
-
-                    logDone();
-                    control.proceed();
-                });
-    }
-
-    @Override
-    public String name() {
-        return "Bootstrap[ReadEnvironment]";
+                })
+                .toCompletable();
     }
 }

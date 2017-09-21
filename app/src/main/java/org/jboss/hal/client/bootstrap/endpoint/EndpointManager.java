@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.XMLHttpRequest;
-import org.jboss.hal.client.bootstrap.functions.BootstrapTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;

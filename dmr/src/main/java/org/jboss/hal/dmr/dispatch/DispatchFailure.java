@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
+package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Task;
-import rx.Completable;
 
-class MacroOperationTask implements Task<FlowContext> {
+/** Exception caused by a failed operation */
+public class DispatchFailure extends RuntimeException {
 
-    private final Dispatcher dispatcher;
     private final Operation operation;
 
-    MacroOperationTask(Dispatcher dispatcher, Operation operation) {
-        this.dispatcher = dispatcher;
+    public DispatchFailure(String message, Operation operation) {
+        super(message);
         this.operation = operation;
     }
 
-    @Override
-    public Completable call(FlowContext context) {
-        return dispatcher.execute(operation).toCompletable();
+    public Operation getOperation() {
+        return operation;
     }
 }

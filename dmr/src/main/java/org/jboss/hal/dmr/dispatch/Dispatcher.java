@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.File;
 import elemental2.dom.FormData;
-import elemental2.dom.HTMLInputElement;
 import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -49,7 +48,6 @@ import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Message;
@@ -57,6 +55,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Single;
+import rx.SingleSubscriber;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
@@ -167,22 +167,12 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public void execute(Composite operations, Consumer<CompositeResult> success, OnFail fail, OnError error) {
-        dmr(operations, payloadres -> success.accept(compositeResult(payloadres)), fail, error);
-    }
-
-
-    // ------------------------------------------------------ execute composite in flow
-
-    @JsIgnore
-    public void executeInFlow(Control control, Composite operations, Consumer<CompositeResult> success) {
-        dmr(operations, payload -> success.accept(compositeResult(payload)),
-                new FailedFlowCallback<>(control), new ExceptionalFlowCallback<>(control));
+        dmr(operations, payload -> success.accept(compositeResult(payload)), fail, error);
     }
 
     @JsIgnore
-    public void executeInFlow(Control control, Composite operations, Consumer<CompositeResult> success, OnFail fail) {
-        dmr(operations, payload -> success.accept(compositeResult(payload)), fail,
-                new ExceptionalFlowCallback<>(control));
+    public Single<CompositeResult> execute(Composite operations) {
+        return dmr(operations).map(this::compositeResult);
     }
 
     private CompositeResult compositeResult(ModelNode payload) { return new CompositeResult(payload.get(RESULT)); }
@@ -205,65 +195,60 @@ public class Dispatcher implements RecordingHandler {
         dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, error);
     }
 
-
-    // ------------------------------------------------------ execute operation in flow
-
     @JsIgnore
-    public void executeInFlow(Control control, Operation operation, Consumer<ModelNode> success) {
-        dmr(operation, payload -> success.accept(payload.get(RESULT)),
-                new FailedFlowCallback<>(control), new ExceptionalFlowCallback<>(control));
-    }
-
-    @JsIgnore
-    public void executeInFlow(Control control, Operation operation, Consumer<ModelNode> success, OnFail fail) {
-        dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, new ExceptionalFlowCallback<>(control));
+    public Single<ModelNode> execute(Operation operation) {
+        return dmr(operation).map(payload -> payload.get(RESULT));
     }
 
 
     // ------------------------------------------------------ dmr
 
     private void dmr(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        String url;
-        HttpMethod method;
-        Operation dmrOperation = runAs(operation);
+        dmr(operation).subscribe(new SingleSubscriber<ModelNode>() {
+            @Override
+            public void onSuccess(ModelNode modelNode) {
+                success.accept(modelNode);
+            }
 
-        if (GetOperation.isSupported(dmrOperation.getName())) {
-            url = operationUrl(dmrOperation);
-            method = GET;
-        } else {
-            url = endpoints.dmr();
-            method = POST;
-        }
+            @Override
+            public void onError(Throwable ex) {
+                if (ex instanceof DispatchFailure) {
+                    fail.onFailed(operation, ex.getMessage());
+                } else {
+                    error.onException(operation, ex);
+                }
+            }
+        });
+    }
 
-        XMLHttpRequest xhr = newDmrXhr(url, method, dmrOperation, new DmrPayloadProcessor(), success, fail, error);
-        xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
-        xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
-        if (method == GET) {
-            xhr.send();
-        } else {
-            xhr.send(dmrOperation.toBase64String());
-        }
-        recordOperation(operation);
+    private Single<ModelNode> dmr(Operation operation) {
+        Operation dmrOperation = runAs(operation); // runAs might mutate the operation, so do it synchronously
+        boolean get = GetOperation.isSupported(dmrOperation.getName());
+        String url = get ? operationUrl(dmrOperation) : endpoints.dmr();
+        HttpMethod method = get ? GET : POST;
+        // ^-- those eager fields are useful if we don't want to evaluate it on each Single subscription
+        return Single.fromEmitter(emitter -> {
+            // in general, code inside the RX type should be able to be executed multiple times and always returns
+            // the same result, so we need to be careful to not mutate anything (like the operation). This is useful
+            // for example if we want to use the retry operator which will try again (subscribe again) if it fails.
+            XMLHttpRequest xhr = newDmrXhr(url, method, dmrOperation, new DmrPayloadProcessor(), emitter::onSuccess,
+                    (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
+                    (op, error) -> emitter.onError(error));
+            xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+            xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
+            if (get) { xhr.send(); } else { xhr.send(dmrOperation.toBase64String()); }
+            recordOperation(operation);
+        });
     }
 
 
     // ------------------------------------------------------ upload
 
     @JsIgnore
-    public void upload(File file, Operation operation, Consumer<ModelNode> success) {
-        upload(file, operation, success, failedCallback, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(File file, Operation operation, Consumer<ModelNode> success, OnFail fail) {
-        upload(file, operation, success, fail, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(File file, Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
+    public Single<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
         FormData formData = createFormData(file, uploadOperation.toBase64String());
-        uploadFormData(formData, uploadOperation, success, fail, error);
+        return uploadFormData(formData, uploadOperation).map(payload -> payload.get(RESULT));
     }
 
     private native FormData createFormData(File file, String operation) /*-{
@@ -273,37 +258,15 @@ public class Dispatcher implements RecordingHandler {
         return formData;
     }-*/;
 
-    @JsIgnore
-    public void upload(HTMLInputElement fileInput, Operation operation, Consumer<ModelNode> success) {
-        upload(fileInput, operation, success, failedCallback, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(HTMLInputElement fileInput, Operation operation, Consumer<ModelNode> callback, OnFail fail) {
-        upload(fileInput, operation, callback, fail, exceptionCallback);
-    }
-
-    @JsIgnore
-    public void upload(HTMLInputElement fileInput, Operation operation, Consumer<ModelNode> success, OnFail fail,
-            OnError error) {
-        Operation uploadOperation = runAs(operation);
-        FormData formData = createFormData(fileInput, uploadOperation.toBase64String());
-        uploadFormData(formData, uploadOperation, success, fail, error);
-    }
-
-    private native FormData createFormData(HTMLInputElement fileInput, String operation) /*-{
-        var formData = new $wnd.FormData();
-        formData.append(fileInput.name, fileInput.files[0]);
-        formData.append("operation", new Blob([operation], {type: "application/dmr-encoded"}));
-        return formData;
-    }-*/;
-
-    private void uploadFormData(FormData formData, Operation operation, Consumer<ModelNode> success, OnFail fail,
-            OnError error) {
-        XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
-                res -> success.accept(res.get(RESULT)), fail, error);
-        xhr.send(formData);
-        // Uploads are not supported in macros!
+    private Single<ModelNode> uploadFormData(FormData formData, Operation operation) {
+        return Single.fromEmitter(emitter -> {
+            XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
+                    emitter::onSuccess,
+                    (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
+                    (op, error) -> emitter.onError(error));
+            xhr.send(formData);
+            // Uploads are not supported in macros!
+        });
     }
 
 
@@ -439,30 +402,32 @@ public class Dispatcher implements RecordingHandler {
         return xhr;
     }
 
-    private void handleErrorCodes(String url, int status, Operation operation, OnError exceptionCallback) {
+    private void handleErrorCodes(String url, int status, Operation operation, OnError error) {
         switch (status) {
             case 0:
-                exceptionCallback.onException(operation,
-                        new DispatchException("The response for '" + url + "' could not be processed.", status));
+                error.onException(operation, new DispatchError(status,
+                        "The response for '" + url + "' could not be processed.", operation));
                 break;
             case 401:
             case 403:
-                exceptionCallback.onException(operation, new DispatchException("Authentication required.", status));
+                error.onException(operation, new DispatchError(status,
+                        "Authentication required.", operation));
                 break;
             case 404:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Management interface at '" + url + "' not found.", status));
+                error.onException(operation, new DispatchError(status,
+                        "Management interface at '" + url + "' not found.", operation));
                 break;
             case 500:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Internal Server Error for '" + operation.asCli() + "'.", status));
+                error.onException(operation, new DispatchError(status,
+                        "Internal Server Error for '" + operation.asCli() + "'.", operation));
                 break;
             case 503:
-                exceptionCallback.onException(operation,
-                        new DispatchException("Service temporarily unavailable. Is the server still booting?", status));
+                error.onException(operation, new DispatchError(status,
+                        "Service temporarily unavailable. Is the server still booting?", operation));
                 break;
             default:
-                exceptionCallback.onException(operation, new DispatchException("Unexpected status code.", status));
+                error.onException(operation, new DispatchError(status,
+                        "Unexpected status code.", operation));
                 break;
         }
     }

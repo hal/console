@@ -25,15 +25,14 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Sets;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+import rx.Completable;
 
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_HANDLER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
@@ -57,15 +56,13 @@ class HandlerTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             OperationFactory operationFactory = new OperationFactory();
             Composite operation = operationFactory
                     .fromChangeSet(AUDIT_LOG_TEMPLATE.resolve(statementContext), changedValues, metadata);
-            if (operation.isEmpty()) {
-                control.proceed();
-            } else {
-                dispatcher.executeInFlow(control, operation, (CompositeResult result) -> control.proceed());
-            }
+            return operation.isEmpty()
+                    ? Completable.complete()
+                    : dispatcher.execute(operation).toCompletable();
         }
     }
 
@@ -81,24 +78,17 @@ class HandlerTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
-                    READ_CHILDREN_NAMES_OPERATION
-            )
+                    READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, HANDLER)
                     .build();
-            //noinspection Duplicates
-            dispatcher.executeInFlow(control, operation,
-                    result -> {
-                        context.push(result.asList().stream()
-                                .map(ModelNode::asString)
-                                .collect(Collectors.toSet()));
-                        control.proceed();
-                    },
-                    (op, failure) -> {
-                        context.push(Collections.emptySet());
-                        control.proceed();
-                    });
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> context.push(result.asList().stream()
+                            .map(ModelNode::asString)
+                            .collect(Collectors.toSet())))
+                    .doOnError(failure -> context.push(Collections.emptySet()))
+                    .toCompletable();
         }
     }
 
@@ -116,7 +106,7 @@ class HandlerTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Set<String> existingHandlers = context.pop();
             Set<String> add = Sets.difference(newHandlers, existingHandlers).immutableCopy();
             Set<String> remove = Sets.difference(existingHandlers, newHandlers).immutableCopy();
@@ -133,12 +123,9 @@ class HandlerTasks {
                     ).build())
                     .forEach(operations::add);
             Composite composite = new Composite(operations);
-            if (composite.isEmpty()) {
-                control.proceed();
-            } else {
-                dispatcher.executeInFlow(control, new Composite(operations),
-                        (CompositeResult result) -> control.proceed());
-            }
+            return composite.isEmpty()
+                    ? Completable.complete()
+                    : dispatcher.execute(new Composite(operations)).toCompletable();
         }
     }
 }

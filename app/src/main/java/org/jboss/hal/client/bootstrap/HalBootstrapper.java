@@ -22,18 +22,16 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental2.dom.Event;
 import org.jboss.hal.client.ExceptionHandler;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
-import org.jboss.hal.client.bootstrap.functions.BootstrapTasks;
+import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
 import org.jboss.hal.config.Endpoints;
-import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
-import org.jboss.hal.flow.Progress;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.functions.Func0;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.hal.flow.Flow.series;
 
 public class HalBootstrapper implements Bootstrapper {
 
@@ -42,19 +40,19 @@ public class HalBootstrapper implements Bootstrapper {
     private final PlaceManager placeManager;
     private final EndpointManager endpointManager;
     private final Endpoints endpoints;
-    private final BootstrapTasks bootstrapFunctions;
+    private final BootstrapTasks bootstrapTasks;
     private final ExceptionHandler exceptionHandler;
 
     @Inject
     public HalBootstrapper(PlaceManager placeManager,
             EndpointManager endpointManager,
             Endpoints endpoints,
-            BootstrapTasks bootstrapFunctions,
+            BootstrapTasks bootstrapTasks,
             ExceptionHandler exceptionHandler) {
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;
         this.endpoints = endpoints;
-        this.bootstrapFunctions = bootstrapFunctions;
+        this.bootstrapTasks = bootstrapTasks;
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -66,24 +64,20 @@ public class HalBootstrapper implements Bootstrapper {
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            series(new FlowContext(), bootstrapFunctions.functions())
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            LoadingPanel.get().off();
-                            logger.info("Bootstrap finished");
-                            placeManager.revealCurrentPlace();
-                            exceptionHandler.afterBootstrap();
-                        }
 
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            LoadingPanel.get().off();
-                            logger.error("Bootstrap error: {}", error.getMessage());
-                            document.body.appendChild(
-                                    BootstrapFailed.create(error.getMessage(), endpoints).asElement());
-                        }
-                    });
+            Observable.from(bootstrapTasks.functions())
+                    .flatMapCompletable(Func0::call, false, 1)
+                    .doOnTerminate(() -> LoadingPanel.get().off())
+                    .doOnCompleted(() -> {
+                        logger.info("Bootstrap finished");
+                        placeManager.revealCurrentPlace();
+                        exceptionHandler.afterBootstrap();
+                    })
+                    .doOnError(e -> {
+                        logger.error("Bootstrap error: {}", e.getMessage());
+                        document.body.appendChild(BootstrapFailed.create(e.getMessage(), endpoints).asElement());
+                    })
+                    .subscribe();
         });
     }
 }

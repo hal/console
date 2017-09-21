@@ -33,7 +33,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import java.util.Set;
 import javax.inject.Inject;
@@ -47,11 +47,13 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.Completable;
 
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
@@ -65,7 +67,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ReadAuthentication implements BootstrapTask {
-
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadAuthentication.class);
     private static final AddressTemplate AUTHENTICATION_TEMPLATE = AddressTemplate.of(
             "/core-service=management/access=authorization");
 
@@ -81,15 +83,14 @@ public class ReadAuthentication implements BootstrapTask {
     }
 
     @Override
-    public void execute(FlowContext context, Control control) {
-        logStart();
-
+    public Completable call() {
         ResourceAddress address = AUTHENTICATION_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE_DEPTH, 1)
                 .build();
-        dispatcher.executeInFlow(control, operation, result -> {
+        return dispatcher.execute(operation)
+                .doOnSuccess(result -> {
                     // provider
                     AccessControlProvider accessControlProvider = asEnumValue(result, PROVIDER,
                             AccessControlProvider::valueOf, SIMPLE);
@@ -115,19 +116,13 @@ public class ReadAuthentication implements BootstrapTask {
                                     .forEach(role -> environment.getRoles().add(role));
                         }
                     }
-
-                    logDone();
-                    control.proceed();
-                },
-                (op, failure) -> {
-                    logger.error(
-                            "{}: Unable to read {} (insufficient rights?). Use default values as fallback.",
-                            name(), AUTHENTICATION_TEMPLATE);
-
+                })
+                .doOnError(throwable -> {
+                    logger.error("Unable to read {} (insufficient rights?). Use default values as fallback.",
+                            AUTHENTICATION_TEMPLATE);
                     applyDefaults();
-                    logDone();
-                    control.proceed();
-                });
+                })
+                .toCompletable();
     }
 
     private Role scopedRole(Property property, Role.Type type, String scopeAttribute) {
@@ -141,10 +136,5 @@ public class ReadAuthentication implements BootstrapTask {
         environment.setAccessControlProvider(SIMPLE);
         environment.getRoles().clear();
         environment.getRoles().addAll(Roles.DEFAULT_ROLES);
-    }
-
-    @Override
-    public String name() {
-        return "Bootstrap[ReadAuthentication]";
     }
 }

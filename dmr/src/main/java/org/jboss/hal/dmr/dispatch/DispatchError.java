@@ -15,20 +15,37 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-/**
- * @author Heiko Braun
- * @date 9/17/13
- */
-public class DispatchException extends Exception {
+import org.jboss.hal.dmr.Operation;
+import org.jetbrains.annotations.NonNls;
+
+/** Exception caused by a communication error or another exception not directly related to the DMR operation. */
+public class DispatchError extends RuntimeException {
 
     private final int statusCode;
+    private final Operation operation;
 
-    DispatchException(String message, int statusCode) {
-        super(message + " Status Code " + statusCode);
+    public DispatchError(Throwable throwable, Operation operation) {
+        super(throwable);
+        this.statusCode = 500;
+        this.operation = operation;
+    }
+
+    public DispatchError(int statusCode, @NonNls String message, Operation operation) {
+        super(message);
         this.statusCode = statusCode;
+        this.operation = operation;
+    }
+
+    @Override
+    public String toString() {
+        return "DispatchError(" + statusCode + ": " + getMessage() + ")";
     }
 
     public int getStatusCode() {
         return statusCode;
+    }
+
+    public Operation getOperation() {
+        return operation;
     }
 }

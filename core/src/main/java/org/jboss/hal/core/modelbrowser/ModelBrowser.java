@@ -42,7 +42,6 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -61,6 +60,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Completable;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -119,12 +119,14 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         private OpenNodeTask(String id) {this.id = id;}
 
         @Override
-        public void execute(FlowContext context, Control control) {
-            if (tree.api().getNode(id) != null) {
-                tree.api().openNode(id, control::proceed);
-            } else {
-                control.proceed();
-            }
+        public Completable call(FlowContext context) {
+            return Completable.fromEmitter(emitter -> {
+                if (tree.api().getNode(id) != null) {
+                    tree.api().openNode(id, emitter::onCompleted);
+                } else {
+                    emitter.onCompleted();
+                }
+            });
         }
     }
 

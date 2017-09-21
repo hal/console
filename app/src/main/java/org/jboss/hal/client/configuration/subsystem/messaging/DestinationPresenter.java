@@ -39,7 +39,6 @@ import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -60,6 +59,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+import rx.Completable;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
@@ -175,16 +175,15 @@ public class DestinationPresenter
                     .resolve(statementContext);
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
-            Task<FlowContext> add = (context, control) -> {
+            Task<FlowContext> add = context -> {
                 Operation addSecuritySetting = new Operation.Builder(securitySettingAddress, ADD).build();
                 Operation addRole = new Operation.Builder(roleAddress, ADD).payload(model).build();
 
                 int status = context.pop();
                 if (status == 404) {
-                    dispatcher.executeInFlow(control, new Composite(addSecuritySetting, addRole),
-                            (CompositeResult result) -> control.proceed());
+                    return dispatcher.execute(new Composite(addSecuritySetting, addRole)).toCompletable();
                 } else {
-                    dispatcher.executeInFlow(control, addRole, result -> control.proceed());
+                    return dispatcher.execute(addRole).toCompletable();
                 }
             };
 
@@ -244,38 +243,37 @@ public class DestinationPresenter
                     resources.messages().removeConfirmationTitle(Names.SECURITY_SETTING),
                     resources.messages().removeConfirmationQuestion(combinedName),
                     () -> {
-                        Task<FlowContext> removeRole = (context, control) -> {
+                        Task<FlowContext> removeRole = context -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .append(ROLE + "=" + roleName)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, REMOVE).build();
-                            dispatcher.executeInFlow(control, operation, result -> control.proceed());
+                            return dispatcher.execute(operation).toCompletable();
                         };
 
-                        Task<FlowContext> readRemainingRoles = (context, control) -> {
+                        Task<FlowContext> readRemainingRoles = context -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                                     .param(CHILD_TYPE, ROLE)
                                     .build();
-                            dispatcher.executeInFlow(control, operation, result -> {
-                                context.push(result.asList());
-                                control.proceed();
-                            });
+                            return dispatcher.execute(operation)
+                                    .doOnSuccess(result -> context.push(result.asList()))
+                                    .toCompletable();
                         };
 
-                        Task<FlowContext> removeSecuritySetting = (context, control) -> {
+                        Task<FlowContext> removeSecuritySetting = context -> {
                             List<ModelNode> roles = context.pop();
                             if (roles.isEmpty()) {
                                 ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                         .append(SECURITY_SETTING + "=" + securitySetting)
                                         .resolve(statementContext);
                                 Operation operation = new Operation.Builder(address, REMOVE).build();
-                                dispatcher.executeInFlow(control, operation, result -> control.proceed());
+                                return dispatcher.execute(operation).toCompletable();
                             } else {
-                                control.proceed();
+                                return Completable.complete();
                             }
                         };
 

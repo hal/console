@@ -43,7 +43,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
@@ -57,6 +56,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
+import rx.Completable;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -78,27 +78,22 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
-
+        public Completable call(FlowContext context) {
             ResourceAddress hostAddress = new ResourceAddress()
                     .add(HOST, "*");
-
-            ResourceAddress patchingAddress = new ResourceAddress()
-                    .add(HOST, "*")
-                    .add(CORE_SERVICE, PATCHING);
-
             Operation opHosts = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
 
+            ResourceAddress patchingAddress = new ResourceAddress()
+                    .add(HOST, "*")
+                    .add(CORE_SERVICE, PATCHING);
             Operation opPatches = new Operation.Builder(patchingAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build();
-            Composite composite = new Composite(opHosts, opPatches);
 
-            dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
-
+            return dispatcher.execute(new Composite(opHosts, opPatches)).doOnSuccess((CompositeResult result) -> {
                 ModelNode availableHosts = result.step(0).get(RESULT);
                 List<ModelNode> hostPatchingResults = result.step(1).get(RESULT).asList();
 
@@ -130,8 +125,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                 });
                 List<NamedNode> sortedHosts = orderedHostWithDomainControllerAsFirstElement(hostPatches);
                 context.set(HOSTS, sortedHosts);
-                control.proceed();
-            });
+            }).toCompletable();
         }
     }
 

@@ -27,12 +27,10 @@ import javax.inject.Provider;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
@@ -46,6 +44,7 @@ import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -87,22 +86,16 @@ public class PropertiesOperations {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, psr)
                     .build();
-            //noinspection Duplicates
-            dispatcher.executeInFlow(control, operation,
-                    result -> {
-                        context.push(result.asList().stream()
-                                .map(ModelNode::asString)
-                                .collect(Collectors.toSet()));
-                        control.proceed();
-                    },
-                    (op, failure) -> {
-                        context.push(Collections.emptySet());
-                        control.proceed();
-                    });
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> context.push(result.asList().stream()
+                            .map(ModelNode::asString)
+                            .collect(Collectors.toSet())))
+                    .doOnError(failure -> context.push(Collections.emptySet()))
+                    .toCompletable();
         }
     }
 
@@ -123,7 +116,7 @@ public class PropertiesOperations {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Set<String> existingProperties = context.pop();
             Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
             Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();
@@ -152,18 +145,14 @@ public class PropertiesOperations {
                     .forEach(operations::add);
             remove.stream()
                     .map(property -> new Operation.Builder(
-                            new ResourceAddress(address).add(propertiesResource, property), REMOVE
-                    )
+                            new ResourceAddress(address).add(propertiesResource, property), REMOVE)
                             .build())
                     .forEach(operations::add);
 
             Composite composite = new Composite(operations);
-            if (composite.isEmpty()) {
-                control.proceed();
-            } else {
-                dispatcher.executeInFlow(control, new Composite(operations),
-                        (CompositeResult result) -> control.proceed());
-            }
+            return composite.isEmpty()
+                    ? Completable.complete()
+                    : dispatcher.execute(new Composite(operations)).toCompletable();
         }
     }
 
@@ -342,13 +331,9 @@ public class PropertiesOperations {
 
         // TODO Check if the steps can be replaced with a composite operation
         series(new FlowContext(progress.get()),
-                (context, control) -> {
-                    if (operations.isEmpty()) {
-                        control.proceed();
-                    } else {
-                        dispatcher.executeInFlow(control, operations, (CompositeResult result) -> control.proceed());
-                    }
-                },
+                context -> operations.isEmpty()
+                        ? Completable.complete()
+                        : dispatcher.execute(operations).toCompletable(),
                 new ReadProperties(dispatcher, address, psr),
                 new MergeProperties(dispatcher, address, psr, properties))
                 .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {

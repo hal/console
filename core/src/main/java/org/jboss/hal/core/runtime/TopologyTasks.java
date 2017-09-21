@@ -35,13 +35,13 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Completable;
 
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
@@ -126,7 +126,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
                 List<Host> hosts = Collections.emptyList();
                 List<ServerGroup> serverGroups = Collections.emptyList();
@@ -134,7 +134,7 @@ public class TopologyTasks {
                 context.set(HOSTS, hosts);
                 context.set(SERVER_GROUPS, serverGroups);
                 context.set(SERVERS, servers);
-                control.proceed();
+                return Completable.complete();
 
             } else {
                 Composite composite = new Composite(
@@ -142,8 +142,8 @@ public class TopologyTasks {
                         DISCONNECTED_HOSTS,
                         SERVER_GROUPS_OPERATION,
                         serverConfigOperation(NAME, GROUP, STATUS, AUTO_START, SOCKET_BINDING_PORT_OFFSET).build());
-                dispatcher.executeInFlow(control, composite,
-                        (CompositeResult result) -> {
+                return dispatcher.execute(composite)
+                        .doOnSuccess((CompositeResult result) -> {
 
                             List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
                                     .map(Host::new)
@@ -165,8 +165,7 @@ public class TopologyTasks {
 
                             addServersToHosts(hosts, serverConfigsByName.values());
                             addServersToServerGroups(serverGroups, serverConfigsByName.values());
-                            control.proceed();
-                        });
+                        }).toCompletable();
             }
         }
     }
@@ -187,12 +186,12 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
-                control.proceed();
+                return Completable.complete();
             } else {
                 List<Server> servers = context.get(SERVERS);
-                readAndAddServerRuntimeAttributes(dispatcher, control, servers);
+                return readAndAddServerRuntimeAttributes(dispatcher, servers);
             }
         }
     }
@@ -202,9 +201,9 @@ public class TopologyTasks {
 
 
     /**
-     * Reads the hosts as order list with the domain controller as first element. Each host contains its
-     * server configs. Should be followed by {@link HostsStartedServers} to include the {@code server} resource
-     * attributes for the running servers.
+     * Reads the hosts as order list with the domain controller as first element. Each host contains its server configs.
+     * Should be followed by {@link HostsStartedServers} to include the {@code server} resource attributes for the
+     * running servers.
      * <p>
      * The list of hosts is available in the context under the key {@link #HOSTS}.
      */
@@ -219,14 +218,13 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
-                control.proceed();
+                return Completable.complete();
             } else {
                 Composite composite = new Composite(HOSTS_OPERATION, DISCONNECTED_HOSTS,
                         serverConfigOperation(NAME, GROUP, STATUS).build());
-                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
-
+                return dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
                     List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
                             .map(Host::new)
                             .collect(toList());
@@ -238,8 +236,7 @@ public class TopologyTasks {
                     addServersToHosts(hosts, serverConfigsByName.values());
 
                     context.set(HOSTS, hosts);
-                    control.proceed();
-                });
+                }).toCompletable();
             }
         }
     }
@@ -260,13 +257,13 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
-                control.proceed();
+                return Completable.complete();
             } else {
                 List<Host> hosts = context.get(HOSTS);
                 List<Host> connectedHosts = hosts.stream().filter(Host::isConnected).collect(toList());
-                processRunningServers(connectedHosts, dispatcher, control);
+                return processRunningServers(dispatcher, connectedHosts);
             }
         }
     }
@@ -289,7 +286,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
             Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
@@ -299,15 +296,14 @@ public class TopologyTasks {
                     .param(CHILD_TYPE, SERVER_CONFIG)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            dispatcher.executeInFlow(control, new Composite(hostOp, serverConfigsOp), (CompositeResult result) -> {
+            return dispatcher.execute(new Composite(hostOp, serverConfigsOp)).doOnSuccess((CompositeResult result) -> {
                 Host host = new Host(result.step(0).get(RESULT));
                 result.step(1).get(RESULT).asPropertyList().stream()
                         .map(property -> new Server(hostName, property.getValue()))
                         .forEach(host::addServer);
 
                 context.set(HOST, host);
-                control.proceed();
-            });
+            }).toCompletable();
         }
     }
 
@@ -325,13 +321,11 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             Host host = context.get(HOST);
-            if (host != null) {
-                readAndAddServerRuntimeAttributes(dispatcher, control, host.getServers());
-            } else {
-                control.proceed();
-            }
+            return host != null
+                    ? readAndAddServerRuntimeAttributes(dispatcher, host.getServers())
+                    : Completable.complete();
         }
     }
 
@@ -401,14 +395,13 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
-                control.proceed();
+                return Completable.complete();
             } else {
                 Composite composite = new Composite(SERVER_GROUPS_OPERATION,
                         serverConfigOperation(NAME, GROUP, STATUS).build());
-                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
-
+                return dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
                     List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
                             .map(ServerGroup::new)
                             .sorted(comparing(ServerGroup::getName))
@@ -418,8 +411,7 @@ public class TopologyTasks {
                     addServersToServerGroups(serverGroups, serverConfigsByName.values());
 
                     context.set(SERVER_GROUPS, serverGroups);
-                    control.proceed();
-                });
+                }).toCompletable();
             }
         }
     }
@@ -440,12 +432,12 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
-                control.proceed();
+                return Completable.complete();
             } else {
                 List<ServerGroup> serverGroups = context.get(SERVER_GROUPS);
-                processRunningServers(serverGroups, dispatcher, control);
+                return processRunningServers(dispatcher, serverGroups);
             }
         }
     }
@@ -468,7 +460,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             ResourceAddress serverGroupAddress = new ResourceAddress()
                     .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
             Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
@@ -478,8 +470,8 @@ public class TopologyTasks {
             Operation serverConfigsOp = serverConfigOperation(NAME, GROUP, STATUS)
                     .param(WHERE, new ModelNode().set(GROUP, serverGroupName))
                     .build();
-            dispatcher.executeInFlow(control, new Composite(serverGroupOp, serverConfigsOp),
-                    (CompositeResult result) -> {
+            return dispatcher.execute(new Composite(serverGroupOp, serverConfigsOp))
+                    .doOnSuccess((CompositeResult result) -> {
                         ServerGroup serverGroup = new ServerGroup(serverGroupName, result.step(0).get(RESULT));
                         result.step(1).get(RESULT).asList().stream()
                                 .filter(modelNode -> !modelNode.isFailure())
@@ -491,8 +483,7 @@ public class TopologyTasks {
                                 .forEach(serverGroup::addServer);
 
                         context.set(SERVER_GROUP, serverGroup);
-                        control.proceed();
-                    });
+                    }).toCompletable();
         }
     }
 
@@ -510,13 +501,11 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             ServerGroup serverGroup = context.get(SERVER_GROUP);
-            if (serverGroup != null) {
-                readAndAddServerRuntimeAttributes(dispatcher, control, serverGroup.getServers());
-            } else {
-                control.proceed();
-            }
+            return serverGroup == null
+                    ? Completable.complete()
+                    : readAndAddServerRuntimeAttributes(dispatcher, serverGroup.getServers());
         }
     }
 
@@ -542,11 +531,11 @@ public class TopologyTasks {
         }
 
         @Override
-        public void execute(FlowContext context, Control control) {
+        public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
                 List<Server> servers = Collections.emptyList();
                 context.set(RUNNING_SERVERS, servers);
-                control.proceed();
+                return Completable.complete();
 
             } else {
                 // Note for mixed domains with servers w/o support for SUSPEND_STATE attribute:
@@ -566,7 +555,7 @@ public class TopologyTasks {
                         .param(WHERE, query)
                         .build();
 
-                dispatcher.executeInFlow(control, operation, result -> {
+                return dispatcher.execute(operation).doOnSuccess(result -> {
                     List<Server> servers = result.asList().stream()
                             .filter(modelNode -> !modelNode.isFailure())
                             .map(modelNode -> {
@@ -576,8 +565,7 @@ public class TopologyTasks {
                             })
                             .collect(toList());
                     context.set(RUNNING_SERVERS, servers);
-                    control.proceed();
-                });
+                }).toCompletable();
             }
         }
     }
@@ -614,14 +602,15 @@ public class TopologyTasks {
         });
     }
 
-    private static <T extends HasServersNode> void processRunningServers(List<T> hasServersNode, Dispatcher dispatcher,
-            Control control) {
+    private static <T extends HasServersNode> Completable processRunningServers(Dispatcher dispatcher,
+            List<T> hasServersNode) {
+        Completable completable = Completable.complete();
         if (hasServersNode != null) {
             List<Server> servers = runningServers(hasServersNode);
             Composite composite = serverRuntimeComposite(servers);
             if (!composite.isEmpty()) {
                 Map<String, Server> serverConfigsById = mapServersById(servers);
-                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
+                completable = dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
                     for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
                         ModelNode payload = iterator.next().get(RESULT);
                         String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
@@ -639,14 +628,10 @@ public class TopologyTasks {
                             }
                         }
                     }
-                    control.proceed();
-                });
-            } else {
-                control.proceed();
+                }).toCompletable();
             }
-        } else {
-            control.proceed();
         }
+        return completable;
     }
 
     private static <T extends HasServersNode> List<Server> runningServers(List<T> hasServersNode) {
@@ -670,21 +655,17 @@ public class TopologyTasks {
         return servers.stream().collect(toMap(Server::getId, identity()));
     }
 
-    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control control,
-            List<Server> servers) {
+    private static Completable readAndAddServerRuntimeAttributes(Dispatcher dispatcher, List<Server> servers) {
+        Completable completable = Completable.complete();
         if (servers != null) {
             Composite composite = serverRuntimeComposite(servers);
             if (!composite.isEmpty()) {
-                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
-                    addServerRuntimeAttributes(servers, result);
-                    control.proceed();
-                });
-            } else {
-                control.proceed();
+                completable = dispatcher.execute(composite)
+                        .doOnSuccess((CompositeResult result) -> addServerRuntimeAttributes(servers, result))
+                        .toCompletable();
             }
-        } else {
-            control.proceed();
         }
+        return completable;
     }
 
     /**

@@ -62,6 +62,7 @@ import org.jboss.hal.spi.Requires;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Completable;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
@@ -156,25 +157,23 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
 
         } else {
             ResourceAddress address = queueAddress();
-            Task<FlowContext> count = (context, control) -> {
+            Task<FlowContext> count = context -> {
                 Operation operation = new Operation.Builder(address, COUNT_MESSAGES).build();
-                dispatcher.executeInFlow(control, operation, result -> {
-                    context.set(MESSAGES_COUNT, result.asLong());
-                    control.proceed();
-                });
+                return dispatcher.execute(operation)
+                        .doOnSuccess(result -> context.set(MESSAGES_COUNT, result.asLong()))
+                        .toCompletable();
             };
-            Task<FlowContext> list = (context, control) -> {
+            Task<FlowContext> list = context -> {
                 long messages = context.get(MESSAGES_COUNT);
                 if (messages > MESSAGES_THRESHOLD) {
                     context.set(MESSAGES, emptyList());
-                    control.proceed();
+                    return Completable.complete();
                 } else {
                     Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
-                    dispatcher.executeInFlow(control, operation, result -> {
-                        context.set(MESSAGES,
-                                result.asList().stream().map(JmsMessage::new).collect(toList()));
-                        control.proceed();
-                    });
+                    return dispatcher.execute(operation)
+                            .doOnSuccess(result -> context.set(MESSAGES,
+                                    result.asList().stream().map(JmsMessage::new).collect(toList())))
+                            .toCompletable();
                 }
             };
             series(new FlowContext(progress.get()), count, list)

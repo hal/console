@@ -152,7 +152,6 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                                         Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
                             }
                             if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
-                                // Use ItemMonitor?
                                 PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
                                         .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
                                 actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),

@@ -16,15 +16,13 @@
 package org.jboss.hal.flow;
 
 import java.util.Collection;
+
 import rx.Observable;
 import rx.Single;
 
 import static java.util.Arrays.asList;
 
-/**
- * Collection of static methods to execute async operations in order or until a condition is met. Uses RxGWT to
- * orchestrate the async operations.
- */
+/** Collection of static methods to execute (async) tasks in order. Uses RxGWT for orchestration. */
 public interface Flow {
 
     /** Executes multiple tasks in order. */
@@ -36,9 +34,9 @@ public interface Flow {
     /** Executes multiple tasks in order. */
     static <C extends FlowContext> Single<C> series(C context, Collection<? extends Task<C>> tasks) {
         return Observable.from(tasks)
-                .flatMapSingle(f -> f.call(context), false, 1)
+                .flatMapSingle(task -> task.call(context).toSingleDefault(context), false, 1)
                 .doOnSubscribe(() -> context.progress.reset(tasks.size()))
-                .doOnNext(n -> context.progress.tick())
+                .doOnNext(c -> c.progress.tick())
                 .doOnTerminate(context.progress::finish)
                 .lastOrDefault(context).toSingle();
     }

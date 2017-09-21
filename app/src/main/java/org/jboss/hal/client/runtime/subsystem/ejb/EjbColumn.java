@@ -145,14 +145,14 @@ public class EjbColumn extends FinderColumn<EjbNode> {
 
             @Override
             public HTMLElement getIcon() {
-                if (!item.isDeliveryActive()) {
-                    return Icons.paused();
-                } else if (hasTimer(item)) {
+                if (hasTimer(item)) {
                     return Icons.custom(pfIcon("history"));
                 } else {
                     switch (item.type) {
                         case MDB:
-                            return Icons.custom(fontAwesome("exchange"));
+                            return item.isDeliveryActive()
+                                    ? Icons.custom(fontAwesome("exchange"))
+                                    : Icons.paused();
                         case SINGLETON:
                             return Icons.custom(fontAwesome("cube"));
                         case STATEFUL:

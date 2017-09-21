@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap.tasks;
 
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
+import rx.Completable;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
@@ -38,12 +37,10 @@ public class RegisterStaticCapabilities implements BootstrapTask {
         this.capabilities = capabilities;
     }
 
-    @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void execute(FlowContext context, Control control) {
+    @Override
+    public Completable call() {
         if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
-            logStart();
-
             // Selected capabilities from https://github.com/wildfly/wildfly-capabilities
             capabilities.register("org.wildfly.data-source",
                     AddressTemplate.of(SELECTED_PROFILE, "subsystem=datasources/data-source=*"));
@@ -82,14 +79,7 @@ public class RegisterStaticCapabilities implements BootstrapTask {
 
             capabilities.register("org.wildfly.clustering.singleton.policy",
                     AddressTemplate.of(SELECTED_PROFILE, "subsystem=singleton/singleton-policy=*"));
-
-            logDone();
         }
-        control.proceed();
-    }
-
-    @Override
-    public String name() {
-        return "Bootstrap[RegisterStaticCapabilities]";
+        return Completable.complete();
     }
 }
