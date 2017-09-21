@@ -29,9 +29,9 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -49,8 +49,11 @@ public class DataSourcePresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(DATA_SOURCE_RUNTIME)
-    @Requires({DATA_SOURCE_ADDRESS, OPTIONAL + DATA_SOURCE_POOL_ADDRESS, OPTIONAL + DATA_SOURCE_JDBC_ADDRESS,
-            XA_DATA_SOURCE_ADDRESS, OPTIONAL + XA_DATA_SOURCE_POOL_ADDRESS, OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS})
+    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS,
+            OPTIONAL + DATA_SOURCE_POOL_ADDRESS,
+            OPTIONAL + DATA_SOURCE_JDBC_ADDRESS,
+            OPTIONAL + XA_DATA_SOURCE_POOL_ADDRESS,
+            OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
