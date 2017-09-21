@@ -70,8 +70,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -79,7 +78,7 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
+@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
@@ -263,10 +262,13 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                 .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
                                 .build());
                         if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                            AddressTemplate configurationChangesTemplate = AddressTemplate
+                                    .of(HOST_CONFIGURATION_CHANGES_ADDRESS).replaceWildcards(item.getAddressName());
                             PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
                                     .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                    ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                                    ccPlaceRequest,
+                                    Constraint.executable(configurationChangesTemplate, LIST_CHANGES_OPERATION)));
                         }
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                     }
