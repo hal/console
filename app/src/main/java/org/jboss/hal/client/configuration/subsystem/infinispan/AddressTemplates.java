@@ -32,6 +32,7 @@ interface AddressTemplates {
     String REPLICATED_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/replicated-cache=*";
 
     String TRANSPORT_JGROUPS_ADDRESS = CACHE_CONTAINER_ADDRESS + "/transport=jgroups";
+    String THREAD_POOL_ADDRESS = CACHE_CONTAINER_ADDRESS + "/thread-pool=*";
 
     AddressTemplate INFINISPAN_SUBSYSTEM_TEMPLATE = AddressTemplate.of(INFINISPAN_SUBSYSTEM_ADDRESS);
 
