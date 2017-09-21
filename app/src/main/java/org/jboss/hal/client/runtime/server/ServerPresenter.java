@@ -53,7 +53,6 @@ import rx.Completable;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 public class ServerPresenter
         extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
@@ -78,8 +77,7 @@ public class ServerPresenter
             INTERFACE_ADDRESS,
             JVM_ADDRESS,
             PATH_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS,
-            OPTIONAL + SERVER_RUNTIME_ADDRESS},
+            SYSTEM_PROPERTY_ADDRESS},
             recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
