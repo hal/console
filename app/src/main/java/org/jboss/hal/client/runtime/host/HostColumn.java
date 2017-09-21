@@ -70,6 +70,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -78,7 +79,7 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS}, recursive = false)
+@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
@@ -254,7 +255,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                         actions.add(new ItemAction.Builder<Host>()
                                 .title(resources.constants().reload())
                                 .handler(hostActions::reload)
-                                .constraint(Constraint.executable(hostTemplate(item), RELOAD_SERVERS))
+                                .constraint(Constraint.executable(hostTemplate(item), RELOAD))
                                 .build());
                         actions.add(new ItemAction.Builder<Host>()
                                 .title(resources.constants().restart())
