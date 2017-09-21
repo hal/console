@@ -67,22 +67,16 @@ class RrdTask implements Task<FlowContext> {
             });
         };
 
-        if (optional) {
-            return dispatcher.execute(composite)
-                    .onErrorResumeNext(throwable -> {
-                        if (throwable instanceof DispatchFailure) {
-                            logger.debug("Ignore errors on optional resource operation {}", composite.asCli());
-                            return Single.just(new CompositeResult(new ModelNode()));
-                        } else {
-                            return Single.error(throwable);
-                        }
-                    })
-                    .doOnSuccess(action)
-                    .toCompletable();
-        } else {
-            return dispatcher.execute(composite)
-                    .doOnSuccess(action)
-                    .toCompletable();
-        }
+        return dispatcher.execute(composite)
+                .onErrorResumeNext(throwable -> {
+                    if (optional && throwable instanceof DispatchFailure) {
+                        logger.debug("Ignore errors on optional resource operation {}", composite.asCli());
+                        return Single.just(new CompositeResult(new ModelNode()));
+                    } else {
+                        return Single.error(throwable);
+                    }
+                })
+                .doOnSuccess(action)
+                .toCompletable();
     }
 }
