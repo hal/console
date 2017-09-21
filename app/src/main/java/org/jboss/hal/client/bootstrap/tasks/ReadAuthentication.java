@@ -46,6 +46,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
@@ -54,6 +55,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
+import rx.Single;
 
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
@@ -117,10 +119,15 @@ public class ReadAuthentication implements BootstrapTask {
                         }
                     }
                 })
-                .doOnError(throwable -> {
-                    logger.error("Unable to read {} (insufficient rights?). Use default values as fallback.",
-                            AUTHENTICATION_TEMPLATE);
-                    applyDefaults();
+                .onErrorResumeNext(throwable -> {
+                    if (throwable instanceof DispatchFailure) {
+                        logger.error("Unable to read {} (insufficient rights?). Use default values as fallback.",
+                                AUTHENTICATION_TEMPLATE);
+                        applyDefaults();
+                        return Single.just(new ModelNode());
+                    } else {
+                        return Single.error(throwable);
+                    }
                 })
                 .toCompletable();
     }
