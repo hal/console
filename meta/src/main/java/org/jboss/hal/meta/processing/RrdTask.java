@@ -17,6 +17,8 @@ package org.jboss.hal.meta.processing;
 
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
@@ -26,6 +28,8 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
+import rx.Single;
+import rx.functions.Action1;
 
 class RrdTask implements Task<FlowContext> {
 
@@ -51,25 +55,34 @@ class RrdTask implements Task<FlowContext> {
 
     @Override
     public Completable call(FlowContext context) {
-        return dispatcher.execute(composite)
-                .doOnSuccess((CompositeResult compositeResult) -> {
-                    RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
-                    rrdResult.securityContexts.forEach((address, securityContext) -> {
-                        logger.debug("Add security context for {}", address);
-                        securityContextRegistry.add(address, securityContext);
-                    });
-                    rrdResult.resourceDescriptions.forEach((address, resourceDescription) -> {
-                        logger.debug("Add resource description for {}", address);
-                        resourceDescriptionRegistry.add(address, resourceDescription);
-                    });
-                })
-                .doOnError(throwable -> {
-                    if (optional) {
-                        logger.debug("Ignore errors on optional resource operation {}", composite.asCli());
-                    } else {
-                        throw new RuntimeException(throwable);
-                    }
-                })
-                .toCompletable();
+        Action1<CompositeResult> action = (CompositeResult compositeResult) -> {
+            RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
+            rrdResult.securityContexts.forEach((address, securityContext) -> {
+                logger.debug("Add security context for {}", address);
+                securityContextRegistry.add(address, securityContext);
+            });
+            rrdResult.resourceDescriptions.forEach((address, resourceDescription) -> {
+                logger.debug("Add resource description for {}", address);
+                resourceDescriptionRegistry.add(address, resourceDescription);
+            });
+        };
+
+        if (optional) {
+            return dispatcher.execute(composite)
+                    .onErrorResumeNext(throwable -> {
+                        if (throwable instanceof DispatchFailure) {
+                            logger.debug("Ignore errors on optional resource operation {}", composite.asCli());
+                            return Single.just(new CompositeResult(new ModelNode()));
+                        } else {
+                            return Single.error(throwable);
+                        }
+                    })
+                    .doOnSuccess(action)
+                    .toCompletable();
+        } else {
+            return dispatcher.execute(composite)
+                    .doOnSuccess(action)
+                    .toCompletable();
+        }
     }
 }

@@ -22,10 +22,7 @@ import rx.Single;
 
 import static java.util.Arrays.asList;
 
-/**
- * Collection of static methods to execute async operations in order or until a condition is met. Uses RxGWT to
- * orchestrate the async operations.
- */
+/** Collection of static methods to execute (async) tasks in order. Uses RxGWT for orchestration. */
 public interface Flow {
 
     /** Executes multiple tasks in order. */

@@ -102,10 +102,6 @@ public class Macro {
         return getOperations().stream().map(Operation::asCli).collect(joining("\n"));
     }
 
-    public boolean hasOperations() {
-        return !operations.isEmpty();
-    }
-
     public void seal() {
         this.sealed = true;
     }

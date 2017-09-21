@@ -48,7 +48,6 @@ import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
-import org.jboss.hal.flow.Control;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Message;
