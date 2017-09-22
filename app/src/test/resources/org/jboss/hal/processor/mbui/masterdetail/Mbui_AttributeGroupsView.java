@@ -63,11 +63,11 @@ public final class Mbui_AttributeGroupsView extends AttributeGroupsView {
                 .end()
                 .onSave((form, changedValues) -> {
                     String name = form.getModel().getName();
-                    saveForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext(), name), changedValues);
+                    saveForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext(), name), changedValues, metadata0);
                 })
                 .prepareReset(form -> {
                     String name = form.getModel().getName();
-                    resetForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0)
+                    resetForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext(), name), form, metadata0)
                 })
                 .build();
 

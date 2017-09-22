@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>24</version>
+        <version>25</version>
     </parent>
 
     <groupId>org.jboss.hal</groupId>
@@ -98,7 +98,7 @@
         <plugin.docker.version>0.17.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.4</plugin.frontend.version>
-        <plugin.gwt.version>1.0-rc-8</plugin.gwt.version>
+        <plugin.gwt.version>1.0-SNAPSHOT</plugin.gwt.version>
         <plugin.processor.version>3.2.0</plugin.processor.version>
         <plugin.swarm.version>60</plugin.swarm.version>
 

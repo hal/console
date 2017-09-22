@@ -61,7 +61,7 @@ public final class Mbui_AttributeGroupsView extends AttributeGroupsView {
                 .customGroup("group-2", "Group 2")
                 .include("baz", "qux")
                 .end()
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues, metadata0))
                 .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 

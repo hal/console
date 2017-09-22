@@ -60,7 +60,7 @@ public final class Mbui_FailSafeView extends FailSafeView {
                                 READ_RESOURCE_OPERATION).build(),
                         () -> addSingleton("form", "Form", metadata0Template))
                 .prepareRemove(form -> removeSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form))
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues, metadata0))
                 .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 
