@@ -29,15 +29,17 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.time;
 
-class MessageSinkElement implements IsElement {
+class NotificationDrawerElement implements IsElement {
 
+    private final NotificationDrawer notificationDrawer;
     private final HTMLElement root;
 
-    MessageSinkElement(final MessageSink messageSink, final Message message, final Resources resources) {
+    NotificationDrawerElement(NotificationDrawer notificationDrawer, Message message, Resources resources) {
+        this.notificationDrawer = notificationDrawer;
+
         HTMLElement iconContainer;
         String id = Ids.uniqueId();
         String dropdownId = Ids.build("dropdown", id);
-
         root = div().css(drawerPfNotification, unread).id(id)
                 .add(div().css(dropdown, pullRight, dropdownKebabPf)
                         .add(button().id(dropdownId)
@@ -54,13 +56,14 @@ class MessageSinkElement implements IsElement {
                                                 .textContent(resources.constants().view())))
                                 .add(li()
                                         .add(a().css(clickable)
-                                                .on(click, event -> messageSink.remove(id))
+                                                .on(click, event -> notificationDrawer.remove(id))
                                                 .textContent(resources.constants().remove())))))
                 .add(iconContainer = span().css(pullLeft).asElement())
-                .add(span().css(drawerPfNotificationMessage).innerHtml(message.getMessage()))
-                .add(span().css(drawerPfNotificationInfo)
-                        .add(span().css(date).textContent(message.getDate()))
-                        .add(span().css(time).textContent(message.getTime())))
+                .add(div().css(drawerPfNotificationContent)
+                        .add(span().css(drawerPfNotificationMessage).innerHtml(message.getMessage()))
+                        .add(div().css(drawerPfNotificationInfo)
+                                .add(span().css(date).textContent(message.getDate()))
+                                .add(span().css(time).textContent(message.getTime()))))
                 .asElement();
 
         String css = null;
@@ -88,6 +91,7 @@ class MessageSinkElement implements IsElement {
 
     private void view(Message message) {
         root.classList.remove(unread);
-        new MessageDialog(message).show();
+        notificationDrawer.updateElements();
+        new ToastNotificationDialog(message).show();
     }
 }

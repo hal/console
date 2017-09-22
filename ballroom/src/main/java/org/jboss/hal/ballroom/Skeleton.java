@@ -42,21 +42,21 @@ public final class Skeleton {
     }
 
     private static int navigationHeight() {
-        int navigation = 0;
+        int height = 0;
         HTMLElement element = (HTMLElement) document.querySelector("body > nav." + navbar); //NON-NLS
         if (element != null) {
-            navigation = (int) element.offsetHeight;
+            height = (int) element.offsetHeight;
         }
-        return navigation;
+        return height;
     }
 
     private static int footerHeight() {
-        int footer = 0;
+        int height = 0;
         HTMLElement element = (HTMLElement) document.querySelector("footer > nav." + navbar); //NON-NLS
         if (element != null) {
-            footer = (int) element.offsetHeight;
+            height = (int) element.offsetHeight;
         }
-        return footer;
+        return height;
     }
 
     private Skeleton() {}

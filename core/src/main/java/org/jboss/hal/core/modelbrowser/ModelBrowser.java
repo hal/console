@@ -218,7 +218,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         int contentOffset = applicationOffset() + 2 * MARGIN_BIG + surroundingHeight;
 
         treeContainer.style.height = vh(treeContainerOffset);
-        content.style.height = vh((contentOffset));
+        content.style.height = vh(contentOffset);
     }
 
     private void initTree(ResourceAddress address, String text) {

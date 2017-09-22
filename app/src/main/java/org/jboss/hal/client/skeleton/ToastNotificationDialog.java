@@ -25,14 +25,14 @@ import org.jboss.hal.spi.Message;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.resources.CSS.*;
 
-class MessageDialog {
+class ToastNotificationDialog {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final Dialog dialog;
 
-    MessageDialog(final Message message) {
-        String[] cssIcon = MessagePanelElement.cssIcon(message.getLevel());
+    ToastNotificationDialog(Message message) {
+        String[] cssIcon = ToastNotificationElement.cssIcon(message.getLevel());
         ElementsBuilder builder = elements();
 
         // header

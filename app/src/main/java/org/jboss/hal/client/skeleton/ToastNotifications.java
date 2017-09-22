@@ -44,8 +44,10 @@ import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
  * A container around the messages / toast notifications which are shown to the user in the upper right corner.
  * Prevents overlapping of simultaneous messages and handles the mouse over / out events in order to pause the
  * automatic fade out time.
+ *
+ * @see <a href="http://www.patternfly.org/pattern-library/communication/toast-notifications/">http://www.patternfly.org/pattern-library/communication/toast-notifications/</a>
  */
-class MessagePanel implements IsElement {
+class ToastNotifications implements IsElement {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
@@ -54,7 +56,7 @@ class MessagePanel implements IsElement {
     private final Map<Long, Message> stickyMessages;
     private final HTMLElement root;
 
-    MessagePanel(final Resources resources) {
+    ToastNotifications(final Resources resources) {
         this.resources = resources;
         this.messageIds = new HashMap<>();
         this.stickyMessages = new HashMap<>();
@@ -73,7 +75,7 @@ class MessagePanel implements IsElement {
 
         } else {
             String id = Ids.uniqueId();
-            HTMLElement element = new MessagePanelElement(this, message, resources).asElement();
+            HTMLElement element = new ToastNotificationElement(this, message, resources).asElement();
             element.id = id;
             root.appendChild(element);
 

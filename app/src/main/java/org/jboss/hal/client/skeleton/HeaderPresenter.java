@@ -120,9 +120,10 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
         void showReload(String text, String tooltip);
         void hideReload();
-        void showMessage(Message message);
-        void clearMessages();
         void hideReconnect();
+
+        void onMessage(Message message);
+        void onClearMessage();
 
         void selectTopLevelCategory(String nameToken);
         void updateLinks(FinderContext finderContext);
@@ -281,11 +282,11 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     @Override
     public void onMessage(final MessageEvent event) {
-        getView().showMessage(event.getMessage());
+        getView().onMessage(event.getMessage());
     }
 
-    void clearMessages() {
-        getView().clearMessages();
+    void onClearMessage() {
+        getView().onClearMessage();
     }
 
     void reconnect() {

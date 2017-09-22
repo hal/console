@@ -20,6 +20,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import rx.Completable;
+import rx.Single;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -42,9 +43,12 @@ public class ResourceCheck implements Task<FlowContext> {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         return dispatcher.execute(operation)
                 .doOnSuccess(result -> context.push(200))
-                .doOnError(throwable -> {
+                .onErrorResumeNext(throwable -> {
                     if (throwable instanceof DispatchFailure) {
                         context.push(404);
+                        return Single.just(new ModelNode());
+                    } else {
+                        return Single.error(throwable);
                     }
                 })
                 .toCompletable();
