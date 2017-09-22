@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.runtime.configurationchanges;
 
+import java.util.Optional;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -75,17 +76,17 @@ public class ConfigurationChangesPresenter extends
     }
     // @formatter:on
 
-    public static final String CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
-    private static final AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of(
-            "{selected.host}/subsystem=core-management");
+    static final String CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
     public static final AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             CONFIGURATION_CHANGES_ADDRESS);
+    private static final AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of(
+            "{selected.host}/subsystem=core-management");
 
-    private Environment environment;
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
+    private Environment environment;
     private CrudOperations crud;
     private MetadataRegistry metadataRegistry;
 
@@ -129,16 +130,21 @@ public class ConfigurationChangesPresenter extends
                 .param(CHILD_TYPE, SERVICE)
                 .build();
         dispatcher.execute(coreOperation, coreResult -> {
-            boolean configurationChangesEnabled = coreResult.asList().size() > 0;
-
-            if (configurationChangesEnabled) {
-                ResourceAddress ccAddress = CONFIGURATION_CHANGES_TEMPLATE.resolve(statementContext);
-                Operation ccOperation = new Operation.Builder(ccAddress, LIST_CHANGES_OPERATION)
-                        .build();
-                dispatcher.execute(ccOperation, ccResult -> getView().update(ccResult));
+            if (coreResult.asList().size() > 0) {
+                Optional<ModelNode> configurationChangesResult = coreResult.asList().stream()
+                        .filter(service -> service.asString().equals(CONFIGURATION_CHANGES)).findFirst();
+                if (configurationChangesResult.isPresent()) {
+                    ResourceAddress ccAddress = CONFIGURATION_CHANGES_TEMPLATE.resolve(statementContext);
+                    Operation ccOperation = new Operation.Builder(ccAddress, LIST_CHANGES_OPERATION)
+                            .build();
+                    dispatcher.execute(ccOperation, ccResult -> getView().update(ccResult));
+                } else {
+                    getView().update(new ModelNode());
+                }
             } else {
                 getView().update(new ModelNode());
             }
+
         });
     }
 

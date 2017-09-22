@@ -71,6 +71,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -78,12 +79,11 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {"/host=*",
-        "/host=*/subsystem=core-management/service=configuration-changes",
-        HOST_CONNECTION_ADDRESS}, recursive = false)
+@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
+    static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "/host=*/subsystem=core-management/service=configuration-changes";
     private static final AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
 
     static AddressTemplate hostTemplate(Host host) {
