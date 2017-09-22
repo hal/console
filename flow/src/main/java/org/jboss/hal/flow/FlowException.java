@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.flow;
 
-class FlowException extends RuntimeException {
+public class FlowException extends RuntimeException {
 
     final Object context;
 
-    FlowException(String message, Object context) {
+    public FlowException(String message, Object context) {
         super(message);
         this.context = context;
     }

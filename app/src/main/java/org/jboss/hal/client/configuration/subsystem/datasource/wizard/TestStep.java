@@ -32,6 +32,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.FlowException;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
@@ -130,7 +131,8 @@ class TestStep extends WizardStep<Context, State> {
                 flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
                 flowContext.set(WIZARD_TEXT,
                         SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
-                return Completable.error(new RuntimeException("no running servers")); //NON-NLS
+                return Completable.error(new FlowException(resources.messages().testConnectionErrorDomain(),
+                        flowContext));
             }
         });
 

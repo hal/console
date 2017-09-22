@@ -426,6 +426,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml switchToSimpleProvider();
 
     SafeHtml testConnectionCancelError(String datasource);
+    String testConnectionErrorDomain();
     SafeHtml testConnectionDomain(String testConnection);
     SafeHtml testConnectionError(String datasource);
     SafeHtml testConnectionStandalone(String testConnection);
