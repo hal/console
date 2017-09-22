@@ -62,9 +62,6 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  */
 public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
-    private static final String VALUE_CONTAINER = "valueContainer";
-    private static final String VALUE_ELEMENT = "valueElement";
-
     final HTMLElement valueContainer;
     HTMLElement valueElement;
     private final HTMLElement root;

@@ -170,7 +170,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
     @Override
     public boolean isEmpty() {
-        return Strings.isNullOrEmpty(isExpressionValue() ? getExpressionValue() : inputElement.value);
+        return Strings.isNullOrEmpty(isExpressionValue() ? getExpressionValue() : String.valueOf(getValue()));
     }
 
     @Override
