@@ -99,11 +99,16 @@ public interface CSS {
     String dlHorizontal = "dl-horizontal";
     String drawerPf = "drawer-pf";
     String drawerPfAction = "drawer-pf-action";
+    String drawerPfActionLink = "drawer-pf-action-link";
+    String drawerPfClose = "drawer-pf-close";
+    String drawerPfExpanded = "drawer-pf-expanded";
     String drawerPfHal = "drawer-pf-hal";
     String drawerPfNotification = "drawer-pf-notification";
+    String drawerPfNotificationContent = "drawer-pf-notification-content";
     String drawerPfNotificationMessage = "drawer-pf-notification-message";
     String drawerPfNotificationInfo = "drawer-pf-notification-info";
     String drawerPfTitle = "drawer-pf-title";
+    String drawerPfToggleExpand = "drawer-pf-toggle-expand";
     String drawerPfNotificationsNonClickable = "drawer-pf-notifications-non-clickable";
     String dropdown = "dropdown";
     String dropdownKebabPf = "dropdown-kebab-pf";
@@ -160,6 +165,7 @@ public interface CSS {
     String header = "header";
     String helpBlock = "help-block";
     String hidden = "hidden";
+    String hiddenXs = "hidden-xs";
     String hide = "hide";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";

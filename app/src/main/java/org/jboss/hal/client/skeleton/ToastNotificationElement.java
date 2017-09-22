@@ -33,12 +33,12 @@ import static org.jboss.hal.resources.UIConstants.DISMISS;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.TRUE;
 
-/** A message inside the {@link MessagePanel} element. */
-class MessagePanelElement implements IsElement {
+/** A message inside the {@link ToastNotifications} element. */
+class ToastNotificationElement implements IsElement {
 
     private final HTMLElement root;
 
-    MessagePanelElement(final MessagePanel messagePanel, final Message message, final Resources resources) {
+    ToastNotificationElement(final ToastNotifications toastNotifications, final Message message, final Resources resources) {
         String[] cssIcon = cssIcon(message.getLevel());
         if (message.isSticky()) {
             cssIcon[0] = cssIcon[0] + " " + alertDismissable;
@@ -51,7 +51,7 @@ class MessagePanelElement implements IsElement {
                     .css(close)
                     .data(DISMISS, ALERT)
                     .aria(HIDDEN, TRUE)
-                    .on(click, event -> messagePanel.closeSticky(message))
+                    .on(click, event -> toastNotifications.closeSticky(message))
                     .add(span().css(pfIcon(close)))
                     .asElement());
         }
@@ -76,7 +76,7 @@ class MessagePanelElement implements IsElement {
     }
 
     private void showMessage(final Message message) {
-        new MessageDialog(message).show();
+        new ToastNotificationDialog(message).show();
     }
 
     @Override

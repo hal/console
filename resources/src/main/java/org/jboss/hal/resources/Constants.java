@@ -74,6 +74,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseStrategy();
     String chooseTemplate();
     String clear();
+    String clearAll();
     String clearAllFilters();
     String clearMessages();
     String clearRunAs();
@@ -303,6 +304,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String managed();
     String managementVersion();
     String manyMessages();
+    String markAllRead();
     String maxUsed();
     String maximum();
     String membership();
@@ -335,6 +337,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noItems();
     String noMacros();
     String noMatchingItems();
+    String noNotifications();
     String noPrincipalsExcluded();
     String noPrincipalsIncluded();
     String noReferenceServer();

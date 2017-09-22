@@ -208,7 +208,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml macroPlaybackSuccessful();
     SafeHtml manyMessages(long number);
     SafeHtml mappingHint();
-    String messages(@PluralCount int count);
     SafeHtml metadataError();
     String modifyResourceTitle(String type);
     SafeHtml modifyResourceSuccess(String type, String name);
@@ -247,6 +246,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String notMoreThanOneAlternativesError(String alternatives);
     SafeHtml noWrite();
     SafeHtml normalLogFile(String size);
+    String notifications(@PluralCount int count);
 
     String operations(int size);
 

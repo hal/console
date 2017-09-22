@@ -103,8 +103,8 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     private Map<String, PlaceRequest> tlcPlaceRequests;
     private Map<String, HTMLElement> tlc;
     private HeaderPresenter presenter;
-    private MessagePanel messagePanel;
-    private MessageSink messageSink;
+    private ToastNotifications toastNotifications;
+    private NotificationDrawer notificationDrawer;
     private HandlerRegistration switchModeHandler;
     private List<HandlerRegistration> handlers;
     private List<HandlerRegistration> breadcrumbHandlers;
@@ -116,7 +116,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement HTMLElement reloadLink;
     @DataElement HTMLElement reloadLabel;
     @DataElement HTMLElement messages;
-    @DataElement HTMLElement messagesIcon;
+    @DataElement HTMLElement badgeIcon;
     @DataElement HTMLElement userName;
     @DataElement HTMLElement userDropdown;
     @DataElement HTMLElement logout;
@@ -146,9 +146,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         Elements.setVisible(reloadContainer, false);
         Elements.setVisible(breadcrumb, false);
 
-        messagePanel = new MessagePanel(resources()); // message panel adds itself to the body
-        messageSink = new MessageSink(resources());
-        topLevelCategories.parentNode.insertBefore(messageSink.asElement(), topLevelCategories);
+        toastNotifications = new ToastNotifications(resources()); // adds itself to the body
+        notificationDrawer = new NotificationDrawer(resources());
+        topLevelCategories.parentNode.insertBefore(notificationDrawer.asElement(), topLevelCategories);
 
         boolean su = ac().isSuperUserOrAdministrator();
         if (!su) {
@@ -190,7 +190,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 bind(logoLink, click, event -> presenter.goTo(NameTokens.HOMEPAGE)),
                 bind(backLink, click, event -> presenter.goTo(backPlaceRequest)),
                 bind(reloadLink, click, event -> presenter.reload()),
-                bind(messages, click, event -> messageSink.asElement().classList.toggle(hide)),
+                bind(messages, click, event -> notificationDrawer.toggle()),
                 bind(logout, click, event -> presenter.logout()),
                 bind(reconnect, click, event -> presenter.reconnect())));
     }
@@ -209,9 +209,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     @Override
-    public void setPresenter(final HeaderPresenter presenter) {
+    public void setPresenter(HeaderPresenter presenter) {
         this.presenter = presenter;
-        messageSink.setPresenter(presenter);
+        notificationDrawer.setPresenter(presenter);
     }
 
     @Override
@@ -226,6 +226,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
         userName.textContent = user.getName();
         updateRoles(environment, settings, user);
+        updateMessageElements();
     }
 
     @Override
@@ -304,7 +305,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     // ------------------------------------------------------ logo, reload, messages & global state
 
     @Override
-    public void showReload(final String text, final String tooltip) {
+    public void showReload(String text, String tooltip) {
         reloadLabel.textContent = text;
         Tooltip.element(reloadLink).setTitle(tooltip);
         Elements.setVisible(reloadContainer, true);
@@ -316,7 +317,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     @Override
-    public void showMessage(final Message message) {
+    public void hideReconnect() {
+        Elements.setVisible(connectedToContainer, false);
+    }
+
+    @Override
+    public void onMessage(Message message) {
         switch (message.getLevel()) {
             case ERROR:
                 logger.error(message.getMessage().asString());
@@ -328,34 +334,20 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 logger.info(message.getMessage().asString());
                 break;
         }
-        messagePanel.add(message);
-        messageSink.add(message);
-        messagesIcon.classList.remove("fa-bell-o"); //NON-NLS
-        messagesIcon.classList.add("fa-bell"); //NON-NLS
-    }
-
-    @Override
-    public void clearMessages() {
-        messageSink.clear();
+        toastNotifications.add(message);
+        notificationDrawer.add(message);
+        updateMessageElements();
     }
 
     @Override
     public void onClearMessage() {
-        if (messageSink.getMessageCount() == 0) {
-            messagesIcon.classList.remove("fa-bell"); //NON-NLS
-            messagesIcon.classList.add("fa-bell-o"); //NON-NLS
-        }
+        updateMessageElements();
     }
 
-    @Override
-    public void onClearAllMessages() {
-        messagesIcon.classList.remove("fa-bell"); //NON-NLS
-        messagesIcon.classList.add("fa-bell-o"); //NON-NLS
-    }
-
-    @Override
-    public void hideReconnect() {
-        Elements.setVisible(connectedToContainer, false);
+    private void updateMessageElements() {
+        int count = notificationDrawer.getMessageCount();
+        Elements.setVisible(badgeIcon, count != 0);
+        messages.title = resources().messages().notifications(count);
     }
 
 
@@ -377,7 +369,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     // ------------------------------------------------------ links & tlc
 
     @Override
-    public void updateLinks(final FinderContext finderContext) {
+    public void updateLinks(FinderContext finderContext) {
         PlaceRequest placeRequest = finderContext.getToken() != null ? finderContext.toPlaceRequest() : HOMEPAGE;
         backPlaceRequest = placeRequest;
         if (tlcPlaceRequests.containsKey(finderContext.getToken())) {
@@ -386,7 +378,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     @Override
-    public void selectTopLevelCategory(final String nameToken) {
+    public void selectTopLevelCategory(String nameToken) {
         for (String token : tlc.keySet()) {
             if (token.equals(nameToken)) {
                 tlc.get(token).classList.add(active);
@@ -402,7 +394,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     // ------------------------------------------------------ breadcrumb
 
     @Override
-    public void updateBreadcrumb(final String title) {
+    public void updateBreadcrumb(String title) {
         clearBreadcrumb();
         HTMLElement li = li().textContent(title).asElement();
         breadcrumb.insertBefore(li, breadcrumbToolsItem);
@@ -410,7 +402,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @Override
     @SuppressWarnings("unchecked")
-    public void updateBreadcrumb(final FinderContext finderContext) {
+    public void updateBreadcrumb(FinderContext finderContext) {
         clearBreadcrumb();
         FinderPath currentPath = new FinderPath();
 
@@ -514,7 +506,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     @Override
-    public void updateBreadcrumb(final ModelBrowserPath path) {
+    public void updateBreadcrumb(ModelBrowserPath path) {
         clearBreadcrumb();
         if (path == null || path.isEmpty()) {
             // deselection
@@ -563,7 +555,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     // ------------------------------------------------------ breadcrumb tools
 
     @Override
-    public void showExpertMode(final ResourceAddress address) {
+    public void showExpertMode(ResourceAddress address) {
         if (switchModeHandler != null) {
             switchModeHandler.removeHandler();
         }
@@ -596,7 +588,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     @Override
-    public void showExternal(final PlaceRequest placeRequest) {
+    public void showExternal(PlaceRequest placeRequest) {
         Elements.setVisible(externalLink, true);
         externalLink.setAttribute(UIConstants.TARGET, placeRequest.getNameToken());
         externalLink.setAttribute(UIConstants.HREF, places().historyToken(placeRequest));
