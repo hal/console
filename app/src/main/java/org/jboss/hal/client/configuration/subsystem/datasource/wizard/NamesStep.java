@@ -19,6 +19,7 @@ import java.util.List;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.PatternValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.DataSource;
@@ -58,10 +59,7 @@ class NamesStep extends WizardStep<Context, State> {
                 })
                 .build();
 
-        form.getFormItem(JNDI_NAME).addValidationHandler(value ->
-                value.toString().matches("java:(jboss)?/.*") ? ValidationResult.OK
-                    : ValidationResult.invalid("JNDI name has to start with java:/ or java:jboss/")
-        );
+        form.getFormItem(JNDI_NAME).addValidationHandler(new PatternValidation.JNDINameValidation());
 
         registerAttachable(form);
     }
