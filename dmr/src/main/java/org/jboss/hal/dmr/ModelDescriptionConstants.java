@@ -379,6 +379,7 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LIBRARY_PATH = "library-path";
     String LICENSE = "license";
+    String LINK = "link";
     String LINES = "lines";
     String LIST_ADD_OPERATION = "list-add";
     String LIST_CHANGES_OPERATION = "list-changes";

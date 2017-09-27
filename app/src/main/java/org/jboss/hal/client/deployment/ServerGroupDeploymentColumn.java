@@ -55,6 +55,7 @@ import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyTasks.RunningServersQuery;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -117,6 +118,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             final EventBus eventBus,
             final Dispatcher dispatcher,
             final Places places,
+            final ServerActions serverActions,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
             final @Footer Provider<Progress> progress,
@@ -277,7 +279,8 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             }
         });
 
-        setPreviewCallback(item -> new ServerGroupDeploymentPreview(this, item, places, resources));
+        setPreviewCallback(item -> new ServerGroupDeploymentPreview(this, item, places, resources, serverActions,
+                environment));
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
@@ -26,6 +27,7 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
@@ -42,8 +44,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployment> {
 
     ServerGroupDeploymentPreview(final ServerGroupDeploymentColumn column, final ServerGroupDeployment sgd,
-            final Places places, final Resources resources) {
-        super(sgd.getName());
+            final Places places, final Resources resources, final ServerActions serverActions,
+            final Environment environment) {
+        super(sgd.getName(), serverActions, environment, sgd.getDeployment());
 
         Deployment deployment = sgd.getDeployment();
         if (deployment != null) {

@@ -15,19 +15,30 @@
  */
 package org.jboss.hal.client.deployment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.Subdeployment;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.ServerUrl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
@@ -38,9 +49,16 @@ import static org.jboss.hal.resources.Icons.flag;
 abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> {
 
     private final LabelBuilder labelBuilder;
+    private ServerActions serverActions;
+    private Environment environment;
+    private Deployment deployment;
 
-    DeploymentPreview(final String header) {
+    DeploymentPreview(final String header, final ServerActions serverActions,
+            final Environment environment, final Deployment deployment) {
         super(header);
+        this.serverActions = serverActions;
+        this.environment = environment;
+        this.deployment = deployment;
         this.labelBuilder = new LabelBuilder();
     }
 
@@ -82,7 +100,10 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
         if (deployment.hasSubsystem(UNDERTOW)) {
             ModelNode contextRoot = failSafeGet(deployment, String.join("/", SUBSYSTEM, UNDERTOW, CONTEXT_ROOT));
             if (contextRoot.isDefined()) {
-                attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOT, contextRoot.asString()));
+                attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOT,
+                        span().textContent(contextRoot.asString())
+                                .data(LINK, "")
+                                .asElement()));
             }
 
         } else if (deployment.hasNestedSubsystem(UNDERTOW)) {
@@ -90,10 +111,12 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             for (Subdeployment subdeployment : deployment.getSubdeployments()) {
                 ModelNode contextRoot = failSafeGet(subdeployment, String.join("/", SUBSYSTEM, UNDERTOW, CONTEXT_ROOT));
                 if (contextRoot.isDefined()) {
+                    SafeHtml contextHtml = SafeHtmlUtils
+                            .fromTrustedString(" <span data-link>" + contextRoot.asString() + "</span>");
                     SafeHtml safeHtml = new SafeHtmlBuilder()
                             .appendEscaped(subdeployment.getName() + " ")
                             .appendHtmlConstant("&rarr;") //NON-NLS
-                            .appendEscaped(" " + contextRoot.asString())
+                            .append(contextHtml)
                             .toSafeHtml();
                     ul.appendChild(li().innerHtml(safeHtml).asElement());
                 }
@@ -101,4 +124,46 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOTS, ul));
         }
     }
+
+    @Override
+    public void attach() {
+        super.attach();
+        injectUrls();
+    }
+
+    private void injectUrls() {
+        List<HTMLElement> linkContainers = new ArrayList<>();
+        asElements().forEach(e -> {
+            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
+                    .filter(htmlElements())
+                    .map(asHtmlElement())
+                    .collect(toList());
+            linkContainers.addAll(elements);
+        });
+        if (!linkContainers.isEmpty()) {
+            String host = deployment.getReferenceServer().getHost();
+            String serverGroup = deployment.getReferenceServer().getServerGroup();
+            String server = deployment.getReferenceServer().getName();
+            serverActions.readUrl(environment.isStandalone(), host, serverGroup, server,
+                    new AsyncCallback<ServerUrl>() {
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            // noop
+                        }
+
+                        @Override
+                        public void onSuccess(ServerUrl url) {
+                            for (HTMLElement linkContainer : linkContainers) {
+                                String link = linkContainer.textContent;
+                                Elements.removeChildrenFrom(linkContainer);
+                                linkContainer.appendChild(a(url.getUrl() + link)
+                                        .apply(a -> a.target = Ids.hostServer(host, server))
+                                        .textContent(link)
+                                        .asElement());
+                            }
+                        }
+                    });
+        }
+    }
+
 }
