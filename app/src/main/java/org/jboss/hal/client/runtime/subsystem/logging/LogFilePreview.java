@@ -20,6 +20,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
@@ -45,22 +46,20 @@ class LogFilePreview extends PreviewContent<LogFile> {
                 .add(container = div()
                         .add(icon = span().asElement())
                         .add(message = span().asElement())
+                        .add(" ")
+                        .add(a(logFiles.downloadUrl(logFile.getFilename())).css(alertLink)
+                                .apply(a -> a.download = logFile.getFilename())
+                                .textContent(resources.constants().download()))
                         .asElement());
         if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
-            container.classList.add(alert, alertWarning);
+            container.classList.add(CSS.alert, alertWarning);
             icon.className = Icons.WARNING;
             message.innerHTML = resources.messages().largeLogFile(logFile.getFormattedSize()).asString();
         } else {
-            container.classList.add(alert, alertInfo);
+            container.classList.add(CSS.alert, alertInfo);
             icon.className = Icons.INFO;
             message.innerHTML = resources.messages().normalLogFile(logFile.getFormattedSize()).asString();
         }
-
-        previewBuilder()
-                .add(span().textContent(" "))
-                .add(a(logFiles.downloadUrl(logFile.getFilename())).css(alertLink)
-                        .apply(a -> a.download = logFile.getFilename())
-                        .textContent(resources.constants().download()));
 
         PreviewAttributes<LogFile> previewAttributes = new PreviewAttributes<>(logFile)
                 .append(model ->
