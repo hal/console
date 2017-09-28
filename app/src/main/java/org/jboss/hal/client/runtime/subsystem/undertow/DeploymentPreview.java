@@ -45,8 +45,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class DeploymentPreview extends PreviewContent<DeploymentResource> {
 
-    private static final String LINK = "link";
-
     private final Environment environment;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -144,16 +142,12 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                                 String link = linkContainer.textContent;
                                 Elements.removeChildrenFrom(linkContainer);
                                 linkContainer.appendChild(a(url.getUrl() + link)
-                                        .apply(a -> a.target = serverId())
+                                        .apply(a -> a.target = Ids.hostServer(host, server))
                                         .textContent(link)
                                         .asElement());
                             }
                         }
                     });
         }
-    }
-
-    private String serverId() {
-        return Ids.hostServer(statementContext.selectedHost(), statementContext.selectedServer());
     }
 }

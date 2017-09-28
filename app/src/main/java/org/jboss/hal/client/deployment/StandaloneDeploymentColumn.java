@@ -46,6 +46,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -56,6 +57,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -94,15 +96,17 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private final Resources resources;
 
     @Inject
-    public StandaloneDeploymentColumn(Finder finder,
-            ColumnActionFactory columnActionFactory,
-            ItemActionFactory itemActionFactory,
-            Environment environment,
-            Dispatcher dispatcher,
-            EventBus eventBus,
-            MetadataRegistry metadataRegistry,
-            @Footer Provider<Progress> progress,
-            Resources resources) {
+    public StandaloneDeploymentColumn(final Finder finder,
+            final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
+            final Environment environment,
+            final ServerActions serverActions,
+            final StatementContext statementContext,
+            final Dispatcher dispatcher,
+            final EventBus eventBus,
+            final MetadataRegistry metadataRegistry,
+            final @Footer Provider<Progress> progress,
+            final Resources resources) {
 
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
@@ -216,7 +220,8 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         });
 
         setPreviewCallback(
-                deployment -> new StandaloneDeploymentPreview(StandaloneDeploymentColumn.this, deployment, resources));
+                deployment -> new StandaloneDeploymentPreview(StandaloneDeploymentColumn.this, deployment, resources,
+                        serverActions, environment));
     }
 
     @Override
