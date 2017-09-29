@@ -57,7 +57,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -101,7 +100,6 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
             final ItemActionFactory itemActionFactory,
             final Environment environment,
             final ServerActions serverActions,
-            final StatementContext statementContext,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final MetadataRegistry metadataRegistry,
@@ -295,23 +293,36 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     }
 
     void enable(Deployment deployment) {
-        enableDisable(deployment, DEPLOY, resources.messages().deploymentEnabledSuccess(deployment.getName()));
+        enableDisable(deployment, DEPLOY,
+                resources.messages().deploymentEnabledSuccess(deployment.getName()),
+                resources.messages().deploymentEnabledError(deployment.getName()));
     }
 
     void disable(Deployment deployment) {
-        enableDisable(deployment, UNDEPLOY, resources.messages().deploymentDisabledSuccess(deployment.getName()));
+        enableDisable(deployment, UNDEPLOY,
+                resources.messages().deploymentDisabledSuccess(deployment.getName()),
+                resources.messages().deploymentDisabledError(deployment.getName()));
     }
 
-    private void enableDisable(Deployment deployment, String operation, SafeHtml message) {
+    private void enableDisable(Deployment deployment, String operation, SafeHtml successMessage, SafeHtml errorMessage) {
         String id = Ids.deployment(deployment.getName());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
         Operation op = new Operation.Builder(address, operation).build();
         ItemMonitor.startProgress(id);
-        dispatcher.execute(op, result -> {
-            ItemMonitor.stopProgress(id);
-            refresh(RESTORE_SELECTION);
-            MessageEvent.fire(eventBus, Message.success(message));
-        });
+        dispatcher.execute(op,
+                result -> {
+                    ItemMonitor.stopProgress(id);
+                    refresh(RESTORE_SELECTION);
+                    MessageEvent.fire(eventBus, Message.success(successMessage));
+                },
+                (o, failure) -> {
+                    ItemMonitor.stopProgress(id);
+                    MessageEvent.fire(eventBus, Message.error(errorMessage, failure));
+                },
+                (o, exception) -> {
+                    ItemMonitor.stopProgress(id);
+                    MessageEvent.fire(eventBus, Message.error(errorMessage, exception.getMessage()));
+                });
     }
 
     private void explode(Deployment deployment) {
