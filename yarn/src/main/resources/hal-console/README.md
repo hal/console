@@ -13,7 +13,7 @@ Starts a local web server listening to http://localhost:3000. Please make sure t
 To install and run HAL use
 
 ```
-npm install -g hal-console
+yarn install -g hal-console
 hal-console
 ```
 

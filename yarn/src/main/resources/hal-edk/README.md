@@ -1,9 +1,9 @@
-Development package to write HAL extensions. Follow these steps to setup a new extension project:
+Development package for writing HAL extensions. Follow these steps to setup a new extension project:
 
-- Create a new npm project
+- Create a new yarn project
 - Install a developer dependency for `hal-edk`:
 
-      $ npm install --save-dev hal-edk
+      $ yarn install --save-dev hal-edk
     
   This will install the management console in `node_modules/hal-edk` and create two files in the project's root folder:
   

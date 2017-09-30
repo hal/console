@@ -4,5 +4,5 @@ var app = express();
 
 app.use('/', express.static(__dirname + '/hal'));
 app.listen(3000, function () {
-    console.log('HAL.next listening on port 3000!');
+    console.log('HAL console listening on port 3000!');
 });

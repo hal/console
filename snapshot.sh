@@ -25,7 +25,7 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # Deploying hal.next
-mvn clean deploy -pl \!npm -P prod,theme-hal,docker
+mvn clean deploy -pl \!yarn -P prod,theme-hal,docker
 
 echo
 echo

@@ -111,11 +111,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-npm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-processors</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -148,6 +143,11 @@
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-theme-wildfly</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-yarn</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
