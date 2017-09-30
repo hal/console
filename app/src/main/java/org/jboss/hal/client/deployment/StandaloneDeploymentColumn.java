@@ -29,6 +29,7 @@ import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;
 import org.jboss.hal.client.deployment.DeploymentTasks.CheckDeployment;
 import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
+import org.jboss.hal.client.deployment.dialog.CreateEmptyDialog;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
@@ -47,6 +48,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -57,6 +59,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -89,22 +92,24 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
     private final Environment environment;
     private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
     private final EventBus eventBus;
     private final MetadataRegistry metadataRegistry;
     private final Provider<Progress> progress;
     private final Resources resources;
 
     @Inject
-    public StandaloneDeploymentColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final Environment environment,
-            final ServerActions serverActions,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final MetadataRegistry metadataRegistry,
-            final @Footer Provider<Progress> progress,
-            final Resources resources) {
+    public StandaloneDeploymentColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Environment environment,
+            ServerActions serverActions,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            EventBus eventBus,
+            MetadataRegistry metadataRegistry,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
 
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
@@ -131,6 +136,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
         this.environment = environment;
         this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
         this.eventBus = eventBus;
         this.metadataRegistry = metadataRegistry;
         this.progress = progress;
@@ -145,6 +151,11 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         addActions.add(new ColumnAction.Builder<Deployment>(Ids.DEPLOYMENT_UNMANAGED_ADD)
                 .title(resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT))
                 .handler(column -> addUnmanaged())
+                .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, ADD))
+                .build());
+        addActions.add(new ColumnAction.Builder<Deployment>(Ids.DEPLOYMENT_EMPTY_CREATE)
+                .title(resources.constants().deploymentEmptyCreate())
+                .handler(column -> createEmpty())
                 .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, ADD))
                 .build());
         addColumnActions(Ids.DEPLOYMENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
@@ -292,6 +303,19 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         dialog.show();
     }
 
+    private void createEmpty() {
+        new CreateEmptyDialog(resources, name -> {
+            ResourceAddress address = DEPLOYMENT_TEMPLATE.resolve(statementContext, name);
+            Operation operation = new Operation.Builder(address, ADD)
+                    .param(CONTENT, new ModelNode().add(new ModelNode().set(EMPTY, true)))
+                    .build();
+            dispatcher.execute(operation, result -> {
+                refresh(Ids.deployment(name));
+                MessageEvent.fire(eventBus, Message.success(resources.messages().deploymentEmptySuccess(name)));
+            });
+        }).show();
+    }
+
     void enable(Deployment deployment) {
         enableDisable(deployment, DEPLOY,
                 resources.messages().deploymentEnabledSuccess(deployment.getName()),
@@ -304,7 +328,8 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 resources.messages().deploymentDisabledError(deployment.getName()));
     }
 
-    private void enableDisable(Deployment deployment, String operation, SafeHtml successMessage, SafeHtml errorMessage) {
+    private void enableDisable(Deployment deployment, String operation, SafeHtml successMessage,
+            SafeHtml errorMessage) {
         String id = Ids.deployment(deployment.getName());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
         Operation op = new Operation.Builder(address, operation).build();

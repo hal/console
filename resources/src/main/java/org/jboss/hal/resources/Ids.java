@@ -151,6 +151,8 @@ public interface Ids {
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_EMPTY_CREATE = build(DEPLOYMENT, "empty-create");
+    String DEPLOYMENT_EMPTY_FORM = build(DEPLOYMENT, "empty", FORM_SUFFIX);
     String DEPLOYMENT_REFRESH = build(DEPLOYMENT, REFRESH_SUFFIX);
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_TAB = build(DEPLOYMENT, TAB_SUFFIX);

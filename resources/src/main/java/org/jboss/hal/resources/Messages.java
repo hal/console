@@ -109,6 +109,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentDisabled(String name);
     SafeHtml deploymentDisabledError(String name);
     SafeHtml deploymentDisabledSuccess(String name);
+    String deploymentEmptyCreate();
+    SafeHtml deploymentEmptySuccess(String name);
     SafeHtml deploymentEnabled(String name);
     SafeHtml deploymentEnabledError(String name);
     SafeHtml deploymentEnabledSuccess(String name);

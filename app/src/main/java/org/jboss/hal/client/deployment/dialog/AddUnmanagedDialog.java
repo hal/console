@@ -34,8 +34,7 @@ public class AddUnmanagedDialog {
 
     private final AddResourceDialog dialog;
 
-    public AddUnmanagedDialog(final Metadata metadata, final Resources resources,
-            final AddResourceDialog.Callback callback) {
+    public AddUnmanagedDialog(Metadata metadata, Resources resources, AddResourceDialog.Callback callback) {
         ModelNode rp = ModelNodeHelper.failSafeGet(metadata.getDescription(),
                 String.join("/", OPERATIONS, ADD, REQUEST_PROPERTIES));
         ModelNode vt = ModelNodeHelper.failSafeGet(rp, CONTENT + "/" + VALUE_TYPE);

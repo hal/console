@@ -237,6 +237,7 @@ public interface ModelDescriptionConstants {
     String EE = "ee";
     String EJB3 = "ejb3";
     String ELYTRON = "elytron";
+    String EMPTY = "empty";
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
     String END_TIME = "end-time";
