@@ -305,6 +305,10 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>rxjava-gwt-repo</id>
+            <url>https://raw.githubusercontent.com/intendia-oss/rxjava-gwt/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>

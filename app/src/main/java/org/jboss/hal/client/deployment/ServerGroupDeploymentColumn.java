@@ -166,7 +166,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 new LoadDeploymentsFromRunningServer(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext context, Throwable error) {
+                    public void onError(Throwable error) {
                         callback.onFailure(error);
                     }
 
@@ -317,7 +317,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                     statementContext.selectedServerGroup()))
                             .subscribe(new Outcome<FlowContext>() {
                                 @Override
-                                public void onError(FlowContext context, Throwable error) {
+                                public void onError(Throwable error) {
                                     wzd.showError(resources.constants().deploymentError(),
                                             resources.messages().deploymentError(name), error.getMessage());
                                 }
@@ -339,7 +339,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
     private void addDeploymentFromContentRepository() {
         Outcome<FlowContext> outcome = new Outcome<FlowContext>() {
             @Override
-            public void onError(FlowContext context, Throwable error) {
+            public void onError(Throwable error) {
                 MessageEvent.fire(eventBus, Message.error(resources.messages().loadContentError(), error.getMessage()));
             }
 

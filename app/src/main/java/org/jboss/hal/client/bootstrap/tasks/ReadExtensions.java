@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
-import rx.Completable;
+import io.reactivex.Completable;
 
 public class ReadExtensions implements BootstrapTask {
 
@@ -34,7 +34,7 @@ public class ReadExtensions implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable get() {
         // TODO Load server side extensions from /core-service=management/console-extension=*
         for (InstalledExtension extension : extensionStorage.list()) {
             extensionRegistry.inject(extension.getFqScript(), extension.getFqStylesheets());

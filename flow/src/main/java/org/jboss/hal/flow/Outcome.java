@@ -15,19 +15,11 @@
  */
 package org.jboss.hal.flow;
 
-import rx.SingleSubscriber;
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 
-public abstract class Outcome<C> extends SingleSubscriber<C> {
+public abstract class Outcome<C> implements SingleObserver<C> {
 
     @Override
-    @SuppressWarnings("unchecked")
-    public final void onError(Throwable error) {
-        if (error instanceof FlowException) {
-            onError((C) ((FlowException) error).context, error);
-        } else {
-            onError(null, error);
-        }
-    }
-
-    public abstract void onError(C context, Throwable error);
+    public void onSubscribe(Disposable d) {}
 }

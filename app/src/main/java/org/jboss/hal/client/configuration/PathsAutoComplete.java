@@ -73,7 +73,7 @@ public class PathsAutoComplete extends AutoComplete {
                             new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())))
             .subscribe(new Outcome<FlowContext>() {
                 @Override
-                public void onError(FlowContext context, Throwable error) {
+                public void onError(Throwable error) {
                     logger.error("Unable to update operation for paths type-ahead: " +
                             "Error reading running servers: {}", error.getMessage());
                     operation = defaultOperation();

@@ -26,7 +26,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
@@ -48,7 +48,7 @@ public class FindDomainController implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable get() {
         if (environment.isStandalone()) {
             return Completable.complete();
         } else {

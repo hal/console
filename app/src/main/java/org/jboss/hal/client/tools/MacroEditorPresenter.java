@@ -135,7 +135,7 @@ public class MacroEditorPresenter
         series(new FlowContext(progress.get()), tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext context, Throwable error) {
+                    public void onError(Throwable error) {
                         getView().enableMacro(macro);
                         MessageEvent.fire(getEventBus(), Message.error(resources.messages().macroPlaybackError(),
                                 error.getMessage()));

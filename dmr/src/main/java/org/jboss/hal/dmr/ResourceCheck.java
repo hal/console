@@ -19,8 +19,8 @@ import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
-import rx.Completable;
-import rx.Single;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -39,7 +39,7 @@ public class ResourceCheck implements Task<FlowContext> {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Completable apply(FlowContext context) {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         return dispatcher.execute(operation)
                 .doOnSuccess(result -> context.push(200))

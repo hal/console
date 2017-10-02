@@ -38,7 +38,7 @@ import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -136,12 +136,13 @@ class TestStep extends WizardStep<Context, State> {
             }
         });
 
-        series(new FlowContext(progress.get()), tasks)
+        FlowContext seriesContext = new FlowContext(progress.get());
+        series(seriesContext, tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext flowContext, Throwable error) {
-                        String title = flowContext.get(WIZARD_TITLE);
-                        SafeHtml text = flowContext.get(WIZARD_TEXT);
+                    public void onError(Throwable error) {
+                        String title = seriesContext.get(WIZARD_TITLE);
+                        SafeHtml text = seriesContext.get(WIZARD_TEXT);
                         wizard().showError(title, text, error.getMessage(), false);
                     }
 

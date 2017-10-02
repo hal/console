@@ -32,7 +32,7 @@ import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_HANDLER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
@@ -56,7 +56,7 @@ class HandlerTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             OperationFactory operationFactory = new OperationFactory();
             Composite operation = operationFactory
                     .fromChangeSet(AUDIT_LOG_TEMPLATE.resolve(statementContext), changedValues, metadata);
@@ -78,7 +78,7 @@ class HandlerTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, HANDLER)
@@ -106,7 +106,7 @@ class HandlerTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Set<String> existingHandlers = context.pop();
             Set<String> add = Sets.difference(newHandlers, existingHandlers).immutableCopy();
             Set<String> remove = Sets.difference(existingHandlers, newHandlers).immutableCopy();

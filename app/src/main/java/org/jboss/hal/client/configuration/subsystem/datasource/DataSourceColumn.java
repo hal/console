@@ -246,7 +246,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 new JdbcDriverTasks.CombineDriverResults())
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext context, Throwable error) {
+                    public void onError(Throwable error) {
                         showWizard(Collections.emptyList(), Collections.emptyList(), xa);
                     }
 

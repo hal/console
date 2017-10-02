@@ -23,6 +23,8 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+import io.reactivex.CompletableObserver;
+import io.reactivex.disposables.Disposable;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -50,8 +52,6 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.CompletableSubscriber;
-import rx.Subscription;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
@@ -249,12 +249,13 @@ public class HostActions {
         pendingDialog.show();
 
         dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
-                        .subscribe(new CompletableSubscriber() {
+                        .subscribe(new CompletableObserver() {
                             @Override
-                            public void onSubscribe(Subscription d) {}
+                            public void onSubscribe(Disposable d) {
+                            }
 
                             @Override
-                            public void onCompleted() {
+                            public void onComplete() {
                                 // wait a little bit before event handlers try to use the reloaded / restarted domain controller
                                 setTimeout((o) -> {
                                     pendingDialog.close();
@@ -276,12 +277,13 @@ public class HostActions {
     private void hostControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
             SafeHtml successMessage, SafeHtml errorMessage, SafeHtml timeoutMessage) {
         dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
-                        .subscribe(new CompletableSubscriber() {
+                        .subscribe(new CompletableObserver() {
                             @Override
-                            public void onSubscribe(Subscription d) {}
+                            public void onSubscribe(Disposable d) {
+                            }
 
                             @Override
-                            public void onCompleted() {
+                            public void onComplete() {
                                 finish(host, servers, Result.SUCCESS, Message.success(successMessage));
                             }
 

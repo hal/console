@@ -60,7 +60,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -119,12 +119,12 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         private OpenNodeTask(String id) {this.id = id;}
 
         @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> {
+        public Completable apply(FlowContext context) {
+            return Completable.create(emitter -> {
                 if (tree.api().getNode(id) != null) {
-                    tree.api().openNode(id, emitter::onCompleted);
+                    tree.api().openNode(id, emitter::onComplete);
                 } else {
-                    emitter.onCompleted();
+                    emitter.onComplete();
                 }
             });
         }
@@ -302,7 +302,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onError(FlowContext context, Throwable error) {
+                        public void onError(Throwable error) {
                             logger.debug("Failed to restore selection {}", previousFilter.parents);
                         }
 

@@ -24,9 +24,9 @@ import org.jboss.hal.dmr.Operation;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
-import rx.Observable;
-import rx.Single;
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -50,16 +50,16 @@ public interface TimeoutHandler {
     @SuppressWarnings("HardCodedStringLiteral")
     static Completable repeatOperationUntil(Dispatcher dispatcher, int timeout, Operation operation,
             @Nullable Predicate<ModelNode> until) {
-        Single<ModelNode> execution = Single.fromEmitter(em -> dispatcher.execute(operation, em::onSuccess,
+        Single<ModelNode> execution = Single.create(em -> dispatcher.execute(operation, em::onSuccess,
                 (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
                 (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
         if (until == null) until = r -> !r.isFailure(); // default: until success
 
         return Observable
                 .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
-                .flatMapSingle(n -> execution, false, 1)
+                .concatMap(n -> execution.toObservable())
                 .takeUntil(until::test) // until succeeded
-                .toCompletable().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
+                .ignoreElements().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
                 .doOnError(e -> {
                     String msg = "Operation " + operation.asCli() + " ran into ";
                     if (e instanceof TimeoutException) logger.warn(msg + "a timeout after " + timeout + " seconds");
@@ -74,16 +74,16 @@ public interface TimeoutHandler {
     @SuppressWarnings("HardCodedStringLiteral")
     static Completable repeatCompositeUntil(Dispatcher dispatcher, int timeout, Composite composite,
             @Nullable Predicate<CompositeResult> until) {
-        Single<CompositeResult> execution = Single.fromEmitter(em -> dispatcher.execute(composite, em::onSuccess,
+        Single<CompositeResult> execution = Single.create(em -> dispatcher.execute(composite, em::onSuccess,
                 (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
                 (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
         if (until == null) until = r -> r.stream().noneMatch(ModelNode::isFailure); // default: until success
 
         return Observable
                 .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
-                .flatMapSingle(n -> execution, false, 1)
+                .concatMap(n -> execution.toObservable())
                 .takeUntil(until::test) // until succeeded
-                .toCompletable().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
+                .ignoreElements().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
                 .doOnError(e -> {
                     String msg = "Composite operation " + composite.asCli() + " ran into ";
                     if (e instanceof TimeoutException) logger.warn(msg + "a timeout after " + timeout + " seconds");

@@ -52,7 +52,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
@@ -76,7 +76,7 @@ public class ReadEnvironment implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable get() {
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)

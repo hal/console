@@ -167,7 +167,7 @@ public class MetadataProcessor {
             logger.debug("About to execute {} composite operations", composites.size() + optionalComposites.size());
             Outcome<FlowContext> outcome = new Outcome<FlowContext>() {
                 @Override
-                public void onError(FlowContext context, Throwable error) {
+                public void onError(Throwable error) {
                     logger.debug("Failed to process metadata: {}", error.getMessage());
                     callback.onFailure(error);
                 }

@@ -21,7 +21,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
@@ -39,7 +39,7 @@ public class RegisterStaticCapabilities implements BootstrapTask {
 
     @SuppressWarnings("HardCodedStringLiteral")
     @Override
-    public Completable call() {
+    public Completable get() {
         if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
             // Selected capabilities from https://github.com/wildfly/wildfly-capabilities
             capabilities.register("org.wildfly.data-source",

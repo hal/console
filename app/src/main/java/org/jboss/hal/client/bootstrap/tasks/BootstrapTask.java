@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import rx.Completable;
-import rx.functions.Func0;
+import java.util.function.Supplier;
+import io.reactivex.Completable;
 
-public interface BootstrapTask extends Func0<Completable> {
+public interface BootstrapTask extends Supplier<Completable> {
 }

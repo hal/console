@@ -59,7 +59,7 @@
             <artifactId>hal-resources</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.intendia.gwt.rxgwt</groupId>
+            <groupId>com.intendia.gwt.rxgwt2</groupId>
             <artifactId>rxgwt</artifactId>
         </dependency>
         <dependency>

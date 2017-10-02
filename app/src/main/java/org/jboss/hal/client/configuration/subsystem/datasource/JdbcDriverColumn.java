@@ -92,7 +92,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                         new JdbcDriverTasks.CombineDriverResults())
                         .subscribe(new Outcome<FlowContext>() {
                             @Override
-                            public void onError(FlowContext context, Throwable error) {
+                            public void onError(Throwable error) {
                                 callback.onFailure(error);
                             }
 

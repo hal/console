@@ -134,7 +134,7 @@ public class ContentColumn extends FinderColumn<Content> {
                         new LoadContent(dispatcher))
                         .subscribe(new Outcome<FlowContext>() {
                             @Override
-                            public void onError(FlowContext context, Throwable error) {
+                            public void onError(Throwable error) {
                                 callback.onFailure(error);
                             }
 
@@ -300,7 +300,7 @@ public class ContentColumn extends FinderColumn<Content> {
                             new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false))
                             .subscribe(new Outcome<FlowContext>() {
                                 @Override
-                                public void onError(FlowContext context, Throwable error) {
+                                public void onError(Throwable error) {
                                     wzd.showError(resources.constants().uploadError(),
                                             resources.messages().uploadError(name), error.getMessage());
                                 }
@@ -351,7 +351,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                         content.getRuntimeName(), uploadElement.getFiles().item(0), false))
                                 .subscribe(new Outcome<FlowContext>() {
                                     @Override
-                                    public void onError(FlowContext context, Throwable error) {
+                                    public void onError(Throwable error) {
                                         MessageEvent.fire(eventBus, Message.error(
                                                 resources.messages().contentReplaceError(content.getName()),
                                                 error.getMessage()));

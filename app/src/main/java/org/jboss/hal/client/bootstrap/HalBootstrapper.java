@@ -27,8 +27,7 @@ import org.jboss.hal.config.Endpoints;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.functions.Func0;
+import io.reactivex.Observable;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
@@ -65,10 +64,10 @@ public class HalBootstrapper implements Bootstrapper {
         endpointManager.select(() -> {
             LoadingPanel.get().on();
 
-            Observable.from(bootstrapTasks.functions())
-                    .flatMapCompletable(Func0::call, false, 1)
+            Observable.fromArray(bootstrapTasks.functions())
+                    .concatMap(o -> o.get().toObservable())
                     .doOnTerminate(() -> LoadingPanel.get().off())
-                    .doOnCompleted(() -> {
+                    .doOnComplete(() -> {
                         logger.info("Bootstrap finished");
                         placeManager.revealCurrentPlace();
                         exceptionHandler.afterBootstrap();

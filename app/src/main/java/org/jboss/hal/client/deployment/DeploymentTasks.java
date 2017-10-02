@@ -51,7 +51,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
@@ -89,7 +89,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Operation contentOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
@@ -150,7 +150,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Completable completable;
 
             if (environment.isStandalone()) {
@@ -211,7 +211,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
                 context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
@@ -248,7 +248,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Completable completable = Completable.complete();
             if (!environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = context
@@ -293,7 +293,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
@@ -339,7 +339,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             boolean replace;
             Operation.Builder builder;
 
@@ -404,7 +404,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Operation operation = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
                     .payload(payload)
                     .build();
@@ -428,7 +428,7 @@ class DeploymentTasks {
         }
 
         @Override
-        public void onError(FlowContext context, Throwable throwable) {
+        public void onError(Throwable throwable) {
             MessageEvent.fire(eventBus, Message.error(resources.messages().deploymentOpFailed(files.getLength())));
         }
 

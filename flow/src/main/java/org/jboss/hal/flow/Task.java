@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.flow;
 
-import rx.Completable;
-import rx.functions.Func1;
+import io.reactivex.Completable;
+import io.reactivex.functions.Function;
 
 /** Marker interface for one work item inside a flow */
-public interface Task<C extends FlowContext> extends Func1<C, Completable> {}
+public interface Task<C extends FlowContext> extends Function<C, Completable> {}

@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.meta.processing;
 
+import io.reactivex.functions.Consumer;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -27,9 +28,8 @@ import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
-import rx.Single;
-import rx.functions.Action1;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 class RrdTask implements Task<FlowContext> {
 
@@ -54,8 +54,8 @@ class RrdTask implements Task<FlowContext> {
     }
 
     @Override
-    public Completable call(FlowContext context) {
-        Action1<CompositeResult> action = (CompositeResult compositeResult) -> {
+    public Completable apply(FlowContext context) {
+        Consumer<CompositeResult> action = (CompositeResult compositeResult) -> {
             RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
             rrdResult.securityContexts.forEach((address, securityContext) -> {
                 logger.debug("Add security context for {}", address);

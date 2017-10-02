@@ -133,7 +133,7 @@ public class ServerGroupDeploymentPresenter extends
                 new LoadDeploymentsFromRunningServer(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext context, Throwable error) {
+                    public void onError(Throwable error) {
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().deploymentReadError(deployment)));
                     }

@@ -56,7 +56,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -78,7 +78,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ResourceAddress hostAddress = new ResourceAddress()
                     .add(HOST, "*");
             Operation opHosts = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
@@ -155,7 +155,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                         new AvailableHosts(dispatcher))
                         .subscribe(new Outcome<FlowContext>() {
                             @Override
-                            public void onError(FlowContext context, Throwable error) {
+                            public void onError(Throwable error) {
                                 callback.onFailure(error);
                             }
 

@@ -25,6 +25,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.File;
 import elemental2.dom.FormData;
 import elemental2.dom.XMLHttpRequest;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -55,8 +58,6 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Single;
-import rx.SingleSubscriber;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
@@ -204,7 +205,9 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ dmr
 
     private void dmr(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        dmr(operation).subscribe(new SingleSubscriber<ModelNode>() {
+        dmr(operation).subscribe(new SingleObserver<ModelNode>() {
+            @Override public void onSubscribe(Disposable d) {}
+
             @Override
             public void onSuccess(ModelNode modelNode) {
                 success.accept(modelNode);
@@ -227,7 +230,7 @@ public class Dispatcher implements RecordingHandler {
         String url = get ? operationUrl(dmrOperation) : endpoints.dmr();
         HttpMethod method = get ? GET : POST;
         // ^-- those eager fields are useful if we don't want to evaluate it on each Single subscription
-        return Single.fromEmitter(emitter -> {
+        return Single.create(emitter -> {
             // in general, code inside the RX type should be able to be executed multiple times and always returns
             // the same result, so we need to be careful to not mutate anything (like the operation). This is useful
             // for example if we want to use the retry operator which will try again (subscribe again) if it fails.
@@ -259,7 +262,7 @@ public class Dispatcher implements RecordingHandler {
     }-*/;
 
     private Single<ModelNode> uploadFormData(FormData formData, Operation operation) {
-        return Single.fromEmitter(emitter -> {
+        return Single.create(emitter -> {
             XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
                     emitter::onSuccess,
                     (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),

@@ -23,7 +23,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -56,7 +56,7 @@ class ServerUrlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (standalone) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
@@ -104,7 +104,7 @@ class ServerUrlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Completable completable;
 
             String sbg = context.get(SOCKET_BINDING_GROUP_KEY);

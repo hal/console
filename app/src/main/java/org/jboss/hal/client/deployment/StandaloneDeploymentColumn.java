@@ -267,7 +267,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                     context.enabled))
                             .subscribe(new Outcome<FlowContext>() {
                                 @Override
-                                public void onError(FlowContext context, Throwable error) {
+                                public void onError(Throwable error) {
                                     wzd.showError(resources.constants().deploymentError(),
                                             resources.messages().deploymentError(name), error.getMessage());
                                 }

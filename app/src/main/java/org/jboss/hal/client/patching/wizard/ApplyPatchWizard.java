@@ -38,7 +38,7 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.hal.client.patching.PatchesColumn.PATCHING_TEMPLATE;
 import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
@@ -66,7 +66,7 @@ public class ApplyPatchWizard {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (patchContext.restartServers) {
                 for (Property serverProp : patchContext.servers) {
                     Server server = new Server(statementContext.selectedHost(), serverProp);
@@ -166,7 +166,7 @@ public class ApplyPatchWizard {
                                 new UploadPatch(statementContext, dispatcher, serverActions, context))
                                 .subscribe(new Outcome<FlowContext>() {
                                     @Override
-                                    public void onError(FlowContext flowContext, Throwable error) {
+                                    public void onError(Throwable error) {
                                         wzd.showError(resources.constants().patchError(),
                                                 messages.patchAddError(name, error.getMessage()),
                                                 error.getMessage());

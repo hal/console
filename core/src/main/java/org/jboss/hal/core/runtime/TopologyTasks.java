@@ -41,7 +41,7 @@ import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
@@ -126,7 +126,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 List<Host> hosts = Collections.emptyList();
                 List<ServerGroup> serverGroups = Collections.emptyList();
@@ -186,7 +186,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 return Completable.complete();
             } else {
@@ -218,7 +218,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 return Completable.complete();
             } else {
@@ -257,7 +257,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 return Completable.complete();
             } else {
@@ -286,7 +286,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
             Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
@@ -321,7 +321,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Host host = context.get(HOST);
             return host != null
                     ? readAndAddServerRuntimeAttributes(dispatcher, host.getServers())
@@ -395,7 +395,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 return Completable.complete();
             } else {
@@ -432,7 +432,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 return Completable.complete();
             } else {
@@ -460,7 +460,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ResourceAddress serverGroupAddress = new ResourceAddress()
                     .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
             Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
@@ -501,7 +501,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ServerGroup serverGroup = context.get(SERVER_GROUP);
             return serverGroup == null
                     ? Completable.complete()
@@ -531,7 +531,7 @@ public class TopologyTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (environment.isStandalone()) {
                 List<Server> servers = Collections.emptyList();
                 context.set(RUNNING_SERVERS, servers);

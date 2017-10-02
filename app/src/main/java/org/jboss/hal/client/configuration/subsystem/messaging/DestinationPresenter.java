@@ -59,7 +59,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;

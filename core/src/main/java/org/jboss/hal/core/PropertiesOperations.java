@@ -44,7 +44,7 @@ import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -86,7 +86,7 @@ public class PropertiesOperations {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, psr)
                     .build();
@@ -116,7 +116,7 @@ public class PropertiesOperations {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Set<String> existingProperties = context.pop();
             Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
             Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();

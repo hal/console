@@ -25,6 +25,8 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+import io.reactivex.CompletableObserver;
+import io.reactivex.disposables.Disposable;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -53,8 +55,6 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.CompletableSubscriber;
-import rx.Subscription;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.runtime.Action.RESUME;
@@ -71,7 +71,7 @@ import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatCompositeUntil;
 /** TODO Fire events for the servers of a server group as well. */
 public class ServerGroupActions {
 
-    private class ServerGroupTimeoutCallback implements CompletableSubscriber {
+    private class ServerGroupTimeoutCallback implements CompletableObserver {
 
         private final ServerGroup serverGroup;
         private final List<Server> servers;
@@ -85,7 +85,11 @@ public class ServerGroupActions {
         }
 
         @Override
-        public void onCompleted() {
+        public void onSubscribe(Disposable d) {
+        }
+
+        @Override
+        public void onComplete() {
             finish(serverGroup, servers, Result.SUCCESS, Message.success(successMessage));
         }
 
@@ -94,9 +98,6 @@ public class ServerGroupActions {
             finish(serverGroup, servers, Result.TIMEOUT,
                     Message.error(resources.messages().serverGroupTimeout(serverGroup.getName())));
         }
-
-        @Override
-        public void onSubscribe(Subscription d) {}
     }
 
 

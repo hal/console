@@ -34,7 +34,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
@@ -61,7 +61,7 @@ class JdbcDriverTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             return crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, JDBC_DRIVER).doOnSuccess(children -> {
                 List<JdbcDriver> drivers = children.stream()
                         .map(JdbcDriver::new)
@@ -89,7 +89,7 @@ class JdbcDriverTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Completable completable = Completable.complete();
 
             if (environment.isStandalone()) {
@@ -142,7 +142,7 @@ class JdbcDriverTasks {
     static class CombineDriverResults implements Task<FlowContext> {
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Map<String, JdbcDriver> map = new HashMap<>();
             List<JdbcDriver> configDrivers = context.get(JdbcDriverTasks.CONFIGURATION_DRIVERS);
             List<JdbcDriver> runtimeDrivers = context.get(JdbcDriverTasks.RUNTIME_DRIVERS);

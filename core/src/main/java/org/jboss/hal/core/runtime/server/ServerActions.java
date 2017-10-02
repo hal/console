@@ -30,6 +30,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
+import io.reactivex.CompletableObserver;
+import io.reactivex.disposables.Disposable;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
@@ -77,8 +79,6 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.CompletableSubscriber;
-import rx.Subscription;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.gwt.elemento.core.Elements.a;
@@ -104,7 +104,7 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class ServerActions {
 
-    private class ServerTimeoutCallback implements CompletableSubscriber {
+    private class ServerTimeoutCallback implements CompletableObserver {
 
         private final Server server;
         private final Action action;
@@ -117,7 +117,11 @@ public class ServerActions {
         }
 
         @Override
-        public void onCompleted() {
+        public void onSubscribe(Disposable d) {
+        }
+
+        @Override
+        public void onComplete() {
             // TODO Check for server boot errors
             if (Action.isStarting(action)) {
                 ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
@@ -139,9 +143,6 @@ public class ServerActions {
         public void onError(Throwable e) {
             finish(server, Result.TIMEOUT, Message.error(resources.messages().serverTimeout(server.getName())));
         }
-
-        @Override
-        public void onSubscribe(Subscription d) {}
     }
 
 
@@ -389,12 +390,13 @@ public class ServerActions {
                         .build();
                 Operation ping = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION).build();
                 dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, SERVER_RESTART_TIMEOUT, ping)
-                                .subscribe(new CompletableSubscriber() {
+                                .subscribe(new CompletableObserver() {
                                     @Override
-                                    public void onSubscribe(Subscription d) {}
+                                    public void onSubscribe(Disposable d) {
+                                    }
 
                                     @Override
-                                    public void onCompleted() {
+                                    public void onComplete() {
                                         // wait a little bit before event handlers try to use the restarted server
                                         setTimeout((o1) -> {
                                             pendingDialog.close();
@@ -675,7 +677,7 @@ public class ServerActions {
                     new ReadSocketBinding(standalone, host, server, dispatcher))
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onError(FlowContext context, Throwable error) {
+                        public void onError(Throwable error) {
                             logger.error(error.getMessage());
                             callback.onFailure(error);
                         }

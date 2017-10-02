@@ -19,7 +19,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
-import rx.Completable;
+import io.reactivex.Completable;
 
 class MacroOperationTask implements Task<FlowContext> {
 
@@ -32,7 +32,7 @@ class MacroOperationTask implements Task<FlowContext> {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Completable apply(FlowContext context) {
         return dispatcher.execute(operation).toCompletable();
     }
 }

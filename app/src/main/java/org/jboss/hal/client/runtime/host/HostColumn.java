@@ -145,7 +145,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 new TopologyTasks.HostsStartedServers(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext context, Throwable error) {
+                    public void onError(Throwable error) {
                         callback.onFailure(error);
                     }
 

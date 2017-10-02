@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.config.Settings.Key.LOCALE;
@@ -43,7 +43,7 @@ public class LoadSettings implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable get() {
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);
         settings.load(PAGE_SIZE, Settings.DEFAULT_PAGE_SIZE);

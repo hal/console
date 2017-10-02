@@ -241,7 +241,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     serverConfigsFn, new TopologyTasks.TopologyStartedServers(environment, dispatcher))
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onError(FlowContext context, Throwable error) {
+                        public void onError(Throwable error) {
                             callback.onFailure(error);
                         }
 

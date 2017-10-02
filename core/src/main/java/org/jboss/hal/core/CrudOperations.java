@@ -58,7 +58,7 @@ import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import rx.Single;
+import io.reactivex.Single;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;

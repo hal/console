@@ -92,7 +92,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                         new TopologyTasks.ServerGroupsStartedServers(environment, dispatcher))
                         .subscribe(new Outcome<FlowContext>() {
                             @Override
-                            public void onError(FlowContext context, Throwable error) {
+                            public void onError(Throwable error) {
                                 callback.onFailure(error);
                             }
 

@@ -30,7 +30,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
-import rx.Completable;
+import io.reactivex.Completable;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -67,7 +67,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Completable result = Completable.complete();
             if (!context.emptyStack()) {
                 Integer status = context.pop();
@@ -98,7 +98,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), WRITE_ATTRIBUTE_OPERATION)
                     .param(NAME, INCLUDE_ALL)
                     .param(VALUE, includeAll)
@@ -125,7 +125,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             if (!context.emptyStack()) {
                 Integer status = context.pop();
                 if (predicate.test(status)) {
@@ -157,7 +157,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ResourceAddress address = AddressTemplates.roleMapping(role)
                     .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
             Operation.Builder builder = new Operation.Builder(address, ADD)
@@ -186,7 +186,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             Completable completable;
             if (assignments.isEmpty()) {
                 completable = Completable.complete();
@@ -225,7 +225,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(new Role(name, null, type, null));
             Operation operation = new Operation.Builder(address, ADD)
                     .payload(payload)
@@ -252,7 +252,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new OperationFactory().fromChangeSet(address, changedValues, metadata);
             return dispatcher.execute(operation).toCompletable();
@@ -274,7 +274,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Completable apply(FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new Operation.Builder(address, REMOVE).build();
             return dispatcher.execute(operation).toCompletable();

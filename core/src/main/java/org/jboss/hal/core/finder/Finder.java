@@ -47,8 +47,8 @@ import org.jboss.hal.spi.Footer;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
-import rx.CompletableEmitter;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
@@ -75,8 +75,8 @@ public class Finder implements IsElement, Attachable {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> appendColumn(segment.getColumnId(),
+        public Completable apply(FlowContext context) {
+            return Completable.create(emitter -> appendColumn(segment.getColumnId(),
                     new AsyncCallback<FinderColumn>() {
                         @Override
                         public void onFailure(Throwable throwable) {
@@ -92,7 +92,7 @@ public class Finder implements IsElement, Attachable {
                                 column.row(segment.getItemId()).asElement().scrollIntoView(false);
                                 updateContext();
                                 context.push(column);
-                                emitter.onCompleted();
+                                emitter.onComplete();
                             } else {
                                 emitter.onError(
                                         new RuntimeException("Error in Finder.SelectTask: Unable to select item '" +
@@ -113,8 +113,8 @@ public class Finder implements IsElement, Attachable {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> {
+        public Completable apply(FlowContext context) {
+            return Completable.create(emitter -> {
                 FinderColumn column = getColumn(segment.getColumnId());
                 if (column != null) {
                     // refresh the existing column
@@ -140,7 +140,7 @@ public class Finder implements IsElement, Attachable {
             if (column.contains(segment.getItemId())) {
                 column.markSelected(segment.getItemId());
                 context.push(column);
-                emitter.onCompleted();
+                emitter.onComplete();
             } else {
                 //noinspection HardCodedStringLiteral
                 emitter.onError(new RuntimeException("Error in Finder.RefreshTask: Unable to select item '" +
@@ -492,7 +492,7 @@ public class Finder implements IsElement, Attachable {
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onError(FlowContext context, Throwable error) {}
+                        public void onError(Throwable error) {}
 
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -556,10 +556,11 @@ public class Finder implements IsElement, Attachable {
             List<SelectTask> tasks = stream(path.spliterator(), false)
                     .map(segment -> new SelectTask(new FinderSegment(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            series(new FlowContext(progress.get()), tasks)
+            FlowContext context = new FlowContext(progress.get());
+            series(context, tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onError(FlowContext context, Throwable error) {
+                        public void onError(Throwable error) {
                             if (Finder.this.context.getPath().isEmpty()) {
                                 fallback.run();
 

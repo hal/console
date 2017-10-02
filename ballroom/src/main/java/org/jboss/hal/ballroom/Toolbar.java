@@ -24,6 +24,7 @@ import com.google.gwt.core.client.GWT;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import io.reactivex.disposables.Disposable;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
@@ -40,9 +41,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
-import rx.Subscription;
 
-import static com.intendia.rxgwt.elemento.RxElemento.fromEvent;
+import static com.intendia.rxgwt2.elemento.RxElemento.fromEvent;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -187,7 +187,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     private HTMLElement filterButtonText;
     private HTMLElement filterUl;
     private HTMLInputElement filterInput;
-    private Subscription keyUpSubscription;
+    private Disposable keyUpSubscription;
 
     private HTMLElement sortButtonText;
     private HTMLElement sortStaticText;
@@ -388,7 +388,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     @Override
     public void detach() {
         if (keyUpSubscription != null) {
-            keyUpSubscription.unsubscribe();
+            keyUpSubscription.dispose();
         }
     }
 

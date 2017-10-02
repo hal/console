@@ -302,7 +302,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 new TopologyTasks.TopologyStartedServers(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext context, Throwable error) {
+                    public void onError(Throwable error) {
                         clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         MessageEvent.fire(eventBus,
@@ -355,7 +355,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 new TopologyTasks.ServerGroupStartedServers(dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onError(FlowContext context, Throwable error) {
+                    public void onError(Throwable error) {
                         MessageEvent.fire(eventBus,
                                 Message.error(resources.messages().updateServerError(server.getName()),
                                         error.getMessage()));

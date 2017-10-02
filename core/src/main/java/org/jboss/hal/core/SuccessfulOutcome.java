@@ -34,7 +34,7 @@ public abstract class SuccessfulOutcome<C> extends Outcome<C> {
 
     /** Emits a error message using the {@link org.jboss.hal.resources.Messages#lastOperationFailed()} error message. */
     @Override
-    public void onError(C context, Throwable throwable) {
+    public void onError(Throwable throwable) {
         MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed(), throwable.getMessage()));
     }
 }

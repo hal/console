@@ -43,8 +43,7 @@ class RestResource extends DeploymentResource {
     private Set<String> resourceMethods(String attribute) {
         List<ModelNode> nodes = failSafeList(this, attribute);
         return nodes.stream()
-                .map(node -> failSafeList(node, RESOURCE_METHODS))
-                .flatMap(Collection::stream)
+                .flatMap(node -> failSafeList(node, RESOURCE_METHODS).stream())
                 .map(method -> {
                     List<String> methods = Splitter.on(' ')
                             .omitEmptyStrings()
@@ -69,8 +68,7 @@ class RestResource extends DeploymentResource {
     private Set<String> mediaType(String attribute, String type) {
         List<ModelNode> restResourcePaths = failSafeList(this, attribute);
         return restResourcePaths.stream()
-                .map(rrp -> failSafeList(rrp, type))
-                .flatMap(Collection::stream)
+                .flatMap(rrp -> failSafeList(rrp, type).stream())
                 .map(ModelNode::asString)
                 .collect(toSet());
     }

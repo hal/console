@@ -54,8 +54,8 @@ import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Completable;
-import rx.Single;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
@@ -85,7 +85,7 @@ public class ReadAuthentication implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable get() {
         ResourceAddress address = AUTHENTICATION_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
