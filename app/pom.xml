@@ -381,6 +381,7 @@
                     </devmodeArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
+                    <localWorkers>1C</localWorkers>
                     <logLevel>${gwt.logLevel}</logLevel>
                     <moduleName>org.jboss.hal.Console</moduleName>
                     <moduleShortName>hal</moduleShortName>

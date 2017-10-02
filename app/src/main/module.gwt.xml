@@ -44,4 +44,6 @@
     <extend-property name="locale" values="en"/>
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en"/>
+
+    <collapse-all-properties/>
 </module>

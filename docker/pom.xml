@@ -85,7 +85,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://ci.wildfly.org/guestAuth/app/rest/builds/project:WF,buildType:WF_Nightly,count:1/artifacts/content/wildfly-${wildfly.version}.zip</url>
+                            <url>http://download.jboss.org/wildfly/${wildfly.version}/wildfly-${wildfly.version}.zip</url>
                         </configuration>
                     </execution>
                 </executions>
