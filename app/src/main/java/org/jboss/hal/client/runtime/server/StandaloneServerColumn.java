@@ -54,13 +54,14 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @Column(Ids.STANDALONE_SERVER)
-@Requires(value = MANAGEMENT_ADDRESS, recursive = false)
+@Requires(value = {"/", MANAGEMENT_ADDRESS, CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static final String MANAGEMENT_ADDRESS = "/core-service=management";
