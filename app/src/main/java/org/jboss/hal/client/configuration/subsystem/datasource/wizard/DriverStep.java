@@ -22,6 +22,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -50,6 +51,10 @@ class DriverStep extends WizardStep<Context, State> {
         if (!driversByName.isEmpty()) {
             form.getFormItem(DRIVER_NAME)
                     .registerSuggestHandler(new StaticAutoComplete(new ArrayList<>(driversByName.keySet())));
+            form.getFormItem(DRIVER_NAME)
+                    .addValidationHandler(value ->
+                        driversByName.keySet().contains(value) ? ValidationResult.OK : ValidationResult.invalid("Invalid driver name")
+                    );
         }
         registerAttachable(form);
     }

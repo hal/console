@@ -294,7 +294,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         if (environment.isStandalone()) {
             ResourceAddress address = new ResourceAddress()
                     .add(SUBSYSTEM, DATASOURCES)
-                    .add(DATA_SOURCE, dataSource.getName());
+                    .add(dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE, dataSource.getName());
             Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
             dispatcher.execute(operation,
                     result -> MessageEvent.fire(eventBus,
