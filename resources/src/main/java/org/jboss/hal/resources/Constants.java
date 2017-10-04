@@ -149,6 +149,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointAddTitle();
     String endpointAddDescription();
     String environment();
+    String error();
     String excludeRole();
     String excludeUserGroup();
     String excludes();
@@ -306,6 +307,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String managementVersion();
     String manyMessages();
     String markAllRead();
+    String maxProcessingTime();
     String maxUsed();
     String maximum();
     String membership();
@@ -322,6 +324,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String monitor();
     String move();
 
+    String nanoseconds();
     String needsReload();
     String needsRestart();
     String networkError();
@@ -505,6 +508,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String toggleDropdown();
     String toggleNavigation();
     String tools();
+    String totalProcessingTime();
     String tracking();
     String transactions();
     String type();

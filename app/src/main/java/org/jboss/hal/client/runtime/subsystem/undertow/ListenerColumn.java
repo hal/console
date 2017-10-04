@@ -131,7 +131,7 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
                     }
 
                 })
-                .onPreview(server -> new ListenerPreview(dispatcher, statementContext, server)));
+                .onPreview(server -> new ListenerPreview(dispatcher, statementContext, resources, server)));
         this.dispatcher = dispatcher;
         this.resources = resources;
         this.eventBus = eventBus;

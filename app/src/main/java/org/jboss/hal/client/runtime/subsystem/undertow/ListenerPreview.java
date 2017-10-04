@@ -15,6 +15,12 @@
  */
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.ballroom.chart.Donut;
+import org.jboss.hal.ballroom.chart.GroupedBar;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.NamedNode;
@@ -23,29 +29,56 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_LISTENER_TYPE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_WEB_SERVER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class ListenerPreview extends PreviewContent<NamedNode> {
 
+    private GroupedBar processingTime;
     private Dispatcher dispatcher;
     private StatementContext statementContext;
     private PreviewAttributes<NamedNode> previewAttributes;
+    private Donut requests;
 
-    ListenerPreview(final Dispatcher dispatcher, final StatementContext statementContext,
+    ListenerPreview(final Dispatcher dispatcher, final StatementContext statementContext, final Resources resources,
             NamedNode server) {
         super(server.getName());
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-        previewAttributes = new PreviewAttributes<>(server, asList("bytes-received", "bytes-sent", "error-count",
-                "processing-time", "max-processing-time", "request-count"));
+        previewAttributes = new PreviewAttributes<>(server, asList("bytes-received", "bytes-sent"));
         getHeaderContainer().appendChild(refreshLink(() -> update(server)));
+
+        // the order of rows is determined at update time.
+        processingTime = new GroupedBar.Builder(resources.constants().milliseconds())
+                .add(MAX_PROCESSING_TIME, resources.constants().maxProcessingTime(), PatternFly.colors.orange)
+                .add(PROCESSING_TIME, resources.constants().totalProcessingTime(), PatternFly.colors.green)
+                .responsive(true)
+                .horizontal()
+                .build();
+        registerAttachable(processingTime);
+
+        requests = new Donut.Builder(Names.REQUESTS)
+                .add(REQUEST_COUNT, resources.constants().requests(), PatternFly.colors.green)
+                .add(ERROR_COUNT, resources.constants().error(), PatternFly.colors.red)
+                .legend(Donut.Legend.BOTTOM)
+                .responsive(true)
+                .build();
+        registerAttachable(requests);
+
         previewBuilder().addAll(previewAttributes);
+        previewBuilder()
+                .add(h(2, resources.constants().processingTime()))
+                .add(processingTime)
+                .add(h(2, resources.constants().requests()))
+                .add(requests);
+
     }
 
     @Override
@@ -61,7 +94,27 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         dispatcher.execute(operation, result -> {
             NamedNode n = new NamedNode(result);
             previewAttributes.refresh(n);
-        });
 
+            Map<String, Long> processingTimes = new HashMap<>();
+            long procTime = result.get(PROCESSING_TIME).asLong();
+            long maxProcTime = result.get(MAX_PROCESSING_TIME).asLong();
+            // convert nanoseconds to milliseconds
+            if (procTime > 0) {
+                procTime = procTime / 1000000;
+            }
+            if (maxProcTime > 0) {
+                maxProcTime = maxProcTime / 1000000;
+            }
+
+            // the order of rows is determined at update time.
+            processingTimes.put(MAX_PROCESSING_TIME, maxProcTime);
+            processingTimes.put(PROCESSING_TIME, procTime);
+            processingTime.update(processingTimes);
+
+            Map<String, Long> metricUpdates = new HashMap<>(7);
+            metricUpdates.put(REQUEST_COUNT, result.get(REQUEST_COUNT).asLong());
+            metricUpdates.put(ERROR_COUNT, result.get(ERROR_COUNT).asLong());
+            requests.update(metricUpdates);
+        });
     }
 }
