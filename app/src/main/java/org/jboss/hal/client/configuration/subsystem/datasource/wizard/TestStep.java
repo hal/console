@@ -110,23 +110,18 @@ class TestStep extends WizardStep<Context, State> {
         }
 
         // check running server(s)
-        tasks.add(new TopologyTasks.RunningServersQuery(
-                environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
+        tasks.add(new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
+                ? null : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
 
         // test connection
         tasks.add(flowContext -> {
             List<Server> servers = flowContext.get(TopologyTasks.RUNNING_SERVERS);
+            ResourceAddress address;
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);
-                ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
-                        .add(DATA_SOURCE, context.dataSource.getName());
-                Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
-                return dispatcher.execute(operation).doOnError(throwable -> {
-                    flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
-                    flowContext.set(WIZARD_TEXT,
-                            resources.messages().testConnectionError(context.dataSource.getName()));
-                }).toCompletable();
-
+                address = server.getServerAddress();
+            } else if (environment.isStandalone()) {
+                address = ResourceAddress.root();
             } else {
                 flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
                 flowContext.set(WIZARD_TEXT,
@@ -134,6 +129,14 @@ class TestStep extends WizardStep<Context, State> {
                 return Completable.error(new FlowException(resources.messages().testConnectionErrorDomain(),
                         flowContext));
             }
+            address.add(SUBSYSTEM, DATASOURCES)
+                    .add(context.dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE, context.dataSource.getName());
+            Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
+            return dispatcher.execute(operation).doOnError(throwable -> {
+                flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
+                flowContext.set(WIZARD_TEXT,
+                        resources.messages().testConnectionError(context.dataSource.getName()));
+            }).toCompletable();
         });
 
         series(new FlowContext(progress.get()), tasks)

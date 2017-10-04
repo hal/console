@@ -19,6 +19,7 @@ import java.util.List;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.PatternValidation.JndiNameValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.DataSource;
@@ -57,6 +58,7 @@ class NamesStep extends WizardStep<Context, State> {
                     wizard().getContext().dataSource.update(form.getModel());
                 })
                 .build();
+        form.getFormItem(JNDI_NAME).addValidationHandler(new JndiNameValidation());
         registerAttachable(form);
     }
 
