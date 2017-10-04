@@ -1,8 +1,8 @@
-Extensions are a way to add features to the management console. They are written in JavaScript and should use the [JavaScript API](https://cdn.rawgit.com/hal/hal.next/esdoc/index.html) to build the UI and interact with the management endpoint.  
+Extensions are a way to add features to the management console. They are written in JavaScript and should use the [JavaScript API](https://cdn.rawgit.com/hal/hal.next/esdoc/index.html) to build the UI and interact with the management interface.  
  
 # Architecture
 
-JavaScript extensions consist of one script and one or more optional stylesheets. The script contains both the code to register the extensions and the actual code of the extension. Here's a code sample of an extension:
+JavaScript extensions consist of one script and one or more optional stylesheets. The script contains both the code to register the extensions and the actual code of the extension. Here's the code of a sample extension:
 
 ```js
 let core = hal.core.Core.getInstance();
