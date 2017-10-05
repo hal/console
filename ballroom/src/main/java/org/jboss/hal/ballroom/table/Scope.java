@@ -31,7 +31,7 @@ public enum Scope {
 
     private final String selector;
 
-    Scope(final String selector) {
+    Scope(String selector) {
         this.selector = selector;
     }
 

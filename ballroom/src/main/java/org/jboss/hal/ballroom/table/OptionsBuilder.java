@@ -20,14 +20,19 @@ package org.jboss.hal.ballroom.table;
  * and assembling an options instance on your own:
  * <pre>
  * class FooBar {
- *     String foo;
- *     String bar;
+ *     final String foo;
+ *     final String bar;
+ *
+ *     FooBar() {
+ *         this.foo = "Foo-" + String.valueOf(Random.nextInt(12345));
+ *         this.bar = "Bar-" + String.valueOf(Random.nextInt(12345));
+ *     }
  * }
  *
  * Options&lt;FooBar&gt; options = new OptionsBuilder&lt;FooBar&gt;()
  *     .button("Click Me", (table) -> Window.alert("Hello"))
  *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
- *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
+ *     .column("bar", "Bar", (cell, type, row, meta) -> row.bar)
  *     .options();
  * </pre>
  *

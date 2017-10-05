@@ -35,14 +35,14 @@ import static org.jboss.hal.resources.CSS.tableBordered;
 import static org.jboss.hal.resources.CSS.tableStriped;
 
 /**
- * Table element which implements the DataTables plugin for jQuery. Using the data table consists of multiple steps:
+ * Table element which implements the DataTables plugin for jQuery. Using the data table consists of these steps:
  * <ol>
  * <li>Create an instance passing an id and an {@linkplain Options options} instance</li>
  * <li>Call {@link #attach()} <strong>after</strong> the data table element was added to the DOM</li>
  * <li>Call any of the {@link Table} methods</li>
  * </ol>
  * <p>
- * Sample which uses a {@code FooBar} as row type:
+ * Sample which uses a {@code FooBar} as the row type:
  * <pre>
  * class FooBar {
  *     final String foo;
@@ -54,15 +54,16 @@ import static org.jboss.hal.resources.CSS.tableStriped;
  *     }
  * }
  *
- * Options<FooBar> options = new OptionsBuilder&lt;FooBarBaz&gt;()
- *     .button("Add Row", (event, api) -> api.row.add(new FooBar()).draw("full-reset"))
+ * Options&lt;FooBar&gt; options = new OptionsBuilder&lt;FooBar&gt;()
+ *     .button("Click Me", (table) -> Window.alert("Hello"))
  *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
  *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
  *     .options();
- * DataTable&lt;FooBar&gt; dataTable = new DataTable&lt;&gt;("sample", SecurityContext.RWX, options);
+ * DataTable&lt;FooBar&gt; dataTable = new DataTable&lt;&gt;("sample", options);
  * </pre>
  *
  * @param <T> the row type
+ *
  * @see <a href="https://datatables.net/">https://datatables.net/</a>
  */
 public class DataTable<T> implements Table<T> {
@@ -77,7 +78,7 @@ public class DataTable<T> implements Table<T> {
     private final HTMLTableElement tableElement;
     private Api<T> api;
 
-    public DataTable(final String id, final Options<T> options) {
+    public DataTable(String id, Options<T> options) {
         this.id = id;
         this.options = options;
         this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, hover).asElement();
@@ -144,7 +145,7 @@ public class DataTable<T> implements Table<T> {
     }
 
     @Override
-    public void enableButton(final int index, final boolean enable) {
+    public void enableButton(int index, boolean enable) {
         api().button(index).enable(enable);
     }
 
@@ -152,7 +153,7 @@ public class DataTable<T> implements Table<T> {
      * Binds a form to the table and takes care to view or clear the form upon selection changes
      */
     @Override
-    public void bindForm(final Form<T> form) {
+    public void bindForm(Form<T> form) {
         onSelectionChange(table -> {
             if (table.hasSelection()) {
                 form.view(table.selectedRow());
@@ -163,7 +164,7 @@ public class DataTable<T> implements Table<T> {
     }
 
     @Override
-    public void bindForms(final Iterable<Form<T>> forms) {
+    public void bindForms(Iterable<Form<T>> forms) {
         onSelectionChange(table -> {
             if (table.hasSelection()) {
                 T selectedRow = table.selectedRow();
@@ -190,7 +191,7 @@ public class DataTable<T> implements Table<T> {
     }
 
     @Override
-    public void onSelectionChange(final SelectionChangeHandler<T> handler) {
+    public void onSelectionChange(SelectionChangeHandler<T> handler) {
         api().on(SELECT, (event, api, type) -> {
             if (ROW.equals(type)) {
                 handler.onSelectionChanged(DataTable.this);
@@ -214,7 +215,7 @@ public class DataTable<T> implements Table<T> {
     }
 
     @Override
-    public void select(final T data) {
+    public void select(T data) {
         select(data, null);
     }
 
@@ -225,7 +226,7 @@ public class DataTable<T> implements Table<T> {
      * @param identifier a function which must return an unique identifier for a given row.
      */
     @Override
-    public void select(final T data, final Function<T, String> identifier) {
+    public void select(T data, Function<T, String> identifier) {
         if (data != null && identifier != null) {
             String id1 = identifier.apply(data);
             Api.RowSelection<T> rows = (idx, d, tr) -> {
@@ -245,17 +246,17 @@ public class DataTable<T> implements Table<T> {
      * @param data the new data
      */
     @Override
-    public void update(final Iterable<T> data) {
+    public void update(Iterable<T> data) {
         update(data, RESET, null);
     }
 
     @Override
-    public void update(final Iterable<T> data, final RefreshMode mode) {
+    public void update(Iterable<T> data, RefreshMode mode) {
         update(data, mode, null);
     }
 
     @Override
-    public void update(final Iterable<T> data, final Function<T, String> identifier) {
+    public void update(Iterable<T> data, Function<T, String> identifier) {
         update(data, RESET, identifier);
     }
 
@@ -268,7 +269,7 @@ public class DataTable<T> implements Table<T> {
      *                   selection after replacing the data.
      */
     @Override
-    public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
+    public void update(Iterable<T> data, RefreshMode mode, Function<T, String> identifier) {
         List<T> selection = api().selectedRows();
         api().clear().add(data).refresh(mode);
         if (identifier != null) {
