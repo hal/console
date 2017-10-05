@@ -244,6 +244,7 @@ public interface ModelDescriptionConstants {
     String ENDPOINT = "endpoint";
     String ENDPOINT_CONFIG = "endpoint-config";
     String ENTRIES = "entries";
+    String ERROR_COUNT = "error-count";
     String EVENTS = "events";
     String EVICTION = "eviction";
     String EXCEPTION_SORTER_CLASS_NAME = "exception-sorter-class-name";
@@ -519,6 +520,7 @@ public interface ModelDescriptionConstants {
     String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";
     String PROBE_OPERATION = "probe";
+    String PROCESSING_TIME = "processing-time";
     String PROCESS_STATE = "process-state";
     String PRODUCES = "produces";
     String PRODUCT_NAME = "product-name";

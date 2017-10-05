@@ -31,6 +31,7 @@ import jsinterop.base.JsPropertyMap;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.window;
@@ -129,11 +130,6 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
         }
         options.axis.x.type = "category";
         options.bindto = "#" + root.id;
-        options.color = new Options.Color();
-        options.color.pattern = new Array<>();
-        for (String id : builder.order) {
-            options.color.pattern.push(builder.colors.get(id));
-        }
         options.data = new Options.Data();
         options.data.columns = new Array<>();
         if (builder.stacked) {
@@ -145,6 +141,10 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
             //noinspection unchecked
             options.data.groups.push(names);
         }
+        options.data.names = JsHelper.asJsMap(builder.names);
+        options.color = new Options.Color();
+        options.data.colors = JsHelper.asJsMap(builder.colors);
+
         options.data.type = "bar";
     }
 
@@ -206,7 +206,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
 
         for (Map.Entry<String, Collection<Long>> entry : data.asMap().entrySet()) {
             Array<Any> column = new Array<>();
-            column.push(Any.of(builder.names.get(entry.getKey())));
+            column.push(Any.of(entry.getKey()));
             for (Long value : entry.getValue()) {
                 column.push(Any.of(value.longValue()));
             }

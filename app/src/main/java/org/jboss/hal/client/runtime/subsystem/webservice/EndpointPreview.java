@@ -84,7 +84,6 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
                 .add(AVERAGE_PROCESSING_TIME, resources.constants().average(), PatternFly.colors.blue)
                 .add(MAX_PROCESSING_TIME, resources.constants().maximum(), PatternFly.colors.orange)
                 .responsive(true)
-                // .stacked(true)
                 .horizontal()
                 .build();
         registerAttachable(processingTime);
