@@ -76,7 +76,7 @@ public class StringsTest {
     public void getParent() throws Exception {
         assertNull(Strings.getParent(null));
         assertEquals("", Strings.getParent(""));
-        assertEquals("a", Strings.getParent("a"));
+        assertNull(Strings.getParent("a"));
         assertEquals("/", Strings.getParent("/"));
         assertEquals("/", Strings.getParent("/a"));
         assertEquals("/a", Strings.getParent("/a/b"));
