@@ -177,6 +177,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().hostPatchesColumnFilterDescription())
         );
 
         setItemRenderer((NamedNode item) -> new ItemDisplay<NamedNode>() {

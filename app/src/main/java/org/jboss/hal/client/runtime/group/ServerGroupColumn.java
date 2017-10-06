@@ -112,6 +112,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 // "server-group => main-server-group / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().serverGroupColumnFilterDescription())
         );
 
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {

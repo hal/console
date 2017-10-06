@@ -102,6 +102,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                             }
                         }))
                 .withFilter()
+                .filterDescription(resources.messages().jdbcDriverColumnFilterDescription())
         );
 
         addColumnAction(columnActionFactory.add(Ids.JDBC_DRIVER_ADD, Names.JDBC_DRIVER, JDBC_DRIVER_TEMPLATE,

@@ -114,6 +114,7 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                 })
 
                 .withFilter()
+                .filterDescription(resources.messages().jpaColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview(item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, placeManager, places,
                                 resources))

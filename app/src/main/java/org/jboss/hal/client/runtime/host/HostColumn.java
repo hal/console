@@ -119,6 +119,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 // "host => master / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().hostColumnFilterDescription())
         );
         this.dispatcher = dispatcher;
         this.crud = crud;

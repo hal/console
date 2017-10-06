@@ -82,6 +82,7 @@ public interface UIConstants {
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";
     String TARGET = "target";
+    String TITLE = "title";
     String TOGGLE = "toggle";
     String TOP = "top";
     String TOOLTIP = "tooltip";

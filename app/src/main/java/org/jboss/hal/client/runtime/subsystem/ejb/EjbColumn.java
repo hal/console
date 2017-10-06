@@ -111,6 +111,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                 .onPreview(item -> new EjbPreview(item, finderPathFactory, places, dispatcher, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().ejbFilterDescription())
                 .showCount()
                 .pinnable());
 
@@ -167,7 +168,8 @@ public class EjbColumn extends FinderColumn<EjbNode> {
 
             @Override
             public String getFilterData() {
-                return item.getName() + " " + item.type.type;
+                return item.getName() + " " + item.type.type +
+                        (item.fromDeployment() ? " " + Names.DEPLOYMENT : "");
             }
 
             @Override

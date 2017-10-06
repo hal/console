@@ -91,6 +91,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .showCount()
+                .filterDescription(resources.messages().destinationFilterDescription())
                 .withFilter());
 
         this.dispatcher = dispatcher;

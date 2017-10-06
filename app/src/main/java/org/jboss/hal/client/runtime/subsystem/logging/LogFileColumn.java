@@ -116,6 +116,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().logfileColumnFilterDescription())
         );
     }
 

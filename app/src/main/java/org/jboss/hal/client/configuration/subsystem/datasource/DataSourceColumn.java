@@ -104,6 +104,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_CONFIGURATION, Names.DATASOURCE)
                 .withFilter()
+                .filterDescription(resources.messages().datasourceFilterDescription())
                 .useFirstActionAsBreadcrumbHandler());
 
         this.metadataRegistry = metadataRegistry;

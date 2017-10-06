@@ -78,6 +78,7 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                         }))
 
                 .withFilter()
+                .filterDescription(resources.messages().resourceAdapterColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview(item -> new ResourceAdapterPreview(item, resources))
         );

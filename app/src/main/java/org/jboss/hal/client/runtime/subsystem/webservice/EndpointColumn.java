@@ -101,6 +101,7 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
                 .onPreview(item -> new EndpointPreview(finderPathFactory, places, item, dispatcher, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().endpointColumnFilterDescription())
                 .showCount()
                 .pinnable());
     }

@@ -181,6 +181,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .pinnable()
                 .showCount()
                 .withFilter()
+                .filterDescription(resources.messages().serverFilterDescription())
                 .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
                         resources))
         );

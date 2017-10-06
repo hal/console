@@ -148,7 +148,8 @@ public class ContentColumn extends FinderColumn<Content> {
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .showCount()
-                .withFilter());
+                .withFilter()
+                .filterDescription(resources.messages().contentFilterDescription()));
 
         this.environment = environment;
         this.dispatcher = dispatcher;

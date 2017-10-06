@@ -64,4 +64,9 @@ class EjbNode extends DeploymentResource {
     boolean isDeliveryActive() {
         return hasDefined(DELIVERY_ACTIVE) && get(DELIVERY_ACTIVE).asBoolean();
     }
+
+    boolean fromDeployment() {
+        return getDeployment() != null;
+    }
+
 }

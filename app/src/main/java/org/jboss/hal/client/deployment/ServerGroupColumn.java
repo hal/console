@@ -68,7 +68,8 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                 })
 
                 .pinnable()
-                .withFilter());
+                .withFilter()
+                .filterDescription(resources.messages().serverGroupColumnFilterDescription()));
 
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {
             @Override

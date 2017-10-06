@@ -80,6 +80,7 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
                 .onPreview(item -> new ExtensionPreview(item, extensionRegistry, resources))
                 .showCount()
                 .withFilter()
+                .filterDescription(resources.messages().extensionColumnFilterDescription())
         );
 
         this.eventBus = eventBus;

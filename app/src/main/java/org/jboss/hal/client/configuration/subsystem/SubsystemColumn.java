@@ -42,6 +42,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
 import static java.util.Collections.singletonList;
@@ -64,7 +65,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             Places places,
             StatementContext statementContext,
             ItemActionFactory itemActionFactory,
-            Subsystems subsystems) {
+            Subsystems subsystems,
+            Resources resources) {
 
         super(new Builder<SubsystemMetadata>(finder, Ids.CONFIGURATION_SUBSYSTEM, Names.SUBSYSTEM)
 
@@ -129,6 +131,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .showCount()
                 .withFilter()
                 .pinnable()
+                .filterDescription(resources.messages().susbsystemFilterDescription())
         );
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {

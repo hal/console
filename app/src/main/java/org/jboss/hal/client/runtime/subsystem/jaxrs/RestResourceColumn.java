@@ -101,6 +101,7 @@ public class RestResourceColumn extends FinderColumn<RestResource> {
                         statementContext, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().restColumnFilterDescription())
                 .showCount()
                 .pinnable());
     }

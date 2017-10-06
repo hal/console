@@ -89,6 +89,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
 
         super(new Builder<Assignment>(finder, Ids.MEMBERSHIP, resources.constants().membership())
                 .withFilter()
+                .filterDescription(resources.messages().membershipColumnFilterDescription())
                 .onPreview(item -> new MembershipPreview(tokens, item.getPrincipal(), resources)));
 
         this.dispatcher = dispatcher;

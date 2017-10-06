@@ -93,7 +93,8 @@ public class JobColumn extends FinderColumn<JobNode> {
                 .columnAction(columnActionFactory.refresh(Ids.JOB_REFRESH))
                 .useFirstActionAsBreadcrumbHandler()
                 .showCount()
-                .withFilter());
+                .withFilter()
+                .filterDescription(resources.messages().jobExecutionColumnFilterDescription()));
 
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
@@ -101,21 +102,22 @@ public class JobColumn extends FinderColumn<JobNode> {
         this.resources = resources;
         this.intervalHandles = new HashMap<>();
 
-        setItemsProvider((context, callback) -> deploymentResources.readChildren(BATCH_JBERET, JOB, JobNode::new, jobs -> {
-            callback.onSuccess(jobs);
+        setItemsProvider(
+                (context, callback) -> deploymentResources.readChildren(BATCH_JBERET, JOB, JobNode::new, jobs -> {
+                    callback.onSuccess(jobs);
 
-            // turn progress animation on/off
-            clearIntervals();
-            for (JobNode job : jobs) {
-                String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
-                if (job.getRunningExecutions() > 0) {
-                    ItemMonitor.startProgress(jobId);
-                    intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
-                } else {
-                    ItemMonitor.stopProgress(jobId);
-                }
-            }
-        }));
+                    // turn progress animation on/off
+                    clearIntervals();
+                    for (JobNode job : jobs) {
+                        String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
+                        if (job.getRunningExecutions() > 0) {
+                            ItemMonitor.startProgress(jobId);
+                            intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
+                        } else {
+                            ItemMonitor.stopProgress(jobId);
+                        }
+                    }
+                }));
 
         setItemRenderer(item -> new ItemDisplay<JobNode>() {
             @Override

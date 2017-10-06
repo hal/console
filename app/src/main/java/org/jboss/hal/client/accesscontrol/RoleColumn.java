@@ -136,6 +136,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 })
                 .onPreview(item -> new RolePreview(accessControl, tokens, item, resources))
                 .showCount()
+                .filterDescription(resources.messages().roleColumnFilterDescription())
                 .withFilter()
         );
 

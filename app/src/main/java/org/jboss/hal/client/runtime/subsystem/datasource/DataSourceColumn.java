@@ -92,6 +92,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_RUNTIME, Names.DATASOURCE)
                 .withFilter()
+                .filterDescription(resources.messages().datasourceRuntimeFilterDescription())
                 .useFirstActionAsBreadcrumbHandler());
 
         this.dispatcher = dispatcher;

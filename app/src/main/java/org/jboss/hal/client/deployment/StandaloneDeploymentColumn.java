@@ -132,7 +132,8 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .showCount()
-                .withFilter());
+                .withFilter()
+                .filterDescription(resources.messages().deploymentStandaloneColumnFilterDescription()));
 
         this.environment = environment;
         this.dispatcher = dispatcher;
