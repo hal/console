@@ -469,6 +469,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml unauthorized();
     SafeHtml undeployedContent(String name);
+
+    String undertowListenerProcessingDisabled(String listener, String server, String profile);
     String updateAvailable(String current, String update);
     SafeHtml updateServerError(String name);
     SafeHtml uploadError(String name);

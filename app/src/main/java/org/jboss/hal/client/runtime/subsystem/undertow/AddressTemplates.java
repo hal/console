@@ -42,6 +42,7 @@ public interface AddressTemplates {
 
     AddressTemplate WEB_SUBSYSTEM_TEMPLATE = AddressTemplate.of(WEB_SUBSYSTEM_ADDRESS);
     AddressTemplate WEB_SERVER_TEMPLATE = AddressTemplate.of(WEB_SERVER_ADDRESS);
+    AddressTemplate WEB_SERVER_CONFIGURATION_TEMPLATE = AddressTemplate.of("/profile=*/subsystem=undertow/server=*");
 
     AddressTemplate WEB_DEPLOYMENT_TEMPLATE = AddressTemplate.of(WEB_DEPLOYMENT_ADDRESS);
     AddressTemplate WEB_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(WEB_SUBDEPLOYMENT_ADDRESS);

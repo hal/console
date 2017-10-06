@@ -517,6 +517,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String undeploy();
     String undeployContent();
     String undeployed();
+    String undertowListenerProcessingDisabledHeader();
     String unknownError();
     String unknownState();
     String unmanaged();

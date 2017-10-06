@@ -566,6 +566,7 @@ public interface ModelDescriptionConstants {
     String REALM = "realm";
     String REALM_NAME = "realm-name";
     String REASON = "reason";
+    String RECORD_REQUEST_START_TIME = "record-request-start-time";
     String RECOVERY_PLUGIN_CLASS_NAME = "recovery-plugin-class-name";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
