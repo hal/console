@@ -118,10 +118,6 @@ public class Deployment extends Content {
         return enabled.isDefined() ? enabled.asBoolean() : false;
     }
 
-    public boolean isExploded() {
-        return get(EXPLODED).asBoolean(false);
-    }
-
     public Status getStatus() {
         return ModelNodeHelper.asEnumValue(this, STATUS, Status::valueOf, Status.UNDEFINED);
     }

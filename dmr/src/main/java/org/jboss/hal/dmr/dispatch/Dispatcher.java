@@ -245,6 +245,25 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ upload
 
     @JsIgnore
+    public void upload(File file, Operation operation, Consumer<ModelNode> success) {
+        upload(file, operation).subscribe(new SingleSubscriber<ModelNode>() {
+            @Override
+            public void onSuccess(ModelNode modelNode) {
+                success.accept(modelNode);
+            }
+
+            @Override
+            public void onError(Throwable ex) {
+                if (ex instanceof DispatchFailure) {
+                    failedCallback.onFailed(operation, ex.getMessage());
+                } else {
+                    exceptionCallback.onException(operation, ex);
+                }
+            }
+        });
+    }
+
+    @JsIgnore
     public Single<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
         FormData formData = createFormData(file, uploadOperation.toBase64String());

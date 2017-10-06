@@ -124,6 +124,7 @@ public interface Ids {
     String CONTENT = "content";
     String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);
     String CONTENT_ADD_ACTIONS = build(CONTENT, "add-actions");
+    String CONTENT_NEW = build(CONTENT, "new");
     String CONTENT_EDITOR = build(CONTENT, "editor");
     String CONTENT_REFRESH = build(CONTENT, REFRESH_SUFFIX);
     String CONTENT_SEARCH = build(CONTENT, "search");

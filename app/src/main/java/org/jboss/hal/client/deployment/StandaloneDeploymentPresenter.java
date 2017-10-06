@@ -61,7 +61,7 @@ public class StandaloneDeploymentPresenter extends
 
     public interface MyView extends HalView, HasPresenter<StandaloneDeploymentPresenter> {
         void reset();
-        void update(ModelNode browseContentResult, Deployment deployment, int tab);
+        void update(Deployment deployment, ModelNode browseContentResult, int tab);
     }
     // @formatter:on
 
@@ -73,15 +73,15 @@ public class StandaloneDeploymentPresenter extends
     private String deployment;
 
     @Inject
-    public StandaloneDeploymentPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            @Footer final Provider<Progress> progress,
-            final Environment environment,
-            final Resources resources) {
+    public StandaloneDeploymentPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            @Footer Provider<Progress> progress,
+            Environment environment,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -97,7 +97,7 @@ public class StandaloneDeploymentPresenter extends
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         deployment = request.getParameter(DEPLOYMENT, null);
     }
@@ -115,23 +115,23 @@ public class StandaloneDeploymentPresenter extends
         boolean supportsBrowseContent = ManagementModel.supportsReadContentFromDeployment(
                 environment.getManagementVersion());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
-        Operation browseContent = new Operation.Builder(address, BROWSE_CONTENT).build();
         Operation readDeployment = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
+        Operation browseContent = new Operation.Builder(address, BROWSE_CONTENT).build();
         Composite composite = new Composite(readDeployment);
         if (supportsBrowseContent) {
             composite.add(browseContent);
         }
         dispatcher.execute(composite, (CompositeResult result) -> {
-            Deployment d = new Deployment(Server.STANDALONE, result.step(0).get(RESULT));
-            ModelNode readContentResult = supportsBrowseContent ? result.step(1).get(RESULT) : new ModelNode();
+            Deployment deployment = new Deployment(Server.STANDALONE, result.step(0).get(RESULT));
+            ModelNode browseContentResult = supportsBrowseContent ? result.step(1).get(RESULT) : new ModelNode();
             getView().reset();
-            getView().update(readContentResult, d, tab);
+            getView().update(deployment, browseContentResult, tab);
         });
     }
 
-    void enable(final String deployment) {
+    void enable(String deployment) {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
         progress.get().reset();
         progress.get().tick();

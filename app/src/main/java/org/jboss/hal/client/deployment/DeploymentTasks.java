@@ -362,7 +362,7 @@ class DeploymentTasks {
 
             }
             Operation operation = builder.build();
-            operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
+            operation.get(CONTENT).add().get(INPUT_STREAM_INDEX).set(0); //NON-NLS
 
             return dispatcher.upload(file, operation)
                     .doOnSuccess(result -> {

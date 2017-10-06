@@ -31,10 +31,11 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 public class CreateEmptyDialog {
 
     private final Dialog dialog;
+    private final Form<ModelNode> form;
 
     public CreateEmptyDialog(Resources resources, Consumer<String> callback) {
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.DEPLOYMENT_EMPTY_FORM, Metadata.empty())
+        form = new ModelNodeForm.Builder<>(Ids.DEPLOYMENT_EMPTY_FORM, Metadata.empty())
                 .unboundFormItem(nameItem, 0)
                 .onSave((f, changedValues) -> callback.accept(nameItem.getValue()))
                 .addOnly()
@@ -51,5 +52,6 @@ public class CreateEmptyDialog {
 
     public void show() {
         dialog.show();
+        form.edit(new ModelNode());
     }
 }

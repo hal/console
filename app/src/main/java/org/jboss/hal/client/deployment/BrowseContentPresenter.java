@@ -23,22 +23,23 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.token.NameTokens;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.BROWSE_CONTENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class BrowseContentPresenter
         extends ApplicationFinderPresenter<BrowseContentPresenter.MyView, BrowseContentPresenter.MyProxy> {
@@ -49,7 +50,7 @@ public class BrowseContentPresenter
     public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {}
 
     public interface MyView extends HalView, HasPresenter<BrowseContentPresenter> {
-        void setContent(String content, ModelNode browseContentResult);
+        void setContent(Content content, ModelNode browseContentResult);
     }
     // @formatter:on
 
@@ -59,13 +60,13 @@ public class BrowseContentPresenter
     private String content;
 
     @Inject
-    public BrowseContentPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final Environment environment) {
+    public BrowseContentPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            Environment environment) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -79,7 +80,7 @@ public class BrowseContentPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         content = request.getParameter(CONTENT, null);
     }
@@ -93,8 +94,15 @@ public class BrowseContentPresenter
     protected void reload() {
         if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-            Operation operation = new Operation.Builder(address, BROWSE_CONTENT).build();
-            dispatcher.execute(operation, result -> getView().setContent(content, result));
+            Operation readContent = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            Operation browseContent = new Operation.Builder(address, BROWSE_CONTENT).build();
+            dispatcher.execute(new Composite(readContent, browseContent), (CompositeResult result) -> {
+                Content content = new Content(result.step(0).get(RESULT));
+                ModelNode browseContentResult = result.step(1).get(RESULT);
+                getView().setContent(content, browseContentResult);
+            });
         }
         // TODO Fallback when browse-content is not supported
     }

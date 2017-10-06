@@ -15,43 +15,59 @@
  */
 package org.jboss.hal.client.deployment;
 
+import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.google.web.bindery.event.shared.EventBus;
 import elemental2.core.Array;
+import elemental2.dom.File;
+import elemental2.dom.File.ConstructorContentsArrayUnionType;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
-import java.util.function.Consumer;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Search;
-import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
+import org.jboss.hal.core.Strings;
+import org.jboss.hal.core.deployment.Content;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+import rx.Completable;
 
-import static elemental2.dom.DomGlobal.setTimeout;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
+import static java.util.Collections.emptyList;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -59,9 +75,7 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 
 /** UI element to browse the content of an item from the content repository. */
@@ -122,7 +136,9 @@ class BrowseContentElement implements IsElement, Attachable {
     private static final int MIN_HEIGHT = 70;
 
     private final Dispatcher dispatcher;
+    private final EventBus eventBus;
     private final Resources resources;
+    private final Callback refreshCallback;
 
     private final ContentParser contentParser;
     private final Search treeSearch;
@@ -132,27 +148,31 @@ class BrowseContentElement implements IsElement, Attachable {
     private final EmptyState unsupportedFileType;
     private AceEditor editor;
 
+    private final HTMLElement addRemoveControls;
+    private final HTMLButtonElement removeButton;
     private final HTMLElement treeContainer;
     private final HTMLElement editorControls;
     private final HTMLElement editorStatus;
-    private final HTMLElement copyToClipboardLink;
-    private final HTMLElement downloadLink;
+    private final HTMLElement downloadButton;
+    private final HTMLButtonElement saveButton;
     private final HTMLElement previewContainer;
     private final HTMLElement previewHeader;
     private final HTMLElement previewImageContainer;
     private final HTMLImageElement previewImage;
     private final HTMLElement root;
 
-    private String content;
+    private Content content;
     private int surroundingHeight;
 
 
     // ------------------------------------------------------ ui setup
 
     @SuppressWarnings("ConstantConditions")
-    BrowseContentElement(final Dispatcher dispatcher, final Resources resources, final Callback refreshCallback) {
+    BrowseContentElement(Dispatcher dispatcher, EventBus eventBus, Resources resources, Callback refreshCallback) {
         this.dispatcher = dispatcher;
+        this.eventBus = eventBus;
         this.resources = resources;
+        this.refreshCallback = refreshCallback;
         this.contentParser = new ContentParser();
         this.surroundingHeight = 0;
 
@@ -168,6 +188,7 @@ class BrowseContentElement implements IsElement, Attachable {
                     }
                 })
                 .build();
+        treeSearch.asElement().classList.add(marginLeftSmall);
 
         Search contentSearch = new Search.Builder(Ids.CONTENT_SEARCH,
                 query -> editor.getEditor().find(query))
@@ -176,7 +197,7 @@ class BrowseContentElement implements IsElement, Attachable {
                 .build();
 
         Options editorOptions = new Options();
-        editorOptions.readOnly = true;
+        editorOptions.readOnly = false;
         editorOptions.showGutter = true;
         editorOptions.showLineNumbers = true;
         editorOptions.showPrintMargin = false;
@@ -197,21 +218,38 @@ class BrowseContentElement implements IsElement, Attachable {
                 .description(resources.constants().unsupportedFileTypeDescription())
                 .primaryAction(resources.constants().download(),
                         () -> window.location.assign(downloadUrl((tree.api().getSelected().data))))
-                .secondaryAction(resources.constants().viewInEditor(), () -> {
-                    viewInEditor(tree.api().getSelected().data);
-                })
+                .secondaryAction(resources.constants().viewInEditor(),
+                        () -> viewInEditor(tree.api().getSelected().data))
                 .build();
 
         root = row()
                 .add(column(4)
                         .add(div().css(flexRow, marginTopLarge)
-                                .add(div().css(btnGroup, marginRightSmall)
-                                        .add(button().css(btn, btnDefault)
-                                                .on(click, event -> refreshCallback.execute())
-                                                .add(i().css(fontAwesome(CSS.refresh))))
-                                        .add(button().css(btn, btnDefault)
-                                                .on(click, event -> collapse(tree.api().getSelected()))
-                                                .add(i().css(fontAwesome("minus")))))
+                                .add(div().css(btnToolbar)
+                                        .add(div().css(btnGroup)
+                                                .add(button().css(btn, btnDefault)
+                                                        .on(click, event -> refreshCallback.execute())
+                                                        .title(resources.constants().refresh())
+                                                        .add(i().css(fontAwesome(CSS.refresh))))
+                                                .add(button().css(btn, btnDefault)
+                                                        .on(click, event -> collapse(tree.api().getSelected()))
+                                                        .title(resources.constants().collapse())
+                                                        .add(i().css(fontAwesome("minus")))))
+                                        .add(addRemoveControls = div().css(btnGroup)
+                                                .add(button().css(btn, btnDefault)
+                                                        .on(click, event -> newContent())
+                                                        .title(resources.constants().newContent())
+                                                        .add(i().css(fontAwesome("file-o"))))
+                                                .add(button().css(btn, btnDefault)
+                                                        .on(click, event -> addContent())
+                                                        .title(resources.constants().uploadContent())
+                                                        .add(i().css(fontAwesome("upload"))))
+                                                .add(removeButton = button().css(btn, btnDefault)
+                                                        .on(click, event -> removeContent())
+                                                        .title(resources.constants().removeContent())
+                                                        .add(i().css(pfIcon("remove")))
+                                                        .asElement())
+                                                .asElement()))
                                 .add(treeSearch))
                         .add(treeContainer = div().css(CSS.treeContainer).asElement()))
                 .add(column(8)
@@ -221,7 +259,7 @@ class BrowseContentElement implements IsElement, Attachable {
                                                 .textContent(resources.constants().preview())
                                                 .asElement())
                                         .add(previewImageContainer = div()
-                                                .style("overflow: scroll")
+                                                .style("overflow: scroll") //NON-NLS
                                                 .add(previewImage = img().css(imgResponsive, imgThumbnail).asElement())
                                                 .asElement())
                                         .asElement())
@@ -232,18 +270,13 @@ class BrowseContentElement implements IsElement, Attachable {
                                                         .textContent(resources.constants().nothingSelected())
                                                         .asElement()))
                                         .add(div().css(editorButtons)
-                                                .add(copyToClipboardLink = a().css(btn, btnDefault, clickable)
-                                                        .title(resources.constants().copyToClipboard())
-                                                        .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                                        .data(UIConstants.CONTAINER, UIConstants.BODY)
-                                                        .data(UIConstants.PLACEMENT, UIConstants.TOP)
-                                                        .add(span().css(fontAwesome("clipboard")))
+                                                .add(saveButton = button().css(btn, btnDefault, clickable)
+                                                        .on(click, event -> saveContent())
+                                                        .title(resources.constants().save())
+                                                        .add(span().css(fontAwesome("floppy-o")))
                                                         .asElement())
-                                                .add(downloadLink = a().css(btn, btnDefault, clickable)
+                                                .add(downloadButton = a().css(btn, btnDefault, clickable)
                                                         .title(resources.constants().download())
-                                                        .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                                        .data(UIConstants.CONTAINER, UIConstants.BODY)
-                                                        .data(UIConstants.PLACEMENT, UIConstants.TOP)
                                                         .add(span().css(fontAwesome("download")))
                                                         .asElement()))
                                         .asElement())
@@ -253,9 +286,7 @@ class BrowseContentElement implements IsElement, Attachable {
                                 .add(unsupportedFileType)))
                 .asElement();
 
-        Clipboard clipboard = new Clipboard(copyToClipboardLink);
-        clipboard.onCopy(event -> copyToClipboard(event.client));
-
+        saveButton.disabled = true;
         Elements.setVisible(pleaseSelect.asElement(), true);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
@@ -268,6 +299,7 @@ class BrowseContentElement implements IsElement, Attachable {
     public void attach() {
         editor.attach();
         editor.getEditor().$blockScrolling = 1;
+
         adjustHeight();
         adjustEditorHeight();
         window.onresize = event -> {
@@ -286,7 +318,7 @@ class BrowseContentElement implements IsElement, Attachable {
         return root;
     }
 
-    void setSurroundingHeight(final int surroundingHeight) {
+    void setSurroundingHeight(int surroundingHeight) {
         this.surroundingHeight = surroundingHeight;
         adjustHeight();
         adjustEditorHeight();
@@ -313,16 +345,18 @@ class BrowseContentElement implements IsElement, Attachable {
 
     // ------------------------------------------------------ ui visibility / states
 
-    void setContent(final String content, final ModelNode browseContentResult) {
+    void setContent(Content content, ModelNode browseContentResult) {
         this.content = content;
+        Elements.setVisible(addRemoveControls, content.isExploded());
 
         Array<Node<ContentEntry>> nodes = new Array<>();
-        Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, content, new ContentEntry())
+        Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, content.getName(), new ContentEntry())
                 .root()
                 .folder()
                 .open()
                 .build();
-        contentParser.parse(nodes, root, browseContentResult.asList());
+        List<ModelNode> modelNodes = browseContentResult.isDefined() ? browseContentResult.asList() : emptyList();
+        contentParser.parse(nodes, root, modelNodes);
 
         tree = new Tree<>(Ids.CONTENT_TREE, nodes);
         Elements.removeChildrenFrom(treeContainer);
@@ -337,6 +371,7 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void noSelection() {
+        removeButton.disabled = true;
         Elements.setVisible(pleaseSelect.asElement(), true);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
@@ -346,19 +381,21 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void deploymentPreview() {
+        removeButton.disabled = true;
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), true);
+        Elements.setVisible(deploymentPreview.asElement(), !content.isExploded());
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
 
-        deploymentPreview.setHeader(content);
+        deploymentPreview.setHeader(content.getName());
         deploymentPreview.setPrimaryAction(resources.constants().download(),
                 () -> window.location.assign(downloadUrl(null)));
     }
 
     private void directory() {
+        removeButton.disabled = true;
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
@@ -368,6 +405,7 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void viewInEditor(ContentEntry contentEntry) {
+        removeButton.disabled = false;
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, true);
         Elements.setVisible(editor.asElement(), true);
@@ -377,14 +415,17 @@ class BrowseContentElement implements IsElement, Attachable {
         adjustEditorHeight();
 
         editorStatus.textContent = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
-        downloadLink.setAttribute("href", downloadUrl(contentEntry)); //NON-NLS
+        downloadButton.setAttribute("href", downloadUrl(contentEntry)); //NON-NLS
         loadContent(contentEntry, result -> {
+            saveButton.disabled = true;
             editor.setModeFromPath(contentEntry.name);
             editor.getEditor().getSession().setValue(result);
+            editor.getEditor().getSession().on("change", delta -> saveButton.disabled = false); //NON-NLS
         });
     }
 
     private void viewInPreview(ContentEntry contentEntry) {
+        removeButton.disabled = false;
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
@@ -396,6 +437,7 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void unsupportedFileType() {
+        removeButton.disabled = false;
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
@@ -407,22 +449,82 @@ class BrowseContentElement implements IsElement, Attachable {
 
     // ------------------------------------------------------ event handler
 
-    private void collapse(final Node<ContentEntry> node) {
-        if (node != null) {
-            tree.select(node.id, true);
+    private void newContent() {
+        NameItem nameItem = new NameItem();
+        TextBoxItem pathItem = new TextBoxItem(TARGET_PATH);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
+                .unboundFormItem(nameItem)
+                .unboundFormItem(pathItem)
+                .addOnly()
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(resources.constants().newContent(), form, (name, model) -> {
+            String path = fullPath(pathItem.getValue(), nameItem.getValue());
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+            ModelNode contentNode = new ModelNode();
+            contentNode.get(INPUT_STREAM_INDEX).set(0);
+            contentNode.get(TARGET_PATH).set(path);
+            Operation operation = new Operation.Builder(address, ADD_CONTENT)
+                    .param(CONTENT, new ModelNode().add(contentNode))
+                    .build();
+            dispatcher.upload(file(nameItem.getValue(), ""), operation, result -> {
+                refreshCallback.execute();
+                MessageEvent.fire(eventBus,
+                        Message.success(resources.messages().newContentSuccess(content.getName(), path)));
+            });
+        });
+        pathItem.setValue(selectedPath());
+        dialog.show();
+    }
+
+    private void addContent() {
+
+    }
+
+    private void saveContent() {
+        Node<ContentEntry> selection = tree.api().getSelected();
+        if (selection != null) {
+            String filename = Strings.substringAfterLast(selection.data.path, "/");
+            String editorContent = editor.getEditor().getSession().getValue();
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+            ModelNode contentNode = new ModelNode();
+            contentNode.get(INPUT_STREAM_INDEX).set(0);
+            contentNode.get(TARGET_PATH).set(selection.data.path);
+            Operation operation = new Operation.Builder(address, ADD_CONTENT)
+                    .param(CONTENT, new ModelNode().add(contentNode))
+                    .build();
+            dispatcher.upload(file(filename, editorContent), operation, result -> {
+                saveButton.disabled = true;
+                MessageEvent.fire(eventBus,
+                        Message.success(resources.messages().saveContentSuccess(content.getName(), filename)));
+                Completable refresh = Completable.fromAction(refreshCallback::execute);
+                Completable select = Completable.fromAction(() -> tree.select(selection.id, false));
+                refresh.andThen(select).subscribe();
+            });
         }
     }
 
-    private void copyToClipboard(Clipboard clipboard) {
-        String value = editor.getEditor().getSession().getValue();
-        if (!Strings.isNullOrEmpty(value)) {
-            clipboard.setText(value);
-            Tooltip tooltip = Tooltip.element(copyToClipboardLink);
-            tooltip.hide()
-                    .setTitle(resources.constants().copied())
-                    .show()
-                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            setTimeout((o) -> tooltip.hide(), 1000);
+    private void removeContent() {
+        Node<ContentEntry> selection = tree.api().getSelected();
+        if (selection != null) {
+            String path = selection.data.path;
+            DialogFactory.showConfirmation(resources.constants().removeContent(),
+                    resources.messages().removeContentQuestion(content.getName(), path), () -> {
+                        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+                        Operation operation = new Operation.Builder(address, REMOVE_CONTENT)
+                                .param(PATHS, new ModelNode().add(path))
+                                .build();
+                        dispatcher.execute(operation, result -> {
+                            refreshCallback.execute();
+                            MessageEvent.fire(eventBus, Message.success(
+                                    resources.messages().removeContentSuccess(content.getName(), path)));
+                        });
+                    });
+        }
+    }
+
+    private void collapse(Node<ContentEntry> node) {
+        if (node != null) {
+            tree.select(node.id, true);
         }
     }
 
@@ -458,9 +560,37 @@ class BrowseContentElement implements IsElement, Attachable {
         }
     }
 
+
+    // ------------------------------------------------------ helper methods
+
+    private String selectedPath() {
+        String path = null;
+        Node<ContentEntry> selection = tree.api().getSelected();
+        if (selection != null && !selection.id.equals(Ids.CONTENT_TREE_ROOT)) {
+            path = Strings.strip(selection.data.path, "/");
+            if (!selection.data.directory) {
+                path = Strings.getParent(path);
+            }
+        }
+        return nullToEmpty(path);
+    }
+
+    private String fullPath(String path, String name) {
+        String localPath = Strings.strip(path, "/");
+        String localName = Strings.strip(name, "/");
+        return isNullOrEmpty(localPath)
+                ? nullToEmpty(localName)
+                : nullToEmpty(localPath) + "/" + nullToEmpty(localName);
+    }
+
+    private File file(String name, String content) {
+        ConstructorContentsArrayUnionType contents = ConstructorContentsArrayUnionType.of(content);
+        return new File(new ConstructorContentsArrayUnionType[]{contents}, name);
+    }
+
     private void loadContent(ContentEntry contentEntry, Consumer<String> successCallback) {
         if (!contentEntry.directory) {
-            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
             Operation operation = new Operation.Builder(address, READ_CONTENT)
                     .param(PATH, contentEntry.path)
                     .build();
@@ -468,11 +598,8 @@ class BrowseContentElement implements IsElement, Attachable {
         }
     }
 
-
-    // ------------------------------------------------------ helper methods
-
     private String downloadUrl(ContentEntry contentEntry) {
-        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
         Operation.Builder builder = new Operation.Builder(address, READ_CONTENT);
         if (contentEntry != null) {
             builder.param(PATH, contentEntry.path);

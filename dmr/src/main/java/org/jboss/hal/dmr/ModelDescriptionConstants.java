@@ -57,6 +57,7 @@ public interface ModelDescriptionConstants {
     String ACTIVE_COUNT = "active-count";
     String ACTIVE_SESSIONS = "active-sessions";
     String ADD = "add";
+    String ADD_CONTENT = "add-content";
     String ADD_PREFIX_ROLE_MAPPER = "add-prefix-role-mapper";
     String ADD_SUFFIX_ROLE_MAPPER = "add-suffix-role-mapper";
     String ADDRESS = "address";
@@ -118,6 +119,7 @@ public interface ModelDescriptionConstants {
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
     String BUNDLED = "bundled";
+    String BYTES = "bytes";
     String CACHE_CONTAINER = "cache-container";
     String CACHE_SIZE = "cache-size";
     String CACHE_TYPE = "cache-type";
@@ -331,6 +333,7 @@ public interface ModelDescriptionConstants {
     String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
     String INPUT_ARGUMENTS = "input-arguments";
+    String INPUT_STREAM_INDEX = "input-stream-index";
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
@@ -488,6 +491,7 @@ public interface ModelDescriptionConstants {
     String PASSIVATED_COUNT = "passivated-count";
     String PASSWORD = "password";
     String PATH = "path";
+    String PATHS = "paths";
     String PATCH = "patch";
     String PATCH_ID = "patch-id";
     String PATCHING = "patching";
@@ -584,6 +588,7 @@ public interface ModelDescriptionConstants {
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_COMMAND = "remote-command";
     String REMOTE_CONNECTOR = "remote-connector";
+    String REMOVE_CONTENT = "remove-content";
     String REMOTE_DESTINATION_OUTBOUND_SOCKET_BINDING = "remote-destination-outbound-socket-binding";
     String REMOTING = "remoting";
     String REMOVE = "remove";
@@ -740,6 +745,7 @@ public interface ModelDescriptionConstants {
     String TARGET = "target";
     String TARGET_CREDENTIAL_REFERENCE = "target-credential-reference";
     String TARGET_PASSWORD = "target-password";
+    String TARGET_PATH = "target-path";
     String TASK_MAX_THREADS = "task-max-threads";
     String TEMPORARY = "temporary";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";

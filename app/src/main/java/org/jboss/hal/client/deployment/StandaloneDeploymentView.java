@@ -17,6 +17,7 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
@@ -44,10 +45,10 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     private StandaloneDeploymentPresenter presenter;
 
     @Inject
-    public StandaloneDeploymentView(final Dispatcher dispatcher, final ModelBrowser modelBrowser,
-            final Environment environment, final Resources resources) {
+    public StandaloneDeploymentView(Dispatcher dispatcher, ModelBrowser modelBrowser,
+            Environment environment, EventBus eventBus, Resources resources) {
         supportsReadContent = ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion());
-        browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.reload());
+        browseContent = new BrowseContentElement(dispatcher, eventBus, resources, () -> presenter.reload());
         deploymentModel = new DeploymentModelElement(modelBrowser, resources);
 
         if (supportsReadContent) {
@@ -89,7 +90,7 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     }
 
     @Override
-    public void setPresenter(final StandaloneDeploymentPresenter presenter) {
+    public void setPresenter(StandaloneDeploymentPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -101,9 +102,9 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     }
 
     @Override
-    public void update(final ModelNode browseContentResult, final Deployment deployment, final int tab) {
+    public void update(Deployment deployment, ModelNode browseContentResult, int tab) {
         if (supportsReadContent) {
-            browseContent.setContent(deployment.getName(), browseContentResult);
+            browseContent.setContent(deployment, browseContentResult);
             tabs.showTab(tab);
         }
         deploymentModel.update(deployment, () -> presenter.enable(deployment.getName()));

@@ -178,13 +178,19 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         this.surroundingHeight = 0;
 
         buttonGroup = div().css(btnGroup, modelBrowserButtons)
-                .add(filter = button().css(btn, btnDefault).on(click, event -> filter(tree.api().getSelected()))
+                .add(filter = button().css(btn, btnDefault)
+                        .on(click, event -> filter(tree.api().getSelected()))
+                        .title(resources.constants().filter())
                         .add(i().css(fontAwesome(CSS.filter)))
                         .asElement())
-                .add(refresh = button().css(btn, btnDefault).on(click, event -> refresh(tree.api().getSelected()))
+                .add(refresh = button().css(btn, btnDefault)
+                        .on(click, event -> refresh(tree.api().getSelected()))
+                        .title(resources.constants().refresh())
                         .add(i().css(fontAwesome(CSS.refresh)))
                         .asElement())
-                .add(collapse = button().css(btn, btnDefault).on(click, event -> collapse(tree.api().getSelected()))
+                .add(collapse = button().css(btn, btnDefault)
+                        .on(click, event -> collapse(tree.api().getSelected()))
+                        .title(resources.constants().collapse())
                         .add(i().css(fontAwesome("minus")))
                         .asElement())
                 .asElement();

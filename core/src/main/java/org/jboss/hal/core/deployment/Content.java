@@ -28,7 +28,7 @@ public class Content extends NamedNode {
 
     private final List<ServerGroupDeployment> serverGroupDeployments;
 
-    public Content(final ModelNode node) {
+    public Content(ModelNode node) {
         super(node);
         this.serverGroupDeployments = new ArrayList<>();
 

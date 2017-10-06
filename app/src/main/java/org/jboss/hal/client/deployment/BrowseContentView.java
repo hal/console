@@ -17,6 +17,8 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -28,8 +30,8 @@ public class BrowseContentView extends HalViewImpl implements BrowseContentPrese
     private BrowseContentPresenter presenter;
 
     @Inject
-    public BrowseContentView(final Dispatcher dispatcher, final Resources resources) {
-        this.browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.reload());
+    public BrowseContentView(Dispatcher dispatcher, EventBus eventBus, Resources resources) {
+        this.browseContent = new BrowseContentElement(dispatcher, eventBus, resources, () -> presenter.reload());
         initElement(browseContent);
     }
 
@@ -40,12 +42,12 @@ public class BrowseContentView extends HalViewImpl implements BrowseContentPrese
     }
 
     @Override
-    public void setPresenter(final BrowseContentPresenter presenter) {
+    public void setPresenter(BrowseContentPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void setContent(final String content, final ModelNode browseContentResult) {
+    public void setContent(Content content, ModelNode browseContentResult) {
         browseContent.setContent(content, browseContentResult);
     }
 }

@@ -15,11 +15,16 @@
  */
 package org.jboss.hal.ballroom.editor;
 
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 @JsType(isNative = true)
 public class Editor {
+
+    @JsProperty
+    public Object $blockScrolling;
 
     public native void focus();
 
@@ -40,7 +45,4 @@ public class Editor {
     public native void findNext();
 
     public native void findPrevious();
-
-    @JsProperty
-    public Object $blockScrolling;
 }

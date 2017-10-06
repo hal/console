@@ -68,6 +68,7 @@ public interface CSS {
     String btnLg = "btn-lg";
     String btnLink = "btn-link";
     String btnPrimary = "btn-primary";
+    String btnToolbar = "btn-toolbar";
 
     String caret = "caret";
     String centerBlock = "center-block";
@@ -235,6 +236,7 @@ public interface CSS {
     String macroList = "macro-list";
     String marginBottomLarge = "margin-bottom-large";
     String marginBottomSmall = "margin-bottom-small";
+    String marginLeftSmall = "margin-left-small";
     String marginRight5 = "margin-right-5";
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";

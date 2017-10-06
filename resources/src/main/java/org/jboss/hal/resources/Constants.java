@@ -76,7 +76,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clear();
     String clearAll();
     String clearAllFilters();
-    String clearMessages();
     String clearRunAs();
     String clearRunAsTitle();
     String clearSelection();
@@ -84,6 +83,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String cloneProfile();
     String close();
     String closed();
+    String collapse();
     String committed();
     String completed();
     String completedExecutions();
@@ -183,7 +183,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String groups();
 
     String help();
-    String heuristics();
     String hiddenColumns();
     String hideSensitive();
     String hitCount();
@@ -328,6 +327,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String needsReload();
     String needsRestart();
     String networkError();
+    String newContent();
     String next();
     String nextPage();
     String no();
@@ -414,6 +414,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String reloadStandaloneTooltip();
     String remoteAddress();
     String remove();
+    String removeContent();
     String rename();
     String replace();
     String replaceContent();
@@ -440,7 +441,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String role();
     String roles();
     String rollback();
-    String rollbacks();
     String rollbackError();
     String rollbackInProgress();
     String rollbackSuccessful();

@@ -40,7 +40,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     String activeRoles(String roles);
-    SafeHtml addConfigurationChangesQuestion(String host);
     SafeHtml addHaPolicy();
     SafeHtml addResourceError(String name, String cause);
     SafeHtml addResourceSuccess(String type, String name);
@@ -224,6 +223,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml moveMessageSuccess(String queue);
     SafeHtml multiValueListHint();
 
+    SafeHtml newContentSuccess(String deployment, String file);
     String noBootErrors();
     SafeHtml noChanges();
     SafeHtml noContent();
@@ -302,6 +302,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
     SafeHtml removeConfigurationChangesQuestion(String type, String name);
+    SafeHtml removeContentQuestion(String deployment, String path);
+    SafeHtml removeContentSuccess(String deployment, String path);
     SafeHtml removeCurrentUserError();
     SafeHtml removeExtensionQuestion();
     SafeHtml removeExtensionSuccess();
@@ -363,6 +365,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
 
+    SafeHtml saveContentSuccess(String deployment, String file);
     SafeHtml selected(int selected, int total);
     SafeHtml sendMessageToDeadLetterQuestion();
     SafeHtml sendMessagesToDeadLetterQuestion();

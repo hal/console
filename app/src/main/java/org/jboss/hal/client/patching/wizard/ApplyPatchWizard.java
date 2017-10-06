@@ -85,7 +85,7 @@ public class ApplyPatchWizard {
                 opBuilder.param(PRESERVE, patchContext.preserve.toArray(new String[patchContext.preserve.size()]));
             }
             Operation operation = opBuilder.build();
-            operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
+            operation.get(CONTENT).add().get(INPUT_STREAM_INDEX).set(0); //NON-NLS
 
             return dispatcher.upload(patchContext.file, operation).toCompletable();
         }
