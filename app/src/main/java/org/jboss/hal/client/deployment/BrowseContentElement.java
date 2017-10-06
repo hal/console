@@ -243,6 +243,7 @@ class BrowseContentElement implements IsElement, Attachable {
                                                 .add(button().css(btn, btnDefault)
                                                         .on(click, event -> addContent())
                                                         .title(resources.constants().uploadContent())
+                                                        .title(resources.constants().addContent())
                                                         .add(i().css(fontAwesome("upload"))))
                                                 .add(removeButton = button().css(btn, btnDefault)
                                                         .on(click, event -> removeContent())

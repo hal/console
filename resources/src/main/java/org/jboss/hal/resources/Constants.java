@@ -46,6 +46,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String activeFilters();
     String activeLower();
     String add();
+    String addContent();
     String address();
     String adminOnly();
     String allMessagesAlways();
