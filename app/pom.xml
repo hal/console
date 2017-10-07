@@ -163,6 +163,10 @@
                         </fileset>
                         <fileset>
                             <directory>src/main/resources/org/jboss/hal/public/js</directory>
+                            <excludes>
+                                <exclude>mode-logfile.js</exclude>
+                                <exclude>theme-logfile.js</exclude>
+                            </excludes>
                         </fileset>
                     </filesets>
                 </configuration>
