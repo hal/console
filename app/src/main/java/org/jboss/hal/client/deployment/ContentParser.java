@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -38,8 +39,10 @@ class ContentParser {
     private static final String DIRECTORY = "directory";
     private static final String FILE_SIZE = "file-size";
 
+    static final Function<String, String> NODE_ID = path -> Ids.build("bct", path, "node");
+
     @SuppressWarnings("unchecked")
-    void parse(Array<Node<ContentEntry>> nodes, Node<ContentEntry> root, List<ModelNode> content) {
+    void parse(Node<ContentEntry> root, Array<Node<ContentEntry>> nodes, List<ModelNode> content) {
         nodes.push(root);
 
         Map<String, Node<ContentEntry>> nodesByPath = new HashMap<>();
@@ -86,8 +89,7 @@ class ContentParser {
     @SuppressWarnings("unchecked")
     private Node<ContentEntry> pushFolder(Array<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
             ContentEntry contentEntry) {
-        Node<ContentEntry> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), contentEntry.name,
-                contentEntry)
+        Node<ContentEntry> node = new Node.Builder<>(NODE_ID.apply(contentEntry.path), contentEntry.name, contentEntry)
                 .parent(parent.id)
                 .folder()
                 .build();
@@ -98,8 +100,7 @@ class ContentParser {
     @SuppressWarnings("unchecked")
     private Node<ContentEntry> pushEntry(Array<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
             ContentEntry contentEntry) {
-        Node<ContentEntry> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), contentEntry.name,
-                contentEntry)
+        Node<ContentEntry> node = new Node.Builder<>(NODE_ID.apply(contentEntry.path), contentEntry.name, contentEntry)
                 .parent(parent.id)
                 .icon(fontAwesome("file-text-o"))
                 .build();

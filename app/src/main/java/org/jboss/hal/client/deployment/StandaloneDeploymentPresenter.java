@@ -23,7 +23,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -32,14 +31,10 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
@@ -48,7 +43,10 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 public class StandaloneDeploymentPresenter extends
         ApplicationFinderPresenter<StandaloneDeploymentPresenter.MyView, StandaloneDeploymentPresenter.MyProxy> {
@@ -61,14 +59,13 @@ public class StandaloneDeploymentPresenter extends
 
     public interface MyView extends HalView, HasPresenter<StandaloneDeploymentPresenter> {
         void reset();
-        void update(Deployment deployment, ModelNode browseContentResult, int tab);
+        void update(Deployment deployment, int tab);
     }
     // @formatter:on
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
-    private final Environment environment;
     private final Resources resources;
     private String deployment;
 
@@ -80,13 +77,11 @@ public class StandaloneDeploymentPresenter extends
             FinderPathFactory finderPathFactory,
             Dispatcher dispatcher,
             @Footer Provider<Progress> progress,
-            Environment environment,
             Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
         this.progress = progress;
-        this.environment = environment;
         this.resources = resources;
     }
 
@@ -112,35 +107,26 @@ public class StandaloneDeploymentPresenter extends
     }
 
     private void reload(int tab) {
-        boolean supportsBrowseContent = ManagementModel.supportsReadContentFromDeployment(
-                environment.getManagementVersion());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
-        Operation readDeployment = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation browseContent = new Operation.Builder(address, BROWSE_CONTENT).build();
-        Composite composite = new Composite(readDeployment);
-        if (supportsBrowseContent) {
-            composite.add(browseContent);
-        }
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            Deployment deployment = new Deployment(Server.STANDALONE, result.step(0).get(RESULT));
-            ModelNode browseContentResult = supportsBrowseContent ? result.step(1).get(RESULT) : new ModelNode();
+        dispatcher.execute(operation, result -> {
             getView().reset();
-            getView().update(deployment, browseContentResult, tab);
+            getView().update(new Deployment(Server.STANDALONE, result), tab);
         });
     }
 
     void enable(String deployment) {
-        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
         progress.get().reset();
         progress.get().tick();
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
         Operation operation = new Operation.Builder(address, DEPLOY).build();
         dispatcher.execute(operation, result -> {
             progress.get().finish();
-            reload(1); // stay on model browser tab
-            MessageEvent
-                    .fire(getEventBus(), Message.success(resources.messages().deploymentEnabledSuccess(deployment)));
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().deploymentEnabledSuccess(deployment)));
+            reload(1);
         });
     }
 }

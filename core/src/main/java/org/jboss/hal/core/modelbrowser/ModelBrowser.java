@@ -32,7 +32,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.tree.Node;
-import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
+import org.jboss.hal.ballroom.tree.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.CrudOperations;
@@ -121,8 +121,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         @Override
         public Completable call(FlowContext context) {
             return Completable.fromEmitter(emitter -> {
-                if (tree.api().getNode(id) != null) {
-                    tree.api().openNode(id, emitter::onCompleted);
+                if (tree.getNode(id) != null) {
+                    tree.openNode(id, emitter::onCompleted);
                 } else {
                     emitter.onCompleted();
                 }
@@ -179,17 +179,17 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
         buttonGroup = div().css(btnGroup, modelBrowserButtons)
                 .add(filter = button().css(btn, btnDefault)
-                        .on(click, event -> filter(tree.api().getSelected()))
+                        .on(click, event -> filter(tree.getSelected()))
                         .title(resources.constants().filter())
                         .add(i().css(fontAwesome(CSS.filter)))
                         .asElement())
                 .add(refresh = button().css(btn, btnDefault)
-                        .on(click, event -> refresh(tree.api().getSelected()))
+                        .on(click, event -> refresh(tree.getSelected()))
                         .title(resources.constants().refresh())
                         .add(i().css(fontAwesome(CSS.refresh)))
                         .asElement())
                 .add(collapse = button().css(btn, btnDefault)
-                        .on(click, event -> collapse(tree.api().getSelected()))
+                        .on(click, event -> collapse(tree.getSelected()))
                         .title(resources.constants().collapse())
                         .add(i().css(fontAwesome("minus")))
                         .asElement())
@@ -261,11 +261,11 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     private void filter(Node<Context> node) {
         if (node != null && node.parent != null) {
-            Node<Context> parent = tree.api().getNode(node.parent);
+            Node<Context> parent = tree.getNode(node.parent);
             FilterInfo filterInfo = new FilterInfo(parent, node);
             filterStack.add(filterInfo);
             filter(filterInfo);
-            tree.api().openNode(MODEL_BROWSER_ROOT, () -> tree.select(MODEL_BROWSER_ROOT, false));
+            tree.openNode(MODEL_BROWSER_ROOT, () -> tree.selectNode(MODEL_BROWSER_ROOT));
         }
     }
 
@@ -289,7 +289,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         }
 
         // reset tree
-        tree.api().destroy(false);
+        tree.destroy();
         initTree(filter.address, filter.text);
     }
 
@@ -314,7 +314,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
                         @Override
                         public void onSuccess(FlowContext context) {
-                            tree.select(previousFilter.node.id, false);
+                            tree.selectNode(previousFilter.node.id);
                         }
                     });
         }
@@ -323,13 +323,13 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     private void refresh(final Node<Context> node) {
         if (node != null) {
             updateNode(node);
-            tree.api().refreshNode(node.id);
+            tree.refreshNode(node.id);
         }
     }
 
     private void collapse(Node<Context> node) {
         if (node != null) {
-            tree.select(node.id, true);
+            tree.selectNode(node.id, true);
         }
     }
 
@@ -375,7 +375,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     private void showResourceView(Node<Context> node, ResourceAddress address) {
-        Node<Context> parent = tree.api().getNode(node.parent);
+        Node<Context> parent = tree.getNode(node.parent);
         AddressTemplate template = asGenericTemplate(parent, address);
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
@@ -473,12 +473,12 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     void remove(ResourceAddress address) {
-        crud.remove(address.lastName(), address.lastValue(), address, () -> refresh(tree.api().getSelected()));
+        crud.remove(address.lastName(), address.lastValue(), address, () -> refresh(tree.getSelected()));
     }
 
     void save(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata) {
         crud.save(address.lastName(), address.lastValue(), address, changedValues, metadata,
-                () -> refresh(tree.api().getSelected()));
+                () -> refresh(tree.getSelected()));
     }
 
     void reset(ResourceAddress address, Form<ModelNode> form, Metadata metadata) {
@@ -486,7 +486,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 new FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(final Form<ModelNode> form) {
-                        refresh(tree.api().getSelected());
+                        refresh(tree.getSelected());
                     }
                 });
     }
@@ -527,8 +527,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         dispatcher.execute(ping,
                 result -> {
                     initTree(root, resource);
-                    tree.api().openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
-                    tree.select(MODEL_BROWSER_ROOT, false);
+                    tree.openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
+                    tree.selectNode(MODEL_BROWSER_ROOT);
 
                     adjustHeight();
                 },
@@ -551,7 +551,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     public void select(final String id, final boolean closeSelected) {
-        tree.select(id, closeSelected);
+        tree.selectNode(id, closeSelected);
     }
 
     @Override

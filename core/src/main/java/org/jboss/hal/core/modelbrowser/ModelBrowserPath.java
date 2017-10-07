@@ -50,7 +50,7 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
         List<Node<Context>> nodes = new ArrayList<>();
         while (current != null && !Ids.MODEL_BROWSER_ROOT.equals(current.id)) {
             nodes.add(current);
-            current = modelBrowser.tree.api().getNode(current.parent);
+            current = modelBrowser.tree.getNode(current.parent);
         }
         Collections.reverse(nodes);
 

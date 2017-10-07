@@ -25,7 +25,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.resources.Ids;
@@ -48,7 +47,7 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     public StandaloneDeploymentView(Dispatcher dispatcher, ModelBrowser modelBrowser,
             Environment environment, EventBus eventBus, Resources resources) {
         supportsReadContent = ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion());
-        browseContent = new BrowseContentElement(dispatcher, eventBus, resources, () -> presenter.reload());
+        browseContent = new BrowseContentElement(dispatcher, eventBus, resources);
         deploymentModel = new DeploymentModelElement(modelBrowser, resources);
 
         if (supportsReadContent) {
@@ -102,9 +101,9 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     }
 
     @Override
-    public void update(Deployment deployment, ModelNode browseContentResult, int tab) {
+    public void update(Deployment deployment, int tab) {
         if (supportsReadContent) {
-            browseContent.setContent(deployment, browseContentResult);
+            browseContent.setContent(deployment);
             tabs.showTab(tab);
         }
         deploymentModel.update(deployment, () -> presenter.enable(deployment.getName()));

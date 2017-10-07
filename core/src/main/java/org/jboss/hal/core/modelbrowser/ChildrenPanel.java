@@ -63,7 +63,7 @@ class ChildrenPanel implements HasElements, Attachable {
         //noinspection HardCodedStringLiteral
         Options<String> options = new OptionsBuilder<String>()
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
-                .column(resources.constants().view(), row -> modelBrowser.tree.api().openNode(parent.id,
+                .column(resources.constants().view(), row -> modelBrowser.tree.openNode(parent.id,
                         () -> modelBrowser.select(uniqueId(parent, row), false)))
                 .button(resources.constants().add(), table -> modelBrowser.add(parent, table.getRows()))
 

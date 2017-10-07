@@ -27,9 +27,7 @@ public interface UIConstants {
     /** The default polling interval used for {@code setInterval()} */
     double POLLING_INTERVAL = 3333;
 
-    /**
-     * The timeout until a non-sticky message is hidden
-     */
+    /** The timeout until a non-sticky message is hidden */
     double MESSAGE_TIMEOUT = 6000; // ms
 
     long RELOAD_MESSAGE_ID = 5102007;
@@ -42,7 +40,6 @@ public interface UIConstants {
     String BODY = "body";
     String BUTTON = "button";
     String CHECKED = "checked";
-    String COMBOBOX = "combobox";
     String COLLAPSE = "collapse";
     String CONSTRAINT = "constraint";
     String CONTAINER = "container";
@@ -68,7 +65,6 @@ public interface UIConstants {
     String NAME = "name";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
-    String OPTION = "option";
     String PLACEHOLDER = "placeholder";
     String PLACEMENT = "placement";
     String PRESENTATION = "presentation";
@@ -89,7 +85,6 @@ public interface UIConstants {
     String TRUE = "true";
     String VALUE = "value";
     String WIDTH = "width";
-
 
     static String data(String name) {
         return "data-" + name; //NON-NLS

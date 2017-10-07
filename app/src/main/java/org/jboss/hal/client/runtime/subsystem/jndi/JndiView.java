@@ -59,17 +59,8 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
     @Inject
     public JndiView(JndiResources jndiResources, Resources resources) {
 
-        search = new Search.Builder(Ids.JNDI_SEARCH,
-                query -> {
-                    if (tree.api() != null) {
-                        tree.api().search(query);
-                    }
-                })
-                .onClear(() -> {
-                    if (tree.api() != null) {
-                        tree.api().clearSearch();
-                    }
-                })
+        search = new Search.Builder(Ids.JNDI_SEARCH, query -> tree.search(query))
+                .onClear(() -> tree.clearSearch())
                 .build();
 
         Metadata metadata = Metadata.staticDescription(jndiResources.jndi());
@@ -89,7 +80,12 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
                                                 .on(click, event -> presenter.reload())
                                                 .add(i().css(fontAwesome(CSS.refresh))))
                                         .add(button().css(btn, btnDefault)
-                                                .on(click, event -> collapse(tree.api().getSelected()))
+                                                .on(click, event -> {
+                                                    Node<JndiContext> selection = tree.getSelected();
+                                                    if (selection != null) {
+                                                        tree.selectNode(selection.id, true);
+                                                    }
+                                                })
                                                 .add(i().css(fontAwesome("minus")))))
                                 .add(search))
                         .add(treeContainer = div().css(CSS.treeContainer).asElement()))
@@ -117,12 +113,6 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
         int searchHeight = (int) search.asElement().offsetHeight;
         int offset = applicationOffset() + 2 * MARGIN_BIG + headerHeight + searchHeight + 2 * MARGIN_SMALL;
         treeContainer.style.height = vh(offset);
-    }
-
-    private void collapse(final Node<JndiContext> node) {
-        if (node != null) {
-            tree.select(node.id, true);
-        }
     }
 
     @Override

@@ -29,17 +29,16 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
-import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.token.NameTokens;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 public class BrowseContentPresenter
         extends ApplicationFinderPresenter<BrowseContentPresenter.MyView, BrowseContentPresenter.MyProxy> {
@@ -49,8 +48,8 @@ public class BrowseContentPresenter
     @NameToken(NameTokens.BROWSE_CONTENT)
     public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {}
 
-    public interface MyView extends HalView, HasPresenter<BrowseContentPresenter> {
-        void setContent(Content content, ModelNode browseContentResult);
+    public interface MyView extends HalView {
+        void setContent(Content content);
     }
     // @formatter:on
 
@@ -74,12 +73,6 @@ public class BrowseContentPresenter
     }
 
     @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
-
-    @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         content = request.getParameter(CONTENT, null);
@@ -94,16 +87,12 @@ public class BrowseContentPresenter
     protected void reload() {
         if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-            Operation readContent = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            Operation browseContent = new Operation.Builder(address, BROWSE_CONTENT).build();
-            dispatcher.execute(new Composite(readContent, browseContent), (CompositeResult result) -> {
-                Content content = new Content(result.step(0).get(RESULT));
-                ModelNode browseContentResult = result.step(1).get(RESULT);
-                getView().setContent(content, browseContentResult);
-            });
+            dispatcher.execute(operation, result -> getView().setContent(new Content(result)));
+        } else {
+            // TODO Fallback when browse-content is not supported
         }
-        // TODO Fallback when browse-content is not supported
     }
 }

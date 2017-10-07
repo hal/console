@@ -15,28 +15,22 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental2.dom.Event;
-import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
+import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-/** ActionHandler when the selection changes. */
-@JsFunction
-@FunctionalInterface
-public interface SelectionChangeHandler<T> {
+@JsType(isNative = true)
+class Bridge<T> {
 
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    class SelectionContext<T> {
-        public String action;
-        public Api<T> api;
-        public Node<T> node;
-        public String[] selected;
-    }
+    @JsMethod(namespace = GLOBAL, name = "$")
+    native static <T> Bridge<T> select(String selector);
 
-    /**
-     * Called when a selection changed. That is when an item is selected <em>or</em> deselected.
-     */
-    void onSelectionChanged(Event event, SelectionContext<T> context);
+    native void jstree(Options options);
+
+    @SuppressWarnings("SameParameterValue")
+    native Api<T> jstree(boolean _true);
+
+    native <E> void on(@NonNls String event, EventHandler<E> handler);
 }

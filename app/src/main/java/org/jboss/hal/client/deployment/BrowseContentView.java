@@ -20,34 +20,22 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Resources;
 
 public class BrowseContentView extends HalViewImpl implements BrowseContentPresenter.MyView {
 
     private final BrowseContentElement browseContent;
-    private BrowseContentPresenter presenter;
 
     @Inject
     public BrowseContentView(Dispatcher dispatcher, EventBus eventBus, Resources resources) {
-        this.browseContent = new BrowseContentElement(dispatcher, eventBus, resources, () -> presenter.reload());
+        browseContent = new BrowseContentElement(dispatcher, eventBus, resources);
+        registerAttachable(browseContent);
         initElement(browseContent);
     }
 
     @Override
-    public void attach() {
-        super.attach();
-        browseContent.attach();
-    }
-
-    @Override
-    public void setPresenter(BrowseContentPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setContent(Content content, ModelNode browseContentResult) {
-        browseContent.setContent(content, browseContentResult);
+    public void setContent(Content content) {
+        browseContent.setContent(content);
     }
 }
