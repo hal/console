@@ -554,9 +554,15 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void deploymentPreview() {
-        downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(null));
-        downloadContentLink.setAttribute(UIConstants.DOWNLOAD, content.getName());
-        downloadContentLink.classList.remove(disabled);
+        if (content.isExploded()) {
+            downloadContentLink.removeAttribute(UIConstants.HREF);
+            downloadContentLink.removeAttribute(UIConstants.DOWNLOAD);
+            downloadContentLink.classList.add(disabled);
+        } else {
+            downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(null));
+            downloadContentLink.setAttribute(UIConstants.DOWNLOAD, content.getName());
+            downloadContentLink.classList.remove(disabled);
+        }
         removeContentButton.disabled = true;
 
         Elements.setVisible(pleaseSelect.asElement(), false);
