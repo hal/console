@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.ballroom.editor;
 
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
@@ -37,6 +35,8 @@ public class Editor {
     public native Session getSession();
 
     public native void setOptions(Options options);
+
+    public native void setReadOnly(boolean readOnly);
 
     public native void setTheme(String theme);
 

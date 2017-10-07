@@ -181,7 +181,6 @@ class BrowseContentElement implements IsElement, Attachable {
         treeSearch.asElement().classList.add(marginLeftSmall);
 
         Options editorOptions = new Options();
-        editorOptions.readOnly = false;
         editorOptions.showGutter = true;
         editorOptions.showLineNumbers = true;
         editorOptions.showPrintMargin = false;
@@ -353,6 +352,8 @@ class BrowseContentElement implements IsElement, Attachable {
         Elements.setVisible(addContentButton, content.isExploded());
         Elements.setVisible(uploadContentButton, content.isExploded());
         Elements.setVisible(removeContentButton, content.isExploded());
+        Elements.setVisible(saveContentButton, content.isExploded());
+        editor.getEditor().setReadOnly(!content.isExploded());
 
         browseContent().subscribe(this::noSelection);
     }
