@@ -133,6 +133,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationModcluster())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(NAMING, "Naming")
+                .subtitle(Names.JNDI)
                 .generic()
                 .preview(resources.previews().configurationNaming())
                 .build());

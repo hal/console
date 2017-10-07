@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -61,6 +60,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
@@ -105,7 +105,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         .map(ModelNode::asString)
                         .filter(subsystems::containsRuntime)
                         .map(subsystems::getRuntime)
-                        .collect(Collectors.toMap(SubsystemMetadata::getName, identity()));
+                        .collect(toMap(SubsystemMetadata::getName, identity()));
 
                 // remove logging if not supported
                 Version serverVersion = ManagementModel.parseVersion(result.step(1).get(RESULT));
