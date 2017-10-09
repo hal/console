@@ -79,7 +79,7 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
  * Presenter which controls the header. The header is a central UI element in HAL showing global state such as
- * reload state, messages or the current user. Additionally it contains the navigation which is either the top level
+ * reload state, notifications or the current user. Additionally it contains the navigation which is either the top level
  * categories (tlc) or the breadcrumb.
  * <p>
  * The breadcrumb shows path like information such as the selected finder path or the selected address in the model

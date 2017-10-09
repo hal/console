@@ -345,9 +345,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     private void updateMessageElements() {
-        int count = notificationDrawer.getMessageCount();
-        Elements.setVisible(badgeIcon, count != 0);
-        messages.title = resources().messages().notifications(count);
+        int unreadCount = notificationDrawer.getUnreadCount();
+        Elements.setVisible(badgeIcon, unreadCount != 0);
+        messages.title = resources().messages().notifications(unreadCount);
     }
 
 

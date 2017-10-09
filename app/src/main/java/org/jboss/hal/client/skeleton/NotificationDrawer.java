@@ -41,7 +41,6 @@ import static org.jboss.hal.resources.CSS.*;
 class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
 
     private final Resources resources;
-    private final HTMLElement headerContainer;
     private final HTMLElement header;
     private final HTMLElement panelBody;
     private final HTMLElement actions;
@@ -53,15 +52,14 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     NotificationDrawer(Resources resources) {
         this.resources = resources;
         this.root = div().css(drawerPf, drawerPfNotificationsNonClickable, drawerPfHal, hide)
-                .add(headerContainer = div().css(drawerPfTitle)
+                .add(div().css(drawerPfTitle)
                         .add(a().css(drawerPfToggleExpand, fontAwesome("angle-double-left"), hiddenXs)
                                 .on(click, event -> toggleWidth()))
                         .add(a().css(drawerPfClose, pfIcon("close"))
                                 .on(click, event -> close()))
                         .add(header = h(3, resources.messages().notifications(0))
                                 .css(textCenter)
-                                .asElement())
-                        .asElement())
+                                .asElement()))
                 .add(div().css(panelGroup)
                         .add(div().css(panel, panelDefault)
                                 .add(div().css(panelHeading, hidden))
@@ -117,13 +115,13 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
         root.classList.toggle(hide);
     }
 
-    int getMessageCount() {
-        return (int) panelBody.childElementCount;
-    }
-
-    private int getUnreadCount() {
+    int getUnreadCount() {
         NodeList<Element> nodes = root.querySelectorAll("." + drawerPfNotification + "." + unread);
         return nodes != null ? (int) nodes.length : 0;
+    }
+
+    private int getMessageCount() {
+        return (int) panelBody.childElementCount;
     }
 
 
