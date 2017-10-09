@@ -1,10 +1,130 @@
-1C10DA60721499040ABCBC8939C42CF2.cache.js
-user.agent safari
-
-81C0482A3D189003C249CCFCE5D8694E.cache.js
-user.agent ie10
-
-BEDA6782C481F1293FE6AE4E6823B9F9.cache.js
+5D669F084BB9C2D9737465336F488616.cache.js
+ClientBundle.enableInlining true
+audioElementSupport maybe
+canvasElementSupport maybe
+compiler.emulatedStack false
+compiler.predeclare.cross.fragment.references false
+compiler.stackMode native
+compiler.useSourceMaps false
+compiler.useSymbolMaps false
+dragEventSupport maybe
+gwt.cspCompatModeEnabled false
+gwt.enableDebugId false
+gwt.forceBidi false
+gwt.logging.consoleHandler ENABLED
+gwt.logging.developmentModeHandler ENABLED
+gwt.logging.enabled TRUE
+gwt.logging.hasWidgetsHandler DISABLED
+gwt.logging.logLevel ALL
+gwt.logging.simpleConsoleHandler DISABLED
+gwt.logging.simpleRemoteHandler DISABLED
+gwt.logging.systemHandler DISABLED
+gwt.suppressNonStaticFinalFieldWarnings false
+gwt.uncaughtexceptionhander.windowonerror IGNORE
+gwtp.crashOnLegacySlot false
+history.noDoubleEncoding false
+jre.checkedMode DISABLED
+jre.checks.api AUTO
+jre.checks.bounds AUTO
+jre.checks.checkLevel NORMAL
+jre.checks.numeric AUTO
+jre.checks.type AUTO
+jre.debugMode DISABLED
+jre.logging.logLevel ALL
+jre.logging.simpleConsoleHandler DISABLED
+jsinterop.checks DISABLED
+locale en
+rpc.XserializeFinalFields false
+superdevmode off
+touchEventSupport maybe
 user.agent gecko1_8
+videoElementSupport maybe
+webApiUsage modern
+
+5D669F084BB9C2D9737465336F488616.cache.js
+ClientBundle.enableInlining true
+audioElementSupport maybe
+canvasElementSupport maybe
+compiler.emulatedStack false
+compiler.predeclare.cross.fragment.references false
+compiler.stackMode native
+compiler.useSourceMaps false
+compiler.useSymbolMaps false
+dragEventSupport maybe
+gwt.cspCompatModeEnabled false
+gwt.enableDebugId false
+gwt.forceBidi false
+gwt.logging.consoleHandler ENABLED
+gwt.logging.developmentModeHandler ENABLED
+gwt.logging.enabled TRUE
+gwt.logging.hasWidgetsHandler DISABLED
+gwt.logging.logLevel ALL
+gwt.logging.simpleConsoleHandler DISABLED
+gwt.logging.simpleRemoteHandler DISABLED
+gwt.logging.systemHandler DISABLED
+gwt.suppressNonStaticFinalFieldWarnings false
+gwt.uncaughtexceptionhander.windowonerror IGNORE
+gwtp.crashOnLegacySlot false
+history.noDoubleEncoding false
+jre.checkedMode DISABLED
+jre.checks.api AUTO
+jre.checks.bounds AUTO
+jre.checks.checkLevel NORMAL
+jre.checks.numeric AUTO
+jre.checks.type AUTO
+jre.debugMode DISABLED
+jre.logging.logLevel ALL
+jre.logging.simpleConsoleHandler DISABLED
+jsinterop.checks DISABLED
+locale en
+rpc.XserializeFinalFields false
+superdevmode off
+touchEventSupport no
+user.agent ie10
+videoElementSupport maybe
+webApiUsage modern
+
+5D669F084BB9C2D9737465336F488616.cache.js
+ClientBundle.enableInlining true
+audioElementSupport maybe
+canvasElementSupport maybe
+compiler.emulatedStack false
+compiler.predeclare.cross.fragment.references false
+compiler.stackMode native
+compiler.useSourceMaps false
+compiler.useSymbolMaps false
+dragEventSupport maybe
+gwt.cspCompatModeEnabled false
+gwt.enableDebugId false
+gwt.forceBidi false
+gwt.logging.consoleHandler ENABLED
+gwt.logging.developmentModeHandler ENABLED
+gwt.logging.enabled TRUE
+gwt.logging.hasWidgetsHandler DISABLED
+gwt.logging.logLevel ALL
+gwt.logging.simpleConsoleHandler DISABLED
+gwt.logging.simpleRemoteHandler DISABLED
+gwt.logging.systemHandler DISABLED
+gwt.suppressNonStaticFinalFieldWarnings false
+gwt.uncaughtexceptionhander.windowonerror IGNORE
+gwtp.crashOnLegacySlot false
+history.noDoubleEncoding false
+jre.checkedMode DISABLED
+jre.checks.api AUTO
+jre.checks.bounds AUTO
+jre.checks.checkLevel NORMAL
+jre.checks.numeric AUTO
+jre.checks.type AUTO
+jre.debugMode DISABLED
+jre.logging.logLevel ALL
+jre.logging.simpleConsoleHandler DISABLED
+jsinterop.checks DISABLED
+locale en
+rpc.XserializeFinalFields false
+superdevmode off
+touchEventSupport maybe
+user.agent safari
+videoElementSupport maybe
+webApiUsage modern
 
 Devmode:devmode.js
