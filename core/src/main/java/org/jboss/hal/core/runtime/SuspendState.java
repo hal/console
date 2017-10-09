@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.core.runtime;
 
-/**
- * Suspend state defined by {@code host.suspend-state}
- *
- * @author Harald Pehl
- */
+/** Suspend state defined by {@code host.suspend-state} */
 public enum SuspendState {
     RUNNING, PRE_SUSPEND, SUSPENDING, SUSPENDED, UNDEFINED
 }

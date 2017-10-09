@@ -59,8 +59,6 @@ import static org.jboss.hal.resources.CSS.separator;
  * <dt>Required</dt>
  * <dd>The composite form item is required if <strong>any of</strong> the form items is required.</dd>
  * </dl>
- *
- * @author Harald Pehl
  */
 public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> implements ModelNodeItem {
 
@@ -82,9 +80,11 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     private List<FormItem> formItems;
     private HTMLElement readOnlyContainer;
     private HTMLElement editingContainer;
+    private final List<HandlerRegistration> handlers;
 
     public CompositeFormItem(final String name, final String label) {
         super(name, label, null);
+        this.handlers = new ArrayList<>();
     }
 
     protected void addFormItems(List<FormItem> formItems) {
@@ -131,7 +131,15 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     public void attach() {
         for (FormItem formItem : formItems) {
             formItem.attach();
-            formItem.addValueChangeHandler(new FormItemChangeHandler(formItem));
+            handlers.add(formItem.addValueChangeHandler(new FormItemChangeHandler(formItem)));
+        }
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        for (HandlerRegistration handler : handlers) {
+            handler.removeHandler();
         }
     }
 

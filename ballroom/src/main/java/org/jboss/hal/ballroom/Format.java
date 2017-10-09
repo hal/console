@@ -16,6 +16,7 @@
 package org.jboss.hal.ballroom;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -23,16 +24,14 @@ import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import org.jboss.hal.resources.Constants;
 
-
-/**
- * @author Harald Pehl
- */
 public final class Format {
 
     private static final DateTimeFormat DATE_TIME_SHORT = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
+    private static final DateTimeFormat DATE_TIME_MEDIUM = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM);
     private static final DateTimeFormat TIME_MEDIUM = DateTimeFormat.getFormat(PredefinedFormat.TIME_MEDIUM);
     private static final NumberFormat SIZE_FORMAT = NumberFormat.getFormat("#,##0.#");
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+
 
     public static String time(Date date) {
         return TIME_MEDIUM.format(date);
@@ -42,6 +41,10 @@ public final class Format {
         return DATE_TIME_SHORT.format(date);
     }
 
+    public static String mediumDateTime(Date date) {
+        return DATE_TIME_MEDIUM.format(date);
+    }
+
     public static String humanReadableFileSize(long size) {
         if (size <= 0) { return "0"; }
         final String[] units = new String[]{"Bytes", "KB", "MB", "GB", "TB"}; //NON-NLS
@@ -49,17 +52,27 @@ public final class Format {
         return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
+    /**
+     * Formats the elapsed time (in milliseconds) to a human readable format: example 1 minute, 16 seconds.
+     *
+     * @param duration in milliseconds
+     * @return The string representation of the human readable format.
+     */
     public static String humanReadableDuration(long duration) {
-        duration = duration / 1000;
+        if (duration < 1000) {
+            return duration + " ms"; //NON-NLS
+        }
+
+        duration = Math.round(duration / 1000.0);
 
         int sec = (int) duration % 60;
-        duration /= 60;
+        duration = Math.round(duration / 60.0);
 
         int min = (int) duration % 60;
-        duration /= 60;
+        duration = Math.round(duration / 60.0);
 
         int hour = (int) duration % 24;
-        duration /= 24;
+        duration = Math.round(duration / 24.0);
 
         int day = (int) duration;
 
@@ -95,6 +108,22 @@ public final class Format {
         }
         return str;
     }
+
+    /**
+     * Formats the elapsed time (in nanoseconds) to a human readable format: example 1 minute, 16 seconds.
+     *
+     * @param duration in nanoseconds
+     * @return The string representation of the human readable format.
+     */
+    public static String humanReadableDurationNanoseconds(long duration) {
+        long l = TimeUnit.NANOSECONDS.toMillis(duration);
+        if (l > 0) {
+            return humanReadableDuration(l);
+        } else {
+            return duration + " ns ";
+        }
+    }
+
 
     private Format() {
     }

@@ -49,9 +49,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "ResultOfMethodCallIgnored"})
 public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
@@ -129,7 +126,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         // main attributes
         Tabs mainAttributesTabs = new Tabs();
         String baseId = Ids.build(Ids.JPA_RUNTIME);
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JPA_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JPA_DEPLOYMENT_TEMPLATE);
 
         for (String section : mainAttributes.keySet()) {
             String sectionId = Ids.asId(section);
@@ -164,15 +161,15 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                 fontAwesome("list-ul"), section);
 
         // child resources
-        buildChildPanel(baseId, AddressTemplates.ENTITY_TEMPLATE, "entity");
+        buildChildPanel(baseId, AddressTemplates.ENTITY_DEPLOYMENT_TEMPLATE, "entity");
         navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_ENTRY, Names.ENTITY, fontAwesome("cubes"),
-                buildChildPanel(baseId, AddressTemplates.ENTITY_TEMPLATE, Names.ENTITY));
+                buildChildPanel(baseId, AddressTemplates.ENTITY_DEPLOYMENT_TEMPLATE, Names.ENTITY));
         navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_CACHE_ENTRY, Names.ENTITY_CACHE, fontAwesome("database"),
-                buildChildPanel(baseId, AddressTemplates.ENTITY_CACHE_TEMPLATE, Names.ENTITY_CACHE));
+                buildChildPanel(baseId, AddressTemplates.ENTITY_CACHE_DEPLOYMENT_TEMPLATE, Names.ENTITY_CACHE));
         navigation.addPrimary(Ids.JPA_RUNTIME_QUERY_CACHE_ENTRY, Names.QUERY_CACHE, pfIcon("storage-domain"),
-                buildChildPanel(baseId, AddressTemplates.QUERY_CACHE_TEMPLATE, Names.QUERY_CACHE));
+                buildChildPanel(baseId, AddressTemplates.QUERY_CACHE_DEPLOYMENT_TEMPLATE, Names.QUERY_CACHE));
         navigation.addPrimary(Ids.JPA_RUNTIME_COLLECTION_ENTRY, Names.COLLECTION, fontAwesome("tasks"),
-                buildChildPanel(baseId, AddressTemplates.COLLECTION_TEMPLATE, Names.COLLECTION));
+                buildChildPanel(baseId, AddressTemplates.COLLECTION_DEPLOYMENT_TEMPLATE, Names.COLLECTION));
 
         initElement(row()
                 .add(column()
@@ -232,8 +229,8 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
     @Override
     public void update(final JpaStatistic statistic) {
-        headerElement.textContent = statistic.getName();
-        leadElement.textContent = statistic.getDeployment();
+        headerElement.textContent = statistic.getPersistenceUnit();
+        leadElement.textContent = statistic.getPath();
 
         mainForms.forEach(form -> form.view(statistic));
 

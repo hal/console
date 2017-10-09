@@ -27,7 +27,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
 import org.jboss.hal.ballroom.table.Table;
-import org.jboss.hal.client.deployment.Content;
+import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -39,11 +39,7 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * Dialog used to deploy one or several one content items to one server group.
- *
- * @author Harald Pehl
- */
+/** Dialog used to deploy one or several one content items to one server group. */
 public class DeployContentDialog2 {
 
     @FunctionalInterface
@@ -104,7 +100,7 @@ public class DeployContentDialog2 {
         Elements.setVisible(noContentSelected.asElement(), !hasSelection);
         if (hasSelection) {
             List<Content> content = table.selectedRows();
-            deployCallback.deploy(serverGroup, content, SwitchBridge.Bridge.element(enable).getValue());
+            deployCallback.deploy(serverGroup, content, SwitchBridge.Api.element(enable).getValue());
         }
         return hasSelection;
     }
@@ -113,6 +109,6 @@ public class DeployContentDialog2 {
         dialog.show();
         Elements.setVisible(noContentSelected.asElement(), false);
         table.update(content);
-        SwitchBridge.Bridge.element(enable).setValue(false);
+        SwitchBridge.Api.element(enable).setValue(false);
     }
 }

@@ -17,7 +17,4 @@ package org.jboss.hal.client.management;
 
 import org.jboss.hal.core.mvp.FinderViewImpl;
 
-/**
- * @author Harald Pehl
- */
 public class ManagementView extends FinderViewImpl implements ManagementPresenter.MyView {}

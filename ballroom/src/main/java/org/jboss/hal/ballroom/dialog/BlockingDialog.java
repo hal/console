@@ -18,12 +18,10 @@ package org.jboss.hal.ballroom.dialog;
 /**
  * A dialog w/o any means to close the dialog (no close icon, no esc handler). The only way to close this dialog is
  * using the {@link #close()} method.
- *
- * @author Harald Pehl
  */
 public class BlockingDialog extends Dialog {
 
-    BlockingDialog(Dialog.Builder builder) {
+    public BlockingDialog(Dialog.Builder builder) {
         super(builder.closeIcon(false).closeOnEsc(false));
     }
 

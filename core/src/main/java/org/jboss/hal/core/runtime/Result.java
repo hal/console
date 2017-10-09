@@ -18,8 +18,6 @@ package org.jboss.hal.core.runtime;
 /**
  * Result constants for operations on runtime resources such as server groups, hosts or servers. Not used in DMR
  * operations, but for the various GWT events.
- *
- * @author Harald Pehl
  */
 public enum Result {
     SUCCESS, ERROR, TIMEOUT

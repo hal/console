@@ -19,9 +19,6 @@ import java.util.Set;
 
 import org.jboss.hal.dmr.ResourceAddress;
 
-/**
- * @author Harald Pehl
- */
 class Context {
 
     private final Set<String> singletons;

@@ -18,29 +18,37 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A customizable finder item useful when you need full control over each and every item.
- *
- * @author Harald Pehl
- */
+import org.jetbrains.annotations.NonNls;
+
+import static java.util.Arrays.asList;
+
+/** A customizable finder item useful when you need full control over each and every item. */
 public class StaticItem {
 
     public static class Builder {
 
         private final String title;
         private final List<ItemAction<StaticItem>> actions;
+        private final List<String> keywords;
         private String id;
+        private String subtitle;
         private PreviewContent previewContent;
         private String nextColumn;
 
         public Builder(final String title) {
             this.title = title;
             this.actions = new ArrayList<>();
+            this.keywords = new ArrayList<>();
             this.previewContent = new PreviewContent(title);
         }
 
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder subtitle(String subtitle) {
+            this.subtitle = subtitle;
             return this;
         }
 
@@ -51,6 +59,14 @@ public class StaticItem {
 
         public Builder action(ItemAction<StaticItem> itemAction) {
             actions.add(itemAction);
+            return this;
+        }
+
+        public Builder keywords(@NonNls String first, @NonNls String... rest) {
+            keywords.add(first);
+            if (rest != null) {
+                keywords.addAll(asList(rest));
+            }
             return this;
         }
 
@@ -71,7 +87,9 @@ public class StaticItem {
 
 
     private final String title;
+    private final String subtitle;
     private final List<ItemAction<StaticItem>> actions;
+    private final List<String> keywords;
     private final String nextColumn;
     private final PreviewContent previewContent;
     private String id;
@@ -79,7 +97,9 @@ public class StaticItem {
     private StaticItem(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
+        this.subtitle = builder.subtitle;
         this.actions = builder.actions;
+        this.keywords = builder.keywords;
         this.nextColumn = builder.nextColumn;
         this.previewContent = builder.previewContent;
     }
@@ -92,12 +112,20 @@ public class StaticItem {
         return actions;
     }
 
+    public List<String> getKeywords() {
+        return keywords;
+    }
+
     public PreviewContent getPreviewContent() {
         return previewContent;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
     }
 
     public String getNextColumn() {

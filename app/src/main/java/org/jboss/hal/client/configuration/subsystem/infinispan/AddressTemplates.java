@@ -19,9 +19,6 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String INFINISPAN_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=infinispan";
@@ -35,6 +32,7 @@ interface AddressTemplates {
     String REPLICATED_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/replicated-cache=*";
 
     String TRANSPORT_JGROUPS_ADDRESS = CACHE_CONTAINER_ADDRESS + "/transport=jgroups";
+    String THREAD_POOL_ADDRESS = CACHE_CONTAINER_ADDRESS + "/thread-pool=*";
 
     AddressTemplate INFINISPAN_SUBSYSTEM_TEMPLATE = AddressTemplate.of(INFINISPAN_SUBSYSTEM_ADDRESS);
 

@@ -15,8 +15,5 @@
  */
 package org.jboss.hal.core.mvp;
 
-/**
- * @author Harald Pehl
- */
 public interface TopLevelCategory {
 }

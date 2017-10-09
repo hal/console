@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.ejb;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     // Container

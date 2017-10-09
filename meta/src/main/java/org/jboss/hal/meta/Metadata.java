@@ -32,14 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
-/**
- * Simple data struct for common metadata. Used to keep the method signatures small and tidy.
- *
- * @author Harald Pehl
- */
+/** Simple data struct for common metadata. Used to keep the method signatures small and tidy. */
 @JsType
 public class Metadata {
 
@@ -75,158 +72,138 @@ public class Metadata {
         this.capabilities = capabilities;
     }
 
-    // @formatter:off
-    /**
-     * Adds all attributes under a complex attribute to the main list of attributes, it also prefix those nested
-     * attributes
-     * with the complex attribute name. It serves the purpose to shows the attributes in the onAdd modal dialog to add
-     * a
-     * resource.
-     * <p>
-     * For example, the resource-description for subsystem=elytron/properties-realm is as below (they are cut for
-     * simplicity)
-     * <pre>
-     *
-     * "attributes" => {
-     *      "case-sensitive" => {
-     *          "type" => BOOLEAN,
-     *          "description" => "Case sensitivity of the properties realm. If case insensitive only lower usernames are
-     *              allowed.",
-     *      },
-     *      "groups-attribute" => {
-     *          "type" => STRING,
-     *          "description" => "The name of the attribute in the returned AuthorizationIdentity that should contain the group
-     *              membership information for the identity.",
-     *      },
-     *      "groups-properties" => {
-     *          "type" => OBJECT,
-     *          "description" => "The properties file containing the users and their groups.",
-     *          "value-type" => {
-     *              "path" => {
-     *                  "type" => STRING,
-     *                  "description" => "The path to the file containing the users and their groups.",
-     *                  "required" => true,
-     *                  "nillable" => false,
-     *              },
-     *              "relative-to" => {
-     *                  "type" => STRING,
-     *                  "description" => "The pre-defined path the path is relative to.",
-     *                  "required" => false,
-     *                  "nillable" => true,
-     *              }
-     *      },
-     *
-     * </pre>
-     * <p>
-     * After this method is called the resource description contains
-     * * <pre>
-     *     The resource-description for subsystem=elytron/properties-realm
-     * "attributes" => {
-     *      "case-sensitive" => {
-     *          "type" => BOOLEAN,
-     *          "description" => "Case sensitivity of the properties realm. If case insensitive only lower usernames are
-     *              allowed.",
-     *      },
-     *      "groups-attribute" => {
-     *          "type" => STRING,
-     *          "description" => "The name of the attribute in the returned AuthorizationIdentity that should contain the group
-     *              membership information for the identity.",
-     *      },
-     *      "groups-properties-path" => {
-     *          "type" => STRING,
-     *          "description" => "The path to the file containing the users and their groups.",
-     *          "required" => true,
-     *          "nillable" => false,
-     *      },
-     *      "groups-properties-relative-to" => {
-     *          "type" => STRING,
-     *          "description" => "The pre-defined path the path is relative to.",
-     *          "required" => false,
-     *          "nillable" => true,
-     *      }
-     * },
-     * </pre>
-     *
-     * @param complexAttributeName   The complex attribute name
-     * @param fromRequestProperties  If the attributes should be loaded from operations/add/request-properties path or
-     *                               attributes path. If is true, the attributes from request-properties path will be
-     *                               appended, if false, the list of attributes will replace the main attributes path.
-     * @param prefixComplexAttribute If the repackaged attribute names should be prefixed with the complex attribute
-     *                               name,
-     *                               as in the above example.
-     * @param appendRequestProperties when appendRequestProperties and fromRequestProperties is true, the attributes
-     *                                  are appended instead of replaced.
-     *
-     * @return A new Metadata with the repackaged attributes.
-     */
-    // @formatter:on
+    /** Copies attributes from this description to the specified metadata */
     @JsIgnore
-    public Metadata repackageComplexAttribute(String complexAttributeName, boolean fromRequestProperties,
-            boolean prefixComplexAttribute, boolean appendRequestProperties) {
-
-        ModelNode nestedDescription = new ModelNode();
-        ModelNode nestedAttributes;
-        if (fromRequestProperties) {
-            // the attributes are appended, as the request-properties attribute are used to add a new resource, the
-            // attributes should be appended instead of replaced.
-            nestedAttributes = this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES)
-                    .get(complexAttributeName).get(VALUE_TYPE);
-            if (appendRequestProperties) {
-                nestedDescription.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES)
-                        .set(this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES));
-            }
-        } else {
-            nestedAttributes = this.description.get(ATTRIBUTES).get(complexAttributeName).get(VALUE_TYPE);
+    public void copyAttribute(String attribute, Metadata destination) {
+        Property p = getDescription().findAttribute(ATTRIBUTES, attribute);
+        if (p != null) {
+            destination.getDescription().get(ATTRIBUTES).get(attribute).set(p.getValue());
         }
-        nestedDescription.get(DESCRIPTION)
-                .set(this.description.get(ATTRIBUTES).get(complexAttributeName).get(DESCRIPTION));
-        for (Property prop : nestedAttributes.asPropertyList()) {
-            // rename the nested attributes to prefix them with the complex attribute name
-            // as the child nested attribute may exist in other child nested attributes
-            // an example is users-properties and groups-properties in /subsystem=elytron/properties-realm=*
-            // both contains "path" and "relative-to" nested attributes.
-            String newName = prop.getName();
-            if (prefixComplexAttribute) {
-                newName = complexAttributeName + "-" + prop.getName();
-            }
+    }
 
-            if (fromRequestProperties) {
-                nestedDescription.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).get(newName).set(prop.getValue());
-            } else {
-                nestedDescription.get(ATTRIBUTES).get(newName).set(prop.getValue());
-            }
+    /**
+     * Makes the specified attribute writable. This is necessary if you copy attributes from a complex attribute to
+     * another metadata. Without adjustment the copied attributes are read-only in the destination metadata.
+     */
+    @JsIgnore
+    public void makeWritable(String attribute) {
+        getSecurityContext().get(ATTRIBUTES).get(attribute).get(READ).set(true);
+        getSecurityContext().get(ATTRIBUTES).get(attribute).get(WRITE).set(true);
+    }
+
+    /** Shortcut for {@link #copyAttribute(String, Metadata)} and {@link #makeWritable(String)} */
+    @JsIgnore
+    public void copyComplexAttributeAttributes(Iterable<String> attributes, Metadata destination) {
+        for (String attribute : attributes) {
+            copyAttribute(attribute, destination);
+            destination.makeWritable(attribute);
+        }
+    }
+
+    /**
+     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
+     * attribute. The resource description will only include the attributes but no operations!
+     */
+    @JsIgnore
+    public Metadata forComplexAttribute(String name) {
+        return forComplexAttribute(name, false);
+    }
+
+    /**
+     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
+     * attribute. The resource description will only include the attributes but no operations!
+     *
+     * @param prefixLabel if {@code true} the labels of the attributes of the complex attribute are prefixed with name
+     *                    of the complex attribute.
+     */
+    @JsIgnore
+    public Metadata forComplexAttribute(String name, boolean prefixLabel) {
+        ModelNode payload = new ModelNode();
+        payload.get(DESCRIPTION).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
+        payload.get(REQUIRED).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + REQUIRED));
+        payload.get(NILLABLE).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + NILLABLE));
+
+        Property complexAttribute = description.findAttribute(ATTRIBUTES, name);
+        if (complexAttribute != null && complexAttribute.getValue().hasDefined(VALUE_TYPE)) {
+            complexAttribute.getValue().get(VALUE_TYPE).asPropertyList().forEach(nestedProperty -> {
+                // The nested name is *always* just the nested property name,
+                // since it's used when building the DMR operations
+                String nestedName = nestedProperty.getName();
+                ModelNode nestedDescription = nestedProperty.getValue();
+                // The name which is used for the label can be prefixed with the complex attribute name.
+                // If prefixComplexAttribute == true), it is stored as an artificial attribute and picked
+                // up by LabelBuilder.label(Property)
+                if (prefixLabel) {
+                    nestedDescription.get(HAL_LABEL).set(name + "-" + nestedProperty.getName());
+                }
+                payload.get(ATTRIBUTES).get(nestedName).set(nestedDescription);
+            });
         }
 
-        // delegates the security-context calls to check against the complex attribute, because the nested attributes
-        // lacks the access-control constraint,
-        SecurityContext sc = new SecurityContext(new ModelNode()) {
+        SecurityContext parentContext = this.securityContext.get();
+        SecurityContext attributeContext = new SecurityContext(new ModelNode()) {
             @Override
             public boolean isReadable() {
-                return securityContext.get().isReadable();
+                return parentContext.isReadable(name);
             }
 
             @Override
             public boolean isWritable() {
-                return securityContext.get().isWritable();
+                return parentContext.isWritable(name);
             }
 
             @Override
             public boolean isReadable(final String attribute) {
-                return securityContext.get().isReadable(complexAttributeName);
+                return isReadable(); // if the complex attribute is readable all nested attributes are readable as well
             }
 
             @Override
             public boolean isWritable(final String attribute) {
-                return securityContext.get().isWritable(complexAttributeName);
+                return isWritable(); // if the complex attribute is writable all nested attributes are writable as well
             }
 
             @Override
             public boolean isExecutable(final String operation) {
-                return securityContext.get().isExecutable(complexAttributeName);
+                return parentContext.isExecutable(operation);
             }
         };
+        return new Metadata(template, () -> attributeContext, new ResourceDescription(payload), capabilities);
+    }
 
-        return new Metadata(template, () -> sc, new ResourceDescription(nestedDescription), capabilities);
+    @JsIgnore
+    public Metadata forOperation(String name) {
+        ModelNode payload = new ModelNode();
+        payload.get(DESCRIPTION).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + DESCRIPTION));
+        payload.get(ATTRIBUTES).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + REQUEST_PROPERTIES));
+
+        SecurityContext parentContext = this.securityContext.get();
+        SecurityContext operationContext = new SecurityContext(new ModelNode()) {
+            @Override
+            public boolean isReadable() {
+                return parentContext.isExecutable(name);
+            }
+
+            @Override
+            public boolean isWritable() {
+                return parentContext.isExecutable(name);
+            }
+
+            @Override
+            public boolean isReadable(final String attribute) {
+                return isReadable(); // if the operation is executable all of its request properties are readable as well
+            }
+
+            @Override
+            public boolean isWritable(final String attribute) {
+                return isWritable(); // if the operation is executable all of its request properties are writable as well
+            }
+
+            @Override
+            public boolean isExecutable(final String operation) {
+                return parentContext.isExecutable(operation);
+            }
+        };
+        return new Metadata(template, () -> operationContext, new ResourceDescription(payload), capabilities);
     }
 
     @JsIgnore

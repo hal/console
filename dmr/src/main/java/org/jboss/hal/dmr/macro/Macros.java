@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.DomGlobal;
 import elemental2.webstorage.Storage;
 import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.dmr.Composite;
@@ -30,13 +29,10 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.resources.Ids;
 
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Repository for macros.
- *
- * @author Harald Pehl
- */
+/** Repository for macros. */
 public class Macros {
 
     private final Map<String, Macro> macros;
@@ -45,7 +41,7 @@ public class Macros {
     private MacroOptions options;
 
     public Macros() {
-        storage = WebStorageWindow.of(DomGlobal.window).localStorage;
+        storage = WebStorageWindow.of(window).localStorage;
         macros = load();
     }
 
@@ -94,7 +90,7 @@ public class Macros {
     private String serialize(Macro macro) {
         ModelNode modelNode = new ModelNode();
         modelNode.get(NAME).set(macro.getName());
-        modelNode.get(DESCRIPTION).set(macro.getName());
+        modelNode.get(DESCRIPTION).set(macro.getDescription());
         for (Operation operation : macro.getOperations()) {
             modelNode.get(OPERATIONS).add(operation);
         }

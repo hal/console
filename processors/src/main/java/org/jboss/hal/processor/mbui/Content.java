@@ -28,8 +28,6 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 /**
  * An element which contains some 'content' such as tables, (fail-safe-)forms or tabs. Most often this is a
  * {@code <metadata/>} element.
- *
- * @author Harald Pehl
  */
 public class Content {
 
@@ -96,7 +94,7 @@ public class Content {
         this.reference = reference;
         this.name = "html" + counter; //NON-NLS
         this.html = html;
-        this.handlebars = Handlebars.parse(html);
+        this.handlebars = ExpressionParser.parse(html);
         counter++;
     }
 

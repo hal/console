@@ -15,10 +15,8 @@
  */
 package org.jboss.hal.meta.description;
 
-import java.util.Collections;
 import java.util.List;
 
-import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -29,14 +27,11 @@ import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.spi.EsReturn;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Contains the resource and attribute descriptions from the read-resource-description operation.
- *
- * @author Harald Pehl
- */
+/** Contains the resource and attribute descriptions from the read-resource-description operation. */
 @JsType(namespace = "hal.meta")
 public class ResourceDescription extends ModelNode {
 
@@ -59,7 +54,7 @@ public class ResourceDescription extends ModelNode {
         if (attributes.isDefined()) {
             return attributes.asPropertyList();
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     @JsIgnore
@@ -91,7 +86,7 @@ public class ResourceDescription extends ModelNode {
 
     @JsIgnore
     public List<Property> getOperations() {
-        return hasDefined(OPERATIONS) ? get(OPERATIONS).asPropertyList() : Collections.emptyList();
+        return hasDefined(OPERATIONS) ? get(OPERATIONS).asPropertyList() : emptyList();
     }
 
     @JsIgnore
@@ -123,7 +118,7 @@ public class ResourceDescription extends ModelNode {
                         .collect(toList());
             }
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     /**
@@ -153,12 +148,15 @@ public class ResourceDescription extends ModelNode {
 
     @JsIgnore
     public boolean isDefaultValue(final String path, final String name, final Object value) {
-        if (value != null) {
-            Property attribute = findAttribute(path, name);
-            if (attribute != null) {
-                if (attribute.getValue().hasDefined(DEFAULT)) {
-                    ModelType type = attribute.getValue().get(TYPE).asType();
-                    Object defaultValue = attribute.getValue().get(DEFAULT).as(type);
+        Property property = findAttribute(path, name);
+        if (property != null) {
+            ModelNode attribute = property.getValue();
+            if (attribute.hasDefined(DEFAULT)) {
+                if (value == null) {
+                    return true;
+                } else {
+                    ModelType type = attribute.get(TYPE).asType();
+                    Object defaultValue = attribute.get(DEFAULT).as(type);
                     return value.equals(defaultValue);
                 }
             }
@@ -174,13 +172,9 @@ public class ResourceDescription extends ModelNode {
      */
     @JsMethod(name = "getAttributes")
     @EsReturn("Property[]")
-    public Array<Property> jsGetAttributes() {
+    public Property[] jsGetAttributes() {
         List<Property> attributes = getAttributes(ATTRIBUTES);
-        Array<Property> array = new Array<>();
-        for (Property t : attributes) {
-            array.push(t);
-        }
-        return array;
+            return attributes.toArray(new Property[attributes.size()]);
     }
 
     /**
@@ -188,13 +182,9 @@ public class ResourceDescription extends ModelNode {
      */
     @JsMethod(name = "getRequestProperties")
     @EsReturn("Property[]")
-    public Array<Property> jsGetRequestProperties() {
+    public Property[] jsGetRequestProperties() {
         List<Property> attributes = getAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES);
-        Array<Property> array = new Array<>();
-        for (Property t : attributes) {
-            array.push(t);
-        }
-        return array;
+        return attributes.toArray(new Property[attributes.size()]);
     }
 
     /**
@@ -202,12 +192,8 @@ public class ResourceDescription extends ModelNode {
      */
     @JsProperty(name = "operations")
     @EsReturn("Property[]")
-    public Array<Property> jsOperations() {
+    public Property[] jsOperations() {
         List<Property> operations = getOperations();
-        Array<Property> array = new Array<>();
-        for (Property t : operations) {
-            array.push(t);
-        }
-        return array;
+        return operations.toArray(new Property[operations.size()]);
     }
 }

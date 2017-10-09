@@ -36,8 +36,6 @@ import static org.jboss.hal.resources.CSS.page;
  * <p>
  * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain
  * VerticalNavigation vertical navigation}.
- *
- * @author Harald Pehl
  */
 public class Pages implements IsElement {
 
@@ -173,6 +171,19 @@ public class Pages implements IsElement {
                 Elements.setVisible(breadcrumb.asElement(), true);
                 pages.forEach((pageId, page3) -> Elements.setVisible(page3.asElement(), id.equals(pageId)));
             }
+        }
+    }
+
+    public String getCurrentId() {
+        if (Elements.isVisible(mainPage)) {
+            return mainId;
+        } else {
+            for (Map.Entry<String, Page> entry : pages.entrySet()) {
+                if (Elements.isVisible(entry.getValue().asElement())) {
+                    return entry.getKey();
+                }
+            }
+            return null;
         }
     }
 

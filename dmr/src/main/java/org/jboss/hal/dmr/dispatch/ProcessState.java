@@ -19,12 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * @author Harald Pehl
- */
 public class ProcessState implements Iterable<ServerState> {
-
-    static final ProcessState EMPTY = new ProcessState();
 
     private final Set<ServerState> serverStates;
 

@@ -17,20 +17,20 @@ package org.jboss.hal.client.management;
 
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.InstalledExtension;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class ExtensionPreview extends PreviewContent<InstalledExtension> {
 
     ExtensionPreview(final InstalledExtension extension,
@@ -43,8 +43,18 @@ class ExtensionPreview extends PreviewContent<InstalledExtension> {
         Alert scriptError = new Alert(Icons.ERROR, resources.messages().extensionScriptError());
 
         PreviewAttributes<InstalledExtension> attributes = new PreviewAttributes<>(extension,
-                asList(NAME, VERSION, DESCRIPTION, URL, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, HOMEPAGE,
-                        LICENSE));
+                asList(NAME, VERSION, DESCRIPTION))
+                .append(model -> new PreviewAttribute(Names.URL, model.get(URL).asString(), model.get(URL).asString(),
+                        Ids.build(model.getName(), URL)))
+                .append(SCRIPT)
+                .append(STYLESHEETS)
+                .append(EXTENSION_POINT)
+                .append(AUTHOR)
+                .append(AUTHOR)
+                .append(model -> new PreviewAttribute(new LabelBuilder().label(HOMEPAGE),
+                        model.get(HOMEPAGE).asString(), model.get(HOMEPAGE).asString(),
+                        Ids.build(model.getName(), Ids.HOMEPAGE)))
+                .append(LICENSE);
 
         previewBuilder()
                 .add(scriptOk)

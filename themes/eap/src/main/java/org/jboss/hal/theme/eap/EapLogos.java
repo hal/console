@@ -18,9 +18,6 @@ package org.jboss.hal.theme.eap;
 import com.google.gwt.resources.client.ImageResource;
 import org.jboss.hal.resources.Logos;
 
-/**
- * @author Harald Pehl
- */
 public interface EapLogos extends Logos {
 
     @Override

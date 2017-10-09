@@ -20,6 +20,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
@@ -43,9 +44,6 @@ import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.marginRight5;
 import static org.jboss.hal.resources.Icons.flag;
 
-/**
- * @author Harald Pehl
- */
 class ContentPreview extends PreviewContent<Content> {
 
     private final ContentColumn column;

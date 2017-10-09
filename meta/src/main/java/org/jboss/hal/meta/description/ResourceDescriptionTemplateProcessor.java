@@ -43,8 +43,6 @@ import static java.util.stream.StreamSupport.stream;
  * /server-group=main-server-group &rarr; /server-group=&#42;
  * /subsystem=mail/mail-session=foo/server=bar &rarr; /subsystem=mail/mail-session=foo/server=bar
  * </pre>
- *
- * @author Harald Pehl
  */
 public class ResourceDescriptionTemplateProcessor implements Function<AddressTemplate, AddressTemplate> {
 

@@ -20,13 +20,12 @@ import jsinterop.annotations.JsType;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-/**
- * @author Harald Pehl
- */
+import elemental2.dom.Element;
+
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options {
 
-    public String selector;
+    public Element selector;
     public SourceFunction source;
     public int minChars;
     public int delay;

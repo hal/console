@@ -23,7 +23,8 @@ import java.util.Map;
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.DomGlobal;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.google.web.bindery.event.shared.HandlerRegistrations;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -37,6 +38,7 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -53,8 +55,6 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  *
  * @param <C> The context
  * @param <S> The state enum
- *
- * @author Harald Pehl
  */
 public class Wizard<C, S extends Enum<S>> {
 
@@ -199,7 +199,6 @@ public class Wizard<C, S extends Enum<S>> {
 
     private static boolean open;
 
-
     static {
         root = div().css(modal)
                 .id(Ids.HAL_WIZARD)
@@ -236,7 +235,7 @@ public class Wizard<C, S extends Enum<S>> {
                                                 .asElement()))))
                 .asElement();
 
-        DomGlobal.document.body.appendChild(root);
+        document.body.appendChild(root);
         initEventHandler();
     }
 
@@ -264,6 +263,7 @@ public class Wizard<C, S extends Enum<S>> {
     private final LinkedHashMap<S, WizardStep<C, S>> steps;
     private final LinkedHashMap<S, HTMLElement> stepElements;
     private final Map<S, HTMLElement> stepIndicators;
+    private final HandlerRegistration handlerRegistration;
     private S initialState;
     private BackFunction<C, S> back;
     private NextFunction<C, S> next;
@@ -294,10 +294,11 @@ public class Wizard<C, S extends Enum<S>> {
 
         reset();
         Wizard.titleElement.textContent = builder.title;
-        bind(closeIcon, click, event -> onCancel());
-        bind(cancelButton, click, event -> onCancel());
-        bind(backButton, click, event -> onBack());
-        bind(nextButton, click, event -> onNext());
+        handlerRegistration = HandlerRegistrations.compose(
+                bind(closeIcon, click, event -> onCancel()),
+                bind(cancelButton, click, event -> onCancel()),
+                bind(backButton, click, event -> onBack()),
+                bind(nextButton, click, event -> onNext()));
     }
 
 
@@ -432,7 +433,7 @@ public class Wizard<C, S extends Enum<S>> {
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
         Elements.setVisible(blankSlate, true);
 
-        cancelButton.disabled =lastStep;
+        cancelButton.disabled = lastStep;
         backButton.disabled = lastStep;
         nextButton.disabled = !lastStep;
         if (lastStep) {
@@ -584,6 +585,7 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     private void close() {
+        handlerRegistration.removeHandler();
         steps.values().forEach(step -> step.attachables.forEach(Attachable::detach));
         $(SELECTOR_ID).modal("hide");
     }

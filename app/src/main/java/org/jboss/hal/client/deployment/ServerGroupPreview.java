@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.deployment;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JsHelper;
@@ -25,15 +24,14 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Harald Pehl
- */
+import static elemental2.dom.DomGlobal.document;
+
 class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
     ServerGroupPreview(final ServerGroup serverGroup, Resources resources) {
         super(serverGroup.getName(), Names.PROFILE + " " + serverGroup.getProfile(),
                 resources.previews().deploymentsServerGroup());
-        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+        Elements.setVisible((HTMLElement) document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                 JsHelper.supportsAdvancedUpload());
     }
 }

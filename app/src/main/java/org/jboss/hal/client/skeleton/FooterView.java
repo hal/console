@@ -36,12 +36,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.ProgressElement.Label.NONE;
+import static org.jboss.hal.ballroom.ProgressElement.Size.XS;
 import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.pulse;
 
-/**
- * @author Harald Pehl
- */
 @Templated("MainLayout.html#footer")
 public abstract class FooterView extends HalViewImpl implements FooterPresenter.MyView {
 
@@ -61,7 +60,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
     private FooterPresenter presenter;
     private Environment environment;
 
-    @DataElement ProgressElement progress = new ProgressElement();
+    @DataElement ProgressElement progress = new ProgressElement(XS, NONE, false);
     @DataElement HTMLElement halVersion;
     @DataElement HTMLElement updateAvailable;
     @DataElement HTMLElement showVersion;
@@ -103,9 +102,8 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
         if (version.greaterThan(environment.getHalVersion())) {
             logger.info("A new HAL version is available. Current version: {}, new version: {}",
                     environment.getHalVersion(), version);
-            String message = resources().messages().updateAvailable(environment.getHalVersion().toString(),
+            updateAvailable.title = resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());
-            updateAvailable.title = message;
             updateAvailable.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
             updateAvailable.dataset.set(UIConstants.PLACEMENT, UIConstants.TOP);
             updateAvailable.dataset.set(UIConstants.CONTAINER, UIConstants.BODY);

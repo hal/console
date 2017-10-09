@@ -19,9 +19,6 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import org.jboss.hal.spi.GinModule;
 
-/**
- * @author Harald Pehl
- */
 @GinModule
 public class ResourcesModule extends AbstractGinModule {
 

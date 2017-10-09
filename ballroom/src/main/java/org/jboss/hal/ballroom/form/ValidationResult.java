@@ -35,10 +35,6 @@
 
 package org.jboss.hal.ballroom.form;
 
-/**
- * @author Heiko Braun
- * @date 3/28/11
- */
 public class ValidationResult {
 
     public static final ValidationResult OK = new ValidationResult(true, null);

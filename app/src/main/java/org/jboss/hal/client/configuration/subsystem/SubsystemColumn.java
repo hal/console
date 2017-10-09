@@ -42,6 +42,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
 import static java.util.Collections.singletonList;
@@ -53,23 +54,21 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
-/**
- * @author Harald Pehl
- */
-@Column(Ids.SUBSYSTEM)
+@Column(Ids.CONFIGURATION_SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=*");
 
     @Inject
-    public SubsystemColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final Places places,
-            final StatementContext statementContext,
-            final ItemActionFactory itemActionFactory,
-            final Subsystems subsystems) {
+    public SubsystemColumn(Finder finder,
+            Dispatcher dispatcher,
+            Places places,
+            StatementContext statementContext,
+            ItemActionFactory itemActionFactory,
+            Subsystems subsystems,
+            Resources resources) {
 
-        super(new Builder<SubsystemMetadata>(finder, Ids.SUBSYSTEM, Names.SUBSYSTEM)
+        super(new Builder<SubsystemMetadata>(finder, Ids.CONFIGURATION_SUBSYSTEM, Names.SUBSYSTEM)
 
                 .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
                     @Override
@@ -105,8 +104,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         if (item.isGeneric()) {
                             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
                             placeRequest = places.genericSubsystem(address);
-                        }
-                        else if (item.getToken() != null) {
+                        } else if (item.getToken() != null) {
                             placeRequest = places.selectedProfile(item.getToken()).build();
                         }
 
@@ -133,6 +131,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .showCount()
                 .withFilter()
                 .pinnable()
+                .filterDescription(resources.messages().susbsystemFilterDescription())
         );
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
@@ -144,8 +143,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 List<SubsystemMetadata> combined = new ArrayList<>();
                 for (ModelNode modelNode : result.asList()) {
                     String name = modelNode.asString();
-                    if (subsystems.contains(name)) {
-                        combined.add(subsystems.get(name));
+                    if (subsystems.containsConfiguration(name)) {
+                        combined.add(subsystems.getConfiguration(name));
 
                     } else {
                         String title = new LabelBuilder().label(name);

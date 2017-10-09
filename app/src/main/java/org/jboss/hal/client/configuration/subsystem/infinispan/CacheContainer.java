@@ -19,9 +19,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
 
-/**
- * @author Harald Pehl
- */
 class CacheContainer extends NamedNode {
 
     CacheContainer(final Property property) {

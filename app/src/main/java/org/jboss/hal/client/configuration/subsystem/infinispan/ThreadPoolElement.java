@@ -33,8 +33,6 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 /**
  * Element to manage the {@linkplain ThreadPool thread pool} singletons of a cache container. The element contains a
  * fail safe form to update the thread pool resource.
- *
- * @author Harald Pehl
  */
 class ThreadPoolElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 

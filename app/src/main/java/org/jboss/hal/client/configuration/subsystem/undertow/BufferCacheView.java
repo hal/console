@@ -25,9 +25,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "WeakerAccess"})
 public abstract class BufferCacheView extends MbuiViewImpl<BufferCachePresenter> implements BufferCachePresenter.MyView {

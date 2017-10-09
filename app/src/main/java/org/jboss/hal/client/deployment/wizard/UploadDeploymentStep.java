@@ -17,9 +17,6 @@ package org.jboss.hal.client.deployment.wizard;
 
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Harald Pehl
- */
 public class UploadDeploymentStep extends UploadStep {
 
     public UploadDeploymentStep(final Resources resources) {

@@ -22,9 +22,6 @@ import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.server.Server;
 
-/**
- * @author Harald Pehl
- */
 @GenEvent
 public class HostResult {
 

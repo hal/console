@@ -22,9 +22,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
-/**
- * @author Harald Pehl
- */
 class RrdResult {
 
     final Map<ResourceAddress, ResourceDescription> resourceDescriptions;

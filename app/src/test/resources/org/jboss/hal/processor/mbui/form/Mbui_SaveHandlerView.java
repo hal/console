@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
+import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
@@ -39,18 +40,19 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_SaveHandlerView extends SaveHandlerView {
+public final class Mbui_SaveHandlerView extends SaveHandlerView {
 
     private final Metadata metadata0;
-    private final Map<String, HTMLElement> handlebarElements;
+    private final Map<String, HTMLElement> expressionElements;
 
+    @Inject
     @SuppressWarnings("unchecked")
-    Mbui_SaveHandlerView(MbuiContext mbuiContext) {
+    public Mbui_SaveHandlerView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
-        this.handlebarElements = new HashMap<>();
+        this.expressionElements = new HashMap<>();
 
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .onSave((form, changedValues) -> presenter.saveForm(form, changedValues))
@@ -66,7 +68,7 @@ final class Mbui_SaveHandlerView extends SaveHandlerView {
                         .add(form)
                 )
                 .asElement();
-        handlebarElements.put("html0", html0);
+        expressionElements.put("html0", html0);
 
         registerAttachable(form);
 

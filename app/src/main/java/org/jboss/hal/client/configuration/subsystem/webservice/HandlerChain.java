@@ -18,11 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Names;
 
-/**
- * Enum struct for the pre and post handler chains of a webservices configuration.
- *
- * @author Harald Pehl
- */
+/** Enum struct for the pre and post handler chains of a webservices configuration. */
 enum HandlerChain {
 
     PRE_HANDLER_CHAIN(Names.PRE_HANDLER_CHAIN, ModelDescriptionConstants.PRE_HANDLER_CHAIN),

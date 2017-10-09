@@ -19,9 +19,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 
-/**
- * @author Harald Pehl
- */
 abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
 
     private final UploadElement uploadElement;

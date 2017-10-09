@@ -19,6 +19,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -28,6 +29,9 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.core.elytron.CredentialReference;
+import org.jboss.hal.core.elytron.CredentialReference.AlternativeValidation;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
@@ -37,7 +41,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -47,6 +51,7 @@ import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SOCKET_BINDING_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -54,14 +59,13 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 /**
  * Implementation note: Not based on MBUI XML due to special handling of mail servers. Each mail session can define
  * three different servers: SMTP, IMAP and POP3.
- *
- * @author Claudio Miranda
  */
 public class MailSessionView extends HalViewImpl implements MailSessionPresenter.MyView {
 
     private final Form<MailSession> mailSessionForm;
     private final Table<NamedNode> serverTable;
     private final Form<NamedNode> serverForm;
+    private Form<ModelNode> crForm;
 
     private MailSessionPresenter presenter;
 
@@ -70,6 +74,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final TableButtonFactory tableButtonFactory,
+            final CredentialReference cr,
             final Resources resources) {
 
         VerticalNavigation navigation = new VerticalNavigation();
@@ -115,14 +120,27 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .onSave((f, changedValues) -> presenter.saveServer(f.getModel().getName(), changedValues))
                 .prepareReset(f -> presenter.resetServer(f.getModel().getName(), f))
                 .build();
+        serverForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> crForm.getModel(), resources));
         serverForm.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
         registerAttachable(serverForm);
 
+        crForm = cr.form(Ids.MAIL_SERVER, serverMetadata, PASSWORD,
+                () -> serverForm.<String>getFormItem(PASSWORD).getValue(),
+                () -> presenter.credentialReferenceTemplate(
+                        serverTable.hasSelection() ? serverTable.selectedRow().getName() : null),
+                () -> presenter.reload());
+        registerAttachable(crForm);
+
+        Tabs serverTabs = new Tabs();
+        serverTabs.add(Ids.build(Ids.MAIL_SERVER, SERVER, Ids.TAB_SUFFIX), resources.constants().attributes(),
+                serverForm.asElement());
+        serverTabs.add(Ids.build(Ids.MAIL_SERVER, CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX), Names.CREDENTIAL_REFERENCE,
+                crForm.asElement());
+
         mailSessionElement = section()
                 .add(p().textContent(serverMetadata.getDescription().getDescription()))
-                .add(serverTable.asElement())
-                .add(serverForm.asElement())
+                .addAll(serverTable, serverTabs)
                 .asElement();
         navigation.addPrimary(Ids.MAIL_SERVER_ENTRY, Names.SERVER, pfIcon("server"), mailSessionElement);
 
@@ -130,7 +148,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         // main layout
         initElement(row()
                 .add(column()
-                        .add(header().textContent(Names.MAIL_SESSION))
+                        .add(h(1).textContent(Names.MAIL_SESSION))
                         .addAll(navigation.panes())));
     }
 
@@ -139,6 +157,13 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     public void attach() {
         super.attach();
         serverTable.bindForm(serverForm);
+        serverTable.onSelectionChange(table -> {
+            if (table.hasSelection()) {
+                crForm.view(failSafeGet(table.selectedRow(), CREDENTIAL_REFERENCE));
+            } else {
+                crForm.clear();
+            }
+        });
     }
 
     @Override
@@ -153,8 +178,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
 
         List<NamedNode> servers = asNamedNodes(failSafePropertyList(mailSession, SERVER));
         serverForm.clear();
+        crForm.clear();
         serverTable.update(servers);
-        serverTable.enableButton(0,servers.size() != 3);
+        serverTable.enableButton(0, servers.size() != 3);
     }
 
     @Override

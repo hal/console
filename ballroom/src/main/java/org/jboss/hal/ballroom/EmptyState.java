@@ -44,7 +44,6 @@ import static org.jboss.hal.resources.CSS.*;
  * attributes. Please make sure to call {@link ElementGuard#processElements(AuthorisationDecision,
  * String)} when the empty state element is added to the DOM.
  *
- * @author Harald Pehl
  * @see <a href="http://www.patternfly.org/pattern-library/communication/empty-state/">http://www.patternfly.org/pattern-library/communication/empty-state/</a>
  */
 public class EmptyState implements IsElement<HTMLElement> {
@@ -181,12 +180,14 @@ public class EmptyState implements IsElement<HTMLElement> {
     }
 
     public void setHeader(String header) {
-        this.header.textContent =header;
+        this.header.textContent = header;
     }
 
     public void setDescription(SafeHtml description) {
         Elements.removeChildrenFrom(paragraphsDiv);
-        paragraphsDiv.appendChild(p().innerHtml(description).asElement());
+        if (description != null) {
+            paragraphsDiv.appendChild(p().innerHtml(description).asElement());
+        }
     }
 
     public void setPrimaryAction(String title, Callback callback) {
@@ -197,6 +198,10 @@ public class EmptyState implements IsElement<HTMLElement> {
                 .asElement();
         primaryActionDiv.appendChild(element);
         Elements.setVisible(primaryActionDiv, true);
+    }
+
+    public void showPrimaryAction(boolean visible) {
+        Elements.setVisible(primaryActionDiv, visible);
     }
 
     @Override

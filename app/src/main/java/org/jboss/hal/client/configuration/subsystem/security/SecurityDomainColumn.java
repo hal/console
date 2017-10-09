@@ -31,6 +31,7 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
@@ -42,9 +43,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.SECURITY_DOMAIN)
 @Requires(SECURITY_DOMAIN_ADDRESS)
 public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
@@ -54,6 +52,7 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final CrudOperations crud,
+            final Resources resources,
             final Places places) {
 
         super(new FinderColumn.Builder<SecurityDomain>(finder, Ids.SECURITY_DOMAIN, Names.SECURITY_DOMAIN)
@@ -74,6 +73,7 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                         }))
 
                 .withFilter()
+                .filterDescription(resources.messages().securityDomainColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview(SecurityDomainPreview::new)
         );

@@ -32,8 +32,6 @@ import org.jboss.hal.resources.Resources;
 /**
  * Presenter which uses the {@link org.jboss.hal.core.modelbrowser.ModelBrowser} to view and modify the management
  * model.
- *
- * @author Harald Pehl
  */
 public class ModelBrowserPresenter
         extends ApplicationPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy>

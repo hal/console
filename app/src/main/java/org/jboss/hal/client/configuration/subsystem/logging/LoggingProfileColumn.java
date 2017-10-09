@@ -47,9 +47,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.LOGGING_PROFILE)
 @Requires(LOGGING_PROFILE_ADDRESS)
 public class LoggingProfileColumn extends FinderColumn<NamedNode> {

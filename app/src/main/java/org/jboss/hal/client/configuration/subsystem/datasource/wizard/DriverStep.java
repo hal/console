@@ -22,6 +22,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -33,16 +34,11 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class DriverStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<JdbcDriver> form;
 
-    DriverStep(final List<JdbcDriver> drivers,
-            final Metadata metadata,
-            final Resources resources) {
+    DriverStep(List<JdbcDriver> drivers, Metadata metadata, Resources resources) {
 
         super(resources.constants().jdbcDriver());
         Map<String, JdbcDriver> driversByName = Maps.uniqueIndex(drivers, JdbcDriver::getName);
@@ -55,11 +51,15 @@ class DriverStep extends WizardStep<Context, State> {
         if (!driversByName.isEmpty()) {
             form.getFormItem(DRIVER_NAME)
                     .registerSuggestHandler(new StaticAutoComplete(new ArrayList<>(driversByName.keySet())));
+            form.getFormItem(DRIVER_NAME)
+                    .addValidationHandler(value ->
+                        driversByName.keySet().contains(value) ? ValidationResult.OK : ValidationResult.invalid("Invalid driver name")
+                    );
         }
         registerAttachable(form);
     }
 
-    private Metadata adjustMetadata(final Metadata metadata) {
+    private Metadata adjustMetadata(Metadata metadata) {
         ModelNode newAttributes = new ModelNode();
         for (Property property : metadata.getDescription().get(ATTRIBUTES).asPropertyList()) {
             ModelNode value = property.getValue().clone();
@@ -79,12 +79,12 @@ class DriverStep extends WizardStep<Context, State> {
     }
 
     @Override
-    protected void onShow(final Context context) {
+    protected void onShow(Context context) {
         form.edit(context.driver);
     }
 
     @Override
-    protected boolean onNext(final Context context) {
+    protected boolean onNext(Context context) {
         boolean valid = form.save();
         if (valid) {
             JdbcDriver driver = form.getModel();
@@ -95,5 +95,17 @@ class DriverStep extends WizardStep<Context, State> {
             }
         }
         return valid;
+    }
+
+    @Override
+    protected boolean onBack(Context context) {
+        form.cancel();
+        return true;
+    }
+
+    @Override
+    protected boolean onCancel(Context context) {
+        form.cancel();
+        return true;
     }
 }

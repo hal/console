@@ -16,42 +16,26 @@
 package org.jboss.hal.client.runtime.subsystem.jpa;
 
 import org.jboss.hal.core.Strings;
+import org.jboss.hal.core.deployment.DeploymentResource;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.resources.Names;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
-/**
- * @author Harald Pehl
- */
-class JpaStatistic extends NamedNode {
+class JpaStatistic extends DeploymentResource {
 
-    private final ResourceAddress address;
-    private final String deployment;
+    private final String persistenceUnit;
 
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     JpaStatistic(final ResourceAddress address, final ModelNode node) {
-        super(Strings.substringAfterLast(node.get("hibernate-persistence-unit").asString(), "#"), node);
-        this.address = address;
-        this.deployment = address.asPropertyList().stream()
-                .filter(property -> DEPLOYMENT.equals(property.getName()))
-                .findAny()
-                .map((property) -> property.getValue().asString())
-                .orElse(Names.NOT_AVAILABLE);
+        super(address, node);
+        this.persistenceUnit = Strings.substringAfterLast(address.lastValue(), "#");
     }
 
     boolean isStatisticsEnabled() {
         return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean();
     }
 
-    public String getDeployment() {
-        return deployment;
-    }
-
-    ResourceAddress getAddress() {
-        return address;
+    public String getPersistenceUnit() {
+        return persistenceUnit;
     }
 }

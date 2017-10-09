@@ -43,8 +43,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
  *   }
  * }
  * </pre>
- *
- * @author Harald Pehl
  */
 class FileFormItem extends CompositeFormItem {
 

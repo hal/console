@@ -27,6 +27,9 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.core.elytron.CredentialReference;
+import org.jboss.hal.core.elytron.CredentialReference.AlternativeValidation;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Constants;
@@ -36,7 +39,7 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -46,12 +49,9 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.NON_XA;
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.XA;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * TODO Add support for nested 'connection-properties' (non-xa) and 'xa-datasource-properties' (xa)
- *
- * @author Harald Pehl
- */
+/** TODO Add support for nested 'connection-properties' (non-xa) and 'xa-datasource-properties' (xa) */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
@@ -120,6 +120,9 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 new Attribute("recovery-plugin-properties", XA)
         ));
 
+        // credential reference is added as a marker key and not part of the grouped form!
+        attributes.put(CREDENTIAL_REFERENCE, null);
+
         // validation
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.validation(), asList(
@@ -161,15 +164,18 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     private final Resources resources;
-    private final Form<DataSource> nonXaForm;
-    private final Form<DataSource> xaForm;
     private final HTMLElement header;
     private final HTMLElement nonXaInfo;
     private final HTMLElement xaInfo;
+    private Form<DataSource> nonXaForm;
+    private Form<ModelNode> nonXaCrForm;
+    private Form<DataSource> xaForm;
+    private Form<ModelNode> xaCrForm;
     private DataSourcePresenter presenter;
 
     @Inject
-    public DataSourceView(MetadataRegistry metadataRegistry, Resources resources) {
+    public DataSourceView(MetadataRegistry metadataRegistry, CredentialReference credentialReference,
+            Resources resources) {
         this.resources = resources;
 
         Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(changedValues);
@@ -188,36 +194,62 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 xaMeta).onSave(saveCallback);
 
         for (String group : attributes.keySet()) {
-            String groupId = Ids.asId(group);
-            List<Attribute> groupAttributes = attributes.get(group);
+            String nonXaId = Ids.build(Ids.DATA_SOURCE_CONFIGURATION, group);
+            String xaId = Ids.build(Ids.XA_DATA_SOURCE, group);
 
-            // non xa form and tab
-            List<String> nonXaNames = groupAttributes.stream()
-                    .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
-                    .map(attribute -> attribute.name)
-                    .collect(toList());
-            nonXaFormBuilder.customGroup(groupId, group)
-                    .include(nonXaNames)
-                    .end();
+            if (CREDENTIAL_REFERENCE.equals(group)) {
+                nonXaCrForm = credentialReference.form(nonXaId, nonXaMeta, PASSWORD,
+                        () -> nonXaForm.<String>getFormItem(PASSWORD).getValue(),
+                        () -> presenter.resourceAddress(),
+                        () -> presenter.reload());
+                registerAttachable(nonXaCrForm);
+                nonXaFormBuilder.customGroup(nonXaId, Names.CREDENTIAL_REFERENCE)
+                        .add(nonXaCrForm)
+                        .end();
 
-            // xa form and tab
-            List<String> xaNames = groupAttributes.stream()
-                    .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
-                    .map(attribute -> attribute.name)
-                    .collect(toList());
-            xaFormBuilder.customGroup(groupId, group)
-                    .include(xaNames)
-                    .end();
+                xaCrForm = credentialReference.form(Ids.XA_DATA_SOURCE, xaMeta, PASSWORD,
+                        () -> xaForm.<String>getFormItem(PASSWORD).getValue(),
+                        () -> presenter.resourceAddress(),
+                        () -> presenter.reload());
+                registerAttachable(xaCrForm);
+                xaFormBuilder.customGroup(xaId, Names.CREDENTIAL_REFERENCE)
+                        .add(xaCrForm)
+                        .end();
+
+            } else {
+                List<Attribute> groupAttributes = attributes.get(group);
+
+                // non xa form and tab
+                List<String> nonXaNames = groupAttributes.stream()
+                        .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
+                        .map(attribute -> attribute.name)
+                        .collect(toList());
+                nonXaFormBuilder.customGroup(nonXaId, group)
+                        .include(nonXaNames)
+                        .end();
+
+                // xa form and tab
+                List<String> xaNames = groupAttributes.stream()
+                        .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
+                        .map(attribute -> attribute.name)
+                        .collect(toList());
+                xaFormBuilder.customGroup(xaId, group)
+                        .include(xaNames)
+                        .end();
+
+            }
         }
 
         nonXaForm = nonXaFormBuilder.build();
+        nonXaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> nonXaCrForm.getModel(), resources));
         xaForm = xaFormBuilder.build();
+        xaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> xaCrForm.getModel(), resources));
         registerAttachable(nonXaForm);
         registerAttachable(xaForm);
 
         initElement(row()
                 .add(column()
-                        .add(header = header().textContent(Names.DATASOURCE).asElement())
+                        .add(header = h(1).textContent(Names.DATASOURCE).asElement())
                         .add(nonXaInfo)
                         .add(xaInfo)
                         .add(nonXaForm)
@@ -236,9 +268,15 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         if (xa) {
             header.textContent = Names.XA_DATASOURCE;
             xaForm.clear();
+            if (xaCrForm != null) {
+                xaCrForm.clear();
+            }
         } else {
             header.textContent = Names.DATASOURCE;
             nonXaForm.clear();
+            if (nonXaCrForm != null) {
+                nonXaCrForm.clear();
+            }
         }
     }
 
@@ -258,8 +296,14 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 .toSafeHtml().asString();
         if (dataSource.isXa()) {
             xaForm.view(dataSource);
+            if (xaCrForm != null) {
+                xaCrForm.view(failSafeGet(dataSource, CREDENTIAL_REFERENCE));
+            }
         } else {
             nonXaForm.view(dataSource);
+            if (nonXaCrForm != null) {
+                nonXaCrForm.view(failSafeGet(dataSource, CREDENTIAL_REFERENCE));
+            }
         }
     }
 

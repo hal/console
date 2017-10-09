@@ -11,9 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Harald Pehl
- */
 public class ExistingStateMachineTest {
 
     private StateMachine stateMachineWithReset;

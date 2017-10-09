@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
-/**
- * @author Harald Pehl
- */
 public class SwitchBridge {
 
     @JsFunction
@@ -39,10 +36,10 @@ public class SwitchBridge {
 
 
     @JsType(isNative = true)
-    public static class Bridge {
+    public static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge element(HTMLInputElement element);
+        public native static Api element(HTMLInputElement element);
 
         public native boolean bootstrapSwitch(String method);
 

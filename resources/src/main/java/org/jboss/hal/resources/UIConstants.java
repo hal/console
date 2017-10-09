@@ -15,26 +15,19 @@
  */
 package org.jboss.hal.resources;
 
-/**
- * UI related constants used in more than one place.
- *
- * @author Harald Pehl
- */
+/** UI related constants used in more than one place. */
 public interface UIConstants {
 
-    /**
-     * The time in milliseconds after one modal dialog is closed and the next one is shown.
-     */
+    /** The time in milliseconds after one modal dialog is closed and the next one is shown. */
     double SHORT_TIMEOUT = 111;
 
-    /**
-     * The timeout for long running operations / actions before some kind of loading indicator is shown
-     */
+    /** The timeout for long running operations / actions before some kind of loading indicator is shown */
     double MEDIUM_TIMEOUT = 333;
 
-    /**
-     * The timeout until a non-sticky message is hidden
-     */
+    /** The default polling interval used for {@code setInterval()} */
+    double POLLING_INTERVAL = 3333;
+
+    /** The timeout until a non-sticky message is hidden */
     double MESSAGE_TIMEOUT = 6000; // ms
 
     long RELOAD_MESSAGE_ID = 5102007;
@@ -52,6 +45,7 @@ public interface UIConstants {
     String CONTAINER = "container";
     String CONTROLS = "controls";
     String DIALOG = "dialog";
+    String DISABLED = "disables";
     String DISMISS = "dismiss";
     String DROPDOWN = "dropdown";
     String DOWNLOAD = "download";
@@ -60,9 +54,10 @@ public interface UIConstants {
     String FOR = "for";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
+    String HEIGHT = "height";
+    String HIDDEN = "hidden";
     String HIDDEN_MODAL = "hidden.bs.modal";
     String HREF = "href";
-    String HIDDEN = "hidden";
     String LABEL = "label";
     String LABELLED_BY = "labelledby";
     String MENU = "menu";
@@ -76,17 +71,20 @@ public interface UIConstants {
     String PROGRESSBAR = "progressbar";
     String READONLY = "readonly";
     String ROLE = "role";
+    String SELECTED = "selected";
+    String SEPARATOR = "separator";
     String SHOWN_MODAL = "shown.bs.modal";
     String TAB = "tab";
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";
     String TARGET = "target";
+    String TITLE = "title";
     String TOGGLE = "toggle";
     String TOP = "top";
     String TOOLTIP = "tooltip";
     String TRUE = "true";
     String VALUE = "value";
-
+    String WIDTH = "width";
 
     static String data(String name) {
         return "data-" + name; //NON-NLS

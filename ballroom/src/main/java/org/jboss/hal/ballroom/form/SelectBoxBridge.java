@@ -17,7 +17,6 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.List;
 
-import elemental2.core.Array;
 import elemental2.dom.Event;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
@@ -27,15 +26,11 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
+import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.ballroom.JsHelper.asJsArray;
-import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-/**
- * @author Harald Pehl
- */
 public class SelectBoxBridge {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
@@ -107,11 +102,11 @@ public class SelectBoxBridge {
         @JsMethod(namespace = GLOBAL, name = "$")
         public native static Multi element(HTMLElement element);
 
-        public native Array<String> val();
+        public native String[] val();
 
         public native void selectpicker(String method);
 
-        public native void selectpicker(String method, Array<String> param);
+        public native void selectpicker(String method, String[] param);
 
         public native void on(@NonNls String event, ChangeListener listener);
 
@@ -132,7 +127,7 @@ public class SelectBoxBridge {
 
         @JsOverlay
         public final void setValue(List<String> value) {
-            selectpicker(VAL, asJsArray(value));
+            selectpicker(VAL, value.toArray(new String[value.size()]));
         }
 
         @JsOverlay

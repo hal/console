@@ -16,21 +16,18 @@
 package org.jboss.hal.client.bootstrap;
 
 import com.google.gwt.core.client.GWT;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.hal.resources.CSS.loading;
 import static org.jboss.hal.resources.CSS.loadingContainer;
 import static org.jboss.hal.resources.CSS.spinner;
 
-/**
- * @author Harald Pehl
- */
 public class LoadingPanel implements IsElement {
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);
@@ -39,7 +36,7 @@ public class LoadingPanel implements IsElement {
         if (instance == null) {
             instance = new LoadingPanel();
             instance.off();
-            DomGlobal.document.body.appendChild(instance.asElement());
+            document.body.appendChild(instance.asElement());
         }
         return instance;
     }

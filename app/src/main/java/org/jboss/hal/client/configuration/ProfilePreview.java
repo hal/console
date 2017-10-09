@@ -39,9 +39,6 @@ import static java.util.stream.Collectors.joining;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class ProfilePreview extends PreviewContent<NamedNode> {
 
     private final Dispatcher dispatcher;

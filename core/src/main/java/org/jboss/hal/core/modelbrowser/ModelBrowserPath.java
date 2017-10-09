@@ -23,9 +23,6 @@ import java.util.List;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.resources.Ids;
 
-/**
- * @author Harald Pehl
- */
 public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
 
     public static final Segment WILDCARD = new Segment(null, "*");
@@ -53,7 +50,7 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
         List<Node<Context>> nodes = new ArrayList<>();
         while (current != null && !Ids.MODEL_BROWSER_ROOT.equals(current.id)) {
             nodes.add(current);
-            current = modelBrowser.tree.api().getNode(current.parent);
+            current = modelBrowser.tree.getNode(current.parent);
         }
         Collections.reverse(nodes);
 

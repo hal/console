@@ -30,9 +30,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_DEFAULT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
 
-/**
- * @author Harald Pehl
- */
 class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
     ServerGroupPreview(final ServerGroup serverGroup, Places places) {

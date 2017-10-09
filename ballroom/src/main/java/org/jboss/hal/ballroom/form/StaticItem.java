@@ -24,9 +24,6 @@ import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
-/**
- * @author Harald Pehl
- */
 public class StaticItem extends AbstractFormItem<String> {
 
     private static class StaticAppearance extends ReadOnlyAppearance<String> {

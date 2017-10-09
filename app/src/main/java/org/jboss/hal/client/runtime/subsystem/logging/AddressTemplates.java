@@ -17,9 +17,6 @@ package org.jboss.hal.client.runtime.subsystem.logging;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String LOGGING_SUBSYSTEM_ADDRESS = "/{selected.host}/{selected.server}/subsystem=logging";

@@ -19,9 +19,6 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-/**
- * @author Harald Pehl
- */
 enum Table {
 
     BINARY(Ids.CACHE_STORE_BINARY_TABLE, Names.BINARY_TABLE, ModelDescriptionConstants.BINARY),

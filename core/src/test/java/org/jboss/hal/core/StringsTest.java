@@ -20,9 +20,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public class StringsTest {
 
@@ -61,6 +58,13 @@ public class StringsTest {
     }
 
     @Test
+    public void abbreviateFqClassname() throws Exception {
+        assertEquals("c.a.main", Strings.abbreviateFqClassName("com.acme.main"));
+        assertEquals("c.a.main.Main", Strings.abbreviateFqClassName("com.acme.main.Main"));
+        assertEquals("c.a.l.p.foo.Bar", Strings.abbreviateFqClassName("com.acme.longer.package.foo.Bar"));
+    }
+
+    @Test
     public void substringAfterLast() throws Exception {
         assertNull(Strings.substringAfterLast(null, "/"));
         assertEquals("", Strings.substringAfterLast("", "/"));
@@ -72,7 +76,7 @@ public class StringsTest {
     public void getParent() throws Exception {
         assertNull(Strings.getParent(null));
         assertEquals("", Strings.getParent(""));
-        assertEquals("a", Strings.getParent("a"));
+        assertNull(Strings.getParent("a"));
         assertEquals("/", Strings.getParent("/"));
         assertEquals("/", Strings.getParent("/a"));
         assertEquals("/a", Strings.getParent("/a/b"));

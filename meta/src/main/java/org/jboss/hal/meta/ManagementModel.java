@@ -22,11 +22,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MAJOR_VERSI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MICRO_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MINOR_VERSION;
 
-/**
- * Static code related to management model versions and support for various operations and attributes
- *
- * @author Harald Pehl
- */
+/** Static code related to management model versions and support for various operations and attributes */
 public class ManagementModel {
 
     private static final Version V_2_0_0 = Version.forIntegers(2, 0, 0); // WildFly 8
@@ -55,6 +51,17 @@ public class ManagementModel {
      * equal {@code 5.0.0}
      */
     public static boolean supportsCapabilitiesRegistry(Version version) {
+        return ensureVersion(version, V_5_0_0);
+    }
+
+    /**
+     * Checks support for configuration changes as defined
+     * by {@code {selected.host}/subsystem=core-management/service=configuration-changes}.
+     *
+     * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
+     * equal {@code 5.0.0}
+     */
+    public static boolean supportsConfigurationChanges(Version version) {
         return ensureVersion(version, V_5_0_0);
     }
 

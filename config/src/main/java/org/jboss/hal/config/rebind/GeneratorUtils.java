@@ -15,15 +15,12 @@
  */
 package org.jboss.hal.config.rebind;
 
+import java.util.List;
+
 import com.google.gwt.core.ext.BadPropertyValueException;
 import com.google.gwt.core.ext.ConfigurationProperty;
 import com.google.gwt.core.ext.PropertyOracle;
 
-import java.util.List;
-
-/**
- * @author Harald Pehl
- */
 final class GeneratorUtils {
 
     private GeneratorUtils() {

@@ -19,8 +19,6 @@ import org.jboss.hal.dmr.Property;
 
 /**
  * Provider to create form items based on attributes descriptions from a {@link org.jboss.hal.meta.description.ResourceDescription}.
- *
- * @author Harald Pehl
  */
 @FunctionalInterface
 public interface FormItemProvider<T> {

@@ -33,9 +33,6 @@ import org.jboss.hal.spi.Column;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.CONFIGURATION)
 public class ConfigurationColumn extends StaticItemColumn {
 
@@ -49,7 +46,7 @@ public class ConfigurationColumn extends StaticItemColumn {
             List<StaticItem> items = new ArrayList<>();
             if (environment.isStandalone()) {
                 items.add(new StaticItem.Builder(Names.SUBSYSTEMS)
-                        .nextColumn(Ids.SUBSYSTEM)
+                        .nextColumn(Ids.CONFIGURATION_SUBSYSTEM)
                         .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().configurationSubsystems()))
                         .build());
 

@@ -18,7 +18,7 @@
 <view>
     <metadata address="/{selected.profile}/subsystem=messaging-activemq">
         <h1>Messaging Configuration</h1>
-        <p>{{metadata.getDescription().getDescription()}}</p>
+        <p>${metadata.getDescription().getDescription()}</p>
         <form id="messaging-global-settings-form" title="Messaging Configuration" auto-save="true" reset="true">
             <attributes>
                 <attribute name="global-client-scheduled-thread-pool-max-size"/>

@@ -27,10 +27,7 @@ import com.gwtplatform.mvp.client.Presenter;
  *     super.onBind();
  *     getView().setPresenter(this);
  * }
- *
  * </pre>
- *
- * @author Harald Pehl
  */
 public interface HasPresenter<P> {
 

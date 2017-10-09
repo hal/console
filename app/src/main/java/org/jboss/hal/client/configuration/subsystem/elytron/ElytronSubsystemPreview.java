@@ -24,9 +24,6 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Claudio Miranda
- */
 class ElytronSubsystemPreview extends PreviewContent<StaticItem> {
 
     private final CrudOperations crud;
@@ -38,14 +35,17 @@ class ElytronSubsystemPreview extends PreviewContent<StaticItem> {
         this.crud = crud;
         this.attributes = new PreviewAttributes<>(new ModelNode(),
                 asList("default-authentication-context",
+                        "disallowed-providers",
                         "initial-providers",
-                        "final-providers"));
+                        "final-providers",
+                        "security-properties"
+                ));
 
         previewBuilder().addAll(attributes);
     }
 
     @Override
     public void update(final StaticItem item) {
-        crud.read(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, attributes::refresh);
+        crud.read(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, attributes::refresh);
     }
 }

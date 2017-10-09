@@ -19,9 +19,6 @@ import com.google.testing.compile.Compilation;
 import org.jboss.hal.processor.mbui.MbuiViewProcessorTest;
 import org.junit.Test;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public class MasterDetailTest extends MbuiViewProcessorTest {
 

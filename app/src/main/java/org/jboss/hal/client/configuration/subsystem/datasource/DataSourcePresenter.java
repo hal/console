@@ -16,7 +16,6 @@
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import java.util.Map;
-import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -25,7 +24,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
@@ -44,8 +42,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
@@ -53,11 +49,7 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * Presenter which is used for both XA and normal data sources.
- *
- * @author Harald Pehl
- */
+/** Presenter which is used for both XA and normal data sources. */
 public class DataSourcePresenter
         extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy>
         implements SupportsExpertMode {
@@ -128,7 +120,7 @@ public class DataSourcePresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(DATASOURCES)
+        return finderPathFactory.configurationSubsystemPath(DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
                 .append(Ids.DATA_SOURCE_CONFIGURATION, Ids.dataSourceConfiguration(name, xa), Names.DATASOURCE, name);
     }
@@ -143,10 +135,7 @@ public class DataSourcePresenter
     }
 
     void resetDataSource(final Form<DataSource> form) {
-        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
-                .map(FormItem::getName)
-                .collect(toSet());
-        crud.reset(type(), name, resourceAddress(), attributes, metadata(), this::reload);
+        crud.reset(type(), name, resourceAddress(), form, metadata(), this::reload);
     }
 
     private String type() {

@@ -24,9 +24,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PERSISTENT_SESSIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSION_COOKIE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 enum ServletContainerSetting {
 
     COOKIE(Ids.UNDERTOW_SERVLET_CONTAINER_COOKIE, Names.COOKIES, SESSION_COOKIE, fontAwesome("birthday-cake")),

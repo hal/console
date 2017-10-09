@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.config;
 
-/**
- * Enum for the operation mode.
- *
- * @author Harald Pehl
- */
+/** Enum for the operation mode. */
 public enum OperationMode {
 
     SELF_CONTAINED, // WildFly Swarm

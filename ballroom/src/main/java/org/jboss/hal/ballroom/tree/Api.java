@@ -15,54 +15,40 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental2.core.Array;
 import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
 
-/**
- * @author Harald Pehl
- */
 @JsType(isNative = true)
-public class Api<T> {
-
-    @JsMethod(name = "close_node")
-    public native void closeNode(String id);
-
-    @JsMethod(name = "open_node")
-    public native void openNode(String id);
-
-    @JsMethod(name = "open_node")
-    public native void openNode(String id, JsCallback callback);
-
-    @JsMethod(name = "refresh_node")
-    public native void refreshNode(String id);
-
-    @JsMethod(name = "get_node")
-    public native Node<T> getNode(String id);
+class Api<T> {
 
     @JsMethod
-    public native Array<Node<T>> get_selected(boolean full);
-
-    @JsOverlay
-    public final Node<T> getSelected() {
-        Array<Node<T>> selected = get_selected(true);
-        return selected.getLength() == 0 ? null : selected.getAt(0);
-    }
-
-    @JsMethod(name = "select_node")
-    public native void selectNode(String id, boolean suppressEvent, boolean preventOpen);
-
-    @JsMethod(name = "deselect_all")
-    public native void deselectAll(boolean suppressEvent);
+    native void close_node(String id);
 
     @JsMethod
-    public native void search(String query);
-
-    @JsMethod(name = "clear_search")
-    public native void clearSearch();
+    native void deselect_all(boolean suppressEvent);
 
     @JsMethod
-    public native void destroy(boolean keepHtml);
+    native Node<T>[] get_selected(boolean full);
+
+    @JsMethod
+    native void select_node(String id, boolean suppressEvent, boolean preventOpen);
+
+    @JsMethod
+    native Node<T> get_node(String id);
+
+    @JsMethod
+    native void open_node(String id, JsCallback callback);
+
+    @JsMethod
+    native void refresh_node(String id);
+
+    @JsMethod
+    native void search(String query);
+
+    @JsMethod
+    native void clear_search();
+
+    @JsMethod
+    native void destroy(boolean keepHtml);
 }

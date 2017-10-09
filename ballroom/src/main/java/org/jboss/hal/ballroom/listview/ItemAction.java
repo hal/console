@@ -15,18 +15,32 @@
  */
 package org.jboss.hal.ballroom.listview;
 
-/**
- * @author Harald Pehl
- */
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
+
 public class ItemAction<T> {
 
     final String id;
     final String title;
+    final Constraints constraints;
     final ItemActionHandler<T> handler;
 
-    public ItemAction(final String id, final String title, final ItemActionHandler<T> handler) {
+    public ItemAction(String id, String title, ItemActionHandler<T> handler) {
+        this(id, title, Constraints.empty(), handler);
+    }
+
+    public ItemAction(String id, String title, Constraint constraint, ItemActionHandler<T> handler) {
+        this(id, title, Constraints.single(constraint), handler);
+    }
+
+    public ItemAction(String id, String title, Constraints constraints, ItemActionHandler<T> handler) {
         this.id = id;
         this.title = title;
+        this.constraints = constraints;
         this.handler = handler;
+    }
+
+    public Constraints getConstraints() {
+        return constraints;
     }
 }

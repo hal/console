@@ -15,13 +15,18 @@
  */
 package org.jboss.hal.ballroom.editor;
 
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
-/**
- * @author Harald Pehl
- */
 @JsType(isNative = true)
 public class Session {
+
+    @JsFunction
+    @FunctionalInterface
+    public interface OnChange {
+
+        void onChange(Object delta);
+    }
 
     public native void setValue(String value);
 
@@ -30,4 +35,6 @@ public class Session {
     public native String getValue();
 
     public native int getLength();
+
+    public native void on(String event, OnChange onChange);
 }

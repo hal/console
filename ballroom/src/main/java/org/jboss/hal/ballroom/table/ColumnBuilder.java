@@ -19,8 +19,6 @@ package org.jboss.hal.ballroom.table;
  * Builder for a {@link Column}.
  *
  * @param <T> the row type
- *
- * @author Harald Pehl
  */
 public class ColumnBuilder<T> {
 

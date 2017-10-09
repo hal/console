@@ -17,9 +17,6 @@ package org.jboss.hal.ballroom.form;
 
 import org.jboss.hal.dmr.ModelNode;
 
-/**
- * @author Harald Pehl
- */
 public class DefaultMapping<T> implements DataMapping<T> {
 
     @Override

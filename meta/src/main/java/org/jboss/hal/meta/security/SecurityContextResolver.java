@@ -17,11 +17,7 @@ package org.jboss.hal.meta.security;
 
 import java.util.Optional;
 
-/**
- * Function to resolve a {@link SecurityContext} from a {@link Constraint}.
- *
- * @author Harald Pehl
- */
+/** Function to resolve a {@link SecurityContext} from a {@link Constraint}. */
 @FunctionalInterface
 public interface SecurityContextResolver {
 

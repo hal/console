@@ -17,28 +17,28 @@ package org.jboss.hal.ballroom;
 
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.SelectBoxBridge;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 import static org.jboss.hal.resources.CSS.selectpicker;
 
-@JsType(isNative = true)
+@JsType(namespace = GLOBAL, name = "patternfly", isNative = true)
 public class PatternFly {
 
-    /**
-     * Same as {@code initComponents(false, null)}
-     */
+    @JsProperty(name = "pfPaletteColors")
+    public static Colors colors;
+
+    /** Same as {@code initComponents(false, null)} */
     @JsOverlay
     public static void initComponents() {
         init(null);
     }
 
-    /**
-     * Same as {@code initComponents(false, parent)}
-     */
+    /** Same as {@code initComponents(false, parent)} */
     @JsOverlay
     public static void initComponents(final String parent) {
         init(parent);
@@ -57,13 +57,6 @@ public class PatternFly {
         }
     }
 
-    @JsMethod(namespace = GLOBAL)
-    public native static PatternFly $(@NonNls String selector);
-
-    @JsMethod(namespace = GLOBAL)
+    @JsMethod(namespace = "PR")
     public native static void prettyPrint();
-
-    public native void bootstrapSwitch();
-
-    public native void selectpicker(SelectBoxBridge.Options options);
 }

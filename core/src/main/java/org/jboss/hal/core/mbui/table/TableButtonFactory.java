@@ -34,9 +34,6 @@ import org.jboss.hal.spi.Callback;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
-/**
- * @author Harald Pehl
- */
 public class TableButtonFactory {
 
     private final CrudOperations crud;

@@ -1,8 +1,17 @@
-<p>The JGroups subsystem provides group communication support for HA services in the form of JGroups channels.</p>
-<p>Named channel instances permit application peers in a cluster to communicate as a group and in such a way that the communication satisfies defined properties (e.g. reliable, ordered, failure-sensitive). Communication properties are configurable for each channel and are defined by the protocol stack used to create the channel. Protocol stacks consist of a base transport layer (used to transport messages around the cluster) together with a user-defined, ordered stack of protocol layers, where each protocol layer supports a given communication property.</p>
-<p>The JGroups subsystem provides the following features:</p>
-<ul>
-    <li>Allows definition of named protocol stacks.</li>
-    <li>Specify a default stack for general use.</li>
-</ul>
-<p>JGroups channels are created transparently as part of the clustering functionality (e.g. on clustered application deployment, channels will be created behind the scenes to support clustered features such as session replication or transmission of SSO contexts around the cluster).</p>
+<p>JGroups is a toolkit for reliable messaging and can be used to create clusters whose nodes can send messages to each other.</p>
+<p>The
+    <code>jgroups</code> subsystem provides group communication support for high availability services in JBoss EAP. It allows you to configure named channels and protocol stacks as well as view runtime statistics for channels. The
+    <code>jgroups</code> subsystem is available when using a configuration that provides high availability capabilities, such as the
+    <i>ha</i> or <i>full-ha</i> profile in a managed domain, or the <code>standalone-ha.xml</code> or
+    <code>standalone-full-ha.xml</code> configuration file for a standalone server.</p>
+<p>JBoss EAP is preconfigured with two JGroups stacks:</p>
+<dl>
+    <dt>udp</dt>
+    <dd>The nodes in the cluster use User Datagram Protocol (UDP) multicasting to communicate with each other. This is the default stack.</dd>
+    <dt>tcp</dt>
+    <dd>The nodes in the cluster use Transmission Control Protocol (TCP) to communicate with each other.</dd>
+</dl>
+<p>You can use the preconfigured stacks or define your own to suit your system’s specific requirements.</p>
+<p><strong>Note:</strong><br/>
+    TCP has more overhead and is often considered slower than UDP since it handles error checking, packet ordering, and congestion control itself. JGroups handles these features for UDP, whereas TCP guarantees them itself. TCP is a good choice when using JGroups on unreliable or high congestion networks, or when multicast is not available.
+</p>

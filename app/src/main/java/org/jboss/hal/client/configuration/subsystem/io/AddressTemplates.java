@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.io;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     String IO_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=io";

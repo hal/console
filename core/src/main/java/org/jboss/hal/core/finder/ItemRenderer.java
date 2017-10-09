@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.core.finder;
 
-/**
- * Function which turns an item into an {@link ItemDisplay}.
- *
- * @author Harald Pehl
- */
+/** Function which turns an item into an {@link ItemDisplay}. */
 @FunctionalInterface
 public interface ItemRenderer<T> {
 

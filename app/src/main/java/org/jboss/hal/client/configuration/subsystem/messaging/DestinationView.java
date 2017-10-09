@@ -44,9 +44,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>

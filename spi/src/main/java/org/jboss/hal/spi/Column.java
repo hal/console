@@ -22,11 +22,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * Triggers registration for a finder column.
- *
- * @author Harald Pehl
- */
+/** Triggers registration for a finder column. */
 @Documented
 @Retention(RUNTIME)
 @Target(TYPE)

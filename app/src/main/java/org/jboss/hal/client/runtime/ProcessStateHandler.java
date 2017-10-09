@@ -21,7 +21,6 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
@@ -44,6 +43,7 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.dispatch.ProcessStateEvent;
 import org.jboss.hal.dmr.dispatch.ServerState;
 import org.jboss.hal.dmr.dispatch.ServerState.State;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -66,8 +66,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
  * In standalone mode the message contains an action link to reload / restart the server. Whereas in domain mode
  * there's no direct way to reload / restart the affected servers (there might be just too many of them). Instead the
  * message contains a link to the topology.
- *
- * @author Harald Pehl
  */
 public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStateEvent.ProcessStateHandler,
         HostResultHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {

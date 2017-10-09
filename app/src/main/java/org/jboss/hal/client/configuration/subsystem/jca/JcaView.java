@@ -64,8 +64,6 @@ import static org.jboss.hal.resources.Names.THREAD_POOLS;
 /**
  * Implementation note: Not based on MBUI XML due to special handling of long and short running thread pools for
  * (distributed) work manager (only one long and short running thread pool allowed per (distributed) work manager).
- *
- * @author Harald Pehl
  */
 public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 

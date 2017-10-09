@@ -11,9 +11,6 @@ import org.junit.Test;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResourceDescriptions;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertSecurityContexts;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
 public class SingleRrdParserTest {
 

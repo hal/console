@@ -32,9 +32,6 @@ import org.jboss.hal.spi.Column;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.MANAGEMENT)
 public class ManagementColumn extends StaticItemColumn {
 
@@ -50,10 +47,6 @@ public class ManagementColumn extends StaticItemColumn {
                 new StaticItem.Builder(Names.MANAGEMENT_INTERFACE)
                         .action(itemActionFactory.view(NameTokens.MANAGEMENT_INTERFACE))
                         .onPreview(new ManagementInterfacePreview(crud, statementContext))
-                        .build(),
-
-                new StaticItem.Builder(Names.CONFIGURATION_CHANGES)
-                        .action(itemActionFactory.view(NameTokens.CONFIGURATION_CHANGES))
                         .build(),
 
                 new StaticItem.Builder(Names.EXTENSIONS)

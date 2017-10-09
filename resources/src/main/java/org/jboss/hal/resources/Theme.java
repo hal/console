@@ -17,36 +17,24 @@ package org.jboss.hal.resources;
 
 import org.jetbrains.annotations.NonNls;
 
-/**
- * Theme interface is meant to be implemented by specific themes.
- *
- * @author Harald Pehl
- */
+/** Theme interface is meant to be implemented by specific themes. */
 public interface Theme {
 
-    /**
-     * A name to be used in the UI.
-     */
+    /** A name to be used in the UI. */
     @NonNls
     String getName();
 
-    /**
-     * A longer name to be used in the UI.
-     */
+    /** A longer name to be used in the UI. */
     @NonNls
     String getFullName();
 
-    /**
-     * String used together with {@link #getLastName()} in the header. Defaults to {@link #getName()}.
-     */
+    /** String used together with {@link #getLastName()} in the header. Defaults to {@link #getName()}. */
     @NonNls
     default String getFirstName() {
         return getName();
     }
 
-    /**
-     * If not {@code null} this string is used together with {@link #getFirstName()} in the header.
-     */
+    /** If not {@code null} this string is used together with {@link #getFirstName()} in the header. */
     @NonNls
     default String getLastName() {
         return null;

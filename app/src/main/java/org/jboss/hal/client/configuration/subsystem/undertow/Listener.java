@@ -22,9 +22,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.AJP_LISTENER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTPS_LISTENER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_LISTENER;
 
-/**
- * @author Harald Pehl
- */
 enum Listener {
 
     AJP(Ids.UNDERTOW_SERVER_AJP_LISTENER, Names.AJP_LISTENER, AJP_LISTENER),

@@ -28,9 +28,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathFactory;
 
-/**
- * @author Harald Pehl
- */
 class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     FormProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,
@@ -59,7 +56,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             if (title == null) {
                 title = new LabelBuilder().label(template.lastName());
             }
-            if (nameResolver != null && !Handlebars.isExpression(nameResolver)) {
+            if (nameResolver != null && !ExpressionParser.isExpression(nameResolver)) {
                 processor.error(field, "Name resolver in form#%s has to be an expression.", selector);
             }
             if ("*".equals(template.lastValue()) && nameResolver == null) {
@@ -68,7 +65,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             }
 
         } else if (!Strings.isNullOrEmpty(onSave)) {
-            if (!Handlebars.isExpression(onSave)) {
+            if (!ExpressionParser.isExpression(onSave)) {
                 processor.error(field, "on-save handler in form#%s has to be an expression.", selector);
             }
         }

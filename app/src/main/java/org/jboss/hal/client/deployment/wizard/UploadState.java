@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
-/**
- * @author Harald Pehl
- */
 public enum UploadState {
     UPLOAD, NAMES
 }

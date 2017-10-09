@@ -18,8 +18,9 @@ package org.jboss.hal.core;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.accesscontrol.AccessControl;
+import org.jboss.hal.core.deployment.DeploymentResources;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
@@ -36,8 +37,10 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.ServerUrlStorage;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.core.ui.UIRegistry;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.GinModule;
@@ -50,7 +53,10 @@ public class CoreModule extends AbstractGinModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
+        bind(ComplexAttributeOperations.class).in(Singleton.class);
+        bind(CredentialReference.class).in(Singleton.class);
         bind(CrudOperations.class).in(Singleton.class);
+        bind(DeploymentResources.class).in(Singleton.class);
         bind(ExpressionResolver.class).asEagerSingleton(); // to register the event handler
         bind(ExtensionRegistry.class).asEagerSingleton(); // to register the event handler
         bind(ExtensionStorage.class).in(Singleton.class);
@@ -64,6 +70,7 @@ public class CoreModule extends AbstractGinModule {
         bind(Places.class).in(Singleton.class);
         bind(ServerActions.class).in(Singleton.class);
         bind(ServerGroupActions.class).in(Singleton.class);
+        bind(ServerUrlStorage.class).in(Singleton.class);
         bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event handler
         bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);

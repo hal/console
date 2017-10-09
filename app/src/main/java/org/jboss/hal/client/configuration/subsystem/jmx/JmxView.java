@@ -60,11 +60,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * Implementation note: Not based on MBUI XML due to special handling of handlers of the audit-log configuration.
- *
- * @author Harald Pehl
- */
+/** Implementation note: Not based on MBUI XML due to special handling of handlers of the audit-log configuration. */
 public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
 
     private final ModelNodeForm<ModelNode> configForm;

@@ -40,9 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpressionHandler {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExpressionResolver.class);
@@ -84,8 +81,8 @@ public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpress
             Operation operation = new Operation.Builder(ResourceAddress.root(), RESOLVE_EXPRESSION_ON_DOMAIN)
                     .param(EXPRESSION, expression.toString())
                     .build();
-            dispatcher.execute(operation, payload -> payload.get(SERVER_GROUPS),
-                    (serverGroups) -> callback.onSuccess(parseServerGroups(serverGroups)),
+            dispatcher.execute(operation,
+                    (res) -> callback.onSuccess(parseServerGroups(res.get(SERVER_GROUPS))),
                     (op1, failure) -> callback.onFailure(new RuntimeException(failure)),
                     (op2, exception) -> callback.onFailure(exception));
         }

@@ -45,9 +45,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-/**
- * @author Harald Pehl
- */
 public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         implements IsElement, MacroOperationHandler, MacroFinishedHandler {
 
@@ -134,13 +131,14 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
             getEventBus().fireEvent(Recording.stop());
 
         } else {
-            new MacroOptionsDialog(macros, resources, options -> {
-                MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStarted()));
-                getEventBus().fireEvent(Recording.start(options));
-                getView().startRecording();
-                getView().steps(0);
-                recording = true;
-            }).show();
+            new MacroOptionsDialog(macros, resources,
+                    options -> {
+                        MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStarted()));
+                        getEventBus().fireEvent(Recording.start(options));
+                        getView().startRecording();
+                        getView().steps(0);
+                        recording = true;
+                    }).show();
         }
     }
 

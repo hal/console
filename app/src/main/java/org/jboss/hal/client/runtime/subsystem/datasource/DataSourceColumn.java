@@ -27,6 +27,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -55,16 +56,16 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.XA_PARAM;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
+// TODO Add data sources from deployments
 @AsyncColumn(Ids.DATA_SOURCE_RUNTIME)
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
@@ -85,11 +86,13 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final Environment environment,
             final Resources resources,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final ItemActionFactory itemActionFactory,
             final Places places) {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_RUNTIME, Names.DATASOURCE)
                 .withFilter()
+                .filterDescription(resources.messages().datasourceRuntimeFilterDescription())
                 .useFirstActionAsBreadcrumbHandler());
 
         this.dispatcher = dispatcher;
@@ -100,20 +103,45 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.finder = finder;
 
         ItemsProvider<DataSource> itemsProvider = (context, callback) -> {
-            List<Operation> operations = new ArrayList<>();
-            ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
-            )
+            List<Operation> operations = new ArrayList<>(); // 6 ops in standalone, 7 in domain
+
+            // subsystem
+            ResourceAddress dsSubsystemAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+            operations.add(new Operation.Builder(dsSubsystemAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build());
-            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
-            )
+            operations.add(new Operation.Builder(dsSubsystemAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, XA_DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build());
+
+            // deployment
+            operations.add(new Operation.Builder(DATA_SOURCE_DEPLOYMENT_TEMPLATE.resolve(statementContext),
+                    READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
+            operations.add(new Operation.Builder(XA_DATA_SOURCE_DEPLOYMENT_TEMPLATE.resolve(statementContext),
+                    READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
+
+            // subdeployment
+            operations.add(new Operation.Builder(DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext),
+                    READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
+            operations.add(new Operation.Builder(XA_DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext),
+                    READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
+
             if (!environment.isStandalone()) {
                 ResourceAddress serverAddress = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                         .resolve(statementContext);
@@ -124,14 +152,38 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
             dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
                 List<DataSource> combined = new ArrayList<>();
+
+                // 6 steps in standalone, 7 in domain
+                // subsystem
                 combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
                         .map(property -> new DataSource(property, false)).collect(toList()));
                 combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
                         .map(property -> new DataSource(property, true)).collect(toList()));
+
+                // deployment
+                result.step(2).get(RESULT).asList().forEach(node -> {
+                    ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
+                    combined.add(new DataSource(address, node.get(RESULT), false));
+                });
+                result.step(3).get(RESULT).asList().forEach(node -> {
+                    ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
+                    combined.add(new DataSource(address, node.get(RESULT), true));
+                });
+
+                // subdeployment
+                result.step(4).get(RESULT).asList().forEach(node -> {
+                    ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
+                    combined.add(new DataSource(address, node.get(RESULT), false));
+                });
+                result.step(5).get(RESULT).asList().forEach(node -> {
+                    ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
+                    combined.add(new DataSource(address, node.get(RESULT), true));
+                });
+
                 combined.sort(comparing(NamedNode::getName));
                 server = environment.isStandalone()
                         ? Server.STANDALONE
-                        : new Server(statementContext.selectedHost(), result.step(2).get(RESULT));
+                        : new Server(statementContext.selectedHost(), result.step(6).get(RESULT));
                 callback.onSuccess(combined);
             });
         };
@@ -147,9 +199,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
                     @Override
                     public void onSuccess(final List<DataSource> result) {
-                        // only datasources w/ enabled statistics will show up in the breadcrumb dropdown
+                        // only datasources defined in configuration w/ enabled statistics
+                        // will show up in the breadcrumb dropdown
                         List<DataSource> dataSourceWithStatistics = result.stream()
-                                .filter(DataSource::isStatisticsEnabled)
+                                .filter(ds -> !ds.fromDeployment() && ds.isStatisticsEnabled())
                                 .collect(toList());
                         callback.onSuccess(dataSourceWithStatistics);
                     }
@@ -163,7 +216,17 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public HTMLElement asElement() {
-                return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
+                List<String> subtitles = new ArrayList<>();
+                if (dataSource.isXa()) {
+                    subtitles.add(Names.XA_DATASOURCE);
+                }
+                if (dataSource.fromDeployment()) {
+                    subtitles.add(dataSource.getDeployment());
+                }
+                if (!subtitles.isEmpty()) {
+                    return ItemDisplay.withSubtitle(dataSource.getName(), String.join(" / ", subtitles));
+                }
+                return null;
             }
 
             @Override
@@ -173,7 +236,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public HTMLElement getIcon() {
-                if (!dataSource.isStatisticsEnabled()) {
+                if (dataSource.fromDeployment()) {
+                    return span().css(fontAwesome("archive")).asElement();
+                } else if (!dataSource.isStatisticsEnabled()) {
                     return Icons.unknown();
                 } else if (!dataSource.isEnabled()) {
                     return Icons.disabled();
@@ -184,7 +249,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public String getTooltip() {
-                if (!dataSource.isStatisticsEnabled()) {
+                if (dataSource.fromDeployment()) {
+                    return resources.constants().fromDeployment();
+                } else if (!dataSource.isStatisticsEnabled()) {
                     return resources.constants().statisticsDisabled();
                 } else {
                     return dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled();
@@ -196,14 +263,15 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 //noinspection HardCodedStringLiteral
                 return getTitle() + " " +
                         (dataSource.isXa() ? "xa" : "normal") + " " +
-                        (dataSource.isEnabled() ? ENABLED : DISABLED);
+                        (dataSource.isEnabled() ? ENABLED : DISABLED) + " " +
+                        (dataSource.fromDeployment() ? Names.DEPLOYMENT : "");
             }
 
             @Override
             @SuppressWarnings("HardCodedStringLiteral")
             public List<ItemAction<DataSource>> actions() {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
-                if (dataSource.isStatisticsEnabled()) {
+                if (!dataSource.fromDeployment() && dataSource.isStatisticsEnabled()) {
                     PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
                             .with(NAME, dataSource.getName())
                             .with(XA_PARAM, String.valueOf(dataSource.isXa()))
@@ -251,14 +319,17 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         });
 
         setPreviewCallback(item -> new DataSourcePreview(this, server, item, environment, dispatcher, statementContext,
-                serverActions, resources));
+                serverActions, finderPathFactory, places, resources));
     }
 
     private void testConnection(DataSource dataSource) {
         Operation operation = new Operation.Builder(dataSourceAddress(dataSource), TEST_CONNECTION_IN_POOL).build();
         dispatcher.execute(operation,
-                result -> MessageEvent.fire(eventBus,
-                        Message.success(resources.messages().testConnectionSuccess(dataSource.getName()))),
+                result -> {
+                    refresh(RESTORE_SELECTION);
+                    MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().testConnectionSuccess(dataSource.getName())));
+                },
                 (o1, failure) -> MessageEvent.fire(eventBus,
                         Message.error(resources.messages().testConnectionError(dataSource.getName()),
                                 failure)),
@@ -277,9 +348,13 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     ResourceAddress dataSourceAddress(DataSource dataSource) {
-        return dataSource.isXa()
-                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
-                : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+        if (dataSource.fromDeployment()) {
+            return dataSource.getAddress();
+        } else {
+            return dataSource.isXa()
+                    ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
+                    : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+        }
     }
 
     AddressTemplate dataSourceConfigurationTemplate(DataSource dataSource) {

@@ -17,11 +17,11 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -72,6 +72,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
 
 import static elemental2.dom.DomGlobal.alert;
+import static elemental2.dom.DomGlobal.location;
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
@@ -102,8 +104,6 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * <p>
  * The header presenter is not part of the actual presenters such as finder or application presenters, its content can
  * only be controlled by sending events. A direct modification using methods is not allowed.
- *
- * @author Harald Pehl
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements
         MessageHandler, HeaderModeHandler, FinderContextHandler, ModelBrowserPathHandler,
@@ -120,9 +120,10 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
         void showReload(String text, String tooltip);
         void hideReload();
-        void showMessage(Message message);
-        void clearMessages();
         void hideReconnect();
+
+        void onMessage(Message message);
+        void onClearMessage();
 
         void selectTopLevelCategory(String nameToken);
         void updateLinks(FinderContext finderContext);
@@ -281,16 +282,16 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     @Override
     public void onMessage(final MessageEvent event) {
-        getView().showMessage(event.getMessage());
+        getView().onMessage(event.getMessage());
     }
 
-    void clearMessages() {
-        getView().clearMessages();
+    void onClearMessage() {
+        getView().onClearMessage();
     }
 
     void reconnect() {
-        String url = Endpoints.getBaseUrl() + "?" + EndpointManager.CONNECT_PARAMETER;
-        DomGlobal.location.assign(url);
+        String url = GWT.getModuleBaseURL() + "?" + EndpointManager.CONNECT_PARAMETER;
+        window.location.assign(url);
     }
 
     void logout() {
@@ -377,7 +378,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         DialogFactory.showConfirmation(resources.constants().runAsRoleTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, role);
-                    DomGlobal.location.reload();
+                    location.reload();
                 });
     }
 
@@ -385,7 +386,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         DialogFactory.showConfirmation(resources.constants().clearRunAsTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, null);
-                    DomGlobal.location.reload();
+                    location.reload();
                 });
     }
 

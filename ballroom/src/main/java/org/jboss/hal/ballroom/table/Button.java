@@ -17,11 +17,7 @@ package org.jboss.hal.ballroom.table;
 
 import org.jboss.hal.meta.security.Constraint;
 
-/**
- * A table button
- *
- * @author Harald Pehl
- */
+/** A table button */
 public class Button<T> {
 
     final String title;
@@ -29,20 +25,19 @@ public class Button<T> {
     final Scope scope;
     final Constraint constraint;
 
-    public Button(final String title, final ButtonHandler<T> handler) {
+    public Button(String title, ButtonHandler<T> handler) {
         this(title, handler, null, null);
     }
 
-    public Button(final String title, final ButtonHandler<T> handler, final Scope scope) {
+    public Button(String title, ButtonHandler<T> handler, Scope scope) {
         this(title, handler, scope, null);
     }
 
-    public Button(final String title, final ButtonHandler<T> handler, final Constraint constraint) {
+    public Button(String title, ButtonHandler<T> handler, Constraint constraint) {
         this(title, handler, null, constraint);
     }
 
-    public Button(final String title, final ButtonHandler<T> handler, final Scope scope,
-            final Constraint constraint) {
+    public Button(String title, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
         this.title = title;
         this.scope = scope;
         this.handler = handler;

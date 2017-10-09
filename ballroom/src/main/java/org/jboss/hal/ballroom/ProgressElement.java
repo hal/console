@@ -35,13 +35,12 @@
 package org.jboss.hal.ballroom;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.CSSProperties.WidthUnionType;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.flow.Progress;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -50,33 +49,59 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 import static org.jboss.hal.resources.UIConstants.ROLE;
 
-/**
- * @author Harald Pehl
- */
 public class ProgressElement implements IsElement, Progress {
 
+    public enum Size {
+        NORMAL(""), SM(progressSm), XS(progressXs);
+
+        final String css;
+
+        Size(String css) {
+            this.css = css;
+        }
+    }
+
+
+    public enum Label {
+        NONE, INLINE, LEFT
+    }
+
+
     private static final String ARIA_VALUENOW = "aria-valuenow";
+
+    private final boolean reverse;
+    private final HTMLElement root;
+    private final HTMLElement valueElement;
+    private final HTMLElement progressBarElement;
 
     private int value;
     private int max;
     private boolean determinate;
-    private final HTMLElement root;
-    private final HTMLElement progressBarElement;
 
-    public ProgressElement() {
+    @SuppressWarnings("HardCodedStringLiteral")
+    public ProgressElement(Size size, Label label, boolean reverse) {
+        this.reverse = reverse;
+
         value = 0;
         max = 100;
         determinate = true;
-        root = div().css(progress, progressXs)
+        root = div().css(progress)
                 .add(progressBarElement = div().css(progressBar)
                         .attr(ROLE, "progress-bar") //NON-NLS
                         .aria("valuenow", "0")
                         .aria("valuemin", "0")
                         .aria("valuemax", "100")
-                        .add(span().css(srOnly).innerHtml(SafeHtmlUtils.EMPTY_SAFE_HTML))
+                        .add(valueElement = span().innerHtml(SafeHtmlUtils.EMPTY_SAFE_HTML).asElement())
                         .asElement())
                 .asElement();
 
+        if (size != Size.NORMAL) {
+            valueElement.classList.add(srOnly);
+            root.classList.add(size.css);
+        }
+        if (label == Label.LEFT) {
+            root.classList.add(progressLabelLeft);
+        }
         Elements.setVisible(root, false);
     }
 
@@ -91,7 +116,7 @@ public class ProgressElement implements IsElement, Progress {
     }
 
     @Override
-    public void reset(final int mx) {
+    public void reset(int mx, String label) {
         value = 0;
         max = mx;
         determinate = max > 1; // if there's just one step, choose none-determinate state
@@ -100,24 +125,39 @@ public class ProgressElement implements IsElement, Progress {
             progressBarElement.classList.remove(progressBarStriped);
             progressBarElement.classList.remove(active);
             progressBarElement.setAttribute(ARIA_VALUENOW, "0");
-            progressBarElement.style.width = WidthUnionType.of("0px"); //NON-NLS
+            if (reverse) {
+                progressBarElement.style.width = width("100%"); //NON-NLS
+            } else {
+                progressBarElement.style.width = width(0);
+            }
         } else {
             progressBarElement.classList.add(progressBarStriped);
             progressBarElement.classList.add(active);
             progressBarElement.setAttribute(ARIA_VALUENOW, "100");
-            progressBarElement.style.width = WidthUnionType.of("100%");
+            progressBarElement.style.width = width("100%");
+        }
+        if (label != null) {
+            valueElement.textContent = label;
+        } else {
+            valueElement.textContent = String.valueOf(value);
         }
         Elements.setVisible(root, true);
     }
 
     @Override
-    public void tick() {
+    public void tick(String label) {
         if (determinate) {
             if (value < max) {
                 value++;
                 double percent = min(round(((double) value / (double) max) * 100.0), 100.0);
                 progressBarElement.setAttribute(ARIA_VALUENOW, String.valueOf(percent));
-                progressBarElement.style.width = WidthUnionType.of(String.valueOf(percent) + "%");
+                progressBarElement.style.width = width(
+                        reverse ? String.valueOf(100 - percent) + "%" : String.valueOf(percent));
+                if (label != null) {
+                    valueElement.textContent = label;
+                } else {
+                    valueElement.textContent = String.valueOf(value);
+                }
             }
         }
     }
@@ -125,6 +165,6 @@ public class ProgressElement implements IsElement, Progress {
     @Override
     public void finish() {
         // give the user a chance to see that we're finished
-        DomGlobal.setTimeout((o) -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
+        setTimeout((o) -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
     }
 }

@@ -17,90 +17,67 @@ package org.jboss.hal.client.bootstrap;
 
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import elemental2.dom.DomGlobal;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
+import elemental2.dom.Event;
+import org.jboss.hal.client.ExceptionHandler;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
-import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
+import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
 import org.jboss.hal.config.Endpoints;
-import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.functions.Func0;
 
-/**
- * @author Harald Pehl
- */
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.window;
+
 public class HalBootstrapper implements Bootstrapper {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HalBootstrapper.class);
 
-    private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final EndpointManager endpointManager;
     private final Endpoints endpoints;
-    private final BootstrapFunctions bootstrapFunctions;
-    private final Resources resources;
+    private final BootstrapTasks bootstrapTasks;
+    private final ExceptionHandler exceptionHandler;
 
     @Inject
-    public HalBootstrapper(final EventBus eventBus,
-            final PlaceManager placeManager,
-            final EndpointManager endpointManager,
-            final Endpoints endpoints,
-            final BootstrapFunctions bootstrapFunctions,
-            final Resources resources) {
-        this.eventBus = eventBus;
+    public HalBootstrapper(PlaceManager placeManager,
+            EndpointManager endpointManager,
+            Endpoints endpoints,
+            BootstrapTasks bootstrapTasks,
+            ExceptionHandler exceptionHandler) {
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;
         this.endpoints = endpoints;
-        this.bootstrapFunctions = bootstrapFunctions;
-        this.resources = resources;
+        this.bootstrapTasks = bootstrapTasks;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
     public void onBootstrap() {
         // event for users of the JS API
-        elemental2.dom.Event event = new elemental2.dom.Event("halReady"); //NON-NLS
-        DomGlobal.window.dispatchEvent(event);
-
-        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-            @Override
-            public void onFailure(final FunctionContext context) {
-                LoadingPanel.get().off();
-                logger.error("Bootstrap error: {}", context.getError());
-                DomGlobal.document.body.appendChild(BootstrapFailed.create(context.getError(), endpoints).asElement());
-            }
-
-            @Override
-            public void onSuccess(final FunctionContext context) {
-                LoadingPanel.get().off();
-                logger.info("Bootstrap finished");
-                placeManager.revealCurrentPlace();
-
-                // reset the uncaught exception handler from HalPreBootstrapper
-                GWT.setUncaughtExceptionHandler(e -> {
-                    String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
-                    logger.error("Uncaught exception: {}", errorMessage);
-                    placeManager.unlock();
-                    MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
-                });
-            }
-        };
+        Event event = new Event("halReady"); //NON-NLS
+        window.dispatchEvent(event);
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            new Async<FunctionContext>(Progress.NOOP).waterfall(
-                    new FunctionContext(), outcome, (Function[]) bootstrapFunctions.functions());
+
+            Observable.from(bootstrapTasks.functions())
+                    .flatMapCompletable(Func0::call, false, 1)
+                    .doOnTerminate(() -> LoadingPanel.get().off())
+                    .doOnCompleted(() -> {
+                        logger.info("Bootstrap finished");
+                        placeManager.revealCurrentPlace();
+                        exceptionHandler.afterBootstrap();
+                    })
+                    .doOnError(e -> {
+                        logger.error("Bootstrap error: {}", e.getMessage());
+                        document.body.appendChild(BootstrapFailed.create(e.getMessage(), endpoints).asElement());
+                    })
+                    .subscribe();
         });
     }
 }

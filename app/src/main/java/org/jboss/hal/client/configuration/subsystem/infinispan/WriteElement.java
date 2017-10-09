@@ -45,9 +45,6 @@ import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnDefault;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * @author Harald Pehl
- */
 class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
     private final EmptyState emptyState;

@@ -27,9 +27,6 @@ import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.span;
 
-/**
- * @author Harald Pehl
- */
 class AssignmentPreview extends PreviewContent<Assignment> {
 
     AssignmentPreview(final AccessControlTokens tokens, final Role role, final Resources resources) {

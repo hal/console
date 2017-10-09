@@ -44,23 +44,19 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
-/**
- * @author Harald Pehl
- */
 public class ServerPresenter
         extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(SERVER_ADDRESS)
-    @NameToken(NameTokens.MESSAGING_SERVER) // TODO Add recursive = false once WFCORE-2022 is resolved
+    @NameToken(NameTokens.MESSAGING_SERVER)
+    @Requires(value = {SERVER_ADDRESS, BINDING_DIRECTORY_ADDRESS, JOURNAL_DIRECTORY_ADDRESS,
+            LARGE_MESSAGES_DIRECTORY_ADDRESS, PAGING_DIRECTORY_ADDRESS}, recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
     public interface MyView extends MbuiView<ServerPresenter> {
@@ -113,10 +109,10 @@ public class ServerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
                         resources.constants().category(), Names.SERVER)
-                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName), Names.SERVER, serverName);
+                .append(Ids.MESSAGING_SERVER_CONFIGURATION, Ids.messagingServer(serverName), Names.SERVER, serverName);
     }
 
     @Override

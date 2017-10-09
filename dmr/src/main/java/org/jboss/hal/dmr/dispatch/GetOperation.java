@@ -20,9 +20,6 @@ import java.util.Map;
 
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("HardCodedStringLiteral")
 enum GetOperation {
     /*

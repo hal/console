@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.resources;
 
-/**
- * @author Harald Pehl
- */
 public interface Urls {
 
     String EXTENSION_DOCUMENTATION = "https://github.com/hal/hal.next/wiki/Extensions";

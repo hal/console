@@ -20,17 +20,14 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 class LogFilePreview extends PreviewContent<LogFile> {
 
     private static final int PREVIEW_LINES = 20;
@@ -49,22 +46,20 @@ class LogFilePreview extends PreviewContent<LogFile> {
                 .add(container = div()
                         .add(icon = span().asElement())
                         .add(message = span().asElement())
+                        .add(" ")
+                        .add(a(logFiles.downloadUrl(logFile.getFilename())).css(alertLink)
+                                .apply(a -> a.download = logFile.getFilename())
+                                .textContent(resources.constants().download()))
                         .asElement());
         if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
-            container.classList.add(alert, alertWarning);
+            container.classList.add(CSS.alert, alertWarning);
             icon.className = Icons.WARNING;
             message.innerHTML = resources.messages().largeLogFile(logFile.getFormattedSize()).asString();
         } else {
-            container.classList.add(alert, alertInfo);
+            container.classList.add(CSS.alert, alertInfo);
             icon.className = Icons.INFO;
             message.innerHTML = resources.messages().normalLogFile(logFile.getFormattedSize()).asString();
         }
-
-        previewBuilder()
-                .add(span().textContent(" "))
-                .add(a(logFiles.downloadUrl(logFile.getFilename())).css(alertLink)
-                        .apply(a -> a.download = logFile.getFilename())
-                        .textContent(resources.constants().download()));
 
         PreviewAttributes<LogFile> previewAttributes = new PreviewAttributes<>(logFile)
                 .append(model ->
@@ -77,9 +72,7 @@ class LogFilePreview extends PreviewContent<LogFile> {
         previewBuilder()
                 .add(h(2).textContent(resources.constants().preview()))
                 .add(div().css(clearfix)
-                        .add(a().css(clickable, pullRight).on(click, event -> update(logFile))
-                                .add(span().css(fontAwesome("refresh"), marginRight5))
-                                .add(span().textContent(resources.constants().refresh())))
+                        .add(refreshLink(() -> update(logFile)))
                         .add(p().textContent(resources.messages().logFilePreview(PREVIEW_LINES))))
                 .add(preview = pre().css(logFilePreview).asElement());
     }

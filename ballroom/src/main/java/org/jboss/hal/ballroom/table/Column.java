@@ -25,8 +25,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * Options for a column in a data table.
  *
  * @param <T> the row type
- *
- * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/option/columns">https://datatables.net/reference/option/columns</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

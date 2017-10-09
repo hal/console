@@ -26,9 +26,6 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("unused")
 public abstract class MbuiTestPresenter extends MbuiPresenter<MbuiTestPresenter.MyView, MbuiTestPresenter.MyProxy> {
 

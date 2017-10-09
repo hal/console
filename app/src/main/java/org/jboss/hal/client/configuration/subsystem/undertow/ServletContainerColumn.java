@@ -40,9 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET_CONTAINER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.UNDERTOW_SERVLET_CONTAINER)
 @Requires(AddressTemplates.SERVLET_CONTAINER_ADDRESS)
 public class ServletContainerColumn extends FinderColumn<NamedNode> {

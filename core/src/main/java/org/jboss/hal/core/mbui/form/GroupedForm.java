@@ -27,6 +27,7 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
@@ -50,8 +51,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
  * <p>
  * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and reset
  * callbacks.
- *
- * @author Harald Pehl
  */
 public class GroupedForm<T extends ModelNode> implements Form<T> {
 
@@ -63,6 +62,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
         final List<UnboundFormItem> unboundFormItems;
+        final List<HTMLElement> elements;
 
         private Group(final String id, final String title) {
             this.id = id;
@@ -71,6 +71,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
+            this.elements = new ArrayList<>();
         }
     }
 
@@ -195,6 +196,20 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             return this;
         }
 
+        public Builder<T> add(IsElement element) {
+            return add(element.asElement());
+        }
+
+        /**
+         * Adds a custom element to the current group. All attributes, includes, excludes, custom or unbound form items
+         * added so far are ignored.
+         */
+        public Builder<T> add(HTMLElement element) {
+            assertCurrentGroup();
+            currentGroup.elements.add(element);
+            return this;
+        }
+
         public Builder<T> onSave(final SaveCallback<T> saveCallback) {
             assertNoCurrentGroup();
             this.saveCallback = saveCallback;
@@ -252,48 +267,54 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         this.forms = new ArrayList<>();
 
         builder.groups.forEach(group -> {
-            ModelNodeForm.Builder<T> fb = new ModelNodeForm.Builder<>(Ids.build(group.id, Ids.FORM_SUFFIX),
-                    builder.metadata);
-            if (!group.excludes.isEmpty()) {
-                fb.exclude(group.excludes);
-            }
-            if (!group.includes.isEmpty()) {
-                fb.include(group.includes);
-                fb.unsorted();
-            }
-            group.providers.forEach(fb::customFormItem);
-            group.unboundFormItems.forEach(fb::unboundFormItem);
-
-            if (builder.mode != null) {
-                switch (builder.mode) {
-                    case ADD_ONLY:
-                        fb.addOnly();
-                        break;
-                    case FROM_REQUEST_PROPERTIES:
-                        fb.fromRequestProperties();
-                        break;
-                    case VIEW_ONLY:
-                        fb.readOnly();
-                        break;
+            if (group.elements.isEmpty()) {
+                ModelNodeForm.Builder<T> fb = new ModelNodeForm.Builder<>(Ids.build(group.id, Ids.FORM_SUFFIX),
+                        builder.metadata);
+                if (!group.excludes.isEmpty()) {
+                    fb.exclude(group.excludes);
                 }
-            }
+                if (!group.includes.isEmpty()) {
+                    fb.include(group.includes);
+                    fb.unsorted();
+                }
+                group.providers.forEach(fb::customFormItem);
+                group.unboundFormItems.forEach(fb::unboundFormItem);
 
-            if (builder.saveCallback != null) {
-                fb.onSave(builder.saveCallback);
-            }
-            if (builder.cancelCallback != null) {
-                fb.onCancel(builder.cancelCallback);
-            }
-            if (builder.prepareReset != null) {
-                fb.prepareReset(builder.prepareReset);
-            }
+                if (builder.mode != null) {
+                    switch (builder.mode) {
+                        case ADD_ONLY:
+                            fb.addOnly();
+                            break;
+                        case FROM_REQUEST_PROPERTIES:
+                            fb.fromRequestProperties();
+                            break;
+                        case VIEW_ONLY:
+                            fb.readOnly();
+                            break;
+                    }
+                }
 
-            Form<T> form = fb.build();
-            forms.add(form);
+                if (builder.saveCallback != null) {
+                    fb.onSave(builder.saveCallback);
+                }
+                if (builder.cancelCallback != null) {
+                    fb.onCancel(builder.cancelCallback);
+                }
+                if (builder.prepareReset != null) {
+                    fb.prepareReset(builder.prepareReset);
+                }
 
-            String tabId = Ids.build(group.id, Ids.TAB_SUFFIX);
-            tabs.add(tabId, group.title, form.asElement());
-            tabs.onShow(tabId, () -> currentForm = form);
+                Form<T> form = fb.build();
+                forms.add(form);
+
+                String tabId = Ids.build(group.id, Ids.TAB_SUFFIX);
+                tabs.add(tabId, group.title, form.asElement());
+                tabs.onShow(tabId, () -> currentForm = form);
+
+            } else {
+                String tabId = Ids.build(group.id, Ids.TAB_SUFFIX);
+                tabs.add(tabId, group.title, group.elements);
+            }
         });
 
         currentForm = forms.get(0);
@@ -320,49 +341,37 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
 
     // ------------------------------------------------------ form contract
 
-    /**
-     * Returns {@link Form#isUndefined()} on the currently active form.
-     */
+    /** Returns {@link Form#isUndefined()} on the currently active form. */
     @Override
     public boolean isUndefined() {
         return currentForm.isUndefined();
     }
 
-    /**
-     * Returns {@link Form#isTransient()} on the currently active form.
-     */
+    /** Returns {@link Form#isTransient()} on the currently active form. */
     @Override
     public boolean isTransient() {
         return currentForm.isTransient();
     }
 
-    /**
-     * Calls {@link Form#view(Object)} on all forms.
-     */
+    /** Calls {@link Form#view(Object)} on all forms. */
     @Override
     public void view(final T model) {
         forms.forEach(form -> form.view(model));
     }
 
-    /**
-     * Calls {@link Form#clear()} on all forms.
-     */
+    /** Calls {@link Form#clear()} on all forms. */
     @Override
     public void clear() {
         forms.forEach(Form::clear);
     }
 
-    /**
-     * Calls {@link Form#edit(Object)} on the currently active form.
-     */
+    /** Calls {@link Form#edit(Object)} on the currently active form. */
     @Override
     public void edit(final T model) {
         currentForm.edit(model);
     }
 
-    /**
-     * Calls {@link Form#save()} on the currently active form.
-     */
+    /** Calls {@link Form#save()} on the currently active form. */
     @Override
     public boolean save() {
         return currentForm.save();
@@ -373,9 +382,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         forms.forEach(form -> form.setSaveCallback(saveCallback));
     }
 
-    /**
-     * Calls {@link Form#cancel()} on the currently active form.
-     */
+    /** Calls {@link Form#cancel()} on the currently active form. */
     @Override
     public void cancel() {
         currentForm.cancel();
@@ -391,9 +398,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         forms.forEach(form -> form.setPrepareReset(prepareReset));
     }
 
-    /**
-     * Calls {@link Form#reset()} on the currently active form.
-     */
+    /** Calls {@link Form#reset()} on the currently active form. */
     @Override
     public void reset() {
         currentForm.reset();
@@ -404,9 +409,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         forms.forEach(form -> form.setPrepareRemove(prepareRemove));
     }
 
-    /**
-     * Calll {@link Form#remove()} on the currently active form.
-     */
+    /** Calls {@link Form#remove()} on the currently active form. */
     @Override
     public void remove() {
         currentForm.remove();
@@ -454,13 +457,11 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         return formItems;
     }
 
-    @Override
-    public Map<String, Object> getUpdatedModel() {
-        return forms.get(0).getUpdatedModel();
-    }
-
+    /** Calls {@link Form#addFormValidation(FormValidation)} on all forms. */
     @Override
     public void addFormValidation(final FormValidation<T> formValidation) {
-        forms.get(0).addFormValidation(formValidation);
+        for (Form<T> form : forms) {
+            form.addFormValidation(formValidation);
+        }
     }
 }

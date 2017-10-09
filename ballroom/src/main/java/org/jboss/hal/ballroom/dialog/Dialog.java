@@ -26,7 +26,6 @@ import java.util.TreeMap;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
@@ -44,6 +43,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -63,8 +63,6 @@ import static org.jboss.hal.resources.UIConstants.*;
  * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If
  * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive
  * numbers for the right side. On each side the buttons are ordered according to the placement.
- *
- * @author Harald Pehl
  */
 @JsType(namespace = "hal.ui")
 public class Dialog implements IsElement {
@@ -166,7 +164,8 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified
          * callback.
          */
-        Builder yesNo(Callback yesCallback) {
+        @JsIgnore
+        public Builder yesNo(Callback yesCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), null, yesCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), null, null, false));
@@ -174,10 +173,11 @@ public class Dialog implements IsElement {
         }
 
         /**
-         * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on yes will execute the specified
+         * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on ok will execute the specified
          * callback.
          */
-        Builder okCancel(Callback okCallback) {
+        @JsIgnore
+        public Builder okCancel(Callback okCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), null, okCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), null, null, false));
@@ -330,7 +330,7 @@ public class Dialog implements IsElement {
                         .asElement())
                 .asElement();
 
-        DomGlobal.document.body.appendChild(root);
+        document.body.appendChild(root);
         initEventHandler();
     }
 

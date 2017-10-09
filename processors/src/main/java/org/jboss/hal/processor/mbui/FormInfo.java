@@ -22,9 +22,6 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * @author Harald Pehl
- */
 public class FormInfo extends MbuiElementInfo {
 
     public static class Group {
@@ -38,7 +35,7 @@ public class FormInfo extends MbuiElementInfo {
         Group(final String id, final String name, final String title) {
             this.id = id;
             this.name = name;
-            this.title = Handlebars.templateSafeValue(title);
+            this.title = ExpressionParser.templateSafeValue(title);
             this.attributes = new ArrayList<>();
             this.excludes = new HashSet<>();
         }
@@ -115,12 +112,12 @@ public class FormInfo extends MbuiElementInfo {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
-        this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+        this.title = ExpressionParser.templateSafeValue(title); // title can be a simple value or an expression
         this.autoSave = autoSave;
-        this.onSave = Handlebars.stripHandlebar(onSave); // save handler has to be an expression
+        this.onSave = ExpressionParser.stripExpression(onSave); // save handler has to be an expression
         this.reset = reset;
-        this.prepareReset = Handlebars.stripHandlebar(prepareReset); // reset handler has to be an expression
-        this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
+        this.prepareReset = ExpressionParser.stripExpression(prepareReset); // reset handler has to be an expression
+        this.nameResolver = ExpressionParser.stripExpression(nameResolver); // name resolver has to be an expression
         this.includeRuntime = includeRuntime;
         this.singleton = singleton;
         this.attributes = new ArrayList<>();

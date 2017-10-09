@@ -25,21 +25,14 @@ import javax.inject.Provider;
 
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.core.Array;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.tree.Node;
-import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
+import org.jboss.hal.ballroom.tree.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.CrudOperations;
@@ -49,6 +42,10 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -63,32 +60,32 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Completable;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
+import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
-import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 
-/**
- * Model browser element which can be embedded in other elements.
- *
- * @author Harald Pehl
- */
+/** Model browser element which can be embedded in other elements. */
 public class ModelBrowser implements IsElement<HTMLElement> {
 
     private static class FilterInfo {
@@ -106,7 +103,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             this.node = child;
             this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
             this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
-            this.parents = child == null ? Collections.emptyList() : asList(child.parents);
+            this.parents = child == null ? emptyList() : asList(child.parents);
             if (!parents.isEmpty()) {
                 Collections.reverse(parents);
                 parents.remove(0); // get rif of the artificial root
@@ -115,19 +112,21 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
 
-    private class OpenNodeFunction implements Function<FunctionContext> {
+    private class OpenNodeTask implements Task<FlowContext> {
 
         private final String id;
 
-        private OpenNodeFunction(final String id) {this.id = id;}
+        private OpenNodeTask(String id) {this.id = id;}
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
-            if (tree.api().getNode(id) != null) {
-                tree.api().openNode(id, control::proceed);
-            } else {
-                control.proceed();
-            }
+        public Completable call(FlowContext context) {
+            return Completable.fromEmitter(emitter -> {
+                if (tree.getNode(id) != null) {
+                    tree.openNode(id, emitter::onCompleted);
+                } else {
+                    emitter.onCompleted();
+                }
+            });
         }
     }
 
@@ -162,12 +161,12 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     // ------------------------------------------------------ ui setup
 
     @Inject
-    public ModelBrowser(final CrudOperations crud,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final Resources resources) {
+    public ModelBrowser(CrudOperations crud,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            Resources resources) {
         this.crud = crud;
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
@@ -179,13 +178,19 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         this.surroundingHeight = 0;
 
         buttonGroup = div().css(btnGroup, modelBrowserButtons)
-                .add(filter = button().css(btn, btnDefault).on(click, event -> filter(tree.api().getSelected()))
+                .add(filter = button().css(btn, btnDefault)
+                        .on(click, event -> filter(tree.getSelected()))
+                        .title(resources.constants().filter())
                         .add(i().css(fontAwesome(CSS.filter)))
                         .asElement())
-                .add(refresh = button().css(btn, btnDefault).on(click, event -> refresh(tree.api().getSelected()))
+                .add(refresh = button().css(btn, btnDefault)
+                        .on(click, event -> refresh(tree.getSelected()))
+                        .title(resources.constants().refresh())
                         .add(i().css(fontAwesome(CSS.refresh)))
                         .asElement())
-                .add(collapse = button().css(btn, btnDefault).on(click, event -> collapse(tree.api().getSelected()))
+                .add(collapse = button().css(btn, btnDefault)
+                        .on(click, event -> collapse(tree.getSelected()))
+                        .title(resources.constants().collapse())
                         .add(i().css(fontAwesome("minus")))
                         .asElement())
                 .asElement();
@@ -219,7 +224,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         int contentOffset = applicationOffset() + 2 * MARGIN_BIG + surroundingHeight;
 
         treeContainer.style.height = vh(treeContainerOffset);
-        content.style.height = vh((contentOffset));
+        content.style.height = vh(contentOffset);
     }
 
     private void initTree(ResourceAddress address, String text) {
@@ -236,13 +241,14 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         childrenPanel.attach();
     }
 
+    @SuppressWarnings("unchecked")
     private void emptyTree() {
         Context context = new Context(ResourceAddress.root(), Collections.emptySet());
         Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, Names.NOT_AVAILABLE, context)
                 .asyncFolder()
                 .build();
 
-        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(new Array<>()));
+        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(new Node[0]));
         Elements.removeChildrenFrom(treeContainer);
         treeContainer.appendChild(tree.asElement());
         tree.attach();
@@ -255,11 +261,11 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     private void filter(Node<Context> node) {
         if (node != null && node.parent != null) {
-            Node<Context> parent = tree.api().getNode(node.parent);
+            Node<Context> parent = tree.getNode(node.parent);
             FilterInfo filterInfo = new FilterInfo(parent, node);
             filterStack.add(filterInfo);
             filter(filterInfo);
-            tree.api().openNode(MODEL_BROWSER_ROOT, () -> tree.select(MODEL_BROWSER_ROOT, false));
+            tree.openNode(MODEL_BROWSER_ROOT, () -> tree.selectNode(MODEL_BROWSER_ROOT));
         }
     }
 
@@ -283,7 +289,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         }
 
         // reset tree
-        tree.api().destroy(false);
+        tree.destroy();
         initTree(filter.address, filter.text);
     }
 
@@ -296,35 +302,34 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             FilterInfo previousFilter = filterStack.pop();
             filter(filterStack.isEmpty() ? FilterInfo.ROOT : filterStack.peek());
 
-            List<OpenNodeFunction> functions = previousFilter.parents.stream()
-                    .map(OpenNodeFunction::new)
+            List<OpenNodeTask> tasks = previousFilter.parents.stream()
+                    .map(OpenNodeTask::new)
                     .collect(toList());
-            Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-                @Override
-                public void onFailure(final FunctionContext context) {
-                    logger.debug("Failed to restore selection {}", previousFilter.parents);
-                }
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new Outcome<FlowContext>() {
+                        @Override
+                        public void onError(FlowContext context, Throwable error) {
+                            logger.debug("Failed to restore selection {}", previousFilter.parents);
+                        }
 
-                @Override
-                public void onSuccess(final FunctionContext context) {
-                    tree.select(previousFilter.node.id, false);
-                }
-            };
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                    functions.toArray(new Function[functions.size()]));
+                        @Override
+                        public void onSuccess(FlowContext context) {
+                            tree.selectNode(previousFilter.node.id);
+                        }
+                    });
         }
     }
 
     private void refresh(final Node<Context> node) {
         if (node != null) {
             updateNode(node);
-            tree.api().refreshNode(node.id);
+            tree.refreshNode(node.id);
         }
     }
 
     private void collapse(Node<Context> node) {
         if (node != null) {
-            tree.select(node.id, true);
+            tree.selectNode(node.id, true);
         }
     }
 
@@ -334,15 +339,15 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             return;
         }
 
-        filter.disabled = context.selected.getLength() == 0 ||
+        filter.disabled = context.selected.length == 0 ||
                 !context.node.data.isFullyQualified() ||
                 context.node.id.equals(MODEL_BROWSER_ROOT);
-        refresh.disabled = context.selected.getLength() == 0;
-        collapse.disabled = context.selected.getLength() == 0;
+        refresh.disabled = context.selected.length == 0;
+        collapse.disabled = context.selected.length == 0;
 
         resourcePanel.hide();
         childrenPanel.hide();
-        if (context.selected.getLength() == 0) {
+        if (context.selected.length == 0) {
             updateBreadcrumb(null);
         } else {
             updateNode(context.node);
@@ -370,7 +375,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     private void showResourceView(Node<Context> node, ResourceAddress address) {
-        Node<Context> parent = tree.api().getNode(node.parent);
+        Node<Context> parent = tree.getNode(node.parent);
         AddressTemplate template = asGenericTemplate(parent, address);
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
@@ -468,12 +473,12 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     void remove(ResourceAddress address) {
-        crud.remove(address.lastName(), address.lastValue(), address, () -> refresh(tree.api().getSelected()));
+        crud.remove(address.lastName(), address.lastValue(), address, () -> refresh(tree.getSelected()));
     }
 
     void save(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata) {
         crud.save(address.lastName(), address.lastValue(), address, changedValues, metadata,
-                () -> refresh(tree.api().getSelected()));
+                () -> refresh(tree.getSelected()));
     }
 
     void reset(ResourceAddress address, Form<ModelNode> form, Metadata metadata) {
@@ -481,7 +486,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 new FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(final Form<ModelNode> form) {
-                        refresh(tree.api().getSelected());
+                        refresh(tree.getSelected());
                     }
                 });
     }
@@ -522,8 +527,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         dispatcher.execute(ping,
                 result -> {
                     initTree(root, resource);
-                    tree.api().openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
-                    tree.select(MODEL_BROWSER_ROOT, false);
+                    tree.openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
+                    tree.selectNode(MODEL_BROWSER_ROOT);
 
                     adjustHeight();
                 },
@@ -546,7 +551,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     public void select(final String id, final boolean closeSelected) {
-        tree.select(id, closeSelected);
+        tree.selectNode(id, closeSelected);
     }
 
     @Override

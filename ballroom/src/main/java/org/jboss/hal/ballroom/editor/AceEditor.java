@@ -23,9 +23,6 @@ import org.jboss.hal.resources.CSS;
 
 import static org.jboss.gwt.elemento.core.Elements.pre;
 
-/**
- * @author Harald Pehl
- */
 public class AceEditor implements IsElement, Attachable {
 
     private static final String MODE_LIST_EXTENSION = "ace/ext/modelist";

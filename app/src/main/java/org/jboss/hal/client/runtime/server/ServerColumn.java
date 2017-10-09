@@ -27,15 +27,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -48,8 +45,11 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
@@ -64,9 +64,16 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.ElementGuard;
@@ -79,16 +86,16 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
-import static elemental2.dom.DomGlobal.alert;
+import static elemental2.dom.DomGlobal.document;
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.SERVER)
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
@@ -104,23 +111,33 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     private final Finder finder;
     private final Environment environment;
     private final SecurityContextRegistry securityContextRegistry;
+    private Dispatcher dispatcher;
+    private EventBus eventBus;
+    private Provider<Progress> progress;
+    private StatementContext statementContext;
+    private MetadataProcessor metadataProcessor;
+    private ServerActions serverActions;
+    private CrudOperations crud;
+    private Resources resources;
     private FinderPath refreshPath;
 
     @Inject
-    public ServerColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final Environment environment,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final SecurityContextRegistry securityContextRegistry,
-            final StatementContext statementContext,
-            final PlaceManager placeManager,
-            final Places places,
-            final FinderPathFactory finderPathFactory,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final ServerActions serverActions,
-            final Resources resources) {
+    public ServerColumn(Finder finder,
+            Dispatcher dispatcher,
+            Environment environment,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            SecurityContextRegistry securityContextRegistry,
+            StatementContext statementContext,
+            PlaceManager placeManager,
+            Places places,
+            MetadataProcessor metadataProcessor,
+            FinderPathFactory finderPathFactory,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            ServerActions serverActions,
+            CrudOperations crud,
+            Resources resources) {
 
         super(new Builder<Server>(finder, Ids.SERVER, Names.SERVER)
 
@@ -164,42 +181,50 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .pinnable()
                 .showCount()
                 .withFilter()
+                .filterDescription(resources.messages().serverFilterDescription())
                 .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
                         resources))
         );
         this.finder = finder;
+        this.dispatcher = dispatcher;
         this.environment = environment;
+        this.eventBus = eventBus;
+        this.progress = progress;
         this.securityContextRegistry = securityContextRegistry;
+        this.statementContext = statementContext;
+        this.metadataProcessor = metadataProcessor;
+        this.serverActions = serverActions;
+        this.crud = crud;
+        this.resources = resources;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
-            Function<FunctionContext> serverConfigsFn;
+            Task<FlowContext> serverConfigsFn;
             boolean browseByHosts = BrowseByColumn.browseByHosts(context);
 
             if (browseByHosts) {
                 processAddColumnAction(statementContext.selectedHost());
-                serverConfigsFn = control -> {
+                serverConfigsFn = flowContext -> {
                     ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, SERVER_CONFIG)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    return dispatcher.execute(operation).doOnSuccess(result -> {
                         List<Server> servers = result.asPropertyList().stream()
                                 .map(property -> new Server(statementContext.selectedHost(), property))
                                 .collect(toList());
-                        control.getContext().set(TopologyFunctions.SERVERS, servers);
-                        control.proceed();
-                    });
+                        flowContext.set(TopologyTasks.SERVERS, servers);
+                    }).toCompletable();
                 };
 
             } else {
-                serverConfigsFn = control -> {
+                serverConfigsFn = flowContext -> {
                     ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
                             .resolve(statementContext);
                     Operation operation = new Operation.Builder(serverConfigAddress, QUERY)
                             .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
                             .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    return dispatcher.execute(operation).doOnSuccess(result -> {
                         List<Server> servers = result.asList().stream()
                                 .filter(modelNode -> !modelNode.isFailure())
                                 .map(modelNode -> {
@@ -208,22 +233,22 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     return new Server(host, modelNode.get(RESULT));
                                 })
                                 .collect(toList());
-                        control.getContext().set(TopologyFunctions.SERVERS, servers);
-                        control.proceed();
-                    });
+                        flowContext.set(TopologyTasks.SERVERS, servers);
+                    }).toCompletable();
                 };
             }
 
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
+            series(new FlowContext(progress.get()),
+                    serverConfigsFn, new TopologyTasks.TopologyStartedServers(environment, dispatcher))
+                    .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getException());
+                        public void onError(FlowContext context, Throwable error) {
+                            callback.onFailure(error);
                         }
 
                         @Override
-                        public void onSuccess(final FunctionContext context) {
-                            List<Server> servers = context.get(TopologyFunctions.SERVERS);
+                        public void onSuccess(FlowContext context) {
+                            List<Server> servers = context.get(TopologyTasks.SERVERS);
                             if (servers == null) {
                                 servers = Collections.emptyList();
                             }
@@ -235,8 +260,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     .filter(serverActions::isPending)
                                     .forEach(server -> ItemMonitor.startProgress(server.getId()));
                         }
-                    },
-                    serverConfigsFn, new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
+                    });
         };
         setItemsProvider(itemsProvider);
 
@@ -323,23 +347,23 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest));
                 }
                 if (!serverActions.isPending(item)) {
+                    actions.add(new ItemAction.Builder<Server>()
+                            .title(resources.constants().copy())
+                            .handler(itm -> copyServer(itm))
+                            .constraint(Constraint.executable(serverConfigTemplate(item), ADD))
+                            .build());
                     if (!item.isStarted()) {
-                        actions.add(new ItemAction.Builder<Server>()
-                                .title(resources.constants().start())
-                                .handler(serverActions::start)
-                                .constraint(Constraint.executable(serverConfigTemplate(item), START))
-                                .build());
                         AddressTemplate template = AddressTemplate
                                 .of("/host=" + item.getHost() + "/server-config=" + item.getName());
                         actions.add(itemActionFactory.remove(Names.SERVER, item.getName(),
                                 template, serverConfigTemplate(item), ServerColumn.this));
                     }
-                    actions.add(new ItemAction.Builder<Server>()
-                            .title(resources.constants().copy())
-                            .handler(itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext())))
-                            .constraint(Constraint.executable(serverConfigTemplate(item), ADD))
-                            .build());
                     if (item.isStarted()) {
+                        actions.add(new ItemAction.Builder<Server>()
+                                .title(resources.constants().editURL())
+                                .handler(itm -> editURL(itm))
+                                .build());
+                        actions.add(ItemAction.separator());
                         // Order is: reload, restart, (resume | suspend), stop
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().reload())
@@ -371,6 +395,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 .handler(serverActions::stop)
                                 .constraint(Constraint.executable(serverConfigTemplate(item), STOP))
                                 .build());
+                    } else {
+                        actions.add(ItemAction.separator());
+                        actions.add(new ItemAction.Builder<Server>()
+                                .title(resources.constants().start())
+                                .handler(serverActions::start)
+                                .constraint(Constraint.executable(serverConfigTemplate(item), START))
+                                .build());
                     }
                 }
                 // add kill action regardless of server state to kill servers which might show a wrong state
@@ -384,7 +415,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             @Override
             public String nextColumn() {
-                return item.isStarted() ? Ids.SERVER_MONITOR : null;
+                return item.isStarted() ? Ids.RUNTIME_SUBSYSTEM : null;
             }
         });
 
@@ -402,11 +433,79 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private void addServer(boolean browseByHost) {
-        alert(Names.NYI);
+        if (browseByHost) {
+            AddressTemplate template = serverConfigTemplate(statementContext.selectedHost());
+            String id = Ids.build(HOST, statementContext.selectedHost(), SERVER, Ids.ADD_SUFFIX);
+            List<String> attributes = asList(AUTO_START, GROUP, SOCKET_BINDING_DEFAULT_INTERFACE,
+                    SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET, UPDATE_AUTO_START_WITH_SERVER_STATUS);
+            crud.add(id, Names.SERVER, template, attributes, (name, address) -> refresh(RESTORE_SELECTION));
+        } else {
+
+            // load all available hosts to show in the copy dialog
+            Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
+                    .param(CHILD_TYPE, HOST)
+                    .build();
+
+            dispatcher.execute(operation, result -> {
+
+                List<String> hosts = new ArrayList<>();
+                result.asList().forEach(m -> hosts.add(m.asString()));
+
+                // get the first host, only to retrieve the r-r-d for server-config
+                // as /host=*/server-config=*:read-operation-description(name=add) does not work
+                AddressTemplate template = serverConfigTemplate(hosts.get(0));
+                metadataProcessor
+                        .lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
+                            @Override
+                            public void onMetadata(final Metadata metadata) {
+
+                                String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
+                                        FORM_SUFFIX);
+                                SingleSelectBoxItem hostFormItem = new SingleSelectBoxItem(HOST, Names.HOST, hosts,
+                                        false);
+                                hostFormItem.setRequired(true);
+                                NameItem nameItem = new NameItem();
+
+                                ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                                        .unboundFormItem(nameItem, 0)
+                                        .unboundFormItem(hostFormItem, 1, resources.messages().addServerHostHelp())
+                                        // add group as custom form item, to set it as read-only and pre-set with
+                                        // the selected server-group column
+                                        .customFormItem(GROUP, attributeDescription -> {
+                                            TextBoxItem groupItem = new TextBoxItem(GROUP,
+                                                    resources.constants().group());
+                                            groupItem.setEnabled(false);
+                                            return groupItem;
+                                        })
+                                        .fromRequestProperties()
+                                        .build();
+
+                                AddResourceDialog dialog = new AddResourceDialog(resources.messages().addServerTitle(),
+                                        form, (resource, payload) -> {
+
+                                    payload.get(GROUP).set(statementContext.selectedServerGroup());
+                                    String serverName = nameItem.getValue();
+                                    ResourceAddress address = serverConfigTemplate(hostFormItem.getValue())
+                                            .resolve(statementContext, serverName);
+
+                                    crud.add(serverName, address, payload,
+                                            resources.messages().addResourceSuccess(Names.SERVER,
+                                                    serverName), (name, address1) -> refresh(RESTORE_SELECTION));
+                                });
+                                dialog.show();
+                                form.<String>getFormItem(GROUP).setValue(statementContext.selectedServerGroup());
+                            }
+                        });
+            });
+        }
     }
 
-    private void copyServer(Server server, boolean browseByHost) {
-        alert(Names.NYI);
+    private void editURL(Server server) {
+        serverActions.editUrl(server, () -> refresh(RESTORE_SELECTION));
+    }
+
+    private void copyServer(Server server) {
+        serverActions.copyServer(server, () -> refresh(RESTORE_SELECTION));
     }
 
     private boolean serverIsLastSegment() {
@@ -421,7 +520,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
             return Optional.empty();
         });
-        HTMLElement addButton = (HTMLElement) DomGlobal.document.getElementById(Ids.SERVER_ADD);
+        HTMLElement addButton = (HTMLElement) document.getElementById(Ids.SERVER_ADD);
         ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(serverConfigTemplate(host), ADD)));
     }
 

@@ -30,7 +30,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
 import org.jboss.hal.ballroom.table.Table;
-import org.jboss.hal.client.deployment.Content;
+import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -43,11 +43,7 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * Dialog used to deploy and undeploy content to one or more server groups.
- *
- * @author Harald Pehl
- */
+/** Dialog used to deploy and undeploy content to one or more server groups. */
 public class DeployContentDialog1 {
 
     @FunctionalInterface
@@ -151,7 +147,7 @@ public class DeployContentDialog1 {
                     .map(usg -> usg.serverGroup)
                     .collect(toList());
             if (deployCallback != null) {
-                deployCallback.deploy(content, serverGroups, SwitchBridge.Bridge.element(enable).getValue());
+                deployCallback.deploy(content, serverGroups, SwitchBridge.Api.element(enable).getValue());
             } else if (undeployCallback != null) {
                 undeployCallback.undeploy(content, serverGroups);
             }
@@ -164,6 +160,6 @@ public class DeployContentDialog1 {
         Elements.setVisible(noServerGroupSelected.asElement(), false);
         Elements.setVisible(enableContainer, deployCallback != null);
         table.update(serverGroups);
-        SwitchBridge.Bridge.element(enable).setValue(false);
+        SwitchBridge.Api.element(enable).setValue(false);
     }
 }

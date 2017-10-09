@@ -36,16 +36,13 @@ import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class Tabs implements IsElement {
 
     @JsType(isNative = true)
-    static class Bridge {
+    static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge select(String selector);
+        public native static Api select(String selector);
 
         public native void tab(String command);
 
@@ -137,7 +134,7 @@ public class Tabs implements IsElement {
 
     public void showTab(final String id) {
         if (id != null) {
-            Bridge.select("a[href='#" + id + "']").tab("show"); //NON-NLS
+            Api.select("a[href='#" + id + "']").tab("show"); //NON-NLS
         }
     }
 
@@ -157,7 +154,7 @@ public class Tabs implements IsElement {
 
     public void onShow(final String id, final JsCallback callback) {
         if (id != null) {
-            Bridge.select("a[href='#" + id + "']").on("shown.bs.tab", callback); //NON-NLS
+            Api.select("a[href='#" + id + "']").on("shown.bs.tab", callback); //NON-NLS
         }
     }
 }

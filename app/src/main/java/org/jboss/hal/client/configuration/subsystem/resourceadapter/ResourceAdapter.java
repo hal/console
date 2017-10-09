@@ -24,9 +24,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ARCHIVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTION_SUPPORT;
 
-/**
- * @author Harald Pehl
- */
 class ResourceAdapter extends NamedNode {
 
     enum AdapterType {

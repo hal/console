@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.json;
 
-/**
- * Represents a Json String value.
- */
+/** Represents a Json String value. */
 public class JsonString extends JsonValue {
 
     public static JsonString create(String string) {

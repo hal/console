@@ -34,9 +34,6 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 
-/**
- * @author Harald Pehl
- */
 class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
     private final HTMLElement root;

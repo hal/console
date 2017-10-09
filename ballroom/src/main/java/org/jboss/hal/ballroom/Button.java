@@ -27,9 +27,6 @@ import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnDefault;
 import static org.jboss.hal.resources.CSS.btnHal;
 
-/**
- * @author Harald Pehl
- */
 public class Button implements IsElement {
 
     public static final String DEFAULT_CSS = btn + " " + btnHal + " " + btnDefault;

@@ -43,6 +43,7 @@ import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
@@ -87,8 +88,6 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * TODO This class is huge! Try to refactor and break into smaller pieces.
  *
  * @param <T> The column and items type.
- *
- * @author Harald Pehl
  */
 public class FinderColumn<T> implements IsElement, Attachable {
 
@@ -109,6 +108,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         private ItemsProvider<T> itemsProvider;
         private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
         private ItemSelectionHandler<T> selectionHandler;
+        private String filterDescription;
 
         public Builder(final Finder finder, final String id, final String title) {
             this.finder = finder;
@@ -120,6 +120,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
             this.withFilter = false;
             this.pinnable = false;
             this.items = new ArrayList<>();
+            this.filterDescription = CONSTANTS.filter();
         }
 
         /**
@@ -136,7 +137,16 @@ public class FinderColumn<T> implements IsElement, Attachable {
         }
 
         public Builder<T> withFilter() {
-            this.withFilter = true;
+            return withFilter(true);
+        }
+
+        public Builder<T> withFilter(boolean yesNo) {
+            this.withFilter = yesNo;
+            return this;
+        }
+
+        public Builder<T> filterDescription(String filterTooltip) {
+            this.filterDescription = filterTooltip;
             return this;
         }
 
@@ -212,28 +222,27 @@ public class FinderColumn<T> implements IsElement, Attachable {
     private final String title;
     private final boolean showCount;
     private final boolean pinnable;
+    private final HTMLElement root;
     private final HTMLElement columnActions;
+    private final HTMLElement hiddenColumns;
+    private final HTMLElement headerElement;
+    private final HTMLInputElement filterElement;
+    private final HTMLElement clearFilterElement;
+    private final HTMLElement ulElement;
+    private final HTMLElement noItems;
     private final List<T> initialItems;
     private final ItemSelectionHandler<T> selectionHandler;
     private final List<HandlerRegistration> handlers;
+    private final Map<String, FinderRow<T>> rows;
+    private final FinderColumnStorage storage;
+
+    private boolean asElement;
+    private boolean firstActionAsBreadcrumbHandler;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
     private PreviewCallback<T> previewCallback;
     private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
     private BreadcrumbItemHandler<T> breadcrumbItemHandler;
-    private boolean firstActionAsBreadcrumbHandler;
-
-    private final Map<String, FinderRow<T>> rows;
-    private final FinderColumnStorage storage;
-
-    private final HTMLElement root;
-    private final HTMLElement hiddenColumns;
-    private final HTMLElement headerElement;
-    private final HTMLInputElement filterElement;
-    private final HTMLElement ulElement;
-    private final HTMLElement noItems;
-
-    private boolean asElement;
 
 
     // ------------------------------------------------------ ui
@@ -274,9 +283,6 @@ public class FinderColumn<T> implements IsElement, Attachable {
                         .asElement())
                 .asElement();
 
-        handlers.add(bind(root, keydown, this::onNavigation));
-        handlers.add(bind(hiddenColumns, click, event -> finder.revealHiddenColumns(FinderColumn.this)));
-
         // column actions
         List<ColumnAction<T>> allowedColumnActions = allowedActions(builder.columnActions);
         HtmlContentBuilder<HTMLDivElement> actionsBuilder = div();
@@ -294,19 +300,24 @@ public class FinderColumn<T> implements IsElement, Attachable {
         // filter box
         if (builder.withFilter) {
             String iconId = Ids.build(id, filter, "icon");
+            HtmlContentBuilder<HTMLElement> clearFilter = span().css(inputGroupAddon, fontAwesome("close")).id(iconId)
+                    .title(CONSTANTS.clear())
+                    .on(click, event -> clearFilter());
             root.appendChild(
                     div().css(inputGroup, filter)
                             .add(filterElement = input(text).css(formControl)
                                     .id(Ids.build(id, filter))
                                     .aria(UIConstants.ARIA_DESCRIBEDBY, iconId)
-                                    .attr(UIConstants.PLACEHOLDER, CONSTANTS.filter())
+                                    .attr(UIConstants.PLACEHOLDER, Strings.abbreviateMiddle(builder.filterDescription, 45))
+                                    .attr(UIConstants.TITLE, builder.filterDescription)
                                     .asElement())
-                            .add(span().css(inputGroupAddon, fontAwesome("search")).id(iconId))
+                            .add(clearFilter)
                             .asElement());
-            handlers.add(bind(filterElement, keydown, this::onNavigation));
-            handlers.add(bind(filterElement, keyup, this::onFilter));
+            clearFilterElement = clearFilter.asElement();
+            Elements.setVisible(clearFilterElement, false);
         } else {
             filterElement = null;
+            clearFilterElement = null;
         }
 
         // rows
@@ -404,7 +415,12 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     @Override
     public void attach() {
-        // noop
+        handlers.add(bind(root, keydown, this::onNavigation));
+        handlers.add(bind(hiddenColumns, click, event -> finder.revealHiddenColumns(FinderColumn.this)));
+        if (filterElement != null) {
+            handlers.add(bind(filterElement, keydown, this::onNavigation));
+            handlers.add(bind(filterElement, keyup, this::onFilter));
+        }
     }
 
     @Override
@@ -421,6 +437,11 @@ public class FinderColumn<T> implements IsElement, Attachable {
     private void onFilter(KeyboardEvent event) {
         if (Escape == Key.fromEvent(event)) {
             filterElement.value = "";
+            // hide the 'clear' icon when there are no chars
+            Elements.setVisible(clearFilterElement, false);
+        } else {
+            // show the 'clear' icon when there are typed chars
+            Elements.setVisible(clearFilterElement, true);
         }
 
         int matched = 0;
@@ -445,6 +466,22 @@ public class FinderColumn<T> implements IsElement, Attachable {
         } else {
             Elements.failSafeRemove(ulElement, noItems);
         }
+        // when user deletes remaining chars, hide the 'clear' icon
+        if (filter.trim().length() == 0) {
+            Elements.setVisible(clearFilterElement, false);
+        }
+    }
+
+    private void clearFilter() {
+        filterElement.value = "";
+        for (HTMLElement li : Elements.children(ulElement)) {
+            if (li == noItems) {
+                continue;
+            }
+            Elements.setVisible(li, true);
+        }
+        Elements.failSafeRemove(ulElement, noItems);
+        Elements.setVisible(clearFilterElement, false);
     }
 
     private void onNavigation(KeyboardEvent event) {

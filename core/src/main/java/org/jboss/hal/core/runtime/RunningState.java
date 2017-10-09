@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.core.runtime;
 
-/**
- * State as defined by {@code host.host-state}, {@code server.server-state}
- */
+/** State as defined by {@code host.host-state}, {@code server.server-state} */
 public enum RunningState {
     STARTING,
     RUNNING,

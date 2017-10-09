@@ -29,11 +29,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-/**
- * A presenter which contains a finder. Should only be used as base class for the top level categories.
- *
- * @author Harald Pehl
- */
+/** A presenter which contains a finder. Should only be used as base class for the top level categories. */
 public abstract class FinderPresenter<V extends FinderView, Proxy_ extends ProxyPlace<?>>
         extends TopLevelPresenter<V, Proxy_>
         implements TopLevelCategory {

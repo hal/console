@@ -18,6 +18,7 @@ package org.jboss.hal.resources;
 import java.util.Arrays;
 
 import elemental2.dom.CSSProperties.HeightUnionType;
+import elemental2.dom.CSSProperties.WidthUnionType;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
@@ -25,8 +26,6 @@ import static java.util.stream.Collectors.joining;
 /**
  * Contains common CSS classes from HAL, PatternFly & Bootstrap. The constants in this interface are not involved in
  * any kind of code generation or GWT magic. They're just here to have them in one place.
- *
- * @author Harald Pehl
  */
 public interface CSS {
 
@@ -58,6 +57,7 @@ public interface CSS {
     String bootstrapSelect = "bootstrap-select";
     String bootstrapSwitch = "bootstrap-switch";
     String breadcrumb = "breadcrumb";
+    String breakTooltip = "break-tooltip";
     String btn = "btn";
     String btnBlock = "btn-block";
     String btnCancel = "btn-cancel";
@@ -68,6 +68,7 @@ public interface CSS {
     String btnLg = "btn-lg";
     String btnLink = "btn-link";
     String btnPrimary = "btn-primary";
+    String btnToolbar = "btn-toolbar";
 
     String caret = "caret";
     String centerBlock = "center-block";
@@ -85,6 +86,7 @@ public interface CSS {
     String containerFluid = "container-fluid";
     String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
     String containerPfNavPfVerticalWithSubMenus = "container-pf-nav-pf-vertical-with-sub-menus";
+    String contentViewPfPagination = "content-view-pf-pagination";
     String controlLabel = "control-label";
     String copy = "copy";
 
@@ -94,14 +96,20 @@ public interface CSS {
     String deprecated = "deprecated";
     String disabled = "disabled";
     String divider = "divider";
+    String disconnected = "disconnected";
     String dlHorizontal = "dl-horizontal";
     String drawerPf = "drawer-pf";
     String drawerPfAction = "drawer-pf-action";
+    String drawerPfActionLink = "drawer-pf-action-link";
+    String drawerPfClose = "drawer-pf-close";
+    String drawerPfExpanded = "drawer-pf-expanded";
     String drawerPfHal = "drawer-pf-hal";
     String drawerPfNotification = "drawer-pf-notification";
+    String drawerPfNotificationContent = "drawer-pf-notification-content";
     String drawerPfNotificationMessage = "drawer-pf-notification-message";
     String drawerPfNotificationInfo = "drawer-pf-notification-info";
     String drawerPfTitle = "drawer-pf-title";
+    String drawerPfToggleExpand = "drawer-pf-toggle-expand";
     String drawerPfNotificationsNonClickable = "drawer-pf-notifications-non-clickable";
     String dropdown = "dropdown";
     String dropdownKebabPf = "dropdown-kebab-pf";
@@ -113,9 +121,7 @@ public interface CSS {
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
     String editor = "editor";
-    String editorButtons = "editor-buttons";
     String editorControls = "editor-controls";
-    String editorStatus = "editor-status";
     String empty = "empty";
     String error = "error";
     String errorCircleO = "error-circle-o";
@@ -124,7 +130,7 @@ public interface CSS {
     String external = "external";
 
     String fade = "fade";
-    String failSafeForm = "fail-safe-form";
+    String faSpin = "fa-spin";
     String filter = "filter";
     String finder = "finder";
     String finderColumn = "finder-column";
@@ -144,11 +150,13 @@ public interface CSS {
 
     String grey = "grey";
 
+    String halConfChangesAdditionalInfo = "hal-conf-changes-additional-info";
+    String halExecutionDuration = "hal-execution-duration";
+    String halExecutionTime = "hal-execution-time";
     String halFormLabel = "hal-form-label";
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
     String halSearch = "hal-search";
-    String halTableButton = "hal-table-button";
     String hasButton = "has-button";
     String hasClear = "has-clear";
     String hasError = "has-error";
@@ -156,43 +164,67 @@ public interface CSS {
     String header = "header";
     String helpBlock = "help-block";
     String hidden = "hidden";
+    String hiddenXs = "hidden-xs";
     String hide = "hide";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
     String hostContainer = "host-container";
 
+    String i = "i";
     String imgResponsive = "img-responsive";
     String imgThumbnail = "img-thumbnail";
     String in = "in";
     String inactive = "inactive";
     String indicator = "indicator";
     String info = "info";
+    String inner = "inner";
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
+    String invisible = "invisible";
     String itemIcon = "item-icon";
     String itemText = "item-text";
 
     String key = "key";
 
+    String label = "label";
+    String labelInfo = "label-info";
+    String langJava = "lang-java";
     String last = "last";
     String lead = "lead";
     String listGroup = "list-group";
     String listGroupItem = "list-group-item";
-    String listGroupItemHeading = "list-group-item-heading";
-    String listGroupItemText = "list-group-item-text";
     String listGroupItemValue = "list-group-item-value";
-    String listViewPf = "list-view-pf";
-    String listViewPfAdditionalInfo = "list-view-pf-additional-info";
-    String listViewPfAdditionalInfoItem = "list-view-pf-additional-info-item";
-    String listViewPfActions = "list-view-pf-actions";
-    String listViewPfBody = "list-view-pf-body";
-    String listViewPfCheckbox = "list-view-pf-checkbox";
-    String listViewPfDescription = "list-view-pf-description";
-    String listViewPfLeft = "list-view-pf-left";
-    String listViewPfMainInfo = "list-view-pf-main-info";
-    String listViewPfStacked = "list-view-pf-stacked";
+    String listHalActions = "list-hal-actions";
+    String listHalAdditionalContent = "list-hal-additional-content";
+    String listHalIconBig = "list-hal-icon-big";
+    String listHalIconError = "list-hal-icon-error";
+    String listHalIconInfo = "list-hal-icon-info";
+    String listHalIconProgress = "list-hal-icon-progress";
+    String listHalIconSuccess = "list-hal-icon-success";
+    String listHalMainContent = "list-hal-main-content";
+    String listHalSelected = "list-hal-selected";
+    String listInline = "list-inline";
+    String listPf = "list-pf";
+    String listPfActions = "list-pf-actions";
+    String listPfAdditionalContent = "list-pf-additional-content";
+    String listPfContainer = "list-pf-container";
+    String listPfContainerLong = "list-pf-container-long";
+    String listPfContent = "list-pf-content";
+    String listPfContentFlex = "list-pf-content-flex";
+    String listPfContentWrapper = "list-pf-content-wrapper";
+    String listPfDescription = "list-pf-description";
+    String listPfHeader = "list-pf-header";
+    String listPfIcon = "list-pf-icon";
+    String listPfIconBordered = "list-pf-icon-bordered";
+    String listPfIconSmall = "list-pf-icon-small";
+    String listPfItem = "list-pf-item";
+    String listPfLeft = "list-pf-left";
+    String listPfMainContent = "list-pf-main-content";
+    String listPfSelect = "list-pf-select";
+    String listPfStacked = "list-pf-stacked";
+    String listPfTitle = "list-pf-title";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String logFileLoading = "log-file-loading";
@@ -200,12 +232,14 @@ public interface CSS {
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
-    String marginBottom5 = "margin-bottom-5";
     String marginBottomLarge = "margin-bottom-large";
     String marginBottomSmall = "margin-bottom-small";
+    String marginLeftSmall = "margin-left-small";
     String marginRight5 = "margin-right-5";
+    String marginRightLarge = "margin-right-large";
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";
+    String marginTop5 = "margin-top-5";
     String marginTopLarge = "margin-top-large";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
@@ -241,10 +275,20 @@ public interface CSS {
     String offset = "offset";
     String ok = "ok";
     String ondrag = "ondrag";
+    String open = "open";
     String operationParameter = "operation-parameter";
     String operations = "operations";
 
     String page = "page";
+    String pagination = "pagination";
+    String paginationHal = "pagination-hal";
+    String paginationPfBack = "paginationpfBack";
+    String paginationPfForward = "paginationpfForward";
+    String paginationPfItemsCurrent = "pagination-pf-items-current";
+    String paginationPfItemsTotal = "pagination-pf-items-total";
+    String paginationPfPage = "pagination-pf-page";
+    String paginationPfPages = "pagination-pf-pages";
+    String paginationPfPagesize = "pagination-pf-pagesize";
     String panel = "panel";
     String panelBody = "panel-body";
     String panelCollapse = "panel-collapse";
@@ -252,10 +296,11 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
-    String pauseCircle = "pause-circle-o";
+    String paused = "paused";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
+    String prettyPrint = "prettyprint";
     String preview = "preview";
     String productVersionsPf = "product-versions-pf";
     String progress = "progress";
@@ -268,20 +313,21 @@ public interface CSS {
     String progressContainer = "progress-container";
     String progressDescription = "progress-description";
     String progressDescriptionLeft = "progress-description-left ";
+    String progressLabelLeft = "progress-label-left";
     String progressLabelRight = "progress-label-right";
     String progressLabelTopRight = "progress-label-top-right";
+    String progressSm = "progress-sm";
     String progressXs = "progress-xs";
     String properties = "properties";
     String pullLeft = "pull-left";
     String pullRight = "pull-right";
     String pulse = "pulse";
 
-    String questionsCircleO = "question-circle-o";
-
     String radio = "radio";
     String rbacHidden = "rbac-hidden";
     String readonly = "readonly";
     String refresh = "refresh";
+    String restResources = "rest-resources";
     String restricted = "restricted";
     String row = "row";
     String rowHeader = "row-header";
@@ -297,6 +343,7 @@ public interface CSS {
     String server = "server";
     String servers = "servers";
     String serverGroupContainer = "server-group-container";
+    String smallLink = "small-link";
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
@@ -313,7 +360,9 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
+    String text = "text";
     String textCenter = "text-center";
+    String textRight = "text-right";
     String time = "time";
     String timestamp = "timestamp";
     String tmTag = "tm-tag";
@@ -321,6 +370,11 @@ public interface CSS {
     String toastNotificationsListPf = "toast-notifications-list-pf";
     String toastPf = "toast-pf";
     String toastPfAction = "toast-pf-action";
+    String toolbarPf = "toolbar-pf";
+    String toolbarPfActionRight = "toolbar-pf-action-right";
+    String toolbarPfActions = "toolbar-pf-actions";
+    String toolbarPfFilter = "toolbar-pf-filter";
+    String toolbarPfResults = "toolbar-pf-results";
     String topology = "topology";
     String treeContainer = "tree-container";
 
@@ -389,6 +443,10 @@ public interface CSS {
 
     static HeightUnionType height(Object height) {
         return HeightUnionType.of(height);
+    }
+
+    static WidthUnionType width(Object height) {
+        return WidthUnionType.of(height);
     }
 
     static String px(int value) {

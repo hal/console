@@ -38,16 +38,13 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_TEMPLATE;
 
-/**
- * @author Claudio Miranda
- */
 public class EjbPresenter
         extends MbuiPresenter<EjbPresenter.MyView, EjbPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.EJB3)
+    @NameToken(NameTokens.EJB3_CONFIGURATION)
     @Requires({EJB_SUBSYSTEM_ADDRESS})
     public interface MyProxy extends ProxyPlace<EjbPresenter> {}
 
@@ -87,7 +84,7 @@ public class EjbPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.EJB3);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.EJB3);
     }
 
     @Override

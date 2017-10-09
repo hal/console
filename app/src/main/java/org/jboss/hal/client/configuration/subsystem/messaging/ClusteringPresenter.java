@@ -34,9 +34,9 @@ import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -48,26 +48,21 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class ClusteringPresenter
         extends ServerSettingsPresenter<ClusteringPresenter.MyView, ClusteringPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    // TODO Replace with
-    // TODO {BROADCAST_GROUP_ADDRESS, DISCOVERY_GROUP_ADDRESS,
-    // TODO  CLUSTER_CONNECTION_ADDRESS, GROUPING_HANDLER_ADDRESS,
-    // TODO  BRIDGE_ADDRESS}
-    // TODO once WFCORE-2022 is resolved
-    @Requires(SERVER_ADDRESS)
+    @Requires({BRIDGE_ADDRESS,
+            BROADCAST_GROUP_ADDRESS,
+            CLUSTER_CONNECTION_ADDRESS,
+            DISCOVERY_GROUP_ADDRESS,
+            GROUPING_HANDLER_ADDRESS})
     @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
     public interface MyProxy extends ProxyPlace<ClusteringPresenter> {}
 
@@ -107,10 +102,10 @@ public class ClusteringPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
                         resources.constants().category(), Names.SERVER)
-                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName),
+                .append(Ids.MESSAGING_SERVER_CONFIGURATION, Ids.messagingServer(serverName),
                         Names.SERVER, serverName)
                 .append(Ids.MESSAGING_SERVER_SETTINGS, Ids.MESSAGING_SERVER_CLUSTERING,
                         resources.constants().settings(), Names.CLUSTERING);
@@ -155,8 +150,9 @@ public class ClusteringPresenter
 
     void addBridge(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
+        NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
-                .unboundFormItem(new NameItem(), 0)
+                .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .include(QUEUE_NAME, DISCOVERY_GROUP, STATIC_CONNECTORS)
                 .unsorted()
@@ -174,9 +170,14 @@ public class ClusteringPresenter
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
 
         new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            name = nameItem.getValue();
             ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
                     .resolve(statementContext);
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();
+    }
+
+    ResourceAddress bridgeAddress(final String bridgeName) {
+        return bridgeName != null ? SELECTED_BRIDGE_TEMPLATE.resolve(statementContext, bridgeName) : null;
     }
 }

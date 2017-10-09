@@ -214,9 +214,6 @@ import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandl
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.Deprecation;
 
-/**
- * @author Harald Pehl
- */
 public class TestableFormItem implements FormItem<String> {
 
     private final String name;

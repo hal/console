@@ -50,9 +50,6 @@ import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.MESSAGING_SERVER_SETTINGS)
 public class ServerSettingsColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility
@@ -94,7 +91,7 @@ public class ServerSettingsColumn
         setItemsProvider((context, callback) -> {
             List<StaticItem> items = new ArrayList<>();
             Optional<String> optional = stream(context.getPath().spliterator(), false)
-                    .filter(segment -> Ids.MESSAGING_SERVER.equals(segment.getColumnId()))
+                    .filter(segment -> Ids.MESSAGING_SERVER_CONFIGURATION.equals(segment.getColumnId()))
                     .findAny()
                     .map(FinderSegment::getItemId);
             if (optional.isPresent()) {

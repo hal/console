@@ -37,9 +37,6 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_CONTROLLER;
 
-/**
- * @author Harald Pehl
- */
 public class RequestControllerPresenter
         extends MbuiPresenter<RequestControllerPresenter.MyView, RequestControllerPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -89,7 +86,7 @@ public class RequestControllerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(REQUEST_CONTROLLER);
+        return finderPathFactory.configurationSubsystemPath(REQUEST_CONTROLLER);
     }
 
     @Override

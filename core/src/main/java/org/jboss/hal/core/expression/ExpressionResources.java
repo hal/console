@@ -18,9 +18,6 @@ package org.jboss.hal.core.expression;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
-/**
- * @author Harald Pehl
- */
 public interface ExpressionResources extends ClientBundle {
 
     @Source("expression.base64")

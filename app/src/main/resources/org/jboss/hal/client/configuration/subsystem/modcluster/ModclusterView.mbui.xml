@@ -20,7 +20,7 @@
         <item id="modcluster-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration">
                 <h1>Configuration</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <form id="modcluster-configuration" title="Configuration" auto-save="true" reset="true">
                     <attributes>
                         <group id="advertising" title="Advertising">
@@ -64,7 +64,7 @@
             <metadata
                     address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration/ssl=configuration">
                 <h1>SSL</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <singleton-form id="modcluster-ssl-form" title="SSL" auto-save="true" reset="true">
                     <attributes>
                         <attribute name="key-alias"/>

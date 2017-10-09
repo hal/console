@@ -21,9 +21,6 @@ import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ResourceAddress;
 
-/**
- * @author Harald Pehl
- */
 public class GenericSubsystemView extends HalViewImpl implements GenericSubsystemPresenter.MyView {
 
     private final ModelBrowser modelBrowser;

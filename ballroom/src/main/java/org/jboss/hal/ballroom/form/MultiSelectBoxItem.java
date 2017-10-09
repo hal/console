@@ -27,9 +27,6 @@ import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
-/**
- * @author Harald Pehl
- */
 public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
     private static class MultiSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<List<String>> {

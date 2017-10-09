@@ -35,12 +35,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-/**
- * Holds the top level items to configure the undertow subsystem.
- * TODO Add support for /subsystem=undertow/application-security-domain=*
- *
- * @author Harald Pehl
- */
+/** Holds the top level items to configure the undertow subsystem. */
 @AsyncColumn(Ids.UNDERTOW_SETTINGS)
 public class UndertowSettingsColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility
@@ -62,6 +57,11 @@ public class UndertowSettingsColumn
                         .id(Ids.UNDERTOW_GLOBAL_SETTINGS)
                         .action(itemActionFactory.view(places.selectedProfile(NameTokens.UNDERTOW).build()))
                         .onPreview(new UndertowSubsystemPreview(crud, resources))
+                        .build(),
+                new StaticItem.Builder(Names.APPLICATION_SECURITY_DOMAIN)
+                        .nextColumn(Ids.UNDERTOW_APP_SECURITY_DOMAIN)
+                        .onPreview(new PreviewContent(Names.APPLICATION_SECURITY_DOMAIN,
+                                resources.previews().configurationUndertowApplicationSecurityDomain()))
                         .build(),
                 new StaticItem.Builder(Names.BUFFER_CACHES)
                         .action(itemActionFactory.view(

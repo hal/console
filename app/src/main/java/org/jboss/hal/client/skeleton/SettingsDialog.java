@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.NumberSelectItem;
 import org.jboss.hal.config.Environment;
@@ -33,16 +32,14 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static elemental2.dom.DomGlobal.window;
 import static java.util.Comparator.naturalOrder;
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.config.Settings.Key.LOCALE;
-import static org.jboss.hal.config.Settings.Key.PAGE_LENGTH;
+import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
-/**
- * @author Harald Pehl
- */
 class SettingsDialog {
 
     private static final SettingsResources RESOURCES = GWT.create(SettingsResources.class);
@@ -73,11 +70,15 @@ class SettingsDialog {
         if (multipleLocales) {
             attributes.add(LOCALE.key());
         }
-        attributes.add(PAGE_LENGTH.key());
+        attributes.add(PAGE_SIZE.key());
+        long[] values = new long[Settings.PAGE_SIZE_VALUES.length];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = Settings.PAGE_SIZE_VALUES[i];
+        }
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SETTINGS_FORM, metadata)
                 .include(attributes)
-                .customFormItem(PAGE_LENGTH.key(),
-                        attributeDescription -> new NumberSelectItem(PAGE_LENGTH.key(), new long[]{10, 20, 50}))
+                .customFormItem(PAGE_SIZE.key(),
+                        attributeDescription -> new NumberSelectItem(PAGE_SIZE.key(), values))
                 .build();
 
         dialog = new ModifyResourceDialog(resources.constants().settings(), form,
@@ -88,7 +89,7 @@ class SettingsDialog {
                 () -> {
                     if (changes) {
                         DialogFactory.showConfirmation(resources.constants().settings(),
-                                resources.messages().reloadSettings(), DomGlobal.location::reload);
+                                resources.messages().reloadSettings(), window.location::reload);
                     }
                 });
     }
@@ -99,7 +100,7 @@ class SettingsDialog {
         if (multipleLocales) {
             modelNode.get(LOCALE.key()).set(settings.get(LOCALE).value());
         }
-        modelNode.get(PAGE_LENGTH.key()).set(settings.get(PAGE_LENGTH).asInt(Settings.DEFAULT_PAGE_LENGTH));
+        modelNode.get(PAGE_SIZE.key()).set(settings.get(PAGE_SIZE).asInt(Settings.DEFAULT_PAGE_SIZE));
         dialog.show(modelNode);
     }
 }

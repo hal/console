@@ -18,19 +18,14 @@ package org.jboss.hal.core.finder;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 
-/**
- * @author Harald Pehl
- */
 public class ItemAction<T> {
 
     public static class Builder<T> {
 
         private String title;
-        private HTMLElement element;
         private ItemActionHandler<T> handler;
         private String href;
         private final Map<String, String> attributes;
@@ -39,7 +34,6 @@ public class ItemAction<T> {
 
         public Builder() {
             this.title = null;
-            this.element = null;
             this.handler = null;
             this.href = null;
             this.attributes = new HashMap<>();
@@ -47,11 +41,6 @@ public class ItemAction<T> {
 
         public Builder<T> title(final String title) {
             this.title = title;
-            return this;
-        }
-
-        public Builder<T> element(final HTMLElement element) {
-            this.element = element;
             return this;
         }
 
@@ -89,8 +78,14 @@ public class ItemAction<T> {
     }
 
 
+    public static final ItemAction SEPARATOR = new ItemAction.Builder().build();
+
+    @SuppressWarnings("unchecked")
+    public static <T> ItemAction<T> separator() {
+        return SEPARATOR;
+    }
+
     final String title;
-    final HTMLElement element;
     final ItemActionHandler<T> handler;
     final String href;
     final Map<String, String> attributes;
@@ -98,7 +93,6 @@ public class ItemAction<T> {
 
     private ItemAction(final Builder<T> builder) {
         this.title = builder.title;
-        this.element = builder.element;
         this.handler = builder.handler;
         this.href = builder.href;
         this.attributes = builder.attributes;

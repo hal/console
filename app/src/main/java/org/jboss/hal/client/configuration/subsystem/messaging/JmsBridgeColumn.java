@@ -51,9 +51,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_BRIDGE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.JMS_BRIDGE)
 @Requires(AddressTemplates.JMS_BRIDGE_ADDRESS)
 public class JmsBridgeColumn extends FinderColumn<NamedNode> {

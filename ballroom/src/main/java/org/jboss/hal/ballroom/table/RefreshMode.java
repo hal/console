@@ -43,7 +43,7 @@ public enum RefreshMode {
 
     private final String mode;
 
-    RefreshMode(final String mode) {
+    RefreshMode(String mode) {
         this.mode = mode;
     }
 

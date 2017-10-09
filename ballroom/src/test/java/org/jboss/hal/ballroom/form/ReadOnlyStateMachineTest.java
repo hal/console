@@ -7,9 +7,6 @@ import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.*;
 import static org.junit.Assert.*;
 
-/**
- * @author Harald Pehl
- */
 public class ReadOnlyStateMachineTest {
 
     private StateMachine stateMachine;

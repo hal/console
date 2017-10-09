@@ -19,9 +19,6 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.resources.Messages;
 
-/**
- * @author Harald Pehl
- */
 class MappingsItem extends PropertiesItem {
 
     MappingsItem(final String name, final Messages messages) {

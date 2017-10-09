@@ -21,9 +21,6 @@ import org.jboss.hal.meta.StatementContext;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
-/**
- * @author Harald Pehl
- */
 public class ResourceDescriptionStatementContext extends FilteringStatementContext {
 
     public ResourceDescriptionStatementContext(final StatementContext delegate, final Environment environment) {

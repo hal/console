@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,7 +28,6 @@ import java.util.TreeSet;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import elemental2.core.Array;
 import org.jboss.hal.ballroom.tree.DataFunction;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
@@ -44,8 +44,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 /**
  * Function which gets invoked when the user opens a node in the model browser tree.
  * TODO Error handling
- *
- * @author Harald Pehl
  */
 final class ReadChildren implements DataFunction<Context> {
 
@@ -87,7 +85,7 @@ final class ReadChildren implements DataFunction<Context> {
                     }
                 }
 
-                Array<Node<Context>> children = new Array<>();
+                List<Node<Context>> children = new ArrayList<>();
                 for (Map.Entry<String, Collection<String>> entry : resources.asMap().entrySet()) {
                     String name = entry.getKey();
                     Set<String> singletons = new HashSet<>(entry.getValue());
@@ -102,9 +100,9 @@ final class ReadChildren implements DataFunction<Context> {
                     if (!singletons.isEmpty()) {
                         builder.icon(fontAwesome("list-ul"));
                     }
-                    children.push(builder.build());
+                    children.add(builder.build());
                 }
-                callback.result(children);
+                callback.result(children.toArray(new Node[children.size()]));
             });
 
         } else {
@@ -114,7 +112,7 @@ final class ReadChildren implements DataFunction<Context> {
                     .build();
             dispatcher.execute(operation, result -> {
                 List<ModelNode> modelNodes = result.asList();
-                Array<Node<Context>> children = new Array<>();
+                List<Node<Context>> children = new ArrayList<>();
                 SortedSet<String> singletons = new TreeSet<>(node.data.getSingletons());
 
                 // Add existing children
@@ -127,7 +125,7 @@ final class ReadChildren implements DataFunction<Context> {
                             .asyncFolder()
                             .icon(fontAwesome("file-text-o"))
                             .build();
-                    children.push(child);
+                    children.add(child);
                 }
 
                 // Add non-existing singletons
@@ -138,10 +136,10 @@ final class ReadChildren implements DataFunction<Context> {
                             .icon(fontAwesome("file-o"))
                             .disabled()
                             .build();
-                    children.push(child);
+                    children.add(child);
                 }
 
-                callback.result(children);
+                callback.result(children.toArray(new Node[children.size()]));
             });
         }
     }

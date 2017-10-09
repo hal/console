@@ -31,11 +31,7 @@ import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.mvp.Slots;
 
-/**
- * Presenter which assembles the root layout: header, main content and footer.
- *
- * @author Harald Pehl
- */
+/** Presenter which assembles the root layout: header, main content and footer. */
 public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter.MyProxy> implements Slots {
 
     // @formatter:off

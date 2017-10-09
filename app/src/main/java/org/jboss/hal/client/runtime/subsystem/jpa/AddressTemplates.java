@@ -17,20 +17,28 @@ package org.jboss.hal.client.runtime.subsystem.jpa;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Harald Pehl
- */
+import static org.jboss.hal.core.deployment.DeploymentResources.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.core.deployment.DeploymentResources.SUBDEPLOYMENT_ADDRESS;
+
 interface AddressTemplates {
 
-    String JPA_ADDRESS = "/{selected.host}/{selected.server}/deployment=*/subsystem=jpa/hibernate-persistence-unit=*";
-    String ENTITY_ADDRESS = JPA_ADDRESS + "/entity=*";
-    String ENTITY_CACHE_ADDRESS = JPA_ADDRESS + "/entity-cache=*";
-    String QUERY_CACHE_ADDRESS = JPA_ADDRESS + "/query-cache=*";
-    String COLLECTION_ADDRESS = JPA_ADDRESS + "/collection=*";
+    String JPA_ADDRESS = "/subsystem=jpa";
+    String HPU_ADDRESS = JPA_ADDRESS + "/hibernate-persistence-unit=*";
 
-    AddressTemplate JPA_TEMPLATE = AddressTemplate.of(JPA_ADDRESS);
-    AddressTemplate ENTITY_TEMPLATE = AddressTemplate.of(ENTITY_ADDRESS);
-    AddressTemplate ENTITY_CACHE_TEMPLATE = AddressTemplate.of(ENTITY_CACHE_ADDRESS);
-    AddressTemplate QUERY_CACHE_TEMPLATE = AddressTemplate.of(QUERY_CACHE_ADDRESS);
-    AddressTemplate COLLECTION_TEMPLATE = AddressTemplate.of(COLLECTION_ADDRESS);
+    String JPA_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + JPA_ADDRESS;
+    String HPU_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + HPU_ADDRESS;
+    String ENTITY_DEPLOYMENT_ADDRESS = HPU_DEPLOYMENT_ADDRESS + "/entity=*";
+    String ENTITY_CACHE_DEPLOYMENT_ADDRESS = HPU_DEPLOYMENT_ADDRESS + "/entity-cache=*";
+    String QUERY_CACHE_DEPLOYMENT_ADDRESS = HPU_DEPLOYMENT_ADDRESS + "/query-cache=*";
+    String COLLECTION_DEPLOYMENT_ADDRESS = HPU_DEPLOYMENT_ADDRESS + "/collection=*";
+
+    String HPU_SUBDEPLOYMENT_ADDRESS = SUBDEPLOYMENT_ADDRESS + HPU_ADDRESS;
+
+    AddressTemplate JPA_DEPLOYMENT_TEMPLATE = AddressTemplate.of(HPU_DEPLOYMENT_ADDRESS);
+    AddressTemplate ENTITY_DEPLOYMENT_TEMPLATE = AddressTemplate.of(ENTITY_DEPLOYMENT_ADDRESS);
+    AddressTemplate ENTITY_CACHE_DEPLOYMENT_TEMPLATE = AddressTemplate.of(ENTITY_CACHE_DEPLOYMENT_ADDRESS);
+    AddressTemplate QUERY_CACHE_DEPLOYMENT_TEMPLATE = AddressTemplate.of(QUERY_CACHE_DEPLOYMENT_ADDRESS);
+    AddressTemplate COLLECTION_DEPLOYMENT_TEMPLATE = AddressTemplate.of(COLLECTION_DEPLOYMENT_ADDRESS);
+
+    AddressTemplate HPU_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(HPU_SUBDEPLOYMENT_ADDRESS);
 }

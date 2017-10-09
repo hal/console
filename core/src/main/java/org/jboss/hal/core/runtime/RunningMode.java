@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.core.runtime;
 
-/**
- * Mode as defined by {@code host.running-mode}, {@code server.running-mode}
- *
- * @author Harald Pehl
- */
+/** Mode as defined by {@code host.running-mode}, {@code server.running-mode} */
 public enum RunningMode {
     NORMAL, ADMIN_ONLY, UNDEFINED
 }

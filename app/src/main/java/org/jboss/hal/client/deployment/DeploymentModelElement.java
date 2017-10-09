@@ -21,13 +21,14 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.deployment.Deployment.Status.OK;
+import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
@@ -36,8 +37,6 @@ import static org.jboss.hal.resources.CSS.stopCircleO;
 /**
  * UI element to show the management model of a deployment in the model browser. Shows an empty state element in case
  * the deployment is inactive.
- *
- * @author Harald Pehl
  */
 class DeploymentModelElement implements HasElements {
 

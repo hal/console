@@ -30,10 +30,9 @@ import static org.jboss.hal.resources.CSS.clickable;
 /**
  * Breadcrumb element as specified by <a href="https://www.patternfly.org/pattern-library/widgets/#breadcrumbs">PatternFly</a>
  *
- * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/pattern-library/widgets/#breadcrumbs>https://www.patternfly.org/pattern-library/widgets/#breadcrumbs</a>
  */
-public class Breadcrumb implements IsElement {
+public class Breadcrumb implements IsElement<HTMLElement> {
 
     @FunctionalInterface
     public interface SegmentHandler {
@@ -52,7 +51,7 @@ public class Breadcrumb implements IsElement {
         Elements.removeChildrenFrom(root);
     }
 
-    public Breadcrumb append(final String segment, final SegmentHandler handler) {
+    public Breadcrumb append(String segment, SegmentHandler handler) {
         root.appendChild(li()
                 .add(a().css(clickable)
                         .textContent(segment)
@@ -61,7 +60,7 @@ public class Breadcrumb implements IsElement {
         return this;
     }
 
-    public Breadcrumb append(final String segment) {
+    public Breadcrumb append(String segment) {
         root.appendChild(li().css(active).textContent(segment).asElement());
         return this;
     }

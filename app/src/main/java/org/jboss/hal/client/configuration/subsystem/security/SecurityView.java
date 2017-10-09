@@ -29,9 +29,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"HardCodedStringLiteral", "WeakerAccess", "unused", "DuplicateStringLiteralInspection"})
 public abstract class SecurityView extends MbuiViewImpl<SecurityPresenter> implements SecurityPresenter.MyView {

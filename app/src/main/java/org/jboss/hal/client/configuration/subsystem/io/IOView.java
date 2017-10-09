@@ -26,9 +26,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Claudio Miranda
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess", "unused"})
 public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPresenter.MyView {

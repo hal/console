@@ -17,38 +17,25 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Harald Pehl
- */
 public class BrowseContentView extends HalViewImpl implements BrowseContentPresenter.MyView {
 
     private final BrowseContentElement browseContent;
-    private BrowseContentPresenter presenter;
 
     @Inject
-    public BrowseContentView(final Dispatcher dispatcher, final Resources resources) {
-        this.browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.reload());
+    public BrowseContentView(Dispatcher dispatcher, EventBus eventBus, Resources resources) {
+        browseContent = new BrowseContentElement(dispatcher, eventBus, resources);
+        registerAttachable(browseContent);
         initElement(browseContent);
     }
 
     @Override
-    public void attach() {
-        super.attach();
-        browseContent.attach();
-    }
-
-    @Override
-    public void setPresenter(final BrowseContentPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setContent(final String content, final ModelNode browseContentResult) {
-        browseContent.setContent(content, browseContentResult);
+    public void setContent(Content content) {
+        browseContent.setContent(content);
     }
 }

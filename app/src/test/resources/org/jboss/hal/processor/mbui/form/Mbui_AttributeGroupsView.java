@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
+import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
@@ -39,18 +40,19 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_AttributeGroupsView extends AttributeGroupsView {
+public final class Mbui_AttributeGroupsView extends AttributeGroupsView {
 
     private final Metadata metadata0;
-    private final Map<String, HTMLElement> handlebarElements;
+    private final Map<String, HTMLElement> expressionElements;
 
+    @Inject
     @SuppressWarnings("unchecked")
-    Mbui_AttributeGroupsView(MbuiContext mbuiContext) {
+    public Mbui_AttributeGroupsView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
-        this.handlebarElements = new HashMap<>();
+        this.expressionElements = new HashMap<>();
 
         form = new GroupedForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .customGroup("group-1", "Group 1")
@@ -59,7 +61,7 @@ final class Mbui_AttributeGroupsView extends AttributeGroupsView {
                 .customGroup("group-2", "Group 2")
                 .include("baz", "qux")
                 .end()
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues, metadata0))
                 .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 
@@ -72,7 +74,7 @@ final class Mbui_AttributeGroupsView extends AttributeGroupsView {
                         .add(form)
                 )
                 .asElement();
-        handlebarElements.put("html0", html0);
+        expressionElements.put("html0", html0);
 
         registerAttachable(form);
 

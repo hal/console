@@ -24,9 +24,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROCESS_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_REQUIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
 
-/**
- * @author Harald Pehl
- */
 public class ProcessStateProcessor implements ResponseHeadersProcessor {
 
     private final EventBus eventBus;

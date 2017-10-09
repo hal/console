@@ -23,9 +23,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
-/**
- * @author Harald Pehl
- */
 class CacheContainerPreview extends PreviewContent<CacheContainer> {
 
     CacheContainerPreview(final CacheContainer cc) {

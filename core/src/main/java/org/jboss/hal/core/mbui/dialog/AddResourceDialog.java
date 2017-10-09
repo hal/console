@@ -16,7 +16,6 @@
 package org.jboss.hal.core.mbui.dialog;
 
 import java.util.Collections;
-import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterables;
@@ -24,6 +23,7 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
@@ -31,9 +31,6 @@ import org.jboss.hal.resources.Constants;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * @author Harald Pehl
- */
 public class AddResourceDialog {
 
     @FunctionalInterface
@@ -53,6 +50,7 @@ public class AddResourceDialog {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
+    private FormItem<String> nameItem;
     private Form<ModelNode> form;
     private Dialog dialog;
 
@@ -67,11 +65,12 @@ public class AddResourceDialog {
     public AddResourceDialog(final String id, final String title, final Metadata metadata,
             final Iterable<String> attributes, final Callback callback) {
 
+        nameItem = new NameItem();
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(id, metadata)
-                .unboundFormItem(new NameItem(), 0)
+                .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .requiredOnly()
-                .onSave((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
+                .onSave((f, changedValues) -> saveForm(callback, form.getModel()));
 
         if (!Iterables.isEmpty(attributes)) {
             formBuilder.include(attributes).unsorted();
@@ -85,7 +84,8 @@ public class AddResourceDialog {
      * Callback#onAdd(String, ModelNode)}.
      */
     public AddResourceDialog(final String title, final Form<ModelNode> form, final Callback callback) {
-        form.setSaveCallback((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
+        nameItem = form.getFormItem(NAME);
+        form.setSaveCallback((f, changedValues) -> saveForm(callback, form.getModel()));
         init(title, form);
     }
 
@@ -100,9 +100,8 @@ public class AddResourceDialog {
         this.dialog.registerAttachable(form);
     }
 
-    private void saveForm(final Callback callback, final Map<String, Object> changedValues,
-            final ModelNode model) {
-        String name = String.valueOf(changedValues.remove(NAME));
+    private void saveForm(final Callback callback, final ModelNode model) {
+        String name = nameItem != null ? nameItem.getValue() : null;
         callback.onAdd(name, model);
     }
 

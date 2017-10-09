@@ -21,9 +21,6 @@ import org.jboss.hal.dmr.NamedNode;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
 
-/**
- * @author Harald Pehl
- */
 class Endpoint extends NamedNode {
 
     static final String SCHEME = "scheme";

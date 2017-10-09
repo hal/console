@@ -27,11 +27,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * This class does the bulk of work when it comes to parse the r-r-d response and collect the results.
- *
- * @author Harald Pehl
- */
+/** This class does the bulk of work when it comes to parse the r-r-d response and collect the results. */
 class SingleRrdParser {
 
     private final RrdResult rrdResult;

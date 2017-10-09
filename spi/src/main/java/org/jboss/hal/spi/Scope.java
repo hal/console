@@ -44,8 +44,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Operation mode meta data for proxies. Use only for presenters which are restricted to standalone or domain.
  * Don't use this annotation, if the presenter is supposed to run in both standalone and domain.
- *
- * @author Harald Pehl
  */
 @Documented
 @Retention(RUNTIME)

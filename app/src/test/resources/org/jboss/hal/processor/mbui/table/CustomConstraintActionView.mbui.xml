@@ -20,7 +20,7 @@
         <h1>Table</h1>
         <table id="table">
             <actions>
-                <action title="Foo" handler="{{presenter.reload()}}"
+                <action title="Foo" handler="${presenter.reload()}"
                         constraint="writable(/subsystem=foo@enabled)"/>
             </actions>
             <columns>

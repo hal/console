@@ -47,10 +47,10 @@
                     <!-- HomepageSection template -->
                     <div data-element="homepage-section">
                         <div class="eap-toggle-controls">
-                            <a href="#{{id()}}" data-element="toggleSection" data-toggle="collapse" aria-expanded="true" aria-controls="{{id}}"><i data-element="toggleIcon" class="eap-home-section-icon fa fa-angle-down"></i><span data-element="sectionHeader">Create a Deployment</span></a>
-                            <a href="{{historyToken()}}"><span>{{resources().constants().start()}} </span><i class="fa fa-arrow-circle-right"></i></a>
+                            <a href="#${id()}" data-element="toggleSection" data-toggle="collapse" aria-expanded="true" aria-controls="${id}"><i data-element="toggleIcon" class="eap-home-section-icon fa fa-angle-down"></i><span data-element="sectionHeader">Create a Deployment</span></a>
+                            <a href="${historyToken()}"><span>${resources().constants().start()} </span><i class="fa fa-arrow-circle-right"></i></a>
                         </div>
-                        <div id="{{id}}" data-element="sectionBody" class="eap-toggle-container collapse">
+                        <div id="${id}" data-element="sectionBody" class="eap-toggle-container collapse">
                             <p data-element="sectionIntro">Deploy an application and assign it to one or more server groups.</p>
                             <ol data-element="sectionSteps">
                             </ol>
@@ -67,7 +67,7 @@
                 </div>
                 <div data-element="moduleBody" class="eap-home-module-container">
                     <div class="eap-home-module-header">
-                        <h2><a data-element="moduleHeader" href="{{historyToken()}}">Configuration</a></h2>
+                        <h2><a data-element="moduleHeader" href="${historyToken()}">Configuration</a></h2>
                         <p data-element="moduleIntro">Configure your server profiles</p>
                     </div>
                 </div>
@@ -160,20 +160,20 @@
         <div data-element="homepage-help" class="eap-home-col">
             <div class="eap-home-module">
                 <div class="eap-home-module-icon">
-                    <img data-preview="help" src="{{resources().images().help().getSafeUri().asString()}}">
+                    <img data-preview="help" src="${resources().images().help().getSafeUri().asString()}">
                 </div>
                 <div class="eap-home-module-container">
                     <div class="eap-home-module-header">
-                        <h2>{{resources().constants().homepageHelpNeedHelp()}}</h2>
+                        <h2>${resources().constants().homepageHelpNeedHelp()}</h2>
                         <p></p>
                     </div>
                     <div class="eap-home-module-col">
-                        <p>{{resources().constants().homepageHelpGeneralResources()}}</p>
+                        <p>${resources().constants().homepageHelpGeneralResources()}</p>
                         <ul data-element="generalResources">
                         </ul>
                     </div>
                     <div class="eap-home-module-col">
-                        <p>{{resources().constants().homepageHelpGetHelp()}}</p>
+                        <p>${resources().constants().homepageHelpGetHelp()}</p>
                         <ul data-element="getHelp">
                         </ul>
                     </div>

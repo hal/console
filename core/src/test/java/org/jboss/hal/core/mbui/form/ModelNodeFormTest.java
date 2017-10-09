@@ -25,9 +25,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ModelNodeFormTest {
 
@@ -214,6 +211,35 @@ public class ModelNodeFormTest {
         assertEquals("baz", iterator.next().getName());
         assertEquals("qux", iterator.next().getName());
     }
+
+    @Test
+    public void excludeFormAddAttributes() {
+        ModelNodeForm<ModelNode> form = builder("excludeFormAddAttributes", attributes)
+                .exclude("foo", "bar")
+                .addOnly()
+                .build();
+        Iterable<FormItem> formItems = form.getFormItems();
+        Iterator<FormItem> iterator = formItems.iterator();
+
+        assertEquals(2, Iterables.size(formItems));
+        assertEquals("baz", iterator.next().getName());
+        assertEquals("qux", iterator.next().getName());
+    }
+
+    @Test
+    public void excludeFormAddRequestProperties() {
+        ModelNodeForm<ModelNode> form = builder("excludeFormAddRequestProperties", requestProperties)
+                .exclude("bar", "qux")
+                .fromRequestProperties()
+                .build();
+        Iterable<FormItem> formItems = form.getFormItems();
+        Iterator<FormItem> iterator = formItems.iterator();
+
+        assertEquals(2, Iterables.size(formItems));
+        assertEquals("baz", iterator.next().getName());
+        assertEquals("foo", iterator.next().getName());
+    }
+
 
     @Test
     public void noRuntime() throws Exception {

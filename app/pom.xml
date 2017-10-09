@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-gwt</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.1</version>
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
@@ -51,6 +51,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-json</artifactId>
         </dependency>
         <dependency>
@@ -76,20 +80,12 @@
 
         <!-- GWT -->
         <dependency>
-            <groupId>org.jboss.gwt.flow</groupId>
-            <artifactId>flow</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.gwt.elemento</groupId>
             <artifactId>elemento-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.gwt.elemento</groupId>
             <artifactId>elemento-template</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.gwt.elemento</groupId>
-            <artifactId>elemento-gin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.gwtplatform</groupId>
@@ -108,6 +104,10 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-gwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.intendia.gwt.rxgwt</groupId>
+            <artifactId>rxgwt</artifactId>
         </dependency>
         <dependency>
             <groupId>ru.finam</groupId>
@@ -163,9 +163,10 @@
                         </fileset>
                         <fileset>
                             <directory>src/main/resources/org/jboss/hal/public/js</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/previews</directory>
+                            <excludes>
+                                <exclude>mode-logfile.js</exclude>
+                                <exclude>theme-logfile.js</exclude>
+                            </excludes>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -175,23 +176,20 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <configuration>
                     <nodeVersion>${node.version}</nodeVersion>
-                    <npmVersion>${npm.version}</npmVersion>
+                    <yarnVersion>${yarn.version}</yarnVersion>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>install node and yarn</id>
                         <goals>
-                            <goal>install-node-and-npm</goal>
+                            <goal>install-node-and-yarn</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>npm install</id>
+                        <id>yarn install</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>bower install</id>
@@ -256,6 +254,7 @@
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
@@ -284,6 +283,7 @@
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
@@ -315,6 +315,7 @@
                                 <source>../config/src/main/java</source>
                                 <source>../core/src/main/java</source>
                                 <source>../dmr/src/main/java</source>
+                                <source>../json/src/main/java</source>
                                 <source>../meta/src/main/java</source>
                                 <source>../resources/src/main/java</source>
                                 <source>../spi/src/main/java</source>
@@ -384,6 +385,7 @@
                     </devmodeArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
+                    <localWorkers>1C</localWorkers>
                     <logLevel>${gwt.logLevel}</logLevel>
                     <moduleName>org.jboss.hal.Console</moduleName>
                     <moduleShortName>hal</moduleShortName>
@@ -402,10 +404,6 @@
                     <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
-                        <configuration>
-                            <nodeVersion>${node.version}</nodeVersion>
-                            <npmVersion>${npm.version}</npmVersion>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>grunt esdoc</id>

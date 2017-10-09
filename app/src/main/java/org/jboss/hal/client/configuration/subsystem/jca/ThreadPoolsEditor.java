@@ -52,8 +52,6 @@ import static org.jboss.hal.resources.Names.THREAD_POOLS;
  * that the {@code short-running-threads} and {@code long-running-threads} resources have the same attributes.
  * <p>
  * TODO Implement save and reset callbacks
- *
- * @author Harald Pehl
  */
 class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresenter<JcaPresenter> {
 

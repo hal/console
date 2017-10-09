@@ -41,10 +41,10 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.FilteringStatementContext.Filter;
 import org.jboss.hal.meta.Metadata;
@@ -56,6 +56,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -63,9 +64,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.encodeValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
-/**
- * @author Harald Pehl
- */
 public class ServerPresenter
         extends ApplicationFinderPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -150,7 +148,7 @@ public class ServerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.SERVER),
                         resources.constants().settings(), Names.SERVER)
                 .append(Ids.UNDERTOW_SERVER, Ids.undertowServer(serverName), Names.SERVER, serverName);
@@ -188,7 +186,7 @@ public class ServerPresenter
     void addHost() {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE);
         AddResourceDialog dialog = new AddResourceDialog(Ids.UNDERTOW_HOST_ADD,
-                resources.messages().addResourceTitle(Names.HOST), metadata,
+                resources.messages().addResourceTitle(Names.HOST), metadata, singletonList(DEFAULT_WEB_MODULE),
                 (name, model) -> {
                     ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(HOST + "=" + name)
                             .resolve(statementContext);
@@ -281,8 +279,7 @@ public class ServerPresenter
                 .build();
         form.getFormItem(NAME)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
-        AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(Names.FILTER), form,
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.FILTER), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=" + name)
                             .resolve(statementContext);
@@ -339,8 +336,7 @@ public class ServerPresenter
         form.getFormItem(HANDLER)
                 .registerSuggestHandler(
                         new ReadChildrenAutoComplete(dispatcher, statementContext, HANDLER_SUGGESTIONS));
-        AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(Names.LOCATION), form,
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.LOCATION), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HOST_TEMPLATE
                             .append(LOCATION + "=" + encodeValue(name))

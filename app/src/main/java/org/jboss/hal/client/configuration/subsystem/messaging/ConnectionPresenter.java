@@ -34,9 +34,9 @@ import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -48,26 +48,27 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class ConnectionPresenter
         extends ServerSettingsPresenter<ConnectionPresenter.MyView, ConnectionPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    // TODO Replace with
-    // TODO {ACCEPTOR_ADDRESS, IN_VM_ACCEPTOR_ADDRESS, REMOTE_ACCEPTOR_ADDRESS,
-    // TODO  CONNECTOR_ADDRESS, IN_VM_CONNECTOR_ADDRESS, REMOTE_CONNECTOR_ADDRESS,
-    // TODO  CONNECTOR_SERVICE_ADDRESS, CONNECTION_FACTORY_ADDRESS, POOLED_CONNECTION_FACTORY_ADDRESS}
-    // TODO once WFCORE-2022 is resolved
-    @Requires(SERVER_ADDRESS)
+    @Requires({ACCEPTOR_ADDRESS,
+            CONNECTION_FACTORY_ADDRESS,
+            CONNECTOR_ADDRESS,
+            CONNECTOR_SERVICE_ADDRESS,
+            HTTP_ACCEPTOR_ADDRESS,
+            HTTP_CONNECTOR_ADDRESS,
+            IN_VM_ACCEPTOR_ADDRESS,
+            IN_VM_CONNECTOR_ADDRESS,
+            POOLED_CONNECTION_FACTORY_ADDRESS,
+            REMOTE_ACCEPTOR_ADDRESS,
+            REMOTE_CONNECTOR_ADDRESS})
     @NameToken(NameTokens.MESSAGING_SERVER_CONNECTION)
     public interface MyProxy extends ProxyPlace<ConnectionPresenter> {}
 
@@ -113,10 +114,10 @@ public class ConnectionPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
                         resources.constants().category(), Names.SERVER)
-                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName),
+                .append(Ids.MESSAGING_SERVER_CONFIGURATION, Ids.messagingServer(serverName),
                         Names.SERVER, serverName)
                 .append(Ids.MESSAGING_SERVER_SETTINGS, Ids.MESSAGING_SERVER_CONNECTION,
                         resources.constants().settings(), Names.CONNECTIONS);
@@ -177,5 +178,39 @@ public class ConnectionPresenter
                     .resolve(statementContext);
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();
+    }
+
+    void addPooledConnectionFactory(final ServerSubResource ssr) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        NameItem nameItem = new NameItem();
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+                .unboundFormItem(nameItem, 0)
+                .fromRequestProperties()
+                .include("entries", DISCOVERY_GROUP, CONNECTORS)
+                .unsorted()
+                .build();
+
+        List<AddressTemplate> templates = asList(
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+        form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+        form.getFormItem(CONNECTORS).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            name = nameItem.getValue();
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
+
+    ResourceAddress pooledConnectionFactoryAddress(final String resource) {
+        return resource != null ? SELECTED_POOLED_CONNECTION_FACTORY_TEMPLATE
+                .resolve(statementContext, resource) : null;
     }
 }

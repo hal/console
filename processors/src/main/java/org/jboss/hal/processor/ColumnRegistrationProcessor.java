@@ -35,11 +35,7 @@ import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
 import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;
 import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
-/**
- * Processor which automates registration of finder columns marked with either {@code @Column} or {@code @AsyncColumn}.
- *
- * @author Harald Pehl
- */
+/** Processor which automates registration of finder columns marked with either {@code @Column} or {@code @AsyncColumn}. */
 @AutoService(Processor.class)
 @SuppressWarnings("HardCodedStringLiteral")
 @SupportedAnnotationTypes({"org.jboss.hal.spi.Column", "org.jboss.hal.spi.AsyncColumn"})

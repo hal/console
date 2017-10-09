@@ -40,9 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.UNDERTOW_SERVER)
 @Requires(AddressTemplates.SERVER_ADDRESS)
 public class ServerColumn extends FinderColumn<NamedNode> {

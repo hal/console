@@ -36,9 +36,6 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.ACCESS_CONTROL_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
 

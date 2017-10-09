@@ -18,20 +18,17 @@ package org.jboss.hal.ballroom.table;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Harald Pehl
- */
 public class ColumnActions<T> {
 
     private final Map<String, ColumnAction<T>> columnActions;
 
     ColumnActions() {columnActions = new HashMap<>();}
 
-    public void add(final String id, ColumnAction<T> columnAction) {
+    public void add(String id, ColumnAction<T> columnAction) {
         columnActions.put(id, columnAction);
     }
 
     public boolean isEmpty() {return columnActions.isEmpty();}
 
-    public ColumnAction<T> get(final String key) {return columnActions.get(key);}
+    public ColumnAction<T> get(String key) {return columnActions.get(key);}
 }

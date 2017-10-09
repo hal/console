@@ -20,7 +20,7 @@ import java.util.EnumSet;
 import org.jboss.hal.ballroom.form.Form.Operation;
 import org.jboss.hal.ballroom.form.Form.State;
 
-import static org.jboss.hal.ballroom.form.Form.Operation.*;
+import static org.jboss.hal.ballroom.form.Form.Operation.VIEW;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
@@ -54,14 +54,15 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *                                    +-------------------+
  * </pre>
  * (0) Initial states
- *
- * @author Harald Pehl
  */
 public class SingletonStateMachine extends AbstractStateMachine implements StateMachine {
 
-    public SingletonStateMachine(final boolean supportsReset) {
-        super(EnumSet.allOf(State.class), supportsReset ?
-                EnumSet.allOf(Operation.class) : EnumSet.of(VIEW, CLEAR, EDIT, SAVE, CANCEL, REMOVE));
+    public SingletonStateMachine() {
+        this(EnumSet.allOf(Operation.class));
+    }
+
+    public SingletonStateMachine(EnumSet<Operation> operations) {
+        super(EnumSet.allOf(State.class), operations);
         this.current = initial();
     }
 

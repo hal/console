@@ -35,21 +35,15 @@
 
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.core.client.GWT;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Messages;
-
-/**
- * Simple form item validation handler
- *
- * @author Heiko Braun
- * @date 3/28/11
- */
+/** Simple form item validation handler */
 @FunctionalInterface
 public interface FormItemValidation<T> {
 
-    Constants CONSTANTS = GWT.create(Constants.class);
-    Messages MESSAGES = GWT.create(Messages.class);
+    enum ValidationRule {IF_MODIFIED, ALWAYS}
+
+    default ValidationRule validateIf() {
+        return ValidationRule.IF_MODIFIED;
+    }
 
     ValidationResult validate(T value);
 }

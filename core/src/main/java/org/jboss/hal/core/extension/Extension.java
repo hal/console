@@ -21,11 +21,7 @@ import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * Represents an extension written in JavaScript.
- *
- * @author Harald Pehl
- */
+/** Represents an extension written in JavaScript. */
 @JsType(namespace = "hal.core")
 public class Extension {
 

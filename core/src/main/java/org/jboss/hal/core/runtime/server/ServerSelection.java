@@ -19,11 +19,7 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.meta.StatementContext.Tuple;
 
-/**
- * Selects both {@link Tuple#SELECTED_SERVER_CONFIG} and {@link Tuple#SELECTED_SERVER}
- *
- * @author Harald Pehl
- */
+/** Selects both {@link Tuple#SELECTED_SERVER_CONFIG} and {@link Tuple#SELECTED_SERVER} */
 @GenEvent
 public class ServerSelection {
 

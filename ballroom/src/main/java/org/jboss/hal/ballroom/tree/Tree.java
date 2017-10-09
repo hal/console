@@ -16,47 +16,24 @@
 package org.jboss.hal.ballroom.tree;
 
 import elemental2.core.Array;
-import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.JsCallback;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
 
-/**
- * @author Harald Pehl
- */
 public class Tree<T> implements IsElement, Attachable {
 
-    @JsType(isNative = true)
-    public static class Bridge<T> {
-
-        @JsMethod(namespace = GLOBAL, name = "$")
-        public native static <T> Bridge<T> select(String selector);
-
-        public native void jstree(Options options);
-
-        /**
-         * Adds a selection change callback.
-         */
-        public native void on(String event, SelectionChangeHandler<T> handler);
-
-        public native Api<T> jstree(boolean _true);
-    }
-
-
     private static final String ROOT_NODE = "#";
-    private static final String CHANGED_EVENT = "changed.jstree";
 
     private final String id;
     private final HTMLElement div;
     private final Options options;
     private Bridge<T> bridge;
     private Api<T> api;
-
 
     /**
      * Creates a tree with the specified root node. All other nodes are loaded on demand using the provided callback.
@@ -68,8 +45,7 @@ public class Tree<T> implements IsElement, Attachable {
         this.options = initOptions();
         this.options.core.data = (DataFunction<T>) (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
-                Array<Node<T>> rootNodes = new Array<>();
-                rootNodes.push(root);
+                Node<T>[] rootNodes = new Node[]{root};
                 callback.result(rootNodes);
             } else {
                 data.load(node, callback);
@@ -102,9 +78,7 @@ public class Tree<T> implements IsElement, Attachable {
         options.core.themes.responsive = true;
         options.core.themes.striped = false;
         options.core.themes.url = false;
-        options.plugins = new Array<>();
-        options.plugins.push("search"); //NON-NLS
-        options.plugins.push("wholerow"); //NON-NLS
+        options.plugins = new String[]{"search", "wholerow"}; //NON-NLS
         return options;
     }
 
@@ -121,7 +95,7 @@ public class Tree<T> implements IsElement, Attachable {
      */
     @Override
     public void attach() {
-        if (api == null) {
+        if (bridge == null || api == null) {
             // TODO check security context and adjust options if necessary
             bridge = Bridge.select("#" + id);
             bridge.jstree(options);
@@ -129,37 +103,82 @@ public class Tree<T> implements IsElement, Attachable {
         }
     }
 
+    private Bridge<T> bridge() {
+        if (bridge == null || api == null) {
+            throw unattached();
+        }
+        return bridge;
+    }
 
-    // ------------------------------------------------------ API access
 
-    /**
-     * Getter for the {@link org.jboss.hal.ballroom.tree.Api} instance.
-     *
-     * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
-     */
-    public Api<T> api() {
-        if (api == null) {
-            throw new IllegalStateException(
-                    "Tree('" + id + "') is not attached. Call Tree.attach() before using any of the API methods!");
+    private Api<T> api() {
+        if (bridge == null || api == null) {
+            throw unattached();
         }
         return api;
     }
 
-    public final void onSelectionChange(SelectionChangeHandler<T> handler) {
-        if (bridge == null) {
-            throw new IllegalStateException(
-                    "Tree('" + id + "') is not attached. Call Tree.attach() before you register callbacks!");
-        }
-        bridge.on(CHANGED_EVENT, handler);
+    private IllegalStateException unattached() {
+        return new IllegalStateException(
+                "Tree('" + id + "') is not attached. Call Tree.attach() before using any of the API methods!");
     }
 
-    public void select(final String id, final boolean closeSelected) {
-        api().deselectAll(true);
-        api().selectNode(id, false, false);
+
+    // ------------------------------------------------------ methods
+
+    public void destroy() {
+        api().destroy(false);
+    }
+
+    public Node<T> getNode(String id) {
+        return api().get_node(id);
+    }
+
+    public Node<T> getSelected() {
+        Node<T>[] selected = api().get_selected(true);
+        return selected.length == 0 ? null : selected[0];
+    }
+
+    public void openNode(String id, JsCallback callback) {
+        api().open_node(id, callback);
+    }
+
+    public void refreshNode(String id) {
+        api().refresh_node(id);
+    }
+
+    public void selectNode(String id) {
+        selectNode(id, false);
+    }
+
+    public void selectNode(String id, boolean closeSelected) {
+        api().deselect_all(true);
+        api().select_node(id, false, false);
         if (closeSelected) {
-            api().closeNode(id);
+            api().close_node(id);
         }
-        asElement().focus();
-        DomGlobal.document.getElementById(id).scrollIntoView(false);
+        Element element = document.getElementById(id);
+        if (element != null) {
+            element.scrollIntoView(false);
+        }
+    }
+
+    public void search(String query) {
+        api().search(query);
+    }
+
+    public void clearSearch() {
+        api().clear_search();
+    }
+
+
+    // ------------------------------------------------------ events
+
+    public void onReady(EventHandler<Void> handler) {
+        bridge().on("ready.jstree", handler);
+    }
+
+    public void onSelectionChange(EventHandler<SelectionContext<T>> handler) {
+        bridge().on("changed.jstree", handler);
     }
 }

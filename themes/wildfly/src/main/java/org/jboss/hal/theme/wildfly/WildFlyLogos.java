@@ -18,9 +18,6 @@ package org.jboss.hal.theme.wildfly;
 import com.google.gwt.resources.client.ImageResource;
 import org.jboss.hal.resources.Logos;
 
-/**
- * @author Harald Pehl
- */
 public interface WildFlyLogos extends Logos {
 
     @Override

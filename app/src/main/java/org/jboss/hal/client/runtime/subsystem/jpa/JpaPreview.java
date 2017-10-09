@@ -20,7 +20,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.metric.Utilization;
+import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -30,21 +30,16 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 class JpaPreview extends PreviewContent<JpaStatistic> {
 
     private final Dispatcher dispatcher;
@@ -56,16 +51,20 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     private final Utilization closedSessions;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    JpaPreview(final JpaStatistic jpaStatistic, final Environment environment, final Dispatcher dispatcher,
-            final FinderPathFactory finderPathFactory, final PlaceManager placeManager, final Places places,
-            final Resources resources) {
+    JpaPreview(JpaStatistic jpaStatistic, Environment environment, Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory, PlaceManager placeManager, Places places, Resources resources) {
 
-        super(jpaStatistic.getName(), jpaStatistic.getDeployment());
+        super(jpaStatistic.getPersistenceUnit(), jpaStatistic.getPath());
         this.dispatcher = dispatcher;
         this.address = jpaStatistic.getAddress();
 
         FinderPath path = finderPathFactory.deployment(jpaStatistic.getDeployment());
         PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
+        Elements.removeChildrenFrom(getLeadElement());
+        getLeadElement().appendChild(a(places.historyToken(placeRequest))
+                .textContent(jpaStatistic.getPath())
+                .title(resources.messages().goTo(Names.DEPLOYMENTS))
+                .asElement());
 
         noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
                 .description(resources.messages()
@@ -79,14 +78,10 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
                 environment.isStandalone(), false);
 
+        getHeaderContainer().appendChild(refresh = refreshLink(() -> update(null)));
         previewBuilder()
                 .add(noStatistics)
-                .add(div().css(clearfix)
-                        .add(refresh = a().css(clickable, pullRight).on(click, event -> update(null))
-                                .add(span().css(fontAwesome("refresh"), marginRight5))
-                                .add(span().textContent(resources.constants().refresh()))
-                                .asElement()))
-                .add(header = h(2).css(underline).textContent(resources.constants().sessions()).asElement())
+                .add(header = h(2).textContent(resources.constants().sessions()).asElement())
                 .add(openedSessions)
                 .add(closedSessions);
 

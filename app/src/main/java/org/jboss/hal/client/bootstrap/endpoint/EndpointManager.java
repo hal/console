@@ -34,10 +34,8 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
  * endpoint. By default this class first tries to connect to the management endpoint the console was loaded from.
  * If no endpoint was found, the selection is triggered by {@link EndpointDialog}.
  * <p>
- * Please note: This class must run <em>before</em> any {@linkplain org.jboss.hal.client.bootstrap.functions.BootstrapFunction
+ * Please note: This class must run <em>before</em> any {@linkplain BootstrapTask
  * bootstrap function}!
- *
- * @author Harald Pehl
  */
 public class EndpointManager {
 

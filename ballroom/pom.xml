@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-gwt</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.1</version>
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
@@ -44,6 +44,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-json</artifactId>
         </dependency>
         <dependency>
@@ -55,8 +59,8 @@
             <artifactId>hal-resources</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.gwt.flow</groupId>
-            <artifactId>flow</artifactId>
+            <groupId>com.intendia.gwt.rxgwt</groupId>
+            <artifactId>rxgwt</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.gwt.elemento</groupId>

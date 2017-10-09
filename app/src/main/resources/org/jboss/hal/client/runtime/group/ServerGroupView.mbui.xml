@@ -20,7 +20,7 @@
         <item id="server-group-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.group}">
                 <h1>Server Group Configuration</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <form id="server-group-configuration-form" title="Server Group Configuration" auto-save="true"
                       reset="true" include-runtime="true">
                     <attributes>
@@ -37,39 +37,39 @@
         <item id="server-group-jvm-item" title="JVMs" icon="fa fa-coffee">
             <metadata address="/{selected.group}/jvm=*">
                 <h1>JVMs</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="server-group-jvm-table" form-ref="server-group-jvm-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="server-group-jvm-form" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
 
         <item id="server-group-system-property-item" title="System Properties" icon="fa fa-list-ul">
             <metadata address="/{selected.group}/system-property=*">
                 <h1>System Properties</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="server-group-system-property-table" form-ref="server-group-system-property-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                         <column name="value"/>
                     </columns>
                 </table>
                 <form id="server-group-system-property-form" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
     </vertical-navigation>

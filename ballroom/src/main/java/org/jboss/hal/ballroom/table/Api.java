@@ -18,22 +18,23 @@ package org.jboss.hal.ballroom.table;
 import java.util.Collections;
 import java.util.List;
 
-import elemental2.core.Array;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
+import org.jetbrains.annotations.NonNls;
 
+import static elemental2.dom.DomGlobal.document;
+import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
 import static org.jboss.gwt.elemento.core.Elements.htmlElements;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
@@ -43,12 +44,20 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * This class and every member of this class is considered to be an internal API and should not be used outside of
  * package {@code org.jboss.hal.ballroom.table}.
  *
- * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 class Api<T> {
+
+    // ------------------------------------------------------ initialization
+
+    @JsMethod(namespace = GLOBAL, name = "$")
+    native static <T> Api<T> select(@NonNls String selector);
+
+    @JsMethod(name = "DataTable")
+    native Api<T> dataTable(Options options);
+
 
     // ------------------------------------------------------ button(s)
 
@@ -254,7 +263,7 @@ class Api<T> {
      */
     native Api<T> select();
 
-    native Array<T> toArray();
+    native T[] toArray();
 
 
     // ------------------------------------------------------ overlay methods
@@ -275,7 +284,7 @@ class Api<T> {
         Options<T> options = api.init();
         ColumnActions<T> columnActions = options.columnActions;
         if (columnActions != null && !columnActions.isEmpty()) {
-            elemental2.dom.Element table = DomGlobal.document.getElementById(options.id);
+            elemental2.dom.Element table = document.getElementById(options.id);
             if (table != null) {
                 Elements.stream(table.querySelectorAll("." + columnAction))
                         .filter(htmlElements())
@@ -286,14 +295,14 @@ class Api<T> {
                                 bind(link, click, event -> {
                                     event.stopPropagation();
                                     HTMLElement e = link; // find enclosing tr
-                                    while (e != null && e != DomGlobal.document.body && !"tr".equalsIgnoreCase(
+                                    while (e != null && e != document.body && !"tr".equalsIgnoreCase(
                                             e.tagName)) {
                                         e = (HTMLElement) e.parentNode;
                                     }
                                     if (e != null) {
-                                        Array<T> array = rows(e).data().toArray();
-                                        if (array.getLength() != 0) {
-                                            columnAction.action(array.getAt(0));
+                                        T[] array = rows(e).data().toArray();
+                                        if (array.length != 0) {
+                                            columnAction.action(array[0]);
                                         }
                                     }
                                 });
@@ -316,8 +325,8 @@ class Api<T> {
     @JsOverlay
     final List<T> selectedRows() {
         SelectorModifier selectorModifier = new SelectorModifierBuilder().selected().build();
-        Array<T> selection = rows(selectorModifier).data().toArray();
-        if (selection == null || selection.getLength() == 0) {
+        T[] selection = rows(selectorModifier).data().toArray();
+        if (selection == null || selection.length == 0) {
             return Collections.emptyList();
         }
         return asList(selection);

@@ -18,9 +18,6 @@ package org.jboss.hal.client.skeleton;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
-/**
- * @author Harald Pehl
- */
 public interface SettingsResources extends ClientBundle {
 
     @Source("settings.base64")

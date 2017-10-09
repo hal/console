@@ -21,24 +21,21 @@ import java.util.function.Predicate;
 
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * @author Harald Pehl
- */
 public abstract class HasServersNode extends NamedNode {
 
     private final List<Server> servers;
 
-    public HasServersNode(final String name, final ModelNode node) {
+    public HasServersNode(String name, ModelNode node) {
         super(name, node);
         this.servers = new ArrayList<>();
     }
 
-    public HasServersNode(final Property property) {
+    public HasServersNode(Property property) {
         super(property);
         this.servers = new ArrayList<>();
     }
@@ -47,7 +44,7 @@ public abstract class HasServersNode extends NamedNode {
         return !servers.isEmpty();
     }
 
-    public boolean hasServers(final Predicate<Server> predicate) {
+    public boolean hasServers(Predicate<Server> predicate) {
         return servers.stream().anyMatch(predicate);
     }
 

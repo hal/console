@@ -29,8 +29,6 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * Represents the different cache types of a cache container.
- *
- * @author Harald Pehl
  */
 enum Cache {
 

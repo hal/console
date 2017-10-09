@@ -21,9 +21,6 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Harald Pehl
- */
 public class Capability {
 
     private final String name;

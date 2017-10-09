@@ -23,10 +23,6 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -36,7 +32,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent.ServerGroupActionHandler;
@@ -46,6 +42,9 @@ import org.jboss.hal.core.runtime.group.ServerGroupResultEvent.ServerGroupResult
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
@@ -59,30 +58,28 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.SERVER_GROUP)
 @Requires("/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup>
         implements ServerGroupActionHandler, ServerGroupResultHandler {
 
-    static AddressTemplate serverGroupTemplate(ServerGroup serverGroup) {
+    private static AddressTemplate serverGroupTemplate(ServerGroup serverGroup) {
         return AddressTemplate.of("/server-group=" + serverGroup.getName());
     }
 
     @Inject
-    public ServerGroupColumn(final Finder finder,
-            final Environment environment,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final ServerGroupActions serverGroupActions,
-            final Places places,
-            final Resources resources) {
+    public ServerGroupColumn(Finder finder,
+            Environment environment,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            ServerGroupActions serverGroupActions,
+            Places places,
+            Resources resources) {
 
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
 
@@ -90,23 +87,21 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                         AddressTemplate.of("/server-group=*"), Ids::serverGroup))
                 .columnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH))
 
-                .itemsProvider((context, callback) ->
-                        new Async<FunctionContext>(progress.get()).waterfall(
-                                new FunctionContext(),
-                                new Outcome<FunctionContext>() {
-                                    @Override
-                                    public void onFailure(final FunctionContext context) {
-                                        callback.onFailure(context.getException());
-                                    }
+                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
+                        new TopologyTasks.ServerGroupsWithServerConfigs(environment, dispatcher),
+                        new TopologyTasks.ServerGroupsStartedServers(environment, dispatcher))
+                        .subscribe(new Outcome<FlowContext>() {
+                            @Override
+                            public void onError(FlowContext context, Throwable error) {
+                                callback.onFailure(error);
+                            }
 
-                                    @Override
-                                    public void onSuccess(final FunctionContext context) {
-                                        List<ServerGroup> serverGroups = context.get(TopologyFunctions.SERVER_GROUPS);
-                                        callback.onSuccess(serverGroups);
-                                    }
-                                },
-                                new TopologyFunctions.ServerGroupsWithServerConfigs(environment, dispatcher),
-                                new TopologyFunctions.ServerGroupsStartedServers(environment, dispatcher)))
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
+                                callback.onSuccess(serverGroups);
+                            }
+                        }))
 
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .onPreview(item -> new ServerGroupPreview(item, places))
@@ -117,6 +112,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 // "server-group => main-server-group / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .filterDescription(resources.messages().serverGroupColumnFilterDescription())
         );
 
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {

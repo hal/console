@@ -23,11 +23,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A segment inside a {@link FinderPath}.
- *
- * @author Harald Pehl
- */
+/** A segment inside a {@link FinderPath}. */
 public class FinderSegment<T> {
 
     public static class DropdownItem<T> {

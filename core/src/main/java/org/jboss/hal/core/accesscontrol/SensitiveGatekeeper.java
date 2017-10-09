@@ -19,11 +19,7 @@ import javax.inject.Inject;
 
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 
-/**
- * A gatekeeper which needs {@link AccessControl#isSuperUserOrAdministrator()} to pass.
- *
- * @author Harald Pehl
- */
+/** A gatekeeper which needs {@link AccessControl#isSuperUserOrAdministrator()} to pass. */
 public class SensitiveGatekeeper implements Gatekeeper {
 
     private final AccessControl accessControl;

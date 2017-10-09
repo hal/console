@@ -1,8 +1,8 @@
-Extensions are a way to add features to the management console. They are written in JavaScript and should use the [JavaScript API](https://cdn.rawgit.com/hal/hal.next/esdoc/index.html) to build the UI and interact with the management endpoint.  
+Extensions are a way to add features to the management console. They are written in JavaScript and should use the [JavaScript API](https://cdn.rawgit.com/hal/hal.next/esdoc/index.html) to build the UI and interact with the management interface.  
  
 # Architecture
 
-JavaScript extensions consist of one script and one or more optional stylesheets. The script contains both the code to register the extensions and the actual code of the extension. Here's a code sample of an extension:
+JavaScript extensions consist of one script and one or more optional stylesheets. The script contains both the code to register the extensions and the actual code of the extension. Here's the code of a sample extension:
 
 ```js
 let core = hal.core.Core.getInstance();
@@ -43,10 +43,10 @@ Extensions must adhere to certain rules:
 
 Please make sure that your extension doesn't use the global scope. Use idioms like [IIFE](https://en.wikipedia.org/wiki/Immediately-invoked_function_expression) to define a custom scope for your extension.
 
-To get started quickly you can use the npm package hal-edk (extension development kit). Follow these steps to setup a new extension project:
+To get started quickly you can use the yarn package hal-edk (extension development kit). Follow these steps to setup a new extension project:
 
-1. Create a new npm project
-1. Install a developer dependency for hal-edk: `npm install --save-dev hal-edk`  
+1. Create a new yarn project
+1. Install a developer dependency for hal-edk: `yarn install --save-dev hal-edk`  
    This will install the management console in `node_modules/hal-edk` and create three files in the project's root folder:
    
     1. index.html: Starts the console and loads extension.js

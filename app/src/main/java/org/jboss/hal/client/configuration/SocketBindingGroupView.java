@@ -48,9 +48,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"unused", "WeakerAccess", "DuplicateStringLiteralInspection"})
 public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingGroupPresenter>

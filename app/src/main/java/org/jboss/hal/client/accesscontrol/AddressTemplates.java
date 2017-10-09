@@ -29,9 +29,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAPPING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP_SCOPED_ROLE;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String ROOT_ADDRESS = "/core-service=management/access=authorization";

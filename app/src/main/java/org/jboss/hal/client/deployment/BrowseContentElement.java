@@ -16,57 +16,72 @@
 package org.jboss.hal.client.deployment;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.google.web.bindery.event.shared.EventBus;
 import elemental2.core.Array;
-import elemental2.dom.DomGlobal;
+import elemental2.dom.File;
+import elemental2.dom.File.ConstructorContentsArrayUnionType;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Search;
-import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
+import org.jboss.hal.ballroom.form.FileItem;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.tree.Node;
-import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
+import org.jboss.hal.ballroom.tree.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
+import org.jboss.hal.core.Strings;
+import org.jboss.hal.core.deployment.Content;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
-import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+import rx.Completable;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
+import static java.util.Collections.emptyList;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
-import static org.jboss.hal.core.ui.Skeleton.applicationHeight;
-import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
+import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
+import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
+import static org.jboss.hal.client.deployment.ContentParser.NODE_ID;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * UI element to browse the content of an item from the content repository.
- *
- * @author Harald Pehl
- */
+/** UI element to browse and modify the content of an item from the content repository. */
+// TODO Use metadata to show/hide buttons according to the security context
 class BrowseContentElement implements IsElement, Attachable {
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -124,96 +139,129 @@ class BrowseContentElement implements IsElement, Attachable {
     private static final int MIN_HEIGHT = 70;
 
     private final Dispatcher dispatcher;
+    private final EventBus eventBus;
     private final Resources resources;
 
-    private final ContentParser contentParser;
+    private final HTMLElement root;
     private final Search treeSearch;
     private Tree<ContentEntry> tree;
     private final EmptyState pleaseSelect;
     private final EmptyState deploymentPreview;
+    private final EmptyState explodedPreview;
     private final EmptyState unsupportedFileType;
-    private AceEditor editor;
+    private final AceEditor editor;
 
+    private final HTMLButtonElement collapseButton;
+    private final HTMLButtonElement addContentButton;
+    private final HTMLButtonElement uploadContentButton;
+    private final HTMLElement downloadContentLink;
+    private final HTMLButtonElement removeContentButton;
     private final HTMLElement treeContainer;
     private final HTMLElement editorControls;
     private final HTMLElement editorStatus;
-    private final HTMLElement copyToClipboardLink;
-    private final HTMLElement downloadLink;
+    private final HTMLButtonElement saveContentButton;
     private final HTMLElement previewContainer;
     private final HTMLElement previewHeader;
     private final HTMLElement previewImageContainer;
     private final HTMLImageElement previewImage;
-    private final HTMLElement root;
 
-    private String content;
+    private Content content;
     private int surroundingHeight;
 
 
     // ------------------------------------------------------ ui setup
 
     @SuppressWarnings("ConstantConditions")
-    BrowseContentElement(final Dispatcher dispatcher, final Resources resources, final Callback refreshCallback) {
+    BrowseContentElement(Dispatcher dispatcher, EventBus eventBus, Resources resources) {
         this.dispatcher = dispatcher;
+        this.eventBus = eventBus;
         this.resources = resources;
-        this.contentParser = new ContentParser();
         this.surroundingHeight = 0;
 
-        treeSearch = new Search.Builder(Ids.CONTENT_TREE_SEARCH,
-                query -> {
-                    if (tree.api() != null) {
-                        tree.api().search(query);
-                    }
-                })
-                .onClear(() -> {
-                    if (tree.api() != null) {
-                        tree.api().clearSearch();
-                    }
-                })
+        treeSearch = new Search.Builder(Ids.CONTENT_TREE_SEARCH, query -> tree.search(query))
+                .onClear(() -> tree.clearSearch())
                 .build();
+        treeSearch.asElement().classList.add(marginLeftSmall);
+
+        Options editorOptions = new Options();
+        editorOptions.showGutter = true;
+        editorOptions.showLineNumbers = true;
+        editorOptions.showPrintMargin = false;
+        editor = new AceEditor(Ids.CONTENT_EDITOR, editorOptions);
 
         Search contentSearch = new Search.Builder(Ids.CONTENT_SEARCH,
                 query -> editor.getEditor().find(query))
                 .onPrevious(query -> editor.getEditor().findPrevious())
                 .onNext(query -> editor.getEditor().findNext())
                 .build();
-
-        Options editorOptions = new Options();
-        editorOptions.readOnly = true;
-        editorOptions.showGutter = true;
-        editorOptions.showLineNumbers = true;
-        editorOptions.showPrintMargin = false;
-        editor = new AceEditor(Ids.CONTENT_EDITOR, editorOptions);
+        contentSearch.asElement().classList.add(marginRightSmall);
 
         pleaseSelect = new EmptyState.Builder(resources.constants().nothingSelected())
                 .icon(Icons.INFO)
-                .description(resources.constants().noContentSelected())
+                .description(resources.messages().noContentSelectedInDeployment())
                 .build();
 
         deploymentPreview = new EmptyState.Builder(Names.DEPLOYMENT)
                 .icon(fontAwesome("archive"))
-                .description(resources.constants().deploymentPreview())
+                .description(resources.messages().deploymentPreview())
+                .build();
+
+        explodedPreview = new EmptyState.Builder(Names.DEPLOYMENT)
+                .icon(fontAwesome("folder-open"))
+                .description(resources.messages().explodedPreview())
                 .build();
 
         unsupportedFileType = new EmptyState.Builder(resources.constants().unsupportedFileType())
                 .icon(Icons.UNKNOWN)
-                .description(resources.constants().unsupportedFileTypeDescription())
+                .description(resources.messages().unsupportedFileTypeDescription())
                 .primaryAction(resources.constants().download(),
-                        () -> DomGlobal.window.location.assign(downloadUrl((tree.api().getSelected().data))))
-                .secondaryAction(resources.constants().viewInEditor(), () -> {
-                    viewInEditor(tree.api().getSelected().data);
-                })
+                        () -> window.location.assign(downloadUrl((tree.getSelected().data))))
+                .secondaryAction(resources.constants().viewInEditor(),
+                        () -> viewInEditor(tree.getSelected().data))
                 .build();
 
         root = row()
                 .add(column(4)
                         .add(div().css(flexRow, marginTopLarge)
-                                .add(div().css(btnGroup, marginRightSmall)
-                                        .add(button().css(btn, btnDefault)
-                                                .on(click, event -> refreshCallback.execute())
-                                                .add(i().css(fontAwesome(CSS.refresh))))
-                                        .add(button().css(btn, btnDefault)
-                                                .on(click, event -> collapse(tree.api().getSelected()))
-                                                .add(i().css(fontAwesome("minus")))))
+                                .add(div().css(btnToolbar)
+                                        .add(div().css(btnGroup)
+                                                .add(button().css(btn, btnDefault)
+                                                        .on(click, event -> refresh())
+                                                        .title(resources.constants().refresh())
+                                                        .add(i().css(fontAwesome(CSS.refresh))))
+                                                .add(collapseButton = button().css(btn, btnDefault)
+                                                        .on(click, event -> {
+                                                            Node<ContentEntry> selection = tree.getSelected();
+                                                            if (selection != null) {
+                                                                tree.selectNode(selection.id, true);
+                                                            }
+                                                        })
+                                                        .title(resources.constants().collapse())
+                                                        .add(i().css(fontAwesome("minus")))
+                                                        .asElement()))
+                                        .add(div().css(btnGroup)
+                                                .add(addContentButton = button().css(btn, btnDefault)
+                                                        .on(click, event -> addContent())
+                                                        .title(resources.constants().newContent())
+                                                        .add(i().css(fontAwesome("file-o")))
+                                                        .asElement())
+                                                .add(uploadContentButton = button().css(btn, btnDefault)
+                                                        .on(click, event -> uploadContent())
+                                                        .title(resources.constants().uploadContent())
+                                                        .title(resources.constants().addContent())
+                                                        .add(i().css(fontAwesome("upload")))
+                                                        .asElement())
+                                                .add(downloadContentLink = a().css(btn, btnDefault)
+                                                        .title(resources.constants().download())
+                                                        .attr(UIConstants.TARGET, "_blank") //NON-NLS
+                                                        .attr(UIConstants.ROLE, UIConstants.BUTTON)
+                                                        .add(span().css(fontAwesome("download")))
+                                                        .asElement())
+                                                .add(removeContentButton = button().css(btn, btnDefault)
+                                                        .on(click, event -> removeContent())
+                                                        .title(resources.constants().removeContent())
+                                                        .add(i().css(pfIcon("remove")))
+                                                        .asElement())))
                                 .add(treeSearch))
                         .add(treeContainer = div().css(CSS.treeContainer).asElement()))
                 .add(column(8)
@@ -223,45 +271,35 @@ class BrowseContentElement implements IsElement, Attachable {
                                                 .textContent(resources.constants().preview())
                                                 .asElement())
                                         .add(previewImageContainer = div()
-                                                .style("overflow: scroll")
+                                                .style("overflow: scroll") //NON-NLS
                                                 .add(previewImage = img().css(imgResponsive, imgThumbnail).asElement())
                                                 .asElement())
                                         .asElement())
                                 .add(editorControls = div().css(CSS.editorControls, marginBottomSmall)
+                                        .add(saveContentButton = button().css(btn, btnDefault, marginRightSmall)
+                                                .on(click, event -> saveContent())
+                                                .title(resources.constants().save())
+                                                .add(span().css(fontAwesome("floppy-o")))
+                                                .asElement())
                                         .add(contentSearch)
-                                        .add(div().css(CSS.editorStatus)
+                                        .add(div()
                                                 .add(editorStatus = span()
                                                         .textContent(resources.constants().nothingSelected())
-                                                        .asElement()))
-                                        .add(div().css(editorButtons)
-                                                .add(copyToClipboardLink = a().css(btn, btnDefault, clickable)
-                                                        .title(resources.constants().copyToClipboard())
-                                                        .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                                        .data(UIConstants.CONTAINER, UIConstants.BODY)
-                                                        .data(UIConstants.PLACEMENT, UIConstants.TOP)
-                                                        .add(span().css(fontAwesome("clipboard")))
-                                                        .asElement())
-                                                .add(downloadLink = a().css(btn, btnDefault, clickable)
-                                                        .title(resources.constants().download())
-                                                        .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                                        .data(UIConstants.CONTAINER, UIConstants.BODY)
-                                                        .data(UIConstants.PLACEMENT, UIConstants.TOP)
-                                                        .add(span().css(fontAwesome("download")))
                                                         .asElement()))
                                         .asElement())
                                 .add(editor)
                                 .add(pleaseSelect)
                                 .add(deploymentPreview)
+                                .add(explodedPreview)
                                 .add(unsupportedFileType)))
                 .asElement();
 
-        Clipboard clipboard = new Clipboard(copyToClipboardLink);
-        clipboard.onCopy(event -> copyToClipboard(event.client));
-
+        saveContentButton.disabled = true;
         Elements.setVisible(pleaseSelect.asElement(), true);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
         Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(explodedPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
     }
@@ -270,12 +308,18 @@ class BrowseContentElement implements IsElement, Attachable {
     public void attach() {
         editor.attach();
         editor.getEditor().$blockScrolling = 1;
+
         adjustHeight();
         adjustEditorHeight();
-        DomGlobal.window.onresize = event -> {
+        window.onresize = event -> {
             adjustEditorHeight();
             return null;
         };
+    }
+
+    @Override
+    public void detach() {
+        window.onresize = null;
     }
 
     @Override
@@ -283,23 +327,26 @@ class BrowseContentElement implements IsElement, Attachable {
         return root;
     }
 
-    void setSurroundingHeight(final int surroundingHeight) {
+    void setSurroundingHeight(int surroundingHeight) {
         this.surroundingHeight = surroundingHeight;
         adjustHeight();
         adjustEditorHeight();
     }
 
     private void adjustHeight() {
-        int treeOffset = (int) (applicationOffset() + 2 * MARGIN_BIG + treeSearch.asElement().offsetHeight + MARGIN_SMALL + surroundingHeight);
+        int treeOffset = (int) (applicationOffset() +
+                2 * MARGIN_BIG + treeSearch.asElement().offsetHeight + MARGIN_SMALL + surroundingHeight);
         int previewHeaderHeight = (int) previewHeader.offsetHeight;
-        int previewOffset = applicationOffset() + 2 * MARGIN_BIG + MARGIN_SMALL + previewHeaderHeight + surroundingHeight;
+        int previewOffset = applicationOffset() +
+                2 * MARGIN_BIG + MARGIN_SMALL + previewHeaderHeight + surroundingHeight;
 
         treeContainer.style.height = vh(treeOffset);
         previewImageContainer.style.height = vh(previewOffset);
     }
 
     private void adjustEditorHeight() {
-        int editorHeight = (int) (applicationHeight() - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.offsetHeight - surroundingHeight);
+        int editorHeight = (int) (applicationHeight() -
+                2 * MARGIN_BIG - MARGIN_SMALL - editorControls.offsetHeight - surroundingHeight);
 
         if (Elements.isVisible(editor.asElement())) {
             editor.asElement().style.height = height(px(max(editorHeight, MIN_HEIGHT)));
@@ -308,123 +355,202 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
 
-    // ------------------------------------------------------ ui visibility / states
+    // ------------------------------------------------------ deployment methods
 
-    void setContent(final String content, final ModelNode browseContentResult) {
+    private String downloadUrl(ContentEntry contentEntry) {
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+        Operation.Builder builder = new Operation.Builder(address, READ_CONTENT);
+        if (contentEntry != null) {
+            builder.param(PATH, contentEntry.path);
+        }
+        return dispatcher.downloadUrl(builder.build());
+    }
+
+    private void refresh() {
+        String selectedId = selectedId();
+        browseContent()
+                .andThen(awaitTreeReady())
+                .subscribe(() -> {
+                    if (selectedId != null) {
+                        tree.selectNode(selectedId);
+                    }
+                });
+    }
+
+
+    // ------------------------------------------------------ CRUD content methods
+
+    void setContent(Content content) {
         this.content = content;
+        Elements.setVisible(addContentButton, content.isExploded());
+        Elements.setVisible(uploadContentButton, content.isExploded());
+        Elements.setVisible(removeContentButton, content.isExploded());
+        Elements.setVisible(saveContentButton, content.isExploded());
+        editor.getEditor().setReadOnly(!content.isExploded());
 
-        Array<Node<ContentEntry>> nodes = new Array<>();
-        Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, content, new ContentEntry())
-                .root()
-                .folder()
-                .open()
+        browseContent().subscribe(this::noSelection);
+    }
+
+    private void addContent() {
+        NameItem nameItem = new NameItem();
+        TextBoxItem pathItem = new TextBoxItem(TARGET_PATH);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
+                .unboundFormItem(nameItem)
+                .unboundFormItem(pathItem)
+                .addOnly()
                 .build();
-        contentParser.parse(nodes, root, browseContentResult.asList());
-
-        tree = new Tree<>(Ids.CONTENT_TREE, nodes);
-        Elements.removeChildrenFrom(treeContainer);
-        treeContainer.appendChild(tree.asElement());
-        tree.attach();
-        tree.onSelectionChange((event, selectionContext) -> {
-            if (!"ready".equals(selectionContext.action)) { //NON-NLS
-                selectNode(selectionContext);
-            }
+        AddResourceDialog dialog = new AddResourceDialog(resources.constants().newContent(), form, (name, model) -> {
+            String path = fullPath(pathItem.getValue(), nameItem.getValue());
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+            ModelNode contentNode = new ModelNode();
+            contentNode.get(INPUT_STREAM_INDEX).set(0);
+            contentNode.get(TARGET_PATH).set(path);
+            Operation operation = new Operation.Builder(address, ADD_CONTENT)
+                    .param(CONTENT, new ModelNode().add(contentNode))
+                    .build();
+            dispatcher.upload(file(nameItem.getValue(), ""), operation)
+                    .toCompletable()
+                    .andThen(browseContent())
+                    .andThen(awaitTreeReady())
+                    .subscribe(() -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().newContentSuccess(content.getName(), path)));
+                        tree.selectNode(NODE_ID.apply(path));
+                    });
         });
-        noSelection();
+        pathItem.setValue(selectedPath());
+        dialog.show();
     }
 
-    private void noSelection() {
-        Elements.setVisible(pleaseSelect.asElement(), true);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
-    }
-
-    private void deploymentPreview() {
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), true);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
-
-        deploymentPreview.setHeader(content);
-        deploymentPreview.setPrimaryAction(resources.constants().download(),
-                () -> DomGlobal.window.location.assign(downloadUrl(null)));
-    }
-
-    private void directory() {
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
-    }
-
-    private void viewInEditor(ContentEntry contentEntry) {
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, true);
-        Elements.setVisible(editor.asElement(), true);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
-        adjustEditorHeight();
-
-        editorStatus.textContent = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
-        downloadLink.setAttribute("href", downloadUrl(contentEntry)); //NON-NLS
-        loadContent(contentEntry, result -> {
-            editor.setModeFromPath(contentEntry.name);
-            editor.getEditor().getSession().setValue(result);
+    private void uploadContent() {
+        FileItem fileItem = new FileItem(FILE, new LabelBuilder().label(FILE));
+        fileItem.setRequired(true);
+        TextBoxItem pathItem = new TextBoxItem(TARGET_PATH);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
+                .unboundFormItem(fileItem)
+                .unboundFormItem(pathItem)
+                .addOnly()
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(resources.constants().uploadContent(), form, (name, model) -> {
+            String path = fullPath(pathItem.getValue(), fileItem.getValue().name);
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+            ModelNode contentNode = new ModelNode();
+            contentNode.get(INPUT_STREAM_INDEX).set(0);
+            contentNode.get(TARGET_PATH).set(path);
+            Operation operation = new Operation.Builder(address, ADD_CONTENT)
+                    .param(CONTENT, new ModelNode().add(contentNode))
+                    .build();
+            dispatcher.upload(fileItem.getValue(), operation)
+                    .toCompletable()
+                    .andThen(browseContent())
+                    .andThen(awaitTreeReady())
+                    .subscribe(() -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().newContentSuccess(content.getName(), path)));
+                        tree.selectNode(NODE_ID.apply(path));
+                    });
         });
+        pathItem.setValue(selectedPath());
+        dialog.show();
     }
 
-    private void viewInPreview(ContentEntry contentEntry) {
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, true);
+    private Completable browseContent() {
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+        Operation operation = new Operation.Builder(address, BROWSE_CONTENT).build();
+        return dispatcher.execute(operation)
+                .doOnSuccess(result -> {
+                    Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, content.getName(),
+                            new ContentEntry())
+                            .root()
+                            .folder()
+                            .open()
+                            .build();
+                    Array<Node<ContentEntry>> nodes = new Array<>();
+                    new ContentParser().parse(root, nodes, result.isDefined() ? result.asList() : emptyList());
 
-        previewImage.src = downloadUrl(contentEntry);
+                    if (tree != null) {
+                        tree.destroy();
+                        tree = null;
+                    }
+                    tree = new Tree<>(Ids.CONTENT_TREE, nodes);
+                    Elements.removeChildrenFrom(treeContainer);
+                    treeContainer.appendChild(tree.asElement());
+                    tree.attach();
+                    tree.onSelectionChange((event, selectionContext) -> {
+                        if (!"ready".equals(selectionContext.action)) { //NON-NLS
+                            onNodeSelected(selectionContext);
+                        }
+                    });
+                })
+                .toCompletable();
     }
 
-    private void unsupportedFileType() {
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), true);
-        Elements.setVisible(previewContainer, false);
-    }
-
-
-    // ------------------------------------------------------ event handler
-
-    private void collapse(final Node<ContentEntry> node) {
-        if (node != null) {
-            tree.select(node.id, true);
+    private void loadContent(ContentEntry contentEntry, Consumer<String> successCallback) {
+        if (!contentEntry.directory) {
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+            Operation operation = new Operation.Builder(address, READ_CONTENT)
+                    .param(PATH, contentEntry.path)
+                    .build();
+            dispatcher.download(operation, successCallback);
         }
     }
 
-    private void copyToClipboard(Clipboard clipboard) {
-        String value = editor.getEditor().getSession().getValue();
-        if (!Strings.isNullOrEmpty(value)) {
-            clipboard.setText(value);
-            Tooltip tooltip = Tooltip.element(copyToClipboardLink);
-            tooltip.hide()
-                    .setTitle(resources.constants().copied())
-                    .show()
-                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            DomGlobal.setTimeout((o) -> tooltip.hide(), 1000);
+    private void saveContent() {
+        Node<ContentEntry> selection = tree.getSelected();
+        if (selection != null) {
+            String filename = selection.data.path.contains("/")
+                    ? Strings.substringAfterLast(selection.data.path, "/")
+                    : selection.data.path;
+            String editorContent = editor.getEditor().getSession().getValue();
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+            ModelNode contentNode = new ModelNode();
+            contentNode.get(INPUT_STREAM_INDEX).set(0);
+            contentNode.get(TARGET_PATH).set(selection.data.path);
+            Operation operation = new Operation.Builder(address, ADD_CONTENT)
+                    .param(CONTENT, new ModelNode().add(contentNode))
+                    .build();
+            dispatcher.upload(file(filename, editorContent), operation)
+                    .doOnSuccess(result -> saveContentButton.disabled = true)
+                    .toCompletable()
+                    .andThen(browseContent())
+                    .andThen(awaitTreeReady())
+                    .subscribe(() -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().saveContentSuccess(content.getName(), filename)));
+                        tree.selectNode(selection.id);
+                    });
         }
     }
 
-    private void selectNode(SelectionContext<ContentEntry> selection) {
-        if (selection.selected.getLength() != 0) {
+    private void removeContent() {
+        Node<ContentEntry> selection = tree.getSelected();
+        if (selection != null) {
+            String path = selection.data.path;
+            DialogFactory.showConfirmation(resources.constants().removeContent(),
+                    resources.messages().removeContentQuestion(content.getName(), path), () -> {
+                        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+                        Operation operation = new Operation.Builder(address, REMOVE_CONTENT)
+                                .param(PATHS, new ModelNode().add(path))
+                                .build();
+                        dispatcher.execute(operation)
+                                .toCompletable()
+                                .andThen(browseContent())
+                                .andThen(awaitTreeReady())
+                                .subscribe(() -> {
+                                    MessageEvent.fire(eventBus, Message.success(
+                                            resources.messages().removeContentSuccess(content.getName(), path)));
+                                    noSelection();
+                                });
+                    });
+        }
+    }
+
+
+    // ------------------------------------------------------ UI state
+
+    private void onNodeSelected(SelectionContext<ContentEntry> selection) {
+        collapseButton.disabled = selection.selected.length == 0;
+        if (selection.selected.length != 0) {
             if (selection.node.id.equals(Ids.CONTENT_TREE_ROOT)) {
                 deploymentPreview();
 
@@ -445,7 +571,7 @@ class BrowseContentElement implements IsElement, Attachable {
                         viewInPreview(contentEntry);
 
                     } else {
-                        unsupportedFileType();
+                        unsupportedFileType(contentEntry);
                     }
                 }
             }
@@ -455,25 +581,154 @@ class BrowseContentElement implements IsElement, Attachable {
         }
     }
 
-    private void loadContent(ContentEntry contentEntry, Dispatcher.SuccessCallback<String> successCallback) {
-        if (!contentEntry.directory) {
-            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-            Operation operation = new Operation.Builder(address, READ_CONTENT)
-                    .param(PATH, contentEntry.path)
-                    .build();
-            dispatcher.download(operation, successCallback);
+    private void noSelection() {
+        collapseButton.disabled = true;
+        downloadContentLink.classList.add(disabled);
+        removeContentButton.disabled = true;
+
+        Elements.setVisible(pleaseSelect.asElement(), true);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(explodedPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+    }
+
+    private void deploymentPreview() {
+        if (content.isExploded()) {
+            downloadContentLink.removeAttribute(UIConstants.HREF);
+            downloadContentLink.removeAttribute(UIConstants.DOWNLOAD);
+            downloadContentLink.classList.add(disabled);
+        } else {
+            downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(null));
+            downloadContentLink.setAttribute(UIConstants.DOWNLOAD, content.getName());
+            downloadContentLink.classList.remove(disabled);
         }
+        removeContentButton.disabled = true;
+
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), !content.isExploded());
+        Elements.setVisible(explodedPreview.asElement(), content.isExploded());
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+
+        deploymentPreview.setHeader(content.getName());
+        deploymentPreview.setPrimaryAction(resources.constants().download(),
+                () -> window.location.assign(downloadUrl(null)));
+    }
+
+    private void directory() {
+        downloadContentLink.removeAttribute(UIConstants.HREF);
+        downloadContentLink.removeAttribute(UIConstants.DOWNLOAD);
+        downloadContentLink.classList.add(disabled);
+        removeContentButton.disabled = true;
+
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(explodedPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+    }
+
+    private void viewInEditor(ContentEntry contentEntry) {
+        downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(contentEntry));
+        downloadContentLink.setAttribute(UIConstants.DOWNLOAD, contentEntry.name);
+        downloadContentLink.classList.remove(disabled);
+        removeContentButton.disabled = false;
+
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, true);
+        Elements.setVisible(editor.asElement(), true);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(explodedPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+        adjustEditorHeight();
+
+        editorStatus.textContent = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
+        loadContent(contentEntry, result -> {
+            editor.setModeFromPath(contentEntry.name);
+            editor.getEditor().getSession().setValue(result);
+            editor.getEditor().getSession().on("change", delta -> saveContentButton.disabled = false); //NON-NLS
+            saveContentButton.disabled = true;
+        });
+    }
+
+    private void viewInPreview(ContentEntry contentEntry) {
+        downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(contentEntry));
+        downloadContentLink.setAttribute(UIConstants.DOWNLOAD, contentEntry.name);
+        downloadContentLink.classList.remove(disabled);
+        removeContentButton.disabled = false;
+        previewImage.src = downloadUrl(contentEntry);
+
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(explodedPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, true);
+    }
+
+    private void unsupportedFileType(ContentEntry contentEntry) {
+        downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(contentEntry));
+        downloadContentLink.setAttribute(UIConstants.DOWNLOAD, contentEntry.name);
+        downloadContentLink.classList.remove(disabled);
+        removeContentButton.disabled = false;
+
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(explodedPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), true);
+        Elements.setVisible(previewContainer, false);
     }
 
 
     // ------------------------------------------------------ helper methods
 
-    private String downloadUrl(ContentEntry contentEntry) {
-        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-        Operation.Builder builder = new Operation.Builder(address, READ_CONTENT);
-        if (contentEntry != null) {
-            builder.param(PATH, contentEntry.path);
+    private String selectedId() {
+        if (tree != null) {
+            Node<ContentEntry> selection = tree.getSelected();
+            if (selection != null) {
+                return selection.id;
+            }
         }
-        return dispatcher.downloadUrl(builder.build());
+        return null;
+    }
+
+    private String selectedPath() {
+        String path = null;
+        Node<ContentEntry> selection = tree.getSelected();
+        if (selection != null && !selection.id.equals(Ids.CONTENT_TREE_ROOT)) {
+            path = Strings.strip(selection.data.path, "/");
+            if (!selection.data.directory) {
+                path = Strings.getParent(path);
+            }
+        }
+        return nullToEmpty(path);
+    }
+
+    private String fullPath(String path, String name) {
+        String localPath = Strings.strip(path, "/");
+        String localName = Strings.strip(name, "/");
+        return isNullOrEmpty(localPath)
+                ? nullToEmpty(localName)
+                : nullToEmpty(localPath) + "/" + nullToEmpty(localName);
+    }
+
+    private File file(String name, String content) {
+        ConstructorContentsArrayUnionType contents = ConstructorContentsArrayUnionType.of(content);
+        return new File(new ConstructorContentsArrayUnionType[]{contents}, name);
+    }
+
+    private Completable awaitTreeReady() {
+        return Completable.fromEmitter(emitter -> tree.onReady((event, any) -> emitter.onCompleted()));
     }
 }

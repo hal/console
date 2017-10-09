@@ -43,9 +43,6 @@ import static org.jboss.hal.client.configuration.subsystem.deploymentscanner.Add
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Claudio Miranda
- */
 public class DeploymentScannerPresenter
         extends MbuiPresenter<DeploymentScannerPresenter.MyView, DeploymentScannerPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -93,7 +90,7 @@ public class DeploymentScannerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.DEPLOYMENT_SCANNER);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.DEPLOYMENT_SCANNER);
     }
 
     @Override

@@ -38,9 +38,6 @@ import static org.jboss.hal.client.configuration.subsystem.security.AddressTempl
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
 import static org.jboss.hal.meta.token.NameTokens.SECURITY_CONFIGURATION;
 
-/**
- * @author Harald Pehl
- */
 public class SecurityPresenter
         extends MbuiPresenter<SecurityPresenter.MyView, SecurityPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -89,7 +86,7 @@ public class SecurityPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(SECURITY);
+        return finderPathFactory.configurationSubsystemPath(SECURITY);
     }
 
     @Override

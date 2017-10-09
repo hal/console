@@ -20,8 +20,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 /**
  * Interface meant to be implemented by presenters which support switching to an 'expert mode' using the model browser
  * w/ {@link #resourceAddress()} as root address.
- *
- * @author Harald Pehl
  */
 public interface SupportsExpertMode {
 

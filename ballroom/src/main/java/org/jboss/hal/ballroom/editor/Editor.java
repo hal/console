@@ -18,11 +18,11 @@ package org.jboss.hal.ballroom.editor;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-/**
- * @author Harald Pehl
- */
 @JsType(isNative = true)
 public class Editor {
+
+    @JsProperty
+    public Object $blockScrolling;
 
     public native void focus();
 
@@ -36,6 +36,8 @@ public class Editor {
 
     public native void setOptions(Options options);
 
+    public native void setReadOnly(boolean readOnly);
+
     public native void setTheme(String theme);
 
     public native void find(String query);
@@ -43,7 +45,4 @@ public class Editor {
     public native void findNext();
 
     public native void findPrevious();
-
-    @JsProperty
-    public Object $blockScrolling;
 }

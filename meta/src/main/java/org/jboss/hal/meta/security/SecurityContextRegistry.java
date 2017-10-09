@@ -26,7 +26,6 @@ import org.jboss.hal.meta.StatementContext;
 
 public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
-
     private static final String SECURITY_CONTEXT_TYPE = "security context";
 
     private final Map<ResourceAddress, SecurityContext> registry;

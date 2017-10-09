@@ -20,24 +20,20 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class ServerPreview extends PreviewContent<NamedNode> {
 
-    @SuppressWarnings("HardCodedStringLiteral")
     ServerPreview(NamedNode server) {
         super(server.getName());
 
         previewBuilder().addAll(new PreviewAttributes<>(server, asList(
-                "management-address",
-                "management-notification-address",
+                MANAGEMENT_ADDRESS,
+                MANAGEMENT_NOTIFICATION_ADDRESS,
                 STATISTICS_ENABLED,
-                "thread-pool-max-size",
-                "scheduled-thread-pool-max-size",
-                "transaction-timeout",
-                "transaction-timeout-scan-period")));
+                THREAD_POOL_MAX_SIZE,
+                SCHEDULED_THREAD_POOL_MAX_SIZE,
+                TRANSACTION_TIMEOUT,
+                TRANSACTION_TIMEOUT_SCAN_PERIOD)));
     }
 }

@@ -18,14 +18,12 @@ package org.jboss.hal.dmr.macro;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.resources.Ids;
 
 import static java.util.stream.Collectors.joining;
 
-/**
- * @author Harald Pehl
- */
 public class Macro {
 
     private String name;
@@ -92,12 +90,16 @@ public class Macro {
         return operations;
     }
 
-    public String asCli() {
-        return getOperations().stream().map(Operation::asCli).collect(joining("\n"));
+    public int getOperationCount() {
+        int count = 0;
+        for (Operation operation : operations) {
+            count += operation instanceof Composite ? ((Composite) operation).size() : 1;
+        }
+        return count;
     }
 
-    public boolean hasOperations() {
-        return !operations.isEmpty();
+    public String asCli() {
+        return getOperations().stream().map(Operation::asCli).collect(joining("\n"));
     }
 
     public void seal() {

@@ -29,7 +29,6 @@ import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -42,10 +41,8 @@ import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.Format;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.runtime.server.ServerStatusSwitch;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.FinderPath;
@@ -55,7 +52,7 @@ import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent.ServerGroupActionHandler;
@@ -77,6 +74,9 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
@@ -92,17 +92,18 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static com.google.common.collect.Lists.asList;
+import static elemental2.dom.DomGlobal.clearTimeout;
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHandler, HostResultHandler,
         ServerGroupActionHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {
 
@@ -126,18 +127,20 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final PreviewAttributes<ServerGroup> serverGroupAttributes;
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
+    private final HTMLElement serverUrl;
+    private final LabelBuilder labelBuilder;
 
-    TopologyPreview(final SecurityContextRegistry securityContextRegistry,
-            final Environment environment,
-            final Dispatcher dispatcher,
-            final Provider<Progress> progress,
-            final EventBus eventBus,
-            final Places places,
-            final FinderPathFactory finderPathFactory,
-            final HostActions hostActions,
-            final ServerGroupActions serverGroupActions,
-            final ServerActions serverActions,
-            final Resources resources) {
+    TopologyPreview(SecurityContextRegistry securityContextRegistry,
+            Environment environment,
+            Dispatcher dispatcher,
+            Provider<Progress> progress,
+            EventBus eventBus,
+            Places places,
+            FinderPathFactory finderPathFactory,
+            HostActions hostActions,
+            ServerGroupActions serverGroupActions,
+            ServerActions serverActions,
+            Resources resources) {
         super(Names.TOPOLOGY, resources.previews().runtimeTopology());
         this.securityContextRegistry = securityContextRegistry;
         this.environment = environment;
@@ -149,6 +152,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         this.serverGroupActions = serverGroupActions;
         this.serverActions = serverActions;
         this.resources = resources;
+        this.labelBuilder = new LabelBuilder();
 
         eventBus.addHandler(HostActionEvent.getType(), this);
         eventBus.addHandler(HostResultEvent.getType(), this);
@@ -180,13 +184,20 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(PRODUCT_VERSION)
                 .append(HOST_STATE)
                 .append(RUNNING_MODE)
-                .append(model -> new PreviewAttribute(
-                        "Management Version", //NON-NLS
+                .append(model -> new PreviewAttribute(labelBuilder.label(MANAGEMENT_VERSION),
                         String.join(".",
                                 model.get(MANAGEMENT_MAJOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MINOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MICRO_VERSION).asString())
-                ));
+                ))
+                .append(model -> new PreviewAttribute(labelBuilder.label(LAST_CONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getLastConnected())
+                                : Names.NOT_AVAILABLE))
+                .append(model -> new PreviewAttribute(labelBuilder.label(DISCONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getDisconnected())
+                                : Names.NOT_AVAILABLE));
 
         serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP)
                 .append(model -> {
@@ -212,6 +223,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(SOCKET_BINDING_PORT_OFFSET)
                 .append(SOCKET_BINDING_DEFAULT_INTERFACE);
 
+        serverUrl = span().textContent(Names.NOT_AVAILABLE).asElement();
         serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER)
                 .append(model -> {
                     String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),
@@ -235,6 +247,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                     .append(Ids.PROFILE, model.get(PROFILE_NAME).asString()));
                     return new PreviewAttribute(Names.PROFILE, model.get(PROFILE_NAME).asString(), token);
                 })
+                .append(model -> new PreviewAttribute(Names.URL, serverUrl))
                 .append(AUTO_START)
                 .append(SOCKET_BINDING_PORT_OFFSET)
                 .append(STATUS)
@@ -271,7 +284,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
         // remember selection
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector("." + topology + " ." + selected);
+        HTMLElement element = (HTMLElement) document.querySelector("." + topology + " ." + selected);
         String hostName = element != null ? String.valueOf(element.dataset.get("host")) : null;
         String serverGroupName = element != null ? String.valueOf(element.dataset.get("serverGroup")) : null;
         String serverName = element != null ? String.valueOf(element.dataset.get("server")) : null;
@@ -282,28 +295,29 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         hideDetails();
 
         // show the loading indicator if the dmr operation takes too long
-        double timeoutHandle = DomGlobal.setTimeout((o) -> Elements.setVisible(loadingSection, true),
+        double timeoutHandle = setTimeout((o) -> Elements.setVisible(loadingSection, true),
                 UIConstants.MEDIUM_TIMEOUT);
-        new Async<FunctionContext>(progress.get()).waterfall(
-                new FunctionContext(),
-                new Outcome<FunctionContext>() {
+        series(new FlowContext(progress.get()),
+                new TopologyTasks.Topology(environment, dispatcher),
+                new TopologyTasks.TopologyStartedServers(environment, dispatcher))
+                .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onFailure(final FunctionContext context) {
-                        DomGlobal.clearTimeout(timeoutHandle);
+                    public void onError(FlowContext context, Throwable error) {
+                        clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().topologyError(), context.getError()));
+                                Message.error(resources.messages().topologyError(), error.getMessage()));
                     }
 
                     @Override
-                    public void onSuccess(final FunctionContext context) {
-                        DomGlobal.clearTimeout(timeoutHandle);
+                    public void onSuccess(FlowContext context) {
+                        clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         Elements.removeChildrenFrom(topologySection);
 
-                        List<Host> hosts = context.get(TopologyFunctions.HOSTS);
-                        List<ServerGroup> serverGroups = context.get(TopologyFunctions.SERVER_GROUPS);
-                        List<Server> servers = context.get(TopologyFunctions.SERVERS);
+                        List<Host> hosts = context.get(TopologyTasks.HOSTS);
+                        List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
+                        List<Server> servers = context.get(TopologyTasks.SERVERS);
 
                         topologySection.appendChild(buildTable(hosts, serverGroups, servers));
                         Elements.setVisible(topologySection, true);
@@ -329,25 +343,28 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                     .ifPresent(server -> serverDetails(server));
                         }
                     }
-                },
-                new TopologyFunctions.Topology(environment, dispatcher),
-                new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
+                });
     }
 
     private void updateServer(Server server) {
-        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+        series(new FlowContext(progress.get()),
+                // TODO Include function to read server boot errors
+                new TopologyTasks.HostWithServerConfigs(server.getHost(), dispatcher),
+                new TopologyTasks.HostStartedServers(dispatcher),
+                new TopologyTasks.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
+                new TopologyTasks.ServerGroupStartedServers(dispatcher))
+                .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onFailure(final FunctionContext context) {
+                    public void onError(FlowContext context, Throwable error) {
                         MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().updateServerError(server.getName()), context.getError()));
+                                Message.error(resources.messages().updateServerError(server.getName()),
+                                        error.getMessage()));
                     }
 
                     @Override
-                    public void onSuccess(final FunctionContext context) {
-                        elemental2.dom.Document document = DomGlobal.document;
-
-                        Host host = context.get(TopologyFunctions.HOST);
-                        ServerGroup serverGroup = context.get(TopologyFunctions.SERVER_GROUP);
+                    public void onSuccess(FlowContext context) {
+                        Host host = context.get(TopologyTasks.HOST);
+                        ServerGroup serverGroup = context.get(TopologyTasks.SERVER_GROUP);
                         if (host != null && serverGroup != null) {
                             // Does not matter where we take the updated server from (must be included in both
                             // host and server group)
@@ -372,13 +389,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                     updatedElement -> serverGroupDetails(serverGroup));
                         }
                     }
-                },
-                // TODO Include function to read server boot errors
-                new TopologyFunctions.HostWithServerConfigs(server.getHost(), dispatcher),
-                new TopologyFunctions.HostStartedServers(dispatcher),
-                new TopologyFunctions.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
-                new TopologyFunctions.ServerGroupStartedServers(dispatcher)
-        );
+                });
     }
 
 
@@ -444,25 +455,21 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         HTMLTableCellElement th = th()
                 .css(asList(rowHeader, statusCss(host)).toArray(new String[]{}))
                 .on(click, event -> hostDetails(host))
-                .data("host", host.getName())
+                .data("host", host.getName()) //NON-NLS
                 .add(div().css(hostContainer)
                         .add(dropdown = div().css(CSS.dropdown).asElement()))
                 .asElement();
 
-        if (host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
-            HTMLElement a;
+        HTMLElement hostNameElement;
+        if (host.isConnected() && host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
             String hostDropDownId = Ids.host(host.getAddressName());
-            dropdown.appendChild(a = a()
+            dropdown.appendChild(hostNameElement = a()
                     .id(hostDropDownId)
                     .css(clickable, dropdownToggle, name)
                     .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                     .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                     .title(host.getName())
                     .asElement());
-            if (host.isDomainController()) {
-                a.appendChild(span().css(fontAwesome("star"), marginRight5).title(Names.DOMAIN_CONTROLLER).asElement());
-            }
-            a.appendChild(span().textContent(host.getName()).asElement());
             dropdown.appendChild(ul()
                     .css(dropdownMenu)
                     .attr(UIConstants.ROLE, UIConstants.MENU)
@@ -470,10 +477,19 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .addAll(hostActions(host))
                     .asElement());
         } else {
-            dropdown.appendChild(span().css(name).title(host.getName())
-                    .textContent(host.getName())
+            dropdown.appendChild(hostNameElement = span().css(name).title(host.getName())
                     .asElement());
         }
+        hostNameElement.appendChild(hostNameElement.ownerDocument.createTextNode(host.getName()));
+        if (!host.isConnected()) {
+            hostNameElement.classList.add(disconnected);
+            hostNameElement.title = hostNameElement.title + " (" + resources.constants().disconnected() + ")";
+        }
+        if (host.isDomainController()) {
+            hostNameElement.appendChild(
+                    span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER).asElement());
+        }
+
         return th;
     }
 
@@ -481,7 +497,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         HTMLElement dropdown;
         HTMLTableCellElement element = th()
                 .on(click, event -> serverGroupDetails(serverGroup))
-                .data("serverGroup", serverGroup.getName())
+                .data("serverGroup", serverGroup.getName()) //NON-NLS
                 .add(div().css(serverGroupContainer)
                         .add(dropdown = div().css(CSS.dropdown).asElement()))
                 .asElement();
@@ -562,7 +578,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void adjustTdHeight() {
-        NodeList<Element> servers = DomGlobal.document.querySelectorAll("." + topology + " ." + CSS.servers);
+        NodeList<Element> servers = document.querySelectorAll("." + topology + " ." + CSS.servers);
         Elements.stream(servers)
                 .filter(htmlElements())
                 .map(asHtmlElement())
@@ -579,7 +595,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void clearSelected() {
-        NodeList<Element> selectedNodes = DomGlobal.document.querySelectorAll("." + topology + " ." + selected);
+        NodeList<Element> selectedNodes = document.querySelectorAll("." + topology + " ." + selected);
         Elements.elements(selectedNodes).forEach(element -> element.classList.remove(selected));
     }
 
@@ -590,17 +606,17 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void startProgress(String selector) {
-        Elements.stream(DomGlobal.document.querySelectorAll(selector))
+        Elements.stream(document.querySelectorAll(selector))
                 .forEach(element -> element.classList.add(withProgress));
     }
 
     private void stopProgress(String selector) {
-        Elements.stream(DomGlobal.document.querySelectorAll(selector))
+        Elements.stream(document.querySelectorAll(selector))
                 .forEach(element -> element.classList.remove(withProgress));
     }
 
     private void disableDropdown(String id, String name) {
-        Element link = DomGlobal.document.getElementById(id);
+        Element link = document.getElementById(id);
         if (link != null) {
             Element parent = (Element) link.parentNode;
             Element ul = link.nextElementSibling;
@@ -622,14 +638,22 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void hostDetails(final Host host) {
         clearSelected();
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(hostSelector(host));
+        HTMLElement element = (HTMLElement) document.querySelector(hostSelector(host));
         if (element != null) {
             element.classList.add(selected);
         }
 
         hostAttributes.refresh(host);
-        hostAttributes.setVisible(HOST_STATE, hostActions.isPending(host));
-        hostAttributes.setVisible(RUNNING_MODE, hostActions.isPending(host));
+        hostAttributes.setVisible(RELEASE_CODENAME, host.isConnected());
+        hostAttributes.setVisible(RELEASE_VERSION, host.isConnected());
+        hostAttributes.setVisible(PRODUCT_NAME, host.isConnected());
+        hostAttributes.setVisible(PRODUCT_VERSION, host.isConnected());
+        hostAttributes.setVisible(HOST_STATE, host.isConnected() && hostActions.isPending(host));
+        hostAttributes.setVisible(RUNNING_MODE, host.isConnected() && hostActions.isPending(host));
+        hostAttributes.setVisible(labelBuilder.label(MANAGEMENT_VERSION), host.isConnected());
+        hostAttributes.setVisible(labelBuilder.label(LAST_CONNECTED), !host.isConnected());
+        hostAttributes.setVisible(labelBuilder.label(DISCONNECTED), !host.isConnected());
+
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, true);
         Elements.setVisible(serverAttributesSection, false);
@@ -688,7 +712,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void serverGroupDetails(final ServerGroup serverGroup) {
         clearSelected();
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(serverGroupSelector(serverGroup));
+        HTMLElement element = (HTMLElement) document.querySelector(serverGroupSelector(serverGroup));
         if (element != null) {
             element.classList.add(selected);
         }
@@ -763,7 +787,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void serverDetails(final Server server) {
         clearSelected();
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(serverSelector(server));
+        HTMLElement element = (HTMLElement) document.querySelector(serverSelector(server));
         if (element != null) {
             element.classList.add(selected);
         }
@@ -780,12 +804,17 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         }
         serverAttributes.refresh(server);
         serverAttributes.setVisible(PROFILE, server.isStarted());
+        serverAttributes.setVisible(URL, server.isStarted());
         serverAttributes.setVisible(RUNNING_MODE, server.isStarted());
         serverAttributes.setVisible(SERVER_STATE, server.isStarted());
         serverAttributes.setVisible(SUSPEND_STATE, server.isStarted());
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, true);
+
+        if (server.isStarted()) {
+            serverActions.readUrl(server, serverUrl);
+        }
     }
 
     private boolean isAllowed(Server server) {
@@ -802,6 +831,12 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         if (!server.isStarted()) {
             actions.add(actionLink(event -> serverActions.start(server), resources.constants().start()));
         } else {
+            actions.add(actionLink(event -> serverActions.editUrl(server, () -> {
+                if (isVisible()) {
+                    updateServer(server);
+                }
+            }), resources.constants().editURL()));
+            actions.add(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).asElement());
             // Order is: reload, restart, (resume | suspend), stop
             actions.add(actionLink(event -> serverActions.reload(server), resources.constants().reload()));
             actions.add(actionLink(event -> serverActions.restart(server), resources.constants().restart()));

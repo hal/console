@@ -20,11 +20,11 @@
         <item id="remoting-endpoint-configuration-item" title="Endpoint Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=remoting/configuration=endpoint">
                 <h1>Endpoint Configuration</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <form id="remoting-endpoint-configuration" title="Endpoint Configuration" auto-save="true" reset="true">
                     <attributes>
                         <group id="remoting-endpoint-configuration-attributes"
-                               title="{{mbuiContext.resources().constants().attributes()}}">
+                               title="${mbuiContext.resources().constants().attributes()}">
                             <attribute name="buffer-region-size"/>
                             <attribute name="heartbeat-interval"/>
                             <attribute name="receive-buffer-size"/>
@@ -35,7 +35,7 @@
                             <attribute name="worker"/>
                         </group>
                         <group id="remoting-endpoint-configuration-security"
-                               title="{{mbuiContext.resources().constants().security()}}">
+                               title="${mbuiContext.resources().constants().security()}">
                             <attribute name="auth-realm"/>
                             <attribute name="authentication-retries"/>
                             <attribute name="authorize-id"/>
@@ -58,15 +58,15 @@
             <sub-item id="remoting-connector-sub-item" title="Connector">
                 <metadata address="/{selected.profile}/subsystem=remoting/connector=*">
                     <h1>Connector</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="remoting-connector-table" title="Connector">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                 </metadata>
@@ -75,15 +75,15 @@
             <sub-item id="remoting-http-connector-sub-item" title="HTTP Connector">
                 <metadata address="/{selected.profile}/subsystem=remoting/http-connector=*">
                     <h1>HTTP Connector</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="remoting-http-connector-table" title="HTTP Connector">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                 </metadata>
@@ -94,7 +94,7 @@
             <sub-item id="remoting-local-outbound-sub-item" title="Local Outbound">
                 <metadata address="/{selected.profile}/subsystem=remoting/local-outbound-connection=*">
                     <h1>Local Outbound</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="remoting-local-outbound-table" title="Local Outbound"
                            form-ref="remoting-local-outbound-form">
                         <actions>
@@ -111,17 +111,17 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="remoting-local-outbound-form" title="Local Outbound"
-                          on-save="{{presenter.saveLocalOutbound(form, changedValues)}}"
-                          prepare-reset="{{presenter.resetLocalOutbound(form)}}">
+                          on-save="${presenter.saveLocalOutbound(form, changedValues)}"
+                          prepare-reset="${presenter.resetLocalOutbound(form)}">
                         <attributes>
-                            <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
+                            <attribute form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("property")}'/>
                             <attribute name="outbound-socket-binding-ref">
                                 <suggest-handler>
                                     <templates>
@@ -138,22 +138,22 @@
             <sub-item id="remoting-outbound-sub-item" title="Outbound">
                 <metadata address="/{selected.profile}/subsystem=remoting/outbound-connection=*">
                     <h1>Outbound</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="remoting-outbound-table" title="Outbound" form-ref="remoting-outbound-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="remoting-outbound-form" title="Outbound"
-                          on-save="{{presenter.saveOutbound(form, changedValues)}}"
-                          prepare-reset="{{presenter.resetOutbound(form)}}">
+                          on-save="${presenter.saveOutbound(form, changedValues)}"
+                          prepare-reset="${presenter.resetOutbound(form)}">
                         <attributes>
-                            <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
+                            <attribute form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("property")}'/>
                             <attribute name="uri"/>
                         </attributes>
                     </form>
@@ -163,7 +163,7 @@
             <sub-item id="remoting-remote-outbound-sub-item" title="Remote Outbound">
                 <metadata address="/{selected.profile}/subsystem=remoting/remote-outbound-connection=*">
                     <h1>Remote Outbound</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <p>${metadata.getDescription().getDescription()}</p>
                     <table id="remoting-remote-outbound-table" title="Remote Outbound"
                            form-ref="remoting-remote-outbound-form">
                         <actions>
@@ -180,15 +180,15 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
+                                    name-resolver="${table.selectedRow().getName()}"/>
                         </actions>
                         <columns>
-                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
                     <form id="remoting-remote-outbound-form" title="Remote Outbound"
-                          on-save="{{presenter.saveRemoteOutbound(form, changedValues)}}"
-                          prepare-reset="{{presenter.resetRemoteOutbound(form)}}">
+                          on-save="${presenter.saveRemoteOutbound(form, changedValues)}"
+                          prepare-reset="${presenter.resetRemoteOutbound(form)}">
                         <attributes>
                             <attribute name="outbound-socket-binding-ref">
                                 <suggest-handler>
@@ -198,7 +198,7 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
+                            <attribute form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("property")}'/>
                             <attribute name="protocol"/>
                             <attribute name="security-realm"/>
                             <attribute name="username"/>

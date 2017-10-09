@@ -15,10 +15,6 @@
  */
 package org.jboss.hal.config.semver;
 
-/**
- * @author Heiko Braun
- * @since 25/02/15
- */
 public class Versions {
 
     private static final int INDEX_NOT_FOUND = -1;

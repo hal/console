@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.dmr;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -24,7 +26,8 @@ import java.util.function.Supplier;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import elemental2.core.Array;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -34,17 +37,18 @@ import org.jboss.hal.spi.EsReturn;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}s. Some methods accept a path
  * parameter separated by "/" to get a deeply nested data.
- *
- * @author Harald Pehl
  */
 @JsType
-public final class ModelNodeHelper {
+public class ModelNodeHelper {
 
     private static final String ENCODED_SLASH = "%2F";
+    private static final DateTimeFormat ISO_8601 = GWT.isScript() ? DateTimeFormat.getFormat(
+            DateTimeFormat.PredefinedFormat.ISO_8601) : null;
 
     @JsIgnore
     public static String encodeValue(String value) {
@@ -64,7 +68,7 @@ public final class ModelNodeHelper {
      *
      * @return The nested node or an empty / undefined model node
      */
-    public static ModelNode failSafeGet(final ModelNode modelNode, final String path) {
+    public static ModelNode failSafeGet(ModelNode modelNode, String path) {
         ModelNode undefined = new ModelNode();
 
         if (Strings.emptyToNull(path) != null) {
@@ -96,35 +100,36 @@ public final class ModelNodeHelper {
      *
      * @return the boolean value or false.
      */
-    public static boolean failSafeBoolean(final ModelNode modelNode, final String path) {
+    public static boolean failSafeBoolean(ModelNode modelNode, String path) {
         ModelNode attribute = failSafeGet(modelNode, path);
         return attribute.isDefined() && attribute.asBoolean();
     }
 
     @JsIgnore
-    public static List<ModelNode> failSafeList(final ModelNode modelNode, final String path) {
+    public static Date failSafeDate(ModelNode modelNode, String path) {
+        ModelNode attribute = failSafeGet(modelNode, path);
+        if (attribute.isDefined()) {
+            try {
+                return ISO_8601.parse(attribute.asString());
+            } catch (IllegalArgumentException ignore) { }
+        }
+        return null;
+    }
+
+    @JsIgnore
+    public static List<ModelNode> failSafeList(ModelNode modelNode, String path) {
         ModelNode result = failSafeGet(modelNode, path);
         return result.isDefined() ? result.asList() : Collections.emptyList();
     }
 
     @JsIgnore
-    public static List<Property> failSafePropertyList(final ModelNode modelNode, final String path) {
+    public static List<Property> failSafePropertyList(ModelNode modelNode, String path) {
         ModelNode result = failSafeGet(modelNode, path);
         return result.isDefined() ? result.asPropertyList() : Collections.emptyList();
     }
 
-    /**
-     * Turns a list of properties into a list of named model nodes which contains a {@link
-     * ModelDescriptionConstants#NAME} key with the properties name.
-     */
     @JsIgnore
-    public static List<NamedNode> asNamedNodes(List<Property> properties) {
-        return properties.stream().map(NamedNode::new).collect(toList());
-    }
-
-    @JsIgnore
-    public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Supplier<T> supplier,
-            T defaultValue) {
+    public static <T> T getOrDefault(ModelNode modelNode, String attribute, Supplier<T> supplier, T defaultValue) {
         T result = defaultValue;
         if (modelNode != null && modelNode.hasDefined(attribute)) {
             try {
@@ -136,13 +141,31 @@ public final class ModelNodeHelper {
         return result;
     }
 
+    @JsIgnore
+    public static void storeIndex(List<ModelNode> modelNodes) {
+        int index = 0;
+        for (ModelNode modelNode : modelNodes) {
+            modelNode.get(HAL_INDEX).set(index);
+            index++;
+        }
+    }
+
+    /**
+     * Turns a list of properties into a list of named model nodes which contains a {@link
+     * ModelDescriptionConstants#NAME} key with the properties name.
+     */
+    @JsIgnore
+    public static List<NamedNode> asNamedNodes(List<Property> properties) {
+        return properties.stream().map(NamedNode::new).collect(toList());
+    }
+
     /**
      * Looks for the specified attribute and tries to convert it to an enum constant using
      * {@code LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.get(attribute).asString())}.
      */
     @JsIgnore
-    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final String attribute,
-            final Function<String, E> valueOf, final E defaultValue) {
+    public static <E extends Enum<E>> E asEnumValue(ModelNode modelNode, String attribute, Function<String, E> valueOf,
+            E defaultValue) {
         if (modelNode.hasDefined(attribute)) {
             return asEnumValue(modelNode.get(attribute), valueOf, defaultValue);
         }
@@ -150,8 +173,7 @@ public final class ModelNodeHelper {
     }
 
     @JsIgnore
-    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final Function<String, E> valueOf,
-            final E defaultValue) {
+    public static <E extends Enum<E>> E asEnumValue(ModelNode modelNode, Function<String, E> valueOf, E defaultValue) {
         E value = defaultValue;
         String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.asString());
         try {
@@ -164,69 +186,48 @@ public final class ModelNodeHelper {
      * The reverse operation to {@link #asEnumValue(ModelNode, String, Function, Enum)}.
      */
     @JsIgnore
-    public static <E extends Enum<E>> String asAttributeValue(final E enumValue) {
+    public static <E extends Enum<E>> String asAttributeValue(E enumValue) {
         return UPPER_UNDERSCORE.to(LOWER_HYPHEN, enumValue.name());
     }
 
-    /**
-     * Given a model as
-     * <pre>
-     * {
-     *   other-attr: "value1"
-     *   complexAttr-name1: "some value 1",
-     *   complexAttr-name2: "some value 2"
-     * }
-     * </pre>
-     * This method extracts the complex attribute name and adds the nested attributes into the complex attribute.
-     * If createComplexAttribute=true, the resulting model node is:
-     *
-     * <pre>
-     * {
-     *   other-attr: "value1"
-     *   complexAttr: {
-     *     name1: "some value 1",
-     *     name2: "some value 2"
-     *     }
-     * }
-     * </pre>
-     *
-     * If createComplexAttribute=false, the resulting model node is:
-     *
-     * <pre>
-     * {
-     *   other-attr: "value1"
-     *   name1: "some value 1",
-     *   name2: "some value 2"
-     * }
-     * </pre>
-     *
-     * @param complexAttributeName The complex attribute name
-     * @param model The model
-     * @param createComplexAttribute Control if the resulting model should add the complex attribute name, see above example.
-     *
-     */
-    public static void reassembleComplexAttribute(String complexAttributeName, ModelNode model,
-            boolean createComplexAttribute) {
-        if (model.isDefined()) {
-            for (Property property : model.asPropertyList()) {
-                String pName = property.getName();
-
-                String nestedAttrName;
-
-                boolean propertyRepackagedName = pName.length() > complexAttributeName.length()
-                        && complexAttributeName.equals(pName.substring(0, complexAttributeName.length()));
-
-                if (propertyRepackagedName) {
-                    nestedAttrName = pName.substring(complexAttributeName.length() + 1);
-                } else {
-                    continue;
+    /** Moves an attribute to another destination. Both source and destination can be a paths. */
+    public static void move(ModelNode modelNode, String source, String destination) {
+        if (modelNode != null && Strings.emptyToNull(source) != null && Strings.emptyToNull(destination) != null) {
+            ModelNode value = null;
+            ModelNode context = modelNode;
+            List<String> sourceNames = Splitter.on('/')
+                    .omitEmptyStrings()
+                    .trimResults()
+                    .splitToList(source);
+            if (!sourceNames.isEmpty()) {
+                for (Iterator<String> iterator = sourceNames.iterator(); iterator.hasNext(); ) {
+                    String name = iterator.next();
+                    String safeName = decodeValue(name);
+                    if (context.hasDefined(safeName)) {
+                        if (iterator.hasNext()) {
+                            context = context.get(safeName);
+                        } else {
+                            value = context.remove(safeName);
+                            break;
+                        }
+                    }
                 }
-
-                if (createComplexAttribute) {
-                    model.get(complexAttributeName).get(nestedAttrName).set(property.getValue());
-                    model.remove(pName);
-                } else {
-                    model.get(nestedAttrName).set(property.getValue());
+            }
+            if (value != null) {
+                context = modelNode;
+                List<String> destinationNames = Splitter.on('/')
+                        .omitEmptyStrings()
+                        .trimResults()
+                        .splitToList(destination);
+                for (Iterator<String> iterator = destinationNames.iterator(); iterator.hasNext(); ) {
+                    String name = iterator.next();
+                    String safeName = decodeValue(name);
+                    if (iterator.hasNext()) {
+                        context = context.get(safeName);
+                    } else {
+                        context.get(safeName).set(value);
+                        break;
+                    }
                 }
             }
         }
@@ -247,8 +248,9 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafeList")
     @EsReturn("ModelNode[]")
-    public static Array<ModelNode> jsFailSafeList(final ModelNode modelNode, final String path) {
-        return asJsArray(failSafeList(modelNode, path));
+    public static ModelNode[] jsFailSafeList(ModelNode modelNode, String path) {
+        List<ModelNode> nodes = failSafeList(modelNode, path);
+        return nodes.toArray(new ModelNode[nodes.size()]);
     }
 
     /**
@@ -262,8 +264,9 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafePropertyList")
     @EsReturn("Property[]")
-    public static Array<Property> jsFailSafePropertyList(final ModelNode modelNode, final String path) {
-        return asJsArray(failSafePropertyList(modelNode, path));
+    public static Property[] jsFailSafePropertyList(ModelNode modelNode, String path) {
+        List<Property> properties = failSafePropertyList(modelNode, path);
+        return properties.toArray(new Property[properties.size()]);
     }
 
     /**
@@ -275,28 +278,7 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "asNamedNodes")
     @EsReturn("NamedNode[]")
-    public static Array<NamedNode> jsAsNamedNodes(@EsParam("Property[]") Array<Property> properties) {
-        return asJsArray(asNamedNodes(asList(properties)));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> Array<T> asJsArray(List<T> list) {
-        Array<T> array = new Array<>();
-        for (T t : list) {
-            array.push(t);
-        }
-        return array;
-    }
-
-    @SuppressWarnings("Duplicates")
-    private static <T> List<T> asList(Array<T> array) {
-        if (array != null) {
-            List<T> list = new ArrayList<>(array.getLength());
-            for (int i = 0; i < array.getLength(); i++) {
-                list.add(array.getAt(i));
-            }
-            return list;
-        }
-        return new ArrayList<>(); // Do not replace with Collections.emptyList()!
+    public static NamedNode[] jsAsNamedNodes(@EsParam("Property[]") Property[] properties) {
+        return Arrays.stream(properties).map(NamedNode::new).toArray(NamedNode[]::new);
     }
 }

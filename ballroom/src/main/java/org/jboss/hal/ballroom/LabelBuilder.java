@@ -27,44 +27,63 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import org.jboss.hal.dmr.Property;
 
-/**
- * Generates human readable labels from terms used in the management model.
- *
- * @author Harald Pehl
- */
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
+
+/** Generates human readable labels from terms used in the management model. */
 public class LabelBuilder {
 
     private static final String QUOTE = "'";
     @SuppressWarnings("HardCodedStringLiteral")
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
+            .put("ajp", "AJP")
             .put("dn", "DN")
+            .put("ear", "EAR")
             .put("ee", "EE")
+            .put("ejb", "EJB")
             .put("ejb3", "EJB3")
+            .put("giop", "GIOP")
+            .put("gss", "GSS")
+            .put("ha", "HA")
             .put("http", "HTTP")
             .put("http2", "HTTP/2")
+            .put("jacc", "JACC")
             .put("jaxrs", "JAX-RS")
+            .put("jboss", "JBoss")
+            .put("jdbc", "JDBC")
             .put("jca", "JCA")
             .put("jdr", "JDA")
             .put("jgroups", "JGroups")
+            .put("jms", "JMS")
             .put("jmx", "JMX")
             .put("jndi", "JNDI")
             .put("jpa", "JPA")
             .put("jsf", "JSF")
             .put("jsr", "JSR")
+            .put("jts", "JTS")
             .put("jwt", "JWT")
+            .put("mbean", "MBean")
             .put("oauth2", "OAuth 2")
+            .put("otp", "OTP")
             .put("rdn", "RDN")
             .put("sar", "SAR")
+            .put("sasl", "SASL")
+            .put("sfsb", "SFSB")
+            .put("slsb", "SLSB")
             .put("sql", "SQL")
             .put("ssl", "SSL")
             .put("tcp", "TCP")
+            .put("ttl", "TTL")
+            .put("tx", "TX")
             .put("uri", "URI")
             .put("url", "URL")
+            .put("uuid", "UUID")
             .put("wsdl", "WSDL")
             .build();
 
     public String label(final Property property) {
-        return label(property.getName());
+        return property.getValue().hasDefined(HAL_LABEL)
+                ? label(property.getValue().get(HAL_LABEL).asString())
+                : label(property.getName());
     }
 
     public String label(final String name) {

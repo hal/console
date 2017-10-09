@@ -21,9 +21,6 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 
-/**
- * @author Harald Pehl
- */
 class ColumnFactory {
 
     private final LabelBuilder labelBuilder;

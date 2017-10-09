@@ -24,9 +24,6 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.dmr.Deprecation;
 
-/**
- * @author Harald Pehl
- */
 public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName, HasValue<T> {
 
     HTMLElement asElement(Form.State state);

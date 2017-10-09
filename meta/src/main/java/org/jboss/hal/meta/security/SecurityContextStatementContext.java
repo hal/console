@@ -21,9 +21,6 @@ import org.jboss.hal.meta.StatementContext;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
-/**
- * @author Harald Pehl
- */
 public class SecurityContextStatementContext extends FilteringStatementContext {
 
     public SecurityContextStatementContext(final StatementContext delegate, final Environment environment) {
@@ -45,11 +42,11 @@ public class SecurityContextStatementContext extends FilteringStatementContext {
                             case DOMAIN_CONTROLLER:
                             case SELECTED_HOST:
                             case SELECTED_GROUP:
+                            case SELECTED_SERVER:
                                 return delegate.resolveTuple(placeholder);
 
                             case SELECTED_PROFILE:
                             case SELECTED_SERVER_CONFIG:
-                            case SELECTED_SERVER:
                                 return new String[]{t.resource(), "*"};
                         }
                     }

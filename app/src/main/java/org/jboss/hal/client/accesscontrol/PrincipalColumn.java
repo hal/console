@@ -23,20 +23,17 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddAssignment;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.CheckRoleMapping;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -48,8 +45,10 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -63,10 +62,8 @@ import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLA
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 
-/**
- * @author Harald Pehl
- */
 class PrincipalColumn extends FinderColumn<Principal> {
 
     static List<String> filterData(Principal principal) {
@@ -213,14 +210,14 @@ class PrincipalColumn extends FinderColumn<Principal> {
     }
 
     private void addPrincipal(final Principal.Type type, final String name, final ModelNode model) {
-        List<Function<FunctionContext>> functions = new ArrayList<>();
-        collectFunctions(functions, type, name, true, model, INCLUDE);
-        collectFunctions(functions, type, name, false, model, EXCLUDE);
-        if (!functions.isEmpty()) {
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new SuccessfulOutcome(eventBus, resources) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        collectTasks(tasks, type, name, true, model, INCLUDE);
+        collectTasks(tasks, type, name, false, model, EXCLUDE);
+        if (!tasks.isEmpty()) {
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                         @Override
-                        public void onSuccess(final FunctionContext context) {
+                        public void onSuccess(FlowContext context) {
                             String typeName = type == Principal.Type.USER
                                     ? resources.constants().user()
                                     : resources.constants().group();
@@ -228,12 +225,11 @@ class PrincipalColumn extends FinderColumn<Principal> {
                                     .addResourceSuccess(typeName, name)));
                             accessControl.reload(() -> refresh(Ids.principal(type.name().toLowerCase(), name)));
                         }
-                    },
-                    functions.toArray(new Function[functions.size()]));
+                    });
         }
     }
 
-    private void collectFunctions(List<Function<FunctionContext>> functions, Principal.Type type, String name,
+    private void collectTasks(List<Task<FlowContext>> tasks, Principal.Type type, String name,
             boolean include, ModelNode modelNode, String attribute) {
         String realm = modelNode.hasDefined(REALM) ? modelNode.get(REALM).asString() : null;
         String resourceName = Principal.buildResourceName(type, name, realm);
@@ -244,9 +240,9 @@ class PrincipalColumn extends FinderColumn<Principal> {
                     .map(nameNode -> accessControl.roles().get(Ids.role(nameNode.asString())))
                     .forEach(role -> {
                         if (role != null) {
-                            functions.add(new CheckRoleMapping(dispatcher, role));
-                            functions.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
-                            functions.add(new AddAssignment(dispatcher, role, principal, include));
+                            tasks.add(new CheckRoleMapping(dispatcher, role));
+                            tasks.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
+                            tasks.add(new AddAssignment(dispatcher, role, principal, include));
                         }
                     });
         }

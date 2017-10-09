@@ -17,24 +17,32 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.List;
 
-import elemental2.core.Array;
 import elemental2.dom.Event;
 import elemental2.dom.HTMLInputElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.JsHelper;
 
-import static elemental.events.KeyboardEvent.KeyCode.ENTER;
+import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.CSS.tagManagerTag;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * @author Harald Pehl
+ * Java wrapper for <a href="https://github.com/max-favilli/tagmanager">Tags Manager</a>.
+ *
+ * @see <a href="https://github.com/max-favilli/tagmanager">https://github.com/max-favilli/tagmanager</a>
  */
-class TagsManager {
+public class TagsManager {
+
+    @JsFunction
+    @FunctionalInterface
+    public interface Validator {
+
+        boolean validate(String tag);
+    }
+
 
     @JsFunction
     @FunctionalInterface
@@ -47,18 +55,10 @@ class TagsManager {
     }
 
 
-    @JsFunction
-    @FunctionalInterface
-    interface Validator {
-
-        boolean validate(String tag);
-    }
-
-
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
-        Array<Integer> delimiters;
+        int[] delimiters;
         String tagsContainer;
         String tagClass;
         public Validator validator;
@@ -71,8 +71,7 @@ class TagsManager {
 
         public static Options get() {
             Options options = new Options();
-            options.delimiters = new Array<>();
-            options.delimiters.setAt(0, ENTER);
+            options.delimiters = new int[]{13}; // enter
             options.tagClass = tagManagerTag;
             options.validator = null;
             return options;
@@ -81,15 +80,15 @@ class TagsManager {
 
 
     @JsType(isNative = true)
-    public static class Bridge {
+    public static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge element(HTMLInputElement element);
+        public native static Api element(HTMLInputElement element);
 
         public native void on(String event, RefreshListener refreshListener);
 
         @JsMethod(name = TAGS_MANAGER)
-        public native Array<String> tagsManagerGetTags(String getTags);
+        public native String[] tagsManagerGetTags(String getTags);
 
         @JsMethod(name = TAGS_MANAGER)
         public native void tagsManagerRemoveTags(String removeTags);
@@ -110,7 +109,7 @@ class TagsManager {
 
         @JsOverlay
         public final List<String> getTags() {
-            return JsHelper.asList(tagsManagerGetTags(TAGS));
+            return asList(tagsManagerGetTags(TAGS));
         }
 
         @JsOverlay

@@ -36,8 +36,6 @@ import static org.jboss.hal.resources.CSS.inputGroupAddon;
  * State should be kept in the form item only not in its appearance(s).
  * <p>
  * An appearance can apply / unapply {@linkplain Decoration decorations}.
- *
- * @author Harald Pehl
  */
 interface Appearance<T> extends IsElement, Attachable, Focusable {
 

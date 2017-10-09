@@ -26,8 +26,6 @@ import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.core.Array;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLHeadElement;
 import elemental2.dom.HTMLLinkElement;
@@ -36,7 +34,6 @@ import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
 import org.jboss.hal.core.extension.Extension.Point;
@@ -48,6 +45,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.li;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -55,11 +53,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
-/**
- * Registry to manage HAL extensions written in JavaScript.
- *
- * @author Harald Pehl
- */
+/** Registry to manage HAL extensions written in JavaScript. */
 @JsType(namespace = "hal.core")
 public class ExtensionRegistry implements ApplicationReadyHandler {
 
@@ -113,12 +107,12 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @JsIgnore
     public boolean verifyScript(final String script) {
-        return DomGlobal.document.head.querySelector("script[src='" + script + "']") != null; //NON-NLS
+        return document.head.querySelector("script[src='" + script + "']") != null; //NON-NLS
     }
 
     @JsIgnore
     public void inject(final String script, final List<String> stylesheets) {
-        jsInject(script, JsHelper.asJsArray(stylesheets));
+        jsInject(script, stylesheets.toArray(new String[stylesheets.size()]));
     }
 
     @Override
@@ -126,10 +120,10 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @SuppressWarnings("HardCodedStringLiteral")
     public void onApplicationReady(final ApplicationReadyEvent event) {
         ready = true;
-        headerDropdown = DomGlobal.document.getElementById(Ids.HEADER_EXTENSIONS_DROPDOWN);
-        headerExtensions = DomGlobal.document.getElementById(Ids.HEADER_EXTENSIONS);
-        footerDropdown = DomGlobal.document.getElementById(Ids.FOOTER_EXTENSIONS_DROPDOWN);
-        footerExtensions = DomGlobal.document.getElementById(Ids.FOOTER_EXTENSIONS);
+        headerDropdown = document.getElementById(Ids.HEADER_EXTENSIONS_DROPDOWN);
+        headerExtensions = document.getElementById(Ids.HEADER_EXTENSIONS);
+        footerDropdown = document.getElementById(Ids.FOOTER_EXTENSIONS_DROPDOWN);
+        footerExtensions = document.getElementById(Ids.FOOTER_EXTENSIONS);
 
         while (!queue.isEmpty()) {
             failSafeApply(queue.poll());
@@ -204,18 +198,18 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
      */
     @JsMethod(name = "inject")
     @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-    public void jsInject(String script, @EsParam("string[]") Array<String> stylesheets) {
-        HTMLHeadElement head = DomGlobal.document.head;
+    public void jsInject(String script, @EsParam("string[]") String[] stylesheets) {
+        HTMLHeadElement head = document.head;
 
-        if (stylesheets != null && stylesheets.getLength() != 0) {
-            for (int i = 0; i < stylesheets.getLength(); i++) {
-                HTMLLinkElement linkElement = (HTMLLinkElement) DomGlobal.document.createElement("link");
+        if (stylesheets != null && stylesheets.length != 0) {
+            for (String stylesheet : stylesheets) {
+                HTMLLinkElement linkElement = (HTMLLinkElement) document.createElement("link");
                 linkElement.rel = "stylesheet";
-                linkElement.href = stylesheets.getAt(i);
+                linkElement.href = stylesheet;
                 head.appendChild(linkElement);
             }
         }
-        HTMLScriptElement scriptElement = (HTMLScriptElement) DomGlobal.document.createElement("script");
+        HTMLScriptElement scriptElement = (HTMLScriptElement) document.createElement("script");
         scriptElement.src = script;
         scriptElement.setAttribute("async", true);
         head.appendChild(scriptElement);

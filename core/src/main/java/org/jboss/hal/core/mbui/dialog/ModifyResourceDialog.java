@@ -22,9 +22,6 @@ import org.jboss.hal.ballroom.dialog.Dialog.Size;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.dmr.ModelNode;
 
-/**
- * @author Harald Pehl
- */
 public class ModifyResourceDialog {
 
     @FunctionalInterface

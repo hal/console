@@ -26,9 +26,6 @@ import org.jboss.gwt.elemento.template.DataElement;
 import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.core.mvp.Places;
 
-/**
- * @author Harald Pehl
- */
 @Templated("Homepage.html#homepage-module")
 abstract class HomepageModule implements IsElement {
 

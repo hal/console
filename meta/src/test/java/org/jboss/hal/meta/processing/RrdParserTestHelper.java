@@ -210,9 +210,6 @@ import org.jboss.hal.meta.StatementContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Harald Pehl
- */
 class RrdParserTestHelper {
 
     static void assertResourceDescriptions(RrdResult rrdResult, int size, String... addresses) {

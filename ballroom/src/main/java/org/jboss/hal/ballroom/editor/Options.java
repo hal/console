@@ -21,7 +21,8 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * @author Harald Pehl
+ * Options for the ACE editor.
+ *
  * @see <a href="https://github.com/ajaxorg/ace/wiki/Configuring-Ace">https://github.com/ajaxorg/ace/wiki/Configuring-Ace</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

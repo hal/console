@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.json;
 
-/**
- * Represents a Json boolean.
- */
+/** Represents a Json boolean. */
 public class JsonBoolean extends JsonValue {
 
     public static JsonBoolean create(boolean bool) {

@@ -15,40 +15,42 @@
  */
 package org.jboss.hal.dmr;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
+import rx.Completable;
+import rx.Single;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * Function which checks whether a given resource exists. Pushes {@code 200} onto the context stack if it exists,
  * {@code 404} otherwise.
- *
- * @author Harald Pehl
  */
-public class ResourceCheck implements Function<FunctionContext> {
+public class ResourceCheck implements Task<FlowContext> {
 
     private final Dispatcher dispatcher;
     private final ResourceAddress address;
 
-    public ResourceCheck(final Dispatcher dispatcher, final ResourceAddress address) {
+    public ResourceCheck(Dispatcher dispatcher, ResourceAddress address) {
         this.dispatcher = dispatcher;
         this.address = address;
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
+    public Completable call(FlowContext context) {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
-        dispatcher.executeInFunction(control, operation,
-                result -> {
-                    control.getContext().push(200);
-                    control.proceed();
-                },
-                (op, failure) -> {
-                    control.getContext().push(404);
-                    control.proceed();
-                });
+        return dispatcher.execute(operation)
+                .doOnSuccess(result -> context.push(200))
+                .onErrorResumeNext(throwable -> {
+                    if (throwable instanceof DispatchFailure) {
+                        context.push(404);
+                        return Single.just(new ModelNode());
+                    } else {
+                        return Single.error(throwable);
+                    }
+                })
+                .toCompletable();
     }
 }

@@ -43,9 +43,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.BUFFER_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class BufferCachePresenter
         extends MbuiPresenter<BufferCachePresenter.MyView, BufferCachePresenter.MyProxy>
         implements SupportsExpertMode {
@@ -96,7 +93,7 @@ public class BufferCachePresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.BUFFER_CACHES),
                         resources.constants().settings(), Names.BUFFER_CACHES);
     }

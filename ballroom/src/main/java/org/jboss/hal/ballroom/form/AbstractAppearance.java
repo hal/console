@@ -31,8 +31,6 @@ import static org.jboss.hal.resources.CSS.deprecated;
  * Abstract appearance with a set of supported decorations. Puts guards around {@link #apply(Decoration, Object)} and
  * {@link #unapply(Decoration)}. The guards check if the decoration is supported and not already applied resp. has been
  * applied.
- *
- * @author Harald Pehl
  */
 abstract class AbstractAppearance<T> implements Appearance<T> {
 

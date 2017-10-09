@@ -43,8 +43,6 @@ import static org.jboss.hal.resources.CSS.lead;
 /**
  * Panel which holds the resource description, the model node form and a detailed description of the attributes and
  * operations.
- *
- * @author Harald Pehl
  */
 class ResourcePanel implements HasElements {
 

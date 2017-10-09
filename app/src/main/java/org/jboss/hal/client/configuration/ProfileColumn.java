@@ -62,9 +62,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TO_PROFILE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.PROFILE)
 @Requires(value = "/profile=*", recursive = false)
 public class ProfileColumn extends FinderColumn<NamedNode> {
@@ -161,7 +158,7 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
 
             @Override
             public String nextColumn() {
-                return Ids.SUBSYSTEM;
+                return Ids.CONFIGURATION_SUBSYSTEM;
             }
         });
     }

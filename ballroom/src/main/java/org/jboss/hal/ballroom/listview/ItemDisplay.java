@@ -18,40 +18,35 @@ package org.jboss.hal.ballroom.listview;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.resources.Ids;
 
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.StreamSupport.stream;
-
-/**
- * Controls the layout of a list view item.
- *
- * @author Harald Pehl
- */
+/** Controls the layout of a list view item. */
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
-    String getDescription();
-
     /**
-     * An unique id for this item
+     * An unique id for this item. If you use a {@link DataProvider} make sure to use the same IDs.
      *
      * @return an id based on {@link #getTitle()}
      */
     default String getId() {
-        Iterable<String> parts = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults().split(getTitle());
-        return stream(parts.spliterator(), false).map(String::toLowerCase).collect(joining("-"));
+        return Ids.asId(getTitle());
     }
 
-    default boolean stacked() {
-        return false;
+    default String getStatusIcon() {
+        return null;
     }
 
-    default HTMLElement status() {
+    default HTMLElement getStatusElement() {
+        return null;
+    }
+
+    default SafeHtml getTitleHtml() {
         return null;
     }
 
@@ -59,12 +54,42 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return null;
     }
 
+    default String getDescription() {
+        return null;
+    }
+
+    default SafeHtml getDescriptionHtml() {
+        return null;
+    }
+
     default HasElements getDescriptionElements() {
         return null;
     }
 
-    default HasElements getAdditionalInfo() {
+    default String getAdditionalInfo() {
         return null;
+    }
+
+    default SafeHtml getAdditionalInfoHtml() {
+        return null;
+    }
+
+    default HasElements getAdditionalInfoElements() {
+        return null;
+    }
+
+    /** The length of the description content. Override this method to control when the display content */
+    default int getDescriptionLength() {
+        return -1;
+    }
+
+    /** The maximum allowed length of the description content to be displayed by default. */
+    default int getMaxDescriptionLength() {
+        return 600;
+    }
+
+    default boolean hideDescriptionWhenLarge() {
+        return getDescriptionLength() > getMaxDescriptionLength();
     }
 
     /**

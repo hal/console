@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for all application presenters which interact with the finder. The presenter updates the breadcrumb by
  * taking the information from {@link #finderPath()} and fires a {@link FinderContextEvent} in {@link #onReset()}.
- *
- * @author Harald Pehl
  */
 public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ extends ProxyPlace<?>>
         extends ApplicationPresenter<V, Proxy_> implements HasFinderPath, SupportsExternalMode {

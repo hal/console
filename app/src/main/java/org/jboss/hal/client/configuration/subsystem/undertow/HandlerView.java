@@ -36,9 +36,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
@@ -94,6 +91,7 @@ public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
                                         ResourceAddress server = host.getParent();
                                         return server.lastValue() + "/" + host.lastValue();
                                     })
+                                    .distinct()
                                     .sorted()
                                     .collect(Collectors.joining(", "));
                             formItem.setValue(hosts);

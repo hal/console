@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.DomGlobal;
 import elemental2.webstorage.Storage;
 import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.dmr.ModelNode;
@@ -31,9 +30,8 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Harald Pehl
- */
+import static elemental2.dom.DomGlobal.window;
+
 public class ExtensionStorage {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionStorage.class);
@@ -42,7 +40,7 @@ public class ExtensionStorage {
     private final Map<String, InstalledExtension> extensions;
 
     public ExtensionStorage() {
-        this.storage = WebStorageWindow.of(DomGlobal.window).localStorage;
+        this.storage = WebStorageWindow.of(window).localStorage;
         this.extensions = load();
     }
 

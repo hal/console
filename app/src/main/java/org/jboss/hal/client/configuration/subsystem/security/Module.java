@@ -21,11 +21,7 @@ import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Enum struct to collect all settings for a specific security module.
- *
- * @author Harald Pehl
- */
+/** Enum struct to collect all settings for a specific security module. */
 enum Module {
     AUTHENTICATION(Ids.SECURITY_DOMAIN_AUTHENTICATION_ADD, Names.AUTHENTICATION_MODULE, "authentication=classic",
             LOGIN_MODULE),

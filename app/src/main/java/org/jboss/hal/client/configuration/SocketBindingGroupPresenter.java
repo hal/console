@@ -41,13 +41,13 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -65,9 +65,6 @@ import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.configuration.SocketBinding.INBOUND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class SocketBindingGroupPresenter
         extends MbuiPresenter<SocketBindingGroupPresenter.MyView, SocketBindingGroupPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -182,8 +179,9 @@ public class SocketBindingGroupPresenter
     void addSocketBinding(SocketBinding socketBinding) {
         Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE.append(socketBinding.templateSuffix()));
 
+        NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(socketBinding.baseId, Ids.ADD_SUFFIX), metadata)
-                .unboundFormItem(new NameItem(), 0)
+                .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .build();
         FormItem<Object> formItem = form.getFormItem(SOCKET_BINDING_REF);
@@ -194,6 +192,7 @@ public class SocketBindingGroupPresenter
         AddResourceDialog dialog = new AddResourceDialog(
                 resources.messages().addResourceTitle(socketBinding.type), form,
                 (name, model) -> {
+                    name = nameItem.getValue();
                     ResourceAddress address = SELECTED_TEMPLATE.append(socketBinding.templateSuffix())
                             .resolve(statementContext, name);
                     crud.add(socketBinding.type, name, address, model, (n, a) -> reload());

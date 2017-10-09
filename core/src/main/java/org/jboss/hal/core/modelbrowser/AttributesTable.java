@@ -39,9 +39,6 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.UIConstants.NBSP;
 
-/**
- * @author Harald Pehl
- */
 class AttributesTable implements IsElement {
 
     private final HTMLElement root;

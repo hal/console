@@ -27,11 +27,7 @@ import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.EsParam;
 
-/**
- * Registry for existing resource {@link Metadata}.
- *
- * @author Harald Pehl
- */
+/** Registry for existing resource {@link Metadata}. */
 @JsType
 public class MetadataRegistry implements Registry<Metadata> {
 

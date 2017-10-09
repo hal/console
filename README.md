@@ -10,6 +10,7 @@ Fresh start of the HAL management console using the latest frameworks / librarie
 - Prepare for GWT 3.x / J2CL
 - Latest GWTP build
 - PatternFly
+- RxGWT
 
 ## Motivation
 
@@ -66,20 +67,20 @@ The module `hal-standalone` contains an executable jar which launches a [Underto
 
 If you don't want to or cannot build locally you can download `hal-standalone.jar` from https://repository.jboss.org/nexus/index.html#nexus-search;quick~hal-standalone. 
 
-### NPM
+### YARN
 
-The module `hal-npm` provides a npm package which launches a local web server at http://localhost:3000.
+The module `hal-yarn` provides a yarn package which launches a local web server at http://localhost:3000.
   
 1. Add http://localhost:3000 as allowed origin
 1. `mvn clean install -P prod,theme-hal`
-1. `cd npm/target/hal-npm-<version>-hal-console/`
-1. `npm install`
+1. `cd yarn/target/hal-yarn-<version>-hal-console/`
+1. `yarn install`
 1. `node server.js`
 1. Open http://localhost:3000
 
-The npm package is also available on npmjs.com: https://www.npmjs.com/package/hal-console
+The yarn package is also available on yarn: https://yarnpkg.com/en/package/hal-console
  
-1. `npm install -g hal-console`
+1. `yarn install -g hal-console`
 1. `hal-console`
 
 ### WildFly Swarm Fraction

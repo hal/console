@@ -34,11 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * Provides methods to create common column actions.
- *
- * @author Harald Pehl
- */
+/** Provides methods to create common column actions. */
 public class ColumnActionFactory {
 
     private final CrudOperations crud;
@@ -99,7 +95,7 @@ public class ColumnActionFactory {
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, String iconCss,
             ColumnActionHandler<T> handler) {
         ColumnAction.Builder<T> builder = new ColumnAction.Builder<T>(id)
-                .element(addButton(type, iconCss))
+                .element(addButton(resources.messages().addResourceTitle(type), iconCss))
                 .handler(handler);
         if (template != null) {
             builder.constraint(Constraint.executable(template, ADD));
@@ -108,12 +104,12 @@ public class ColumnActionFactory {
     }
 
     public HTMLElement addButton(String type) {
-        return addButton(type, pfIcon("add-circle-o"));
+        return addButton(resources.messages().addResourceTitle(type), pfIcon("add-circle-o"));
     }
 
-    public HTMLElement addButton(String type, String iconCss) {
+    public HTMLElement addButton(String title, String iconCss) {
         return span().css(iconCss)
-                .title(resources.messages().addResourceTitle(type))
+                .title(title)
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
                 .asElement();

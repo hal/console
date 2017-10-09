@@ -22,9 +22,6 @@ import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplat
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
 
-/**
- * @author Harald Pehl
- */
 class Context {
 
     private final boolean xa;
@@ -33,20 +30,24 @@ class Context {
     DataSourceTemplate template;
     DataSource dataSource;
     JdbcDriver driver;
+    Map<String, String> xaProperties;
 
     Context(boolean xa) {
         this.xa = xa;
         this.changedValues = new HashMap<>();
+        this.xaProperties = new HashMap<>();
     }
 
     void custom() {
         dataSource = new DataSource(xa);
         driver = new JdbcDriver();
+        xaProperties.clear();
     }
 
     void useTemplate() {
         dataSource = template.getDataSource();
         driver = template.getDriver();
+        xaProperties.putAll(template.getXaProperties());
     }
 
     void recordChange(String name, Object value) {
@@ -55,10 +56,6 @@ class Context {
 
     boolean isXa() {
         return xa;
-    }
-
-    DataSource getDataSource() {
-        return dataSource;
     }
 
     boolean isCreated() {

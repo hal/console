@@ -23,7 +23,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 /**
  * Options for how the row, column and cell selector should operate on rows.
  *
- * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/type/selector-modifier">https://datatables.net/reference/type/selector-modifier</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

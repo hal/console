@@ -20,9 +20,6 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 
-/**
- * @author Harald Pehl
- */
 public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
         extends ApplicationFinderPresenter<V, Proxy_> {
 

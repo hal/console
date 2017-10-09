@@ -21,7 +21,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JsHelper;
@@ -35,9 +34,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Harald Pehl
- */
+import static elemental2.dom.DomGlobal.document;
+
 public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
 
     // @formatter:off
@@ -60,7 +58,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
         @Override
         public void update(Void whatever) {
             if (environment.isStandalone()) {
-                Elements.setVisible((HTMLElement) DomGlobal.document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+                Elements.setVisible((HTMLElement) document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                         JsHelper.supportsAdvancedUpload());
             }
         }

@@ -23,16 +23,7 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public abstract class RuntimePreview<T> extends PreviewContent<T> {
-
-    protected static final String ALERT_CONTAINER = "alert-container-element";
-    protected static final String ALERT_ICON = "alert-icon-element";
-    protected static final String ALERT_TEXT = "alert-text-element";
-    protected static final String RELOAD_LINK = "reload-link";
-    protected static final String RESTART_LINK = "restart-link";
 
     protected final Resources resources;
     protected HTMLElement alertContainer;
@@ -52,19 +43,19 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
     protected void starting(SafeHtml message) {
         alertContainer.className = alert + " " + alertInfo;
-        alertIcon.className = Icons.DISABLED;
+        alertIcon.className = Icons.PENDING;
         alertText.innerHTML = message.asString();
     }
 
     protected void pending(SafeHtml message) {
         alertContainer.className = alert + " " + alertInfo;
-        alertIcon.className = Icons.UNKNOWN;
+        alertIcon.className = Icons.PENDING;
         alertText.innerHTML = message.asString();
     }
 
     protected void suspended(SafeHtml message) {
         alertContainer.className = alert + " " + alertSuspended;
-        alertIcon.className = Icons.PAUSE;
+        alertIcon.className = Icons.PAUSED;
         alertText.innerHTML = message.asString();
     }
 
@@ -87,6 +78,12 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
     protected void unknown(SafeHtml message) {
         alertContainer.className = alert + " " + alertWarning;
         alertIcon.className = Icons.UNKNOWN;
+        alertText.innerHTML = message.asString();
+    }
+
+    protected void disconnected(SafeHtml message) {
+        alertContainer.className = alert + " " + alertInfo;
+        alertIcon.className = Icons.DISCONNECTED;
         alertText.innerHTML = message.asString();
     }
 

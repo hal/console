@@ -22,11 +22,7 @@ import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Represents the RBAC related payload from the read-resource-description operation.
- *
- * @author Harald Pehl
- */
+/** Represents the RBAC related payload from the read-resource-description operation. */
 @JsType(namespace = "hal.meta")
 @SuppressWarnings("SimplifiableIfStatement")
 public class SecurityContext extends ModelNode {

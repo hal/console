@@ -22,9 +22,6 @@ import org.jboss.hal.resources.Theme;
 import static org.jboss.hal.resources.Names.HAL;
 import static org.jboss.hal.resources.Names.MANAGEMENT_CONSOLE;
 
-/**
- * @author Harald Pehl
- */
 public class HalTheme implements Theme {
 
     private static final Logos LOGOS = GWT.create(HalLogos.class);

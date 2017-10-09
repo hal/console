@@ -36,10 +36,9 @@ import static org.jboss.hal.resources.CSS.*;
  * Alert element with an optional icon and link.
  * <p>
  * {@linkplain Constraint Constraints} for the links are encoded as {@code data-constraint} attributes. Please make
- * sure to call {@link ElementGuard#processElements(AuthorisationDecision, String)} when
- * the alert element is added to the DOM.
+ * sure to call {@link ElementGuard#processElements(AuthorisationDecision, String)} when the alert element is added to
+ * the DOM.
  *
- * @author Harald Pehl
  * @see <a href="http://www.patternfly.org/pattern-library/communication/inline-notifications/">http://www.patternfly.org/pattern-library/communication/inline-notifications/</a>
  */
 public class Alert implements IsElement {

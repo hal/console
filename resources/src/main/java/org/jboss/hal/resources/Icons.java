@@ -20,26 +20,24 @@ import elemental2.dom.HTMLElement;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Collection of common icons
- *
- * @author Harald Pehl
- */
+/** Collection of common icons */
 public interface Icons {
 
     // ------------------------------------------------------ icon css classes
 
     String CHECK = fontAwesome("check");
     String DISABLED = fontAwesome("ban");
+    String DISCONNECTED = fontAwesome("chain-broken");
     String ERROR = pfIcon(errorCircleO);
     String INFO = pfIcon(info);
     String LOCK = fontAwesome("lock");
     String NOT = fontAwesome("times");
     String OK = pfIcon(ok);
-    String PAUSE = fontAwesome(pauseCircle) + " " + blue;
-    String STOPPED = fontAwesome(stopCircleO) + " " + grey;
+    String PAUSED = pfIcon(paused);
+    String PENDING = pfIcon("pending");
+    String STOPPED = fontAwesome(stopCircleO);
     String WARNING = pfIcon(warningTriangleO);
-    String UNKNOWN = fontAwesome(questionsCircleO);
+    String UNKNOWN = pfIcon("help");
 
     static String flag(boolean value) {
         return value ? CHECK : NOT;
@@ -50,6 +48,10 @@ public interface Icons {
 
     static HTMLElement disabled() {
         return span().css(DISABLED).asElement();
+    }
+
+    static HTMLElement disconnected() {
+        return span().css(DISCONNECTED).asElement();
     }
 
     static HTMLElement error() {
@@ -68,8 +70,12 @@ public interface Icons {
         return span().css(OK).asElement();
     }
 
-    static HTMLElement pause() {
-        return span().css(PAUSE).asElement();
+    static HTMLElement paused() {
+        return span().css(PAUSED).asElement();
+    }
+
+    static HTMLElement pending() {
+        return span().css(PENDING).asElement();
     }
 
     static HTMLElement stopped() {
@@ -82,5 +88,9 @@ public interface Icons {
 
     static HTMLElement unknown() {
         return span().css(UNKNOWN).asElement();
+    }
+
+    static HTMLElement custom(String css) {
+        return span().css(css).asElement();
     }
 }

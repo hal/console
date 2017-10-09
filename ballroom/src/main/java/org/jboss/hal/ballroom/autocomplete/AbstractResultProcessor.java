@@ -17,7 +17,6 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
-import elemental2.core.Array;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.json.JsonObject;
@@ -28,18 +27,16 @@ import org.jboss.hal.json.JsonObject;
  * <p>
  * The bulk of work should be placed into {@link #processToModel(String, ModelNode)} which can easily be unit tested.
  * Whereas {@link #asJson(List)} should contain no logic other than mapping the model to json.
- *
- * @author Harald Pehl
  */
 abstract class AbstractResultProcessor<T> implements ResultProcessor {
 
     @Override
-    public final Array<JsonObject> process(final String query, final ModelNode nodes) {
+    public final JsonObject[] process(final String query, final ModelNode nodes) {
         return asJson(processToModel(query, nodes));
     }
 
     @Override
-    public final Array<JsonObject> process(final String query, final CompositeResult compositeResult) {
+    public final JsonObject[] process(final String query, final CompositeResult compositeResult) {
         return asJson(processToModel(query, compositeResult));
     }
 
@@ -47,5 +44,5 @@ abstract class AbstractResultProcessor<T> implements ResultProcessor {
 
     protected abstract List<T> processToModel(final String query, final CompositeResult compositeResult);
 
-    abstract Array<JsonObject> asJson(final List<T> models);
+    abstract JsonObject[] asJson(final List<T> models);
 }

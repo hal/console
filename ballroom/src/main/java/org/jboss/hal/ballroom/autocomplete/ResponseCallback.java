@@ -15,15 +15,11 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import elemental2.core.Array;
 import jsinterop.annotations.JsFunction;
 
-/**
- * @author Harald Pehl
- */
 @JsFunction
 @FunctionalInterface
 public interface ResponseCallback<T> {
 
-    void response(Array<T> result);
+    void response(T[] result);
 }

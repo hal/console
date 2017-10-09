@@ -25,6 +25,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.CSS;
@@ -42,13 +43,12 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.data;
 
-/**
- * UI class for a single row in in a finder column. Only used internally in the finder.
- */
+/** UI class for a single row in in a finder column. Only used internally in the finder. */
 class FinderRow<T> implements IsElement {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String PREVENT_SET_ITEMS = "preventSetItems";
+    private static final int MAX_ACTION_TITLE_LENGTH = 16;
 
     private final Finder finder;
     private final FinderColumn<T> column;
@@ -108,7 +108,9 @@ class FinderRow<T> implements IsElement {
         root.id = display.getId();
         root.dataset.set(DATA_BREADCRUMB, display.getTitle());
         // TODO getFilterData() causes a ReferenceError in SuperDevMode WTF?
-        root.dataset.set(DATA_FILTER, display.getFilterData());
+        if (display.getFilterData() != null) {
+            root.dataset.set(DATA_FILTER, display.getFilterData());
+        }
 
         HTMLElement icon = display.getIcon();
         if (icon != null) {
@@ -183,10 +185,14 @@ class FinderRow<T> implements IsElement {
                                     .asElement());
                             ulCreated = true;
                         }
-                        ul.appendChild(li()
-                                .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                                .add(actionLink(action, true))
-                                .asElement());
+                        if (action == ItemAction.SEPARATOR) {
+                            ul.appendChild(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).asElement());
+                        } else {
+                            ul.appendChild(li()
+                                    .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
+                                    .add(actionLink(action, true))
+                                    .asElement());
+                        }
                     }
                 }
             }
@@ -199,8 +205,13 @@ class FinderRow<T> implements IsElement {
     private HTMLAnchorElement actionLink(ItemAction<T> action, boolean li) {
         String[] css = li ? new String[]{clickable} : new String[]{clickable, btn, btnFinder};
         HtmlContentBuilder<HTMLAnchorElement> builder = a().css(css)
-                .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                .textContent(action.title);
+                .data(PREVENT_SET_ITEMS, UIConstants.TRUE);
+        if (!li && action.title.length() > MAX_ACTION_TITLE_LENGTH) {
+            builder.textContent(Strings.abbreviateMiddle(action.title, MAX_ACTION_TITLE_LENGTH));
+            builder.title(action.title);
+        } else {
+            builder.textContent(action.title);
+        }
         if (action.handler != null) {
             builder.on(click, event -> action.handler.execute(item));
         } else if (action.href != null) {

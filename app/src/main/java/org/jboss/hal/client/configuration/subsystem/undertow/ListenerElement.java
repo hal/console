@@ -38,9 +38,6 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 
-/**
- * @author Harald Pehl
- */
 class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<ServerPresenter> {
 
     private final HTMLElement root;

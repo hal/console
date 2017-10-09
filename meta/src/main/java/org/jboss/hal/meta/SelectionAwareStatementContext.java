@@ -17,11 +17,7 @@ package org.jboss.hal.meta;
 
 import java.util.function.Supplier;
 
-/**
- * A filtering statement context which resolves the key {@code selection} to the specified selection supplier.
- *
- * @author Harald Pehl
- */
+/** A filtering statement context which resolves the key {@code selection} to the specified selection supplier. */
 public class SelectionAwareStatementContext extends FilteringStatementContext implements StatementContext {
 
     public static final String SELECTION_KEY = "selection";

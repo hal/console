@@ -32,9 +32,6 @@ import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PR
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 import static org.jboss.hal.meta.processing.MetadataProcessor.RRD_DEPTH;
 
-/**
- * @author Harald Pehl
- */
 class CreateRrdOperations {
 
     private final SecurityContextStatementContext securityContextStatementContext;

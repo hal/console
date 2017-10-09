@@ -22,9 +22,6 @@ import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
-/**
- * @author Harald Pehl
- */
 @JsType(isNative = true)
 public class Tooltip {
 

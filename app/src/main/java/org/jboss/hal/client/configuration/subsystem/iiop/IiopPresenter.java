@@ -35,9 +35,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
-/**
- * @author Harald Pehl
- */
 public class IiopPresenter
         extends MbuiPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -83,7 +80,7 @@ public class IiopPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ROOT_TEMPLATE.lastValue());
+        return finderPathFactory.configurationSubsystemPath(ROOT_TEMPLATE.lastValue());
     }
 
     @Override

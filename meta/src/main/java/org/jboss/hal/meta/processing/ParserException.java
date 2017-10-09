@@ -15,12 +15,9 @@
  */
 package org.jboss.hal.meta.processing;
 
-/**
- * @author Harald Pehl
- */
-public class ParserException extends RuntimeException {
+class ParserException extends RuntimeException {
 
-    public ParserException(final String message) {
+    ParserException(final String message) {
         super(message);
     }
 }

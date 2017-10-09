@@ -40,11 +40,7 @@ import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTempla
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.CSS.columnAction;
 
-/**
- * Element to configure the stack resource
- *
- * @author Claudio Miranda
- */
+/** Element to configure the stack resource */
 class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     static final String REMOTE_SITE_ID = Ids.build(Ids.JGROUPS_REMOTE_SITE, Ids.PAGE_SUFFIX);

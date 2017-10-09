@@ -45,9 +45,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Harald Pehl
- */
 public class LoggingProfilePresenter
         extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy>
         implements SupportsExpertMode {
@@ -120,7 +117,7 @@ public class LoggingProfilePresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
+        return finderPathFactory.configurationSubsystemPath(LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
                 .append(Ids.LOGGING_PROFILE, Ids.loggingProfile(loggingProfile),
                         Names.LOGGING_PROFILE, loggingProfile);
     }

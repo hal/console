@@ -24,15 +24,12 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -41,15 +38,16 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.ResourceCheck;
-import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -61,29 +59,26 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+import rx.Completable;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ROLE_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.flow.Flow.series;
 
-/**
- * @author Harald Pehl
- */
 public class DestinationPresenter
         extends ServerSettingsPresenter<DestinationPresenter.MyView, DestinationPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    // TODO Replace with
-    // TODO {CORE_QUEUE_ADDRESS, JMS_QUEUE_ADDRESS, JMS_TOPIC_ADDRESS,
-    // TODO  SECURITY_SETTING_ADDRESS, ADDRESS_SETTING_ADDRESS, DIVERT_ADDRESS}
-    // TODO once WFCORE-2022 is resolved
-    @Requires(SERVER_ADDRESS)
+    @Requires({ADDRESS_SETTING_ADDRESS,
+            CORE_QUEUE_ADDRESS,
+            DIVERT_ADDRESS,
+            JMS_QUEUE_ADDRESS,
+            JMS_TOPIC_ADDRESS,
+            SECURITY_SETTING_ADDRESS})
     @NameToken(NameTokens.MESSAGING_SERVER_DESTINATION)
     public interface MyProxy extends ProxyPlace<DestinationPresenter> {}
 
@@ -104,17 +99,17 @@ public class DestinationPresenter
 
     @Inject
     public DestinationPresenter(
-            final EventBus eventBus,
-            final DestinationPresenter.MyView view,
-            final DestinationPresenter.MyProxy myProxy,
-            final Finder finder,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final MetadataRegistry metadataRegistry,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            @Footer final Provider<Progress> progress,
-            final Resources resources) {
+            EventBus eventBus,
+            DestinationPresenter.MyView view,
+            DestinationPresenter.MyProxy myProxy,
+            Finder finder,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            MetadataRegistry metadataRegistry,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
         super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext, resources);
         this.dispatcher = dispatcher;
         this.progress = progress;
@@ -128,10 +123,10 @@ public class DestinationPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
                         resources.constants().category(), Names.SERVER)
-                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName),
+                .append(Ids.MESSAGING_SERVER_CONFIGURATION, Ids.messagingServer(serverName),
                         Names.SERVER, serverName)
                 .append(Ids.MESSAGING_SERVER_SETTINGS, Ids.MESSAGING_SERVER_DESTINATION,
                         resources.constants().settings(), Names.DESTINATIONS);
@@ -180,30 +175,27 @@ public class DestinationPresenter
                     .resolve(statementContext);
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
-            Function<FunctionContext> add = control -> {
+            Task<FlowContext> add = context -> {
                 Operation addSecuritySetting = new Operation.Builder(securitySettingAddress, ADD).build();
                 Operation addRole = new Operation.Builder(roleAddress, ADD).payload(model).build();
 
-                int status = control.getContext().pop();
+                int status = context.pop();
                 if (status == 404) {
-                    dispatcher.executeInFunction(control, new Composite(addSecuritySetting, addRole),
-                            (CompositeResult result) -> control.proceed());
+                    return dispatcher.execute(new Composite(addSecuritySetting, addRole)).toCompletable();
                 } else {
-                    dispatcher.executeInFunction(control, addRole, result -> control.proceed());
+                    return dispatcher.execute(addRole).toCompletable();
                 }
             };
 
-            new Async<FunctionContext>(progress.get()).waterfall(
-                    new FunctionContext(),
-                    new SuccessfulOutcome(getEventBus(), resources) {
+            series(new FlowContext(progress.get()), check, add)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                         @Override
-                        public void onSuccess(final FunctionContext context) {
+                        public void onSuccess(FlowContext context) {
                             MessageEvent.fire(getEventBus(), Message.success(resources.messages()
                                     .addResourceSuccess(Names.SECURITY_SETTING, pattern + "/" + name)));
                             reload();
                         }
-                    },
-                    check, add);
+                    });
         }).show();
     }
 
@@ -251,52 +243,50 @@ public class DestinationPresenter
                     resources.messages().removeConfirmationTitle(Names.SECURITY_SETTING),
                     resources.messages().removeConfirmationQuestion(combinedName),
                     () -> {
-                        Function<FunctionContext> removeRole = control -> {
+                        Task<FlowContext> removeRole = context -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .append(ROLE + "=" + roleName)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, REMOVE).build();
-                            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+                            return dispatcher.execute(operation).toCompletable();
                         };
 
-                        Function<FunctionContext> readRemainingRoles = control -> {
+                        Task<FlowContext> readRemainingRoles = context -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                                     .param(CHILD_TYPE, ROLE)
                                     .build();
-                            dispatcher.executeInFunction(control, operation, result -> {
-                                control.getContext().push(result.asList());
-                                control.proceed();
-                            });
+                            return dispatcher.execute(operation)
+                                    .doOnSuccess(result -> context.push(result.asList()))
+                                    .toCompletable();
                         };
 
-                        Function<FunctionContext> removeSecuritySetting = control -> {
-                            List<ModelNode> roles = control.getContext().pop();
+                        Task<FlowContext> removeSecuritySetting = context -> {
+                            List<ModelNode> roles = context.pop();
                             if (roles.isEmpty()) {
                                 ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                         .append(SECURITY_SETTING + "=" + securitySetting)
                                         .resolve(statementContext);
                                 Operation operation = new Operation.Builder(address, REMOVE).build();
-                                dispatcher.executeInFunction(control, operation, result -> control.proceed());
+                                return dispatcher.execute(operation).toCompletable();
                             } else {
-                                control.proceed();
+                                return Completable.complete();
                             }
                         };
 
-                        new Async<FunctionContext>(progress.get()).waterfall(
-                                new FunctionContext(),
-                                new SuccessfulOutcome(getEventBus(), resources) {
+                        series(new FlowContext(progress.get()),
+                                removeRole, readRemainingRoles, removeSecuritySetting)
+                                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                                     @Override
-                                    public void onSuccess(final FunctionContext context) {
+                                    public void onSuccess(FlowContext context) {
                                         MessageEvent.fire(getEventBus(), Message.success(resources.messages()
                                                 .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
                                         reload();
                                     }
-                                },
-                                removeRole, readRemainingRoles, removeSecuritySetting);
+                                });
                     });
 
         } else {

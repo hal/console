@@ -27,9 +27,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.POP3;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SMTP;
 
-/**
- * @author Claudio Miranda
- */
 class MailSessionPreview extends PreviewContent<MailSession> {
 
     MailSessionPreview(final MailSession mailSession, final Resources resources) {

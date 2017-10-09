@@ -45,9 +45,6 @@ import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 import static org.jboss.hal.resources.CSS.pullRight;
 
-/**
- * @author Harald Pehl
- */
 public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyView {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HaPolicyView.class);

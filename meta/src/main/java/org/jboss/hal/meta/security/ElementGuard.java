@@ -18,13 +18,13 @@ package org.jboss.hal.meta.security;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.UIConstants;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.resources.CSS.hidden;
 import static org.jboss.hal.resources.CSS.rbacHidden;
 import static org.jboss.hal.resources.UIConstants.data;
@@ -32,8 +32,6 @@ import static org.jboss.hal.resources.UIConstants.data;
 /**
  * Helper class to process elements with constraints in their {@code data-constraint} attributes. Toggles the
  * element's visibility depending on the {@link AuthorisationDecision} result.
- *
- * @author Harald Pehl
  */
 public class ElementGuard {
 
@@ -93,7 +91,7 @@ public class ElementGuard {
     }
 
     public static void processElements(AuthorisationDecision authorisationDecision, String selector) {
-        processElements(authorisationDecision, DomGlobal.document.querySelectorAll(selector));
+        processElements(authorisationDecision, document.querySelectorAll(selector));
     }
 
     public static void processElements(AuthorisationDecision authorisationDecision, HTMLElement element) {

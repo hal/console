@@ -58,8 +58,6 @@ import static org.jboss.hal.resources.CSS.*;
  * <li>Help: Visible in the {@linkplain Form.State#READONLY read-only} and the {@linkplain Form.State#EDITING editing}
  * states. Provides access to the help texts.</li>
  * </ol>
- *
- * @author Harald Pehl
  */
 public class FormLinks<T> implements IsElement {
 

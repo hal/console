@@ -25,11 +25,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HalView;
@@ -37,6 +32,9 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.Macros;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -46,10 +44,8 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static elemental2.dom.DomGlobal.alert;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.flow.Flow.series;
 
-/**
- * @author Harald Pehl
- */
 public class MacroEditorPresenter
         extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
         implements HasTitle {
@@ -78,13 +74,13 @@ public class MacroEditorPresenter
     private Macro macro;
 
     @Inject
-    public MacroEditorPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Dispatcher dispatcher,
-            final Macros macros,
+    public MacroEditorPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Dispatcher dispatcher,
+            Macros macros,
             @Footer Provider<Progress> progress,
-            final Resources resources) {
+            Resources resources) {
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.macros = macros;
@@ -133,26 +129,25 @@ public class MacroEditorPresenter
     }
 
     void play(Macro macro) {
-        List<MacroOperationFunction> functions = macro.getOperations().stream()
-                .map(operation -> new MacroOperationFunction(dispatcher, operation)).collect(toList());
-        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-            @Override
-            public void onFailure(final FunctionContext context) {
-                getView().enableMacro(macro);
-                MessageEvent
-                        .fire(getEventBus(),
-                                Message.error(resources.messages().macroPlaybackError(), context.getError()));
-            }
-
-            @Override
-            public void onSuccess(final FunctionContext context) {
-                getView().enableMacro(macro);
-                MessageEvent.fire(getEventBus(), Message.success(resources.messages().macroPlaybackSuccessful()));
-            }
-        };
+        List<MacroOperationTask> tasks = macro.getOperations().stream()
+                .map(operation -> new MacroOperationTask(dispatcher, operation)).collect(toList());
         getView().disableMacro(macro);
-        new Async<FunctionContext>(progress.get())
-                .waterfall(new FunctionContext(), outcome, functions.toArray(new Function[functions.size()]));
+        series(new FlowContext(progress.get()), tasks)
+                .subscribe(new Outcome<FlowContext>() {
+                    @Override
+                    public void onError(FlowContext context, Throwable error) {
+                        getView().enableMacro(macro);
+                        MessageEvent.fire(getEventBus(), Message.error(resources.messages().macroPlaybackError(),
+                                error.getMessage()));
+                    }
+
+                    @Override
+                    public void onSuccess(FlowContext context) {
+                        getView().enableMacro(macro);
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(resources.messages().macroPlaybackSuccessful()));
+                    }
+                });
     }
 
     void rename(Macro macro) {

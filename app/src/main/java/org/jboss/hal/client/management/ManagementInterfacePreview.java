@@ -33,9 +33,6 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Icons.flag;
 
-/**
- * @author Harald Pehl
- */
 class ManagementInterfacePreview extends PreviewContent<StaticItem> {
 
     private static final AddressTemplate TEMPLATE = AddressTemplate.of(

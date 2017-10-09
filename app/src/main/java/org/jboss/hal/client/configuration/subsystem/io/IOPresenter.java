@@ -40,9 +40,6 @@ import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.*
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Claudio Miranda
- */
 public class IOPresenter
         extends MbuiPresenter<IOPresenter.MyView, IOPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -91,7 +88,7 @@ public class IOPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.IO);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.IO);
     }
 
     @Override

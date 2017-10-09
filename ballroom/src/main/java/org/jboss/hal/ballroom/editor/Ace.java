@@ -17,9 +17,6 @@ package org.jboss.hal.ballroom.editor;
 
 import jsinterop.annotations.JsMethod;
 
-/**
- * @author Harald Pehl
- */
 class Ace {
 
     @JsMethod(namespace = "ace")

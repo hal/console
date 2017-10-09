@@ -43,9 +43,6 @@ import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public enum HaPolicy {
 
     LIVE_ONLY(Ids.MESSAGING_HA_REPLICATION_LIVE_ONLY,

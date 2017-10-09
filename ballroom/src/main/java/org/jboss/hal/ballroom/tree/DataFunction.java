@@ -15,12 +15,8 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental2.core.Array;
 import jsinterop.annotations.JsFunction;
 
-/**
- * @author Harald Pehl
- */
 @JsFunction
 @FunctionalInterface
 public interface DataFunction<T> {
@@ -29,7 +25,7 @@ public interface DataFunction<T> {
     @FunctionalInterface
     interface ResultCallback<T> {
 
-        void result(Array<Node<T>> nodes);
+        void result(Node<T>[] nodes);
     }
 
     void load(Node<T> node, ResultCallback<T> callback);

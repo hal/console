@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.core.header;
 
-/**
- * @author Harald Pehl
- */
 public enum PresenterType {
     TOP_LEVEL_CATEGORY,
     APPLICATION

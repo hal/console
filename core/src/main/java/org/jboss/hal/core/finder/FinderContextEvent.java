@@ -18,9 +18,6 @@ package org.jboss.hal.core.finder;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-/**
- * @author Harald Pehl
- */
 public class FinderContextEvent extends GwtEvent<FinderContextEvent.FinderContextHandler> {
 
     public interface FinderContextHandler extends EventHandler {

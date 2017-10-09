@@ -19,6 +19,7 @@ import java.util.List;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.PatternValidation.JndiNameValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.DataSource;
@@ -32,15 +33,11 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * @author Harald Pehl
- */
 class NamesStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    NamesStep(final List<DataSource> existingDataSources, final Metadata metadata, final Resources resources,
-            final boolean xa) {
+    NamesStep(List<DataSource> existingDataSources, Metadata metadata, Resources resources, boolean xa) {
         super(resources.constants().attributes());
 
         FormItem<String> nameItem = new NameItem();
@@ -59,9 +56,9 @@ class NamesStep extends WizardStep<Context, State> {
                 .onSave((form, changedValues) -> {
                     wizard().getContext().dataSource = new DataSource(nameItem.getValue(), xa);
                     wizard().getContext().dataSource.update(form.getModel());
-
                 })
                 .build();
+        form.getFormItem(JNDI_NAME).addValidationHandler(new JndiNameValidation());
         registerAttachable(form);
     }
 
@@ -71,7 +68,7 @@ class NamesStep extends WizardStep<Context, State> {
     }
 
     @Override
-    protected void onShow(final Context context) {
+    protected void onShow(Context context) {
         // name is unbound so we have to bind it manually
         FormItem<String> nameItem = form.getFormItem(NAME);
         nameItem.setValue(context.dataSource.getName());
@@ -83,7 +80,19 @@ class NamesStep extends WizardStep<Context, State> {
     }
 
     @Override
-    protected boolean onNext(final Context context) {
+    protected boolean onNext(Context context) {
         return form.save();
+    }
+
+    @Override
+    protected boolean onBack(Context context) {
+        form.cancel();
+        return true;
+    }
+
+    @Override
+    protected boolean onCancel(Context context) {
+        form.cancel();
+        return true;
     }
 }

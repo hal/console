@@ -22,9 +22,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 public abstract class JpaView extends MbuiViewImpl<JpaPresenter> implements JpaPresenter.MyView {
 

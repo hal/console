@@ -36,9 +36,6 @@ import static org.jboss.hal.resources.CSS.formGroup;
 import static org.jboss.hal.resources.CSS.halFormInput;
 import static org.jboss.hal.resources.CSS.halFormLabel;
 
-/**
- * @author Harald Pehl
- */
 public class ButtonItem extends AbstractFormItem<Void> {
 
     private static class ButtonReadOnlyAppearance extends ReadOnlyAppearance<Void> {

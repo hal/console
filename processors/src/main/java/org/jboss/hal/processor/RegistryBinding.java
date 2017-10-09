@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.processor;
 
-/**
- * @author Harald Pehl
- */
 public class RegistryBinding {
 
     private final String interface_;

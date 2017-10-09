@@ -19,27 +19,25 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.core.OperationFactory;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 
-/**
- * Holds common classes needed by UI views.
- *
- * @author Harald Pehl
- */
+/** Holds common classes needed by UI views. */
 public class MbuiContext {
 
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final PropertiesOperations po;
     private final Environment environment;
     private final EventBus eventBus;
@@ -51,19 +49,21 @@ public class MbuiContext {
     private final TableButtonFactory tableButtonFactory;
 
     @Inject
-    public MbuiContext(final CrudOperations crud,
-            final PropertiesOperations po,
-            final Dispatcher dispatcher,
-            final Environment environment,
-            final EventBus eventBus,
-            final MetadataRegistry metadataRegistry,
-            final OperationFactory operationFactory,
-            final @Footer Provider<Progress> progress,
-            final Resources resources,
-            final StatementContext statementContext,
-            final TableButtonFactory tableButtonFactory) {
+    public MbuiContext(CrudOperations crud,
+            PropertiesOperations po,
+            Dispatcher dispatcher,
+            ComplexAttributeOperations ca,
+            Environment environment,
+            EventBus eventBus,
+            MetadataRegistry metadataRegistry,
+            OperationFactory operationFactory,
+            @Footer Provider<Progress> progress,
+            Resources resources,
+            StatementContext statementContext,
+            TableButtonFactory tableButtonFactory) {
         this.crud = crud;
         this.po = po;
+        this.ca = ca;
         this.environment = environment;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
@@ -77,6 +77,10 @@ public class MbuiContext {
 
     public CrudOperations crud() {
         return crud;
+    }
+
+    public ComplexAttributeOperations ca() {
+        return ca;
     }
 
     public PropertiesOperations po() {

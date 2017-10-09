@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import elemental.events.Event;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.KeyboardEvent;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -30,27 +30,27 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
 import static org.jboss.gwt.elemento.core.Elements.htmlElements;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
+import static org.jboss.hal.resources.CSS.formControl;
 
 /**
  * Java wrapper for <a href="https://github.com/Pixabay/JavaScript-autoComplete">javascript-auto-complete</a>
- *
- * @author Harald Pehl
  * @see <a href="https://github.com/Pixabay/JavaScript-autoComplete">https://github.com/Pixabay/JavaScript-autoComplete</a>
  */
 public class AutoComplete implements SuggestHandler, Attachable {
 
     @JsType(isNative = true, namespace = GLOBAL, name = "autoComplete")
-    static class Bridge {
+    static class Api {
 
         @JsConstructor
         @SuppressWarnings("UnusedParameters")
-        Bridge(Options options) {
-        }
+        Api(Options options) {}
 
         @JsMethod
         private native void destroy();
@@ -60,7 +60,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
     @NonNls static final Logger logger = LoggerFactory.getLogger(AutoComplete.class);
 
     private FormItem formItem;
-    private Bridge bridge;
+    private Api api;
     private Options options;
 
     protected void init(Options options) {
@@ -69,54 +69,51 @@ public class AutoComplete implements SuggestHandler, Attachable {
 
     @Override
     public void attach() {
-        if (bridge == null) {
-            options.selector = formItemSelector();
+        if (api == null) {
+            options.selector = formItem().asElement(EDITING).getElementsByClassName(formControl).getAt(0);
             options.onSelect = (event, item, renderedItem) -> {
                 if (formItem() instanceof AbstractFormItem) {
                     ((AbstractFormItem) formItem()).onSuggest(item);
                 }
             };
-            bridge = new Bridge(options);
+            api = new Api(options);
         }
     }
 
     @Override
     public void detach() {
-        if (bridge != null) {
-            bridge.destroy();
-            bridge = null;
+        Element element = document.getElementById(formItem().getId(EDITING));
+        if (api != null && element != null) {
+            api.destroy();
+            api = null;
         }
     }
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     public void showAll() {
-        Element element = DomGlobal.document.getElementById(formItem().getId(EDITING));
-        DomGlobal.setTimeout((o) -> {
-            element.blur();
-            triggerEvent(element, Event.KEYUP, "", 0); // to reset 'last_val' in autoComplete.js
-            triggerEvent(element, Event.KEYUP, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
-            element.focus();
-        }, 351); // timeout must be > 350, which is used in autoComplete.js
+        HTMLInputElement element = (HTMLInputElement) document.getElementById(formItem().getId(EDITING));
+        if (element != null) {
+            setTimeout((o) -> {
+                element.blur();
+                KeyboardEvent event = new KeyboardEvent("keyup");
+                triggerEvent(element, event, "", 0); // to reset 'last_val' in autoComplete.js
+                triggerEvent(element, event, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
+                element.focus();
+            }, 351); // timeout must be > 350, which is used in autoComplete.js
+        }
     }
 
-    private native void triggerEvent(Element element, String type, String key, int keyCode) /*-{
+    private native void triggerEvent(HTMLInputElement element, KeyboardEvent event, String key, int keyCode) /*-{
         element.value = key;
-        if ($doc.createEvent) {
-            event = new Event(type);
-            event.keyCode = keyCode;
-            event.which = keyCode;
-            element.dispatchEvent(event);
-        } else {
-            event = $doc.createEventObject();
-            event.keyCode = keyCode;
-            event.which = keyCode;
-            element.fireEvent("on" + type, event);
-        }
+        event.keyCode = keyCode;
+        event.which = keyCode;
+        element.dispatchEvent(event);
     }-*/;
 
     @Override
     public void close() {
-        Elements.stream(DomGlobal.document.querySelectorAll(autocompleteSuggestions))
+        Elements.stream(document.querySelectorAll(autocompleteSuggestions))
                 .filter(htmlElements())
                 .map(asHtmlElement())
                 .filter(Elements::isVisible)

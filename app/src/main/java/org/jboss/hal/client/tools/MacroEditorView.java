@@ -18,40 +18,42 @@ package org.jboss.hal.client.tools;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
+import org.jboss.hal.ballroom.listview.ListView;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
-import org.jboss.hal.ballroom.listview.ListView;
+import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static elemental2.dom.DomGlobal.setTimeout;
+import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.elements;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter.MyView {
 
     private static final String PLAY_ACTION = "play";
@@ -61,6 +63,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
 
     private final Resources resources;
     private final EmptyState empty;
+    private final DataProvider<Macro> dataProvider;
     private final ListView<Macro> macroList;
     private final AceEditor editor;
     private final HTMLButtonElement copyToClipboard;
@@ -71,13 +74,16 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     public MacroEditorView(Resources resources) {
         this.resources = resources;
 
+        dataProvider = new DataProvider<>(Macro::getName, false);
+        dataProvider.onSelect(this::loadMacro);
+
         empty = new EmptyState.Builder(resources.constants().noMacros())
                 .icon(CSS.fontAwesome("dot-circle-o"))
                 .description(resources.messages().noMacrosDescription(resources.constants().startMacro()))
                 .build();
         empty.asElement().classList.add(noMacros);
 
-        macroList = new ListView<>(Ids.MACRO_LIST, macro -> new ItemDisplay<Macro>() {
+        ItemRenderer<Macro> itemRenderer = macro -> new ItemDisplay<Macro>() {
             @Override
             public String getTitle() {
                 return macro.getName();
@@ -89,8 +95,10 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             }
 
             @Override
-            public boolean stacked() {
-                return true;
+            public HasElements getAdditionalInfoElements() {
+                return elements().add(div()
+                        .add(span().css(pfIcon("image"), marginRight5))
+                        .add(span().textContent(resources.messages().operations(macro.getOperationCount()))));
             }
 
             @Override
@@ -106,9 +114,10 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                                         resources.messages().removeConfirmationQuestion(macro.getName()),
                                         () -> presenter.remove(macro))));
             }
-        });
-        macroList.onSelect(this::loadMacro);
+        };
+        macroList = new ListView<>(Ids.MACRO_LIST, dataProvider, itemRenderer, true, false);
         macroList.asElement().classList.add(CSS.macroList);
+        dataProvider.addDisplay(macroList);
 
         Options editorOptions = new Options();
         editorOptions.readOnly = true;
@@ -145,10 +154,16 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
         super.attach();
         adjustHeight();
         adjustEditorHeight();
-        DomGlobal.window.onresize = event -> {
+        window.onresize = event -> {
             adjustEditorHeight();
             return null;
         };
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        window.onresize = null;
     }
 
     private void adjustHeight() {
@@ -177,12 +192,12 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     public void setMacros(Iterable<Macro> macros) {
         Elements.setVisible(empty.asElement(), false);
         Elements.setVisible(row, true);
-        macroList.setItems(macros);
+        dataProvider.update(macros);
     }
 
     @Override
     public void selectMacro(final Macro macro) {
-        macroList.selectItem(macro);
+        dataProvider.select(macro, true);
     }
 
     @Override
@@ -204,14 +219,14 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     }
 
     private void copyToClipboard(Clipboard clipboard) {
-        if (macroList.selectedItem() != null) {
-            clipboard.setText(macroList.selectedItem().asCli());
+        if (dataProvider.getSelectionInfo().getSingleSelection() != null) {
+            clipboard.setText(dataProvider.getSelectionInfo().getSingleSelection().asCli());
             Tooltip tooltip = Tooltip.element(copyToClipboard);
             tooltip.hide()
                     .setTitle(resources.constants().copied())
                     .show()
                     .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            DomGlobal.setTimeout((o) -> tooltip.hide(), 1000);
+            setTimeout((o) -> tooltip.hide(), 1000);
         }
     }
 }

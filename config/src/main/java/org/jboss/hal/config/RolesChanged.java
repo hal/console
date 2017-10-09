@@ -20,8 +20,6 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
 /**
  * Signal that the roles have been changed. The event has no payload. The current roles can be read from {@link
  * Environment#getRoles()}.
- *
- * @author Harald Pehl
  */
 @GenEvent
 public class RolesChanged {

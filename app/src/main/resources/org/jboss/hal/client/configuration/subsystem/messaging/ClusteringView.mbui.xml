@@ -20,23 +20,23 @@
         <item id="messaging-broadcast-group-entry" title="Broadcast Group" icon="fa fa-video-camera">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/broadcast-group=*">
                 <h1>Broadcast Group</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="messaging-broadcast-group-table" title="Broadcast Group"
                        form-ref="messaging-broadcast-group-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.BROADCAST_GROUP)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.BROADCAST_GROUP, table.selectedRow())}}"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.add(ServerSubResource.BROADCAST_GROUP)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(ServerSubResource.BROADCAST_GROUP, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="messaging-broadcast-group-form" title="Broadcast Group"
-                      on-save="{{presenter.save(ServerSubResource.BROADCAST_GROUP, form, changedValues)}}"
-                      prepare-reset="{{presenter.reset(ServerSubResource.BROADCAST_GROUP, form)}}">
+                      on-save="${presenter.save(ServerSubResource.BROADCAST_GROUP, form, changedValues)}"
+                      prepare-reset="${presenter.reset(ServerSubResource.BROADCAST_GROUP, form)}">
                     <attributes>
                         <attribute name="broadcast-period"/>
                         <attribute name="connectors"/>
@@ -57,23 +57,23 @@
         <item id="messaging-discovery-group-entry" title="Discovery Group" icon="fa fa-map-o">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/discovery-group=*">
                 <h1>Discovery Group</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="messaging-discovery-group-table" title="Discovery Group"
                        form-ref="messaging-discovery-group-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.DISCOVERY_GROUP)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.DISCOVERY_GROUP, table.selectedRow())}}"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.add(ServerSubResource.DISCOVERY_GROUP)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(ServerSubResource.DISCOVERY_GROUP, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="messaging-discovery-group-form" title="Discovery Group"
-                      on-save="{{presenter.save(ServerSubResource.DISCOVERY_GROUP, form, changedValues)}}"
-                      prepare-reset="{{presenter.reset(ServerSubResource.DISCOVERY_GROUP, form)}}">
+                      on-save="${presenter.save(ServerSubResource.DISCOVERY_GROUP, form, changedValues)}"
+                      prepare-reset="${presenter.reset(ServerSubResource.DISCOVERY_GROUP, form)}">
                     <attributes>
                         <attribute name="initial-wait-timeout"/>
                         <attribute name="refresh-timeout"/>
@@ -94,70 +94,49 @@
         <item id="messaging-cluster-connection-entry" title="Cluster Connection" icon="pficon pficon-network">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/cluster-connection=*">
                 <h1>Cluster Connection</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="messaging-cluster-connection-table" title="Cluster Connection"
                        form-ref="messaging-cluster-connection-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addClusterConnection(ServerSubResource.CLUSTER_CONNECTION)}}"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addClusterConnection(ServerSubResource.CLUSTER_CONNECTION)}"
                                 constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.CLUSTER_CONNECTION, table.selectedRow())}}"
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(ServerSubResource.CLUSTER_CONNECTION, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="messaging-cluster-connection-form" title="Cluster Connection"
-                      on-save="{{presenter.save(ServerSubResource.CLUSTER_CONNECTION, form, changedValues)}}"
-                      prepare-reset="{{presenter.reset(ServerSubResource.CLUSTER_CONNECTION, form)}}"/>
+                      on-save="${presenter.save(ServerSubResource.CLUSTER_CONNECTION, form, changedValues)}"
+                      prepare-reset="${presenter.reset(ServerSubResource.CLUSTER_CONNECTION, form)}"/>
             </metadata>
         </item>
 
         <item id="messaging-grouping-handler-entry" title="Grouping Handler" icon="fa fa-object-group">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/grouping-handler=*">
                 <h1>Grouping Handler</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="messaging-grouping-handler-table" title="Grouping Handler"
                        form-ref="messaging-grouping-handler-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.GROUPING_HANDLER)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.GROUPING_HANDLER, table.selectedRow())}}"
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.add(ServerSubResource.GROUPING_HANDLER)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(ServerSubResource.GROUPING_HANDLER, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="messaging-grouping-handler-form" title="Grouping Handler"
-                      on-save="{{presenter.save(ServerSubResource.GROUPING_HANDLER, form, changedValues)}}"
-                      prepare-reset="{{presenter.reset(ServerSubResource.GROUPING_HANDLER, form)}}"/>
+                      on-save="${presenter.save(ServerSubResource.GROUPING_HANDLER, form, changedValues)}"
+                      prepare-reset="${presenter.reset(ServerSubResource.GROUPING_HANDLER, form)}"/>
             </metadata>
         </item>
 
-        <item id="messaging-bridge-entry" title="Bridge" icon="fa fa-road">
-            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/bridge=*">
-                <h1>Bridge</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="messaging-bridge-table" title="Bridge" form-ref="messaging-bridge-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addBridge(ServerSubResource.BRIDGE)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.BRIDGE, table.selectedRow())}}"
-                                scope="selected" constraint="remove"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="messaging-bridge-form" title="Bridge"
-                      on-save="{{presenter.save(ServerSubResource.BRIDGE, form, changedValues)}}"
-                      prepare-reset="{{presenter.reset(ServerSubResource.BRIDGE, form)}}"/>
-            </metadata>
-        </item>
     </vertical-navigation>
 </view>

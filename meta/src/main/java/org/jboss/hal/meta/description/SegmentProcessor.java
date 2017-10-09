@@ -24,9 +24,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
-/**
- * @author Harald Pehl
- */
 final class SegmentProcessor {
 
     static void process(List<String[]> segments, Consumer<String[]> consumer) {

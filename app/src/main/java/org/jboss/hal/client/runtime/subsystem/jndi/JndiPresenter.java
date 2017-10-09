@@ -25,12 +25,12 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -38,11 +38,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAMING;
 import static org.jboss.hal.meta.token.NameTokens.JNDI;
 
-/**
- * @author Harald Pehl
- */
 public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyView, JndiPresenter.MyProxy> {
 
     private static final String ROOT_ADDRESS = "/{selected.host}/{selected.server}/subsystem=naming";
@@ -90,7 +88,7 @@ public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyVi
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(Names.JNDI), resources.constants().monitor(), Names.JNDI);
+                .append(Ids.RUNTIME_SUBSYSTEM, NAMING, resources.constants().monitor(), Names.JNDI);
     }
 
     @Override

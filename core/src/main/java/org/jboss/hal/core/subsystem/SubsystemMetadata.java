@@ -17,9 +17,6 @@ package org.jboss.hal.core.subsystem;
 
 import com.google.gwt.resources.client.ExternalTextResource;
 
-/**
- * @author Harald Pehl
- */
 public class SubsystemMetadata {
 
     public static class Builder {
@@ -32,7 +29,7 @@ public class SubsystemMetadata {
         private ExternalTextResource externalTextResource;
         private boolean generic;
 
-        public Builder(final String name, final String title) {
+        public Builder(String name,  String title) {
             this.name = name;
             this.title = title;
         }
@@ -43,8 +40,10 @@ public class SubsystemMetadata {
         }
 
         /**
-         * Register a named token to this finder item, displaing a "View" clickable link to open a View.
+         * Registers a named token to this finder item, showing a "View" button.
+         *
          * @param token A string based token from NameTokens class.
+         *
          * @return This builder instance.
          */
         public Builder token(String token) {
@@ -81,7 +80,7 @@ public class SubsystemMetadata {
     private final ExternalTextResource externalTextResource;
     private final boolean generic;
 
-    private SubsystemMetadata(final Builder builder) {
+    private SubsystemMetadata(Builder builder) {
         this.name = builder.name;
         this.title = builder.title;
         this.subtitle = builder.subtitle;

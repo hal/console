@@ -28,7 +28,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.config.Settings.Key.PAGE_LENGTH;
+import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -36,8 +36,6 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @param <B> the builder type
  * @param <T> the row type
- *
- * @author Harald Pehl
  */
 public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T>, T> {
 
@@ -57,7 +55,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         this.buttons = new ArrayList<>();
         this.columns = new ArrayList<>();
         this.columnActions = new ColumnActions<>();
-        this.pageLength = Settings.INSTANCE.get(PAGE_LENGTH).asInt(Settings.DEFAULT_PAGE_LENGTH);
+        this.pageLength = Settings.INSTANCE.get(PAGE_SIZE).asInt(Settings.DEFAULT_PAGE_SIZE);
         this.keys = true;
         this.paging = true;
         this.searching = true;
@@ -137,6 +135,11 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public B column(String link, ColumnAction<T> columnAction) {
+        return column(link, columnAction, "10em");
+    }
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    public B column(String link, ColumnAction<T> columnAction, String width) {
         assertNoOptions();
 
         Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
@@ -147,7 +150,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
                 })
                 .orderable(false)
                 .searchable(false)
-                .width("10em")
+                .width(width)
                 .build();
         this.columns.add(column);
         return that();

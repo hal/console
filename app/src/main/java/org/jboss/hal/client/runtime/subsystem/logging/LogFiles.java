@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -31,15 +30,12 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 
+import static elemental2.dom.DomGlobal.window;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.mvp.Places.EXTERNAL_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Common code used by the finder column and the presenter.
- *
- * @author Harald Pehl
- */
+/** Common code used by the finder column and the presenter. */
 public class LogFiles {
 
     /**
@@ -69,7 +65,7 @@ public class LogFiles {
     }
 
     public void download(String logFile) {
-        DomGlobal.window.open(downloadUrl(logFile), "", "");
+        window.open(downloadUrl(logFile), "", "");
     }
 
     String downloadUrl(String name) {

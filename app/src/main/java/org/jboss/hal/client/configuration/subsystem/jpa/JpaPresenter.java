@@ -35,9 +35,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
-/**
- * @author Harald Pehl
- */
 public class JpaPresenter
         extends MbuiPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -84,7 +81,7 @@ public class JpaPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ROOT_TEMPLATE.lastValue());
+        return finderPathFactory.configurationSubsystemPath(ROOT_TEMPLATE.lastValue());
     }
 
     @Override

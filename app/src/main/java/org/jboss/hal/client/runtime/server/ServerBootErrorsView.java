@@ -27,9 +27,6 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter.MANAGEMENT_TEMPLATE;
 
-/**
- * @author Harald Pehl
- */
 public class ServerBootErrorsView extends HalViewImpl implements ServerBootErrorsPresenter.MyView {
 
     private final BootErrorsElement bootErrorsElement;

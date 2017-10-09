@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-/**
- * @author Harald Pehl
- */
 public class OptionsBuilder<T> {
 
     private final SourceFunction<T> source;

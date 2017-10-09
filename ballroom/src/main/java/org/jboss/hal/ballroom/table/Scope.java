@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.ballroom.table;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public enum Scope {
     SELECTED("selected"), SELECTED_SINGLE("selectedSingle");
@@ -34,7 +31,7 @@ public enum Scope {
 
     private final String selector;
 
-    Scope(final String selector) {
+    Scope(String selector) {
         this.selector = selector;
     }
 

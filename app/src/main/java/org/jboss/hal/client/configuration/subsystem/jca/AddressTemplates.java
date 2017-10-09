@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String JCA_ADDRESS = "/{selected.profile}/subsystem=jca";

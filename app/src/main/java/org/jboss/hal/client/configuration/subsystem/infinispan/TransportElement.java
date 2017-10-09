@@ -41,8 +41,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NONE;
 /**
  * Element to view and modify the {@code transport=jgroups} singleton of a cache container. Kind of a fail safe form
  * with the difference that we need to take care of {@code transport=none}.
- *
- * @author Harald Pehl
  */
 class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 

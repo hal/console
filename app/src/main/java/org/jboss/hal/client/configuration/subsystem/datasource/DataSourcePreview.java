@@ -31,9 +31,6 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class DataSourcePreview extends PreviewContent<DataSource> {
 
     private static final String DATASOURCE = "datasource";
@@ -42,7 +39,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
     DataSourcePreview(final DataSourceColumn column, final DataSource dataSource, final Resources resources) {
         super(dataSource.getName(), dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE);
         boolean enabled = dataSource.hasDefined(ENABLED) && dataSource.get(ENABLED).asBoolean();
-        String type = dataSource.isXa() ? DATASOURCE : XA_DATASOURCE;
+        String type = dataSource.isXa() ? XA_DATASOURCE: DATASOURCE;
 
         if (enabled) {
             previewBuilder().add(

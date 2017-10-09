@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ExternalTextResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLHeadingElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
@@ -30,25 +30,37 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Previews;
+import org.jboss.hal.spi.Callback;
 
-import static org.jboss.gwt.elemento.core.Elements.elements;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.hal.resources.CSS.finderPreview;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Wrapper for the preview content which consists of a header (mandatory) and one or more optional elements.
- *
- * @author Harald Pehl
- */
+/** Wrapper for the preview content which consists of a header (mandatory) and one or more optional elements. */
 public class PreviewContent<T> implements HasElements, Attachable {
 
+    /** Common building block for a refresh link */
+    protected static HTMLElement refreshLink(Callback callback) {
+        return a().css(clickable, pullRight, smallLink, marginTop5).on(click, event -> callback.execute())
+                .add(span().css(fontAwesome("refresh"), marginRight5))
+                .add(span().textContent(CONSTANTS.refresh()))
+                .asElement();
+
+    }
+
+
     private static final int MAX_HEADER_LENGTH = 30;
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final List<Attachable> attachables;
     private final ElementsBuilder builder;
+    private HTMLElement headerContainer;
+    private HTMLElement lead;
+
+
+    // ------------------------------------------------------ construction
 
     /**
      * Empty preview w/o content
@@ -61,7 +73,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(lead(lead));
         }
     }
 
@@ -73,7 +85,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(lead(lead));
         }
 
         builder.add(section().innerHtml(html));
@@ -87,7 +99,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(lead(lead));
         }
 
         HtmlContentBuilder<HTMLElement> section;
@@ -107,8 +119,9 @@ public class PreviewContent<T> implements HasElements, Attachable {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(lead(lead));
         }
+
         builder.add(section().addAll(elements));
     }
 
@@ -121,7 +134,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(lead(lead));
         }
 
         HTMLElement section;
@@ -129,13 +142,27 @@ public class PreviewContent<T> implements HasElements, Attachable {
         Previews.innerHtml(section, resource);
     }
 
-    private HTMLHeadingElement header(final String header) {
+
+    // ------------------------------------------------------ header & lead
+
+    protected HTMLElement getHeaderContainer() {
+        return headerContainer;
+    }
+
+    protected HTMLElement getLeadElement() {
+        return lead;
+    }
+
+    private HTMLElement header(final String header) {
         String readableHeader = shorten(header);
-        HtmlContentBuilder<HTMLHeadingElement> builder = h(1);
+        HtmlContentBuilder<HTMLElement> builder = span();
         if (!readableHeader.equals(header)) {
+            builder.textContent(readableHeader);
             builder.title(header);
+        } else {
+            builder.textContent(header);
         }
-        return builder.asElement();
+        return this.headerContainer = h(1).add(builder.asElement()).asElement();
     }
 
     private String shorten(String header) {
@@ -143,6 +170,13 @@ public class PreviewContent<T> implements HasElements, Attachable {
                 ? Strings.abbreviateMiddle(header, MAX_HEADER_LENGTH)
                 : header;
     }
+
+    private HTMLElement lead(String lead) {
+        return this.lead = p().css(CSS.lead).textContent(lead).asElement();
+    }
+
+
+    // ------------------------------------------------------ other methods
 
     protected ElementsBuilder previewBuilder() {
         return builder;
@@ -159,6 +193,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
     public void attach() {
         PatternFly.initComponents("." + finderPreview);
         attachables.forEach(Attachable::attach);
+    }
+
+    @Override
+    public void detach() {
+        attachables.forEach(Attachable::detach);
     }
 
     @Override

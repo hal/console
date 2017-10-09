@@ -39,9 +39,6 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.SOCKET_BINDING_GROUP)
 @Requires(SocketBindingGroupPresenter.ROOT_ADDRESS)
 public class SocketBindingGroupColumn extends FinderColumn<NamedNode> {

@@ -1,0 +1,514 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.core.mbui;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import com.google.common.collect.Iterables;
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.Pages;
+import org.jboss.hal.ballroom.Tabs;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Column;
+import org.jboss.hal.ballroom.table.Table;
+import org.jboss.hal.core.ComplexAttributeOperations;
+import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.spi.Callback;
+import org.jetbrains.annotations.NonNls;
+
+import static elemental2.dom.DomGlobal.alert;
+import static java.util.Collections.singletonList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
+import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
+
+/**
+ * Master detail element for a resource with support for n complex attributes of type {@code OBJECT} and one
+ * complex attribute of type {@code LIST}.
+ *
+ * <p>This class provides the following features:</p>
+ * <ul>
+ * <li>Table for the main resource with add and remove buttons.</li>
+ * <li>Form with all simple configuration attributes of the main resource.</li>
+ * <li>A tab for each complex attribute of type {@code OBJECT}. The tab contains a form to add, save, reset and remove
+ * the complex attribute (remove is only available if the complex attribute is not required).</li>
+ * <li>If there's a complex attribute of type {@code LIST}, the table contains a link to a sub-page. The sub-page
+ * contains a table and a form to CRUD the elements of the complex attribute. Only simple attributes in the complex
+ * attribute of type {@code LIST} are supported.</li>
+ * <li>All CRUD actions are delegated to {@link CrudOperations} and {@link ComplexAttributeOperations}</li>
+ * </ul>
+ *
+ * <p>Multiple complex attributes of type {@code LIST} or nested complex attributes are not supported.</p>
+ */
+public class ResourceElement implements IsElement<HTMLElement>, Attachable {
+
+    public static class Builder {
+
+        private final String baseId;
+        private final String resource;
+        private final Metadata metadata;
+        private final MbuiContext mbuiContext;
+        private final ModelNodeTable.Builder<NamedNode> tableBuilder;
+        private String type;
+        private List<String> coAttributes; // co = complex object
+        private String clAttribute; // cl = complex list
+        private final List<String> clColumns;
+        private final List<String> clAddAttributes;
+        private Function<ModelNode, String> clIdentifier;
+        private Callback onAdd;
+        private Callback crudCallback;
+
+        public Builder(String baseId, String resource, Metadata metadata, MbuiContext mbuiContext) {
+            this.baseId = baseId;
+            this.resource = resource;
+            this.metadata = metadata;
+            this.mbuiContext = mbuiContext;
+
+            this.tableBuilder = new ModelNodeTable.Builder<>(Ids.build(baseId, Ids.TABLE_SUFFIX), metadata);
+            this.type = new LabelBuilder().label(resource);
+            this.coAttributes = new ArrayList<>();
+            this.clAttribute = null;
+            this.clColumns = new ArrayList<>();
+            this.clAddAttributes = new ArrayList<>();
+            this.clIdentifier = null;
+            this.onAdd = null;
+            this.crudCallback = () -> alert(Names.NYI);
+        }
+
+        /**
+         * Overrides the human readable type of the main resource which is built by default using the {@link
+         * LabelBuilder}.
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
+
+        /** Columns for the main table. */
+        public Builder columns(@NonNls String first, @NonNls String... rest) {
+            tableBuilder.columns(first, rest);
+            return this;
+        }
+
+        public Builder column(String name, Column.RenderCallback<NamedNode, ?> render) {
+            tableBuilder.column(name, render);
+            return this;
+        }
+
+        /**
+         * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the
+         * complex attribute.
+         */
+        public Builder addComplexObjectAttribute(String name) {
+            coAttributes.add(name);
+            return this;
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name   The name of the complex attribute
+         * @param column The column for the table on the sub-page
+         */
+        public Builder setComplexListAttribute(String name, String column) {
+            return setComplexListAttribute(name, singletonList(column), Collections.emptyList(), null);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param column        The column for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         */
+        public Builder setComplexListAttribute(String name, String column, Iterable<String> addAttributes) {
+            return setComplexListAttribute(name, singletonList(column), addAttributes, null);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name       The name of the complex attribute
+         * @param column     The column for the table on the sub-page
+         * @param identifier function to maintain the selection after updating the table entries
+         */
+        public Builder setComplexListAttribute(String name, String column, Function<ModelNode, String> identifier) {
+            return setComplexListAttribute(name, singletonList(column), Collections.emptyList(), identifier);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param column        The column for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         * @param identifier    function to maintain the selection after updating the table entries
+         */
+        public Builder setComplexListAttribute(String name, String column, Iterable<String> addAttributes,
+                Function<ModelNode, String> identifier) {
+            return setComplexListAttribute(name, singletonList(column), addAttributes, identifier);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name    The name of the complex attribute
+         * @param columns The columns for the table on the sub-page
+         */
+        public Builder setComplexListAttribute(String name, Iterable<String> columns) {
+            return setComplexListAttribute(name, columns, Collections.emptyList(), null);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param columns       The columns for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         */
+        public Builder setComplexListAttribute(String name, Iterable<String> columns, Iterable<String> addAttributes) {
+            return setComplexListAttribute(name, columns, addAttributes, null);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name       The name of the complex attribute
+         * @param columns    The columns for the table on the sub-page
+         * @param identifier function to maintain the selection after updating the table entries
+         */
+        public Builder setComplexListAttribute(String name, Iterable<String> columns,
+                Function<ModelNode, String> identifier) {
+            return setComplexListAttribute(name, columns, Collections.emptyList(), identifier);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param columns       The columns for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         * @param identifier    function to maintain the selection after updating the table entries
+         */
+        public Builder setComplexListAttribute(String name, Iterable<String> columns,
+                Iterable<String> addAttributes, Function<ModelNode, String> identifier) {
+            clAttribute = name;
+            Iterables.addAll(clColumns, columns);
+            Iterables.addAll(clAddAttributes, addAttributes);
+            clIdentifier = identifier;
+            return this;
+        }
+
+        /**
+         * Defines the callback which is executed to add the main resource. If not specified {@link
+         * CrudOperations#add(String, String, AddressTemplate, CrudOperations.AddCallback)} is used (which opens an
+         * {@linkplain org.jboss.hal.core.mbui.dialog.AddResourceDialog add-resource-dialog} with all required
+         * properties of the main resource).
+         *
+         * Use this method if you need to customize the add-resource-dialog somehow, e.g. if there's a required
+         * complex attribute which has to be specified).
+         */
+        public Builder onAdd(Callback callback) {
+            this.onAdd = callback;
+            return this;
+        }
+
+        /** Defines the callback which is used after all CRUD actions. */
+        public Builder onCrud(Callback callback) {
+            this.crudCallback = callback;
+            return this;
+        }
+
+        public ResourceElement build() {
+            return new ResourceElement(this);
+        }
+    }
+
+
+    private final Builder builder;
+    private final Table<NamedNode> table;
+    private final Form<NamedNode> form;
+    private final Map<String, Form<ModelNode>> coForms;
+    private final Pages pages;
+    private final Table<ModelNode> clTable;
+    private final Form<ModelNode> clForm;
+    private final HTMLElement root;
+
+    private String selectedResource;
+    private int clIndex;
+
+    private ResourceElement(Builder builder) {
+        this.builder = builder;
+        this.selectedResource = null;
+        this.clIndex = -1;
+
+        HTMLElement section;
+        LabelBuilder labelBuilder = new LabelBuilder();
+
+        // main table and form
+        if (builder.onAdd != null) {
+            builder.tableBuilder.button(builder.mbuiContext.tableButtonFactory().add(builder.metadata.getTemplate(),
+                    table -> builder.onAdd.execute()));
+        } else {
+            builder.tableBuilder.button(builder.mbuiContext.tableButtonFactory().add(builder.metadata.getTemplate(),
+                    table -> builder.mbuiContext.crud().add(Ids.build(builder.baseId, Ids.ADD_SUFFIX), builder.type,
+                            builder.metadata.getTemplate(), (name, address) -> builder.crudCallback.execute())));
+        }
+        builder.tableBuilder.button(builder.mbuiContext.tableButtonFactory().remove(builder.metadata.getTemplate(),
+                table -> builder.mbuiContext.crud().remove(builder.type, table.selectedRow().getName(),
+                        builder.metadata.getTemplate(), builder.crudCallback)));
+        if (builder.clAttribute != null) {
+            builder.tableBuilder.column(labelBuilder.label(builder.clAttribute), this::showComplexList);
+        }
+        table = builder.tableBuilder.build();
+
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM_SUFFIX), builder.metadata)
+                .onSave((f, changedValues) -> builder.mbuiContext.crud().save(builder.type, f.getModel().getName(),
+                        builder.metadata.getTemplate(), changedValues, builder.crudCallback))
+                .build();
+
+        // complex attributes of type OBJECT
+        coForms = new HashMap<>();
+        if (!builder.coAttributes.isEmpty()) {
+            Tabs tabs = new Tabs();
+            tabs.add(Ids.build(builder.baseId, ATTRIBUTES, Ids.TAB_SUFFIX),
+                    builder.mbuiContext.resources().constants().attributes(), form.asElement());
+
+            for (String complexAttribute : builder.coAttributes) {
+                // is the complex attribute *itself* required?
+                boolean requiredComplexAttribute = false;
+                Property attribute = builder.metadata.getDescription().findAttribute(ATTRIBUTES, complexAttribute);
+                if (attribute != null) {
+                    requiredComplexAttribute = failSafeBoolean(attribute.getValue(), REQUIRED);
+                }
+
+                Callback callback;
+                String type = labelBuilder.label(complexAttribute);
+                Metadata metadata = builder.metadata.forComplexAttribute(complexAttribute);
+
+                // does the complex attribute *contain* required attributes?
+                List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(ATTRIBUTES);
+                if (requiredAttributes.isEmpty()) {
+                    callback = () -> builder.mbuiContext.ca().add(selectedResource, complexAttribute, type,
+                            metadata.getTemplate(), null, builder.crudCallback);
+                } else {
+                    callback = () -> builder.mbuiContext.ca()
+                            .add(Ids.build(builder.baseId, complexAttribute, Ids.ADD_SUFFIX),
+                                    selectedResource, complexAttribute, type, metadata.getTemplate(),
+                                    builder.crudCallback);
+                }
+
+                Supplier<Operation> ping = () -> {
+                    ResourceAddress address = builder.metadata.getTemplate()
+                            .resolve(builder.mbuiContext.statementContext(), selectedResource);
+                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                            .param(NAME, complexAttribute)
+                            .build();
+                };
+
+                ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
+                        Ids.build(builder.baseId, complexAttribute, Ids.FORM_SUFFIX), metadata)
+                        .singleton(ping, callback)
+                        .onSave((f, changedValues) -> alert(Names.NYI))
+                        .prepareReset(f -> builder.mbuiContext.ca().reset(selectedResource, complexAttribute, type,
+                                metadata.getTemplate(), f, new Form.FinishReset<ModelNode>(f) {
+                                    @Override
+                                    public void afterReset(Form<ModelNode> form) {
+                                        builder.crudCallback.execute();
+                                    }
+                                }));
+                if (!requiredComplexAttribute) {
+                    formBuilder.prepareRemove(
+                            f -> builder.mbuiContext.ca().remove(selectedResource, complexAttribute, type,
+                                    metadata.getTemplate(), new Form.FinishRemove<ModelNode>(f) {
+                                        @Override
+                                        public void afterRemove(Form<ModelNode> form) {
+                                            builder.crudCallback.execute();
+                                        }
+                                    }));
+                }
+                Form<ModelNode> form = formBuilder.build();
+
+                tabs.add(Ids.build(builder.baseId, complexAttribute, Ids.TAB_SUFFIX), type, form.asElement());
+                coForms.put(complexAttribute, form);
+            }
+
+            section = section()
+                    .add(h(1).textContent(builder.type))
+                    .add(p().textContent(builder.metadata.getDescription().getDescription()))
+                    .addAll(table, tabs)
+                    .asElement();
+
+        } else {
+            section = section()
+                    .add(h(1).textContent(builder.type))
+                    .add(p().textContent(builder.metadata.getDescription().getDescription()))
+                    .addAll(table, form)
+                    .asElement();
+        }
+
+        // complex attributes of type LIST
+        if (builder.clAttribute != null) {
+            pages = new Pages(mainPageId(), section);
+
+            Metadata metadata = builder.metadata.forComplexAttribute(builder.clAttribute);
+            clTable = new ModelNodeTable.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.TABLE_SUFFIX),
+                    metadata)
+                    .button(builder.mbuiContext.tableButtonFactory().add(metadata.getTemplate(),
+                            table -> builder.mbuiContext.ca()
+                                    .listAdd(Ids.build(builder.baseId, builder.clAttribute, Ids.ADD_SUFFIX),
+                                            selectedResource, builder.clAttribute,
+                                            labelBuilder.label(builder.clAttribute),
+                                            metadata.getTemplate(), builder.clAddAttributes, builder.crudCallback)))
+                    .button(builder.mbuiContext.tableButtonFactory().remove(metadata.getTemplate(),
+                            table -> builder.mbuiContext.ca().remove(selectedResource, builder.clAttribute,
+                                    labelBuilder.label(builder.clAttribute), clIndex, metadata.getTemplate(),
+                                    builder.crudCallback)))
+                    .columns(builder.clColumns)
+                    .build();
+            clForm = new ModelNodeForm.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.FORM_SUFFIX),
+                    metadata)
+                    .onSave((f, changedValues) -> builder.mbuiContext.ca().save(selectedResource, builder.clAttribute,
+                            labelBuilder.label(builder.clAttribute), clIndex, metadata.getTemplate(), changedValues,
+                            builder.crudCallback))
+                    .build();
+            HTMLElement clSection = section()
+                    .add(h(1).textContent(labelBuilder.label(builder.clAttribute)))
+                    .add(p().textContent(metadata.getDescription().getDescription()))
+                    .addAll(clTable, clForm)
+                    .asElement();
+
+            pages.addPage(mainPageId(), complexListPageId(),
+                    () -> builder.type + ": " + selectedResource,
+                    () -> labelBuilder.label(builder.clAttribute),
+                    clSection);
+            root = pages.asElement();
+
+        } else {
+            pages = null;
+            clTable = null;
+            clForm = null;
+            root = section;
+        }
+    }
+
+    @Override
+    public HTMLElement asElement() {
+        return root;
+    }
+
+    @Override
+    public void attach() {
+        table.attach();
+        form.attach();
+        table.bindForm(form);
+        table.onSelectionChange(table -> {
+            if (table.hasSelection()) {
+                selectedResource = table.selectedRow().getName();
+                coForms.forEach((complexAttribute, form) ->
+                        form.view(failSafeGet(table.selectedRow(), complexAttribute)));
+            } else {
+                selectedResource = null;
+                for (Form<ModelNode> form : coForms.values()) {
+                    form.clear();
+                }
+            }
+        });
+        if (Iterables.isEmpty(form.getFormItems())) {
+            Elements.setVisible(form.asElement(), false);
+        }
+
+        if (clTable != null && clForm != null) {
+            clTable.attach();
+            clForm.attach();
+            clTable.bindForm(clForm);
+            clTable.onSelectionChange(table -> {
+                if (table.hasSelection()) {
+                    clIndex = table.selectedRow().get(HAL_INDEX).asInt();
+                } else {
+                    clIndex = -1;
+                }
+            });
+        }
+    }
+
+    public void update(List<NamedNode> nodes) {
+        form.clear();
+        for (Form<ModelNode> form : coForms.values()) {
+            form.clear();
+        }
+        table.update(nodes);
+
+        if (pages != null) {
+            if (complexListPageId().equals(pages.getCurrentId())) {
+                nodes.stream()
+                        .filter(node -> selectedResource.equals(node.getName()))
+                        .findFirst()
+                        .ifPresent(this::showComplexList);
+            }
+        }
+    }
+
+    private void showComplexList(NamedNode node) {
+        selectedResource = node.getName();
+        List<ModelNode> clNodes = failSafeList(node, builder.clAttribute);
+        storeIndex(clNodes);
+
+        if (clTable != null && clForm != null && pages != null) {
+            clForm.clear();
+            if (builder.clIdentifier != null) {
+                clTable.update(clNodes, builder.clIdentifier);
+            } else {
+                clTable.update(clNodes);
+            }
+            pages.showPage(complexListPageId());
+        }
+    }
+
+    private String mainPageId() {
+        return Ids.build(builder.baseId, builder.resource, Ids.PAGE_SUFFIX);
+    }
+
+    private String complexListPageId() {
+        return Ids.build(builder.baseId, builder.clAttribute, Ids.PAGE_SUFFIX);
+    }
+}

@@ -32,9 +32,6 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.MESSAGING_CATEGORY)
 public class MessagingCategoryColumn extends StaticItemColumn {
 
@@ -52,7 +49,7 @@ public class MessagingCategoryColumn extends StaticItemColumn {
                         .onPreview(new MessagingSubsystemPreview(crud, resources))
                         .build(),
                 new StaticItem.Builder(Names.SERVER)
-                        .nextColumn(Ids.MESSAGING_SERVER)
+                        .nextColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
                         .onPreview(new PreviewContent(Names.SERVER,
                                 resources.previews().configurationMessagingServer()))
                         .build(),

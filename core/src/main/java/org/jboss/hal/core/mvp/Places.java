@@ -36,11 +36,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
-/**
- * Factory methods for place requests.
- *
- * @author Harald Pehl
- */
+/** Factory methods for place requests. */
 public class Places {
 
     public static final String ADDRESS_PARAM = "address";

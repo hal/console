@@ -17,11 +17,7 @@ package org.jboss.hal.config;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
-/**
- * Signal that the current user has been changed.
- *
- * @author Harald Pehl
- */
+/** Signal that the current user has been changed. */
 @GenEvent
 public class UserChanged {
 }

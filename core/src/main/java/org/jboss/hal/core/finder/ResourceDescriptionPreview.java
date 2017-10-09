@@ -25,11 +25,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 
-/**
- * Preview which shows the description of a {@code :read-resource-description} operation.
- *
- * @author Harald Pehl
- */
+/** Preview which shows the description of a {@code :read-resource-description} operation. */
 public class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata> {
 
     public ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation rrd) {

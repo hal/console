@@ -23,9 +23,6 @@ import java.util.Set;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.MissingMetadataException;
 
-/**
- * @author Harald Pehl
- */
 class LookupResult {
 
     /**

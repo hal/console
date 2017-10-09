@@ -20,11 +20,7 @@ import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.resources.Resources;
 
-/**
- * A special form item which is used to resolve expressions.
- *
- * @author Harald Pehl
- */
+/** A special form item which is used to resolve expressions. */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public class ExpressionItem extends TextBoxItem {
 

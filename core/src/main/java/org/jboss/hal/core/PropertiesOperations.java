@@ -26,18 +26,14 @@ import javax.inject.Provider;
 
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -48,8 +44,10 @@ import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 
 /**
  * Many resources store properties in form of a sub resource similar to:
@@ -72,53 +70,45 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * <li>Modified properties are modified in the PSRs</li>
  * <li>Removed properties are removed from the PSR</li>
  * </ol>
- *
- * @author Harald Pehl
  */
 public class PropertiesOperations {
 
-    private static class ReadProperties implements Function<FunctionContext> {
+    private static class ReadProperties implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final ResourceAddress address;
         private final String psr;
 
-        private ReadProperties(final Dispatcher dispatcher, ResourceAddress address, final String psr) {
+        private ReadProperties(Dispatcher dispatcher, ResourceAddress address, String psr) {
             this.dispatcher = dispatcher;
             this.address = address;
             this.psr = psr;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public Completable call(FlowContext context) {
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, psr)
                     .build();
-            //noinspection Duplicates
-            dispatcher.executeInFunction(control, operation,
-                    result -> {
-                        control.getContext().push(result.asList().stream()
-                                .map(ModelNode::asString)
-                                .collect(Collectors.toSet()));
-                        control.proceed();
-                    },
-                    (op, failure) -> {
-                        control.getContext().push(Collections.emptySet());
-                        control.proceed();
-                    });
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> context.push(result.asList().stream()
+                            .map(ModelNode::asString)
+                            .collect(Collectors.toSet())))
+                    .doOnError(failure -> context.push(Collections.emptySet()))
+                    .toCompletable();
         }
     }
 
 
-    private static class MergeProperties implements Function<FunctionContext> {
+    private static class MergeProperties implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final ResourceAddress address;
         private final String propertiesResource;
         private final Map<String, String> properties;
 
-        public MergeProperties(final Dispatcher dispatcher, final ResourceAddress address,
-                final String propertiesResource, final Map<String, String> properties) {
+        public MergeProperties(Dispatcher dispatcher, ResourceAddress address, String propertiesResource,
+                Map<String, String> properties) {
             this.dispatcher = dispatcher;
             this.address = address;
             this.propertiesResource = propertiesResource;
@@ -126,8 +116,8 @@ public class PropertiesOperations {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
-            Set<String> existingProperties = control.getContext().pop();
+        public Completable call(FlowContext context) {
+            Set<String> existingProperties = context.pop();
             Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
             Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();
             Set<String> remove = Sets.difference(existingProperties, properties.keySet()).immutableCopy();
@@ -155,18 +145,14 @@ public class PropertiesOperations {
                     .forEach(operations::add);
             remove.stream()
                     .map(property -> new Operation.Builder(
-                            new ResourceAddress(address).add(propertiesResource, property), REMOVE
-                    )
+                            new ResourceAddress(address).add(propertiesResource, property), REMOVE)
                             .build())
                     .forEach(operations::add);
 
             Composite composite = new Composite(operations);
-            if (composite.isEmpty()) {
-                control.proceed();
-            } else {
-                dispatcher.executeInFunction(control, new Composite(operations),
-                        (CompositeResult result) -> control.proceed());
-            }
+            return composite.isEmpty()
+                    ? Completable.complete()
+                    : dispatcher.execute(new Composite(operations)).toCompletable();
         }
     }
 
@@ -181,13 +167,13 @@ public class PropertiesOperations {
     private final OperationFactory operationFactory;
 
     @Inject
-    public PropertiesOperations(final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final StatementContext statementContext,
-            final Resources resources,
-            final CrudOperations crud) {
+    public PropertiesOperations(EventBus eventBus,
+            Dispatcher dispatcher,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            StatementContext statementContext,
+            Resources resources,
+            CrudOperations crud) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataProcessor = metadataProcessor;
@@ -343,24 +329,16 @@ public class PropertiesOperations {
     private void saveInternal(String type, String name, ResourceAddress address,
             Composite operations, String psr, Map<String, String> properties, Callback callback) {
 
-        // TODO Check if the functions can be replaced with a composite operation
-        Function[] functions = new Function[]{
-                (Function<FunctionContext>) control -> {
-                    if (operations.isEmpty()) {
-                        control.proceed();
-                    } else {
-                        dispatcher.executeInFunction(control, operations,
-                                (CompositeResult result) -> control.proceed());
-                    }
-                },
+        // TODO Check if the steps can be replaced with a composite operation
+        series(new FlowContext(progress.get()),
+                context -> operations.isEmpty()
+                        ? Completable.complete()
+                        : dispatcher.execute(operations).toCompletable(),
                 new ReadProperties(dispatcher, address, psr),
-                new MergeProperties(dispatcher, address, psr, properties)
-        };
-
-        new Async<FunctionContext>(progress.get())
-                .waterfall(new FunctionContext(), new SuccessfulOutcome(eventBus, resources) {
+                new MergeProperties(dispatcher, address, psr, properties))
+                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                     @Override
-                    public void onSuccess(final FunctionContext context) {
+                    public void onSuccess(FlowContext context) {
                         if (name == null) {
                             MessageEvent.fire(eventBus,
                                     Message.success(resources.messages().modifySingleResourceSuccess(type)));
@@ -370,6 +348,6 @@ public class PropertiesOperations {
                         }
                         callback.execute();
                     }
-                }, functions);
+                });
     }
 }

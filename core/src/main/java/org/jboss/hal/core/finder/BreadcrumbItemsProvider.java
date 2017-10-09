@@ -22,8 +22,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * Function to load the items shown in the breadcrumb dropdown. Normally this list equals to the list which is returned
  * by {@link ItemsProvider}.
- *
- * @author Harald Pehl
  */
 @FunctionalInterface
 public interface BreadcrumbItemsProvider<T> {

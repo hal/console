@@ -52,8 +52,6 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  * Implementation note: Not based on MBUI XML due to special cache container singleton resources.
  *
  * TODO This view generates a huge DOM tree (about 14k lines of HTML). Think about ways to optimize this.
- *
- * @author Harald Pehl
  */
 public class CacheContainerView extends HalViewImpl
         implements CacheContainerPresenter.MyView {

@@ -41,16 +41,12 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.collect.Sets.intersection;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class OperationFactory {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
@@ -61,6 +57,13 @@ public class OperationFactory {
         this(null);
     }
 
+    /**
+     * Creates a new instance with the specified name function. Use this constructor if you want to create change sets
+     * for complex attributes and need to adopt the {@code NAME} parameters of the DMR operations.
+     *
+     * @param nameFn function which is applied to the {@code NAME} parameter of the operations created by this
+     *               class.
+     */
     public OperationFactory(final Function<String, String> nameFn) {
         this.nameFn = nameFn;
     }
@@ -94,7 +97,8 @@ public class OperationFactory {
         allAlternatives.forEach((attribute, alternatives) -> {
 
             logger.debug("Alternatives resolution for {} -> [{}]", attribute, String.join(", ", alternatives));
-            Set<String> intersection = intersection(new HashSet<>(alternatives), changeSet.keySet()).immutableCopy();
+            HashSet<String> intersection = new HashSet<>(alternatives);
+            intersection.retainAll(changeSet.keySet());
             if (intersection.isEmpty()) {
 
                 // the easy part: no conflicts
@@ -169,89 +173,6 @@ public class OperationFactory {
                 operations.putIfAbsent(name, writeAttribute(address, name, value, resourceDescription)));
         return new Composite(operations.values().stream().filter(Objects::nonNull).collect(toList()));
     }
-
-    /**
-     * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION
-     * write-attribute} operation.
-     *
-     * @param address   the fq address used for the operations
-     * @param changeSet the changed values
-     * @param complexAttributeName the complex attribute name
-     * @param metadata  the metadata which should contain the attribute definitions of the change-set
-     */
-    public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet,
-            String complexAttributeName, final Metadata metadata) {
-
-        ResourceDescription resourceDescription = metadata.getDescription();
-
-        ModelNode payload = new ModelNode();
-        changeSet.forEach((attribute, value) -> {
-            if (!isNullOrEmpty(value)) {
-                ModelNode valueNode = asValueNode(attribute, value, resourceDescription, complexAttributeName);
-                if (valueNode != null) {
-                    payload.get(attribute).set(valueNode);
-                }
-            }
-        });
-
-        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
-                            .param(NAME, complexAttributeName)
-                            .param(VALUE, payload)
-                            .build();
-
-        return new Composite(operation);
-    }
-
-    /**
-     * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#LIST_ADD_OPERATION
-     * list-add} operation.
-     *
-     * @param address   the fq address used for the operations
-     * @param changeSet the changed values
-     * @param complexAttributeName the complex attribute name
-     * @param metadata  the metadata which should contain the attribute definitions of the change-set
-     */
-    public Composite fromListChangeSet(final ResourceAddress address, final Map<String, Object> changeSet,
-            String complexAttributeName, final Metadata metadata) {
-
-        ResourceDescription resourceDescription = metadata.getDescription();
-
-        ModelNode payload = new ModelNode();
-        changeSet.forEach((attribute, value) -> {
-            if (!isNullOrEmpty(value)) {
-                ModelNode valueNode = asValueNode(attribute, value, resourceDescription, complexAttributeName);
-                if (valueNode != null) {
-                    payload.get(attribute).set(valueNode);
-                }
-            }
-        });
-
-        Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
-                            .param(NAME, complexAttributeName)
-                            .param(VALUE, payload)
-                            .build();
-
-        return new Composite(operation);
-    }
-
-    /**
-     * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#LIST_ADD_OPERATION
-     * list-add} operation.
-     *
-     * @param address   the fq address used for the operations
-     * @param complexAttributeName the complex attribute name
-     */
-    public Composite fromListChangeSet(final ResourceAddress address, final ModelNode payload,
-            String complexAttributeName) {
-
-        Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
-                            .param(NAME, complexAttributeName)
-                            .param(VALUE, payload)
-                            .build();
-
-        return new Composite(operation);
-    }
-
 
     /**
      * Creates a composite operation which resets the attributes of the specified resource. Only attributes which are
@@ -340,7 +261,7 @@ public class OperationFactory {
             return undefineAttribute(address, name);
 
         } else {
-            ModelNode valueNode = asValueNode(name, value, resourceDescription, null);
+            ModelNode valueNode = asValueNode(name, value, resourceDescription);
             if (valueNode != null) {
                 return new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                         .param(NAME, attributeName(name))
@@ -360,18 +281,10 @@ public class OperationFactory {
     }
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private ModelNode asValueNode(String name, Object value, ResourceDescription resourceDescription,
-            String complexAttribute) {
-
+    private ModelNode asValueNode(String name, Object value, ResourceDescription resourceDescription) {
         ModelNode valueNode = new ModelNode();
 
-        String _attributesPath;
-        if (complexAttribute != null)
-            _attributesPath = ATTRIBUTES + "/" + complexAttribute + "/" + VALUE_TYPE;
-        else
-            _attributesPath = ATTRIBUTES;
-
-        Property attribute = resourceDescription.findAttribute(_attributesPath, name);
+        Property attribute = resourceDescription.findAttribute(ATTRIBUTES, name);
         if (attribute != null) {
             String stringValue = String.valueOf(value);
             ModelNode attributeDescription = attribute.getValue();
@@ -379,10 +292,10 @@ public class OperationFactory {
                     attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean() &&
                     Expression.isExpression(stringValue)) {
                 valueNode.setExpression(stringValue);
+
             } else {
                 ModelType type = attributeDescription.get(TYPE).asType();
                 try {
-
                     switch (type) {
                         case BIG_DECIMAL:
                             valueNode.set(BigDecimal.valueOf(Double.parseDouble(stringValue)));
@@ -406,17 +319,22 @@ public class OperationFactory {
                             valueNode.set(Long.valueOf(stringValue).intValue());
                             break;
                         case LIST: {
-                            ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
-                                    ? attributeDescription.get(VALUE_TYPE).asType()
-                                    : ModelType.UNDEFINED;
-                            if (valueType == ModelType.STRING) {
-                                valueNode.clear();
-                                List l = (List) value;
-                                for (Object o : l) { valueNode.add(String.valueOf(o)); }
+                            ModelNode valueTypeNode = attributeDescription.get(VALUE_TYPE);
+                            ModelType typeOfValueType = valueTypeNode.getType();
+                            if (typeOfValueType == ModelType.TYPE) {
+                                ModelType valueType = attributeDescription.get(VALUE_TYPE).asType();
+                                if (valueType == ModelType.STRING) {
+                                    valueNode.clear();
+                                    List l = (List) value;
+                                    for (Object o : l) { valueNode.add(String.valueOf(o)); }
+                                } else {
+                                    logger.error("Unsupported value type {} for attribute {} of type {}",
+                                            valueType, name, type);
+                                }
+                            } else if (typeOfValueType == ModelType.OBJECT) {
+                                valueNode = (ModelNode) value;
                             } else {
-                                valueNode = null;
-                                logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
-                                        type);
+                                logger.error("Unsupported value type for attribute {} of type {}", name, type);
                             }
                             break;
                         }
@@ -424,22 +342,24 @@ public class OperationFactory {
                             valueNode.set(Long.parseLong(stringValue));
                             break;
                         case OBJECT:
-
-                            ModelType valueType = attributeDescription.get(VALUE_TYPE).getType();
-
-                            boolean stringValueType = valueType.equals(ModelType.TYPE)
-                                    && attributeDescription.get(VALUE_TYPE).asType().equals(ModelType.STRING);
-
-                            if (stringValueType) {
-                                Map map = (Map) value;
-                                for (Object k : map.keySet()) {
-                                    valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
+                            ModelNode valueTypeNode = attributeDescription.get(VALUE_TYPE);
+                            ModelType typeOfValueType = valueTypeNode.getType();
+                            if (typeOfValueType == ModelType.TYPE) {
+                                ModelType valueType = attributeDescription.get(VALUE_TYPE).asType();
+                                if (valueType == ModelType.STRING) {
+                                    valueNode.clear();
+                                    Map map = (Map) value;
+                                    for (Object k : map.keySet()) {
+                                        valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
+                                    }
+                                } else {
+                                    logger.error("Unsupported value type {} for attribute {} of type {}",
+                                            valueType, name, type);
                                 }
-                            } else if (valueType.equals(ModelType.OBJECT)) {
+                            } else if (typeOfValueType == ModelType.OBJECT) {
                                 valueNode = (ModelNode) value;
                             } else {
-                                logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
-                                        type);
+                                logger.error("Unsupported value type for attribute {} of type {}", name, type);
                             }
                             break;
                         case STRING:

@@ -17,11 +17,7 @@ package org.jboss.hal.ballroom;
 
 import jsinterop.annotations.JsFunction;
 
-/**
- * A general purpose callback for JS code only.
- *
- * @author Harald Pehl
- */
+/** A general purpose callback for JS code only. */
 @JsFunction
 public interface JsCallback {
 

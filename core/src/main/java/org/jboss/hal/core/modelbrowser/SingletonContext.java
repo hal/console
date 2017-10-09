@@ -20,9 +20,6 @@ import java.util.List;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 
-/**
- * @author Harald Pehl
- */
 class SingletonContext {
 
     final Node<Context> parent;

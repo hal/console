@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
@@ -41,15 +40,12 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Element to show the basic attributes of a resource inside the preview pane.
- *
- * @author Harald Pehl
- */
+/** Element to show the basic attributes of a resource inside the preview pane. */
 public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
     public static class PreviewAttribute {
@@ -58,41 +54,47 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         final String value;
         final SafeHtml htmlValue;
         final String href;
+        final String target;
         final HTMLElement element;
         final Iterable<HTMLElement> elements;
 
-        public PreviewAttribute(final String label, final String value) {
-            this(label, value, null, null, null, null);
+        public PreviewAttribute(String label, String value) {
+            this(label, value, null, null, null, null, null);
         }
 
-        public PreviewAttribute(final String label, final String value, final String href) {
-            this(label, value, null, href, null, null);
+        public PreviewAttribute(String label, String value, String href) {
+            this(label, value, null, href, null, null, null);
         }
 
-        public PreviewAttribute(final String label, final SafeHtml value) {
-            this(label, null, value, null, null, null);
+        public PreviewAttribute(String label, String value, String href, String target) {
+            this(label, value, null, href, target, null, null);
         }
 
-        public PreviewAttribute(final String label, final SafeHtml value, final String href) {
-            this(label, null, value, href, null, null);
+        public PreviewAttribute(String label, SafeHtml value) {
+            this(label, null, value, null, null, null, null);
         }
 
-        public PreviewAttribute(final String label, final Iterable<HTMLElement> elements) {
-            this(label, null, null, null, elements, null);
+        public PreviewAttribute(String label, SafeHtml value, String href, String target) {
+            this(label, null, value, href, target, null, null);
         }
 
-        public PreviewAttribute(final String label, final HTMLElement element) {
-            this(label, null, null, null, null, element);
+        public PreviewAttribute(String label, Iterable<HTMLElement> elements) {
+            this(label, null, null, null, null, null, elements);
         }
 
-        private PreviewAttribute(final String label, final String value, final SafeHtml htmlValue, final String href,
-                final Iterable<HTMLElement> elements, final HTMLElement element) {
+        public PreviewAttribute(String label, HTMLElement element) {
+            this(label, null, null, null, null, element, null);
+        }
+
+        private PreviewAttribute(String label, String value, SafeHtml htmlValue, String href,
+                String target, HTMLElement element, Iterable<HTMLElement> elements) {
             this.label = label;
             this.value = value;
             this.htmlValue = htmlValue;
             this.href = href;
             this.element = element;
             this.elements = elements;
+            this.target = target;
         }
 
         private boolean isUndefined() {
@@ -125,32 +127,33 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     private final Map<String, HTMLLIElement> listItems;
     private final Map<String, PreviewAttributeFunction<T>> functions;
 
-    public PreviewAttributes(final T model) {
+    public PreviewAttributes(T model) {
         this(model, CONSTANTS.mainAttributes(), null, Collections.emptyList());
     }
 
-    public PreviewAttributes(final T model, final String header) {
+    public PreviewAttributes(T model, String header) {
         this(model, header, null, Collections.emptyList());
     }
 
-    public PreviewAttributes(final T model, final List<String> attributes) {
+    public PreviewAttributes(T model, List<String> attributes) {
         this(model, CONSTANTS.mainAttributes(), null, attributes);
     }
 
-    public PreviewAttributes(final T model, final String header, final List<String> attributes) {
+    public PreviewAttributes(T model, String header, List<String> attributes) {
         this(model, header, null, attributes);
     }
 
-    public PreviewAttributes(final T model, final String header, final String description,
-            final List<String> attributes) {
+    public PreviewAttributes(T model, String header, String description, List<String> attributes) {
         this.model = model;
         this.functions = new HashMap<>();
         this.listItems = new HashMap<>();
         this.lb = new LabelBuilder();
-        this.eb = new ElementsBuilder()
-                .add(h(2, header))
-                .add(this.description = p().asElement());
+        this.eb = new ElementsBuilder();
 
+        if (header != null) {
+            eb.add(h(2, header));
+        }
+        eb.add(this.description = p().asElement());
         if (description != null) {
             this.description.textContent = description;
         } else {
@@ -161,20 +164,20 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         attributes.forEach(this::append);
     }
 
-    public PreviewAttributes<T> append(final String attribute) {
+    public PreviewAttributes<T> append(String attribute) {
         append(model -> new PreviewAttribute(lb.label(attribute),
                 model.hasDefined(attribute) ? model.get(attribute).asString() : ""));
         return this;
     }
 
-    public PreviewAttributes<T> append(final String attribute, String href) {
+    public PreviewAttributes<T> append(String attribute, String href) {
         append(model -> new PreviewAttribute(lb.label(attribute),
                 model.hasDefined(attribute) ? model.get(attribute).asString() : "",
                 href));
         return this;
     }
 
-    public PreviewAttributes<T> append(final PreviewAttributeFunction<T> function) {
+    public PreviewAttributes<T> append(PreviewAttributeFunction<T> function) {
         String id = Ids.uniqueId();
         String labelId = Ids.build(id, LABEL);
         String valueId = Ids.build(id, VALUE);
@@ -195,7 +198,11 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             }
         } else {
             if (previewAttribute.href != null) {
-                valueContainer.appendChild(valueContainer = a(previewAttribute.href).asElement());
+                HTMLAnchorElement anchorElement = a(previewAttribute.href).asElement();
+                if (previewAttribute.target != null) {
+                    anchorElement.target = previewAttribute.target;
+                }
+                valueContainer.appendChild(valueContainer = anchorElement);
             }
             if (previewAttribute.isUndefined()) {
                 valueContainer.textContent = Names.NOT_AVAILABLE;
@@ -237,12 +244,12 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             PreviewAttributeFunction<T> function = entry.getValue();
             PreviewAttribute previewAttribute = function.labelValue(model);
 
-            Element label = DomGlobal.document.getElementById(labelId);
+            Element label = document.getElementById(labelId);
             if (label != null) {
                 label.textContent = previewAttribute.label;
             }
 
-            HTMLElement valueContainer = (HTMLElement) DomGlobal.document.getElementById(valueId);
+            HTMLElement valueContainer = (HTMLElement) document.getElementById(valueId);
             if (valueContainer != null) {
                 if (previewAttribute.elements != null) {
                     Elements.removeChildrenFrom(valueContainer);

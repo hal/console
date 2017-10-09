@@ -18,9 +18,6 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
-/**
- * @author Harald Pehl
- */
 public interface JndiResources extends ClientBundle {
 
     @Source("jndi.base64")

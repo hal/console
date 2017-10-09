@@ -29,9 +29,6 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 
-/**
- * @author Harald Pehl
- */
 public class NamesStep extends WizardStep<UploadContext, UploadState> {
 
     private final NameItem nameItem;
@@ -91,5 +88,17 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
             }
         }
         return valid;
+    }
+
+    @Override
+    protected boolean onBack(UploadContext context) {
+        form.cancel();
+        return true;
+    }
+
+    @Override
+    protected boolean onCancel(UploadContext context) {
+        form.cancel();
+        return true;
     }
 }

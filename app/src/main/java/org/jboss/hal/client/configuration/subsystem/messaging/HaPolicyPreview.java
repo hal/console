@@ -27,9 +27,6 @@ import org.jetbrains.annotations.NonNls;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
-/**
- * @author Harald Pehl
- */
 class HaPolicyPreview extends PreviewContent<StaticItem> {
 
     @SuppressWarnings("DuplicateStringLiteralInspection") @NonNls

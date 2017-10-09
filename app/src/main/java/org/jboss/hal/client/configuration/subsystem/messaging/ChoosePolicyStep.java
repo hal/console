@@ -29,9 +29,6 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.formHorizontal;
 import static org.jboss.hal.resources.CSS.radio;
 
-/**
- * @author Harald Pehl
- */
 public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolicyWizard.State> {
 
     private final HTMLElement root;

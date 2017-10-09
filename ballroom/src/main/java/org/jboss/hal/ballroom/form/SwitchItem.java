@@ -18,15 +18,18 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.gwt.elemento.core.InputType.text;
@@ -34,9 +37,6 @@ import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class SwitchItem extends AbstractFormItem<Boolean> {
 
     private static class SwitchReadOnlyAppearance extends ReadOnlyAppearance<Boolean> {
@@ -62,6 +62,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         private final FormItemValidation<Boolean> expressionValidation;
         private Boolean backup;
         private HandlerRegistration expressionHandler;
+        private HandlerRegistration resolveHandler;
 
 
         // ------------------------------------------------------ ui code
@@ -103,11 +104,13 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                     .on(click, event -> switchToExpressionMode())
                     .add(i().css(fontAwesome("link")))
                     .asElement();
+            expressionHandler = bind(expressionModeInput, change,
+                    event -> modifyExpressionValue(expressionModeInput.value));
 
             // it's types to boolean, but used to validate the expression
             this.expressionValidation = value -> {
                 if (!hasExpressionScheme(expressionModeInput.value)) {
-                    return ValidationResult.invalid(FormItemValidation.CONSTANTS.invalidExpression());
+                    return ValidationResult.invalid(CONSTANTS.invalidExpression());
                 }
                 return ValidationResult.OK;
             };
@@ -131,15 +134,21 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         public void attach() {
             super.attach();
             inputElement.classList.add(bootstrapSwitch);
-            SwitchBridge.Bridge.element(inputElement).onChange((event, state) -> modifyValue(state));
+            SwitchBridge.Api.element(inputElement).onChange((event, state) -> modifyValue(state));
         }
 
         @Override
         public void detach() {
             super.detach();
             if (attached) {
+                if (expressionHandler != null) {
+                    expressionHandler.removeHandler();
+                }
+                if (resolveHandler != null) {
+                    resolveHandler.removeHandler();
+                }
                 inputElement.classList.remove(bootstrapSwitch);
-                SwitchBridge.Bridge.element(inputElement).destroy();
+                SwitchBridge.Api.element(inputElement).destroy();
             }
         }
 
@@ -154,7 +163,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void showValue(final Boolean value) {
             if (attached) {
-                SwitchBridge.Bridge.element(inputElement).setValue(value);
+                SwitchBridge.Api.element(inputElement).setValue(value);
             } else {
                 inputElement.checked = value;
             }
@@ -168,7 +177,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void clearValue() {
             if (attached) {
-                SwitchBridge.Bridge.element(inputElement).setValue(false);
+                SwitchBridge.Api.element(inputElement).setValue(false);
             } else {
                 inputElement.checked = false;
             }
@@ -177,11 +186,10 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
         // ------------------------------------------------------ decorations
 
-
         @Override
         void applyDefault(final String defaultValue) {
             if (attached) {
-                SwitchBridge.Bridge.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
+                SwitchBridge.Api.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
             } else {
                 inputElement.checked = Boolean.parseBoolean(defaultValue);
             }
@@ -191,16 +199,18 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         protected void applyExpression(final ExpressionContext expressionContext) {
             Elements.failSafeRemove(inputContainer, normalModeContainer);
             Elements.lazyAppend(inputContainer, expressionModeContainer);
-            expressionHandler = bind(resolveExpressionButton, click,
-                    event -> expressionContext.callback.resolveExpression(expressionModeInput.value));
+            if (resolveHandler != null) {
+                resolveHandler = bind(resolveExpressionButton, click,
+                        event -> expressionContext.callback.resolveExpression(expressionModeInput.value));
+            }
             addValidationHandler(expressionValidation);
         }
 
         @Override
         void unapplyExpression() {
-            if (expressionHandler != null) {
-                expressionHandler.removeHandler();
-                expressionHandler = null;
+            if (resolveHandler != null) {
+                resolveHandler.removeHandler();
+                resolveHandler = null;
             }
             Elements.failSafeRemove(inputContainer, expressionModeContainer);
             Elements.lazyAppend(inputContainer, normalModeContainer);
@@ -273,6 +283,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         }
     }
 
+
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
 
     private final SwitchEditingAppearance editingAppearance;
 

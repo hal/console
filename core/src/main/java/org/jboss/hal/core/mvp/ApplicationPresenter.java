@@ -21,7 +21,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.header.HeaderModeEvent;
 import org.jboss.hal.core.header.PresenterType;
-import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.ballroom.Skeleton;
 
 /**
  * Base presenter for all kind of application presenters. The presenter returns a {@link HeaderModeEvent} with various
@@ -31,8 +31,6 @@ import org.jboss.hal.core.ui.Skeleton;
  * <li>{@link SupportsExternalMode}: a flag indicating support to open the presenter in an external tab / window</li>
  * <li>{@link SupportsExpertMode}: the resource address as returned by {@link SupportsExpertMode#resourceAddress()}</li>
  * </ul>
- *
- * @author Harald Pehl
  */
 public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends ProxyPlace<?>>
         extends HalPresenter<V, Proxy_> {

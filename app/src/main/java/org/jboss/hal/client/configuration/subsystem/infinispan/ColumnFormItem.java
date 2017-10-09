@@ -42,8 +42,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
  *   }
  * }
  * </pre>
- *
- * @author Harald Pehl
  */
 class ColumnFormItem extends CompositeFormItem {
 

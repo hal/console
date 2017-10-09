@@ -210,9 +210,6 @@ import org.jboss.hal.meta.description.ResourceDescription;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class ResourceDescriptionBuilder {
 
     public ResourceDescription empty() {

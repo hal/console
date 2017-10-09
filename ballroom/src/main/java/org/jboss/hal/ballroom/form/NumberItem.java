@@ -19,7 +19,10 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLInputElement;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.input;
@@ -31,9 +34,6 @@ import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.resources.CSS.formControl;
 
-/**
- * @author Harald Pehl
- */
 public class NumberItem extends AbstractFormItem<Long> {
 
     private static class NumberReadOnlyAppearance extends ReadOnlyAppearance<Long> {
@@ -81,7 +81,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         public ValidationResult validate(final Long value) {
-            if (!isExpressionValue()) {
+            if (!isExpressionValue() && !isEmpty()) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
                     Long.parseLong(inputElement.value);
@@ -99,7 +99,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         public ValidationResult validate(final Long value) {
-            if (!isExpressionValue()) {
+            if (!isExpressionValue() && !isEmpty()) {
                 if (value < min || value > max) {
                     return ValidationResult.invalid(MESSAGES.invalidRange(value, min, max));
                 }
@@ -118,6 +118,9 @@ public class NumberItem extends AbstractFormItem<Long> {
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
     public static final long MAX_SAFE_LONG = 9007199254740991L;
+
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
+    private final static Messages MESSAGES = GWT.create(Messages.class);
 
     private final HTMLInputElement inputElement;
     private long min;
@@ -143,10 +146,12 @@ public class NumberItem extends AbstractFormItem<Long> {
                         Long value = Long.parseLong(stringValue);
                         modifyValue(value);
                     } catch (NumberFormatException e) {
-                        // at least mark as modified and undefined
+                        // at least mark as modified and defined
                         setModified(true);
                         setUndefined(false);
                     }
+                } else {
+                    modifyValue(null);
                 }
             }
         }));
@@ -165,7 +170,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
     @Override
     public boolean isEmpty() {
-        return isExpressionValue() ? Strings.isNullOrEmpty(getExpressionValue()) : getValue() == null;
+        return Strings.isNullOrEmpty(isExpressionValue() ? getExpressionValue() : String.valueOf(getValue()));
     }
 
     @Override

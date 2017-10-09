@@ -28,9 +28,6 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.DATA_SOURCE_DRIVER)
 public class DataSourcesDriversColumn extends StaticItemColumn {
 

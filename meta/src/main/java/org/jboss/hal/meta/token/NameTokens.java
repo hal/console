@@ -19,9 +19,7 @@ import java.util.Set;
 
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 
-/**
- * HAL name tokens.
- */
+/** HAL name tokens. */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public interface NameTokens {
 
@@ -45,7 +43,8 @@ public interface NameTokens {
     String ELYTRON_MAPPERS_DECODERS = "elytron-mappers";
     String ELYTRON_SECURITY_REALMS = "elytron-security-realms";
     String ELYTRON_OTHER = "elytron-other";
-    String EJB3 = ModelDescriptionConstants.EJB3;
+    String EJB3_CONFIGURATION = ModelDescriptionConstants.EJB3 + CONFIGURATION_SUFFIX;
+    String EJB3_RUNTIME = ModelDescriptionConstants.EJB3 + RUNTIME_SUFFIX;
     String EXPERT_MODE = "expert-mode";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
@@ -56,8 +55,11 @@ public interface NameTokens {
     String JCA = ModelDescriptionConstants.JCA;
     String JGROUPS = ModelDescriptionConstants.JGROUPS;
     String JMS_BRIDGE = ModelDescriptionConstants.JMS_BRIDGE;
+    String JMS_QUEUE = "jms-queue";
+    String JMS_TOPIC = "jms-topic";
     String JMX = ModelDescriptionConstants.JMX;
     String JNDI = "jndi";
+    String JOB = "job" + RUNTIME_SUFFIX;
     String JPA_CONFIGURATION = ModelDescriptionConstants.JPA + CONFIGURATION_SUFFIX;
     String JPA_RUNTIME = ModelDescriptionConstants.JPA + RUNTIME_SUFFIX;
     String LOG_FILE = "log-file";
@@ -77,6 +79,7 @@ public interface NameTokens {
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
     String PATH = "path";
+    String QUEUE = "queue";
     String REMOTING = ModelDescriptionConstants.REMOTING;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;
@@ -87,17 +90,21 @@ public interface NameTokens {
     String SERVER_CONFIGURATION = "server-configuration";
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
     String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";
-    String SERVER_STATUS = "server-status";
+    String SERVER_RUNTIME = "server-runtime";
     String SOCKET_BINDING_GROUP = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
+    String TRANSACTIONS_RUNTIME = "transactions-runtime";
     String UNDERTOW = "undertow";
+    String UNDERTOW_APPLICATION_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";
     String UNDERTOW_FILTER = "undertow-filter";
     String UNDERTOW_HANDLER = "undertow-handler";
+    String UNDERTOW_RUNTIME_DEPLOYMENT_VIEW = "undertow-runtime-deployment";
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
+    String WEBSERVICES_RUNTIME = "webservices-runtime";
 
     Set<String> getTokens();
 }

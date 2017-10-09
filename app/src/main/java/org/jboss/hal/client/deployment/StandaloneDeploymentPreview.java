@@ -16,9 +16,12 @@
 package org.jboss.hal.client.deployment;
 
 import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.client.deployment.Deployment.Status;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.Deployment;
+import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
@@ -30,17 +33,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
 
-/**
- * @author Harald Pehl
- */
 class StandaloneDeploymentPreview extends DeploymentPreview<Deployment> {
 
     static final String LAST_ENABLED_AT = "Last enabled at";
     static final String LAST_DISABLED_AT = "Last disabled at";
 
     StandaloneDeploymentPreview(final StandaloneDeploymentColumn column, final Deployment deployment,
-            final Resources resources) {
-        super(deployment.getName());
+            final Resources resources, final ServerActions serverActions, Environment environment) {
+        super(deployment.getName(), serverActions, environment, deployment);
 
         if (deployment.getStatus() == Status.FAILED) {
             previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(deployment.getName())));

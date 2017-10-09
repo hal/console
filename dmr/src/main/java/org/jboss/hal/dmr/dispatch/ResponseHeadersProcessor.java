@@ -71,8 +71,6 @@ import org.jboss.hal.resources.Names;
  *     }
  * }
  * </pre>
- *
- * @author Harald Pehlo
  */
 @FunctionalInterface
 public interface ResponseHeadersProcessor {

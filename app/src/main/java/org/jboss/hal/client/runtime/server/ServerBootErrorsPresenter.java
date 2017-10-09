@@ -38,9 +38,6 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_BOOT_ERRORS;
 
-/**
- * @author Harald Pehl
- */
 public class ServerBootErrorsPresenter
         extends ApplicationFinderPresenter<ServerBootErrorsPresenter.MyView, ServerBootErrorsPresenter.MyProxy> {
 

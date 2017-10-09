@@ -46,11 +46,7 @@ import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
-/**
- * Panel which holds the children of the selected resource.
- *
- * @author Harald Pehl
- */
+/** Panel which holds the children of the selected resource. */
 class ChildrenPanel implements HasElements, Attachable {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ChildrenPanel.class);
@@ -67,7 +63,7 @@ class ChildrenPanel implements HasElements, Attachable {
         //noinspection HardCodedStringLiteral
         Options<String> options = new OptionsBuilder<String>()
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
-                .column(resources.constants().view(), row -> modelBrowser.tree.api().openNode(parent.id,
+                .column(resources.constants().view(), row -> modelBrowser.tree.openNode(parent.id,
                         () -> modelBrowser.select(uniqueId(parent, row), false)))
                 .button(resources.constants().add(), table -> modelBrowser.add(parent, table.getRows()))
 

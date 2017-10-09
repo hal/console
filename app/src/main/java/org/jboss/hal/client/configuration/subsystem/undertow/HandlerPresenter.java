@@ -41,9 +41,6 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
-/**
- * @author Harald Pehl
- */
 public class HandlerPresenter
         extends MbuiPresenter<HandlerPresenter.MyView, HandlerPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -93,7 +90,7 @@ public class HandlerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.HANDLERS),
                         resources.constants().settings(), Names.HANDLERS);
     }

@@ -21,9 +21,6 @@ import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class PropertyFilter implements Predicate<Property> {
 
     private final ModelNodeForm.Builder builder;
@@ -47,15 +44,17 @@ class PropertyFilter implements Predicate<Property> {
         if (builder.addOnly) {
             // if builder.includes is empty include either all or only required properties
             // otherwise include required properties plus the ones defined in builder.includes
-            if (builder.includes.isEmpty()) {
+            if (emptyIncludes() && builder.excludes.isEmpty()) {
                 filter = builder.requiredOnly ? required : (p) -> true;
+            } else if (!builder.excludes.isEmpty()) {
+                filter = p -> !builder.excludes.contains(p.getName());
             } else {
                 Predicate<Property> included = p -> builder.includes.contains(p.getName());
                 filter = required.or(included);
             }
 
         } else {
-            if (builder.includes.isEmpty() && builder.excludes.isEmpty()) {
+            if (emptyIncludes() && builder.excludes.isEmpty()) {
                 filter = builder.requiredOnly ? required : (p) -> true;
             } else if (!builder.excludes.isEmpty()) {
                 filter = p -> !builder.excludes.contains(p.getName());
@@ -69,5 +68,24 @@ class PropertyFilter implements Predicate<Property> {
         }
 
         return filter.test(property);
+    }
+
+    private boolean emptyIncludes() {
+        if (builder.includes.isEmpty()) {
+            return true;
+        } else {
+            // custom form items are added automatically to builder.includes by
+            // org.jboss.hal.core.mbui.form.ModelNodeForm.Builder.customFormItem()
+            // that doesn't count when we want to know whether builder.includes is 'empty'
+            for (Object include : builder.includes) {
+                // if the include is no custom form item, it was added explicitly
+                if (!builder.providers.containsKey(String.valueOf(include))) {
+                    return false;
+                }
+            }
+            // all includes are custom form items which were added automatically
+            // so we can say builder.includes is actually empty
+            return true;
+        }
     }
 }

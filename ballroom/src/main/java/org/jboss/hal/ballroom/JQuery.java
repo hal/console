@@ -15,17 +15,29 @@
  */
 package org.jboss.hal.ballroom;
 
+import elemental2.dom.HTMLElement;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.form.SelectBoxBridge;
+import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
-/**
- * Contains selected JQuery methods.
- *
- * @author Harald Pehl
- */
+/** Contains selected JQuery methods. */
 @JsType(namespace = GLOBAL, name = "jQuery", isNative = true)
 public class JQuery {
 
+    @JsMethod(namespace = GLOBAL)
+    public native static JQuery $(@NonNls String selector);
+
+    @JsMethod(namespace = GLOBAL)
+    public native static JQuery $(HTMLElement element);
+
     public native JQuery attr(String key, String value);
+
+    public native void bootstrapSwitch();
+
+    public native void selectpicker(SelectBoxBridge.Options options);
+
+    public native float width();
 }

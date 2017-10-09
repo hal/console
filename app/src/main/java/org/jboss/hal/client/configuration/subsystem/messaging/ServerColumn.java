@@ -42,11 +42,8 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
-@AsyncColumn(Ids.MESSAGING_SERVER)
-@Requires(SERVER_ADDRESS) // TODO Add recursive = false once WFCORE-2022 is resolved
+@AsyncColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
+@Requires(value = SERVER_ADDRESS, recursive = false)
 public class ServerColumn extends FinderColumn<NamedNode> {
 
     @Inject
@@ -57,11 +54,14 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             final PlaceManager placeManager,
             final Places places) {
 
-        super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER, Names.SERVER)
+        super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_CONFIGURATION, Names.SERVER)
 
                 .columnAction(columnActionFactory.add(Ids.MESSAGING_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
-                        Ids::messagingServer))
-                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_REFRESH))
+                        name -> {
+                            //noinspection Convert2MethodRef
+                            return Ids.messagingServer(name);
+                        }))
+                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_CONFIGURATION_REFRESH))
 
                 .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
                         children -> callback.onSuccess(asNamedNodes(children))))

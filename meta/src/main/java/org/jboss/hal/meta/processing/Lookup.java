@@ -24,9 +24,6 @@ import org.jboss.hal.meta.security.SecurityContextRegistry;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 
-/**
- * @author Harald Pehl
- */
 class Lookup {
 
     private final SecurityContextRegistry securityContextRegistry;

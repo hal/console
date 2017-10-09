@@ -43,9 +43,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.DEPLOYMENT_SERVER_GROUP)
 @Requires("/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup> {
@@ -71,7 +68,8 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                 })
 
                 .pinnable()
-                .withFilter());
+                .withFilter()
+                .filterDescription(resources.messages().serverGroupColumnFilterDescription()));
 
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {
             @Override

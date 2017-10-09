@@ -27,7 +27,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 /**
  * Clipboard implementation based on <a href="http://zeroclipboard.org/">ZeroClipboard</a>.
  *
- * @author Harald Pehl
  * @see <a href="http://zeroclipboard.org/">http://zeroclipboard.org/</a>
  */
 @JsType(name = "ZeroClipboard", namespace = GLOBAL, isNative = true)

@@ -29,11 +29,7 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
-/**
- * Factory to build common finder path instances for configuration and runtime presenters.
- *
- * @author Harald Pehl
- */
+/** Factory to build common finder path instances for configuration and runtime presenters. */
 public class FinderPathFactory {
 
     private final Environment environment;
@@ -61,7 +57,7 @@ public class FinderPathFactory {
     /**
      * Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode.
      */
-    public FinderPath subsystemPath(String subsystem) {
+    public FinderPath configurationSubsystemPath(String subsystem) {
         FinderPath path = new FinderPath();
 
         if (environment.isStandalone()) {
@@ -72,8 +68,8 @@ public class FinderPathFactory {
                     .append(Ids.PROFILE, profile, Names.PROFILES, profile);
 
         }
-        path.append(Ids.SUBSYSTEM, subsystem,
-                Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.get(subsystem)));
+        path.append(Ids.CONFIGURATION_SUBSYSTEM, subsystem,
+                Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.getConfiguration(subsystem)));
         return path;
     }
 

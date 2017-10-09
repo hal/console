@@ -19,11 +19,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -33,9 +33,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_ADDRESS;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_ADDRESS;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.GROUP)
 @Requires({INCLUDE_ADDRESS, EXCLUDE_ADDRESS})
 public class GroupColumn extends PrincipalColumn {

@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.meta;
 
-/**
- * Intercepts the resolution and allows to filter/replace certain statement values.
- *
- * @author Heiko Braun
- */
+/** Intercepts the resolution and allows to filter/replace certain statement values. */
 public class FilteringStatementContext implements StatementContext {
 
     /**

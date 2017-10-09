@@ -16,11 +16,8 @@
 package org.jboss.hal.json;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import elemental2.core.Array;
 
-/**
- * Represents a Json object.
- */
+/** Represents a Json object. */
 public class JsonObject extends JsonValue {
 
     public static JsonObject create() {
@@ -60,12 +57,7 @@ public class JsonObject extends JsonValue {
         return key in this;
     }-*/;
 
-    public final String[] keys() {
-        Array<String> str = keys0();
-        return str.asArray();
-    }
-
-    public final native Array<String> keys0() /*-{
+    public final native String[] keys()  /*-{
         var keys = [];
         for (var key in this) {
             if (Object.prototype.hasOwnProperty.call(this, key) && key != '$H') {

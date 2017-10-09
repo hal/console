@@ -23,8 +23,6 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.DomGlobal;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -39,7 +37,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.TimeoutHandler;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -52,19 +50,20 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.CompletableSubscriber;
+import rx.Subscription;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
-/**
- * @author Harald Pehl
- */
 public class HostActions {
 
-    private class HostFailedCallback implements Dispatcher.FailedCallback {
+    private class HostFailedCallback implements Dispatcher.OnFail {
 
         private final Host host;
         private final List<Server> servers;
@@ -83,7 +82,7 @@ public class HostActions {
     }
 
 
-    private class HostExceptionCallback implements Dispatcher.ExceptionCallback {
+    private class HostExceptionCallback implements Dispatcher.OnError {
 
         private final Host host;
         private final List<Server> servers;
@@ -119,12 +118,12 @@ public class HostActions {
     private final Map<String, Host> pendingHosts;
 
     @Inject
-    public HostActions(final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
-            final ServerActions serverActions,
-            final Resources resources) {
+    public HostActions(EventBus eventBus,
+            Dispatcher dispatcher,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            ServerActions serverActions,
+            Resources resources) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataProcessor = metadataProcessor;
@@ -166,7 +165,7 @@ public class HostActions {
 
                             // execute the reload with a little delay to ensure the confirmation dialog is closed
                             // before the next dialog is opened (only one modal can be open at a time!)
-                            DomGlobal.setTimeout((o) -> {
+                            setTimeout((o) -> {
 
                                 if (host.isDomainController()) {
                                     domainControllerOperation(host, operation, reloadTimeout(host),
@@ -209,10 +208,14 @@ public class HostActions {
         SafeHtml question = host.isDomainController()
                 ? resources.messages().restartDomainControllerQuestion(host.getName())
                 : resources.messages().restartHostControllerQuestion(host.getName());
+        restart(host, question);
+    }
+
+    public void restart(final Host host, SafeHtml question) {
         DialogFactory.showConfirmation(resources.messages().restart(host.getName()), question, () -> {
             // execute the restart with a little delay to ensure the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)
-            DomGlobal.setTimeout((o) -> {
+            setTimeout((o) -> {
 
                 prepare(host, host.getServers(), Action.RESTART);
                 Operation operation = new Operation.Builder(host.getAddress(), SHUTDOWN)
@@ -245,42 +248,48 @@ public class HostActions {
         BlockingDialog pendingDialog = DialogFactory.buildLongRunning(title, pendingMessage);
         pendingDialog.show();
 
-        dispatcher.execute(operation,
-                result -> new TimeoutHandler(dispatcher, timeout).execute(ping(host), new TimeoutHandler.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        // wait a little bit before event handlers try to use the reloaded / restarted domain controller
-                        DomGlobal.setTimeout((o) -> {
-                            pendingDialog.close();
-                            finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                        }, 666);
-                    }
+        dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
+                        .subscribe(new CompletableSubscriber() {
+                            @Override
+                            public void onSubscribe(Subscription d) {}
 
-                    @Override
-                    public void onTimeout() {
-                        pendingDialog.close();
-                        DialogFactory.buildBlocking(title, timeoutMessage).show();
-                        finish(host, servers, Result.TIMEOUT, null);
-                    }
-                }),
+                            @Override
+                            public void onCompleted() {
+                                // wait a little bit before event handlers try to use the reloaded / restarted domain controller
+                                setTimeout((o) -> {
+                                    pendingDialog.close();
+                                    finish(host, servers, Result.SUCCESS, Message.success(successMessage));
+                                }, 666);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                pendingDialog.close();
+                                DialogFactory.buildBlocking(title, timeoutMessage).show();
+                                finish(host, servers, Result.TIMEOUT, null);
+                            }
+                        }),
                 new HostFailedCallback(host, servers, errorMessage),
                 new HostExceptionCallback(host, servers, errorMessage));
     }
 
     private void hostControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
             SafeHtml successMessage, SafeHtml errorMessage, SafeHtml timeoutMessage) {
-        dispatcher.execute(operation,
-                result -> new TimeoutHandler(dispatcher, timeout).execute(ping(host), new TimeoutHandler.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                    }
+        dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
+                        .subscribe(new CompletableSubscriber() {
+                            @Override
+                            public void onSubscribe(Subscription d) {}
 
-                    @Override
-                    public void onTimeout() {
-                        finish(host, servers, Result.TIMEOUT, Message.error(timeoutMessage));
-                    }
-                }),
+                            @Override
+                            public void onCompleted() {
+                                finish(host, servers, Result.SUCCESS, Message.success(successMessage));
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                finish(host, servers, Result.TIMEOUT, Message.error(timeoutMessage));
+                            }
+                        }),
                 new HostFailedCallback(host, servers, errorMessage),
                 new HostExceptionCallback(host, servers, errorMessage));
     }

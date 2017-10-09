@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.CSSProperties.WidthUnionType;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -43,18 +42,17 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.hal.ballroom.PatternFly.$;
+import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.bootstrapSelect;
 import static org.jboss.hal.resources.CSS.btnGroup;
 import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.CSS.width;
 
 /**
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
  * that we need to take care of {@code store=none}.
- *
- * @author Harald Pehl
  */
 class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
@@ -230,7 +228,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private void autoWidth(HTMLElement element) {
         HTMLElement select = (HTMLElement) element.querySelector("." + btnGroup + "." + bootstrapSelect);
         if (select != null) {
-            select.style.width = WidthUnionType.of("auto"); //NON-NLS
+            select.style.width = width("auto"); //NON-NLS
         }
     }
 

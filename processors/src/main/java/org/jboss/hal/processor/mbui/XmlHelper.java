@@ -21,9 +21,6 @@ import java.io.StringWriter;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-/**
- * @author Harald Pehl
- */
 final class XmlHelper {
 
     private XmlHelper() {}

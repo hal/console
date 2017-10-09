@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.meta.security;
 
-/**
- * @author Harald Pehl
- */
 public enum Target {
     OPERATION(":"), ATTRIBUTE("@");
 

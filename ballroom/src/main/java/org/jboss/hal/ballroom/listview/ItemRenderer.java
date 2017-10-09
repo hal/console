@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.ballroom.listview;
 
-/**
- * Function which turns an item into an {@link ItemRenderer}.
- *
- * @author Harald Pehl
- */
+/** Function which turns an item into an {@link ItemRenderer}. */
 @FunctionalInterface
 public interface ItemRenderer<T> {
 

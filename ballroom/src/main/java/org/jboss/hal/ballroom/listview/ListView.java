@@ -15,45 +15,66 @@
  */
 package org.jboss.hal.ballroom.listview;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.CSS;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
+import org.jboss.hal.ballroom.dataprovider.Display;
+import org.jboss.hal.ballroom.dataprovider.PageInfo;
+import org.jboss.hal.ballroom.dataprovider.SelectionInfo;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.active;
-import static org.jboss.hal.resources.CSS.listGroup;
-import static org.jboss.hal.resources.CSS.listViewPf;
+import static org.jboss.hal.resources.CSS.listPf;
+import static org.jboss.hal.resources.CSS.listPfStacked;
 
 /**
- * @author Harald Pehl
+ * PatternFly list view. The list view does not manage data by itself. Instead you have to use a {@link DataProvider}
+ * and add the list view as a display to the data provider:
+ *
+ * <pre>
+ * DataProvider dataProvider = ...;
+ * ListView listView = ...;
+ *
+ * dataProvider.addDisplay(listView);
+ * dataProvider.setItems(...);
+ * </pre>
+ *
+ * @see <a href="http://www.patternfly.org/pattern-library/content-views/list-view/">http://www.patternfly.org/pattern-library/content-views/list-view/</a>
  */
-public class ListView<T> implements IsElement {
+public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
 
-    private final String id;
-    private final boolean multiselect;
+    private final DataProvider<T> dataProvider;
     private final ItemRenderer<T> itemRenderer;
-    private final Map<String, ListItem<T>> items;
+    private final boolean multiSelect;
+    private final String[] contentWidths;
     private final HTMLElement root;
-    private SelectHandler<T> selectHandler;
+    private final Map<String, ListItem<T>> currentListItems;
 
-    public ListView(final String id, final ItemRenderer<T> itemRenderer) {
-        this(id, false, itemRenderer);
+    public ListView(String id, DataProvider<T> dataProvider, ItemRenderer<T> itemRenderer,
+            boolean stacked, boolean multiSelect) {
+        this(id, dataProvider, itemRenderer, stacked, multiSelect, new String[]{"60%", "40%"});
     }
 
-    public ListView(final String id, final boolean multiselect, final ItemRenderer<T> itemRenderer) {
-        this.id = id;
-        this.multiselect = multiselect;
+    public ListView(String id, DataProvider<T> dataProvider, ItemRenderer<T> itemRenderer,
+            boolean stacked, boolean multiSelect, String[] contentWidths) {
+        this.dataProvider = dataProvider;
         this.itemRenderer = itemRenderer;
-        this.items = new HashMap<>();
-        this.root = div().id(id).css(listGroup, listViewPf).asElement();
+        this.multiSelect = multiSelect;
+        this.contentWidths = contentWidths;
+        this.currentListItems = new HashMap<>();
+
+        HtmlContentBuilder<HTMLDivElement> div = div().id(id).css(listPf);
+        if (stacked) {
+            div.css(listPfStacked);
+        }
+        this.root = div.asElement();
     }
 
     @Override
@@ -61,92 +82,54 @@ public class ListView<T> implements IsElement {
         return root;
     }
 
-    public void setItems(Iterable<T> items) {
-        this.items.clear();
+    @Override
+    public void showItems(Iterable<T> items, PageInfo pageInfo) {
+        currentListItems.clear();
         Elements.removeChildrenFrom(root);
         for (T item : items) {
-            ListItem<T> listItem = new ListItem<>(this, item, multiselect, itemRenderer.render(item));
-            this.items.put(listItem.id, listItem);
+            ItemDisplay<T> display = itemRenderer.render(item);
+            ListItem<T> listItem = new ListItem<>(this, item, multiSelect, display, contentWidths);
+            currentListItems.put(listItem.id, listItem);
             root.appendChild(listItem.asElement());
         }
     }
 
-    /**
-     * Select the item and fires a selection event
-     */
-    public void selectItem(T item) {
-        ListItem<T> listItem = getItem(item);
-        if (listItem != null) {
-            select(listItem, true);
-        }
-    }
-
-    void select(ListItem<T> item, boolean select) {
-        if (select) {
-            item.asElement().classList.add(active);
-            if (selectHandler != null) {
-                selectHandler.onSelect(item.item);
-            }
-        } else {
-            item.asElement().classList.remove(active);
-        }
-        if (!multiselect) {
-            // deselect all other items
-            for (ListItem<T> otherItem : items.values()) {
-                if (otherItem == item) {
-                    continue;
+    @Override
+    public void updateSelection(SelectionInfo<T> selectionInfo) {
+        for (ListItem<T> item : currentListItems.values()) {
+            if (selectionInfo.isSelected(item.item)) {
+                item.asElement().classList.add(active);
+                if (item.checkbox != null) {
+                    item.checkbox.checked = true;
                 }
-                otherItem.asElement().classList.remove(active);
-            }
-        }
-    }
-
-    public void onSelect(SelectHandler<T> selectHandler) {
-        this.selectHandler = selectHandler;
-    }
-
-    public boolean hasSelection() {
-        return !selectedItems().isEmpty();
-    }
-
-    public T selectedItem() {
-        HTMLElement element = (HTMLElement) root.querySelector("." + CSS.active);
-        if (element != null && element.id != null && items.containsKey(element.id)) {
-            return items.get(element.id).item;
-        }
-        return null;
-    }
-
-    public List<T> selectedItems() {
-        List<T> selected = new ArrayList<>();
-        NodeList<Element> nodes = root.querySelectorAll("." + CSS.active);
-        for (int i = 0; i < nodes.getLength(); i++) {
-            if (nodes.item(i) instanceof HTMLElement) {
-                HTMLElement element = (HTMLElement) nodes.item(i);
-                if (element.id != null && items.containsKey(element.id)) {
-                    selected.add(items.get(element.id).item);
+            } else {
+                item.asElement().classList.remove(active);
+                if (item.checkbox != null) {
+                    item.checkbox.checked = false;
                 }
             }
         }
-        return selected;
+    }
+
+    void selectListItem(ListItem<T> listItem, boolean select) {
+        dataProvider.select(listItem.item, select);
     }
 
     public void enableAction(T item, String actionId) {
-        ListItem<T> listItem = getItem(item);
+        ListItem<T> listItem = currentListItems.get(dataProvider.getId(item));
         if (listItem != null) {
             listItem.enableAction(actionId);
         }
     }
 
     public void disableAction(T item, String actionId) {
-        ListItem<T> listItem = getItem(item);
+        ListItem<T> listItem = currentListItems.get(dataProvider.getId(item));
         if (listItem != null) {
             listItem.disableAction(actionId);
         }
     }
 
-    private ListItem<T> getItem(T item) {
-        String itemId = itemRenderer.render(item).getId();
-        return items.get(itemId);
+    protected List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
+        return actions;
     }
 }

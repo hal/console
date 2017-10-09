@@ -19,18 +19,15 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointStorage;
-import org.jboss.hal.client.bootstrap.functions.LoadSettings;
-import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
-import org.jboss.hal.client.bootstrap.functions.FindDomainController;
-import org.jboss.hal.client.bootstrap.functions.ReadAuthentication;
-import org.jboss.hal.client.bootstrap.functions.ReadEnvironment;
-import org.jboss.hal.client.bootstrap.functions.ReadExtensions;
-import org.jboss.hal.client.bootstrap.functions.RegisterStaticCapabilities;
+import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
+import org.jboss.hal.client.bootstrap.tasks.FindDomainController;
+import org.jboss.hal.client.bootstrap.tasks.LoadSettings;
+import org.jboss.hal.client.bootstrap.tasks.ReadAuthentication;
+import org.jboss.hal.client.bootstrap.tasks.ReadEnvironment;
+import org.jboss.hal.client.bootstrap.tasks.ReadExtensions;
+import org.jboss.hal.client.bootstrap.tasks.RegisterStaticCapabilities;
 import org.jboss.hal.spi.GinModule;
 
-/**
- * @author Harald Pehl
- */
 @GinModule
 public class BootstrapModule extends AbstractGinModule {
 
@@ -45,6 +42,6 @@ public class BootstrapModule extends AbstractGinModule {
         bind(ReadAuthentication.class).in(Singleton.class);
         bind(FindDomainController.class).in(Singleton.class);
         bind(RegisterStaticCapabilities.class).in(Singleton.class);
-        bind(BootstrapFunctions.class).in(Singleton.class);
+        bind(BootstrapTasks.class).in(Singleton.class);
     }
 }

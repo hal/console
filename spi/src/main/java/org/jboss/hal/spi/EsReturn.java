@@ -22,11 +22,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
-/**
- * Annotation used to generate ECMAScript 6 documentation.
- *
- * @author Harald Pehl
- */
+/** Annotation used to generate ECMAScript 6 documentation. */
 @Retention(SOURCE)
 @Target({METHOD, FIELD})
 public @interface EsReturn {

@@ -18,8 +18,5 @@ package org.jboss.hal.core.mbui;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
 
-/**
- * @author Harald Pehl
- */
 public interface MbuiView<P extends MbuiPresenter> extends HasPresenter<P>, HalView {
 }

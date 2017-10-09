@@ -36,9 +36,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
-/**
- * @author Harald Pehl
- */
 public class ModclusterPresenter
         extends MbuiPresenter<ModclusterPresenter.MyView, ModclusterPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -89,7 +86,7 @@ public class ModclusterPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.MODCLUSTER);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.MODCLUSTER);
     }
 
     @Override

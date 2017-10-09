@@ -30,9 +30,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 
-/**
- * @author Harald Pehl
- */
 class RolePreview extends PreviewContent<Role> {
 
     private final AccessControl accessControl;

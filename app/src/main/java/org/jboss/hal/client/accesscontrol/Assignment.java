@@ -19,8 +19,6 @@ import org.jboss.hal.config.Role;
 
 /**
  * An assignment between a principal and a role.
- *
- * @author Harald Pehl
  */
 class Assignment {
 

@@ -25,9 +25,6 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.wrap;
 
-/**
- * @author Harald Pehl
- */
 class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
 
     PreReadOnlyAppearance() {

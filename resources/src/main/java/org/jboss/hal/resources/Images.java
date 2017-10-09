@@ -18,9 +18,6 @@ package org.jboss.hal.resources;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
-/**
- * @author Harald Pehl
- */
 public interface Images extends ClientBundle {
 
     @Source("homepage/access_control.png")

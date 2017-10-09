@@ -17,11 +17,9 @@ package org.jboss.hal.core.finder;
 
 import java.util.List;
 
-/**
- * Finder column for {@link StaticItem}.
- *
- * @author Harald Pehl
- */
+import elemental2.dom.HTMLElement;
+
+/** Finder column for {@link StaticItem}. */
 public class StaticItemColumn extends FinderColumn<StaticItem> {
 
     public static class StaticItemDisplay implements ItemDisplay<StaticItem> {
@@ -43,8 +41,21 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         }
 
         @Override
+        public HTMLElement asElement() {
+            if (item.getSubtitle() != null) {
+                return ItemDisplay.withSubtitle(item.getTitle(), item.getSubtitle());
+            }
+            return null;
+        }
+
+        @Override
         public List<ItemAction<StaticItem>> actions() {
             return item.getActions();
+        }
+
+        @Override
+        public String getFilterData() {
+            return item.getKeywords().isEmpty() ? null : String.join(" ", item.getKeywords());
         }
 
         @Override
@@ -58,7 +69,8 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         super(new Builder<StaticItem>(finder, id, title)
                 .itemRenderer(StaticItemDisplay::new)
                 .initialItems(items)
-                .onPreview(StaticItem::getPreviewContent));
+                .onPreview(StaticItem::getPreviewContent)
+                .withFilter(items.stream().anyMatch(i -> !i.getKeywords().isEmpty())));
     }
 
     public StaticItemColumn(final Finder finder, final String id, final String title,

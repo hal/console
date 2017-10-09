@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import elemental2.core.Array;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -67,9 +66,11 @@ abstract class ReadChildrenProcessor extends AbstractResultProcessor<ReadChildre
     }
 
     @Override
-    Array<JsonObject> asJson(final List<ReadChildrenResult> results) {
-        Array<JsonObject> array = new Array<>();
-        results.forEach(result -> array.push(result.asJson()));
+    JsonObject[] asJson(final List<ReadChildrenResult> results) {
+        JsonObject[] array = new JsonObject[results.size()];
+        for (int i = 0; i < results.size(); i++) {
+            array[i] = results.get(i).asJson();
+        }
         return array;
     }
 }

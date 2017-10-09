@@ -39,8 +39,6 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 /**
  * View which initializes JavaScript based PatternFly components like select picker, tooltips or data tables in its
  * {@link #attach()} method.
- *
- * @author Harald Pehl
  */
 public abstract class HalViewImpl extends ViewImpl implements HalView {
 
@@ -106,7 +104,9 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
     public void attach() {
         if (!attached) {
             PatternFly.initComponents();
-            attachables.forEach(Attachable::attach);
+            for (Attachable attachable : attachables) {
+                attachable.attach();
+            }
             attached = true;
         }
     }
@@ -114,7 +114,9 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
     @Override
     public void detach() {
         if (attached) {
-            attachables.forEach(Attachable::detach);
+            for (Attachable attachable : attachables) {
+                attachable.detach();
+            }
             attached = false;
         }
     }

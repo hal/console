@@ -20,29 +20,29 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.proxy.NavigationEvent;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.spi.Callback;
 
+import static elemental2.dom.DomGlobal.clearTimeout;
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.resources.CSS.withProgress;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
  * Class to monitor item actions and show a progress indicator if they take longer than a given timeout. Relies on an
  * unique item id implemented by {@link ItemDisplay#getId()} and specified in the column setup.
- *
- * @author Harald Pehl
  */
 public class ItemMonitor {
 
     public static void startProgress(final String itemId) {
-        elemental2.dom.Element element = DomGlobal.document.getElementById(itemId);
+        elemental2.dom.Element element = document.getElementById(itemId);
         if (element != null) {
             element.classList.add(withProgress);
         }
     }
 
     public static void stopProgress(final String itemId) {
-        elemental2.dom.Element element = DomGlobal.document.getElementById(itemId);
+        elemental2.dom.Element element = document.getElementById(itemId);
         if (element != null) {
             element.classList.remove(withProgress);
         }
@@ -66,12 +66,12 @@ public class ItemMonitor {
         return itm -> {
             callback.execute();
             startProgress(itemId);
-            timeoutHandle = DomGlobal.setTimeout(whatever ->
+            timeoutHandle = setTimeout(whatever ->
                     handlerRegistration = eventBus.addHandler(NavigationEvent.getType(),
                             navigationEvent -> {
                                 if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
                                     handlerRegistration.removeHandler();
-                                    DomGlobal.clearTimeout(timeoutHandle);
+                                    clearTimeout(timeoutHandle);
                                     stopProgress(itemId);
                                 }
                             }), MEDIUM_TIMEOUT);

@@ -2,6 +2,15 @@ h2.underline {
   border-bottom: 1px solid #ededed;
 }
 
+.bootstrap-error.layout-pf.layout-pf-fixed body {
+  padding-top: 28px;
+  padding-bottom: 0;
+}
+
+.break-tooltip + .tooltip > .tooltip-inner {
+  word-wrap: break-word;
+}
+
 .btn-group > .dropdown:first-child {
   margin-left: 0;
 }
@@ -25,11 +34,6 @@ h2.underline {
     padding-top: @hal-header-height-sm;
   }
   padding-bottom: @hal-footer-height;
-}
-
-.bootstrap-error.layout-pf.layout-pf-fixed body {
-  padding-top: 28px;
-  padding-bottom: 0;
 }
 
 .margin-bottom-5 {
@@ -56,8 +60,16 @@ h2.underline {
   margin-right: 5px;
 }
 
+.margin-right-large {
+  margin-right: @margin-large;
+}
+
 .margin-right-small {
   margin-right: @margin-small;
+}
+
+.margin-top-5 {
+  margin-top: 5px;
 }
 
 .margin-top-large {
@@ -74,6 +86,12 @@ h2.underline {
 
 .rbac-hidden {
   display: none !important;
+}
+
+.small-link {
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 1;
 }
 
 .with-progress {

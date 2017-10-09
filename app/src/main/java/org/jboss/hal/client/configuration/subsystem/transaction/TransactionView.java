@@ -23,9 +23,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Claudio Miranda
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
@@ -53,9 +50,9 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
         super.setPresenter(presenter);
 
         // set the process fields as not required, because uuid and socket-binding are mutually exclusive.
-        processForm.getFormItems().forEach(formItem -> formItem.setRequired(false));
+        processForm.getBoundFormItems().forEach(formItem -> formItem.setRequired(false));
 
-        // --------------- form validation for the general attributes 
+        // --------------- form validation for the general attributes
         attributesForm.addFormValidation(presenter.getAttributesFormValidation());
 
         // --------------- form validation for the process attributes

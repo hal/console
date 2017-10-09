@@ -15,16 +15,15 @@
  */
 package org.jboss.hal.resources;
 
-/**
- * @author Harald Pehl
- */
+import org.jetbrains.annotations.NonNls;
+
 public enum FontAwesomeSize {
 
     large("lg"), x2("2x"), x3("3x"), x4("4x"), x5("5x");
 
     private final String size;
 
-    FontAwesomeSize(final String size) {
+    FontAwesomeSize(@NonNls String size) {
         this.size = size;
     }
 

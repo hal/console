@@ -17,13 +17,14 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.resources.Ids;
@@ -33,9 +34,6 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.navTabsHal;
 
-/**
- * @author Harald Pehl
- */
 public class StandaloneDeploymentView extends HalViewImpl implements StandaloneDeploymentPresenter.MyView {
 
     private final boolean supportsReadContent;
@@ -46,10 +44,10 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     private StandaloneDeploymentPresenter presenter;
 
     @Inject
-    public StandaloneDeploymentView(final Dispatcher dispatcher, final ModelBrowser modelBrowser,
-            final Environment environment, final Resources resources) {
+    public StandaloneDeploymentView(Dispatcher dispatcher, ModelBrowser modelBrowser,
+            Environment environment, EventBus eventBus, Resources resources) {
         supportsReadContent = ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion());
-        browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.reload());
+        browseContent = new BrowseContentElement(dispatcher, eventBus, resources);
         deploymentModel = new DeploymentModelElement(modelBrowser, resources);
 
         if (supportsReadContent) {
@@ -91,7 +89,7 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     }
 
     @Override
-    public void setPresenter(final StandaloneDeploymentPresenter presenter) {
+    public void setPresenter(StandaloneDeploymentPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -103,9 +101,9 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     }
 
     @Override
-    public void update(final ModelNode browseContentResult, final Deployment deployment, final int tab) {
+    public void update(Deployment deployment, int tab) {
         if (supportsReadContent) {
-            browseContent.setContent(deployment.getName(), browseContentResult);
+            browseContent.setContent(deployment);
             tabs.showTab(tab);
         }
         deploymentModel.update(deployment, () -> presenter.enable(deployment.getName()));

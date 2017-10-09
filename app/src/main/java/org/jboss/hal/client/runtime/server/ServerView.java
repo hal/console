@@ -18,24 +18,45 @@ package org.jboss.hal.client.runtime.server;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
+import com.google.common.base.Splitter;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implements ServerPresenter.MyView {
+
+    private static final String[] JVM_ATTRIBUTES = {
+            NAME,
+            VM_NAME,
+            VM_VENDOR,
+            VM_VERSION,
+            SPEC_NAME,
+            SPEC_VENDOR,
+            SPEC_VERSION,
+            MANAGEMENT_SPEC_VERSION
+    };
+
+    private static final String[] BOOTSTRAP_ATTRIBUTES = {
+            BOOT_CLASS_PATH_SUPPORTED,
+            BOOT_CLASS_PATH,
+            CLASS_PATH,
+            LIBRARY_PATH,
+            INPUT_ARGUMENTS,
+    };
 
     public static ServerView create(final MbuiContext mbuiContext) {
         return new Mbui_ServerView(mbuiContext);
@@ -51,6 +72,8 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
     @MbuiElement("server-path-form") Form<NamedNode> serverPathForm;
     @MbuiElement("server-system-property-table") Table<NamedNode> serverSystemPropertyTable;
     @MbuiElement("server-system-property-form") Form<NamedNode> serverSystemPropertyForm;
+
+    private HTMLElement headerElement;
 
     ServerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -89,5 +112,24 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
     public void updateSystemProperties(final List<NamedNode> properties) {
         serverSystemPropertyForm.clear();
         serverSystemPropertyTable.update(properties);
+    }
+
+    @Override
+    public void updateRuntime(ModelNode modelNode) {
+        navigation.setVisible(Ids.SERVER_RUNTIME_ITEM, modelNode != null);
+        if (modelNode != null) {
+            List<Property> sp = modelNode.get(SYSTEM_PROPERTIES).asPropertyList();
+            String pathSeparator = sp.stream()
+                    .filter(p -> "path.separator".equals(p.getName())) //NON-NLS
+                    .findAny()
+                    .map(p -> p.getValue().asString())
+                    .orElse(":");
+
+            headerElement.textContent = modelNode.get(NAME).asString();
+        }
+    }
+
+    private String pathWithNewLines(String path, String pathSeparator) {
+        return String.join("\n", Splitter.on(pathSeparator).omitEmptyStrings().split(path));
     }
 }

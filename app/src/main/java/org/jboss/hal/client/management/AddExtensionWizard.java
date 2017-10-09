@@ -42,13 +42,11 @@ import org.jboss.hal.resources.Urls;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.client.management.AddExtensionWizard.State.REVIEW;
 import static org.jboss.hal.client.management.AddExtensionWizard.State.URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class AddExtensionWizard {
 
     // ------------------------------------------------------ context and state
@@ -83,7 +81,8 @@ class AddExtensionWizard {
 
             urlItem = new TextBoxItem(ModelDescriptionConstants.URL);
             urlItem.setRequired(true);
-            ((HTMLInputElement) urlItem.asElement(Form.State.EDITING)).type = "url"; //NON-NLS
+
+            ((HTMLInputElement) urlItem.asElement(EDITING).querySelector("input[type=text]")).type = "url"; //NON-NLS
             form = new ModelNodeForm.Builder<>(Ids.EXTENSION_URL_FORM, Metadata.empty())
                     .unboundFormItem(urlItem, 0, resources.messages().extensionUrl())
                     .addOnly()

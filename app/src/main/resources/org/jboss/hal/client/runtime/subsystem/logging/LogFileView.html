@@ -42,12 +42,12 @@
                 <div data-element="search"></div>
                 <div data-element="status" class="editor-status" title="Some status text, an error message or anything related to the current log file">Some status text, an error message or anything related to the current log file</div>
                 <div class="log-file-follow">
-                    <label for="log-file-follow">{{resources().constants().tailMode()}}</label><input data-element="tailMode" class="bootstrap-switch" id="log-file-follow" type="checkbox"/>
+                    <label for="log-file-follow">${resources().constants().tailMode()}</label><input data-element="tailMode" class="bootstrap-switch" id="log-file-follow" type="checkbox"/>
                 </div>
                 <div class="editor-buttons btn-group">
-                    <a data-element="refresh" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="{{resources().constants().refresh()}}"><i class="fa fa-refresh"></i></a>
-                    <a data-element="copyToClipboard" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="{{resources().constants().copyToClipboard()}}"><i class="fa fa-clipboard"></i></a>
-                    <a data-element="download" href="#" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="{{resources().constants().download()}}"><i class="fa fa-download"></i></a>
+                    <a data-element="refresh" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="${resources().constants().refresh()}"><i class="fa fa-refresh"></i></a>
+                    <a data-element="copyToClipboard" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="${resources().constants().copyToClipboard()}"><i class="fa fa-clipboard"></i></a>
+                    <a data-element="download" href="#" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="${resources().constants().download()}"><i class="fa fa-download"></i></a>
                 </div>
             </div>
             <div data-element="editorContainer" class="margin-bottom-large log-file-editor-container">

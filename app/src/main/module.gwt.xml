@@ -20,6 +20,7 @@
     <inherits name="elemental2.core.Core"/>
     <inherits name="elemental2.dom.Dom"/>
     <inherits name="elemental2.webstorage.WebStorage"/>
+    <inherits name="com.intendia.rxgwt.RxElemento"/>
     <inherits name="org.jboss.gwt.elemento.Core"/>
     <inherits name="org.jboss.gwt.elemento.Template"/>
     <inherits name="ru.finam.slf4jgwt.logging.gwt.Logging"/>
@@ -32,7 +33,7 @@
                                    value="org.jboss.hal.client.gin.CompositeModule"/>
 
     <define-configuration-property name="hal.version" is-multi-valued="false"/>
-    <set-configuration-property name="hal.version" value="0.9.0"/>
+    <set-configuration-property name="hal.version" value="0.9.1"/>
 
     <set-configuration-property name="CssResource.enableGss" value="true"/>
 
@@ -43,4 +44,6 @@
     <extend-property name="locale" values="en"/>
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en"/>
+
+    <collapse-all-properties/>
 </module>

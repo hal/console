@@ -22,35 +22,35 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.Strings;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.HPU_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.token.NameTokens.JPA_RUNTIME;
 
-/**
- * @author Harald Pehl
- */
+// TODO Support sub-deployments!
 public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(JPA_RUNTIME)
-    @Requires(JPA_ADDRESS)
+    @Requires(JPA_DEPLOYMENT_ADDRESS)
     public interface MyProxy extends ProxyPlace<JpaPresenter> {}
 
     public interface MyView extends HalView, HasPresenter<JpaPresenter> {
@@ -63,8 +63,9 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private String resourceName;
     private String deployment;
+    private String subdeployment;
+    private String resourceName;
     private String persistenceUnit;
 
     @Inject
@@ -90,27 +91,39 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-        persistenceUnit = request.getParameter(NAME, null);
         deployment = request.getParameter(DEPLOYMENT, null);
-        resourceName = deployment + "#" + persistenceUnit;
+        subdeployment = request.getParameter(SUBDEPLOYMENT, null);
+        resourceName = request.getParameter(NAME, null);
+        persistenceUnit = resourceName != null ? Strings.substringAfterLast(resourceName, "#") : Names.NOT_AVAILABLE;
     }
 
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(Names.JPA), resources.constants().monitor(), Names.JPA)
-                .append(Ids.JPA_RUNTIME, Ids.jpaStatistic(deployment, persistenceUnit), Names.JPA, persistenceUnit);
+                .append(Ids.RUNTIME_SUBSYSTEM, JPA, resources.constants().monitor(), Names.JPA)
+                .append(Ids.JPA_RUNTIME, Ids.jpaStatistic(deployment, subdeployment, resourceName), Names.JPA,
+                        persistenceUnit);
     }
 
     @Override
     protected void reload() {
-        ResourceAddress address = JPA_TEMPLATE.resolve(statementContext, deployment, resourceName);
+        ResourceAddress address = jobAddress();
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();
         dispatcher.execute(operation, result -> getView().update(new JpaStatistic(address, result)));
+    }
+
+    private ResourceAddress jobAddress() {
+        ResourceAddress address;
+        if (subdeployment == null) {
+            address = JPA_DEPLOYMENT_TEMPLATE.resolve(statementContext, deployment, resourceName);
+        } else {
+            address = HPU_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext, deployment, subdeployment, resourceName);
+        }
+        return address;
     }
 }

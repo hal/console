@@ -37,7 +37,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -58,9 +57,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * @author Harald Pehl
- */
 public class ServletContainerView extends HalViewImpl implements ServletContainerPresenter.MyView {
 
     private static final ServletContainerSetting[] NAVIGATION_ORDER = new ServletContainerSetting[]{
@@ -90,8 +86,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .prepareReset(form -> presenter.resetServletContainer(form))
                 .build();
 
-        Metadata emptyMetadata = configurationMetadata.customResourceDescription(
-                new ResourceDescription(new ModelNode()));
+        Metadata emptyMetadata = Metadata.empty();
 
         ModelNode mimeMappingDescription = failSafeGet(configurationMetadata.getDescription(),
                 "children/mime-mapping/description"); //NON-NLS

@@ -38,11 +38,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.resources.Names.ROOT_LOGGER;
 
-/**
- * Used for both logging configuration and logging profiles.
- *
- * @author Harald Pehl
- */
+/** Used for both logging configuration and logging profiles. */
 class LoggingPreview<T> extends PreviewContent<T> {
 
     private final Dispatcher dispatcher;

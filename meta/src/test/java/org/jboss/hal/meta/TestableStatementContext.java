@@ -21,9 +21,6 @@ import java.util.Map;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 import static org.jboss.hal.meta.StatementContext.Tuple.*;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class TestableStatementContext implements StatementContext {
 

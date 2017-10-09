@@ -20,11 +20,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 
-/**
- * Adapter between GWTPs views which are based on widgets and HAL views which are based on elements.
- *
- * @author Harald Pehl
- */
+/** Adapter between GWTPs views which are based on widgets and HAL views which are based on elements. */
 public interface HalView extends View, IsElement, HasElements {
 
     /**

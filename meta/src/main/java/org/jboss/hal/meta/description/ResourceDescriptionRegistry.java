@@ -25,10 +25,7 @@ import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-
-/**
- * A registry for resource descriptions.
- */
+/** A registry for resource descriptions. */
 public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescription> {
 
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";

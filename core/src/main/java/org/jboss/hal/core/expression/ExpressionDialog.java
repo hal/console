@@ -48,9 +48,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.formControl;
 
-/**
- * @author Harald Pehl
- */
 public class ExpressionDialog {
 
     private static final ExpressionResources RESOURCES = GWT.create(ExpressionResources.class);

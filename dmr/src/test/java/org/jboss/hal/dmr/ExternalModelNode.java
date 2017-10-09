@@ -208,9 +208,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author Harald Pehl
- */
 public class ExternalModelNode {
 
     public static ModelNode read(InputStream inputStream) {

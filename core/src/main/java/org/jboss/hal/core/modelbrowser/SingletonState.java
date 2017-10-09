@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-/**
- * @author Harald Pehl
- */
 enum SingletonState {
     CHOOSE, CREATE
 }

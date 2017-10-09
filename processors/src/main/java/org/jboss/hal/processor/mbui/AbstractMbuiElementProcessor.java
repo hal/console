@@ -32,9 +32,6 @@ import org.jetbrains.annotations.NonNls;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
-/**
- * @author Harald Pehl
- */
 abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     @NonNls final MbuiViewProcessor processor;
@@ -98,19 +95,19 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
         if (name == null && formItem == null) {
             processor.error(field, "Invalid attribute \"%s\": name is mandatory.", xmlAsString(attributeElement));
         }
-        if (provider != null && !Handlebars.isExpression(provider)) {
+        if (provider != null && !ExpressionParser.isExpression(provider)) {
             processor.error(field, "Provider for attribute \"%s\" has to be an expression.",
                     xmlAsString(attributeElement));
         }
-        if (formItem != null && !Handlebars.isExpression(formItem)) {
+        if (formItem != null && !ExpressionParser.isExpression(formItem)) {
             processor.error(field, "FormItem for attribute \"%s\" has to be an expression.",
                     xmlAsString(attributeElement));
         }
-        if (validationHandler != null && !Handlebars.isExpression(validationHandler)) {
+        if (validationHandler != null && !ExpressionParser.isExpression(validationHandler)) {
             processor.error(field, "Validation handler for attribute \"%s\" has to be an expression.",
                     xmlAsString(attributeElement));
         }
-        if (suggestHandlerAttribute != null && !Handlebars.isExpression(suggestHandlerAttribute)) {
+        if (suggestHandlerAttribute != null && !ExpressionParser.isExpression(suggestHandlerAttribute)) {
             processor.error(field, "Suggestion handler for attribute \"%s\" has to be an expression.",
                     xmlAsString(attributeElement));
         }

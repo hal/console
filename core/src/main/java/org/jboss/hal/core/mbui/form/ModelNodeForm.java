@@ -16,8 +16,8 @@
 package org.jboss.hal.core.mbui.form;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,15 +25,14 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.core.Array;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -58,7 +57,6 @@ import org.jboss.hal.ballroom.form.SingletonStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
@@ -71,22 +69,22 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.ballroom.JsHelper.asJsMap;
-import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
-/**
- * @author Harald Pehl
- */
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     /**
@@ -125,7 +123,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         // ------------------------------------------------------ configure required and optional settings
 
         @JsIgnore
-        public Builder(@NonNls final String id, final Metadata metadata) {
+        public Builder(@NonNls String id, Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
             this.includes = new LinkedHashSet<>();
@@ -144,7 +142,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         @JsIgnore
         public Builder<T> include(final String[] attributes) {
-            includes.addAll(Arrays.asList(attributes));
+            includes.addAll(asList(attributes));
             return this;
         }
 
@@ -162,7 +160,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         @JsIgnore
         public Builder<T> exclude(final String[] attributes) {
-            excludes.addAll(Arrays.asList(attributes));
+            excludes.addAll(asList(attributes));
             return this;
         }
 
@@ -382,7 +380,14 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             } else if (readOnly) {
                 return new ReadOnlyStateMachine();
             } else if (singleton) {
-                return new SingletonStateMachine(prepareReset != null);
+                EnumSet<Operation> operations = EnumSet.allOf(Operation.class);
+                if (prepareReset == null) {
+                    operations.remove(Operation.RESET);
+                }
+                if (prepareRemove == null) {
+                    operations.remove(Operation.REMOVE);
+                }
+                return new SingletonStateMachine(operations);
             } else {
                 return new ExistingStateMachine(prepareReset != null);
             }
@@ -405,14 +410,14 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         /** Includes the specified attributes */
         @JsMethod(name = "include")
         @EsReturn("FormBuilder")
-        public Builder<T> jsInclude(Array<String> attributes) {
+        public Builder<T> jsInclude(@EsParam("string[]") String[] attributes) {
             return include(asList(attributes));
         }
 
         /** Excludes the specified attributes */
         @JsMethod(name = "exclude")
         @EsReturn("FormBuilder")
-        public Builder<T> jsExclude(Array<String> attributes) {
+        public Builder<T> jsExclude(@EsParam("string[]") String[] attributes) {
             return exclude(asList(attributes));
         }
 
@@ -433,7 +438,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private final boolean addOnly;
     private final boolean singleton;
     private final Supplier<org.jboss.hal.dmr.Operation> ping;
-    private final Map<String, ModelNode> attributeMetadata;
+    private final Map<String, ModelNode> attributeDescriptions;
     private final ResourceDescription resourceDescription;
     private final String attributePath;
     private Metadata metadata;
@@ -485,7 +490,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             properties.addAll(filteredProperties);
             properties.sort(Comparator.comparing(Property::getName));
         }
-        this.attributeMetadata = properties.stream().collect(toMap(Property::getName, Property::getValue));
+        this.attributeDescriptions = properties.stream().collect(toMap(Property::getName, Property::getValue));
 
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
@@ -536,19 +541,25 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
         }
 
-        // requires & alternatives
+        // create form validations from requires and alternatives
+        HashMultimap<String, String> requires = HashMultimap.create();
         Set<String> processedAlternatives = new HashSet<>();
-        getFormItems().forEach((FormItem formItem) -> {
+        for (FormItem formItem : getBoundFormItems()) {
             String name = formItem.getName();
 
-            // requires
-            List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
-                    .map(this::getFormItem)
-                    .filter(Objects::nonNull)
-                    .collect(toList());
-            if (!requires.isEmpty()) {
-                formItem.addValueChangeHandler(
-                        event -> requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem))));
+            // requires (1)
+            ModelNode attributeDescription = attributeDescriptions.get(name);
+            if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
+                // collect all attributes from the 'requires' list of this attribute
+                // which are not required themselves.
+                failSafeList(attributeDescription, REQUIRES).stream()
+                        .map(ModelNode::asString)
+                        .forEach(requiresName -> {
+                            ModelNode requiresDescription = attributeDescriptions.get(requiresName);
+                            if (requiresDescription != null && !failSafeBoolean(requiresDescription, REQUIRED)) {
+                                requires.put(requiresName, name);
+                            }
+                        });
             }
 
             // alternatives
@@ -560,8 +571,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
                 Set<String> requiredAlternatives = new HashSet<>();
                 uniqueAlternatives.forEach(alternative -> {
-                    ModelNode attribute = attributeMetadata.getOrDefault(alternative, new ModelNode());
-                    if (ModelNodeHelper.failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
+                    ModelNode attribute = attributeDescriptions.getOrDefault(alternative, new ModelNode());
+                    if (failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
                         requiredAlternatives.add(alternative);
                     }
                 });
@@ -576,6 +587,15 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
                 processedAlternatives.addAll(uniqueAlternatives);
             }
+        }
+
+        // requires (2)
+        requires.asMap().forEach((name, requiredBy) -> {
+            FormItem<Object> formItem = getFormItem(name);
+            if (formItem != null) {
+                formItem.addValidationHandler(
+                        new RequiredByValidation<>(formItem, requiredBy, this, CONSTANTS, MESSAGES));
+            }
         });
     }
 
@@ -583,13 +603,22 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @JsMethod
     public void attach() {
         super.attach();
+
         if (Iterables.isEmpty(getFormItems())) {
             Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
             Elements.removeChildrenFrom(asElement());
             asElement().appendChild(alert.asElement());
         }
+
         if (singleton && ping != null && ping.get() != null) {
-            Core.INSTANCE.dispatcher().execute(ping.get(), result -> flip(READONLY), (op, failure) -> flip(EMPTY));
+            Core.INSTANCE.dispatcher().execute(ping.get(),
+                    result -> {
+                        if (!result.isDefined()) {
+                            flip(EMPTY);
+                        } else {
+                            flip(READONLY);
+                        }
+                    }, (op, failure) -> flip(EMPTY));
         }
     }
 
@@ -607,10 +636,13 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             case READONLY:
             case EDITING:
                 // change restricted and enabled state
-                getBoundFormItems().forEach(formItem -> {
+                for (FormItem formItem : getBoundFormItems()) {
                     formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
-                    formItem.setEnabled(securityContext.isWritable(formItem.getName()));
-                });
+                    // don't touch disabled form items
+                    if (formItem.isEnabled()) {
+                        formItem.setEnabled(securityContext.isWritable(formItem.getName()));
+                    }
+                }
                 break;
         }
 
@@ -625,18 +657,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @Override
     protected void prepareEditState() {
         super.prepareEditState();
-        getFormItems().forEach(this::evalRequires);
-    }
-
-    private void evalRequires(FormItem formItem) {
-        String name = formItem.getName();
-        List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
-                .map(this::getFormItem)
-                .filter(Objects::nonNull)
-                .collect(toList());
-        if (!requires.isEmpty()) {
-            requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem)));
-        }
     }
 
     @Override
@@ -656,7 +676,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     protected Map<String, Object> getChangedValues() {
         Map<String, Object> writableChanges = new HashMap<>(super.getChangedValues());
         writableChanges.entrySet().removeIf(entry -> {
-            ModelNode metadata = attributeMetadata.get(entry.getKey());
+            ModelNode metadata = attributeDescriptions.get(entry.getKey());
             return metadata != null && metadata.hasDefined(ACCESS_TYPE) && !READ_WRITE
                     .equals(metadata.get(ACCESS_TYPE).asString());
         });
@@ -666,10 +686,10 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     boolean isEmptyOrDefault(FormItem formItem) {
         String name = formItem.getName();
         Object value = formItem.getValue();
-        ModelNode attributeDescription = attributeMetadata.get(name);
+        ModelNode attributeDescription = attributeDescriptions.get(name);
         if (attributeDescription != null) {
             if (attributeDescription.hasDefined(DEFAULT)) {
-                return resourceDescription.isDefaultValue(attributePath, name, value);
+                return resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
             } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
                 return value == null || !(Boolean) value;
             } else {

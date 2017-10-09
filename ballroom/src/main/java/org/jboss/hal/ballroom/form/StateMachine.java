@@ -20,11 +20,7 @@ import javax.annotation.Nullable;
 import org.jboss.hal.ballroom.form.Form.Operation;
 import org.jboss.hal.ballroom.form.Form.State;
 
-/**
- * Defines how to transition between {@linkplain State states} based on {@linkplain Operation operations}.
- *
- * @author Harald Pehl
- */
+/** Defines how to transition between {@linkplain State states} based on {@linkplain Operation operations}. */
 public interface StateMachine {
 
     void reset();

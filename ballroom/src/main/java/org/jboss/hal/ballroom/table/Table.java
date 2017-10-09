@@ -26,9 +26,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
 
-/**
- * @author Harald Pehl
- */
 @JsType(namespace = "hal.ui")
 public interface Table<T> extends IsElement, Attachable {
 
@@ -56,12 +53,12 @@ public interface Table<T> extends IsElement, Attachable {
     void hide();
 
     @JsIgnore
-    void enableButton(final int index, final boolean enable);
+    void enableButton(int index, boolean enable);
 
-    void bindForm(final Form<T> form);
+    void bindForm(Form<T> form);
 
     @JsIgnore
-    void bindForms(final Iterable<Form<T>> forms);
+    void bindForms(Iterable<Form<T>> forms);
 
     void clear();
 
@@ -82,20 +79,20 @@ public interface Table<T> extends IsElement, Attachable {
     List<T> selectedRows();
 
     @JsIgnore
-    void select(final T data);
+    void select(T data);
 
     @JsIgnore
-    void select(final T data, final Function<T, String> identifier);
+    void select(T data, Function<T, String> identifier);
 
     @JsIgnore
-    void update(final Iterable<T> data);
+    void update(Iterable<T> data);
 
     @JsIgnore
-    void update(final Iterable<T> data, final RefreshMode mode);
+    void update(Iterable<T> data, RefreshMode mode);
 
     @JsIgnore
-    void update(final Iterable<T> data, final Function<T, String> identifier);
+    void update(Iterable<T> data, Function<T, String> identifier);
 
     @JsIgnore
-    void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier);
+    void update(Iterable<T> data, RefreshMode mode, Function<T, String> identifier);
 }

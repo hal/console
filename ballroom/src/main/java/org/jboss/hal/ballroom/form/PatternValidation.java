@@ -1,41 +1,38 @@
-/*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.regexp.shared.RegExp;
+import org.jboss.hal.resources.Messages;
 
-/**
- * @author Harald Pehl
- */
-public class PatternValidation implements FormItemValidation<String> {
+import com.google.gwt.core.client.GWT;
 
-    private final RegExp regExp;
-    private final String errorMessage;
+public class PatternValidation implements FormItemValidation<Object> {
 
-    public PatternValidation(final String pattern) {
-        this(pattern, MESSAGES.patternMismatch(pattern));
+    public static class JndiNameValidation extends PatternValidation {
+
+        public JndiNameValidation() {
+            super("java:(jboss)?/.*"); //NON-NLS
+        }
+
+        @Override
+        protected String errorMessage() {
+            return MESSAGES.invalidJNDIName();
+        }
     }
 
-    public PatternValidation(final String pattern, String errorMessage) {
-        this.errorMessage = errorMessage;
-        regExp = RegExp.compile(pattern);
+
+    private final static Messages MESSAGES = GWT.create(Messages.class);
+
+    private String pattern;
+
+    PatternValidation(String pattern) {
+        this.pattern = pattern;
     }
 
     @Override
-    public ValidationResult validate(final String value) {
-        return regExp.test(value) ? ValidationResult.OK : ValidationResult.invalid(errorMessage);
+    public ValidationResult validate(Object value) {
+        return value.toString().matches(pattern) ? ValidationResult.OK : ValidationResult.invalid(errorMessage());
+    }
+
+    protected String errorMessage() {
+        return MESSAGES.invalidFormat();
     }
 }

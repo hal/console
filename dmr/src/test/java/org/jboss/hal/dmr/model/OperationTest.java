@@ -25,9 +25,6 @@ import org.junit.Test;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class OperationTest {
 

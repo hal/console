@@ -29,9 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class CompositeRrdParser {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(CompositeRrdParser.class);

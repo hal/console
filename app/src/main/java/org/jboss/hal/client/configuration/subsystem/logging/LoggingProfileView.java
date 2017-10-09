@@ -46,6 +46,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
@@ -55,9 +56,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePresenter>
@@ -162,9 +160,9 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     private void rootLoggerVisibility(final boolean visible) {
-        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-profile-root-logger-header"),
+        Elements.setVisible((HTMLElement) document.getElementById("logging-profile-root-logger-header"),
                 visible);
-        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-profile-root-logger-description"),
+        Elements.setVisible((HTMLElement) document.getElementById("logging-profile-root-logger-description"),
                 visible);
         Elements.setVisible(rootLoggerForm.asElement(), visible);
         Elements.setVisible(noRootLogger.asElement(), !visible);

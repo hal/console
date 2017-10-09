@@ -22,9 +22,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Claudio Miranda
- */
 @MbuiView
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class ElytronSubsystemView extends MbuiViewImpl<ElytronSubsystemPresenter>

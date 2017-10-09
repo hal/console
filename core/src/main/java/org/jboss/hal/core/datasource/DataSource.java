@@ -16,43 +16,57 @@
 package org.jboss.hal.core.datasource;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
+/** Used for data-sources in configuration, runtime and deployments */
 public class DataSource extends NamedNode {
 
     private final boolean xa;
+    private final ResourceAddress address;
+    private String path;
+    private String deployment;
+    private String subdeployment;
 
-    public DataSource(final boolean xa) {
+    public DataSource(boolean xa) {
         this("", xa);
     }
 
-    public DataSource(final String name, final boolean xa) {
+    public DataSource(String name, boolean xa) {
         super(name, new ModelNode());
         this.xa = xa;
+        this.address = null;
     }
 
-    public DataSource(final String name, final ModelNode modelNode, final boolean xa) {
+    public DataSource(String name, ModelNode modelNode, boolean xa) {
         super(name, modelNode);
         this.xa = xa;
+        this.address = null;
     }
 
-    public DataSource(final Property property, final boolean xa) {
+    public DataSource(Property property, boolean xa) {
         super(property);
         this.xa = xa;
+        this.address = null;
     }
 
-    public DataSource newName(final String name) {
-        return new DataSource(name, xa);
+    public DataSource(ResourceAddress address, ModelNode modelNode, boolean xa) {
+        super(address.lastValue(), modelNode);
+        this.xa = xa;
+        this.address = address;
+
+        address.asList().forEach(segment -> {
+            if (segment.hasDefined(DEPLOYMENT)) {
+                deployment = segment.get(DEPLOYMENT).asString();
+            }
+            if (segment.hasDefined(SUBDEPLOYMENT)) {
+                subdeployment = segment.get(SUBDEPLOYMENT).asString();
+            }
+        });
+        this.path = subdeployment != null ? deployment + "/" + subdeployment : deployment;
     }
 
     public boolean isXa() {
@@ -70,5 +84,29 @@ public class DataSource extends NamedNode {
     public void setDriver(final JdbcDriver driver) {
         get(DRIVER_NAME).set(driver.getName());
         get(DRIVER_CLASS).set(driver.get(DRIVER_CLASS_NAME));
+    }
+
+    public boolean fromDeployment() {
+        return address != null;
+    }
+
+    public ResourceAddress getAddress() {
+        return address;
+    }
+
+    public String getDeployment() {
+        return deployment;
+    }
+
+    public String getSubdeployment() {
+        return subdeployment;
+    }
+
+    /**
+     * Returns {@code deployment}/{@code subdeployment} if {@code subdeployment != null}, {@code deployment} otherwise.
+     * Should not be used to build DMR operations, but rather in the UI.
+     */
+    public String getPath() {
+        return path;
     }
 }

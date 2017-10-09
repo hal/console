@@ -57,9 +57,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Harald Pehl
- */
 public class WebservicePresenter
         extends ApplicationFinderPresenter<WebservicePresenter.MyView, WebservicePresenter.MyProxy>
         implements SupportsExpertMode {
@@ -144,7 +141,7 @@ public class WebservicePresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(WEBSERVICES);
+        return finderPathFactory.configurationSubsystemPath(WEBSERVICES);
     }
 
 

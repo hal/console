@@ -36,9 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.*;
 
-/**
- * @author Harald Pehl
- */
 public class CoreStatementContext implements StatementContext,
         ProfileSelectionHandler, ServerGroupSelectionHandler, HostSelectionHandler, ServerSelectionHandler {
 

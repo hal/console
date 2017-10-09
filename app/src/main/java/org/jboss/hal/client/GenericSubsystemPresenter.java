@@ -41,8 +41,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
  * the management model starting at the resource specified as place request parameter.
  * <p>
  * Used in configuration and runtime perspective.
- *
- * @author Harald Pehl
  */
 public class GenericSubsystemPresenter
         extends ApplicationFinderPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
@@ -96,6 +94,6 @@ public class GenericSubsystemPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(address.lastValue());
+        return finderPathFactory.configurationSubsystemPath(address.lastValue());
     }
 }

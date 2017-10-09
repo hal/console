@@ -20,15 +20,12 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-/**
- * @author Harald Pehl
- */
 public abstract class SuccessfulMetadataCallback implements MetadataProcessor.MetadataCallback {
 
     private final EventBus eventBus;
     private final Resources resources;
 
-    public SuccessfulMetadataCallback(final EventBus eventBus, final Resources resources) {
+    protected SuccessfulMetadataCallback(final EventBus eventBus, final Resources resources) {
         this.eventBus = eventBus;
         this.resources = resources;
     }

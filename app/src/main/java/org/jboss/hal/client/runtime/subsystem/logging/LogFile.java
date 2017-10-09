@@ -17,23 +17,17 @@ package org.jboss.hal.client.runtime.subsystem.logging;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.shared.DateTimeFormat;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.dmr.ModelNode;
 
-import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.ISO_8601;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeDate;
 
-/**
- * @author Harald Pehl
- */
 class LogFile extends ModelNode {
 
     private static final String FILE_NAME = "file-name";
     private static final String FILE_SIZE = "file-size";
     private static final String LAST_MODIFIED_DATE = "last-modified-date";
     private static final String LAST_MODIFIED_TIMESTAMP = "last-modified-timestamp";
-
-    private static final DateTimeFormat DATE_TIME_FORMAT = DateTimeFormat.getFormat(ISO_8601);
 
     LogFile(final ModelNode node) {
         set(node);
@@ -50,22 +44,11 @@ class LogFile extends ModelNode {
 
     public Date getLastModifiedDate() {
         // first try LAST_MODIFIED_DATE then LAST_MODIFIED_TIMESTAMP
-        Date date = convert(LAST_MODIFIED_DATE);
+        Date date = failSafeDate(this, LAST_MODIFIED_DATE);
         if (date == null) {
-            date = convert(LAST_MODIFIED_TIMESTAMP);
+            date = failSafeDate(this, LAST_MODIFIED_TIMESTAMP);
         }
         return date;
-    }
-
-    private Date convert(String attribute) {
-        if (hasDefined(attribute)) {
-            try {
-                return DATE_TIME_FORMAT.parse(get(attribute).asString());
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
-        return null;
     }
 
     public String getFormattedLastModifiedDate() {

@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -53,29 +54,27 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.STANDALONE_SERVER)
-@Requires(value = MANAGEMENT_ADDRESS, recursive = false)
+@Requires(value = {"/", MANAGEMENT_ADDRESS, CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static final String MANAGEMENT_ADDRESS = "/core-service=management";
     private static final AddressTemplate MANAGEMENT_TEMPLATE = AddressTemplate.of(MANAGEMENT_ADDRESS);
 
-
     private final Finder finder;
     private FinderPath refreshPath;
 
     @Inject
-    public StandaloneServerColumn(final Finder finder, final EventBus eventBus, final Dispatcher dispatcher,
-            final ItemActionFactory itemActionFactory, final ServerActions serverActions,
-            final PlaceManager placeManager, final Places places, final FinderPathFactory finderPathFactory,
-            final Resources resources) {
+    public StandaloneServerColumn(Finder finder, EventBus eventBus, Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
+            ServerActions serverActions, PlaceManager placeManager, Places places,
+            Resources resources) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -84,8 +83,8 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                             .param(ATTRIBUTES_ONLY, true)
                             .build();
                     Operation bootErrors = new Operation.Builder(ResourceAddress.root().add(CORE_SERVICE, MANAGEMENT),
-                            READ_BOOT_ERRORS
-                    ).build();
+                            READ_BOOT_ERRORS)
+                            .build();
                     dispatcher.execute(new Composite(attributes, bootErrors), (CompositeResult result) -> {
                         Server.STANDALONE.addServerAttributes(result.step(0).get(RESULT));
                         Server.STANDALONE.setBootErrors(!result.step(1).get(RESULT).asList().isEmpty());
@@ -153,13 +152,19 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                                 actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest,
                                         Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
                             }
+                            if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                                PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
+                                        .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
+                                actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
+                                        ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                            }
                         }
                         return actions;
                     }
 
                     @Override
                     public String nextColumn() {
-                        return Ids.SERVER_MONITOR;
+                        return Ids.RUNTIME_SUBSYSTEM;
                     }
                 })
 

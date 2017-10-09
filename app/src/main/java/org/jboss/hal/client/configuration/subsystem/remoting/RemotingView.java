@@ -50,8 +50,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * This view is half generated, half hand written. The navigation, tables and outbound forms are generated using MBUI
  * XML, whereas the connector forms are created in this view. This is because these forms contain nested singletons
  * which may be null.
- *
- * @author Harald Pehl
  */
 @MbuiView
 @SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection", "unused"})

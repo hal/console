@@ -19,9 +19,6 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.core.runtime.Result;
 
-/**
- * @author Harald Pehl
- */
 @GenEvent
 public class ServerResult {
 

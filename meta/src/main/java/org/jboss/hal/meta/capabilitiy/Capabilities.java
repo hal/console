@@ -24,11 +24,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 
-/**
- * Provides access to static fall-back capabilities for servers which don't support a capabilities-registry.
- *
- * @author Harald Pehl
- */
+/** Provides access to static fall-back capabilities for servers which don't support a capabilities-registry. */
 public class Capabilities {
 
     private final Environment environment;

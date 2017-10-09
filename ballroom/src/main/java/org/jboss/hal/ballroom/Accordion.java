@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.ballroom;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -26,22 +25,20 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static elemental2.dom.DomGlobal.document;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class Accordion implements IsElement {
 
     @JsType(isNative = true)
-    static class Bridge {
+    static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge select(String selector);
+        public native static Api select(String selector);
 
         public native void collapse(String command);
     }
@@ -76,7 +73,7 @@ public class Accordion implements IsElement {
                                         .aria(UIConstants.EXPANDED, String.valueOf(firstPanel))
                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                                         .textContent(title))))
-                .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : "").aria("labelledby", headerId)
+                .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : null).aria("labelledby", headerId)
                         .add(body = div().css(panelBody).asElement()))
                 .asElement();
 
@@ -99,20 +96,20 @@ public class Accordion implements IsElement {
     }
 
     public void showPanel(final String id) {
-        Bridge.select("#" + id).collapse("show"); //NON-NLS
+        Api.select("#" + id).collapse("show"); //NON-NLS
     }
 
     public void hidePanel(final String id) {
-        Bridge.select("#" + id).collapse("hide"); //NON-NLS
+        Api.select("#" + id).collapse("hide"); //NON-NLS
     }
 
     public void togglePanel(final String id) {
-        Bridge.select("#" + id).collapse("toggle"); //NON-NLS
+        Api.select("#" + id).collapse("toggle"); //NON-NLS
     }
 
     public void setContent(final String id, Element first, Element... rest) {
         if (id != null) {
-            Element body = DomGlobal.document.querySelector("#" + id + " > ." + panelBody);
+            Element body = document.querySelector("#" + id + " > ." + panelBody);
             if (body != null) {
                 Elements.removeChildrenFrom(body);
                 fillBody(body, first, rest);

@@ -49,8 +49,6 @@ import static org.jboss.hal.meta.security.Target.OPERATION;
  * <p>
  * If WildFly uses {@link AccessControlProvider#SIMPLE}, {@code isAllowed()} will <strong>always</strong>
  * return {@code true}.
- *
- * @author Harald Pehl
  */
 public class AuthorisationDecision {
 

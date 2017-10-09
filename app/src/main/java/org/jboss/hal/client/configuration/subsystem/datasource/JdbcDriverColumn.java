@@ -22,10 +22,6 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
@@ -38,11 +34,14 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -62,11 +61,9 @@ import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.UNKNOWN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.JDBC_DRIVER)
 @Requires(JDBC_DRIVER_ADDRESS)
 public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
@@ -86,28 +83,26 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
         super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER, Names.JDBC_DRIVER)
 
-                .itemsProvider((context, callback) -> {
-                    Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getException());
-                        }
+                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
+                        new JdbcDriverTasks.ReadConfiguration(crud),
+                        new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
+                                ? null
+                                : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
+                        new JdbcDriverTasks.ReadRuntime(environment, dispatcher),
+                        new JdbcDriverTasks.CombineDriverResults())
+                        .subscribe(new Outcome<FlowContext>() {
+                            @Override
+                            public void onError(FlowContext context, Throwable error) {
+                                callback.onFailure(error);
+                            }
 
-                        @Override
-                        public void onSuccess(final FunctionContext context) {
-                            callback.onSuccess(context.get(JdbcDriverFunctions.DRIVERS));
-                        }
-                    };
-                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                            new JdbcDriverFunctions.ReadConfiguration(crud),
-                            new TopologyFunctions.RunningServersQuery(environment, dispatcher,
-                                    environment.isStandalone()
-                                            ? null
-                                            : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
-                            new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),
-                            new JdbcDriverFunctions.CombineDriverResults());
-                })
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                callback.onSuccess(context.get(JdbcDriverTasks.DRIVERS));
+                            }
+                        }))
                 .withFilter()
+                .filterDescription(resources.messages().jdbcDriverColumnFilterDescription())
         );
 
         addColumnAction(columnActionFactory.add(Ids.JDBC_DRIVER_ADD, Names.JDBC_DRIVER, JDBC_DRIVER_TEMPLATE,

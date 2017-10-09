@@ -26,15 +26,13 @@ import com.google.common.collect.Sets;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddAssignment;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlTasks.CheckRoleMapping;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.UserChangedEvent;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionHandler;
 import org.jboss.hal.core.finder.Finder;
@@ -46,8 +44,9 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -63,12 +62,11 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * Shows the assigned roles of the selected principal (the reverse of the {@link MembershipColumn}.
- *
- * @author Harald Pehl
  */
 @AsyncColumn(Ids.ASSIGNMENT)
 public class AssignmentColumn extends FinderColumn<Assignment> {
@@ -237,10 +235,13 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
         return column -> {
             Principal principal = findPrincipal(getFinder().getContext().getPath());
             if (principal != null) {
-                new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                        new SuccessfulOutcome(eventBus, resources) {
+                series(new FlowContext(progress.get()),
+                        new CheckRoleMapping(dispatcher, role),
+                        new AddRoleMapping(dispatcher, role, status -> status == 404),
+                        new AddAssignment(dispatcher, role, principal, include))
+                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                             @Override
-                            public void onSuccess(final FunctionContext context) {
+                            public void onSuccess(FlowContext context) {
                                 String type = resources.constants().role();
                                 SafeHtml message = include
                                         ? resources.messages().assignmentIncludeSuccess(type, role.getName())
@@ -253,10 +254,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                                     }
                                 });
                             }
-                        },
-                        new CheckRoleMapping(dispatcher, role),
-                        new AddRoleMapping(dispatcher, role, status -> status == 404),
-                        new AddAssignment(dispatcher, role, principal, include));
+                        });
             }
         };
     }

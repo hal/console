@@ -19,9 +19,6 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Logos;
 import org.jboss.hal.resources.Theme;
 
-/**
- * @author Harald Pehl
- */
 public class WildFlyTheme implements Theme {
 
     private static final Logos LOGOS = GWT.create(WildFlyLogos.class);

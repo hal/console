@@ -51,8 +51,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
  * add new servers.
- *
- * @author Harald Pehl
  */
 class EndpointDialog {
 

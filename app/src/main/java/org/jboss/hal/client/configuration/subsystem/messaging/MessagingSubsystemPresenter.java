@@ -40,9 +40,6 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 
-/**
- * @author Harald Pehl
- */
 public class MessagingSubsystemPresenter
         extends MbuiPresenter<MessagingSubsystemPresenter.MyView, MessagingSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -92,7 +89,7 @@ public class MessagingSubsystemPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.MESSAGING_GLOBAL_SETTINGS,
                         resources.constants().category(), resources.constants().globalSettings());
     }

@@ -15,16 +15,14 @@
  */
 package org.jboss.hal.ballroom;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.google.web.bindery.event.shared.HandlerRegistrations;
-import elemental2.core.Array;
 import elemental2.dom.DragEvent;
 import elemental2.dom.HTMLElement;
+import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
@@ -32,31 +30,7 @@ import org.jboss.gwt.elemento.core.EventCallbackFn;
 import static org.jboss.gwt.elemento.core.EventType.*;
 import static org.jboss.hal.resources.CSS.ondrag;
 
-/**
- * @author Harald Pehl
- */
 public final class JsHelper {
-
-    @SuppressWarnings("Duplicates")
-    public static <T> List<T> asList(Array<T> array) {
-        if (array != null) {
-            List<T> list = new ArrayList<>(array.getLength());
-            for (int i = 0; i < array.getLength(); i++) {
-                list.add(array.getAt(i));
-            }
-            return list;
-        }
-        return new ArrayList<>(); // Do not replace with Collections.emptyList()!
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> Array<T> asJsArray(List<T> list) {
-        Array<T> array = new Array<>();
-        for (T t : list) {
-            array.push(t);
-        }
-        return array;
-    }
 
     public static Map<String, Object> asMap(JsPropertyMapOfAny jsMap) {
         Map<String, Object> map = new HashMap<>();
@@ -64,9 +38,9 @@ public final class JsHelper {
         return map;
     }
 
-    public static JsPropertyMapOfAny asJsMap(Map<String, Object> map) {
+    public static <T> JsPropertyMapOfAny asJsMap(Map<String, T> map) {
         JsPropertyMapOfAny jsMap = JsPropertyMap.of();
-        map.forEach(jsMap::set);
+        map.forEach((key, value) -> jsMap.set(key, Any.of(value)));
         return jsMap;
     }
 

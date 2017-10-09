@@ -21,7 +21,7 @@
         <item id="batch-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=batch-jberet">
                 <h1>Configuration</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <form id="batch-configuration-form" auto-save="true" reset="true"/>
             </metadata>
         </item>
@@ -29,15 +29,15 @@
         <item id="batch-in-memory-job-repo-item" title="In Memory" icon="pficon pficon-memory">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/in-memory-job-repository=*">
                 <h1>In Memory Job Repository</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="batch-in-memory-job-repo-table" title="In Memory Job">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
             </metadata>
@@ -46,19 +46,19 @@
         <item id="batch-jdbc-job-repo-item" title="JDBC" icon="fa fa-database">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/jdbc-job-repository=*">
                 <h1>JDBC Job Repository</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="batch-jdbc-job-repo-table" title="JDBC Job Repository" form-ref="batch-jdbc-job-repo-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="batch-jdbc-job-repo-form" title="JDBC Job Repository" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="data-source">
                             <suggest-handler>
@@ -75,19 +75,19 @@
         <item id="batch-thread-factory-item" title="Thread Factory" icon="pficon pficon-service">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/thread-factory=*">
                 <h1>Thread Factory</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="batch-thread-factory-table" title="Thread Factory" form-ref="batch-thread-factory-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="batch-thread-factory-form" title="Thread Factory" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                 </form>
             </metadata>
         </item>
@@ -95,19 +95,19 @@
         <item id="batch-thread-pool-item" title="Thread Pool" icon="pficon pficon-resource-pool">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/thread-pool=*">
                 <h1>Thread Pool</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
+                <p>${metadata.getDescription().getDescription()}</p>
                 <table id="batch-thread-pool-table" title="Thread Pool" form-ref="batch-thread-pool-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{table.selectedRow().getName()}}"/>
+                                name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
                 <form id="batch-thread-pool-form" title="Thread Pool" auto-save="true" reset="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                      name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="name"/>
                         <attribute name="max-threads"/>

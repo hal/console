@@ -49,11 +49,7 @@ import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * Provides access to all important classes. Acts as an entry point for the JavaScript API.
- *
- * @author Harald Pehl
- */
+/** Provides access to all important classes. Acts as an entry point for the JavaScript API. */
 @JsType
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public class Core {

@@ -15,15 +15,11 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental2.core.Array;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-/**
- * @author Harald Pehl
- */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options<T> {
 
@@ -48,6 +44,6 @@ public class Options<T> {
     }
 
 
-    public Array<String> plugins;
+    public String[] plugins;
     public Core<T> core;
 }

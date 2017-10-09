@@ -20,7 +20,6 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
@@ -28,6 +27,7 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -38,9 +38,6 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 
-/**
- * @author Harald Pehl
- */
 class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
     private final MetadataProcessor metadataProcessor;
@@ -50,8 +47,8 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
     private final HTMLElement root;
     private Form<ModelNode> form;
 
-    CreateSingletonStep(final Node<Context> parent, final MetadataProcessor metadataProcessor,
-            final Provider<Progress> progress, final EventBus eventBus, final Resources resources) {
+    CreateSingletonStep(Node<Context> parent, MetadataProcessor metadataProcessor,
+            Provider<Progress> progress, EventBus eventBus, Resources resources) {
         super(resources.messages().addResourceTitle(parent.text));
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;

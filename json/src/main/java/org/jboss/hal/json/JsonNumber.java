@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.json;
 
-/**
- * Represents a Json number value.
- */
+/** Represents a Json number value. */
 public class JsonNumber extends JsonValue {
 
     public static JsonNumber create(double number) {

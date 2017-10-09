@@ -15,18 +15,14 @@
  */
 package org.jboss.hal.spi;
 
-import com.google.inject.BindingAnnotation;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 
+import com.google.inject.BindingAnnotation;
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * Qualifier to select the progress implementation in HAL's footer.
- *
- * @author Harald Pehl
- */
+/** Qualifier to select the progress implementation in HAL's footer. */
 @Documented
 @BindingAnnotation
 @Retention(RUNTIME)

@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
@@ -41,6 +40,7 @@ import org.jboss.hal.spi.MbuiView;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
@@ -48,9 +48,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> implements LoggingPresenter.MyView {
@@ -130,8 +127,8 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     }
 
     private void rootLoggerVisibility(final boolean visible) {
-        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-root-logger-header"), visible);
-        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-root-logger-description"),
+        Elements.setVisible((HTMLElement) document.getElementById("logging-root-logger-header"), visible);
+        Elements.setVisible((HTMLElement) document.getElementById("logging-root-logger-description"),
                 visible);
         Elements.setVisible(rootLoggerForm.asElement(), visible);
         Elements.setVisible(noRootLogger.asElement(), !visible);

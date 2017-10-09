@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.core.finder;
 
-/**
- * Action handler for an item.
- *
- * @author Harald Pehl
- */
+/** Action handler for an item. */
 @FunctionalInterface
 public interface ItemActionHandler<T> {
 

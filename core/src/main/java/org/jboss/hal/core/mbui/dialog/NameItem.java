@@ -22,8 +22,6 @@ import org.jboss.hal.resources.Names;
 /**
  * A text box item useful for add resource dialogs. The form item has {@link ModelDescriptionConstants#NAME} as name,
  * is required and does not allow expressions.
- *
- * @author Harald Pehl
  */
 public class NameItem extends TextBoxItem {
 

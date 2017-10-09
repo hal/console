@@ -19,9 +19,6 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-/**
- * @author Harald Pehl
- */
 enum Write {
 
     BEHIND(Ids.CACHE_STORE_WRITE_BEHIND, Names.WRITE_BEHIND, ModelDescriptionConstants.BEHIND),

@@ -19,11 +19,7 @@ import org.jboss.hal.ballroom.table.SelectorModifier.Order;
 import org.jboss.hal.ballroom.table.SelectorModifier.Page;
 import org.jboss.hal.ballroom.table.SelectorModifier.Search;
 
-/**
- * Builder for a {@link SelectorModifier}.
- *
- * @author Harald Pehl
- */
+/** Builder for a {@link SelectorModifier}. */
 class SelectorModifierBuilder {
 
     private Order order;

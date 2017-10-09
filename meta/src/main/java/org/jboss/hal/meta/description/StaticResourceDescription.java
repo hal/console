@@ -18,9 +18,6 @@ package org.jboss.hal.meta.description;
 import com.google.gwt.resources.client.TextResource;
 import org.jboss.hal.dmr.ModelNode;
 
-/**
- * @author Harald Pehl
- */
 public final class StaticResourceDescription {
 
     private StaticResourceDescription() {}

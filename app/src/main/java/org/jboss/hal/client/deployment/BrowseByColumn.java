@@ -18,7 +18,6 @@ package org.jboss.hal.client.deployment;
 import java.util.Arrays;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JsHelper;
@@ -31,11 +30,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
-/**
- * Initial column in the deployment top level tab for the domain mode.
- *
- * @author Harald Pehl
- */
+import static elemental2.dom.DomGlobal.document;
+
+/** Initial column in the deployment top level tab for the domain mode. */
 @Column(Ids.DEPLOYMENT_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
 
@@ -47,7 +44,7 @@ public class BrowseByColumn extends StaticItemColumn {
 
         @Override
         public void update(StaticItem item) {
-            Elements.setVisible((HTMLElement) DomGlobal.document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+            Elements.setVisible((HTMLElement) document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                     JsHelper.supportsAdvancedUpload());
         }
     }

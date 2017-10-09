@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.json;
 
-/**
- * Represents the Json null value.
- */
+/** Represents the Json null value. */
 public class JsonNull extends JsonValue {
 
     public static JsonNull create() {

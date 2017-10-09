@@ -33,9 +33,6 @@ import org.jboss.hal.resources.Names;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * @author Harald Pehl
- */
 class SocketBindingGroupPreview extends PreviewContent<NamedNode> {
 
     private final PreviewAttributes<NamedNode> attributes;

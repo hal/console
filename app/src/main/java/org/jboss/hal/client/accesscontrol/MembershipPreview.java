@@ -24,9 +24,6 @@ import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.span;
 
-/**
- * @author Harald Pehl
- */
 class MembershipPreview extends PreviewContent<Assignment> {
 
     MembershipPreview(final AccessControlTokens tokens, final Principal principal, final Resources resources) {

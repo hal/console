@@ -39,9 +39,6 @@ import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
 import static org.jboss.hal.dmr.ModelType.EXPRESSION;
 import static org.jboss.hal.dmr.ModelType.INT;
 
-/**
- * @author Harald Pehl
- */
 class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
@@ -195,7 +192,11 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     continue;
                 }
                 if (formItem instanceof ModelNodeItem) {
-                    model.get(name).set(((ModelNodeItem) formItem).getValue());
+                    if (formItem.getValue() == null) {
+                        failSafeRemove(model, name);
+                    } else {
+                        model.get(name).set(((ModelNodeItem) formItem).getValue());
+                    }
 
                 } else {
                     if (formItem.isExpressionValue()) {
@@ -245,7 +246,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                                 break;
 
                             case OBJECT:
-
                                 boolean stringValueType = attributeDescription.get(VALUE_TYPE).getType().equals(ModelType.TYPE)
                                         && attributeDescription.get(VALUE_TYPE).asType().equals(ModelType.STRING);
                                 if (stringValueType) {

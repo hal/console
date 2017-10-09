@@ -45,8 +45,6 @@ import static org.jboss.hal.resources.CSS.*;
  *     &lt;/div&gt;
  * &lt;/div&gt;
  * </pre>
- *
- * @author Harald Pehl
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
@@ -204,8 +202,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             expressionButton.style.marginRight = MarginRightUnionType.of("-1px"); //NON-NLS
         } else {
             inputGroup.appendChild(expressionContainer);
-            expressionButton.style.marginLeft = MarginLeftUnionType.of("");
-            expressionButton.style.marginRight = MarginRightUnionType.of("");
+            expressionButton.style.marginLeft = MarginLeftUnionType.of(0);
+            expressionButton.style.marginRight = MarginRightUnionType.of(0);
         }
         expressionHandler = bind(expressionButton, click,
                 event -> expressionContext.callback.resolveExpression(inputElement.value));

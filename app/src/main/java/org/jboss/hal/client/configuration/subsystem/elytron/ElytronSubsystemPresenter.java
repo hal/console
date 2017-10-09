@@ -36,14 +36,10 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ELYTRON;
 
-
-/**
- * @author Claudio Miranda
- */
 public class ElytronSubsystemPresenter
         extends MbuiPresenter<ElytronSubsystemPresenter.MyView, ElytronSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -51,7 +47,7 @@ public class ElytronSubsystemPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.ELYTRON)
-    @Requires(value = ELYTRON_SUBSYSTEM, recursive = false)
+    @Requires(value = ELYTRON_SUBSYSTEM_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<ElytronSubsystemPresenter> {}
 
     public interface MyView extends MbuiView<ElytronSubsystemPresenter> {
@@ -88,18 +84,18 @@ public class ElytronSubsystemPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
+        return ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ELYTRON)
+        return finderPathFactory.configurationSubsystemPath(ELYTRON)
                 .append(Ids.ELYTRON, Ids.ELYTRON,
                         resources.constants().settings(), resources.constants().globalSettings());
     }
 
     @Override
     protected void reload() {
-        crud.read(ELYTRON_SUBSYSTEM_ADDRESS, result -> getView().update(result));
+        crud.read(ELYTRON_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 }

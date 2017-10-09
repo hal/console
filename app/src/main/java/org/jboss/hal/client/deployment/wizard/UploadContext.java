@@ -17,9 +17,6 @@ package org.jboss.hal.client.deployment.wizard;
 
 import elemental2.dom.File;
 
-/**
- * @author Harald Pehl
- */
 public class UploadContext {
 
     public File file;

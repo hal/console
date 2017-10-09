@@ -62,9 +62,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HEADER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
-/**
- * @author Harald Pehl
- */
 public class FilterPresenter
         extends MbuiPresenter<FilterPresenter.MyView, FilterPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -120,7 +117,7 @@ public class FilterPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.FILTERS),
                         resources.constants().settings(), Names.FILTERS);
     }

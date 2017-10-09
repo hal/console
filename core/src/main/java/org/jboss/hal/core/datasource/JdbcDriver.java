@@ -25,9 +25,6 @@ import org.jboss.hal.resources.Names;
 import static com.google.common.base.Strings.emptyToNull;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class JdbcDriver extends ModelNode {
 
     public enum Provider {
