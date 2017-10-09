@@ -23,7 +23,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         theme: grunt.option('theme') || 'hal',
         config: {
-            version: '0.9.1-SNAPSHOT',
+            version: '0.9.1',
             bower: 'bower_components',
             less: 'src/main/less',
             public: 'src/main/resources/org/jboss/hal/public',
