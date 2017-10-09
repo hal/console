@@ -115,7 +115,7 @@
                     <execution>
                         <id>publish-hal-edk</id>
                         <goals>
-                            <goal>yarn</goal>
+                            <goal>npm</goal>
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
@@ -127,7 +127,7 @@
                     <execution>
                         <id>publish-hal-console</id>
                         <goals>
-                            <goal>yarn</goal>
+                            <goal>npm</goal>
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
