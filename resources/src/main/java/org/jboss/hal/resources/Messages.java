@@ -476,6 +476,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String undertowListenerProcessingDisabled(String listener, String server, String profile);
     String updateAvailable(String current, String update);
     SafeHtml updateServerError(String name);
+    SafeHtml uploadContentDescription();
+    String uploadContentInvalid();
     SafeHtml uploadError(String name);
     SafeHtml uploadInProgress(String name);
     SafeHtml uploadSuccessful(String name);
@@ -490,5 +492,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String view(String type);
 
     SafeHtml writeBehaviour(String current, String switchTo);
+
     //@formatter:on
 }

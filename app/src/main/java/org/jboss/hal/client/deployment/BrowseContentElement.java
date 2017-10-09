@@ -33,19 +33,20 @@ import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Search;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.form.FileItem;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
@@ -61,8 +62,8 @@ import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import rx.Completable;
+import rx.Single;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
@@ -392,15 +393,14 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void addContent() {
-        NameItem nameItem = new NameItem();
-        TextBoxItem pathItem = new TextBoxItem(TARGET_PATH);
+        TextBoxItem targetPathItem = new TextBoxItem(TARGET_PATH);
+        targetPathItem.setRequired(true);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
-                .unboundFormItem(nameItem)
-                .unboundFormItem(pathItem)
+                .unboundFormItem(targetPathItem)
                 .addOnly()
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.constants().newContent(), form, (name, model) -> {
-            String path = fullPath(pathItem.getValue(), nameItem.getValue());
+            String path = targetPathItem.getValue();
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
             ModelNode contentNode = new ModelNode();
             contentNode.get(INPUT_STREAM_INDEX).set(0);
@@ -408,7 +408,7 @@ class BrowseContentElement implements IsElement, Attachable {
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
-            dispatcher.upload(file(nameItem.getValue(), ""), operation)
+            dispatcher.upload(file(filename(path), ""), operation)
                     .toCompletable()
                     .andThen(browseContent())
                     .andThen(awaitTreeReady())
@@ -418,30 +418,53 @@ class BrowseContentElement implements IsElement, Attachable {
                         tree.selectNode(NODE_ID.apply(path));
                     });
         });
-        pathItem.setValue(selectedPath());
+        targetPathItem.setValue(selectedPath());
         dialog.show();
     }
 
     private void uploadContent() {
-        FileItem fileItem = new FileItem(FILE, new LabelBuilder().label(FILE));
-        fileItem.setRequired(true);
-        TextBoxItem pathItem = new TextBoxItem(TARGET_PATH);
+        LabelBuilder labelBuilder = new LabelBuilder();
+        TextBoxItem targetPathItem = new TextBoxItem(TARGET_PATH);
+        targetPathItem.setRequired(true);
+
+        FileItem fileItem = new FileItem(FILE, labelBuilder.label(FILE));
+        fileItem.addValueChangeHandler(event ->
+                targetPathItem.setValue(appendFilename(targetPathItem.getValue(), event.getValue().name)));
+
+        TextBoxItem urlItem = new TextBoxItem(URL, labelBuilder.label(URL));
+        urlItem.addValueChangeHandler(event ->
+                targetPathItem.setValue(appendFilename(targetPathItem.getValue(), filename(event.getValue()))));
+
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
                 .unboundFormItem(fileItem)
-                .unboundFormItem(pathItem)
+                .unboundFormItem(urlItem)
+                .unboundFormItem(targetPathItem)
                 .addOnly()
                 .build();
-        AddResourceDialog dialog = new AddResourceDialog(resources.constants().uploadContent(), form, (name, model) -> {
-            String path = fullPath(pathItem.getValue(), fileItem.getValue().name);
+        form.addFormValidation(f -> {
+            if (fileItem.isEmpty() && urlItem.isEmpty()) {
+                return ValidationResult.invalid(resources.messages().uploadContentInvalid());
+            }
+            return ValidationResult.OK;
+        });
+        form.setSaveCallback((f, model) -> {
+            String path = targetPathItem.getValue();
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+
             ModelNode contentNode = new ModelNode();
-            contentNode.get(INPUT_STREAM_INDEX).set(0);
+            if (fileItem.isEmpty()) {
+                contentNode.get(URL).set(urlItem.getValue());
+            } else {
+                contentNode.get(INPUT_STREAM_INDEX).set(0);
+            }
             contentNode.get(TARGET_PATH).set(path);
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
-            dispatcher.upload(fileItem.getValue(), operation)
-                    .toCompletable()
+            Single<ModelNode> single = fileItem.isEmpty()
+                    ? dispatcher.execute(operation)
+                    : dispatcher.upload(fileItem.getValue(), operation);
+            single.toCompletable()
                     .andThen(browseContent())
                     .andThen(awaitTreeReady())
                     .subscribe(() -> {
@@ -450,8 +473,18 @@ class BrowseContentElement implements IsElement, Attachable {
                         tree.selectNode(NODE_ID.apply(path));
                     });
         });
-        pathItem.setValue(selectedPath());
+
+        Dialog dialog = new Dialog.Builder(resources.constants().uploadContent())
+                .add(p().innerHtml(resources.messages().uploadContentDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().upload(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        targetPathItem.setValue(selectedPath());
         dialog.show();
+        form.edit(new ModelNode());
     }
 
     private Completable browseContent() {
@@ -711,16 +744,29 @@ class BrowseContentElement implements IsElement, Attachable {
             if (!selection.data.directory) {
                 path = Strings.getParent(path);
             }
+            path += "/";
         }
         return nullToEmpty(path);
     }
 
-    private String fullPath(String path, String name) {
-        String localPath = Strings.strip(path, "/");
-        String localName = Strings.strip(name, "/");
-        return isNullOrEmpty(localPath)
-                ? nullToEmpty(localName)
-                : nullToEmpty(localPath) + "/" + nullToEmpty(localName);
+    private String appendFilename(String path, String file) {
+        if (!com.google.common.base.Strings.isNullOrEmpty(path)) {
+            if (path.endsWith("/")) {
+                return path + file;
+            } else {
+                return Strings.getParent(path) + "/" + file;
+            }
+        }
+        return file;
+    }
+
+    private String filename(String path) {
+        if (path != null) {
+            return path.contains("/")
+                    ? Strings.substringAfterLast(path, "/")
+                    : path;
+        }
+        return null;
     }
 
     private File file(String name, String content) {

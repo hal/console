@@ -108,7 +108,7 @@ public class FileItem extends AbstractFormItem<File> {
         addAppearance(Form.State.EDITING, editingAppearance);
 
         remember(bind(fileInput, change, event -> {
-            setValue(fileInput.files.getAt(0));
+            setValue(fileInput.files.getAt(0), true);
             setModified(true);
             setUndefined(false);
         }));
