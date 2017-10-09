@@ -18,9 +18,6 @@ package org.jboss.hal.ballroom.form;
 /**
  * Predefined set of decorations which can be {@linkplain Appearance#apply(Decoration, Object) applied} and
  * {@linkplain Appearance#unapply(Decoration) unapplied} to an {@link Appearance} to modify its L&F.
- *
- * TODO Add a SENSITIVE decoration which would be used by the PasswordItem and all form items which have
- * a access constraint of type sensitive in their metadata.
  */
 public enum Decoration {
     // The context used with the decoration is given as comment.

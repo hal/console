@@ -118,7 +118,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String deploymentEmptyCreate();
     String deploymentError();
     String deploymentInProgress();
-    String deploymentPreview();
     String deploymentSuccessful();
     String deployments();
     String description();
@@ -335,7 +334,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noAttributes();
     String noBootErrors();
     String noConfiguredMailServers();
-    String noContentSelected();
     String noDetails();
     String noExecutions();
     String noHaPolicy();
@@ -523,7 +521,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unmanaged();
     String unpin();
     String unsupportedFileType();
-    String unsupportedFileTypeDescription();
     String uploadContent();
     String uploadPatch();
     String uploadDeployment();

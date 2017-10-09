@@ -122,6 +122,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentInProgress(String name);
     SafeHtml deploymentNotEnabled(String name);
     SafeHtml deploymentOpFailed(@PluralCount int count);
+    SafeHtml deploymentPreview();
     SafeHtml deploymentReadError(String deployment);
     SafeHtml deploymentReplaced(@PluralCount int count);
     String deploymentStandaloneColumnFilterDescription();
@@ -149,6 +150,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml expireMessageQuestion();
     SafeHtml expireMessagesQuestion();
     SafeHtml expireMessageSuccess();
+    SafeHtml explodedPreview();
     SafeHtml expressionError(String expression);
     SafeHtml expressionWarning(String expression);
     String extensionColumnFilterDescription();
@@ -243,8 +245,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String noBootErrors();
     SafeHtml noChanges();
     SafeHtml noContent();
-    SafeHtml noSelectedPatch();
     SafeHtml noContentSelected();
+    SafeHtml noContentSelectedInDeployment();
     SafeHtml noContextForNormalMode();
     SafeHtml noDeployment();
     SafeHtml noDeploymentsUploaded();
@@ -261,6 +263,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noReset();
     SafeHtml noResource();
     SafeHtml noSecuritySettingSelected();
+    SafeHtml noSelectedPatch();
     SafeHtml noServerGroupSelected();
     SafeHtml noStore();
     SafeHtml noTransport();
@@ -480,6 +483,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml unknownError();
     SafeHtml unknownResource();
     String unknownResourceDetails(String address, String reason);
+    SafeHtml unsupportedFileTypeDescription();
     String uptime(String uptime);
     String used(double value);
 
