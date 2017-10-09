@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.bower",
-  "version": "0.9.1-SNAPSHOT",
+  "version": "0.9.1",
   "description": "Bower dependencies",
   "license": "Apache-2.0",
   "private": true,
