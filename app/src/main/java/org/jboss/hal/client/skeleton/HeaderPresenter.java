@@ -123,6 +123,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         void hideReconnect();
 
         void onMessage(Message message);
+        void onMarkAllAsRead();
         void onClearMessage();
 
         void selectTopLevelCategory(String nameToken);
@@ -283,6 +284,10 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     @Override
     public void onMessage(final MessageEvent event) {
         getView().onMessage(event.getMessage());
+    }
+
+    void onMarkAllAsRead() {
+        getView().onMarkAllAsRead();
     }
 
     void onClearMessage() {

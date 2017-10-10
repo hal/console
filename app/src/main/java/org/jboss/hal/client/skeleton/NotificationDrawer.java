@@ -139,6 +139,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
         Elements.stream(root.querySelectorAll("." + drawerPfNotification + "." + unread))
                 .forEach(element -> element.classList.remove(unread));
         updateElements();
+        presenter.onMarkAllAsRead();
     }
 
     void remove(String id) {
