@@ -197,6 +197,16 @@ public class ContentColumn extends FinderColumn<Content> {
             }
 
             @Override
+            public HTMLElement asElement() {
+                if (!item.getServerGroupDeployments().isEmpty()) {
+                    return ItemDisplay.withSubtitle(item.getName(), item.getServerGroupDeployments().stream()
+                            .map(ServerGroupDeployment::getServerGroup)
+                            .collect(joining(", ")));
+                }
+                return null;
+            }
+
+            @Override
             public String getTooltip() {
                 return String.join(", ",
                         item.isExploded() ? resources.constants().exploded() : resources.constants().archived(),

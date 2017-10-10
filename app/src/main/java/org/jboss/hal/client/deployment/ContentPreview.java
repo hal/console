@@ -100,7 +100,7 @@ class ContentPreview extends PreviewContent<Content> {
     }
 
     @Override
-    public void update(final Content content) {
+    public void update(Content content) {
         attributes.refresh(content);
 
         boolean undeployed = content.getServerGroupDeployments().isEmpty();

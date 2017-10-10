@@ -43,9 +43,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployment> {
 
-    ServerGroupDeploymentPreview(final ServerGroupDeploymentColumn column, final ServerGroupDeployment sgd,
-            final Places places, final Resources resources, final ServerActions serverActions,
-            final Environment environment) {
+    ServerGroupDeploymentPreview(ServerGroupDeploymentColumn column, ServerGroupDeployment sgd, Places places,
+            Resources resources, ServerActions serverActions, Environment environment) {
         super(sgd.getName(), serverActions, environment, sgd.getDeployment());
 
         Deployment deployment = sgd.getDeployment();
