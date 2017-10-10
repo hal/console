@@ -18,9 +18,12 @@ package org.jboss.hal.client.deployment;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Resources;
 
 public class BrowseContentView extends HalViewImpl implements BrowseContentPresenter.MyView {
@@ -28,8 +31,10 @@ public class BrowseContentView extends HalViewImpl implements BrowseContentPrese
     private final BrowseContentElement browseContent;
 
     @Inject
-    public BrowseContentView(Dispatcher dispatcher, EventBus eventBus, Resources resources) {
-        browseContent = new BrowseContentElement(dispatcher, eventBus, resources);
+    public BrowseContentView(Dispatcher dispatcher, EventBus eventBus, Environment environment,
+            MetadataRegistry metadataRegistry, Resources resources) {
+        Metadata metadata = metadataRegistry.lookup(ContentColumn.CONTENT_TEMPLATE);
+        browseContent = new BrowseContentElement(dispatcher, environment, eventBus, metadata, resources);
         registerAttachable(browseContent);
         initElement(browseContent);
     }

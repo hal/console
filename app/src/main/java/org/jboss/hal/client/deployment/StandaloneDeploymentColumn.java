@@ -307,8 +307,10 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private void createEmpty() {
         new CreateEmptyDialog(resources, name -> {
             ResourceAddress address = DEPLOYMENT_TEMPLATE.resolve(statementContext, name);
+            ModelNode contentNode = new ModelNode();
+            contentNode.get(EMPTY).set(true);
             Operation operation = new Operation.Builder(address, ADD)
-                    .param(CONTENT, new ModelNode().add(new ModelNode().set(EMPTY, true)))
+                    .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
             dispatcher.execute(operation, result -> {
                 refresh(Ids.deployment(name));

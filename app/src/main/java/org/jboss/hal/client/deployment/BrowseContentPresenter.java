@@ -34,6 +34,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
@@ -46,6 +47,7 @@ public class BrowseContentPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.BROWSE_CONTENT)
+    @Requires(value = ContentColumn.CONTENT_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {}
 
     public interface MyView extends HalView {

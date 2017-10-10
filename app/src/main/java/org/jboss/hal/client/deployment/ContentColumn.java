@@ -33,6 +33,7 @@ import org.jboss.hal.client.deployment.DeploymentTasks.CheckDeployment;
 import org.jboss.hal.client.deployment.DeploymentTasks.LoadContent;
 import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
+import org.jboss.hal.client.deployment.dialog.CreateEmptyDialog;
 import org.jboss.hal.client.deployment.dialog.DeployContentDialog1;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContentStep;
@@ -64,6 +65,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
@@ -114,6 +116,7 @@ public class ContentColumn extends FinderColumn<Content> {
     private final Provider<Progress> progress;
     private final MetadataRegistry metadataRegistry;
     private final SecurityContextRegistry securityContextRegistry;
+    private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
@@ -127,6 +130,7 @@ public class ContentColumn extends FinderColumn<Content> {
             @Footer Provider<Progress> progress,
             MetadataRegistry metadataRegistry,
             SecurityContextRegistry securityContextRegistry,
+            StatementContext statementContext,
             Resources resources) {
 
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
@@ -157,6 +161,7 @@ public class ContentColumn extends FinderColumn<Content> {
         this.progress = progress;
         this.metadataRegistry = metadataRegistry;
         this.securityContextRegistry = securityContextRegistry;
+        this.statementContext = statementContext;
         this.resources = resources;
 
         List<ColumnAction<Content>> addActions = new ArrayList<>();
@@ -170,9 +175,15 @@ public class ContentColumn extends FinderColumn<Content> {
                 .handler(column -> addUnmanaged())
                 .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
                 .build());
+        addActions.add(new ColumnAction.Builder<Content>(Ids.DEPLOYMENT_EMPTY_CREATE)
+                .title(resources.constants().deploymentEmptyCreate())
+                .handler(column -> createEmpty())
+                .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
+                .build());
         addColumnActions(Ids.CONTENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.CONTENT_REFRESH));
-        setPreviewCallback(item -> new ContentPreview(this, item, places, resources));
+        setPreviewCallback(item -> new ContentPreview(this, item, environment, places,
+                metadataRegistry.lookup(SERVER_GROUP_DEPLOYMENT_TEMPLATE), resources));
 
         setItemRenderer(item -> new ItemDisplay<Content>() {
             @Override
@@ -335,6 +346,21 @@ public class ContentColumn extends FinderColumn<Content> {
                             }
                         }));
         dialog.show();
+    }
+
+    private void createEmpty() {
+        new CreateEmptyDialog(resources, name -> {
+            ResourceAddress address = CONTENT_TEMPLATE.resolve(statementContext, name);
+            ModelNode contentNode = new ModelNode();
+            contentNode.get(EMPTY).set(true);
+            Operation operation = new Operation.Builder(address, ADD)
+                    .param(CONTENT, new ModelNode().add(contentNode))
+                    .build();
+            dispatcher.execute(operation, result -> {
+                refresh(Ids.deployment(name));
+                MessageEvent.fire(eventBus, Message.success(resources.messages().deploymentEmptySuccess(name)));
+            });
+        }).show();
     }
 
     private void replace(Content content) {
