@@ -39,17 +39,17 @@ public class ItemAction<T> {
             this.attributes = new HashMap<>();
         }
 
-        public Builder<T> title(final String title) {
+        public Builder<T> title(String title) {
             this.title = title;
             return this;
         }
 
-        public Builder<T> handler(final ItemActionHandler<T> handler) {
+        public Builder<T> handler(ItemActionHandler<T> handler) {
             this.handler = handler;
             return this;
         }
 
-        public Builder<T> href(final String href, final String... attributes) {
+        public Builder<T> href(String href, String... attributes) {
             this.href = href;
             if (attributes != null && attributes.length > 1) {
                 if (attributes.length % 2 != 0) {
@@ -62,12 +62,12 @@ public class ItemAction<T> {
             return this;
         }
 
-        public Builder<T> constraint(final Constraint constraint) {
+        public Builder<T> constraint(Constraint constraint) {
             this.constraint = constraint;
             return this;
         }
 
-        public Builder<T> constraints(final Constraints constraints) {
+        public Builder<T> constraints(Constraints constraints) {
             this.constraints = constraints;
             return this;
         }
@@ -91,7 +91,7 @@ public class ItemAction<T> {
     final Map<String, String> attributes;
     final Constraints constraints;
 
-    private ItemAction(final Builder<T> builder) {
+    private ItemAction(Builder<T> builder) {
         this.title = builder.title;
         this.handler = builder.handler;
         this.href = builder.href;

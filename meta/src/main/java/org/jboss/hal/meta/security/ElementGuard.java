@@ -41,8 +41,6 @@ public class ElementGuard {
      * <p>
      * Use this filter to find elements which can be processed by other security related functions such as
      * {@link Toggle}.
-     *
-     * @author Harald Pehl
      */
     public static class Visible implements Predicate<Element> {
 
@@ -53,11 +51,7 @@ public class ElementGuard {
     }
 
 
-    /**
-     * Toggle the CSS class {@link org.jboss.hal.resources.CSS#rbacHidden} based on the element's constraints.
-     *
-     * @author Harald Pehl
-     */
+    /** Toggle the CSS class {@link org.jboss.hal.resources.CSS#rbacHidden} based on the element's constraints. */
     public static class Toggle implements Consumer<Element> {
 
         private final AuthorisationDecision authorisationDecision;
