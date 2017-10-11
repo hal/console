@@ -144,6 +144,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             String host = deployment.getReferenceServer().getHost();
             String serverGroup = deployment.getReferenceServer().getServerGroup();
             String server = deployment.getReferenceServer().getName();
+            //noinspection Duplicates
             serverActions.readUrl(environment.isStandalone(), host, serverGroup, server,
                     new AsyncCallback<ServerUrl>() {
                         @Override

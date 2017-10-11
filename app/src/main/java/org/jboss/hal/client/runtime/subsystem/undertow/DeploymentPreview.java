@@ -30,6 +30,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerUrl;
 import org.jboss.hal.dmr.Operation;
@@ -126,9 +127,10 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
             linkContainers.addAll(elements);
         });
         if (!linkContainers.isEmpty()) {
-            String host = statementContext.selectedHost();
+            String host = environment.isStandalone() ? Server.STANDALONE.getHost() : statementContext.selectedHost();
             String serverGroup = statementContext.selectedServerGroup();
-            String server = statementContext.selectedServer();
+            String server = environment.isStandalone() ? Server.STANDALONE.getName() : statementContext.selectedServer();
+            //noinspection Duplicates
             serverActions.readUrl(environment.isStandalone(), host, serverGroup, server,
                     new AsyncCallback<ServerUrl>() {
                         @Override
