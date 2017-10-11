@@ -185,7 +185,7 @@ public class JobColumn extends FinderColumn<JobNode> {
                 actions.add(itemActionFactory.view(placeRequest));
                 actions.add(new ItemAction.Builder<JobNode>()
                         .title(resources.constants().start())
-                        .constraint(Constraint.executable(BATCH_DEPLOYMENT_JOB_TEMPLATE, START_SERVERS))
+                        .constraint(Constraint.executable(BATCH_DEPLOYMENT_JOB_TEMPLATE, START_JOB))
                         .handler(itm -> startJob(itm))
                         .build());
                 return actions;
