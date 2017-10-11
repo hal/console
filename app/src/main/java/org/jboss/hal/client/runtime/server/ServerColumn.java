@@ -361,7 +361,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (item.isStarted()) {
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().editURL())
-                                .handler(itm -> editURL(itm))
+                                .handler(itm -> serverActions.editUrl(itm, () -> refresh(RESTORE_SELECTION)))
                                 .build());
                         actions.add(ItemAction.separator());
                         // Order is: reload, restart, (resume | suspend), stop
@@ -498,10 +498,6 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         });
             });
         }
-    }
-
-    private void editURL(Server server) {
-        serverActions.editUrl(server, () -> refresh(RESTORE_SELECTION));
     }
 
     private void copyServer(Server server) {

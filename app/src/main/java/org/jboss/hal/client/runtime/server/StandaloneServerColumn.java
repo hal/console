@@ -97,77 +97,6 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     });
                 })
 
-                .itemRenderer(item -> new ItemDisplay<Server>() {
-                    @Override
-                    public String getId() {
-                        return item.getId();
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return item.getName();
-                    }
-
-                    @Override
-                    public String getTooltip() {
-                        return new ServerTooltip(serverActions, resources).apply(item);
-                    }
-
-                    @Override
-                    public HTMLElement getIcon() {
-                        return new ServerIcon(serverActions).apply(item);
-                    }
-
-                    @Override
-                    public List<ItemAction<Server>> actions() {
-                        List<ItemAction<Server>> actions = new ArrayList<>();
-                        if (!serverActions.isPending(item)) {
-                            // Order is: reload, restart, (resume | suspend), boot errors
-                            actions.add(new ItemAction.Builder<Server>()
-                                    .title(resources.constants().reload())
-                                    .handler(serverActions::reload)
-                                    .constraint(Constraint.executable(AddressTemplate.ROOT, RELOAD))
-                                    .build());
-                            actions.add(new ItemAction.Builder<Server>()
-                                    .title(resources.constants().restart())
-                                    .handler(serverActions::restart)
-                                    .constraint(Constraint.executable(AddressTemplate.ROOT, SHUTDOWN))
-                                    .build());
-                            if (item.isSuspended()) {
-                                actions.add(new ItemAction.Builder<Server>()
-                                        .title(resources.constants().resume())
-                                        .handler(serverActions::resume)
-                                        .constraint(Constraint.executable(AddressTemplate.ROOT, RESUME))
-                                        .build());
-                            } else {
-                                actions.add(new ItemAction.Builder<Server>()
-                                        .title(resources.constants().suspend())
-                                        .handler(serverActions::suspend)
-                                        .constraint(Constraint.executable(AddressTemplate.ROOT, SUSPEND))
-                                        .build());
-                            }
-                            if (item.hasBootErrors()) {
-                                PlaceRequest bootErrorsRequest = new PlaceRequest.Builder().nameToken(
-                                        NameTokens.SERVER_BOOT_ERRORS).build();
-                                actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest,
-                                        Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
-                            }
-                            if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
-                                PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
-                                        .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
-                                actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                        ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
-                            }
-                        }
-                        return actions;
-                    }
-
-                    @Override
-                    public String nextColumn() {
-                        return Ids.RUNTIME_SUBSYSTEM;
-                    }
-                })
-
                 .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
                         resources))
         );
@@ -175,6 +104,84 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
         this.finder = finder;
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);
+
+        setItemRenderer(item -> new ItemDisplay<Server>() {
+            @Override
+            public String getId() {
+                return item.getId();
+            }
+
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public String getTooltip() {
+                return new ServerTooltip(serverActions, resources).apply(item);
+            }
+
+            @Override
+            public HTMLElement getIcon() {
+                return new ServerIcon(serverActions).apply(item);
+            }
+
+            @Override
+            public List<ItemAction<Server>> actions() {
+                List<ItemAction<Server>> actions = new ArrayList<>();
+                if (item.hasBootErrors()) {
+                    PlaceRequest bootErrorsRequest = new PlaceRequest.Builder().nameToken(
+                            NameTokens.SERVER_BOOT_ERRORS).build();
+                    actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest,
+                            Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
+                }
+                if (!serverActions.isPending(item)) {
+                    // Order is: reload, restart, (resume | suspend)
+                    actions.add(new ItemAction.Builder<Server>()
+                            .title(resources.constants().reload())
+                            .handler(serverActions::reload)
+                            .constraint(Constraint.executable(AddressTemplate.ROOT, RELOAD))
+                            .build());
+                    actions.add(new ItemAction.Builder<Server>()
+                            .title(resources.constants().restart())
+                            .handler(serverActions::restart)
+                            .constraint(Constraint.executable(AddressTemplate.ROOT, SHUTDOWN))
+                            .build());
+                    if (ManagementModel.supportsSuspend(item.getManagementVersion())) {
+                        if (item.isSuspended()) {
+                            actions.add(new ItemAction.Builder<Server>()
+                                    .title(resources.constants().resume())
+                                    .handler(serverActions::resume)
+                                    .constraint(Constraint.executable(AddressTemplate.ROOT, RESUME))
+                                    .build());
+                        } else {
+                            actions.add(new ItemAction.Builder<Server>()
+                                    .title(resources.constants().suspend())
+                                    .handler(serverActions::suspend)
+                                    .constraint(Constraint.executable(AddressTemplate.ROOT, SUSPEND))
+                                    .build());
+                        }
+                    }
+                    actions.add(ItemAction.separator());
+                    if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                        PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
+                                .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
+                        actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
+                                ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                    }
+                    actions.add(new ItemAction.Builder<Server>()
+                            .title(resources.constants().editURL())
+                            .handler(itm -> serverActions.editUrl(itm, () -> refresh(RESTORE_SELECTION)))
+                            .build());
+                }
+                return actions;
+            }
+
+            @Override
+            public String nextColumn() {
+                return Ids.RUNTIME_SUBSYSTEM;
+            }
+        });
     }
 
     @Override
