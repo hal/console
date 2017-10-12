@@ -1597,22 +1597,22 @@ public class ModelNode implements Cloneable {
         }
     }
 
-    /**
-     * @return true if this node has an outcome and the outcome does not equal "success"
-     */
+    /** @return {@code true} if this node has an outcome and the outcome does not equal "success" */
     @JsProperty
     public boolean isFailure() {
         return hasDefined(OUTCOME) && !get(OUTCOME).asString().equals(SUCCESS);
     }
 
-    /**
-     * @return the failure description or "No failure-description provided"
-     */
+    /** @return the failure description or "No failure-description provided" */
     @JsProperty
     public String getFailureDescription() {
-        return hasDefined(FAILURE_DESCRIPTION)
-                ? get(FAILURE_DESCRIPTION).asString()
-                : "No failure-description provided";
+        if (hasDefined(FAILURE_DESCRIPTION)) {
+            StringBuilder failure = new StringBuilder();
+            get(FAILURE_DESCRIPTION).format(failure, 0, true);
+            return failure.toString();
+        } else {
+            return "No failure-description provided";
+        }
     }
 
     @JsIgnore
@@ -1633,6 +1633,7 @@ public class ModelNode implements Cloneable {
 
     /**
      * Creates a new undefined model node
+     *
      * @return the new model node
      */
     @JsMethod(name = "create")

@@ -52,9 +52,9 @@ final class ObjectModelValue extends ModelValue {
 
     private final Map<String, ModelNode> map;
 
-    protected ObjectModelValue() {
+    ObjectModelValue() {
         super(ModelType.OBJECT);
-        map = new LinkedHashMap<String, ModelNode>();
+        map = new LinkedHashMap<>();
     }
 
     private ObjectModelValue(final Map<String, ModelNode> map) {
@@ -65,7 +65,7 @@ final class ObjectModelValue extends ModelValue {
     ObjectModelValue(final DataInput in) throws IOException {
         super(ModelType.OBJECT);
         final int count = in.readInt();
-        final LinkedHashMap<String, ModelNode> map = new LinkedHashMap<String, ModelNode>();
+        final LinkedHashMap<String, ModelNode> map = new LinkedHashMap<>();
         for (int i = 0; i < count; i++) {
             final String key = in.readUTF();
             final ModelNode value = new ModelNode();
@@ -163,7 +163,7 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     List<Property> asPropertyList() {
-        final List<Property> propertyList = new ArrayList<Property>();
+        final List<Property> propertyList = new ArrayList<>();
         for (final Map.Entry<String, ModelNode> entry : map.entrySet()) {
             propertyList.add(new Property(entry.getKey(), entry.getValue()));
         }
@@ -181,7 +181,7 @@ final class ObjectModelValue extends ModelValue {
     }
 
     ModelValue copy(final boolean resolve) {
-        final LinkedHashMap<String, ModelNode> newMap = new LinkedHashMap<String, ModelNode>();
+        final LinkedHashMap<String, ModelNode> newMap = new LinkedHashMap<>();
         for (final Map.Entry<String, ModelNode> entry : map.entrySet()) {
             newMap.put(entry.getKey(), resolve ? entry.getValue().resolve() : entry.getValue().clone());
         }
@@ -190,7 +190,7 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     List<ModelNode> asList() {
-        final ArrayList<ModelNode> nodes = new ArrayList<ModelNode>();
+        final ArrayList<ModelNode> nodes = new ArrayList<>();
         for (final Map.Entry<String, ModelNode> entry : map.entrySet()) {
             final ModelNode node = new ModelNode();
             node.set(entry.getKey(), entry.getValue());

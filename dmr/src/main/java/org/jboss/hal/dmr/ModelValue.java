@@ -48,6 +48,8 @@ import java.util.Set;
 @SuppressWarnings("HardCodedStringLiteral")
 abstract class ModelValue implements Cloneable {
 
+    private static final String TAB_SIZE = "  ";
+
     static final ModelValue UNDEFINED = new ModelValue(ModelType.UNDEFINED) {
 
         @Override
@@ -165,7 +167,7 @@ abstract class ModelValue implements Cloneable {
 
     protected static void indent(final StringBuilder target, final int count) {
         for (int i = 0; i < count; i++) {
-            target.append("    ");
+            target.append(TAB_SIZE);
         }
     }
     private final ModelType type;
