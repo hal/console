@@ -212,10 +212,7 @@ public interface Ids {
     String ELYTRON_CUSTOM_MODIFIABLE_REALM = build(ELYTRON, "custom-modifiable-realm");
     String ELYTRON_CUSTOM_PERMISSION_MAPPER = build(ELYTRON, "custom-permission-mapper");
     String ELYTRON_CUSTOM_POLICY = build(ELYTRON, "custom-policy");
-    String ELYTRON_CUSTOM_POLICY_ADD = build(ELYTRON_CUSTOM_POLICY, ADD_SUFFIX);
     String ELYTRON_CUSTOM_POLICY_FORM = build(ELYTRON_CUSTOM_POLICY, FORM_SUFFIX);
-    String ELYTRON_CUSTOM_POLICY_PAGE = build(ELYTRON_CUSTOM_POLICY, PAGE_SUFFIX);
-    String ELYTRON_CUSTOM_POLICY_TABLE = build(ELYTRON_CUSTOM_POLICY, TABLE_SUFFIX);
     String ELYTRON_CUSTOM_PRINCIPAL_DECODER = build(ELYTRON, "custom-principal-decoder");
     String ELYTRON_CUSTOM_PRINCIPAL_TRANSFORMER = build(ELYTRON, "custom-principal-transformer");
     String ELYTRON_CUSTOM_REALM = build(ELYTRON, "custom-realm");
@@ -229,10 +226,7 @@ public interface Ids {
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY = build(ELYTRON, "http-authentication-factory");
     String ELYTRON_IDENTITY_REALM = build(ELYTRON, "identity-realm");
     String ELYTRON_JACC_POLICY = build(ELYTRON, "jacc-policy");
-    String ELYTRON_JACC_POLICY_ADD = build(ELYTRON_JACC_POLICY, ADD_SUFFIX);
     String ELYTRON_JACC_POLICY_FORM = build(ELYTRON_JACC_POLICY, FORM_SUFFIX);
-    String ELYTRON_JACC_POLICY_PAGE = build(ELYTRON_JACC_POLICY, PAGE_SUFFIX);
-    String ELYTRON_JACC_POLICY_TABLE = build(ELYTRON_JACC_POLICY, TABLE_SUFFIX);
     String ELYTRON_JDBC_REALM = build(ELYTRON, "jdbc-realm");
     String ELYTRON_KERBEROS_SECURITY_FACTORY = build(ELYTRON, "kerberos-security-factory");
     String ELYTRON_KEY_MANAGER = build(ELYTRON, "key-manager");
@@ -257,8 +251,6 @@ public interface Ids {
     String ELYTRON_PERMISSION_MAPPINGS_PAGE = build(ELYTRON_PERMISSION_MAPPINGS, PAGE_SUFFIX);
     String ELYTRON_PERMISSION_MAPPINGS_TABLE = build(ELYTRON_PERMISSION_MAPPINGS, TABLE_SUFFIX);
     String ELYTRON_POLICY = build(ELYTRON, "policy");
-    String ELYTRON_POLICY_FORM = build(ELYTRON, "policy", FORM_SUFFIX);
-    String ELYTRON_POLICY_PAGE = build(ELYTRON, "policy", PAGE_SUFFIX);
     String ELYTRON_POLICY_TABLE = build(ELYTRON, "policy", TABLE_SUFFIX);
     String ELYTRON_PROPERTIES_REALM = build(ELYTRON, "properties-realm");
     String ELYTRON_PROVIDER_HTTP_SERVER_MECHANISM_FACTORY = build(ELYTRON, "provider-http-server-mechanism-factory");
@@ -606,10 +598,7 @@ public interface Ids {
     String SERVER_RUNTIME = build(SERVER, "runtime");
     String SERVER_RUNTIME_ITEM = build(SERVER_RUNTIME, "item");
     String SERVER_RUNTIME_BOOTSTRAP_FORM = build(SERVER_RUNTIME, "bootstrap", FORM_SUFFIX);
-    String SERVER_RUNTIME_BOOTSTRAP_TAB = build(SERVER_RUNTIME, "bootstrap", TAB_SUFFIX);
     String SERVER_RUNTIME_JVM_ATTRIBUTES_FORM = build(SERVER_RUNTIME, "jvm-attributes", FORM_SUFFIX);
-    String SERVER_RUNTIME_JVM_ATTRIBUTES_TAB = build(SERVER_RUNTIME, "jvm-attributes", TAB_SUFFIX);
-    String SERVER_RUNTIME_PROPERTIES_TAB = build(SERVER_RUNTIME, "properties", TAB_SUFFIX);
     String SERVER_RUNTIME_PROPERTIES_TABLE = build(SERVER_RUNTIME, "properties", TABLE_SUFFIX);
     String SERVER_RUNTIME_STATUS = build(SERVER_RUNTIME, "status");
     String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_RUNTIME, "bootstrap", ENTRY_SUFFIX);
@@ -692,7 +681,6 @@ public interface Ids {
     String UNDERTOW_RESPONSE_HEADER_ADD = build("undertow-response-header", ADD_SUFFIX);
     String UNDERTOW_RUNTIME = "undertow-runtime";
     String UNDERTOW_RUNTIME_APP_SEC_DOMAIN = "undertow-runtime-app-sec-domain";
-    String UNDERTOW_RUNTIME_APP_SEC_DOMAIN_REFRESH = "undertow-runtime-app-sec-domain-refresh";
     String UNDERTOW_RUNTIME_DEPLOYMENT = "undertow-runtime-deployment";
     String UNDERTOW_RUNTIME_REFRESH = build("undertow-runtime-deployment", REFRESH_SUFFIX);
     String UNDERTOW_RUNTIME_LISTENER = "undertow-runtime-listener";

@@ -26,6 +26,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -83,11 +85,12 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
 
+
     // @formatter:off
     public interface MyView extends MbuiView<OtherSettingsPresenter> {
         void updateResourceElement(String resource, List<NamedNode> nodes);
         void updateLdapKeyStore(List<NamedNode> model);
-        void updatePolicy(List<NamedNode> model);
+        void updatePolicy(NamedNode policy);
     }
     // @formatter:on
 
@@ -99,16 +102,16 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     private final Resources resources;
 
     @Inject
-    public OtherSettingsPresenter(final EventBus eventBus,
-            final OtherSettingsPresenter.MyView view,
-            final OtherSettingsPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public OtherSettingsPresenter(EventBus eventBus,
+            OtherSettingsPresenter.MyView view,
+            OtherSettingsPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            ComplexAttributeOperations ca,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.ca = ca;
@@ -159,9 +162,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG.resource,
                 ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
                 ElytronResource.SYSLOG_AUDIT_LOG.resource,
-                ElytronResource.POLICY.resource,
-                ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource
-                ),
+                ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                ElytronResource.POLICY.resource), // policy must be the last item in the list!
                 result -> {
                     int i = 0;
                     getView().updateResourceElement(ElytronResource.KEY_STORE.resource,
@@ -199,9 +201,11 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.SYSLOG_AUDIT_LOG.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updatePolicy(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    // policy must be the last item in the list!
+                    List<NamedNode> policies = asNamedNodes(result.step(i).get(RESULT).asPropertyList());
+                    getView().updatePolicy(policies.isEmpty() ? null : policies.get(0));
                 });
     }
 
@@ -217,12 +221,12 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 children -> getView().updateLdapKeyStore(asNamedNodes(children)));
     }
 
-    void saveLdapKeyStore(final String name, final Map<String, Object> changedValues) {
+    void saveLdapKeyStore(String name, Map<String, Object> changedValues) {
         crud.save(Names.LDAP_KEY_STORE, name, AddressTemplates.LDAP_KEY_STORE_TEMPLATE, changedValues,
                 this::reloadLdapKeyStores);
     }
 
-    void addNewItemTemplate(final String ldapKeyStore) {
+    void addNewItemTemplate(String ldapKeyStore) {
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_TEMPLATE)
                 .forComplexAttribute(NEW_ITEM_TEMPLATE);
         String id = Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, NEW_ITEM_TEMPLATE, Ids.ADD_SUFFIX);
@@ -239,24 +243,24 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                         AddressTemplates.LDAP_KEY_STORE_TEMPLATE, model, this::reloadLdapKeyStores)).show();
     }
 
-    Operation pingNewItemTemplate(final String ldapKeyStore) {
+    Operation pingNewItemTemplate(String ldapKeyStore) {
         ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_TEMPLATE.resolve(statementContext, ldapKeyStore);
         return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                 .param(NAME, NEW_ITEM_TEMPLATE)
                 .build();
     }
 
-    void saveNewItemTemplate(final String ldapKeyStore, final Map<String, Object> changedValues) {
+    void saveNewItemTemplate(String ldapKeyStore, Map<String, Object> changedValues) {
         ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
                 changedValues, this::reloadLdapKeyStores);
     }
 
 
-    void removeNewItemTemplate(final String ldapKeyStore, final Form<ModelNode> form) {
+    void removeNewItemTemplate(String ldapKeyStore, Form<ModelNode> form) {
         ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
-                new Form.FinishRemove<ModelNode>(form) {
+                new FinishRemove<ModelNode>(form) {
                     @Override
-                    public void afterRemove(final Form<ModelNode> form) {
+                    public void afterRemove(Form<ModelNode> form) {
                         reloadLdapKeyStores();
                     }
                 });
@@ -264,68 +268,53 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     // -------------------------------------------- Policy
 
-    void addPolicy() {
-        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE);
-        String id = Ids.build(Ids.ELYTRON_POLICY, Ids.ADD_SUFFIX);
-        NameItem nameItem = new NameItem();
+    void addPolicy(String complexAttribute, String type) {
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(complexAttribute);
+        String id = Ids.build(Ids.ELYTRON_POLICY, complexAttribute, Ids.ADD_SUFFIX);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .unboundFormItem(new NameItem(), 0)
                 .addOnly()
-                .requiredOnly()
-                .unboundFormItem(nameItem, 0)
                 .build();
-
-        new AddResourceDialog(Names.POLICY, form, (name, model) -> {
-            // sets the "default-policy" to the same name as the policy name as the default value is "policy"
-            // repackage the model because it is not possible to add a policy with no parameter see WFLY-9056
-            model.get("default-policy").set(nameItem.getValue());
-            ModelNode jaccPolicy = new ModelNode();
-            jaccPolicy.get(NAME).set(nameItem.getValue());
-            model.get(JACC_POLICY).add(jaccPolicy);
-            ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, nameItem.getValue());
-            crud.add(Names.POLICY, name, address, model, (n, a) -> reloadPolicy());
+        new AddResourceDialog(type, form, (name, model) -> {
+            ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, name);
+            ModelNode payload = new ModelNode();
+            payload.get(complexAttribute)
+                    .set(model != null && model.isDefined() ? model : new ModelNode().setEmptyObject());
+            crud.add(type, address, payload, resources.messages().addSingleResourceSuccess(type),
+                    (n, a) -> reloadPolicy());
         }).show();
-
     }
 
-    void savePolicy(final String name, final Map<String, Object> changedValues) {
-        crud.save(Names.POLICY, name, AddressTemplates.POLICY_TEMPLATE, changedValues, this::reloadPolicy);
+    void savePolicy(String policyName, String complexAttribute, String type, Map<String, Object> changedValues) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, policyName);
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(complexAttribute);
+        ca.save(complexAttribute, type, address, changedValues, metadata, this::reloadPolicy);
     }
 
-    void reloadPolicy() {
+    void resetPolicy(String policyName, String complexAttribute, String type, Form<ModelNode> form) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, policyName);
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(complexAttribute);
+        ca.reset(complexAttribute, type, address, metadata, form, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(Form<ModelNode> form) {
+                reloadPolicy();
+            }
+        });
+    }
+
+    void removePolicy(String policyName, String type) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, policyName);
+        crud.removeSingleton(type, address, this::reloadPolicy);
+    }
+
+    private void reloadPolicy() {
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, ModelDescriptionConstants.POLICY,
-                children -> getView().updatePolicy(asNamedNodes(children)));
-    }
-
-    void addCustomPolicy(final String selectedPolicyRealm) {
-        ca.listAdd(Ids.ELYTRON_CUSTOM_POLICY_ADD, selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY,
-                POLICY_TEMPLATE, asList(NAME, CLASS_NAME, MODULE), this::reloadPolicy);
-    }
-
-    void removeCustomPolicy(final String selectedPolicyRealm, final int customPolicyIndex) {
-        ca.remove(selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY, customPolicyIndex, POLICY_TEMPLATE,
-                this::reloadPolicy);
-    }
-
-    void saveCustomPolicy(final String selectedPolicyRealm, final int i,
-            final Map<String, Object> changedValues) {
-        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
-        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(CUSTOM_POLICY);
-        ca.save(CUSTOM_POLICY, Names.CUSTOM_POLICY, i, address, changedValues, metadata, this::reloadPolicy);
-    }
-
-    void addJaccPolicy(final String selectedPolicyRealm) {
-        ca.listAdd(Ids.ELYTRON_JACC_POLICY_ADD, selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY,
-                POLICY_TEMPLATE, asList(NAME, POLICY, "configuration-factory", MODULE), this::reloadPolicy);
-    }
-
-    void removeJaccmPolicy(final String selectedPolicyRealm, final int jaccPolicyIndex) {
-        ca.remove(selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY, jaccPolicyIndex, POLICY_TEMPLATE,
-                this::reloadPolicy);
-    }
-
-    void saveJaccPolicy(final String selectedPolicyRealm, final int i, final Map<String, Object> changedValues) {
-        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
-        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(JACC_POLICY);
-        ca.save(JACC_POLICY, Names.JACC_POLICY, i, address, changedValues, metadata, this::reloadPolicy);
+                children -> {
+                    if (children.isEmpty()) {
+                        getView().updatePolicy(null);
+                    } else {
+                        getView().updatePolicy(asNamedNodes(children).get(0));
+                    }
+                });
     }
 }

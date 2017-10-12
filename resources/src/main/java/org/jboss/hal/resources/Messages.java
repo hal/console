@@ -252,10 +252,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noDeploymentsUploaded();
     SafeHtml noExecutions();
     SafeHtml noItems();
+    SafeHtml noLogFile();
     SafeHtml noMatchingItems();
     SafeHtml noMessagesSelected();
-    SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
+    SafeHtml noPolicy();
     String nonEmptyRequires(String fields);
     String noPatchesForHost();
     SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
@@ -492,6 +493,5 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String view(String type);
 
     SafeHtml writeBehaviour(String current, String switchTo);
-
     //@formatter:on
 }

@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     // @formatter:off
@@ -131,7 +128,6 @@ interface AddressTemplates {
     AddressTemplate AGGREGATE_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(AGGREGATE_ROLE_MAPPER_ADDRESS);
     AddressTemplate AGGREGATE_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(AGGREGATE_SASL_SERVER_FACTORY_ADDRESS);
     AddressTemplate AGGREGATE_SECURITY_EVENT_LISTENER_TEMPLATE = AddressTemplate.of(AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS);
-    AddressTemplate AGGREGATE_TRANSFORMER_TEMPLATE = AddressTemplate.of(AGGREGATE_TRANSFORMER_ADDRESS);
     AddressTemplate AUTHENTICATION_CONFIGURATION_TEMPLATE = AddressTemplate.of(AUTHENTICATION_CONFIGURATION_ADDRESS);
     AddressTemplate AUTHENTICATION_CONTEXT_TEMPLATE = AddressTemplate.of(AUTHENTICATION_CONTEXT_ADDRESS);
 
@@ -146,7 +142,6 @@ interface AddressTemplates {
     AddressTemplate CONSTANT_PRINCIPAL_TRANSFORMER_TEMPLATE = AddressTemplate.of(CONSTANT_PRINCIPAL_TRANSFORMER_ADDRESS);
     AddressTemplate CONSTANT_REALM_MAPPER_TEMPLATE = AddressTemplate.of(CONSTANT_REALM_MAPPER_ADDRESS);
     AddressTemplate CONSTANT_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(CONSTANT_ROLE_MAPPER_ADDRESS);
-    AddressTemplate CONSTANT_TRANSFORMER_TEMPLATE = AddressTemplate.of(CONSTANT_TRANSFORMER_ADDRESS);
     AddressTemplate CREDENTIAL_STORE_TEMPLATE = AddressTemplate.of(CREDENTIAL_STORE_ADDRESS);
     AddressTemplate CUSTOM_CREDENTIAL_SECURITY_FACTORY_TEMPLATE = AddressTemplate.of(CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS);
     AddressTemplate CUSTOM_MODIFIABLE_REALM_TEMPLATE = AddressTemplate.of(CUSTOM_MODIFIABLE_REALM_ADDRESS);
@@ -157,7 +152,6 @@ interface AddressTemplates {
     AddressTemplate CUSTOM_REALM_TEMPLATE = AddressTemplate.of(CUSTOM_REALM_ADDRESS);
     AddressTemplate CUSTOM_ROLE_DECODER_TEMPLATE = AddressTemplate.of(CUSTOM_ROLE_DECODER_ADDRESS);
     AddressTemplate CUSTOM_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(CUSTOM_ROLE_MAPPER_ADDRESS);
-    AddressTemplate CUSTOM_TRANSFORMER_TEMPLATE = AddressTemplate.of(CUSTOM_TRANSFORMER_ADDRESS);
 
     AddressTemplate DIR_CONTEXT_TEMPLATE = AddressTemplate.of(DIR_CONTEXT_ADDRESS);
 
@@ -184,7 +178,6 @@ interface AddressTemplates {
     AddressTemplate MAPPED_REGEX_REALM_MAPPER_TEMPLATE = AddressTemplate.of(MAPPED_REGEX_REALM_MAPPER_ADDRESS);
     AddressTemplate MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS);
 
-    AddressTemplate PERIODIC_FILE_AUDIT_LOG_TEMPLATE = AddressTemplate.of(PERIODIC_FILE_AUDIT_LOG_ADDRESS);
     AddressTemplate PERIODIC_ROTATING_FILE_AUDIT_LOG_TEMPLATE = AddressTemplate.of(PERIODIC_ROTATING_FILE_AUDIT_LOG_ADDRESS);
     AddressTemplate POLICY_TEMPLATE = AddressTemplate.of(POLICY_ADDRESS);
     AddressTemplate PROPERTIES_REALM_TEMPLATE = AddressTemplate.of(PROPERTIES_REALM_ADDRESS);

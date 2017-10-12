@@ -341,6 +341,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noMacros();
     String noMatchingItems();
     String noNotifications();
+    String noPolicy();
     String noPrincipalsExcluded();
     String noPrincipalsIncluded();
     String noReferenceServer();

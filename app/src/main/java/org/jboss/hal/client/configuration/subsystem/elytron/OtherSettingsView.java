@@ -25,6 +25,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
 import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
@@ -36,9 +37,9 @@ import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 
 public class OtherSettingsView extends HalViewImpl implements OtherSettingsPresenter.MyView {
-
 
     private final Map<String, ResourceElement> elements;
     private LdapKeyStoreElement ldapKeyStoreElement;
@@ -47,7 +48,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private OtherSettingsPresenter presenter;
 
     @Inject
-    OtherSettingsView(final MbuiContext mbuiContext) {
+    OtherSettingsView(MbuiContext mbuiContext) {
 
         elements = new HashMap<>();
         navigation = new VerticalNavigation();
@@ -105,7 +106,6 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         // ==== SSL elements
 
-
         addResourceElement(AGGREGATE_PROVIDERS,
                 AGGREGATE_PROVIDERS.resourceElement(mbuiContext,
                         () -> presenter.reload(AGGREGATE_PROVIDERS.resource,
@@ -126,8 +126,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 KEY_MANAGER.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(KEY_MANAGER.resource,
                                 nodes -> updateResourceElement(KEY_MANAGER.resource, nodes)))
-                .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
-                .build(),
+                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .build(),
                 primaryIdSsl,
                 Ids.build(KEY_MANAGER.baseId, Ids.ENTRY_SUFFIX),
                 labelBuilder.label(KEY_MANAGER.resource));
@@ -152,8 +152,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 SECURITY_DOMAIN.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(SECURITY_DOMAIN.resource,
                                 nodes -> updateResourceElement(SECURITY_DOMAIN.resource, nodes)))
-                .setComplexListAttribute("realms", "realm")
-                .build(),
+                        .setComplexListAttribute("realms", "realm")
+                        .build(),
                 primaryIdSsl,
                 Ids.build(SECURITY_DOMAIN.baseId, Ids.ENTRY_SUFFIX),
                 labelBuilder.label(SECURITY_DOMAIN.resource));
@@ -162,8 +162,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 TRUST_MANAGER.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(TRUST_MANAGER.resource,
                                 nodes -> updateResourceElement(TRUST_MANAGER.resource, nodes)))
-                .addComplexObjectAttribute("certificate-revocation-list")
-                .build(),
+                        .addComplexObjectAttribute("certificate-revocation-list")
+                        .build(),
                 primaryIdSsl,
                 Ids.build(TRUST_MANAGER.baseId, Ids.ENTRY_SUFFIX),
                 labelBuilder.label(TRUST_MANAGER.resource));
@@ -174,8 +174,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 AUTHENTICATION_CONFIGURATION.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(AUTHENTICATION_CONFIGURATION.resource,
                                 nodes -> updateResourceElement(AUTHENTICATION_CONFIGURATION.resource, nodes)))
-                .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
-                .build(),
+                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .build(),
                 primaryIdAuth,
                 Ids.build(AUTHENTICATION_CONFIGURATION.baseId, Ids.ENTRY_SUFFIX),
                 labelBuilder.label(AUTHENTICATION_CONFIGURATION.resource));
@@ -184,21 +184,21 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 AUTHENTICATION_CONTEXT.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(AUTHENTICATION_CONTEXT.resource,
                                 nodes -> updateResourceElement(AUTHENTICATION_CONTEXT.resource, nodes)))
-                // display all attributes as none of them are required=true
-                .setComplexListAttribute("match-rules", asList(
-                        "match-abstract-type",
-                        "match-abstract-type-authority",
-                        "match-host",
-                        "match-local-security-domain",
-                        "match-no-user",
-                        "match-path",
-                        "match-port",
-                        "match-protocol",
-                        "match-urn",
-                        "match-user",
-                        "authentication-configuration",
-                        "ssl-context"))
-                .build(),
+                        // display all attributes as none of them are required=true
+                        .setComplexListAttribute("match-rules", asList(
+                                "match-abstract-type",
+                                "match-abstract-type-authority",
+                                "match-host",
+                                "match-local-security-domain",
+                                "match-no-user",
+                                "match-path",
+                                "match-port",
+                                "match-protocol",
+                                "match-urn",
+                                "match-user",
+                                ModelDescriptionConstants.AUTHENTICATION_CONFIGURATION,
+                                SSL_CONTEXT))
+                        .build(),
                 primaryIdAuth,
                 Ids.build(AUTHENTICATION_CONTEXT.baseId, Ids.ENTRY_SUFFIX),
                 labelBuilder.label(AUTHENTICATION_CONTEXT.resource));
@@ -247,9 +247,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         // ====== Other settings
 
-
         Metadata policyMetadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.POLICY_TEMPLATE);
-        policyElement = new PolicyElement(policyMetadata, mbuiContext.tableButtonFactory());
+        policyElement = new PolicyElement(policyMetadata, mbuiContext.resources());
         registerAttachable(policyElement);
         navigation.addSecondary(primaryIdOther, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.asElement());
 
@@ -257,12 +256,11 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 DIR_CONTEXT.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(DIR_CONTEXT.resource,
                                 nodes -> updateResourceElement(DIR_CONTEXT.resource, nodes)))
-                .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
-                .build(),
+                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .build(),
                 primaryIdOther,
                 Ids.build(DIR_CONTEXT.baseId, Ids.ENTRY_SUFFIX),
                 labelBuilder.label(DIR_CONTEXT.resource));
-
 
         initElement(row()
                 .add(column()
@@ -295,17 +293,17 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     }
 
     @Override
-    public void updateLdapKeyStore(final List<NamedNode> model) {
+    public void updateLdapKeyStore(List<NamedNode> model) {
         ldapKeyStoreElement.update(model);
     }
 
     @Override
-    public void updatePolicy(final List<NamedNode> model) {
-        policyElement.update(model);
+    public void updatePolicy(NamedNode policy) {
+        policyElement.update(policy);
     }
 
     @Override
-    public void setPresenter(final OtherSettingsPresenter presenter) {
+    public void setPresenter(OtherSettingsPresenter presenter) {
         this.presenter = presenter;
 
         ldapKeyStoreElement.setPresenter(presenter);
