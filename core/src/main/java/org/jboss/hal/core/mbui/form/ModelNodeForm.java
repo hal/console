@@ -581,6 +581,12 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                     // validate that exactly one of the required alternatives is defined
                     addFormValidation(new ExactlyOneAlternativeValidation<>(requiredAlternatives, CONSTANTS, MESSAGES));
                 }
+
+                if (builder.requiredOnly && requiredAlternatives.size() == 1) {
+                    // if the form displays only one required alternative then display it as required
+                    getFormItem(name).setRequired(true);
+                }
+
                 // validate that not more than one of the alternatives is defined
                 addFormValidation(new NotMoreThanOneAlternativeValidation<>(uniqueAlternatives, this, CONSTANTS,
                         MESSAGES));
