@@ -65,11 +65,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
     /**
      * Empty preview w/o content
      */
-    public PreviewContent(final String header) {
+    public PreviewContent(String header) {
         this(header, (String) null);
     }
 
-    public PreviewContent(final String header, final String lead) {
+    public PreviewContent(String header, String lead) {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
@@ -77,11 +77,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
         }
     }
 
-    public PreviewContent(final String header, final SafeHtml html) {
+    public PreviewContent(String header, SafeHtml html) {
         this(header, null, html);
     }
 
-    public PreviewContent(final String header, final String lead, final SafeHtml html) {
+    public PreviewContent(String header, String lead, SafeHtml html) {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
@@ -91,11 +91,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
         builder.add(section().innerHtml(html));
     }
 
-    public PreviewContent(final String header, final HTMLElement first, final HTMLElement... rest) {
+    public PreviewContent(String header, HTMLElement first, HTMLElement... rest) {
         this(header, null, first, rest);
     }
 
-    public PreviewContent(final String header, final String lead, final HTMLElement first, final HTMLElement... rest) {
+    public PreviewContent(String header, String lead, HTMLElement first, HTMLElement... rest) {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
@@ -111,11 +111,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
         }
     }
 
-    public PreviewContent(final String header, final HasElements elements) {
+    public PreviewContent(String header, HasElements elements) {
         this(header, null, elements);
     }
 
-    public PreviewContent(final String header, final String lead, HasElements elements) {
+    public PreviewContent(String header, String lead, HasElements elements) {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
@@ -125,12 +125,12 @@ public class PreviewContent<T> implements HasElements, Attachable {
         builder.add(section().addAll(elements));
     }
 
-    public PreviewContent(final String header, final ExternalTextResource resource) {
+    public PreviewContent(String header, ExternalTextResource resource) {
         this(header, null, resource);
     }
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    public PreviewContent(final String header, final String lead, final ExternalTextResource resource) {
+    public PreviewContent(String header, String lead, ExternalTextResource resource) {
         attachables = new ArrayList<>();
         builder = elements().add(header(header));
         if (lead != null) {
@@ -153,7 +153,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         return lead;
     }
 
-    private HTMLElement header(final String header) {
+    private HTMLElement header(String header) {
         String readableHeader = shorten(header);
         HtmlContentBuilder<HTMLElement> builder = span();
         if (!readableHeader.equals(header)) {

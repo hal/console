@@ -5,12 +5,12 @@
 <p>It interacts with the domain controller to help manage the communication between the servers and the domain controller. Multiple host controllers of a domain can interact with only a single domain controller. Hence, all the host controllers and server instances running on a single domain mode have a single domain controller and must belong to the same domain.</p>
 
 <p>By default each host controller reads its configuration from the
-    <code>domain/configuration/host.xml</code> file located in the unzipped JBoss EAP 6 installation file on its host's filesystem. The
+    <code>domain/configuration/host.xml</code> file located in the unzipped ${build.shortName} installation file on its host's filesystem. The
     <code>host.xml</code> file contains the following configuration information that is specific to the particular host:
 </p>
 
 <ul>
-    <li>The names of the JBoss EAP 6 instances meant to run from this installation.</li>
+    <li>The names of the ${build.shortName} instances meant to run from this installation.</li>
     <li>Any of the following configurations:</li>
     <ul>
         <li>How the host controller contacts the domain controller to register itself and access the domain configuration.</li>

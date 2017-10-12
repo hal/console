@@ -312,15 +312,14 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/web.html")
     ExternalTextResource runtimeWeb();
 
+
     // ------------------------------------------------------ helper methods
 
     @NonNls Logger logger = LoggerFactory.getLogger(Previews.class);
 
-    /**
-     * Sets the inner HTML of the specified element to the HTML from the specified resource.
-     */
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    public static void innerHtml(HTMLElement element, ExternalTextResource resource) {
+    /** Sets the inner HTML of the specified element to the HTML from the specified resource. */
+    @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+    static void innerHtml(HTMLElement element, ExternalTextResource resource) {
         if (resource != null) {
             try {
                 resource.getText(new ResourceCallback<TextResource>() {
@@ -330,8 +329,10 @@ public interface Previews extends ClientBundleWithLookup {
                     }
 
                     @Override
-                    public void onSuccess(final TextResource textResource) {
-                        SafeHtml html = SafeHtmlUtils.fromSafeConstant(textResource.getText());
+                    public void onSuccess(TextResource textResource) {
+                        PreviewTemplate previewTemplate = PreviewTemplate.get();
+                        String text = previewTemplate.evaluate(textResource.getText());
+                        SafeHtml html = SafeHtmlUtils.fromSafeConstant(text);
                         element.innerHTML = html.asString();
                     }
                 });

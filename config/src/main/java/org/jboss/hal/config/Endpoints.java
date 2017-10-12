@@ -30,16 +30,12 @@ import static org.jboss.hal.resources.Urls.UPLOAD;
 @JsType
 public class Endpoints {
 
-    /**
-     * Please use this constant only in cases where no DI is available.
-     */
+    /** Please use this constant only in cases where no DI is available. */
     @Inject
     @JsIgnore
     public static Endpoints INSTANCE;
 
-    /**
-     * @return the base url w/o a trailing slash
-     */
+    /** @return the base url w/o a trailing slash */
     @JsIgnore
     public static String getBaseUrl() {
         String hostUrl = GWT.getHostPageBaseURL();
@@ -73,25 +69,19 @@ public class Endpoints {
         sameOrigin = baseUrl.equals(getBaseUrl());
     }
 
-    /**
-     * @return the endpoint used to execute management operations.
-     */
+    /** @return the endpoint used to execute management operations. */
     @JsProperty(name = "dmr")
     public String dmr() {
         return dmr;
     }
 
-    /**
-     * @return the endpoint used for file uploads.
-     */
+    /** @return the endpoint used for file uploads. */
     @JsProperty(name = "upload")
     public String upload() {
         return upload;
     }
 
-    /**
-     * @return {string} the endpoint used for logout.
-     */
+    /** @return {string} the endpoint used for logout. */
     @JsIgnore
     public String logout() {
         return logout;

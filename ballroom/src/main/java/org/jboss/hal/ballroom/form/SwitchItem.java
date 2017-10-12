@@ -199,7 +199,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         protected void applyExpression(final ExpressionContext expressionContext) {
             Elements.failSafeRemove(inputContainer, normalModeContainer);
             Elements.lazyAppend(inputContainer, expressionModeContainer);
-            if (resolveHandler != null) {
+            if (resolveHandler == null) {
                 resolveHandler = bind(resolveExpressionButton, click,
                         event -> expressionContext.callback.resolveExpression(expressionModeInput.value));
             }
