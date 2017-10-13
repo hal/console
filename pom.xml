@@ -83,7 +83,7 @@
     </issueManagement>
 
     <properties>
-        <checkstyle.hal-config.version>1</checkstyle.hal-config.version>
+        <checkstyle.hal-config.version>2</checkstyle.hal-config.version>
 
         <grunt-task>dev</grunt-task>
         <gwt.draftCompile>true</gwt.draftCompile>
