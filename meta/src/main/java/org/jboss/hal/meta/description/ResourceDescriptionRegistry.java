@@ -17,6 +17,7 @@ package org.jboss.hal.meta.description;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;

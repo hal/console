@@ -51,14 +51,14 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
             AddressTemplate template, String name, String resourceId) {
         this.resources = resources;
 
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(resourceId, Ids.TABLE_SUFFIX), metadata)
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(resourceId, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(template, table -> presenter.addResourceDialog(template,
-                        Ids.build(resourceId, Ids.ADD_SUFFIX, Ids.FORM_SUFFIX), name)))
+                        Ids.build(resourceId, Ids.ADD, Ids.FORM), name)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeResource(template, table.selectedRow().getName(), name)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(resourceId, Ids.FORM_SUFFIX), metadata)
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(resourceId, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter
                         .saveResource(template, table.selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(name)))

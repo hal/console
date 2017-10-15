@@ -215,8 +215,8 @@ public interface Names {
     String OTP_CREDENTIAL_MAPPER = "OTP Credential Mapper";
 
     String PAGING_DIRECTORY = "Paging Directory";
-    String PARTICIPANT= "Participant";
-    String PARTICIPANTS= "Participants";
+    String PARTICIPANT = "Participant";
+    String PARTICIPANTS = "Participants";
     String PARTITION_HANDLING = "Partition Handling";
     String PATCH = "Patch";
     String PATCHES = "Patches";

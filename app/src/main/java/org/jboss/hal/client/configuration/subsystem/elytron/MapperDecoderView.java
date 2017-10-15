@@ -96,7 +96,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .build();
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
-                Ids.build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, Ids.ENTRY_SUFFIX),
+                Ids.build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, Ids.ENTRY),
                 "mappers-decoders-custom-permission-mapper-item",
                 "Constant Permission Mapper",
                 constantPermissionMapperElement.asElement());
@@ -108,7 +108,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         simplePermissionMapperElement = new SimplePermissionMapperElement(spmMetadata, mbuiContext.tableButtonFactory());
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
-                Ids.build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, Ids.ENTRY_SUFFIX),
+                Ids.build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, Ids.ENTRY),
                 "mappers-decoders-simple-permission-mapper-item",
                 "Simple Permission Mapper",
                 simplePermissionMapperElement.asElement());

@@ -17,11 +17,11 @@ package org.jboss.hal.meta.processing;
 
 import java.util.List;
 
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;

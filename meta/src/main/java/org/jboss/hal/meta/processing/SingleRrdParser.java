@@ -21,8 +21,8 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.meta.description.ResourceDescriptionAddressProcessor;
 import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.description.ResourceDescriptionAddressProcessor;
 import org.jboss.hal.meta.security.SecurityContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

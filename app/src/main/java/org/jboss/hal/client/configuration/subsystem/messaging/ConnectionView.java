@@ -48,9 +48,8 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.Ids.ENTRY_SUFFIX;
+import static org.jboss.hal.resources.Ids.ENTRY;
 import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
 
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
@@ -105,7 +104,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                 () -> presenter.reload());
 
         pooledConnectionFactoryTable = new ModelNodeTable.Builder<NamedNode>(
-                Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, TABLE_SUFFIX), metadata)
+                Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, Ids.TABLE), metadata)
                 .button(mbuiContext.resources().constants().add(),
                         table -> presenter.addPooledConnectionFactory(ServerSubResource.POOLED_CONNECTION_FACTORY),
                         Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, ADD))
@@ -117,16 +116,16 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                 .build();
 
         pooledConnectionFactoryForm = new ModelNodeForm.Builder<NamedNode>(
-                Ids.build(Ids.MESSAGING_POOLED_CONNECTION_FACTORY, Ids.FORM_SUFFIX), metadata)
+                Ids.build(Ids.MESSAGING_POOLED_CONNECTION_FACTORY, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter
                         .save(ServerSubResource.POOLED_CONNECTION_FACTORY, form, changedValues))
                 .prepareReset(form -> presenter.reset(ServerSubResource.POOLED_CONNECTION_FACTORY, form))
                 .build();
 
         Tabs tabs = new Tabs();
-        tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ATTRIBUTES, Ids.TAB_SUFFIX),
+        tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ATTRIBUTES, Ids.TAB),
                 mbuiContext.resources().constants().attributes(), pooledConnectionFactoryForm.asElement());
-        tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX),
+        tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, CREDENTIAL_REFERENCE, Ids.TAB),
                 Names.CREDENTIAL_REFERENCE, crForm.asElement());
 
         HTMLElement htmlSection = section()
@@ -138,7 +137,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
         registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
 
-        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ENTRY_SUFFIX), null,
+        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ENTRY), null,
                 Names.POOLED_CONNECTION_FACTORY, "pficon pficon-replicator", htmlSection);
 
     }

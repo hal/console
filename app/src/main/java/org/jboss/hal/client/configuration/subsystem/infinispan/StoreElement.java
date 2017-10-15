@@ -123,24 +123,24 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             tabs.put(store, storeTabs);
 
             Metadata metadata = metadataRegistry.lookup(cache.template.append(STORE + "=" + store.resource));
-            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cache.baseId, store.baseId, Ids.FORM_SUFFIX),
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cache.baseId, store.baseId, Ids.FORM),
                     metadata)
                     .onSave((f, changedValues) -> presenter.saveCacheStore(store, changedValues))
                     .prepareReset(f -> presenter.resetCacheStore(store, f))
                     .build();
             storeForms.put(store, form);
-            storeTabs.add(Ids.build(cache.baseId, store.baseId, ATTRIBUTES, Ids.TAB_SUFFIX),
+            storeTabs.add(Ids.build(cache.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
                     resources.constants().attributes(), form.asElement());
 
             WriteElement writeElement = new WriteElement(cache, store, metadataRegistry, resources);
-            storeTabs.add(Ids.build(cache.baseId, store.baseId, WRITE, Ids.TAB_SUFFIX), Names.WRITE_BEHAVIOUR,
+            storeTabs.add(Ids.build(cache.baseId, store.baseId, WRITE, Ids.TAB), Names.WRITE_BEHAVIOUR,
                     writeElement.asElement());
             writeElements.put(store, writeElement);
 
             if (store.tables != null) {
                 for (Table table : store.tables) {
                     Form<ModelNode> tableForm = tableForm(cache, store, table, metadataRegistry);
-                    storeTabs.add(Ids.build(cache.baseId, store.baseId, table.baseId, Ids.TAB_SUFFIX), table.type,
+                    storeTabs.add(Ids.build(cache.baseId, store.baseId, table.baseId, Ids.TAB), table.type,
                             tableForm.asElement());
                     tableForms.put(new StoreTable(store, table), tableForm);
                 }
@@ -191,7 +191,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .append(TABLE + "=" + table.resource);
         Metadata metadata = metadataRegistry.lookup(template);
 
-        String id = Ids.build(cache.baseId, store.baseId, table.baseId, Ids.FORM_SUFFIX);
+        String id = Ids.build(cache.baseId, store.baseId, table.baseId, Ids.FORM);
         return new ModelNodeForm.Builder<>(id, metadata)
                 .include(PREFIX)
                 .customFormItem(ID_COLUMN, ad -> new ColumnFormItem(ID_COLUMN))

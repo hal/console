@@ -50,7 +50,7 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     HandlerElement(final Config configType, final MetadataRegistry metadataRegistry,
             final TableButtonFactory tableButtonFactory) {
 
-        String tableId = Ids.build(configType.baseId, "handler", Ids.TABLE_SUFFIX);
+        String tableId = Ids.build(configType.baseId, "handler", Ids.TABLE);
         Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(tableId, metadata)
                 .button(tableButtonFactory.add(HANDLER_TEMPLATE, table -> presenter.addHandler()))
@@ -59,7 +59,7 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
 
-        String formId = Ids.build(configType.baseId, "handler", Ids.FORM_SUFFIX);
+        String formId = Ids.build(configType.baseId, "handler", Ids.FORM);
         form = new ModelNodeForm.Builder<NamedNode>(formId, metadata)
                 .onSave((form, changedValues) -> presenter.saveHandler(form.getModel().getName(), changedValues))
                 .prepareReset(form -> presenter.resetHandler(form.getModel().getName(), form))

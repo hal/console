@@ -66,13 +66,14 @@ public class TopologyTasks {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
 
+    private static final String WILDCARD = "*";
     private static final ResourceAddress ALL_SERVER_CONFIGS = new ResourceAddress()
-            .add(ModelDescriptionConstants.HOST, "*")
-            .add(SERVER_CONFIG, "*");
+            .add(ModelDescriptionConstants.HOST, WILDCARD)
+            .add(SERVER_CONFIG, WILDCARD);
 
     private static final ResourceAddress ALL_SERVERS = new ResourceAddress()
-            .add(ModelDescriptionConstants.HOST, "*")
-            .add(SERVER, "*");
+            .add(ModelDescriptionConstants.HOST, WILDCARD)
+            .add(SERVER, WILDCARD);
 
     private static final Operation HOSTS_OPERATION = new Operation.Builder(ResourceAddress.root(),
             READ_CHILDREN_RESOURCES_OPERATION)
@@ -83,7 +84,7 @@ public class TopologyTasks {
     private static final Operation DISCONNECTED_HOSTS = new Operation.Builder(
             new ResourceAddress()
                     .add(CORE_SERVICE, MANAGEMENT)
-                    .add(HOST_CONNECTION, "*"),
+                    .add(HOST_CONNECTION, WILDCARD),
             QUERY)
             .param(SELECT, new ModelNode().add(EVENTS))
             .param(WHERE, new ModelNode().set(CONNECTED, false))
@@ -94,6 +95,204 @@ public class TopologyTasks {
             .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
             .param(INCLUDE_RUNTIME, true)
             .build();
+
+    private static List<Host> orderedHostWithDomainControllerAsFirstElement(List<Host> connected,
+            List<Host> disconnected) {
+        List<Host> hosts = new ArrayList<>();
+        hosts.addAll(connected);
+        hosts.addAll(disconnected);
+        hosts.sort(comparing(Host::getName));
+
+        Host domainController = null;
+        for (Iterator<Host> iterator = hosts.iterator();
+                iterator.hasNext() && domainController == null; ) {
+            Host host = iterator.next();
+            if (host.isDomainController()) {
+                domainController = host;
+                iterator.remove();
+            }
+        }
+        if (domainController != null) {
+            hosts.add(0, domainController);
+        }
+        return hosts;
+    }
+
+    private static List<Host> disconnectedHosts(ModelNode modelNode) {
+        return modelNode.asList().stream()
+                .filter(node -> !node.isFailure())
+                .map(node -> {
+                    String name = new ResourceAddress(node.get(ADDRESS)).lastValue();
+                    long registered = 0;
+                    long unregistered = 0;
+                    for (ModelNode event : failSafeList(node, RESULT + "/" + EVENTS)) {
+                        if (event.hasDefined(TYPE) && event.hasDefined(TIMESTAMP)) {
+                            if (REGISTERED.equals(event.get(TYPE).asString())) {
+                                registered = max(registered, event.get(TIMESTAMP).asLong());
+                            } else if (UNREGISTERED.equals(event.get(TYPE).asString())) {
+                                unregistered = max(unregistered, event.get(TIMESTAMP).asLong());
+                            }
+                        }
+                    }
+                    Date disconnected = unregistered != 0 ? new Date(unregistered) : null;
+                    Date lastConnected = registered != 0 ? new Date(registered) : null;
+                    return Host.disconnected(name, disconnected, lastConnected);
+                })
+                .collect(toList());
+    }
+
+    private static Operation.Builder serverConfigOperation(String first, String... rest) {
+        ModelNode select = new ModelNode().add(first);
+        if (rest != null) {
+            for (String attribute : rest) {
+                select.add(attribute);
+            }
+        }
+        return new Operation.Builder(ALL_SERVER_CONFIGS, QUERY)
+                .param(SELECT, select);
+    }
+
+    private static void addServersToHosts(List<Host> hosts, Collection<Server> servers) {
+        Map<String, List<Server>> serversByHost = servers.stream()
+                .collect(groupingBy(Server::getHost));
+        hosts.stream()
+                .filter(Host::isConnected)
+                .forEach(host -> {
+                    List<Server> serversOfHost = serversByHost.getOrDefault(host.getName(), emptyList());
+                    serversOfHost.forEach(host::addServer);
+                });
+    }
+
+    private static void addServersToServerGroups(List<ServerGroup> serverGroups, Collection<Server> servers) {
+        Map<String, List<Server>> serversByServerGroup = servers.stream()
+                .collect(groupingBy(Server::getServerGroup));
+        serverGroups.forEach(serverGroup -> {
+            List<Server> serversOfServerGroup = serversByServerGroup
+                    .getOrDefault(serverGroup.getName(), emptyList());
+            serversOfServerGroup.forEach(serverGroup::addServer);
+        });
+    }
+
+    private static <T extends HasServersNode> Completable processRunningServers(Dispatcher dispatcher,
+            List<T> hasServersNode) {
+        Completable completable = Completable.complete();
+        if (hasServersNode != null) {
+            List<Server> servers = runningServers(hasServersNode);
+            Composite composite = serverRuntimeComposite(servers);
+            if (!composite.isEmpty()) {
+                Map<String, Server> serverConfigsById = mapServersById(servers);
+                completable = dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
+                    for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+                        ModelNode payload = iterator.next().get(RESULT);
+                        String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
+                        String serverName = payload.get(NAME).asString();
+                        String id = Ids.hostServer(hostName, serverName);
+                        Server server = serverConfigsById.get(id);
+                        //noinspection Duplicates
+                        if (server != null) {
+                            server.addServerAttributes(payload);
+                            if (iterator.hasNext()) {
+                                List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
+                                server.setBootErrors(!bootErrors.isEmpty());
+                            } else {
+                                logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
+                            }
+                        }
+                    }
+                }).toCompletable();
+            }
+        }
+        return completable;
+    }
+
+    private static <T extends HasServersNode> List<Server> runningServers(List<T> hasServersNode) {
+        return hasServersNode.stream()
+                .flatMap(hasServers -> hasServers.getServers().stream().filter(Server::isStarted))
+                .collect(toList());
+    }
+
+    private static Map<String, Server> serverConfigsById(List<ModelNode> modelNodes) {
+        return modelNodes.stream()
+                .filter(modelNode -> !modelNode.isFailure())
+                .map(modelNode -> {
+                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
+                    String host = address.getParent().lastValue();
+                    return new Server(host, modelNode.get(RESULT));
+                })
+                .collect(toMap(Server::getId, identity()));
+    }
+
+    private static Map<String, Server> mapServersById(List<Server> servers) {
+        return servers.stream().collect(toMap(Server::getId, identity()));
+    }
+
+    private static Completable readAndAddServerRuntimeAttributes(Dispatcher dispatcher, List<Server> servers) {
+        Completable completable = Completable.complete();
+        if (servers != null) {
+            Composite composite = serverRuntimeComposite(servers);
+            if (!composite.isEmpty()) {
+                completable = dispatcher.execute(composite)
+                        .doOnSuccess((CompositeResult result) -> addServerRuntimeAttributes(servers, result))
+                        .toCompletable();
+            }
+        }
+        return completable;
+    }
+
+    /**
+     * @return a composite operation with two operations per started server:
+     * <ol>
+     * <li>{@code host=h/server=s:read-resource(attributes-only,include-runtime)}</li>
+     * <li>{@code host=h/server=s/core-service=management:read-boot-errors()}</li>
+     * </ol>
+     */
+    private static Composite serverRuntimeComposite(List<Server> servers) {
+        List<Operation> operations = new ArrayList<>();
+        for (Server server : servers) {
+            if (server.isStarted()) {
+                operations.add(new Operation.Builder(server.getServerAddress(), READ_RESOURCE_OPERATION)
+                        .param(ATTRIBUTES_ONLY, true)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build());
+                operations.add(new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
+                        READ_BOOT_ERRORS
+                ).build());
+            }
+        }
+        return new Composite(operations);
+    }
+
+    /**
+     * Updates the server runtime attributes with information from the composite result. For each server there has to
+     * be two steps in the composite result:
+     * <ol>
+     * <li>The server runtime attributes (including the server name)</li>
+     * <li>The server boot errors</li>
+     * </ol>
+     */
+    private static void addServerRuntimeAttributes(List<Server> servers, CompositeResult result) {
+        Map<String, Server> serverConfigsByName = servers.stream().collect(toMap(Server::getId, identity()));
+
+        for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+            ModelNode attributes = iterator.next().get(RESULT);
+            String serverId = Ids.hostServer(attributes.get(ModelDescriptionConstants.HOST).asString(),
+                    attributes.get(NAME).asString());
+            Server server = serverConfigsByName.get(serverId);
+            //noinspection Duplicates
+            if (server != null) {
+                server.addServerAttributes(attributes);
+                if (iterator.hasNext()) {
+                    List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
+                    server.setBootErrors(!bootErrors.isEmpty());
+                } else {
+                    logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
+                }
+            }
+        }
+    }
+
+    private TopologyTasks() {
+    }
 
 
     // ------------------------------------------------------ topology
@@ -329,51 +528,6 @@ public class TopologyTasks {
         }
     }
 
-    private static List<Host> orderedHostWithDomainControllerAsFirstElement(List<Host> connected,
-            List<Host> disconnected) {
-        List<Host> hosts = new ArrayList<>();
-        hosts.addAll(connected);
-        hosts.addAll(disconnected);
-        hosts.sort(comparing(Host::getName));
-
-        Host domainController = null;
-        for (Iterator<Host> iterator = hosts.iterator();
-                iterator.hasNext() && domainController == null; ) {
-            Host host = iterator.next();
-            if (host.isDomainController()) {
-                domainController = host;
-                iterator.remove();
-            }
-        }
-        if (domainController != null) {
-            hosts.add(0, domainController);
-        }
-        return hosts;
-    }
-
-    private static List<Host> disconnectedHosts(ModelNode modelNode) {
-        return modelNode.asList().stream()
-                .filter(node -> !node.isFailure())
-                .map(node -> {
-                    String name = new ResourceAddress(node.get(ADDRESS)).lastValue();
-                    long registered = 0;
-                    long unregistered = 0;
-                    for (ModelNode event : failSafeList(node, RESULT + "/" + EVENTS)) {
-                        if (event.hasDefined(TYPE) && event.hasDefined(TIMESTAMP)) {
-                            if (REGISTERED.equals(event.get(TYPE).asString())) {
-                                registered = max(registered, event.get(TIMESTAMP).asLong());
-                            } else if (UNREGISTERED.equals(event.get(TYPE).asString())) {
-                                unregistered = max(unregistered, event.get(TIMESTAMP).asLong());
-                            }
-                        }
-                    }
-                    Date disconnected = unregistered != 0 ? new Date(unregistered) : null;
-                    Date lastConnected = registered != 0 ? new Date(registered) : null;
-                    return Host.disconnected(name, disconnected, lastConnected);
-                })
-                .collect(toList());
-    }
-
 
     // ------------------------------------------------------ server groups
 
@@ -566,156 +720,6 @@ public class TopologyTasks {
                             .collect(toList());
                     context.set(RUNNING_SERVERS, servers);
                 }).toCompletable();
-            }
-        }
-    }
-
-    private static Operation.Builder serverConfigOperation(String first, String... rest) {
-        ModelNode select = new ModelNode().add(first);
-        if (rest != null) {
-            for (String attribute : rest) {
-                select.add(attribute);
-            }
-        }
-        return new Operation.Builder(ALL_SERVER_CONFIGS, QUERY)
-                .param(SELECT, select);
-    }
-
-    private static void addServersToHosts(List<Host> hosts, Collection<Server> servers) {
-        Map<String, List<Server>> serversByHost = servers.stream()
-                .collect(groupingBy(Server::getHost));
-        hosts.stream()
-                .filter(Host::isConnected)
-                .forEach(host -> {
-                    List<Server> serversOfHost = serversByHost.getOrDefault(host.getName(), emptyList());
-                    serversOfHost.forEach(host::addServer);
-                });
-    }
-
-    private static void addServersToServerGroups(List<ServerGroup> serverGroups, Collection<Server> servers) {
-        Map<String, List<Server>> serversByServerGroup = servers.stream()
-                .collect(groupingBy(Server::getServerGroup));
-        serverGroups.forEach(serverGroup -> {
-            List<Server> serversOfServerGroup = serversByServerGroup
-                    .getOrDefault(serverGroup.getName(), emptyList());
-            serversOfServerGroup.forEach(serverGroup::addServer);
-        });
-    }
-
-    private static <T extends HasServersNode> Completable processRunningServers(Dispatcher dispatcher,
-            List<T> hasServersNode) {
-        Completable completable = Completable.complete();
-        if (hasServersNode != null) {
-            List<Server> servers = runningServers(hasServersNode);
-            Composite composite = serverRuntimeComposite(servers);
-            if (!composite.isEmpty()) {
-                Map<String, Server> serverConfigsById = mapServersById(servers);
-                completable = dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
-                    for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
-                        ModelNode payload = iterator.next().get(RESULT);
-                        String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
-                        String serverName = payload.get(NAME).asString();
-                        String id = Ids.hostServer(hostName, serverName);
-                        Server server = serverConfigsById.get(id);
-                        //noinspection Duplicates
-                        if (server != null) {
-                            server.addServerAttributes(payload);
-                            if (iterator.hasNext()) {
-                                List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
-                                server.setBootErrors(!bootErrors.isEmpty());
-                            } else {
-                                logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
-                            }
-                        }
-                    }
-                }).toCompletable();
-            }
-        }
-        return completable;
-    }
-
-    private static <T extends HasServersNode> List<Server> runningServers(List<T> hasServersNode) {
-        return hasServersNode.stream()
-                .flatMap(hasServers -> hasServers.getServers().stream().filter(Server::isStarted))
-                .collect(toList());
-    }
-
-    private static Map<String, Server> serverConfigsById(List<ModelNode> modelNodes) {
-        return modelNodes.stream()
-                .filter(modelNode -> !modelNode.isFailure())
-                .map(modelNode -> {
-                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                    String host = address.getParent().lastValue();
-                    return new Server(host, modelNode.get(RESULT));
-                })
-                .collect(toMap(Server::getId, identity()));
-    }
-
-    private static Map<String, Server> mapServersById(List<Server> servers) {
-        return servers.stream().collect(toMap(Server::getId, identity()));
-    }
-
-    private static Completable readAndAddServerRuntimeAttributes(Dispatcher dispatcher, List<Server> servers) {
-        Completable completable = Completable.complete();
-        if (servers != null) {
-            Composite composite = serverRuntimeComposite(servers);
-            if (!composite.isEmpty()) {
-                completable = dispatcher.execute(composite)
-                        .doOnSuccess((CompositeResult result) -> addServerRuntimeAttributes(servers, result))
-                        .toCompletable();
-            }
-        }
-        return completable;
-    }
-
-    /**
-     * @return a composite operation with two operations per started server:
-     * <ol>
-     * <li>{@code host=h/server=s:read-resource(attributes-only,include-runtime)}</li>
-     * <li>{@code host=h/server=s/core-service=management:read-boot-errors()}</li>
-     * </ol>
-     */
-    private static Composite serverRuntimeComposite(List<Server> servers) {
-        List<Operation> operations = new ArrayList<>();
-        for (Server server : servers) {
-            if (server.isStarted()) {
-                operations.add(new Operation.Builder(server.getServerAddress(), READ_RESOURCE_OPERATION)
-                        .param(ATTRIBUTES_ONLY, true)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build());
-                operations.add(new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
-                        READ_BOOT_ERRORS
-                ).build());
-            }
-        }
-        return new Composite(operations);
-    }
-
-    /**
-     * Updates the server runtime attributes with information from the composite result. For each server there has to
-     * be two steps in the composite result:
-     * <ol>
-     * <li>The server runtime attributes (including the server name)</li>
-     * <li>The server boot errors</li>
-     * </ol>
-     */
-    private static void addServerRuntimeAttributes(List<Server> servers, CompositeResult result) {
-        Map<String, Server> serverConfigsByName = servers.stream().collect(toMap(Server::getId, identity()));
-
-        for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
-            ModelNode attributes = iterator.next().get(RESULT);
-            String serverId = Ids.hostServer(attributes.get(ModelDescriptionConstants.HOST).asString(),
-                    attributes.get(NAME).asString());
-            Server server = serverConfigsByName.get(serverId);
-            //noinspection Duplicates
-            if (server != null) {
-                server.addServerAttributes(attributes);
-                if (iterator.hasNext()) {
-                    List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
-                    server.setBootErrors(!bootErrors.isEmpty());
-                } else {
-                    logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
-                }
             }
         }
     }

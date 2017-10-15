@@ -42,7 +42,7 @@ class ThreadPoolElement implements IsElement<HTMLElement>, Attachable, HasPresen
 
     ThreadPoolElement(ThreadPool threadPool, MetadataRegistry metadataRegistry) {
         Metadata metadata = metadataRegistry.lookup(threadPool.template());
-        form = new ModelNodeForm.Builder<>(Ids.build(threadPool.baseId, Ids.FORM_SUFFIX), metadata)
+        form = new ModelNodeForm.Builder<>(Ids.build(threadPool.baseId, Ids.FORM), metadata)
                 .singleton(() -> presenter.readThreadPool(threadPool), () -> presenter.addThreadPool(threadPool))
                 .onSave((f, changedValues) -> presenter.saveThreadPool(threadPool, changedValues))
                 .prepareReset(f -> presenter.resetThreadPool(threadPool, f))

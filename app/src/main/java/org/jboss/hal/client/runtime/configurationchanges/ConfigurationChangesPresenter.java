@@ -61,7 +61,7 @@ import static org.jboss.hal.meta.token.NameTokens.CONFIGURATION_CHANGES;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.px;
 import static org.jboss.hal.resources.CSS.wrap;
-import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
+import static org.jboss.hal.resources.Ids.ADD;
 
 public class ConfigurationChangesPresenter extends
         ApplicationFinderPresenter<ConfigurationChangesPresenter.MyView, ConfigurationChangesPresenter.MyProxy> {
@@ -150,7 +150,7 @@ public class ConfigurationChangesPresenter extends
 
     void launchAdd() {
         Metadata metadata = metadataRegistry.lookup(CONFIGURATION_CHANGES_TEMPLATE);
-        String id = Ids.build(Ids.CONFIGURATION_CHANGES, ADD_SUFFIX);
+        String id = Ids.build(Ids.CONFIGURATION_CHANGES, Ids.ADD);
         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, ADD)
                 .build();
         ModelNode changeModel = new ModelNode();

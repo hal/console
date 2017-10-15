@@ -206,5 +206,6 @@ public class PreviewContent<T> implements HasElements, Attachable {
     }
 
     @SuppressWarnings("UnusedParameters")
-    public void update(T item) {}
+    public void update(T item) {
+    }
 }

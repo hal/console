@@ -206,6 +206,8 @@ class DefaultFormItemProvider implements FormItemProvider {
                             "Unsupported model type {} for attribute {} in metadata {}. Unable to create a form item. Attribute will be skipped.",
                             type.name(), property.getName(), metadata.getTemplate());
                     break;
+                default:
+                    break;
             }
 
             if (formItem != null) {

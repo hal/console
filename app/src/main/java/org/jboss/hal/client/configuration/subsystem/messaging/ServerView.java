@@ -82,7 +82,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         LabelBuilder lb = new LabelBuilder();
         form = new GroupedForm.Builder<NamedNode>("messaging-server-form", metadata)
-                .customGroup(Ids.build(Ids.MESSAGING_SERVER, ATTRIBUTES, Ids.FORM_SUFFIX),
+                .customGroup(Ids.build(Ids.MESSAGING_SERVER, ATTRIBUTES, Ids.FORM),
                         mbuiContext.resources().constants().attributes())
                 .include(attrs)
                 .end()
@@ -90,7 +90,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .attributeGroup("security").end()
                 .attributeGroup("journal").end()
                 .attributeGroup("cluster").end()
-                .customGroup(Ids.build(Ids.MESSAGING_SERVER, clusterCR, Ids.TAB_SUFFIX), lb.label(clusterCR))
+                .customGroup(Ids.build(Ids.MESSAGING_SERVER, clusterCR, Ids.TAB), lb.label(clusterCR))
                 .add(crForm)
                 .end()
                 .attributeGroup("message-expiry").end()
@@ -111,7 +111,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .asElement();
 
 
-        verticalNavigation.addPrimary(Ids.build(Ids.MESSAGING_SERVER, "item", Ids.TAB_SUFFIX), Names.CONFIGURATION,
+        verticalNavigation.addPrimary(Ids.build(Ids.MESSAGING_SERVER, "item", Ids.TAB), Names.CONFIGURATION,
                 "pficon pficon-settings", htmlSection);
 
         Metadata bindingMetadata = mbuiContext.metadataRegistry().lookup(BINDING_DIRECTORY_TEMPLATE);
@@ -209,17 +209,17 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
 
         verticalNavigation.addPrimary(primaryIdDirectory, "Directories", "pficon pficon-repository");
-        verticalNavigation.addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_PAGING_DIRECTORY, Ids.ENTRY_SUFFIX), "Paging",
+        verticalNavigation.addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_PAGING_DIRECTORY, Ids.ENTRY), "Paging",
                 pagingDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_BINDING_DIRECTORY, Ids.ENTRY_SUFFIX), "Bindings",
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_BINDING_DIRECTORY, Ids.ENTRY), "Bindings",
                         bindingsDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY, Ids.ENTRY_SUFFIX),
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY, Ids.ENTRY),
                         "Large Messages",
                         largeMessagesElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY, Ids.ENTRY_SUFFIX), "Journal",
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY, Ids.ENTRY), "Journal",
                         journalElement);
 
         registerAttachable(verticalNavigation);

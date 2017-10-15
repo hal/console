@@ -75,7 +75,9 @@ public enum ResponseHeader {
 
     private final String header;
 
-    ResponseHeader(@NonNls final String header) {this.header = header;}
+    ResponseHeader(@NonNls final String header) {
+        this.header = header;
+    }
 
     public String header() {
         return header;

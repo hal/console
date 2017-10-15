@@ -48,5 +48,5 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
         return template.resolve(statementContext);
     }
 
-    protected abstract T lookupAddress(final ResourceAddress address);
+    protected abstract T lookupAddress(ResourceAddress address);
 }

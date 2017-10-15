@@ -43,11 +43,11 @@ import static org.jboss.hal.resources.CSS.columnAction;
 /** Element to configure the stack resource */
 class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
-    static final String REMOTE_SITE_ID = Ids.build(Ids.JGROUPS_REMOTE_SITE, Ids.PAGE_SUFFIX);
-    private static final String STACK_ID = Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.PAGE_SUFFIX);
-    private static final String RELAY_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE_SUFFIX);
-    private static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_PROTOCOL, Ids.PAGE_SUFFIX);
-    private static final String TRANSPORT_ID = Ids.build(Ids.JGROUPS_TRANSPORT, Ids.PAGE_SUFFIX);
+    static final String REMOTE_SITE_ID = Ids.build(Ids.JGROUPS_REMOTE_SITE, Ids.PAGE);
+    private static final String STACK_ID = Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.PAGE);
+    private static final String RELAY_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE);
+    private static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_PROTOCOL, Ids.PAGE);
+    private static final String TRANSPORT_ID = Ids.build(Ids.JGROUPS_TRANSPORT, Ids.PAGE);
 
     private final Pages innerPages;
     private final Table<NamedNode> table;
@@ -64,9 +64,9 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
             final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), metadata)
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(STACK_TEMPLATE, table -> presenter.addStack()))
-                //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD_SUFFIX),
+                //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD),
                 //        Names.STACK))
                 .button(tableButtonFactory.remove(STACK_TEMPLATE,
                         table -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),

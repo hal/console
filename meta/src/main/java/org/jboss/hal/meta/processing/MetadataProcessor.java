@@ -18,6 +18,7 @@ package org.jboss.hal.meta.processing;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
@@ -57,14 +58,6 @@ import static org.jboss.hal.flow.Flow.series;
 @JsType(namespace = "hal.meta")
 public class MetadataProcessor {
 
-    public interface MetadataCallback {
-
-        void onMetadata(Metadata metadata);
-
-        void onError(Throwable error);
-    }
-
-
     /**
      * Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size
      */
@@ -73,7 +66,7 @@ public class MetadataProcessor {
     /**
      * Number of r-r-d operations part of one composite operation.
      */
-    private final static int BATCH_SIZE = 3;
+    private static final int BATCH_SIZE = 3;
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
 
@@ -192,13 +185,6 @@ public class MetadataProcessor {
 
     // ------------------------------------------------------ JS methods
 
-
-    @JsFunction
-    public interface JsMetadataCallback {
-
-        void onMetadata(Metadata metadata);
-    }
-
     /**
      * Reads the metadata for the template, stores it in the registry and passes it to the callback. If the metadata is
      * already in the registry it's passed directly to the callback.
@@ -228,5 +214,20 @@ public class MetadataProcessor {
             throw new IllegalArgumentException(
                     "Illegal 1st argument: Use MetadataProcessor((AddressTemplate|string), function(Metadata))");
         }
+    }
+
+
+    @JsFunction
+    public interface JsMetadataCallback {
+
+        void onMetadata(Metadata metadata);
+    }
+
+
+    public interface MetadataCallback {
+
+        void onMetadata(Metadata metadata);
+
+        void onError(Throwable error);
     }
 }

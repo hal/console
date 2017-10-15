@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;
@@ -56,13 +57,6 @@ import static org.jboss.hal.resources.CSS.hidden;
 /** Registry to manage HAL extensions written in JavaScript. */
 @JsType(namespace = "hal.core")
 public class ExtensionRegistry implements ApplicationReadyHandler {
-
-    @FunctionalInterface
-    public interface MetadataCallback {
-
-        void result(int status, JsonObject json);
-    }
-
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
@@ -213,5 +207,12 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         scriptElement.src = script;
         scriptElement.setAttribute("async", true);
         head.appendChild(scriptElement);
+    }
+
+
+    @FunctionalInterface
+    public interface MetadataCallback {
+
+        void result(int status, JsonObject json);
     }
 }

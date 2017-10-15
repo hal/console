@@ -63,7 +63,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(AGGREGATE_REALM.resource,
                                 nodes -> updateResourceElement(AGGREGATE_REALM.resource, nodes))),
                 primaryIdSecurityRealm,
-                Ids.build(AGGREGATE_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(AGGREGATE_REALM.baseId, Ids.ENTRY),
                 "Aggregate Realm");
 
         addResourceElement(CACHING_REALM,
@@ -71,7 +71,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(CACHING_REALM.resource,
                                 nodes -> updateResourceElement(CACHING_REALM.resource, nodes))),
                 primaryIdSecurityRealm,
-                Ids.build(CACHING_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CACHING_REALM.baseId, Ids.ENTRY),
                 "Caching Realm");
 
         addResourceElement(CUSTOM_MODIFIABLE_REALM,
@@ -79,7 +79,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(CUSTOM_MODIFIABLE_REALM.resource,
                                 nodes -> updateResourceElement(CUSTOM_MODIFIABLE_REALM.resource, nodes))),
                 primaryIdSecurityRealm,
-                Ids.build(CUSTOM_MODIFIABLE_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CUSTOM_MODIFIABLE_REALM.baseId, Ids.ENTRY),
                 "Custom Modifiable Realm");
 
         addResourceElement(CUSTOM_REALM,
@@ -87,7 +87,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(CUSTOM_REALM.resource,
                                 nodes -> updateResourceElement(CUSTOM_REALM.resource, nodes))),
                 primaryIdSecurityRealm,
-                Ids.build(CUSTOM_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CUSTOM_REALM.baseId, Ids.ENTRY),
                 "Custom Realm");
 
         addResourceElement(FILESYSTEM_REALM,
@@ -95,7 +95,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(FILESYSTEM_REALM.resource,
                                 nodes -> updateResourceElement(FILESYSTEM_REALM.resource, nodes))),
                 primaryIdSecurityRealm,
-                Ids.build(FILESYSTEM_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(FILESYSTEM_REALM.baseId, Ids.ENTRY),
                 "Filesystem Realm");
 
         addResourceElement(IDENTITY_REALM,
@@ -103,7 +103,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(IDENTITY_REALM.resource,
                                 nodes -> updateResourceElement(IDENTITY_REALM.resource, nodes))),
                 primaryIdSecurityRealm,
-                Ids.build(IDENTITY_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(IDENTITY_REALM.baseId, Ids.ENTRY),
                 "Identity Realm");
 
         Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.JDBC_REALM_TEMPLATE);
@@ -117,7 +117,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(KEY_STORE_REALM.resource,
                                 nodes -> updateResourceElement(KEY_STORE_REALM.resource, nodes))),
                 primaryIdSecurityRealm,
-                Ids.build(KEY_STORE_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(KEY_STORE_REALM.baseId, Ids.ENTRY),
                 "Key Store Realm");
 
         Metadata mtLdapRealm = mbuiContext.metadataRegistry().lookup(AddressTemplates.LDAP_REALM_TEMPLATE);
@@ -135,7 +135,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         .addComplexObjectAttribute(USERS_PROPERTIES)
                         .build(),
                 primaryIdSecurityRealm,
-                Ids.build(PROPERTIES_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(PROPERTIES_REALM.baseId, Ids.ENTRY),
                 Names.PROPERTIES_REALM);
 
         addResourceElement(TOKEN_REALM,
@@ -146,7 +146,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         .addComplexObjectAttribute("oauth2-introspection")
                         .build(),
                 primaryIdSecurityRealm,
-                Ids.build(TOKEN_REALM.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(TOKEN_REALM.baseId, Ids.ENTRY),
                 "Token Realm");
 
         // =========== realm mapper
@@ -156,7 +156,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(CONSTANT_REALM_MAPPER.resource,
                                 nodes -> updateResourceElement(CONSTANT_REALM_MAPPER.resource, nodes))),
                 primaryIdRealmMapper,
-                Ids.build(CONSTANT_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CONSTANT_REALM_MAPPER.baseId, Ids.ENTRY),
                 "Constant Realm Mapper");
 
         addResourceElement(CUSTOM_REALM_MAPPER,
@@ -164,7 +164,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(CUSTOM_REALM_MAPPER.resource,
                                 nodes -> updateResourceElement(CUSTOM_REALM_MAPPER.resource, nodes))),
                 primaryIdRealmMapper,
-                Ids.build(CUSTOM_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CUSTOM_REALM_MAPPER.baseId, Ids.ENTRY),
                 "Custom Realm Mapper");
 
         addResourceElement(MAPPED_REGEX_REALM_MAPPER,
@@ -172,7 +172,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(MAPPED_REGEX_REALM_MAPPER.resource,
                                 nodes -> updateResourceElement(MAPPED_REGEX_REALM_MAPPER.resource, nodes))),
                 primaryIdRealmMapper,
-                Ids.build(MAPPED_REGEX_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(MAPPED_REGEX_REALM_MAPPER.baseId, Ids.ENTRY),
                 "Mapped Regex Realm Mapper");
 
         addResourceElement(SIMPLE_REGEX_REALM_MAPPER,
@@ -180,7 +180,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                         () -> presenter.reload(SIMPLE_REGEX_REALM_MAPPER.resource,
                                 nodes -> updateResourceElement(SIMPLE_REGEX_REALM_MAPPER.resource, nodes))),
                 primaryIdRealmMapper,
-                Ids.build(SIMPLE_REGEX_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(SIMPLE_REGEX_REALM_MAPPER.baseId, Ids.ENTRY),
                 "Simple Regex Realm Mapper");
 
         initElement(row()

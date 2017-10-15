@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -70,74 +71,6 @@ import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatCompositeUntil;
 
 /** TODO Fire events for the servers of a server group as well. */
 public class ServerGroupActions {
-
-    private class ServerGroupTimeoutCallback implements CompletableSubscriber {
-
-        private final ServerGroup serverGroup;
-        private final List<Server> servers;
-        private final SafeHtml successMessage;
-
-        ServerGroupTimeoutCallback(final ServerGroup serverGroup, final List<Server> servers,
-                final SafeHtml successMessage) {
-            this.serverGroup = serverGroup;
-            this.servers = servers;
-            this.successMessage = successMessage;
-        }
-
-        @Override
-        public void onCompleted() {
-            finish(serverGroup, servers, Result.SUCCESS, Message.success(successMessage));
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            finish(serverGroup, servers, Result.TIMEOUT,
-                    Message.error(resources.messages().serverGroupTimeout(serverGroup.getName())));
-        }
-
-        @Override
-        public void onSubscribe(Subscription d) {}
-    }
-
-
-    private class ServerGroupFailedCallback implements Dispatcher.OnFail {
-
-        private final ServerGroup serverGroup;
-        private final List<Server> servers;
-        private final SafeHtml errorMessage;
-
-        ServerGroupFailedCallback(final ServerGroup serverGroup, final List<Server> servers,
-                final SafeHtml errorMessage) {
-            this.serverGroup = serverGroup;
-            this.servers = servers;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onFailed(final Operation operation, final String failure) {
-            finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, failure));
-        }
-    }
-
-
-    private class ServerGroupExceptionCallback implements Dispatcher.OnError {
-
-        private final ServerGroup serverGroup;
-        private final List<Server> servers;
-        private final SafeHtml errorMessage;
-
-        ServerGroupExceptionCallback(final ServerGroup serverGroup, final List<Server> servers, SafeHtml errorMessage) {
-            this.serverGroup = serverGroup;
-            this.servers = servers;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onException(final Operation operation, final Throwable exception) {
-            finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
-        }
-    }
-
 
     private static final int DEFAULT_TIMEOUT = 10; // seconds
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerGroupActions.class);
@@ -216,7 +149,7 @@ public class ServerGroupActions {
             metadataProcessor.lookup(serverGroupTemplate(serverGroup), progress.get(), new MetadataCallback() {
                 @Override
                 public void onMetadata(final Metadata metadata) {
-                    String id = Ids.build(SUSPEND_SERVERS, serverGroup.getName(), Ids.FORM_SUFFIX);
+                    String id = Ids.build(SUSPEND_SERVERS, serverGroup.getName(), Ids.FORM);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND_SERVERS).build();
 
                     Dialog dialog = DialogFactory.buildConfirmation(
@@ -291,7 +224,7 @@ public class ServerGroupActions {
             metadataProcessor.lookup(serverGroupTemplate(serverGroup), progress.get(), new MetadataCallback() {
                 @Override
                 public void onMetadata(final Metadata metadata) {
-                    String id = Ids.build(STOP_SERVERS, serverGroup.getName(), Ids.FORM_SUFFIX);
+                    String id = Ids.build(STOP_SERVERS, serverGroup.getName(), Ids.FORM);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP_SERVERS)
                             .include(TIMEOUT).build();
 
@@ -400,6 +333,8 @@ public class ServerGroupActions {
                     timeout = serverGroup.getServers(Server::isStarted).size() * ServerActions.SERVER_STOP_TIMEOUT;
                 }
                 break;
+            default:
+                break;
         }
         return timeout;
     }
@@ -468,5 +403,74 @@ public class ServerGroupActions {
                     .count();
             return statusCount == servers;
         };
+    }
+
+
+    private class ServerGroupTimeoutCallback implements CompletableSubscriber {
+
+        private final ServerGroup serverGroup;
+        private final List<Server> servers;
+        private final SafeHtml successMessage;
+
+        ServerGroupTimeoutCallback(final ServerGroup serverGroup, final List<Server> servers,
+                final SafeHtml successMessage) {
+            this.serverGroup = serverGroup;
+            this.servers = servers;
+            this.successMessage = successMessage;
+        }
+
+        @Override
+        public void onCompleted() {
+            finish(serverGroup, servers, Result.SUCCESS, Message.success(successMessage));
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            finish(serverGroup, servers, Result.TIMEOUT,
+                    Message.error(resources.messages().serverGroupTimeout(serverGroup.getName())));
+        }
+
+        @Override
+        public void onSubscribe(Subscription d) {
+        }
+    }
+
+
+    private class ServerGroupFailedCallback implements Dispatcher.OnFail {
+
+        private final ServerGroup serverGroup;
+        private final List<Server> servers;
+        private final SafeHtml errorMessage;
+
+        ServerGroupFailedCallback(final ServerGroup serverGroup, final List<Server> servers,
+                final SafeHtml errorMessage) {
+            this.serverGroup = serverGroup;
+            this.servers = servers;
+            this.errorMessage = errorMessage;
+        }
+
+        @Override
+        public void onFailed(final Operation operation, final String failure) {
+            finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, failure));
+        }
+    }
+
+
+    private class ServerGroupExceptionCallback implements Dispatcher.OnError {
+
+        private final ServerGroup serverGroup;
+        private final List<Server> servers;
+        private final SafeHtml errorMessage;
+
+        ServerGroupExceptionCallback(final ServerGroup serverGroup, final List<Server> servers, SafeHtml errorMessage) {
+            this.serverGroup = serverGroup;
+            this.servers = servers;
+            this.errorMessage = errorMessage;
+        }
+
+        @Override
+        public void onException(final Operation operation, final Throwable exception) {
+            finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
+        }
     }
 }

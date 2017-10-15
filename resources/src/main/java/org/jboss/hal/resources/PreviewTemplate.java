@@ -55,7 +55,9 @@ class PreviewTemplate {
 
     private final Map<String, String> context;
 
-    private PreviewTemplate(Map<String, String> context) {this.context = context;}
+    private PreviewTemplate(Map<String, String> context) {
+        this.context = context;
+    }
 
     String evaluate(String text) {
         if (text != null) {

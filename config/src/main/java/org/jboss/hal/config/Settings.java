@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Splitter;
@@ -29,6 +30,50 @@ import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 
 public class Settings {
+
+    @Inject public static Settings INSTANCE; // use only if no DI is available!
+    public static final String DEFAULT_LOCALE = "en";
+    public static final int DEFAULT_PAGE_SIZE = 10;
+    public static final int[] PAGE_SIZE_VALUES = new int[]{10, 20, 50};
+    private static final int EXPIRES = 365; // days
+
+    private final Map<Key, Value> values;
+
+    public Settings() {
+        values = new EnumMap<>(Key.class);
+    }
+
+    public <T> void load(Key key, T defaultValue) {
+        String value = Cookies.get(cookieName(key));
+        if (value == null) {
+            if (defaultValue != null) {
+                value = String.valueOf(defaultValue);
+            }
+        }
+        values.put(key, new Value(value));
+    }
+
+    public Value get(Key key) {
+        return values.getOrDefault(key, Value.EMPTY);
+    }
+
+    public <T> void set(Key key, T value) {
+        values.put(key, new Value(value != null ? String.valueOf(value) : null));
+        if (value == null) {
+            Cookies.remove(cookieName(key));
+        } else {
+            if (key.persistent) {
+                Cookies.set(cookieName(key), String.valueOf(value), EXPIRES);
+            } else {
+                Cookies.set(cookieName(key), String.valueOf(value));
+            }
+        }
+    }
+
+    private String cookieName(Key key) {
+        return Ids.build(Ids.COOKIE, key.key);
+    }
+
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
     public enum Key {
@@ -73,7 +118,9 @@ public class Settings {
 
         private final String value;
 
-        private Value(final String value) {this.value = value;}
+        private Value(final String value) {
+            this.value = value;
+        }
 
         public boolean asBoolean() {
             return Boolean.parseBoolean(value);
@@ -94,7 +141,7 @@ public class Settings {
             return asSet(SEPARATOR);
         }
 
-        public Set<String> asSet(String separator) {
+        Set<String> asSet(String separator) {
             if (value != null) {
                 return stream(Splitter.on(separator).omitEmptyStrings().trimResults().split(value).spliterator(), false)
                         .collect(toSet());
@@ -105,50 +152,5 @@ public class Settings {
         public String value() {
             return value;
         }
-    }
-
-
-    @Inject
-    public static Settings INSTANCE; // use only if no DI is available!
-    public static final String DEFAULT_LOCALE = "en";
-    public static final int DEFAULT_PAGE_SIZE = 10;
-    public static final int[] PAGE_SIZE_VALUES = new int[]{10, 20, 50};
-    private static final int EXPIRES = 365; // days
-
-    private final Map<Key, Value> values;
-
-    public Settings() {
-        values = new EnumMap<>(Key.class);
-    }
-
-    public <T> void load(Key key, T defaultValue) {
-        String value = Cookies.get(cookieName(key));
-        if (value == null) {
-            if (defaultValue != null) {
-                value = String.valueOf(defaultValue);
-            }
-        }
-        values.put(key, new Value(value));
-    }
-
-    public Value get(Key key) {
-        return values.getOrDefault(key, Value.EMPTY);
-    }
-
-    public <T> void set(Key key, T value) {
-        values.put(key, new Value(value != null ? String.valueOf(value) : null));
-        if (value == null) {
-            Cookies.remove(cookieName(key));
-        } else {
-            if (key.persistent) {
-                Cookies.set(cookieName(key), String.valueOf(value), EXPIRES);
-            } else {
-                Cookies.set(cookieName(key), String.valueOf(value));
-            }
-        }
-    }
-
-    private String cookieName(Key key) {
-        return Ids.build(Ids.COOKIE_PREFIX, key.key);
     }
 }

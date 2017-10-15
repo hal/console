@@ -50,7 +50,7 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
     HandlerChainElement(final Config configType, final MetadataRegistry metadataRegistry,
             final TableButtonFactory tableButtonFactory) {
 
-        String tableId = Ids.build(configType.baseId, "handler-chain", Ids.TABLE_SUFFIX);
+        String tableId = Ids.build(configType.baseId, "handler-chain", Ids.TABLE);
         Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(tableId, metadata)
                 .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, table -> presenter.addHandlerChain()))
@@ -60,7 +60,7 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .column(Names.HANDLER, row -> presenter.showHandlers(row))
                 .build();
 
-        String formId = Ids.build(configType.baseId, "handler-chain", Ids.FORM_SUFFIX);
+        String formId = Ids.build(configType.baseId, "handler-chain", Ids.FORM);
         form = new ModelNodeForm.Builder<NamedNode>(formId, metadata)
                 .onSave((form, changedValues) -> presenter.saveHandlerChain(form.getModel().getName(), changedValues))
                 .prepareReset(form -> presenter.resetHandlerChain(form.getModel().getName(), form))

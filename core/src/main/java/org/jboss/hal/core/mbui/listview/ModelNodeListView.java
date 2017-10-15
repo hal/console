@@ -66,91 +66,6 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
     private static final String NO_ITEMS = "org.jboss.hal.core.mbui.listview.NoItems";
     private static final String NO_MATCHING_ITEMS = "org.jboss.hal.core.mbui.listview.NoMatchingItems";
-
-
-    public static class Builder<T extends ModelNode> {
-
-        private final String id;
-        private final Metadata metadata;
-        private final List<Toolbar.Attribute<T>> toolbarAttributes;
-        private final List<Toolbar.Action> toolbarActions;
-        private final DataProvider<T> dataProvider;
-        private final ItemRenderer<T> itemRenderer;
-        private final Map<String, EmptyState> emptyStates;
-        private boolean multiSelect;
-        private boolean stacked;
-
-        public Builder(@NonNls String id, Metadata metadata, DataProvider<T> dataProvider,
-                ItemRenderer<T> itemRenderer) {
-            this.id = id;
-            this.metadata = metadata;
-            this.dataProvider = dataProvider;
-            this.itemRenderer = itemRenderer;
-            this.toolbarAttributes = new ArrayList<>();
-            this.toolbarActions = new ArrayList<>();
-            this.emptyStates = new HashMap<>();
-            this.multiSelect = false;
-            this.stacked = true;
-
-            emptyStates.put(NO_ITEMS, new EmptyState.Builder(CONSTANTS.noItems())
-                    .description(MESSAGES.noItems())
-                    .build());
-            emptyStates.put(NO_MATCHING_ITEMS, new EmptyState.Builder(CONSTANTS.noMatchingItems())
-                    .description(MESSAGES.noMatchingItems())
-                    .build());
-        }
-
-        public Builder<T> stacked(boolean stacked) {
-            this.stacked = stacked;
-            return this;
-        }
-
-        public Builder<T> multiSelect(boolean multiSelect) {
-            this.multiSelect = multiSelect;
-            return this;
-        }
-
-        public Builder<T> toolbarAttribute(Toolbar.Attribute<T> attribute) {
-            toolbarAttributes.add(attribute);
-            return this;
-        }
-
-        public Builder<T> toolbarAction(Toolbar.Action action) {
-            toolbarActions.add(action);
-            return this;
-        }
-
-        public Builder<T> noItems(String header) {
-            return noItems(header, null);
-        }
-
-        public Builder<T> noItems(String header, SafeHtml description) {
-            emptyStates.get(NO_ITEMS).setHeader(header);
-            emptyStates.get(NO_ITEMS).setDescription(description);
-            return this;
-        }
-
-        public Builder<T> noMatchingItems(String header) {
-            return noMatchingItems(header, null);
-        }
-
-        public Builder<T> noMatchingItems(String header, SafeHtml description) {
-            emptyStates.get(NO_MATCHING_ITEMS).setHeader(header);
-            emptyStates.get(NO_MATCHING_ITEMS).setDescription(description);
-            return this;
-        }
-
-        public Builder<T> emptyState(String name, EmptyState emptyState) {
-            emptyStates.put(name, emptyState);
-            return this;
-        }
-
-        public ModelNodeListView<T> build() {
-            return new ModelNodeListView<>(this);
-        }
-    }
-
-
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
@@ -294,5 +209,88 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             Elements.setVisible(element, false);
         }
         Elements.setVisible(listView.asElement(), true);
+    }
+
+
+    public static class Builder<T extends ModelNode> {
+
+        private final String id;
+        private final Metadata metadata;
+        private final List<Toolbar.Attribute<T>> toolbarAttributes;
+        private final List<Toolbar.Action> toolbarActions;
+        private final DataProvider<T> dataProvider;
+        private final ItemRenderer<T> itemRenderer;
+        private final Map<String, EmptyState> emptyStates;
+        private boolean multiSelect;
+        private boolean stacked;
+
+        public Builder(@NonNls String id, Metadata metadata, DataProvider<T> dataProvider,
+                ItemRenderer<T> itemRenderer) {
+            this.id = id;
+            this.metadata = metadata;
+            this.dataProvider = dataProvider;
+            this.itemRenderer = itemRenderer;
+            this.toolbarAttributes = new ArrayList<>();
+            this.toolbarActions = new ArrayList<>();
+            this.emptyStates = new HashMap<>();
+            this.multiSelect = false;
+            this.stacked = true;
+
+            emptyStates.put(NO_ITEMS, new EmptyState.Builder(CONSTANTS.noItems())
+                    .description(MESSAGES.noItems())
+                    .build());
+            emptyStates.put(NO_MATCHING_ITEMS, new EmptyState.Builder(CONSTANTS.noMatchingItems())
+                    .description(MESSAGES.noMatchingItems())
+                    .build());
+        }
+
+        public Builder<T> stacked(boolean stacked) {
+            this.stacked = stacked;
+            return this;
+        }
+
+        public Builder<T> multiSelect(boolean multiSelect) {
+            this.multiSelect = multiSelect;
+            return this;
+        }
+
+        public Builder<T> toolbarAttribute(Toolbar.Attribute<T> attribute) {
+            toolbarAttributes.add(attribute);
+            return this;
+        }
+
+        public Builder<T> toolbarAction(Toolbar.Action action) {
+            toolbarActions.add(action);
+            return this;
+        }
+
+        public Builder<T> noItems(String header) {
+            return noItems(header, null);
+        }
+
+        public Builder<T> noItems(String header, SafeHtml description) {
+            emptyStates.get(NO_ITEMS).setHeader(header);
+            emptyStates.get(NO_ITEMS).setDescription(description);
+            return this;
+        }
+
+        public Builder<T> noMatchingItems(String header) {
+            return noMatchingItems(header, null);
+        }
+
+        public Builder<T> noMatchingItems(String header, SafeHtml description) {
+            emptyStates.get(NO_MATCHING_ITEMS).setHeader(header);
+            emptyStates.get(NO_MATCHING_ITEMS).setDescription(description);
+            return this;
+        }
+
+        public Builder<T> emptyState(String name, EmptyState emptyState) {
+            emptyStates.put(name, emptyState);
+            return this;
+        }
+
+        public ModelNodeListView<T> build() {
+            return new ModelNodeListView<>(this);
+        }
     }
 }

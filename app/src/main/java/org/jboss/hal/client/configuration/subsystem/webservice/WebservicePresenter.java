@@ -185,7 +185,7 @@ public class WebservicePresenter
 
     void addConfig() {
         Metadata metadata = metadataRegistry.lookup(configType.template);
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(configType.baseId, Ids.ADD_SUFFIX),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(configType.baseId, Ids.ADD),
                 resources.messages().addResourceTitle(configType.type), metadata,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);

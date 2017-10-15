@@ -87,6 +87,294 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
+
+    private final boolean addOnly;
+    private final boolean singleton;
+    private final Supplier<org.jboss.hal.dmr.Operation> ping;
+    private final Map<String, ModelNode> attributeDescriptions;
+    private final ResourceDescription resourceDescription;
+    private final String attributePath;
+    private Metadata metadata;
+
+    @SuppressWarnings("unchecked")
+    protected ModelNodeForm(final Builder<T> builder) {
+        super(builder.id, builder.stateMachine(),
+                builder.dataMapping != null
+                        ? builder.dataMapping
+                        : new ModelNodeMapping<>(
+                        builder.metadata.getDescription().getAttributes(builder.attributePath)),
+                builder.emptyState);
+
+        this.addOnly = builder.addOnly;
+        this.singleton = builder.singleton;
+        this.ping = builder.ping;
+        this.saveCallback = builder.saveCallback;
+        this.cancelCallback = builder.cancelCallback;
+        this.prepareReset = builder.prepareReset;
+        this.prepareRemove = builder.prepareRemove;
+        this.resourceDescription = builder.metadata.getDescription();
+        this.attributePath = builder.attributePath;
+        this.metadata = builder.metadata;
+
+        List<Property> properties = new ArrayList<>();
+        List<Property> filteredProperties = resourceDescription.getAttributes(attributePath)
+                .stream()
+                .filter(new PropertyFilter(builder))
+                .collect(toList());
+        LinkedHashMap<String, Property> filteredByName = new LinkedHashMap<>();
+        for (Property property : filteredProperties) {
+            filteredByName.put(property.getName(), property);
+        }
+
+        if (builder.unsorted && !builder.includes.isEmpty()) {
+            // re-shuffle the properties:
+            // 1. the ones specified in 'builder.includes'
+            // 2. the remaining from 'filteredProperties'
+            for (String include : builder.includes) {
+                Property removed = filteredByName.remove(include);
+                if (removed != null) {
+                    properties.add(removed);
+                }
+            }
+            properties.addAll(filteredByName.values());
+        } else if (builder.unsorted) {
+            properties.addAll(filteredByName.values());
+        } else {
+            properties.addAll(filteredProperties);
+            properties.sort(Comparator.comparing(Property::getName));
+        }
+        this.attributeDescriptions = properties.stream().collect(toMap(Property::getName, Property::getValue));
+
+        int index = 0;
+        LabelBuilder labelBuilder = new LabelBuilder();
+        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
+        for (Property property : properties) {
+
+            // any unbound form items for the current index?
+            for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext(); ) {
+                UnboundFormItem unboundFormItem = iterator.next();
+                if (unboundFormItem.position == index) {
+                    addFormItem(unboundFormItem.formItem);
+                    markAsUnbound(unboundFormItem.formItem.getName());
+                    if (unboundFormItem.helpText != null) {
+                        addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
+                    }
+                    iterator.remove();
+                    index++;
+                }
+            }
+
+            String name = property.getName();
+            ModelNode attribute = property.getValue();
+
+            FormItem formItem;
+            if (builder.providers.containsKey(name)) {
+                formItem = builder.providers.get(name).createFrom(property);
+            } else {
+                formItem = builder.defaultFormItemProvider.createFrom(property);
+            }
+            if (formItem != null) {
+                addFormItem(formItem);
+                if (attribute.hasDefined(DESCRIPTION)) {
+                    SafeHtml helpText = helpTextBuilder.helpText(property);
+                    addHelp(labelBuilder.label(property), helpText);
+                }
+                index++;
+            } else {
+                logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id);
+            }
+        }
+
+        // add remaining unbound form items
+        for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
+            addFormItem(unboundFormItem.formItem);
+            markAsUnbound(unboundFormItem.formItem.getName());
+            if (unboundFormItem.helpText != null) {
+                addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
+            }
+        }
+
+        // create form validations from requires and alternatives
+        HashMultimap<String, String> requires = HashMultimap.create();
+        Set<String> processedAlternatives = new HashSet<>();
+        for (FormItem formItem : getBoundFormItems()) {
+            String name = formItem.getName();
+
+            // requires (1)
+            ModelNode attributeDescription = attributeDescriptions.get(name);
+            if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
+                // collect all attributes from the 'requires' list of this attribute
+                // which are not required themselves.
+                failSafeList(attributeDescription, REQUIRES).stream()
+                        .map(ModelNode::asString)
+                        .forEach(requiresName -> {
+                            ModelNode requiresDescription = attributeDescriptions.get(requiresName);
+                            if (requiresDescription != null && !failSafeBoolean(requiresDescription, REQUIRED)) {
+                                requires.put(requiresName, name);
+                            }
+                        });
+            }
+
+            // alternatives
+            List<String> alternatives = resourceDescription.findAlternatives(attributePath, name);
+            HashSet<String> uniqueAlternatives = new HashSet<>(alternatives);
+            uniqueAlternatives.add(name);
+            uniqueAlternatives.removeAll(processedAlternatives);
+            if (uniqueAlternatives.size() > 1) {
+
+                Set<String> requiredAlternatives = new HashSet<>();
+                uniqueAlternatives.forEach(alternative -> {
+                    ModelNode attribute = attributeDescriptions.getOrDefault(alternative, new ModelNode());
+                    if (failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
+                        requiredAlternatives.add(alternative);
+                    }
+                });
+
+                if (requiredAlternatives.size() > 1) {
+                    // validate that exactly one of the required alternatives is defined
+                    addFormValidation(new ExactlyOneAlternativeValidation<>(requiredAlternatives, CONSTANTS, MESSAGES));
+                }
+
+                if (builder.requiredOnly && requiredAlternatives.size() == 1) {
+                    // if the form displays only one required alternative then display it as required
+                    getFormItem(name).setRequired(true);
+                }
+
+                // validate that not more than one of the alternatives is defined
+                addFormValidation(new NotMoreThanOneAlternativeValidation<>(uniqueAlternatives, this, CONSTANTS,
+                        MESSAGES));
+
+                processedAlternatives.addAll(uniqueAlternatives);
+            }
+        }
+
+        // requires (2)
+        requires.asMap().forEach((name, requiredBy) -> {
+            FormItem<Object> formItem = getFormItem(name);
+            if (formItem != null) {
+                formItem.addValidationHandler(
+                        new RequiredByValidation<>(formItem, requiredBy, this, CONSTANTS, MESSAGES));
+            }
+        });
+    }
+
+    @Override
+    @JsMethod
+    public void attach() {
+        super.attach();
+
+        if (Iterables.isEmpty(getFormItems())) {
+            Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
+            Elements.removeChildrenFrom(asElement());
+            asElement().appendChild(alert.asElement());
+        }
+
+        if (singleton && ping != null && ping.get() != null) {
+            Core.INSTANCE.dispatcher().execute(ping.get(),
+                    result -> {
+                        if (!result.isDefined()) {
+                            flip(EMPTY);
+                        } else {
+                            flip(READONLY);
+                        }
+                    }, (op, failure) -> flip(EMPTY));
+        }
+    }
+
+    @Override
+    protected void prepare(final State state) {
+        super.prepare(state);
+
+        SecurityContext securityContext = metadata.getSecurityContext();
+        switch (state) {
+            case EMPTY:
+                ElementGuard.processElements(
+                        AuthorisationDecision.from(Core.INSTANCE.environment(), securityContext), asElement());
+                break;
+
+            case READONLY:
+            case EDITING:
+                // change restricted and enabled state
+                for (FormItem formItem : getBoundFormItems()) {
+                    formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
+                    // don't touch disabled form items
+                    if (formItem.isEnabled()) {
+                        formItem.setEnabled(securityContext.isWritable(formItem.getName()));
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        // adjust form links in any case
+        if (!securityContext.isWritable()) {
+            formLinks.setVisible(Operation.EDIT, false);
+            formLinks.setVisible(Operation.RESET, false);
+            formLinks.setVisible(Operation.REMOVE, false);
+        }
+    }
+
+    @Override
+    protected void prepareEditState() {
+        super.prepareEditState();
+    }
+
+    @Override
+    public boolean isUndefined() {
+        return getModel() == null || !getModel().isDefined();
+    }
+
+    @Override
+    public boolean isTransient() {
+        return addOnly || (getModel() != null && !getModel().isDefined());
+    }
+
+    /**
+     * @return only the changed values w/ {@code "access-type" => "read-write"}.
+     */
+    @Override
+    protected Map<String, Object> getChangedValues() {
+        Map<String, Object> writableChanges = new HashMap<>(super.getChangedValues());
+        writableChanges.entrySet().removeIf(entry -> {
+            ModelNode metadata = attributeDescriptions.get(entry.getKey());
+            return metadata != null && metadata.hasDefined(ACCESS_TYPE) && !READ_WRITE
+                    .equals(metadata.get(ACCESS_TYPE).asString());
+        });
+        return writableChanges;
+    }
+
+    boolean isEmptyOrDefault(FormItem formItem) {
+        String name = formItem.getName();
+        Object value = formItem.getValue();
+        ModelNode attributeDescription = attributeDescriptions.get(name);
+        if (attributeDescription != null) {
+            if (attributeDescription.hasDefined(DEFAULT)) {
+                return resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
+            } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
+                return value == null || !(Boolean) value;
+            } else {
+                return formItem.isEmpty();
+            }
+        }
+        return formItem.isEmpty();
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsProperty(name = "element")
+    public HTMLElement jsElement() {
+        return asElement();
+    }
+
+
+    // ------------------------------------------------------ inner classes
+
+
     /**
      * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes
      * with <code>"storage" =&gt; "configuration"</code>.
@@ -400,13 +688,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         // ------------------------------------------------------ JS methods
 
-
-        @JsFunction
-        interface JsSaveCallback<T> {
-
-            void onSave(final Form<T> form, final JsPropertyMapOfAny changedValues);
-        }
-
         /** Includes the specified attributes */
         @JsMethod(name = "include")
         @EsReturn("FormBuilder")
@@ -424,292 +705,15 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         /** Calls the specified callback when the save button was clicked and no validation errors occurred. */
         @JsMethod(name = "onSave")
         @EsReturn("FormBuilder")
-        public Builder<T> jsOnSave(final JsSaveCallback<T> callback) {
+        public Builder<T> jsOnSave(JsSaveCallback<T> callback) {
             this.saveCallback = (form, changedValues) -> callback.onSave(form, asJsMap(changedValues));
             return this;
         }
-    }
 
+        @JsFunction
+        interface JsSaveCallback<T> {
 
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final Messages MESSAGES = GWT.create(Messages.class);
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
-
-    private final boolean addOnly;
-    private final boolean singleton;
-    private final Supplier<org.jboss.hal.dmr.Operation> ping;
-    private final Map<String, ModelNode> attributeDescriptions;
-    private final ResourceDescription resourceDescription;
-    private final String attributePath;
-    private Metadata metadata;
-
-    @SuppressWarnings("unchecked")
-    protected ModelNodeForm(final Builder<T> builder) {
-        super(builder.id, builder.stateMachine(),
-                builder.dataMapping != null
-                        ? builder.dataMapping
-                        : new ModelNodeMapping<>(
-                        builder.metadata.getDescription().getAttributes(builder.attributePath)),
-                builder.emptyState);
-
-        this.addOnly = builder.addOnly;
-        this.singleton = builder.singleton;
-        this.ping = builder.ping;
-        this.saveCallback = builder.saveCallback;
-        this.cancelCallback = builder.cancelCallback;
-        this.prepareReset = builder.prepareReset;
-        this.prepareRemove = builder.prepareRemove;
-        this.resourceDescription = builder.metadata.getDescription();
-        this.attributePath = builder.attributePath;
-        this.metadata = builder.metadata;
-
-        List<Property> properties = new ArrayList<>();
-        List<Property> filteredProperties = resourceDescription.getAttributes(attributePath)
-                .stream()
-                .filter(new PropertyFilter(builder))
-                .collect(toList());
-        LinkedHashMap<String, Property> filteredByName = new LinkedHashMap<>();
-        for (Property property : filteredProperties) {
-            filteredByName.put(property.getName(), property);
+            void onSave(Form<T> form, JsPropertyMapOfAny changedValues);
         }
-
-        if (builder.unsorted && !builder.includes.isEmpty()) {
-            // re-shuffle the properties:
-            // 1. the ones specified in 'builder.includes'
-            // 2. the remaining from 'filteredProperties'
-            for (String include : builder.includes) {
-                Property removed = filteredByName.remove(include);
-                if (removed != null) {
-                    properties.add(removed);
-                }
-            }
-            properties.addAll(filteredByName.values());
-        } else if (builder.unsorted) {
-            properties.addAll(filteredByName.values());
-        } else {
-            properties.addAll(filteredProperties);
-            properties.sort(Comparator.comparing(Property::getName));
-        }
-        this.attributeDescriptions = properties.stream().collect(toMap(Property::getName, Property::getValue));
-
-        int index = 0;
-        LabelBuilder labelBuilder = new LabelBuilder();
-        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
-        for (Property property : properties) {
-
-            // any unbound form items for the current index?
-            for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext(); ) {
-                UnboundFormItem unboundFormItem = iterator.next();
-                if (unboundFormItem.position == index) {
-                    addFormItem(unboundFormItem.formItem);
-                    markAsUnbound(unboundFormItem.formItem.getName());
-                    if (unboundFormItem.helpText != null) {
-                        addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
-                    }
-                    iterator.remove();
-                    index++;
-                }
-            }
-
-            String name = property.getName();
-            ModelNode attribute = property.getValue();
-
-            FormItem formItem;
-            if (builder.providers.containsKey(name)) {
-                formItem = builder.providers.get(name).createFrom(property);
-            } else {
-                formItem = builder.defaultFormItemProvider.createFrom(property);
-            }
-            if (formItem != null) {
-                addFormItem(formItem);
-                if (attribute.hasDefined(DESCRIPTION)) {
-                    SafeHtml helpText = helpTextBuilder.helpText(property);
-                    addHelp(labelBuilder.label(property), helpText);
-                }
-                index++;
-            } else {
-                logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id);
-            }
-        }
-
-        // add remaining unbound form items
-        for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
-            addFormItem(unboundFormItem.formItem);
-            markAsUnbound(unboundFormItem.formItem.getName());
-            if (unboundFormItem.helpText != null) {
-                addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
-            }
-        }
-
-        // create form validations from requires and alternatives
-        HashMultimap<String, String> requires = HashMultimap.create();
-        Set<String> processedAlternatives = new HashSet<>();
-        for (FormItem formItem : getBoundFormItems()) {
-            String name = formItem.getName();
-
-            // requires (1)
-            ModelNode attributeDescription = attributeDescriptions.get(name);
-            if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
-                // collect all attributes from the 'requires' list of this attribute
-                // which are not required themselves.
-                failSafeList(attributeDescription, REQUIRES).stream()
-                        .map(ModelNode::asString)
-                        .forEach(requiresName -> {
-                            ModelNode requiresDescription = attributeDescriptions.get(requiresName);
-                            if (requiresDescription != null && !failSafeBoolean(requiresDescription, REQUIRED)) {
-                                requires.put(requiresName, name);
-                            }
-                        });
-            }
-
-            // alternatives
-            List<String> alternatives = resourceDescription.findAlternatives(attributePath, name);
-            HashSet<String> uniqueAlternatives = new HashSet<>(alternatives);
-            uniqueAlternatives.add(name);
-            uniqueAlternatives.removeAll(processedAlternatives);
-            if (uniqueAlternatives.size() > 1) {
-
-                Set<String> requiredAlternatives = new HashSet<>();
-                uniqueAlternatives.forEach(alternative -> {
-                    ModelNode attribute = attributeDescriptions.getOrDefault(alternative, new ModelNode());
-                    if (failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
-                        requiredAlternatives.add(alternative);
-                    }
-                });
-
-                if (requiredAlternatives.size() > 1) {
-                    // validate that exactly one of the required alternatives is defined
-                    addFormValidation(new ExactlyOneAlternativeValidation<>(requiredAlternatives, CONSTANTS, MESSAGES));
-                }
-
-                if (builder.requiredOnly && requiredAlternatives.size() == 1) {
-                    // if the form displays only one required alternative then display it as required
-                    getFormItem(name).setRequired(true);
-                }
-
-                // validate that not more than one of the alternatives is defined
-                addFormValidation(new NotMoreThanOneAlternativeValidation<>(uniqueAlternatives, this, CONSTANTS,
-                        MESSAGES));
-
-                processedAlternatives.addAll(uniqueAlternatives);
-            }
-        }
-
-        // requires (2)
-        requires.asMap().forEach((name, requiredBy) -> {
-            FormItem<Object> formItem = getFormItem(name);
-            if (formItem != null) {
-                formItem.addValidationHandler(
-                        new RequiredByValidation<>(formItem, requiredBy, this, CONSTANTS, MESSAGES));
-            }
-        });
-    }
-
-    @Override
-    @JsMethod
-    public void attach() {
-        super.attach();
-
-        if (Iterables.isEmpty(getFormItems())) {
-            Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
-            Elements.removeChildrenFrom(asElement());
-            asElement().appendChild(alert.asElement());
-        }
-
-        if (singleton && ping != null && ping.get() != null) {
-            Core.INSTANCE.dispatcher().execute(ping.get(),
-                    result -> {
-                        if (!result.isDefined()) {
-                            flip(EMPTY);
-                        } else {
-                            flip(READONLY);
-                        }
-                    }, (op, failure) -> flip(EMPTY));
-        }
-    }
-
-    @Override
-    protected void prepare(final State state) {
-        super.prepare(state);
-
-        SecurityContext securityContext = metadata.getSecurityContext();
-        switch (state) {
-            case EMPTY:
-                ElementGuard.processElements(
-                        AuthorisationDecision.from(Core.INSTANCE.environment(), securityContext), asElement());
-                break;
-
-            case READONLY:
-            case EDITING:
-                // change restricted and enabled state
-                for (FormItem formItem : getBoundFormItems()) {
-                    formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
-                    // don't touch disabled form items
-                    if (formItem.isEnabled()) {
-                        formItem.setEnabled(securityContext.isWritable(formItem.getName()));
-                    }
-                }
-                break;
-        }
-
-        // adjust form links in any case
-        if (!securityContext.isWritable()) {
-            formLinks.setVisible(Operation.EDIT, false);
-            formLinks.setVisible(Operation.RESET, false);
-            formLinks.setVisible(Operation.REMOVE, false);
-        }
-    }
-
-    @Override
-    protected void prepareEditState() {
-        super.prepareEditState();
-    }
-
-    @Override
-    public boolean isUndefined() {
-        return getModel() == null || !getModel().isDefined();
-    }
-
-    @Override
-    public boolean isTransient() {
-        return addOnly || (getModel() != null && !getModel().isDefined());
-    }
-
-    /**
-     * @return only the changed values w/ {@code "access-type" => "read-write"}.
-     */
-    @Override
-    protected Map<String, Object> getChangedValues() {
-        Map<String, Object> writableChanges = new HashMap<>(super.getChangedValues());
-        writableChanges.entrySet().removeIf(entry -> {
-            ModelNode metadata = attributeDescriptions.get(entry.getKey());
-            return metadata != null && metadata.hasDefined(ACCESS_TYPE) && !READ_WRITE
-                    .equals(metadata.get(ACCESS_TYPE).asString());
-        });
-        return writableChanges;
-    }
-
-    boolean isEmptyOrDefault(FormItem formItem) {
-        String name = formItem.getName();
-        Object value = formItem.getValue();
-        ModelNode attributeDescription = attributeDescriptions.get(name);
-        if (attributeDescription != null) {
-            if (attributeDescription.hasDefined(DEFAULT)) {
-                return resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
-            } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
-                return value == null || !(Boolean) value;
-            } else {
-                return formItem.isEmpty();
-            }
-        }
-        return formItem.isEmpty();
-    }
-
-
-    // ------------------------------------------------------ JS methods
-
-    @JsProperty(name = "element")
-    public HTMLElement jsElement() {
-        return asElement();
     }
 }

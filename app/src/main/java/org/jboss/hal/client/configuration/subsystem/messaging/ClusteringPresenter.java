@@ -127,7 +127,7 @@ public class ClusteringPresenter
 
     void addClusterConnection(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .fromRequestProperties()
                 .requiredOnly()
@@ -151,7 +151,7 @@ public class ClusteringPresenter
     void addBridge(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .include(QUEUE_NAME, DISCOVERY_GROUP, STATIC_CONNECTORS)

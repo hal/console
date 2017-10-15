@@ -133,9 +133,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         registerAttachable(crForm);
 
         Tabs serverTabs = new Tabs();
-        serverTabs.add(Ids.build(Ids.MAIL_SERVER, SERVER, Ids.TAB_SUFFIX), resources.constants().attributes(),
+        serverTabs.add(Ids.build(Ids.MAIL_SERVER, SERVER, Ids.TAB), resources.constants().attributes(),
                 serverForm.asElement());
-        serverTabs.add(Ids.build(Ids.MAIL_SERVER, CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX), Names.CREDENTIAL_REFERENCE,
+        serverTabs.add(Ids.build(Ids.MAIL_SERVER, CREDENTIAL_REFERENCE, Ids.TAB), Names.CREDENTIAL_REFERENCE,
                 crForm.asElement());
 
         mailSessionElement = section()

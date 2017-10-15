@@ -92,7 +92,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .on(click, event -> presenter.switchWrite(THROUGH, BEHIND)))
                 .asElement();
 
-        String id = Ids.build(cache.baseId, store.baseId, BEHIND.baseId, Ids.FORM_SUFFIX);
+        String id = Ids.build(cache.baseId, store.baseId, BEHIND.baseId, Ids.FORM);
         Metadata metadata = metadataRegistry.lookup(cache.template
                 .append(STORE + "=" + store.resource)
                 .append(WRITE + "=" + BEHIND.resource));

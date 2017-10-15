@@ -26,6 +26,37 @@ import static java.util.stream.Collectors.toList;
 
 public class VerticalNavigationInfo extends MbuiElementInfo {
 
+    private final List<Item> items;
+    private final Map<String, Item> itemsById;
+
+    VerticalNavigationInfo(final String name, final String selector) {
+        super(name, selector);
+        this.items = new ArrayList<>();
+        this.itemsById = new HashMap<>();
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    void addItem(Item item) {
+        items.add(item);
+        itemsById.put(item.getId(), item);
+    }
+
+    Item getItem(String id) {
+        Item item = itemsById.get(id);
+        if (item == null) {
+            for (Item itm : items) {
+                Item subItem = itm.getItem(id);
+                if (subItem != null) {
+                    return subItem;
+                }
+            }
+        }
+        return item;
+    }
+
     public static class Item {
 
         private final String id;
@@ -95,37 +126,5 @@ public class VerticalNavigationInfo extends MbuiElementInfo {
             }
             return null;
         }
-    }
-
-
-    private final List<Item> items;
-    private final Map<String, Item> itemsById;
-
-    VerticalNavigationInfo(final String name, final String selector) {
-        super(name, selector);
-        this.items = new ArrayList<>();
-        this.itemsById = new HashMap<>();
-    }
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    void addItem(Item item) {
-        items.add(item);
-        itemsById.put(item.getId(), item);
-    }
-
-    Item getItem(String id) {
-        Item item = itemsById.get(id);
-        if (item == null) {
-            for (Item itm : items) {
-                Item subItem = itm.getItem(id);
-                if (subItem != null) {
-                    return subItem;
-                }
-            }
-        }
-        return item;
     }
 }

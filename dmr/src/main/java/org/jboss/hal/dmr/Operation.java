@@ -35,152 +35,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @JsType
 public class Operation extends ModelNode {
 
-    /**
-     * A builder for operations.
-     *
-     * @author Harald Pehl
-     */
-    @JsType(name = "OperationBuilder")
-    public static class Builder {
-
-        private final String name;
-        private final ResourceAddress address;
-        private ModelNode parameter;
-        private ModelNode header;
-        private Set<String> roles;
-
-        @JsIgnore
-        public Builder(final ResourceAddress address, final String name) {
-            this.address = address;
-            this.name = name;
-            this.parameter = new ModelNode();
-            this.header = new ModelNode();
-            this.roles = new HashSet<>();
-        }
-
-        @JsIgnore
-        public Builder param(String name, boolean value) {
-            parameter.get(name).set(value);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder param(String name, int value) {
-            parameter.get(name).set(value);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder param(String name, long value) {
-            parameter.get(name).set(value);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder param(String name, double value) {
-            parameter.get(name).set(value);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder param(String name, @NonNls String value) {
-            parameter.get(name).set(value);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder param(String name, @NonNls String[] values) {
-            for (String value : values) {
-                parameter.get(name).add(value);
-            }
-            return this;
-        }
-
-        @JsIgnore
-        public Builder param(String name, ModelNode value) {
-            parameter.get(name).set(value);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder header(String name, String value) {
-            header.get(name).set(value);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder header(String name, boolean value) {
-            header.get(name).set(value);
-            return this;
-        }
-
-        /**
-         * Uses the specified payload for the operation.
-         *
-         * @param payload The operation as model node.
-         *
-         * @return this builder
-         */
-        @EsReturn("OperationBuilder")
-        public Builder payload(ModelNode payload) {
-            parameter = payload;
-            return this;
-        }
-
-        /**
-         * @return builds and returns the operation
-         */
-        public Operation build() {
-            return new Operation(name, address, parameter, header, roles);
-        }
-
-
-        // ------------------------------------------------------ JS methods
-
-        /**
-         * Add a parameter to the operation
-         *
-         * @param name  The name of the parameter.
-         * @param value The value of the parameter.
-         *
-         * @return this builder
-         */
-        @JsMethod(name = "param")
-        @EsReturn("OperationBuilder")
-        public Builder jsParam(String name, @EsParam("boolean|int|string") Object value) {
-            if (value instanceof Boolean) {
-                param(name, ((Boolean) value));
-            } else if (value instanceof Integer) {
-                param(name, ((Integer) value));
-            } else if (value instanceof String) {
-                param(name, ((String) value));
-            } else if (value instanceof ModelNode) {
-                param(name, ((ModelNode) value));
-            }
-            return this;
-        }
-
-        /**
-         * Add a header to the operation
-         *
-         * @param name  The name of the header.
-         * @param value The value of the header.
-         *
-         * @return this builder
-         */
-        @JsMethod(name = "header")
-        @EsReturn("OperationBuilder")
-        public Builder jsHeader(String name, @EsParam("boolean|int|string") Object value) {
-            if (value instanceof Boolean) {
-                header(name, ((Boolean) value));
-            } else if (value instanceof String) {
-                header(name, ((String) value));
-            }
-            return this;
-        }
-    }
-
-
     private final String name;
     private final ResourceAddress address;
     private final ModelNode parameter;
@@ -329,5 +183,151 @@ public class Operation extends ModelNode {
             builder.append("}");
         }
         return builder.toString();
+    }
+
+
+    /**
+     * A builder for operations.
+     *
+     * @author Harald Pehl
+     */
+    @JsType(name = "OperationBuilder")
+    public static class Builder {
+
+        private final String name;
+        private final ResourceAddress address;
+        private ModelNode parameter;
+        private ModelNode header;
+        private Set<String> roles;
+
+        @JsIgnore
+        public Builder(final ResourceAddress address, final String name) {
+            this.address = address;
+            this.name = name;
+            this.parameter = new ModelNode();
+            this.header = new ModelNode();
+            this.roles = new HashSet<>();
+        }
+
+        @JsIgnore
+        public Builder param(String name, boolean value) {
+            parameter.get(name).set(value);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder param(String name, int value) {
+            parameter.get(name).set(value);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder param(String name, long value) {
+            parameter.get(name).set(value);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder param(String name, double value) {
+            parameter.get(name).set(value);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder param(String name, @NonNls String value) {
+            parameter.get(name).set(value);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder param(String name, @NonNls String[] values) {
+            for (String value : values) {
+                parameter.get(name).add(value);
+            }
+            return this;
+        }
+
+        @JsIgnore
+        public Builder param(String name, ModelNode value) {
+            parameter.get(name).set(value);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder header(String name, String value) {
+            header.get(name).set(value);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder header(String name, boolean value) {
+            header.get(name).set(value);
+            return this;
+        }
+
+        /**
+         * Uses the specified payload for the operation.
+         *
+         * @param payload The operation as model node.
+         *
+         * @return this builder
+         */
+        @EsReturn("OperationBuilder")
+        public Builder payload(ModelNode payload) {
+            parameter = payload;
+            return this;
+        }
+
+        /**
+         * @return builds and returns the operation
+         */
+        public Operation build() {
+            return new Operation(name, address, parameter, header, roles);
+        }
+
+
+        // ------------------------------------------------------ JS methods
+
+        /**
+         * Add a parameter to the operation
+         *
+         * @param name  The name of the parameter.
+         * @param value The value of the parameter.
+         *
+         * @return this builder
+         */
+        @JsMethod(name = "param")
+        @EsReturn("OperationBuilder")
+        public Builder jsParam(String name, @EsParam("boolean|int|string") Object value) {
+            if (value instanceof Boolean) {
+                param(name, ((Boolean) value));
+            } else if (value instanceof Integer) {
+                param(name, ((Integer) value));
+            } else if (value instanceof String) {
+                param(name, ((String) value));
+            } else if (value instanceof ModelNode) {
+                param(name, ((ModelNode) value));
+            }
+            return this;
+        }
+
+        /**
+         * Add a header to the operation
+         *
+         * @param name  The name of the header.
+         * @param value The value of the header.
+         *
+         * @return this builder
+         */
+        @JsMethod(name = "header")
+        @EsReturn("OperationBuilder")
+        public Builder jsHeader(String name, @EsParam("boolean|int|string") Object value) {
+            if (value instanceof Boolean) {
+                header(name, ((Boolean) value));
+            } else if (value instanceof String) {
+                header(name, ((String) value));
+            }
+            return this;
+        }
     }
 }

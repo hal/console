@@ -61,7 +61,6 @@ import org.jboss.hal.spi.MessageEvent;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
 import static org.jboss.hal.resources.Ids.PATCHES_AGEOUT;
 
 @Column(Ids.PATCHING)
@@ -147,7 +146,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                 .handler(column -> applyPatch())
                 .build();
         ColumnAction<ModelNode> ageoutAction = new ColumnAction.Builder<ModelNode>(
-                Ids.build(HOSTS, PATCHES_AGEOUT, ADD_SUFFIX))
+                Ids.build(HOSTS, PATCHES_AGEOUT, Ids.ADD))
                 .element(columnActionFactory.addButton(resources.messages().cleanPatchHistory(), "fa fa-eraser"))
                 .handler(column -> ageoutHistory())
                 .build();

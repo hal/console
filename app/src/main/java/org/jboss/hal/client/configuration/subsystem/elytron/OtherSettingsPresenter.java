@@ -229,7 +229,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     void addNewItemTemplate(String ldapKeyStore) {
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_TEMPLATE)
                 .forComplexAttribute(NEW_ITEM_TEMPLATE);
-        String id = Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, NEW_ITEM_TEMPLATE, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, NEW_ITEM_TEMPLATE, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
                 .customFormItem(NEW_ITEM_ATTRIBUTES,
@@ -270,7 +270,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     void addPolicy(String complexAttribute, String type) {
         Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(complexAttribute);
-        String id = Ids.build(Ids.ELYTRON_POLICY, complexAttribute, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_POLICY, complexAttribute, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .addOnly()

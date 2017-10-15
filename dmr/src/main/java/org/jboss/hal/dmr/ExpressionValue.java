@@ -171,9 +171,12 @@ final class ExpressionValue extends ModelValue {
                 builder.append(value.substring(start - 2));
                 break;
             }
+            default:
+                break;
         }
         return builder.toString();
     }
+
     private final String expressionString;
 
     ExpressionValue(final String expressionString) {

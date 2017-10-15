@@ -135,7 +135,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         Tabs tabs = new Tabs();
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
         for (HostSetting setting : HostSetting.values()) {
-            tabs.add(Ids.build(setting.baseId, Ids.TAB_SUFFIX), setting.type,
+            tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
                     hostSettingForms.get(setting).asElement());
         }
 
@@ -239,11 +239,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 configurationSection);
         navigation.addPrimary(Ids.UNDERTOW_HOST_ENTRY, Names.HOSTS, pfIcon("enterprise"), hostPages);
         navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Names.LISTENER, fontAwesome("headphones"));
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(AJP.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(AJP.baseId, Ids.ENTRY),
                 AJP.type, listener.get(AJP).asElement());
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTP.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTP.baseId, Ids.ENTRY),
                 HTTP.type, listener.get(HTTP).asElement());
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTPS.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTPS.baseId, Ids.ENTRY),
                 HTTPS.type, listener.get(HTTPS).asElement());
 
         registerAttachable(navigation,
@@ -262,7 +262,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     private Form<ModelNode> hostSetting(final HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
-        return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
+        return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM), metadata)
                 .singleton(() -> presenter.hostSettingOperation(hostSetting),
                         () -> presenter.addHostSetting(hostSetting))
                 .onSave((f, changedValues) -> presenter.saveHostSetting(hostSetting, changedValues))
@@ -318,7 +318,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         listener.forEach((l, e) -> {
             List<NamedNode> items = asNamedNodes(failSafePropertyList(payload, l.resource));
             e.update(items);
-            navigation.updateBadge(Ids.build(l.baseId, Ids.ENTRY_SUFFIX), items.size());
+            navigation.updateBadge(Ids.build(l.baseId, Ids.ENTRY), items.size());
         });
     }
 

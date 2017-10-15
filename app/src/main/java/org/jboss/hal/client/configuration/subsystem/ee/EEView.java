@@ -237,11 +237,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Metadata metadata = metadataRegistry.lookup(template);
 
-        Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE_SUFFIX),
+        Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE),
                 metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
-                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type, template,
+                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
                         (name, address) -> presenter.reload()))
                 .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
                         () -> presenter.reload()))
@@ -250,7 +250,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         registerAttachable(table);
         tables.put(template.lastName(), table);
 
-        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM_SUFFIX),
+        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM),
                 metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.selectedRow().getName());

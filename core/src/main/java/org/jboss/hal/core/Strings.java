@@ -16,7 +16,6 @@
 package org.jboss.hal.core;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.Math.max;
 
 /** Collection of string helper methods. */

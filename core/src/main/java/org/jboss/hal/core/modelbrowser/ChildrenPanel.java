@@ -77,7 +77,7 @@ class ChildrenPanel implements HasElements, Attachable {
                 .paging(false)
                 .options();
 
-        table = new DataTable<>(Ids.build(Ids.MODEL_BROWSER, "children", Ids.TABLE_SUFFIX), options);
+        table = new DataTable<>(Ids.build(Ids.MODEL_BROWSER, "children", Ids.TABLE), options);
         builder = Elements.elements()
                 .add(header = h(1).asElement())
                 .add(table);

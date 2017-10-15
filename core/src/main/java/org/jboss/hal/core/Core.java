@@ -211,7 +211,7 @@ public class Core {
     @JsMethod(name = "form")
     @EsReturn("FormBuilder")
     public ModelNodeForm.Builder<ModelNode> jsForm(@EsParam("Metadata|AddressTemplate|string") Object meta) {
-        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("form", meta));
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM), jsMetadata("form", meta));
     }
 
     /**
@@ -234,7 +234,7 @@ public class Core {
     @JsMethod(name = "namedForm")
     @EsReturn("FormBuilder")
     public ModelNodeForm.Builder<NamedNode> jsNamedForm(@EsParam("Metadata|AddressTemplate|string") Object meta) {
-        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM), jsMetadata("namedForm", meta));
     }
 
     /**
@@ -247,7 +247,7 @@ public class Core {
     @JsMethod(name = "namedTable")
     @EsReturn("TableBuilder")
     public ModelNodeTable.Builder<NamedNode> jsNamedTable(@EsParam("Metadata|AddressTemplate|string") Object meta) {
-        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedTable", meta));
+        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM), jsMetadata("namedTable", meta));
     }
 
     /**
@@ -296,7 +296,7 @@ public class Core {
     @JsMethod(name = "table")
     @EsReturn("TableBuilder")
     public ModelNodeTable.Builder<ModelNode> jsTable(final Object meta) {
-        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.TAB_SUFFIX), jsMetadata("table", meta));
+        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.TAB), jsMetadata("table", meta));
     }
 
     /**
@@ -323,6 +323,8 @@ public class Core {
                 break;
             case SUCCESS:
                 MessageEvent.fire(eventBus, Message.success(safeMessage));
+                break;
+            default:
                 break;
         }
     }

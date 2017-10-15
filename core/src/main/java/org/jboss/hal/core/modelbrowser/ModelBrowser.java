@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -87,49 +88,6 @@ import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 
 /** Model browser element which can be embedded in other elements. */
 public class ModelBrowser implements IsElement<HTMLElement> {
-
-    private static class FilterInfo {
-
-        static final FilterInfo ROOT = new FilterInfo(null, null);
-
-        final ResourceAddress address;
-        final Node<Context> node;
-        final String text;
-        final String filterText;
-        final List<String> parents;
-
-        private FilterInfo(Node<Context> parent, Node<Context> child) {
-            this.address = child == null ? ResourceAddress.root() : child.data.getAddress();
-            this.node = child;
-            this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
-            this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
-            this.parents = child == null ? emptyList() : asList(child.parents);
-            if (!parents.isEmpty()) {
-                Collections.reverse(parents);
-                parents.remove(0); // get rif of the artificial root
-            }
-        }
-    }
-
-
-    private class OpenNodeTask implements Task<FlowContext> {
-
-        private final String id;
-
-        private OpenNodeTask(String id) {this.id = id;}
-
-        @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> {
-                if (tree.getNode(id) != null) {
-                    tree.openNode(id, emitter::onCompleted);
-                } else {
-                    emitter.onCompleted();
-                }
-            });
-        }
-    }
-
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
@@ -399,7 +357,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
-                String id = Ids.build(parent.id, "singleton", Ids.ADD_SUFFIX);
+                String id = Ids.build(parent.id, "singleton", Ids.ADD);
                 crud.addSingleton(id, singleton, template, address -> refresh(parent));
 
             } else {
@@ -557,5 +515,50 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     @Override
     public HTMLElement asElement() {
         return root;
+    }
+
+
+    private static class FilterInfo {
+
+        static final FilterInfo ROOT = new FilterInfo(null, null);
+
+        final ResourceAddress address;
+        final Node<Context> node;
+        final String text;
+        final String filterText;
+        final List<String> parents;
+
+        private FilterInfo(Node<Context> parent, Node<Context> child) {
+            this.address = child == null ? ResourceAddress.root() : child.data.getAddress();
+            this.node = child;
+            this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
+            this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
+            this.parents = child == null ? emptyList() : asList(child.parents);
+            if (!parents.isEmpty()) {
+                Collections.reverse(parents);
+                parents.remove(0); // get rif of the artificial root
+            }
+        }
+    }
+
+
+    private class OpenNodeTask implements Task<FlowContext> {
+
+        private final String id;
+
+        private OpenNodeTask(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            return Completable.fromEmitter(emitter -> {
+                if (tree.getNode(id) != null) {
+                    tree.openNode(id, emitter::onCompleted);
+                } else {
+                    emitter.onCompleted();
+                }
+            });
+        }
     }
 }

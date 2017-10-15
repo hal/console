@@ -36,6 +36,34 @@ import static org.jboss.hal.resources.UIConstants.data;
 public class ElementGuard {
 
     /**
+     * Adds the {@link org.jboss.hal.resources.CSS#rbacHidden} CSS class if {@code condition == true}, removes it
+     * otherwise.
+     */
+    public static void toggle(HTMLElement element, boolean condition) {
+        if (new Visible().test(element)) {
+            Elements.toggle(element, rbacHidden, condition);
+        }
+    }
+
+    public static void processElements(AuthorisationDecision authorisationDecision, String selector) {
+        processElements(authorisationDecision, document.querySelectorAll(selector));
+    }
+
+    public static void processElements(AuthorisationDecision authorisationDecision, HTMLElement element) {
+        processElements(authorisationDecision, element.querySelectorAll("[" + data(UIConstants.CONSTRAINT + "]")));
+    }
+
+    private static void processElements(AuthorisationDecision authorisationDecision, NodeList<Element> elements) {
+        Elements.stream(elements)
+                .filter(new Visible()) // prevent that hidden elements become visible by Toggle()
+                .forEach(new Toggle(authorisationDecision));
+    }
+
+    private ElementGuard() {
+    }
+
+
+    /**
      * Predicate which returns only visible elements (elements which don't have the CSS class {@link
      * org.jboss.hal.resources.CSS#hidden}).
      * <p>
@@ -71,30 +99,5 @@ public class ElementGuard {
                 }
             }
         }
-    }
-
-
-    /**
-     * Adds the {@link org.jboss.hal.resources.CSS#rbacHidden} CSS class if {@code condition == true}, removes it
-     * otherwise.
-     */
-    public static void toggle(HTMLElement element, boolean condition) {
-        if (new Visible().test(element)) {
-            Elements.toggle(element, rbacHidden, condition);
-        }
-    }
-
-    public static void processElements(AuthorisationDecision authorisationDecision, String selector) {
-        processElements(authorisationDecision, document.querySelectorAll(selector));
-    }
-
-    public static void processElements(AuthorisationDecision authorisationDecision, HTMLElement element) {
-        processElements(authorisationDecision, element.querySelectorAll("[" + data(UIConstants.CONSTRAINT + "]")));
-    }
-
-    private static void processElements(AuthorisationDecision authorisationDecision, NodeList<Element> elements) {
-        Elements.stream(elements)
-                .filter(new Visible()) // prevent that hidden elements become visible by Toggle()
-                .forEach(new Toggle(authorisationDecision));
     }
 }

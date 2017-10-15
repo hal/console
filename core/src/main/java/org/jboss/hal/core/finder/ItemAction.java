@@ -23,6 +23,42 @@ import org.jboss.hal.meta.security.Constraints;
 
 public class ItemAction<T> {
 
+    public static final ItemAction SEPARATOR = new ItemAction.Builder().build();
+
+    @SuppressWarnings("unchecked")
+    public static <T> ItemAction<T> separator() {
+        return SEPARATOR;
+    }
+
+    final String title;
+    final ItemActionHandler<T> handler;
+    final String href;
+    final Map<String, String> attributes;
+    final Constraints constraints;
+
+    private ItemAction(Builder<T> builder) {
+        this.title = builder.title;
+        this.handler = builder.handler;
+        this.href = builder.href;
+        this.attributes = builder.attributes;
+        if (builder.constraints != null) {
+            this.constraints = builder.constraints;
+        } else if (builder.constraint != null) {
+            this.constraints = Constraints.single(builder.constraint);
+        } else {
+            this.constraints = Constraints.empty();
+        }
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public ItemActionHandler<T> getHandler() {
+        return handler;
+    }
+
+
     public static class Builder<T> {
 
         private String title;
@@ -75,41 +111,5 @@ public class ItemAction<T> {
         public ItemAction<T> build() {
             return new ItemAction<>(this);
         }
-    }
-
-
-    public static final ItemAction SEPARATOR = new ItemAction.Builder().build();
-
-    @SuppressWarnings("unchecked")
-    public static <T> ItemAction<T> separator() {
-        return SEPARATOR;
-    }
-
-    final String title;
-    final ItemActionHandler<T> handler;
-    final String href;
-    final Map<String, String> attributes;
-    final Constraints constraints;
-
-    private ItemAction(Builder<T> builder) {
-        this.title = builder.title;
-        this.handler = builder.handler;
-        this.href = builder.href;
-        this.attributes = builder.attributes;
-        if (builder.constraints != null) {
-            this.constraints = builder.constraints;
-        } else if (builder.constraint != null) {
-            this.constraints = Constraints.single(builder.constraint);
-        } else {
-            this.constraints = Constraints.empty();
-        }
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public ItemActionHandler<T> getHandler() {
-        return handler;
     }
 }

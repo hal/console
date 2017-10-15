@@ -20,12 +20,6 @@ import com.google.gwt.event.shared.GwtEvent;
 
 public class FinderContextEvent extends GwtEvent<FinderContextEvent.FinderContextHandler> {
 
-    public interface FinderContextHandler extends EventHandler {
-
-        void onFinderContext(FinderContextEvent event);
-    }
-
-
     private static final Type<FinderContextHandler> TYPE = new Type<>();
 
     public static Type<FinderContextHandler> getType() {
@@ -34,7 +28,9 @@ public class FinderContextEvent extends GwtEvent<FinderContextEvent.FinderContex
 
     private final FinderContext finderContext;
 
-    public FinderContextEvent(final FinderContext finderContext) {this.finderContext = finderContext;}
+    public FinderContextEvent(final FinderContext finderContext) {
+        this.finderContext = finderContext;
+    }
 
     public FinderContext getFinderContext() {
         return finderContext;
@@ -48,5 +44,11 @@ public class FinderContextEvent extends GwtEvent<FinderContextEvent.FinderContex
     @Override
     public Type<FinderContextHandler> getAssociatedType() {
         return TYPE;
+    }
+
+
+    public interface FinderContextHandler extends EventHandler {
+
+        void onFinderContext(FinderContextEvent event);
     }
 }

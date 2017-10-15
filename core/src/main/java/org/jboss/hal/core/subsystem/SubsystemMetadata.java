@@ -19,59 +19,6 @@ import com.google.gwt.resources.client.ExternalTextResource;
 
 public class SubsystemMetadata {
 
-    public static class Builder {
-
-        private final String name;
-        private final String title;
-        private String subtitle;
-        private String token;
-        private String nextColumn;
-        private ExternalTextResource externalTextResource;
-        private boolean generic;
-
-        public Builder(String name,  String title) {
-            this.name = name;
-            this.title = title;
-        }
-
-        public Builder subtitle(String subtitle) {
-            this.subtitle = subtitle;
-            return this;
-        }
-
-        /**
-         * Registers a named token to this finder item, showing a "View" button.
-         *
-         * @param token A string based token from NameTokens class.
-         *
-         * @return This builder instance.
-         */
-        public Builder token(String token) {
-            this.token = token;
-            return this;
-        }
-
-        public Builder nextColumn(String nextColumn) {
-            this.nextColumn = nextColumn;
-            return this;
-        }
-
-        public Builder preview(ExternalTextResource externalTextResource) {
-            this.externalTextResource = externalTextResource;
-            return this;
-        }
-
-        public Builder generic() {
-            this.generic = true;
-            return this;
-        }
-
-        public SubsystemMetadata build() {
-            return new SubsystemMetadata(this);
-        }
-    }
-
-
     private final String name;
     private final String title;
     private final String subtitle;
@@ -121,5 +68,58 @@ public class SubsystemMetadata {
 
     public boolean isGeneric() {
         return generic;
+    }
+
+
+    public static class Builder {
+
+        private final String name;
+        private final String title;
+        private String subtitle;
+        private String token;
+        private String nextColumn;
+        private ExternalTextResource externalTextResource;
+        private boolean generic;
+
+        public Builder(String name, String title) {
+            this.name = name;
+            this.title = title;
+        }
+
+        public Builder subtitle(String subtitle) {
+            this.subtitle = subtitle;
+            return this;
+        }
+
+        /**
+         * Registers a named token to this finder item, showing a "View" button.
+         *
+         * @param token A string based token from NameTokens class.
+         *
+         * @return This builder instance.
+         */
+        public Builder token(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public Builder nextColumn(String nextColumn) {
+            this.nextColumn = nextColumn;
+            return this;
+        }
+
+        public Builder preview(ExternalTextResource externalTextResource) {
+            this.externalTextResource = externalTextResource;
+            return this;
+        }
+
+        public Builder generic() {
+            this.generic = true;
+            return this;
+        }
+
+        public SubsystemMetadata build() {
+            return new SubsystemMetadata(this);
+        }
     }
 }

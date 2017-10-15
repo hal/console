@@ -25,6 +25,53 @@ import static java.util.Arrays.asList;
 /** A customizable finder item useful when you need full control over each and every item. */
 public class StaticItem {
 
+    private final String title;
+    private final String subtitle;
+    private final List<ItemAction<StaticItem>> actions;
+    private final List<String> keywords;
+    private final String nextColumn;
+    private final PreviewContent previewContent;
+    private String id;
+
+    private StaticItem(Builder builder) {
+        this.id = builder.id;
+        this.title = builder.title;
+        this.subtitle = builder.subtitle;
+        this.actions = builder.actions;
+        this.keywords = builder.keywords;
+        this.nextColumn = builder.nextColumn;
+        this.previewContent = builder.previewContent;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public List<ItemAction<StaticItem>> getActions() {
+        return actions;
+    }
+
+    public List<String> getKeywords() {
+        return keywords;
+    }
+
+    public PreviewContent getPreviewContent() {
+        return previewContent;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public String getNextColumn() {
+        return nextColumn;
+    }
+
+
     public static class Builder {
 
         private final String title;
@@ -83,52 +130,5 @@ public class StaticItem {
         public StaticItem build() {
             return new StaticItem(this);
         }
-    }
-
-
-    private final String title;
-    private final String subtitle;
-    private final List<ItemAction<StaticItem>> actions;
-    private final List<String> keywords;
-    private final String nextColumn;
-    private final PreviewContent previewContent;
-    private String id;
-
-    private StaticItem(Builder builder) {
-        this.id = builder.id;
-        this.title = builder.title;
-        this.subtitle = builder.subtitle;
-        this.actions = builder.actions;
-        this.keywords = builder.keywords;
-        this.nextColumn = builder.nextColumn;
-        this.previewContent = builder.previewContent;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public List<ItemAction<StaticItem>> getActions() {
-        return actions;
-    }
-
-    public List<String> getKeywords() {
-        return keywords;
-    }
-
-    public PreviewContent getPreviewContent() {
-        return previewContent;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getSubtitle() {
-        return subtitle;
-    }
-
-    public String getNextColumn() {
-        return nextColumn;
     }
 }

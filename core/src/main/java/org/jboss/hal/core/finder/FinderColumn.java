@@ -91,129 +91,7 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  */
 public class FinderColumn<T> implements IsElement, Attachable {
 
-    public static class Builder<T> {
-
-        private final Finder finder;
-        private final String id;
-        private final String title;
-        private final List<ColumnAction<T>> columnActions;
-        private ItemRenderer<T> itemRenderer;
-        private boolean showCount;
-        private boolean withFilter;
-        private boolean pinnable;
-        private PreviewCallback<T> previewCallback;
-        private BreadcrumbItemHandler<T> breadcrumbItemHandler;
-        private boolean firstActionAsBreadcrumbHandler;
-        private List<T> items;
-        private ItemsProvider<T> itemsProvider;
-        private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
-        private ItemSelectionHandler<T> selectionHandler;
-        private String filterDescription;
-
-        public Builder(final Finder finder, final String id, final String title) {
-            this.finder = finder;
-            this.id = id;
-            this.title = title;
-            this.itemRenderer = item -> () -> String.valueOf(item);
-            this.columnActions = new ArrayList<>();
-            this.showCount = false;
-            this.withFilter = false;
-            this.pinnable = false;
-            this.items = new ArrayList<>();
-            this.filterDescription = CONSTANTS.filter();
-        }
-
-        /**
-         * Adds a single column action button in the header of the column
-         */
-        public Builder<T> columnAction(ColumnAction<T> action) {
-            columnActions.add(action);
-            return this;
-        }
-
-        public Builder<T> showCount() {
-            this.showCount = true;
-            return this;
-        }
-
-        public Builder<T> withFilter() {
-            return withFilter(true);
-        }
-
-        public Builder<T> withFilter(boolean yesNo) {
-            this.withFilter = yesNo;
-            return this;
-        }
-
-        public Builder<T> filterDescription(String filterTooltip) {
-            this.filterDescription = filterTooltip;
-            return this;
-        }
-
-        public Builder<T> pinnable() {
-            this.pinnable = true;
-            return this;
-        }
-
-        public Builder<T> initialItems(List<T> items) {
-            if (items != null && !items.isEmpty()) {
-                this.items.addAll(items);
-            }
-            return this;
-        }
-
-        public Builder<T> itemsProvider(ItemsProvider<T> itemsProvider) {
-            this.itemsProvider = itemsProvider;
-            return this;
-        }
-
-        public Builder<T> breadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
-            this.breadcrumbItemsProvider = breadcrumbItemsProvider;
-            return this;
-        }
-
-        public Builder<T> itemRenderer(ItemRenderer<T> itemRenderer) {
-            this.itemRenderer = itemRenderer;
-            return this;
-        }
-
-        public Builder<T> onItemSelect(ItemSelectionHandler<T> selectionHandler) {
-            this.selectionHandler = selectionHandler;
-            return this;
-        }
-
-        public Builder<T> onPreview(PreviewCallback<T> previewCallback) {
-            this.previewCallback = previewCallback;
-            return this;
-        }
-
-        /**
-         * Sets the handler which is executed when an item in the breadcrumb dropdown is selected. Has precedence over
-         * {@link #useFirstActionAsBreadcrumbHandler()}.
-         */
-        public Builder<T> onBreadcrumbItem(BreadcrumbItemHandler<T> handler) {
-            this.breadcrumbItemHandler = handler;
-            return this;
-        }
-
-        /**
-         * Uses the item's first action as breadcrumb item handler. If a custom handler is set using {@link
-         * #onBreadcrumbItem(BreadcrumbItemHandler)} this handler will be used instead of the first item action.
-         */
-        public Builder<T> useFirstActionAsBreadcrumbHandler() {
-            this.firstActionAsBreadcrumbHandler = true;
-            return this;
-        }
-
-        public FinderColumn<T> build() {
-            return new FinderColumn<>(this);
-        }
-    }
-
-
-    public enum RefreshMode {CLEAR_SELECTION, RESTORE_SELECTION}
-
-
+    private static final String DOT = ".";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
 
@@ -308,7 +186,8 @@ public class FinderColumn<T> implements IsElement, Attachable {
                             .add(filterElement = input(text).css(formControl)
                                     .id(Ids.build(id, filter))
                                     .aria(UIConstants.ARIA_DESCRIBEDBY, iconId)
-                                    .attr(UIConstants.PLACEHOLDER, Strings.abbreviateMiddle(builder.filterDescription, 45))
+                                    .attr(UIConstants.PLACEHOLDER,
+                                            Strings.abbreviateMiddle(builder.filterDescription, 45))
                                     .attr(UIConstants.TITLE, builder.filterDescription)
                                     .asElement())
                             .add(clearFilter)
@@ -576,6 +455,9 @@ public class FinderColumn<T> implements IsElement, Attachable {
                     }
                     break;
                 }
+
+                default:
+                    break;
             }
         }
     }
@@ -591,7 +473,9 @@ public class FinderColumn<T> implements IsElement, Attachable {
         Elements.setVisible(hiddenColumns, show);
     }
 
-    private HTMLElement activeElement() {return (HTMLElement) ulElement.querySelector("li." + active);} //NON-NLS
+    private HTMLElement activeElement() {
+        return (HTMLElement) ulElement.querySelector("li." + active); //NON-NLS
+    }
 
     private boolean hasVisibleElements() {
         for (HTMLElement element : Elements.children(ulElement)) {
@@ -668,7 +552,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
         // move row to unpinned section
         ulElement.removeChild(row.asElement());
-        NodeList<Element> nodes = ulElement.querySelectorAll("." + unpinned);
+        NodeList<Element> nodes = ulElement.querySelectorAll(DOT + unpinned);
         if (nodes.getLength() == 0) {
             // no unpinned rows append to bottom
             ulElement.appendChild(row.asElement());
@@ -690,7 +574,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
         // move row to pinned section
         ulElement.removeChild(row.asElement());
-        NodeList<Element> nodes = ulElement.querySelectorAll("." + pinned);
+        NodeList<Element> nodes = ulElement.querySelectorAll(DOT + pinned);
         if (nodes.getLength() == 0) {
             // no pinned rows append to top
             ulElement.insertBefore(row.asElement(), ulElement.firstChild);
@@ -699,7 +583,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
             if (before != null) {
                 ulElement.insertBefore(row.asElement(), before);
             } else {
-                Element firstUnpinned = ulElement.querySelector("." + unpinned);
+                Element firstUnpinned = ulElement.querySelector(DOT + unpinned);
                 if (firstUnpinned != null) {
                     ulElement.insertBefore(row.asElement(), firstUnpinned);
                 } else {
@@ -724,7 +608,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
     private void adjustPinSeparator() {
-        NodeList<Element> nodes = ulElement.querySelectorAll("." + pinned);
+        NodeList<Element> nodes = ulElement.querySelectorAll(DOT + pinned);
         for (int i = 0; i < nodes.getLength(); i++) {
             Element element = nodes.item(i);
             if (i == nodes.getLength() - 1) {
@@ -967,6 +851,8 @@ public class FinderColumn<T> implements IsElement, Attachable {
                     }
                 });
                 break;
+            default:
+                break;
         }
     }
 
@@ -1052,5 +938,130 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
         return AuthorisationDecision.from(finder.environment(), finder.securityContextRegistry())
                 .isAllowed(Constraints.and(collect));
+    }
+
+
+    public enum RefreshMode {
+        CLEAR_SELECTION, RESTORE_SELECTION
+    }
+
+
+    public static class Builder<T> {
+
+        private final Finder finder;
+        private final String id;
+        private final String title;
+        private final List<ColumnAction<T>> columnActions;
+        private ItemRenderer<T> itemRenderer;
+        private boolean showCount;
+        private boolean withFilter;
+        private boolean pinnable;
+        private PreviewCallback<T> previewCallback;
+        private BreadcrumbItemHandler<T> breadcrumbItemHandler;
+        private boolean firstActionAsBreadcrumbHandler;
+        private List<T> items;
+        private ItemsProvider<T> itemsProvider;
+        private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
+        private ItemSelectionHandler<T> selectionHandler;
+        private String filterDescription;
+
+        public Builder(final Finder finder, final String id, final String title) {
+            this.finder = finder;
+            this.id = id;
+            this.title = title;
+            this.itemRenderer = item -> () -> String.valueOf(item);
+            this.columnActions = new ArrayList<>();
+            this.showCount = false;
+            this.withFilter = false;
+            this.pinnable = false;
+            this.items = new ArrayList<>();
+            this.filterDescription = CONSTANTS.filter();
+        }
+
+        /**
+         * Adds a single column action button in the header of the column
+         */
+        public Builder<T> columnAction(ColumnAction<T> action) {
+            columnActions.add(action);
+            return this;
+        }
+
+        public Builder<T> showCount() {
+            this.showCount = true;
+            return this;
+        }
+
+        public Builder<T> withFilter() {
+            return withFilter(true);
+        }
+
+        public Builder<T> withFilter(boolean yesNo) {
+            this.withFilter = yesNo;
+            return this;
+        }
+
+        public Builder<T> filterDescription(String filterTooltip) {
+            this.filterDescription = filterTooltip;
+            return this;
+        }
+
+        public Builder<T> pinnable() {
+            this.pinnable = true;
+            return this;
+        }
+
+        public Builder<T> initialItems(List<T> items) {
+            if (items != null && !items.isEmpty()) {
+                this.items.addAll(items);
+            }
+            return this;
+        }
+
+        public Builder<T> itemsProvider(ItemsProvider<T> itemsProvider) {
+            this.itemsProvider = itemsProvider;
+            return this;
+        }
+
+        public Builder<T> breadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
+            this.breadcrumbItemsProvider = breadcrumbItemsProvider;
+            return this;
+        }
+
+        public Builder<T> itemRenderer(ItemRenderer<T> itemRenderer) {
+            this.itemRenderer = itemRenderer;
+            return this;
+        }
+
+        public Builder<T> onItemSelect(ItemSelectionHandler<T> selectionHandler) {
+            this.selectionHandler = selectionHandler;
+            return this;
+        }
+
+        public Builder<T> onPreview(PreviewCallback<T> previewCallback) {
+            this.previewCallback = previewCallback;
+            return this;
+        }
+
+        /**
+         * Sets the handler which is executed when an item in the breadcrumb dropdown is selected. Has precedence over
+         * {@link #useFirstActionAsBreadcrumbHandler()}.
+         */
+        public Builder<T> onBreadcrumbItem(BreadcrumbItemHandler<T> handler) {
+            this.breadcrumbItemHandler = handler;
+            return this;
+        }
+
+        /**
+         * Uses the item's first action as breadcrumb item handler. If a custom handler is set using {@link
+         * #onBreadcrumbItem(BreadcrumbItemHandler)} this handler will be used instead of the first item action.
+         */
+        public Builder<T> useFirstActionAsBreadcrumbHandler() {
+            this.firstActionAsBreadcrumbHandler = true;
+            return this;
+        }
+
+        public FinderColumn<T> build() {
+            return new FinderColumn<>(this);
+        }
     }
 }

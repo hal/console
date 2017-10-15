@@ -18,6 +18,7 @@ package org.jboss.hal.json;
 import com.google.gwt.core.client.JavaScriptObject;
 
 /** Base interface for all Json values. */
+@SuppressWarnings("unused")
 public class JsonValue extends JavaScriptObject {
 
     static native JsonValue box(JsonValue value) /*-{
@@ -47,13 +48,13 @@ public class JsonValue extends JavaScriptObject {
     protected JsonValue() {
     }
 
-    final public native boolean asBoolean() /*-{
+    public final native boolean asBoolean() /*-{
         return @com.google.gwt.core.client.GWT::isScript()() || this == null ?
             !!@org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this) :
             (!!@org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this)).valueOf();
     }-*/;
 
-    final public native double asNumber() /*-{
+    public final native double asNumber() /*-{
         if (this == null) {
             return 0;
         }
@@ -63,12 +64,12 @@ public class JsonValue extends JavaScriptObject {
     }-*/;
 
     // avoid casts, as compiler will throw CCE trying to cast a raw JS String to an interface
-    final public native String asString() /*-{
+    public final native String asString() /*-{
         return this == null ? null :
             ("" + @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this));
     }-*/;
 
-    final public JsonType getType() {
+    public final JsonType getType() {
         if (isNull(this)) {
             return JsonType.NULL;
         }
@@ -86,12 +87,12 @@ public class JsonValue extends JavaScriptObject {
         return null;
     }
 
-    final public native boolean jsEquals(JsonValue value) /*-{
+    public final native boolean jsEquals(JsonValue value) /*-{
         return @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this)
             === @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(value);
     }-*/;
 
-    final public native String toJson() /*-{
+    public final native String toJson() /*-{
         // skip hashCode field
         return $wnd.JSON.stringify(this, function (keyName, value) {
             if (keyName == "$H") {
@@ -101,7 +102,7 @@ public class JsonValue extends JavaScriptObject {
         }, 0);
     }-*/;
 
-    final public native Object toNative() /*-{
+    public final native Object toNative() /*-{
         return @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this);
     }-*/;
 }

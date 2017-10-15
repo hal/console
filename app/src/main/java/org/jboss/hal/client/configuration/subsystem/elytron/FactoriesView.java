@@ -72,7 +72,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                                 nodes -> updateResourceElement(AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY.resource,
                                         nodes))),
                 primaryIdHttpFactories,
-                Ids.build(AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY),
                 "Aggregate HTTP Server Mechanism");
 
         addResourceElement(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY,
@@ -84,7 +84,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                                 modelNode -> Ids.build(modelNode.get(PATTERN_FILTER).asString()))
                         .build(),
                 primaryIdHttpFactories,
-                Ids.build(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY),
                 "Configurable HTTP Server Mechanism");
 
         // HTTP_AUTHENTICATION_FACTORY uses a custom element
@@ -92,7 +92,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
         httpAuthenticationFactoryElement = new HttpAuthenticationFactoryElement(metadata,
                 mbuiContext.tableButtonFactory());
         registerAttachable(httpAuthenticationFactoryElement);
-        navigation.addSecondary(primaryIdHttpFactories, Ids.build(HTTP_AUTHENTICATION_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addSecondary(primaryIdHttpFactories, Ids.build(HTTP_AUTHENTICATION_FACTORY.baseId, Ids.ENTRY),
                 Names.HTTP_AUTHENTICATION_FACTORY, httpAuthenticationFactoryElement.asElement());
 
         addResourceElement(PROVIDER_HTTP_SERVER_MECHANISM_FACTORY,
@@ -101,7 +101,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                                 nodes -> updateResourceElement(PROVIDER_HTTP_SERVER_MECHANISM_FACTORY.resource,
                                         nodes))),
                 primaryIdHttpFactories,
-                Ids.build(PROVIDER_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(PROVIDER_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY),
                 "Provider HTTP Server Mechanism");
 
         addResourceElement(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY,
@@ -110,7 +110,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                                 nodes -> updateResourceElement(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY.resource,
                                         nodes))),
                 primaryIdHttpFactories,
-                Ids.build(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY),
                 "Service Loader HTTP Server Mechanism");
 
 
@@ -121,7 +121,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(AGGREGATE_SASL_SERVER_FACTORY.resource,
                                 nodes -> updateResourceElement(AGGREGATE_SASL_SERVER_FACTORY.resource, nodes))),
                 primaryIdSaslFactories,
-                Ids.build(AGGREGATE_SASL_SERVER_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(AGGREGATE_SASL_SERVER_FACTORY.baseId, Ids.ENTRY),
                 "Aggregate SASL Server");
 
         addResourceElement(CONFIGURABLE_SASL_SERVER_FACTORY,
@@ -133,7 +133,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                                 modelNode -> Ids.build(modelNode.get(PATTERN_FILTER).asString()))
                         .build(),
                 primaryIdSaslFactories,
-                Ids.build(CONFIGURABLE_SASL_SERVER_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CONFIGURABLE_SASL_SERVER_FACTORY.baseId, Ids.ENTRY),
                 "Configurable SASL Server");
 
         addResourceElement(MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY,
@@ -146,7 +146,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                                 modelNode -> Ids.build(modelNode.get(PROVIDER_NAME).asString()))
                         .build(),
                 primaryIdSaslFactories,
-                Ids.build(MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY.baseId, Ids.ENTRY),
                 "Mechanism Provider Filtering SASL Server");
 
         addResourceElement(PROVIDER_SASL_SERVER_FACTORY,
@@ -154,7 +154,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(PROVIDER_SASL_SERVER_FACTORY.resource,
                                 nodes -> updateResourceElement(PROVIDER_SASL_SERVER_FACTORY.resource, nodes))),
                 primaryIdSaslFactories,
-                Ids.build(PROVIDER_SASL_SERVER_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(PROVIDER_SASL_SERVER_FACTORY.baseId, Ids.ENTRY),
                 "Provider SASL Server");
 
         // SASL_AUTHENTICATION_FACTORY uses a custom element
@@ -162,7 +162,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
         saslAuthenticationFactoryElement = new SaslAuthenticationFactoryElement(metadataSaslAuthFactory,
                 mbuiContext.tableButtonFactory());
         registerAttachable(saslAuthenticationFactoryElement);
-        navigation.addSecondary(primaryIdSaslFactories, Ids.build(SASL_AUTHENTICATION_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addSecondary(primaryIdSaslFactories, Ids.build(SASL_AUTHENTICATION_FACTORY.baseId, Ids.ENTRY),
                 Names.SASL_AUTHENTICATION_FACTORY, saslAuthenticationFactoryElement.asElement());
 
         addResourceElement(SERVICE_LOADER_SASL_SERVER_FACTORY,
@@ -170,7 +170,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(SERVICE_LOADER_SASL_SERVER_FACTORY.resource,
                                 nodes -> updateResourceElement(SERVICE_LOADER_SASL_SERVER_FACTORY.resource, nodes))),
                 primaryIdSaslFactories,
-                Ids.build(SERVICE_LOADER_SASL_SERVER_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(SERVICE_LOADER_SASL_SERVER_FACTORY.baseId, Ids.ENTRY),
                 "Service Loader SASL Server");
 
 
@@ -181,7 +181,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(KERBEROS_SECURITY_FACTORY.resource,
                                 nodes -> updateResourceElement(KERBEROS_SECURITY_FACTORY.resource, nodes))),
                 primaryIdOtherFactories,
-                Ids.build(KERBEROS_SECURITY_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(KERBEROS_SECURITY_FACTORY.baseId, Ids.ENTRY),
                 "Kerberos Security");
 
         addResourceElement(CUSTOM_CREDENTIAL_SECURITY_FACTORY,
@@ -189,7 +189,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(CUSTOM_CREDENTIAL_SECURITY_FACTORY.resource,
                                 nodes -> updateResourceElement(CUSTOM_CREDENTIAL_SECURITY_FACTORY.resource, nodes))),
                 primaryIdOtherFactories,
-                Ids.build(CUSTOM_CREDENTIAL_SECURITY_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CUSTOM_CREDENTIAL_SECURITY_FACTORY.baseId, Ids.ENTRY),
                 "Custom Credential Security");
 
 
@@ -200,7 +200,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(AGGREGATE_PRINCIPAL_TRANSFORMER.resource,
                                 nodes -> updateResourceElement(AGGREGATE_PRINCIPAL_TRANSFORMER.resource, nodes))),
                 primaryIdTransformers,
-                Ids.build(AGGREGATE_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(AGGREGATE_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY),
                 "Aggregate");
 
         addResourceElement(CHAINED_PRINCIPAL_TRANSFORMER,
@@ -208,7 +208,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(CHAINED_PRINCIPAL_TRANSFORMER.resource,
                                 nodes -> updateResourceElement(CHAINED_PRINCIPAL_TRANSFORMER.resource, nodes))),
                 primaryIdTransformers,
-                Ids.build(CHAINED_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CHAINED_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY),
                 "Chained");
 
         addResourceElement(CONSTANT_PRINCIPAL_TRANSFORMER,
@@ -216,7 +216,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(CONSTANT_PRINCIPAL_TRANSFORMER.resource,
                                 nodes -> updateResourceElement(CONSTANT_PRINCIPAL_TRANSFORMER.resource, nodes))),
                 primaryIdTransformers,
-                Ids.build(CONSTANT_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CONSTANT_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY),
                 "Constant");
 
         addResourceElement(CUSTOM_PRINCIPAL_TRANSFORMER,
@@ -224,7 +224,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(CUSTOM_PRINCIPAL_TRANSFORMER.resource,
                                 nodes -> updateResourceElement(CUSTOM_PRINCIPAL_TRANSFORMER.resource, nodes))),
                 primaryIdTransformers,
-                Ids.build(CUSTOM_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(CUSTOM_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY),
                 "Custom");
 
         addResourceElement(REGEX_PRINCIPAL_TRANSFORMER,
@@ -232,7 +232,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(REGEX_PRINCIPAL_TRANSFORMER.resource,
                                 nodes -> updateResourceElement(REGEX_PRINCIPAL_TRANSFORMER.resource, nodes))),
                 primaryIdTransformers,
-                Ids.build(REGEX_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(REGEX_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY),
                 "Regex");
 
         addResourceElement(REGEX_VALIDATING_PRINCIPAL_TRANSFORMER,
@@ -241,7 +241,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                                 nodes -> updateResourceElement(REGEX_VALIDATING_PRINCIPAL_TRANSFORMER.resource,
                                         nodes))),
                 primaryIdTransformers,
-                Ids.build(REGEX_VALIDATING_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY_SUFFIX),
+                Ids.build(REGEX_VALIDATING_PRINCIPAL_TRANSFORMER.baseId, Ids.ENTRY),
                 "Regex Validating");
 
         initElement(row()

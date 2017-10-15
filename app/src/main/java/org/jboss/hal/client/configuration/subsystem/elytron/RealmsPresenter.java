@@ -219,7 +219,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.ELYTRON_JDBC_REALM, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.ELYTRON_JDBC_REALM, Ids.ADD), metadata)
                 .addOnly()
                 .requiredOnly()
                 .unboundFormItem(nameItem, 0)
@@ -235,7 +235,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void addPrincipalQuery(String jdbcRealm) {
-        ca.listAdd(Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, Ids.ADD_SUFFIX), jdbcRealm, PRINCIPAL_QUERY,
+        ca.listAdd(Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, Ids.ADD), jdbcRealm, PRINCIPAL_QUERY,
                 Names.PRINCIPAL_QUERY, JDBC_REALM_TEMPLATE, this::reloadJdbcRealms);
     }
 
@@ -269,7 +269,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             Metadata metadata = metadataRegistry.lookup(JDBC_REALM_TEMPLATE)
                     .forComplexAttribute(PRINCIPAL_QUERY)
                     .forComplexAttribute(keyMapper);
-            String id = Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, keyMapper, Ids.ADD_SUFFIX);
+            String id = Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, keyMapper, Ids.ADD);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                     .addOnly()
                     .requiredOnly()
@@ -328,7 +328,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .forComplexAttribute(PRINCIPAL_QUERY)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                Ids.build(Ids.ELYTRON_JDBC_REALM, ATTRIBUTE_MAPPING, Ids.ADD_SUFFIX), metadata)
+                Ids.build(Ids.ELYTRON_JDBC_REALM, ATTRIBUTE_MAPPING, Ids.ADD), metadata)
                 .addOnly()
                 .include(TO, INDEX)
                 .build();
@@ -372,7 +372,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 metadata);
 
         NameItem nameItem = new NameItem();
-        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
@@ -405,7 +405,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void addIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type) {
-        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, complexAttribute, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, complexAttribute, Ids.ADD);
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
@@ -469,7 +469,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata iamMetadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
-        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, ATTRIBUTE_MAPPING, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, ATTRIBUTE_MAPPING, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, iamMetadata)
                 .addOnly()
                 .include(FROM, TO)
@@ -504,7 +504,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata upMetadata = metadata.forComplexAttribute(USERS_PROPERTIES, true);
         upMetadata.copyComplexAttributeAttributes(asList(PATH, RELATIVE_TO), metadata);
 
-        String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD);
         NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()

@@ -60,7 +60,7 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
 
     private Form<EjbNode> ejbForm(EjbNode.Type type, MetadataRegistry metadataRegistry) {
         Metadata metadata = metadataRegistry.lookup(ejbDeploymentTemplate(type));
-        String id = Ids.build(Ids.EJB3_DEPLOYMENT, type.name(), Ids.FORM_SUFFIX);
+        String id = Ids.build(Ids.EJB3_DEPLOYMENT, type.name(), Ids.FORM);
         return new ModelNodeForm.Builder<EjbNode>(id, metadata)
                 .readOnly()
                 .includeRuntime()

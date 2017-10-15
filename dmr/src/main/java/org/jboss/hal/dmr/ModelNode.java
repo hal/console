@@ -101,6 +101,7 @@ public class ModelNode implements Cloneable {
         return bytes;
     }-*/;
 
+    private static final String NEW_VALUE_IS_NULL = "newValue is null";
 
     private boolean protect = false;
     private ModelValue value = ModelValue.UNDEFINED;
@@ -475,7 +476,7 @@ public class ModelNode implements Cloneable {
      */
     public ModelNode setExpression(final String newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         value = new ExpressionValue(newValue);
@@ -492,7 +493,7 @@ public class ModelNode implements Cloneable {
     @JsMethod(name = "setString")
     public ModelNode set(final String newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         value = new StringModelValue(newValue);
@@ -515,7 +516,9 @@ public class ModelNode implements Cloneable {
             setEmptyList();
             List list = (List) propValue;
 
-            for (Object item : list) { add(String.valueOf(item)); }
+            for (Object item : list) {
+                add(String.valueOf(item));
+            }
         } else {
             throw new RuntimeException("Type conversion not implemented for " + type);
         }
@@ -533,7 +536,7 @@ public class ModelNode implements Cloneable {
     @JsIgnore
     public ModelNode set(final BigDecimal newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         value = new BigDecimalModelValue(newValue);
@@ -550,7 +553,7 @@ public class ModelNode implements Cloneable {
     @JsIgnore
     public ModelNode set(final BigInteger newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         value = new BigIntegerModelValue(newValue);
@@ -567,7 +570,7 @@ public class ModelNode implements Cloneable {
     @JsMethod(name = "setNode")
     public ModelNode set(final ModelNode newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         value = newValue.value.copy();
@@ -584,7 +587,7 @@ public class ModelNode implements Cloneable {
     @JsIgnore
     public ModelNode set(final byte[] newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         byte[] clone = new byte[newValue.length];
@@ -604,7 +607,7 @@ public class ModelNode implements Cloneable {
     @JsIgnore
     public ModelNode set(final ModelType newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         value = TypeModelValue.of(newValue);
@@ -621,7 +624,7 @@ public class ModelNode implements Cloneable {
     @JsMethod(name = "setProperty")
     public ModelNode set(final Property newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         set(newValue.getName(), newValue.getValue());
         return this;
@@ -823,7 +826,7 @@ public class ModelNode implements Cloneable {
     @JsIgnore
     public ModelNode set(final Collection<ModelNode> newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("newValue is null");
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
         final ArrayList<ModelNode> list = new ArrayList<>(newValue.size());
@@ -1487,7 +1490,9 @@ public class ModelNode implements Cloneable {
         clone.value = value.copy();
 
         if (tags != null) {
-            for (String k : tags.keySet()) { clone.setTag(k, tags.get(k)); }
+            for (String k : tags.keySet()) {
+                clone.setTag(k, tags.get(k));
+            }
         }
         return clone;
     }
@@ -1618,14 +1623,20 @@ public class ModelNode implements Cloneable {
     @JsIgnore
     @SuppressWarnings({"unused", "WeakerAccess"})
     public void setTag(String name, Object value) {
-        if (tags == null) { tags = new HashMap<>(2); }
+        if (tags == null) {
+            tags = new HashMap<>(2);
+        }
         tags.put(name, value);
     }
 
     @JsIgnore
     @SuppressWarnings("unused")
     public Object getTag(String name) {
-        if (tags == null) { return null; } else { return tags.get(name); }
+        if (tags == null) {
+            return null;
+        } else {
+            return tags.get(name);
+        }
     }
 
 

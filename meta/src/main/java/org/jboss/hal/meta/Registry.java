@@ -31,9 +31,9 @@ import org.jboss.hal.dmr.ResourceAddress;
  */
 interface Registry<T> {
 
-    T lookup(final AddressTemplate template) throws MissingMetadataException;
+    T lookup(AddressTemplate template) throws MissingMetadataException;
 
-    boolean contains(final AddressTemplate template);
+    boolean contains(AddressTemplate template);
 
-    void add(final ResourceAddress address, final T metadata);
+    void add(ResourceAddress address, T metadata);
 }

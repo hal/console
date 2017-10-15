@@ -24,6 +24,7 @@ public class Recording {
     public static RecordingEvent start(MacroOptions options) {
         return new RecordingEvent(Action.START, options);
     }
+
     public static RecordingEvent stop() {
         return new RecordingEvent(Action.STOP, null);
     }

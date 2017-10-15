@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -70,7 +71,10 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 @SupportedAnnotationTypes("org.jboss.hal.spi.MbuiView")
 public class MbuiViewProcessor extends AbstractProcessor {
 
+    public static final String GET = "get";
+    public static final String IS = "is";
     private static final String MBUI_PREFIX = "Mbui_";
+    private static final String SLASH_SLASH = "//";
 
     /**
      * Method to reset the various counters to generate unique variables names. Used to simplify unit testing - do not
@@ -273,7 +277,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
      */
     private void processMetadata(final TypeElement type, final Document document, final MbuiViewContext context) {
         XPathExpression<org.jdom2.Element> expression = xPathFactory
-                .compile("//" + XmlTags.METADATA, Filters.element());
+                .compile(SLASH_SLASH + XmlTags.METADATA, Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
             String template = element.getAttributeValue(XmlTags.ADDRESS);
             if (template == null) {
@@ -322,6 +326,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
                                 break;
                             case Form:
                                 elementProcessor = new FormProcessor(this, typeUtils, elementUtils, xPathFactory);
+                                break;
+                            default:
                                 break;
                         }
                         elementProcessor.process(field, element, selector, context);
@@ -388,7 +394,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     private void processCrossReferences(final Document document, final MbuiViewContext context) {
         // table-form bindings
         XPathExpression<org.jdom2.Element> expression = xPathFactory
-                .compile("//" + XmlTags.TABLE + "[@" + XmlTags.FORM_REF + "]", Filters.element());
+                .compile(SLASH_SLASH + XmlTags.TABLE + "[@" + XmlTags.FORM_REF + "]", Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
             DataTableInfo tableInfo = context.getElement(element.getAttributeValue(XmlTags.ID));
             FormInfo formInfo = context.getElement(element.getAttributeValue(XmlTags.FORM_REF));
@@ -407,9 +413,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
                 }
             }
         } else {
-            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.TABLE, document, context);
-            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.FORM, document, context);
-            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.SINGLETON_FORM, document, context);
+            resolveItemReferences(navigation, SLASH_SLASH + XmlTags.ITEM + SLASH_SLASH + XmlTags.TABLE, document,
+                    context);
+            resolveItemReferences(navigation, SLASH_SLASH + XmlTags.ITEM + SLASH_SLASH + XmlTags.FORM, document,
+                    context);
+            resolveItemReferences(navigation, SLASH_SLASH + XmlTags.ITEM + SLASH_SLASH + XmlTags.SINGLETON_FORM,
+                    document, context);
         }
     }
 
@@ -469,18 +478,18 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     private boolean isGetter(ExecutableElement method) {
         String name = method.getSimpleName().toString();
-        boolean get = name.startsWith("get") && !name.equals("get");
-        boolean is = name.startsWith("is") && !name.equals("is")
+        boolean get = name.startsWith(GET) && !name.equals(GET);
+        boolean is = name.startsWith(IS) && !name.equals(IS)
                 && method.getReturnType().getKind() == TypeKind.BOOLEAN;
         return get || is;
     }
 
     private String nameWithoutPrefix(String name) {
         String withoutPrefix;
-        if (name.startsWith("get") && !name.equals("get")) {
+        if (name.startsWith(GET) && !name.equals(GET)) {
             withoutPrefix = name.substring(3);
         } else {
-            assert name.startsWith("is");
+            assert name.startsWith(IS);
             withoutPrefix = name.substring(2);
         }
         return Introspector.decapitalize(withoutPrefix);

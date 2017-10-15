@@ -98,11 +98,17 @@ public class FinderPath implements Iterable<FinderSegment> {
         return segments.iterator();
     }
 
-    public boolean isEmpty() {return segments.isEmpty();}
+    public boolean isEmpty() {
+        return segments.isEmpty();
+    }
 
-    public int size() {return segments.size();}
+    public int size() {
+        return segments.size();
+    }
 
-    public void clear() {segments.clear();}
+    public void clear() {
+        segments.clear();
+    }
 
     public FinderPath copy() {
         List<FinderSegment> copy = new ArrayList<>();

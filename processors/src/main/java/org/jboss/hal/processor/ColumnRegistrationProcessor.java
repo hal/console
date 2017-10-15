@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -131,12 +132,17 @@ public class ColumnRegistrationProcessor extends AbstractProcessor {
         @Override
         @SuppressWarnings("SimplifiableIfStatement")
         public boolean equals(final Object o) {
-            if (this == o) { return true; }
-            if (!(o instanceof ColumnInfo)) { return false; }
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof ColumnInfo)) {
+                return false;
+            }
 
             ColumnInfo that = (ColumnInfo) o;
-
-            if (async != that.async) { return false; }
+            if (async != that.async) {
+                return false;
+            }
             return fqClassName.equals(that.fqClassName);
 
         }

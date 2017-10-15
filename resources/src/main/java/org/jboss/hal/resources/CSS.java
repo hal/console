@@ -59,7 +59,6 @@ public interface CSS {
     String breadcrumb = "breadcrumb";
     String breakTooltip = "break-tooltip";
     String btn = "btn";
-    String btnBlock = "btn-block";
     String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
@@ -411,29 +410,32 @@ public interface CSS {
     String wizardPfSuccessIcon = "wizard-pf-success-icon";
     String wrap = "wrap";
 
+    String DASH = "-";
+    String SPACE = " ";
+
     static String column(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {
             return Arrays.stream(sizes)
-                    .map(size -> column + "-" + size + "-" + String.valueOf(columns))
-                    .collect(joining(" "));
+                    .map(size -> column + DASH + size + DASH + String.valueOf(columns))
+                    .collect(joining(SPACE));
         } else {
-            return column + "-" + columnXs + "-" + String.valueOf(columns) + " " +
-                    column + "-" + columnSm + "-" + String.valueOf(columns) + " " +
-                    column + "-" + columnMd + "-" + String.valueOf(columns) + " " +
-                    column + "-" + columnLg + "-" + String.valueOf(columns);
+            return column + DASH + columnXs + DASH + String.valueOf(columns) + SPACE +
+                    column + DASH + columnSm + DASH + String.valueOf(columns) + SPACE +
+                    column + DASH + columnMd + DASH + String.valueOf(columns) + SPACE +
+                    column + DASH + columnLg + DASH + String.valueOf(columns);
         }
     }
 
     static String offset(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {
             return Arrays.stream(sizes)
-                    .map(size -> column + "-" + size + "-" + offset + "-" + String.valueOf(columns))
-                    .collect(joining(" "));
+                    .map(size -> column + DASH + size + DASH + offset + DASH + String.valueOf(columns))
+                    .collect(joining(SPACE));
         } else {
-            return column + "-" + columnXs + "-" + offset + "-" + String.valueOf(columns) + " " +
-                    column + "-" + columnSm + "-" + offset + "-" + String.valueOf(columns) + " " +
-                    column + "-" + columnMd + "-" + offset + "-" + String.valueOf(columns) + " " +
-                    column + "-" + columnLg + "-" + offset + "-" + String.valueOf(columns);
+            return column + DASH + columnXs + DASH + offset + DASH + String.valueOf(columns) + SPACE +
+                    column + DASH + columnSm + DASH + offset + DASH + String.valueOf(columns) + SPACE +
+                    column + DASH + columnMd + DASH + offset + DASH + String.valueOf(columns) + SPACE +
+                    column + DASH + columnLg + DASH + offset + DASH + String.valueOf(columns);
         }
     }
 

@@ -37,15 +37,19 @@ public interface Progress {
     Progress NOOP = new Progress() {
 
         @Override
-        public void reset() {}
+        public void reset() {
+        }
 
         @Override
-        public void reset(int max, String label) {}
+        public void reset(int max, String label) {
+        }
 
         @Override
-        public void tick(String label) {}
+        public void tick(String label) {
+        }
 
         @Override
-        public void finish() {}
+        public void finish() {
+        }
     };
 }

@@ -245,7 +245,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     @SuppressWarnings("ConstantConditions")
     void addStack() {
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD_SUFFIX),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD),
                 resources.messages().addResourceTitle(Names.STACK), metadata,
                 (name, model) -> {
                     ResourceAddress address = STACK_TEMPLATE.resolve(filterStatementContext, name);
@@ -271,7 +271,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
     void addRelay() {
         AddressTemplate addressTemplate = AddressTemplate.of(SELECTED_RELAY_TEMPLATE.resolve(filterStatementContext));
-        crud.addSingleton(Ids.build(RELAY, Ids.ADD_SUFFIX, Ids.FORM_SUFFIX), Names.RELAY,
+        crud.addSingleton(Ids.build(RELAY, Ids.ADD, Ids.FORM), Names.RELAY,
                 addressTemplate, address -> reload());
     }
 

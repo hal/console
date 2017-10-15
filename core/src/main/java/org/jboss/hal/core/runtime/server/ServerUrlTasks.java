@@ -149,4 +149,7 @@ class ServerUrlTasks {
             return completable;
         }
     }
+
+    private ServerUrlTasks() {
+    }
 }

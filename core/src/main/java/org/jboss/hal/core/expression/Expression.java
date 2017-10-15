@@ -61,12 +61,17 @@ public class Expression {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Expression)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Expression)) {
+            return false;
+        }
 
         Expression that = (Expression) o;
-
-        if (!key.equals(that.key)) { return false; }
+        if (!key.equals(that.key)) {
+            return false;
+        }
         return defaultValue != null ? defaultValue.equals(that.defaultValue) : that.defaultValue == null;
     }
 

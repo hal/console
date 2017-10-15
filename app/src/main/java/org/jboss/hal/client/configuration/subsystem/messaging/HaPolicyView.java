@@ -113,10 +113,10 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         Form<ModelNode> slaveForm = form(haPolicy.slave);
 
         Tabs tabs = new Tabs();
-        tabs.add(Ids.build(haPolicy.baseId, Ids.TAB_SUFFIX), resources.constants().attributes(),
+        tabs.add(Ids.build(haPolicy.baseId, Ids.TAB), resources.constants().attributes(),
                 colocatedForm.asElement());
-        tabs.add(Ids.build(haPolicy.master.baseId, Ids.TAB_SUFFIX), Names.MASTER, masterForm.asElement());
-        tabs.add(Ids.build(haPolicy.slave.baseId, Ids.TAB_SUFFIX), Names.SLAVE, slaveForm.asElement());
+        tabs.add(Ids.build(haPolicy.master.baseId, Ids.TAB), Names.MASTER, masterForm.asElement());
+        tabs.add(Ids.build(haPolicy.slave.baseId, Ids.TAB), Names.SLAVE, slaveForm.asElement());
 
         HTMLElement element = section().css(clearfix)
                 .add(h(1).textContent(haPolicy.type))
@@ -135,7 +135,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
 
     private Form<ModelNode> form(HaPolicy haPolicy) {
         Metadata metadata = metadataRegistry.lookup(haPolicy.template);
-        return new ModelNodeForm.Builder<>(Ids.build(haPolicy.baseId, Ids.FORM_SUFFIX), metadata)
+        return new ModelNodeForm.Builder<>(Ids.build(haPolicy.baseId, Ids.FORM), metadata)
                 .onSave((f, changedValues) -> presenter.saveHaPolicy(haPolicy, changedValues))
                 .prepareReset(f -> presenter.resetHaPolicy(haPolicy, f))
                 .build();

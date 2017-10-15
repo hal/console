@@ -27,18 +27,6 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
 
     public static final Segment WILDCARD = new Segment(null, "*");
 
-    public static class Segment {
-
-        public final String id;
-        public final String text;
-
-        Segment(final String id, final String text) {
-            this.id = id;
-            this.text = text;
-        }
-    }
-
-
     private final ModelBrowser modelBrowser;
     private final List<Segment[]> segments;
 
@@ -68,7 +56,9 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
         }
     }
 
-    public boolean isEmpty() {return segments.isEmpty();}
+    public boolean isEmpty() {
+        return segments.isEmpty();
+    }
 
     @Override
     public Iterator<Segment[]> iterator() {
@@ -77,5 +67,17 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
 
     public ModelBrowser getModelBrowser() {
         return modelBrowser;
+    }
+
+
+    public static class Segment {
+
+        public final String id;
+        public final String text;
+
+        Segment(final String id, final String text) {
+            this.id = id;
+            this.text = text;
+        }
     }
 }

@@ -18,18 +18,6 @@ package org.jboss.hal.meta;
 /** Intercepts the resolution and allows to filter/replace certain statement values. */
 public class FilteringStatementContext implements StatementContext {
 
-    /**
-     * Allows to modify resource names and placeholders. Methods should return {@code null} if no modification is
-     * necessary.
-     */
-    public interface Filter {
-
-        String filter(String resource);
-
-        String[] filterTuple(String placeholder);
-    }
-
-
     private Filter filter;
     private StatementContext delegate;
 
@@ -78,5 +66,17 @@ public class FilteringStatementContext implements StatementContext {
     @Override
     public String selectedServer() {
         return delegate.selectedServer();
+    }
+
+
+    /**
+     * Allows to modify resource names and placeholders. Methods should return {@code null} if no modification is
+     * necessary.
+     */
+    public interface Filter {
+
+        String filter(String resource);
+
+        String[] filterTuple(String placeholder);
     }
 }

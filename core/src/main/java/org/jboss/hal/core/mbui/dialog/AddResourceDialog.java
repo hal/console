@@ -16,6 +16,7 @@
 package org.jboss.hal.core.mbui.dialog;
 
 import java.util.Collections;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterables;
@@ -32,21 +33,6 @@ import org.jboss.hal.resources.Constants;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 public class AddResourceDialog {
-
-    @FunctionalInterface
-    public interface Callback {
-
-        /**
-         * Called after the dialog was closed using the primary button.
-         *
-         * @param name  The name of the resource to add. {@code null} if the dialog's form does not contain a
-         *              name item (i.e. when adding a singleton resource)
-         * @param model The model of the related form. {@code null} if the related resource description and thus
-         *              the form does not contain attributes / form items.
-         */
-        void onAdd(@Nullable String name, @Nullable ModelNode model);
-    }
-
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
@@ -112,5 +98,20 @@ public class AddResourceDialog {
         // First call dialog.show() (which attaches everything), then call form.add()
         dialog.show();
         form.edit(new ModelNode());
+    }
+
+
+    @FunctionalInterface
+    public interface Callback {
+
+        /**
+         * Called after the dialog was closed using the primary button.
+         *
+         * @param name  The name of the resource to add. {@code null} if the dialog's form does not contain a
+         *              name item (i.e. when adding a singleton resource)
+         * @param model The model of the related form. {@code null} if the related resource description and thus
+         *              the form does not contain attributes / form items.
+         */
+        void onAdd(@Nullable String name, @Nullable ModelNode model);
     }
 }

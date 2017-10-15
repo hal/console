@@ -50,8 +50,9 @@ public class DataInput {
     }
 
     public int read() throws IOException {
-        if (pos >= bytes.length) { return -1; }
-
+        if (pos >= bytes.length) {
+            return -1;
+        }
         return bytes[pos++] & 0xFF;
     }
 
@@ -76,7 +77,7 @@ public class DataInput {
     public double readDouble() throws IOException {
         // See  https://issues.jboss.org/browse/AS7-4126
         //return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
-        byte doubleBytes[] = new byte[8];
+        byte[] doubleBytes = new byte[8];
         readFully(doubleBytes);
 
         return IEEE754.toDouble(
@@ -107,7 +108,7 @@ public class DataInput {
     }
 
     public long readLong() throws IOException {
-        byte longBytes[] = new byte[8];
+        byte[] longBytes = new byte[8];
         readFully(longBytes);
 
         //noinspection PointlessBitwiseExpression

@@ -50,6 +50,7 @@ final class BooleanModelValue extends ModelValue {
     static BooleanModelValue valueOf(final boolean value) {
         return value ? TRUE : FALSE;
     }
+
     private final boolean value;
 
     private BooleanModelValue(final boolean value) {

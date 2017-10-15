@@ -105,11 +105,17 @@ public class Macros {
 
     }
 
-    public int size() {return macros.size();}
+    public int size() {
+        return macros.size();
+    }
 
-    public boolean isEmpty() {return macros.isEmpty();}
+    public boolean isEmpty() {
+        return macros.isEmpty();
+    }
 
-    public boolean contains(final Macro macro) {return macros.containsKey(macro.getName());}
+    public boolean contains(final Macro macro) {
+        return macros.containsKey(macro.getName());
+    }
 
     public Macro get(String name) {
         return macros.get(name);

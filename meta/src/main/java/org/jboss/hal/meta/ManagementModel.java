@@ -121,4 +121,7 @@ public class ManagementModel {
     private static boolean ensureVersion(Version existing, Version expected) {
         return existing != Version.UNDEFINED && existing.greaterThanOrEqualTo(expected);
     }
+
+    private ManagementModel() {
+    }
 }

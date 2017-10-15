@@ -71,13 +71,21 @@ public class Deployment extends Content {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Deployment)) { return false; }
-        if (!super.equals(o)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Deployment)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Deployment that = (Deployment) o;
         //noinspection SimplifiableIfStatement
-        if (!referenceServer.equals(that.referenceServer)) { return false; }
+        if (!referenceServer.equals(that.referenceServer)) {
+            return false;
+        }
         return getName().equals(that.getName());
     }
 

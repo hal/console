@@ -51,13 +51,20 @@ public class NamedNode extends ModelNode {
     @Override
     @JsIgnore
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof NamedNode)) { return false; }
-        if (!super.equals(o)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof NamedNode)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         NamedNode namedNode = (NamedNode) o;
-
-        if (!name.equals(namedNode.name)) { return false; }
+        if (!name.equals(namedNode.name)) {
+            return false;
+        }
         return node.equals(namedNode.node);
 
     }

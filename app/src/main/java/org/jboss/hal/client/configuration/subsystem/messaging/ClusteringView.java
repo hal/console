@@ -49,9 +49,8 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.Ids.ENTRY_SUFFIX;
+import static org.jboss.hal.resources.Ids.ENTRY;
 import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
 
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
@@ -90,7 +89,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 () -> presenter.bridgeAddress(bridgeTable.hasSelection() ? bridgeTable.selectedRow().getName() : null),
                 () -> presenter.reload());
 
-        bridgeTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(MESSAGING_SERVER, BRIDGE, TABLE_SUFFIX), metadata)
+        bridgeTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(MESSAGING_SERVER, BRIDGE, Ids.TABLE), metadata)
                 .button(mbuiContext.resources().constants().add(),
                         table -> presenter.addBridge(ServerSubResource.BRIDGE),
                         Constraint.executable(BRIDGE_TEMPLATE, ADD))
@@ -100,15 +99,15 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        bridgeForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.MESSAGING_BRIDGE, Ids.FORM_SUFFIX), metadata)
+        bridgeForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.MESSAGING_BRIDGE, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter.save(ServerSubResource.BRIDGE, form, changedValues))
                 .prepareReset(form -> presenter.reset(ServerSubResource.BRIDGE, form))
                 .build();
 
         Tabs tabs = new Tabs();
-        tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, ATTRIBUTES, Ids.TAB_SUFFIX),
+        tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, ATTRIBUTES, Ids.TAB),
                 mbuiContext.resources().constants().attributes(), bridgeForm.asElement());
-        tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX),
+        tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, CREDENTIAL_REFERENCE, Ids.TAB),
                 Names.CREDENTIAL_REFERENCE, crForm.asElement());
 
         HTMLElement bridgeSection = section()
@@ -120,7 +119,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
         registerAttachable(bridgeTable, bridgeForm, crForm);
 
-        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY_SUFFIX), null, Names.BRIDGE, "fa fa-road", bridgeSection);
+        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY), null, Names.BRIDGE, "fa fa-road", bridgeSection);
     }
 
     @Override

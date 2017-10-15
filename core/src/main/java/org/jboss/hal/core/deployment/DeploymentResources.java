@@ -18,6 +18,7 @@ package org.jboss.hal.core.deployment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.dmr.Composite;

@@ -102,13 +102,17 @@ public class Composite extends Operation implements Iterable<Operation> {
      * @return whether this composite contains operations
      */
     @JsProperty
-    public boolean isEmpty() {return operations.isEmpty();}
+    public boolean isEmpty() {
+        return operations.isEmpty();
+    }
 
     /**
      * @return the number of operations
      */
     @JsProperty(name = "size")
-    public int size() {return operations.size();}
+    public int size() {
+        return operations.size();
+    }
 
     @JsIgnore
     public Composite runAs(final Set<String> runAs) {

@@ -132,7 +132,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
             String sectionId = Ids.asId(section);
             List<String> sectionAttributes = mainAttributes.get(section);
             Form<JpaStatistic> form = new ModelNodeForm.Builder<JpaStatistic>(
-                    Ids.build(baseId, Ids.FORM_SUFFIX, sectionId), metadata)
+                    Ids.build(baseId, Ids.FORM, sectionId), metadata)
                     .readOnly()
                     .includeRuntime()
                     .include(sectionAttributes)
@@ -140,7 +140,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                     .build();
             registerAttachable(form);
             mainForms.add(form);
-            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB_SUFFIX, sectionId), section, form.asElement());
+            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.asElement());
         }
 
         HTMLElement section = section()
@@ -181,11 +181,11 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         Metadata metadata = metadataRegistry.lookup(template);
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(
-                Ids.build(baseId, resource, Ids.TABLE_SUFFIX), metadata)
+                Ids.build(baseId, resource, Ids.TABLE), metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
 
-        Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM_SUFFIX),
+        Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM),
                 metadata)
                 .readOnly()
                 .includeRuntime()

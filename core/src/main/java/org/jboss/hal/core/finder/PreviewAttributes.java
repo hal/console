@@ -48,72 +48,6 @@ import static org.jboss.hal.resources.CSS.*;
 /** Element to show the basic attributes of a resource inside the preview pane. */
 public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
-    public static class PreviewAttribute {
-
-        final String label;
-        final String value;
-        final SafeHtml htmlValue;
-        final String href;
-        final String target;
-        final HTMLElement element;
-        final Iterable<HTMLElement> elements;
-
-        public PreviewAttribute(String label, String value) {
-            this(label, value, null, null, null, null, null);
-        }
-
-        public PreviewAttribute(String label, String value, String href) {
-            this(label, value, null, href, null, null, null);
-        }
-
-        public PreviewAttribute(String label, String value, String href, String target) {
-            this(label, value, null, href, target, null, null);
-        }
-
-        public PreviewAttribute(String label, SafeHtml value) {
-            this(label, null, value, null, null, null, null);
-        }
-
-        public PreviewAttribute(String label, SafeHtml value, String href, String target) {
-            this(label, null, value, href, target, null, null);
-        }
-
-        public PreviewAttribute(String label, Iterable<HTMLElement> elements) {
-            this(label, null, null, null, null, null, elements);
-        }
-
-        public PreviewAttribute(String label, HTMLElement element) {
-            this(label, null, null, null, null, element, null);
-        }
-
-        private PreviewAttribute(String label, String value, SafeHtml htmlValue, String href,
-                String target, HTMLElement element, Iterable<HTMLElement> elements) {
-            this.label = label;
-            this.value = value;
-            this.htmlValue = htmlValue;
-            this.href = href;
-            this.element = element;
-            this.elements = elements;
-            this.target = target;
-        }
-
-        private boolean isUndefined() {
-            return value == null && htmlValue == null;
-        }
-
-        private boolean isExpression() {
-            return Expression.isExpression(value);
-        }
-    }
-
-
-    @FunctionalInterface
-    public interface PreviewAttributeFunction<T> {
-
-        PreviewAttribute labelValue(T model);
-    }
-
-
     private static final String LABEL = "label";
     private static final String VALUE = "value";
     private static final String VALUE_MARKER = "valueMarker";
@@ -308,5 +242,71 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     @Override
     public Iterable<HTMLElement> asElements() {
         return eb.asElements();
+    }
+
+
+    public static class PreviewAttribute {
+
+        final String label;
+        final String value;
+        final SafeHtml htmlValue;
+        final String href;
+        final String target;
+        final HTMLElement element;
+        final Iterable<HTMLElement> elements;
+
+        public PreviewAttribute(String label, String value) {
+            this(label, value, null, null, null, null, null);
+        }
+
+        public PreviewAttribute(String label, String value, String href) {
+            this(label, value, null, href, null, null, null);
+        }
+
+        public PreviewAttribute(String label, String value, String href, String target) {
+            this(label, value, null, href, target, null, null);
+        }
+
+        public PreviewAttribute(String label, SafeHtml value) {
+            this(label, null, value, null, null, null, null);
+        }
+
+        public PreviewAttribute(String label, SafeHtml value, String href, String target) {
+            this(label, null, value, href, target, null, null);
+        }
+
+        public PreviewAttribute(String label, Iterable<HTMLElement> elements) {
+            this(label, null, null, null, null, null, elements);
+        }
+
+        public PreviewAttribute(String label, HTMLElement element) {
+            this(label, null, null, null, null, element, null);
+        }
+
+        private PreviewAttribute(String label, String value, SafeHtml htmlValue, String href,
+                String target, HTMLElement element, Iterable<HTMLElement> elements) {
+            this.label = label;
+            this.value = value;
+            this.htmlValue = htmlValue;
+            this.href = href;
+            this.element = element;
+            this.elements = elements;
+            this.target = target;
+        }
+
+        private boolean isUndefined() {
+            return value == null && htmlValue == null;
+        }
+
+        private boolean isExpression() {
+            return Expression.isExpression(value);
+        }
+    }
+
+
+    @FunctionalInterface
+    public interface PreviewAttributeFunction<T> {
+
+        PreviewAttribute labelValue(T model);
     }
 }

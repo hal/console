@@ -22,12 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 // No @GenEvent here due to naming conflicts
 public class MessageEvent extends GwtEvent<MessageEvent.MessageHandler> {
 
-    public interface MessageHandler extends EventHandler {
-
-        void onMessage(MessageEvent event);
-    }
-
-
     private static final Type<MessageHandler> TYPE = new Type<>();
 
     public static Type<MessageHandler> getType() {
@@ -40,7 +34,9 @@ public class MessageEvent extends GwtEvent<MessageEvent.MessageHandler> {
 
     private final Message message;
 
-    public MessageEvent(final Message message) {this.message = message;}
+    public MessageEvent(final Message message) {
+        this.message = message;
+    }
 
     public Message getMessage() {
         return message;
@@ -54,5 +50,11 @@ public class MessageEvent extends GwtEvent<MessageEvent.MessageHandler> {
     @Override
     public Type<MessageHandler> getAssociatedType() {
         return TYPE;
+    }
+
+
+    public interface MessageHandler extends EventHandler {
+
+        void onMessage(MessageEvent event);
     }
 }

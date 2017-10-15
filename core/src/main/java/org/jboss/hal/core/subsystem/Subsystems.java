@@ -17,6 +17,7 @@ package org.jboss.hal.core.subsystem;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.meta.token.NameTokens;

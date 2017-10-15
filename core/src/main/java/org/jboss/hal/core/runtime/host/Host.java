@@ -30,11 +30,7 @@ import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.STARTING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
@@ -72,7 +68,7 @@ public class Host extends HasServersNode {
         this.managementVersion = ManagementModel.parseVersion(node);
     }
 
-    public Host( Property property) {
+    public Host(Property property) {
         super(property.getValue().get(NAME).asString(), property.getValue());
         this.connected = true;
         this.disconnected = null;

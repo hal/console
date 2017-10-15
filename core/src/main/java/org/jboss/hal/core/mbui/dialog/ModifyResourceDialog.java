@@ -24,16 +24,6 @@ import org.jboss.hal.dmr.ModelNode;
 
 public class ModifyResourceDialog {
 
-    @FunctionalInterface
-    public interface Callback {
-
-        /**
-         * Called after the dialog was closed using the primary button.
-         */
-        void onModify(Form<ModelNode> form, Map<String, Object> changedValues);
-    }
-
-
     private Form<ModelNode> form;
     private Dialog dialog;
 
@@ -75,5 +65,15 @@ public class ModifyResourceDialog {
         // First call dialog.show() (which attaches everything), then call form.edit()
         dialog.show();
         form.edit(modelNode);
+    }
+
+
+    @FunctionalInterface
+    public interface Callback {
+
+        /**
+         * Called after the dialog was closed using the primary button.
+         */
+        void onModify(Form<ModelNode> form, Map<String, Object> changedValues);
     }
 }

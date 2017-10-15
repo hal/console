@@ -45,9 +45,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /** Element to configure the fork resource */
 class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
-    static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_CHANNEL_FORK_PROTOCOL, Ids.PAGE_SUFFIX);
-    private static final String CHANNEL_ID = Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.PAGE_SUFFIX);
-    private static final String FORK_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE_SUFFIX);
+    static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_CHANNEL_FORK_PROTOCOL, Ids.PAGE);
+    private static final String CHANNEL_ID = Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.PAGE);
+    private static final String FORK_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE);
 
     private final Pages innerPages;
     private final Table<NamedNode> table;
@@ -63,10 +63,10 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
             final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(CHANNEL_TEMPLATE);
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), metadata)
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(CHANNEL_TEMPLATE,
                         table -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
-                                Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.ADD_SUFFIX), Names.CHANNEL)))
+                                Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.ADD), Names.CHANNEL)))
                 .button(tableButtonFactory.remove(CHANNEL_TEMPLATE,
                         table -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
@@ -77,7 +77,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                     presenter.showChannelInnerPage(FORK_ID);
                 })
                 .build();
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.FORM_SUFFIX), metadata)
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter
                         .saveResource(CHANNEL_TEMPLATE, table.selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(Names.CHANNEL)))

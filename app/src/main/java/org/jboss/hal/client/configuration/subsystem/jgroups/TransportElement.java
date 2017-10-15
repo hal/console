@@ -115,7 +115,7 @@ class TransportElement extends GenericElement {
         parentElement.removeChild(form1);
 
         Tabs threadPoolTabs = new Tabs();
-        threadPoolTabs.add(Ids.build("jgroups-transport", Ids.FORM_SUFFIX), resources.constants().attributes(),
+        threadPoolTabs.add(Ids.build("jgroups-transport", Ids.FORM), resources.constants().attributes(),
                 form1);
         threadPoolTabs.add(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_TAB, "Thread Pool Default",
                 threadPoolDefaultForm.asElement());

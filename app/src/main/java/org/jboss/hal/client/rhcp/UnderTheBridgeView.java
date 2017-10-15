@@ -117,13 +117,13 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveModel(form.getModel());
 
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
-            ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM_SUFFIX),
+            ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM),
                     Metadata.staticDescription(description))
                     .include(entry.getValue())
                     .onSave(saveCallback)
                     .build();
             forms.add(form);
-            tabs.add(Ids.build(entry.getKey(), Ids.TAB_SUFFIX), new LabelBuilder().label(entry.getKey()),
+            tabs.add(Ids.build(entry.getKey(), Ids.TAB), new LabelBuilder().label(entry.getKey()),
                     form.asElement());
         }
 

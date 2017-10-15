@@ -17,6 +17,7 @@ package org.jboss.hal.core.finder;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.client.proxy.PlaceManager;

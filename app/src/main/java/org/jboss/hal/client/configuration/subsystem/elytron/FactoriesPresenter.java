@@ -224,7 +224,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     }
 
     void addHttpMechanismConfiguration(String httpAuthenticationFactory) {
-        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD);
         ca.listAdd(id, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION,
                 AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, singletonList(MECHANISM_NAME),
                 this::reloadHttpAuthenticationFactories);
@@ -246,7 +246,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE)
                 .forComplexAttribute(MECHANISM_CONFIGURATIONS)
                 .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
-        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .requiredOnly()
@@ -292,7 +292,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     }
 
     void addSaslMechanismConfiguration(String saslAuthenticationFactory) {
-        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD);
         ca.listAdd(id, saslAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION,
                 AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, singletonList(MECHANISM_NAME),
                 this::reloadSaslAuthenticationFactories);
@@ -314,7 +314,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE)
                 .forComplexAttribute(MECHANISM_CONFIGURATIONS)
                 .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
-        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .requiredOnly()

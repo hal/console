@@ -66,7 +66,8 @@ class NotMoreThanOneAlternativeValidation<T extends ModelNode> implements FormVa
                 FormItem<Object> formItem = form.getFormItem(alternative);
                 if (!this.form.isEmptyOrDefault(formItem)) {
                     formItem.showError(
-                            messages.notMoreThanOneAlternativeError(labelBuilder.enumeration(otherAlternatives, constants.and())));
+                            messages.notMoreThanOneAlternativeError(
+                                    labelBuilder.enumeration(otherAlternatives, constants.and())));
                 }
             });
             // return overall result

@@ -467,7 +467,7 @@ public class ServerPresenter
 
     void addListener(final Listener listenerType) {
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(listenerType.baseId, Ids.ADD_SUFFIX),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(listenerType.baseId, Ids.ADD),
                 resources.messages().addResourceTitle(listenerType.type), metadata,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(listenerType.resource + "=" + name)

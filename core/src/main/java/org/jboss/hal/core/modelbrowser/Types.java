@@ -24,7 +24,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 
 final class Types {
 
-    private Types() {}
+    private Types() {
+    }
 
     static String formatType(ModelNode hasType) {
         StringBuilder builder = new StringBuilder();

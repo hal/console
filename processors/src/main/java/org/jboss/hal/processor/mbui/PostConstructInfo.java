@@ -19,7 +19,9 @@ public class PostConstructInfo {
 
     private final String name;
 
-    PostConstructInfo(final String name) {this.name = name;}
+    PostConstructInfo(final String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;

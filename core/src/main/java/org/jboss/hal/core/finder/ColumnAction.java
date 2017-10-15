@@ -24,6 +24,29 @@ import org.jboss.hal.meta.security.Constraints;
 
 public class ColumnAction<T> {
 
+    final String id;
+    final String title;
+    final HTMLElement element;
+    final List<ColumnAction<T>> actions;
+    final ColumnActionHandler<T> handler;
+    final Constraints constraints;
+
+    private ColumnAction(final Builder<T> builder) {
+        this.id = builder.id;
+        this.title = builder.title;
+        this.element = builder.element;
+        this.handler = builder.handler;
+        this.actions = builder.actions;
+        if (builder.constraints != null) {
+            this.constraints = builder.constraints;
+        } else if (builder.constraint != null) {
+            this.constraints = Constraints.single(builder.constraint);
+        } else {
+            this.constraints = Constraints.empty();
+        }
+    }
+
+
     public static class Builder<T> {
 
         private final String id;
@@ -79,29 +102,6 @@ public class ColumnAction<T> {
 
         public ColumnAction<T> build() {
             return new ColumnAction<>(this);
-        }
-    }
-
-
-    final String id;
-    final String title;
-    final HTMLElement element;
-    final List<ColumnAction<T>> actions;
-    final ColumnActionHandler<T> handler;
-    final Constraints constraints;
-
-    private ColumnAction(final Builder<T> builder) {
-        this.id = builder.id;
-        this.title = builder.title;
-        this.element = builder.element;
-        this.handler = builder.handler;
-        this.actions = builder.actions;
-        if (builder.constraints != null) {
-            this.constraints = builder.constraints;
-        } else if (builder.constraint != null) {
-            this.constraints = Constraints.single(builder.constraint);
-        } else {
-            this.constraints = Constraints.empty();
         }
     }
 }

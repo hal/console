@@ -29,10 +29,10 @@ class LookupResult {
      * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present.
      * First bit stands for resource description second one for security context.
      */
-    final static int NOTHING_PRESENT = 0b00;
-    final static int RESOURCE_DESCRIPTION_PRESENT = 0b10;
-    final static int SECURITY_CONTEXT_PRESENT = 0b01;
-    final static int ALL_PRESENT = 0b11;
+    static final int NOTHING_PRESENT = 0b00;
+    static final int RESOURCE_DESCRIPTION_PRESENT = 0b10;
+    static final int SECURITY_CONTEXT_PRESENT = 0b01;
+    static final int ALL_PRESENT = 0b11;
 
     private final Map<AddressTemplate, Integer> templates;
     private final boolean recursive;
@@ -98,6 +98,8 @@ class LookupResult {
                     break;
                 case ALL_PRESENT:
                     builder.append("all present");
+                    break;
+                default:
                     break;
             }
             if (iterator.hasNext()) {

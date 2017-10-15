@@ -17,6 +17,7 @@ package org.jboss.hal.core.finder;
 
 import java.util.Collections;
 import java.util.function.Function;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;

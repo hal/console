@@ -65,11 +65,14 @@ public class EnvironmentGenerator extends Generator {
         PrintWriter printWriter = generatorContext.tryCreate(logger, PRODUCT_INFO_PACKAGE, PRODUCT_INFO_CLASS);
 
         // print writer if null, source code has ALREADY been generated, return
-        if (printWriter == null) { return; }
+        if (printWriter == null) {
+            return;
+        }
 
         String halVersion = failSafeGetProperty(generatorContext.getPropertyOracle(), "hal.version", "0.0.0");
         String halBuild = failSafeGetProperty(generatorContext.getPropertyOracle(), "hal.build", null);
-        LocaleUtils localeUtils = LocaleUtils.getInstance(logger, generatorContext.getPropertyOracle(), generatorContext);
+        LocaleUtils localeUtils = LocaleUtils.getInstance(logger, generatorContext.getPropertyOracle(),
+                generatorContext);
         Set<GwtLocale> locales = localeUtils.getAllCompileLocales();
         List<String> localeValues = locales.stream()
                 .map(GwtLocale::getAsString)

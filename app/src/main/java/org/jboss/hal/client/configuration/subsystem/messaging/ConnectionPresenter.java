@@ -146,7 +146,7 @@ public class ConnectionPresenter
 
     void addHttp(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .fromRequestProperties()
                 .requiredOnly()
@@ -164,7 +164,7 @@ public class ConnectionPresenter
 
     void addRemote(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .fromRequestProperties()
                 .requiredOnly()
@@ -183,7 +183,7 @@ public class ConnectionPresenter
     void addPooledConnectionFactory(final ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .include("entries", DISCOVERY_GROUP, CONNECTORS)

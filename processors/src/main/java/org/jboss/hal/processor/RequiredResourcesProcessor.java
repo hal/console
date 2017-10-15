@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
+
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -157,8 +158,12 @@ public class RequiredResourcesProcessor extends AbstractProcessor {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) { return true; }
-            if (!(o instanceof RequiredInfo)) { return false; }
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof RequiredInfo)) {
+                return false;
+            }
 
             RequiredInfo that = (RequiredInfo) o;
             return id.equals(that.id);

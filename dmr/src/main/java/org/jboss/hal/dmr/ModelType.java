@@ -88,6 +88,7 @@ public enum ModelType {
                 throw new IllegalArgumentException("Invalid type character '" + c + "'");
         }
     }
+
     final char typeChar;
 
     ModelType(final char typeChar) {

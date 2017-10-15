@@ -23,8 +23,6 @@ import org.jdom2.output.XMLOutputter;
 
 final class XmlHelper {
 
-    private XmlHelper() {}
-
     static String xmlAsString(org.jdom2.Element element) {
         String asString;
         StringWriter writer = new StringWriter();
@@ -35,5 +33,8 @@ final class XmlHelper {
             asString = "<" + element + "/>";
         }
         return asString;
+    }
+
+    private XmlHelper() {
     }
 }

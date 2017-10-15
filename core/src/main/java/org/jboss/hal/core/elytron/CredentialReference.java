@@ -16,6 +16,7 @@
 package org.jboss.hal.core.elytron;
 
 import java.util.function.Supplier;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;
@@ -52,60 +53,6 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
  * resources across subsystems.
  */
 public class CredentialReference {
-
-    /**
-     * Form validation which validates that only one of {@code credential-reference} and {@code <alternativeName>} is
-     * given.
-     */
-    public static class AlternativeValidation<T extends ModelNode> implements FormValidation<T> {
-
-        private final String alternativeName;
-        private final Supplier<ModelNode> credentialReferenceValue;
-        private final Resources resources;
-
-        public AlternativeValidation(String alternativeName,
-                Supplier<ModelNode> credentialReferenceValue, Resources resources) {
-            this.alternativeName = alternativeName;
-            this.credentialReferenceValue = credentialReferenceValue;
-            this.resources = resources;
-        }
-
-        @Override
-        public ValidationResult validate(Form<T> form) {
-            FormItem<String> formItem = form.getFormItem(alternativeName);
-            if (formItem != null && !Strings.isNullOrEmpty(formItem.getValue()) && credentialReferenceValue.get()
-                    .isDefined()) {
-                formItem.showError(resources.messages()
-                        .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
-                return ValidationResult.invalid(resources.messages().credentialReferenceConflict());
-            }
-            return ValidationResult.OK;
-        }
-    }
-
-
-    private static class CrFormValidation implements FormValidation<ModelNode> {
-
-        private final String alternativeName;
-        private final Supplier<String> alternativeValue;
-        private final Resources resources;
-
-        private CrFormValidation(String alternativeName, Supplier<String> alternativeValue, Resources resources) {
-            this.alternativeName = alternativeName;
-            this.alternativeValue = alternativeValue;
-            this.resources = resources;
-        }
-
-        @Override
-        public ValidationResult validate(Form<ModelNode> form) {
-            if (alternativeName != null && alternativeValue != null && !Strings.isNullOrEmpty(alternativeValue.get())) {
-                ValidationResult.invalid(resources.messages()
-                        .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
-            }
-            return ValidationResult.OK;
-        }
-    }
-
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -161,7 +108,7 @@ public class CredentialReference {
         final String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
         Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
-                Ids.build(baseId, credentialReferenceName, Ids.FORM_SUFFIX), crMetadata)
+                Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
                 .singleton(
                         () -> {
                             ResourceAddress fqAddress = address.get();
@@ -242,7 +189,7 @@ public class CredentialReference {
             Supplier<ResourceAddress> address, Callback callback) {
         ResourceAddress fqAddress = address.get();
         if (fqAddress != null) {
-            String id = Ids.build(baseId, credentialReferenceName, Ids.ADD_SUFFIX);
+            String id = Ids.build(baseId, credentialReferenceName, Ids.ADD);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, crMetadata)
                     .addOnly()
                     .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
@@ -272,6 +219,60 @@ public class CredentialReference {
         } else {
             MessageEvent.fire(eventBus,
                     Message.error(resources.messages().credentialReferenceAddressError()));
+        }
+    }
+
+
+    /**
+     * Form validation which validates that only one of {@code credential-reference} and {@code <alternativeName>} is
+     * given.
+     */
+    public static class AlternativeValidation<T extends ModelNode> implements FormValidation<T> {
+
+        private final String alternativeName;
+        private final Supplier<ModelNode> credentialReferenceValue;
+        private final Resources resources;
+
+        public AlternativeValidation(String alternativeName,
+                Supplier<ModelNode> credentialReferenceValue, Resources resources) {
+            this.alternativeName = alternativeName;
+            this.credentialReferenceValue = credentialReferenceValue;
+            this.resources = resources;
+        }
+
+        @Override
+        public ValidationResult validate(Form<T> form) {
+            FormItem<String> formItem = form.getFormItem(alternativeName);
+            if (formItem != null && !Strings.isNullOrEmpty(formItem.getValue()) && credentialReferenceValue.get()
+                    .isDefined()) {
+                formItem.showError(resources.messages()
+                        .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
+                return ValidationResult.invalid(resources.messages().credentialReferenceConflict());
+            }
+            return ValidationResult.OK;
+        }
+    }
+
+
+    private static class CrFormValidation implements FormValidation<ModelNode> {
+
+        private final String alternativeName;
+        private final Supplier<String> alternativeValue;
+        private final Resources resources;
+
+        private CrFormValidation(String alternativeName, Supplier<String> alternativeValue, Resources resources) {
+            this.alternativeName = alternativeName;
+            this.alternativeValue = alternativeValue;
+            this.resources = resources;
+        }
+
+        @Override
+        public ValidationResult validate(Form<ModelNode> form) {
+            if (alternativeName != null && alternativeValue != null && !Strings.isNullOrEmpty(alternativeValue.get())) {
+                ValidationResult.invalid(resources.messages()
+                        .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
+            }
+            return ValidationResult.OK;
         }
     }
 }

@@ -123,6 +123,8 @@ public class AuthorisationDecision {
                         logger.error("Unsupported permission in constraint {}. Only {} is allowed for target {}.",
                                 constraint, EXECUTABLE.name().toLowerCase(), OPERATION.name().toLowerCase());
                         break;
+                    default:
+                        break;
                 }
 
             } else if (constraint.getTarget() == ATTRIBUTE) {
@@ -137,6 +139,8 @@ public class AuthorisationDecision {
                         logger.error("Unsupported permission in constraint {}. Only ({}|{}) are allowed for target {}.",
                                 constraint, READABLE.name().toLowerCase(), WRITABLE.name().toLowerCase(),
                                 ATTRIBUTE.name().toLowerCase());
+                        break;
+                    default:
                         break;
                 }
             }

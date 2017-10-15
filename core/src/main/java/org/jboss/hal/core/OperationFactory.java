@@ -236,6 +236,8 @@ public class OperationFactory {
                             case TYPE:
                             case UNDEFINED:
                                 break;
+                            default:
+                                break;
                         }
                     }
                 });
@@ -326,7 +328,9 @@ public class OperationFactory {
                                 if (valueType == ModelType.STRING) {
                                     valueNode.clear();
                                     List l = (List) value;
-                                    for (Object o : l) { valueNode.add(String.valueOf(o)); }
+                                    for (Object o : l) {
+                                        valueNode.add(String.valueOf(o));
+                                    }
                                 } else {
                                     logger.error("Unsupported value type {} for attribute {} of type {}",
                                             valueType, name, type);
@@ -372,6 +376,8 @@ public class OperationFactory {
                             valueNode = null;
                             logger.error("Unsupported type {} for attribute {}", type, name);
                             break;
+                        default:
+                            break;
                     }
                 } catch (ClassCastException e) {
                     logger.error("Unable to cast attribute {} as {}", name, type);
@@ -403,7 +409,9 @@ public class OperationFactory {
                 } else if (ArrayList.class == clazz) {
                     valueNode.clear();
                     List l = (List) value;
-                    for (Object o : l) { valueNode.add(String.valueOf(o)); }
+                    for (Object o : l) {
+                        valueNode.add(String.valueOf(o));
+                    }
                 } else if (HashMap.class == clazz) {
                     valueNode.clear();
                     Map map = (Map) value;

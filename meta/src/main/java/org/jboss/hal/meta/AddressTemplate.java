@@ -73,17 +73,11 @@ import static java.util.stream.Collectors.toList;
 @JsType(namespace = "hal.meta")
 public final class AddressTemplate implements Iterable<String> {
 
-    @FunctionalInterface
-    public interface Unresolver {
-
-        String unresolve(String name, String value, boolean first, boolean last, int index, int size);
-    }
-
-
     /**
      * The root template
      */
     public static final AddressTemplate ROOT = AddressTemplate.of("/");
+    public static final String EQUALS = "=";
 
     /**
      * Creates a new address template from a well known placeholder.
@@ -156,7 +150,7 @@ public final class AddressTemplate implements Iterable<String> {
                 String value = property.getValue().asString();
 
                 String segment = unresolver == null
-                        ? name + "=" + value
+                        ? name + EQUALS + value
                         : unresolver.unresolve(name, value, first, !iterator.hasNext(), index, size);
                 builder.append(segment);
 
@@ -219,8 +213,8 @@ public final class AddressTemplate implements Iterable<String> {
         StringTokenizer tok = new StringTokenizer(normalized);
         while (tok.hasMoreTokens()) {
             String nextToken = tok.nextToken();
-            if (nextToken.contains("=")) {
-                String[] split = nextToken.split("=");
+            if (nextToken.contains(EQUALS)) {
+                String[] split = nextToken.split(EQUALS);
                 tokens.add(new Token(split[0], split[1]));
             } else {
                 tokens.add(new Token(nextToken));
@@ -238,8 +232,12 @@ public final class AddressTemplate implements Iterable<String> {
     @Override
     @JsIgnore
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof AddressTemplate)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AddressTemplate)) {
+            return false;
+        }
 
         AddressTemplate that = (AddressTemplate) o;
         return optional == that.optional && template.equals(that.template);
@@ -266,13 +264,17 @@ public final class AddressTemplate implements Iterable<String> {
      * @return true if this template contains no tokens, false otherwise
      */
     @JsProperty
-    public boolean isEmpty() {return tokens.isEmpty();}
+    public boolean isEmpty() {
+        return tokens.isEmpty();
+    }
 
     /**
      * @return the number of tokens
      */
     @JsProperty(name = "size")
-    public int size() {return tokens.size();}
+    public int size() {
+        return tokens.size();
+    }
 
     @NotNull
     @Override
@@ -458,8 +460,8 @@ public final class AddressTemplate implements Iterable<String> {
                     }
                     resolvedValue = tupleMemory.next(tokenRef);
                 } else {
-                    assert tokenRef.contains("=") : "Invalid token expression " + tokenRef;
-                    resolvedValue = tokenRef.split("=");
+                    assert tokenRef.contains(EQUALS) : "Invalid token expression " + tokenRef;
+                    resolvedValue = tokenRef.split(EQUALS);
                 }
 
                 if (resolvedValue != null) {
@@ -474,8 +476,12 @@ public final class AddressTemplate implements Iterable<String> {
                 String resolvedKey = resolveSome(context, valueMemory, keyRef);
                 String resolvedValue = resolveSome(context, valueMemory, valueRef);
 
-                if (resolvedKey == null) { resolvedKey = BLANK; }
-                if (resolvedValue == null) { resolvedValue = BLANK; }
+                if (resolvedKey == null) {
+                    resolvedKey = BLANK;
+                }
+                if (resolvedValue == null) {
+                    resolvedValue = BLANK;
+                }
 
                 // wildcards
                 String addressValue = resolvedValue;
@@ -507,39 +513,64 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
 
+    // ------------------------------------------------------ JS methods
+
+    /**
+     * Append an address to this addrress template and return a new one.
+     *
+     * @param address The address to append.
+     *
+     * @return a new address template with the specified address added at the end.
+     */
+    @JsMethod(name = "append")
+    public AddressTemplate jsAppend(@EsParam("string|AddressTemplate") Object address) {
+        if (address instanceof String) {
+            return append(((String) address));
+        } else if (address instanceof AddressTemplate) {
+            return append(((AddressTemplate) address));
+        }
+        return this;
+    }
+
+
     // ------------------------------------------------------ inner classes
 
 
-    private static class Token {
+    @FunctionalInterface
+    public interface Unresolver {
 
-        final String key;
-        final String value;
+        String unresolve(String name, String value, boolean first, boolean last, int index, int size);
+    }
 
-        Token(String key, String value) {
-            this.key = key;
-            this.value = value;
+
+    private static class Memory<T> {
+
+        final Map<String, List<T>> values = new HashMap<>();
+        final Map<String, Integer> indexes = new HashMap<>();
+
+        boolean contains(String key) {
+            return values.containsKey(key);
         }
 
-        Token(String value) {
-            this.key = null;
-            this.value = value;
+        void memorize(String key, List<T> resolved) {
+            int startIdx = resolved.isEmpty() ? 0 : resolved.size() - 1;
+            values.put(key, resolved);
+            indexes.put(key, startIdx);
         }
 
-        boolean hasKey() {
-            return key != null;
-        }
+        T next(String key) {
+            T result = null;
 
-        String getKey() {
-            return key;
-        }
+            if (values.containsKey(key) && indexes.containsKey(key)) {
+                List<T> items = values.get(key);
+                Integer idx = indexes.get(key);
 
-        String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return hasKey() ? key + "=" + value : value;
+                if (!items.isEmpty() && idx >= 0) {
+                    result = items.get(idx);
+                    indexes.put(key, --idx);
+                }
+            }
+            return result;
         }
     }
 
@@ -592,54 +623,36 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
 
-    private static class Memory<T> {
+    private static class Token {
 
-        final Map<String, List<T>> values = new HashMap<>();
-        final Map<String, Integer> indexes = new HashMap<>();
+        final String key;
+        final String value;
 
-        boolean contains(String key) {
-            return values.containsKey(key);
+        Token(String key, String value) {
+            this.key = key;
+            this.value = value;
         }
 
-        void memorize(String key, List<T> resolved) {
-            int startIdx = resolved.isEmpty() ? 0 : resolved.size() - 1;
-            values.put(key, resolved);
-            indexes.put(key, startIdx);
+        Token(String value) {
+            this.key = null;
+            this.value = value;
         }
 
-        T next(String key) {
-            T result = null;
-
-            if (values.containsKey(key) && indexes.containsKey(key)) {
-                List<T> items = values.get(key);
-                Integer idx = indexes.get(key);
-
-                if (!items.isEmpty() && idx >= 0) {
-                    result = items.get(idx);
-                    indexes.put(key, --idx);
-                }
-            }
-            return result;
+        boolean hasKey() {
+            return key != null;
         }
-    }
 
-
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * Append an address to this addrress template and return a new one.
-     *
-     * @param address The address to append.
-     *
-     * @return a new address template with the specified address added at the end.
-     */
-    @JsMethod(name = "append")
-    public AddressTemplate jsAppend(@EsParam("string|AddressTemplate") Object address) {
-        if (address instanceof String) {
-            return append(((String) address));
-        } else if (address instanceof AddressTemplate) {
-            return append(((AddressTemplate) address));
+        String getKey() {
+            return key;
         }
-        return this;
+
+        String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return hasKey() ? key + EQUALS + value : value;
+        }
     }
 }

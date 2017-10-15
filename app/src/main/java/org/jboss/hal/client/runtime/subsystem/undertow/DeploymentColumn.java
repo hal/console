@@ -184,7 +184,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                 new MetadataProcessor.MetadataCallback() {
                     @Override
                     public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(INVALIDATE_SESSION_OPERATION, Ids.FORM_SUFFIX);
+                        String id = Ids.build(INVALIDATE_SESSION_OPERATION, Ids.FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, INVALIDATE_SESSION_OPERATION)
                                 .build();
 

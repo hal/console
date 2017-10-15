@@ -137,7 +137,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         navigation.addPrimary(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_ENTRY, Names.CONFIGURATION,
                 pfIcon("settings"), configurationSection);
         for (ServletContainerSetting setting : NAVIGATION_ORDER) {
-            navigation.addPrimary(Ids.build(setting.baseId, Ids.ENTRY_SUFFIX), setting.type, setting.icon,
+            navigation.addPrimary(Ids.build(setting.baseId, Ids.ENTRY), setting.type, setting.icon,
                     settingsSections.get(setting));
         }
 
@@ -150,7 +150,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
     }
 
     private Form<ModelNode> failSafeFrom(ServletContainerSetting settingType, Metadata metadata) {
-        return new ModelNodeForm.Builder<>(Ids.build(settingType.baseId, Ids.FORM_SUFFIX), metadata)
+        return new ModelNodeForm.Builder<>(Ids.build(settingType.baseId, Ids.FORM), metadata)
                 .singleton(() -> presenter.pingSettings(settingType), () -> presenter.addSettingsSingleton(settingType))
                 .onSave((f, changedValues) -> presenter.saveSettings(settingType, changedValues))
                 .prepareReset(f -> presenter.resetSettings(settingType, f))

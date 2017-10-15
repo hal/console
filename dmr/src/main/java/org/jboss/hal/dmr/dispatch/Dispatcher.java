@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -73,30 +74,6 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 @SuppressWarnings("DuplicateStringLiteralInspection")
 @JsType(namespace = "hal.dmr")
 public class Dispatcher implements RecordingHandler {
-
-    @FunctionalInterface
-    public interface OnFail {
-
-        void onFailed(Operation operation, String failure);
-    }
-
-
-    @FunctionalInterface
-    public interface OnError {
-
-        void onException(Operation operation, Throwable exception);
-    }
-
-
-    public enum HttpMethod {GET, POST}
-
-
-    @FunctionalInterface
-    private interface OnLoad {
-
-        void onLoad(XMLHttpRequest xhr);
-    }
-
 
     static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
     static final String APPLICATION_JSON = "application/json";
@@ -175,7 +152,9 @@ public class Dispatcher implements RecordingHandler {
         return dmr(operations).map(this::compositeResult);
     }
 
-    private CompositeResult compositeResult(ModelNode payload) { return new CompositeResult(payload.get(RESULT)); }
+    private CompositeResult compositeResult(ModelNode payload) {
+        return new CompositeResult(payload.get(RESULT));
+    }
 
 
     // ------------------------------------------------------ execute operation
@@ -236,7 +215,11 @@ public class Dispatcher implements RecordingHandler {
                     (op, error) -> emitter.onError(error));
             xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
             xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
-            if (get) { xhr.send(); } else { xhr.send(dmrOperation.toBase64String()); }
+            if (get) {
+                xhr.send();
+            } else {
+                xhr.send(dmrOperation.toBase64String());
+            }
             recordOperation(operation);
         });
     }
@@ -528,20 +511,6 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ JS methods
 
-
-    @JsFunction
-    public interface JsOperationCallback {
-
-        void onSuccess(ModelNode result);
-    }
-
-
-    @JsFunction
-    public interface JsCompositeCallback {
-
-        void onSuccess(CompositeResult result);
-    }
-
     /**
      * Executes the specified composite operation.
      *
@@ -563,5 +532,48 @@ public class Dispatcher implements RecordingHandler {
     @JsMethod(name = "execute")
     public void jsExecute(Operation operation, @EsParam("function(result: ModelNode)") JsOperationCallback callback) {
         dmr(operation, payload -> callback.onSuccess(payload.get(RESULT)), failedCallback, exceptionCallback);
+    }
+
+
+    // ------------------------------------------------------ inner classes
+
+
+    @FunctionalInterface
+    public interface OnFail {
+
+        void onFailed(Operation operation, String failure);
+    }
+
+
+    @FunctionalInterface
+    public interface OnError {
+
+        void onException(Operation operation, Throwable exception);
+    }
+
+
+    @FunctionalInterface
+    private interface OnLoad {
+
+        void onLoad(XMLHttpRequest xhr);
+    }
+
+
+    @JsFunction
+    public interface JsOperationCallback {
+
+        void onSuccess(ModelNode result);
+    }
+
+
+    @JsFunction
+    public interface JsCompositeCallback {
+
+        void onSuccess(CompositeResult result);
+    }
+
+
+    public enum HttpMethod {
+        GET, POST
     }
 }

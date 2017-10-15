@@ -31,7 +31,7 @@ public class Json {
      *
      * @return a JavaScript object constructed from the parse
      */
-    public native static <T extends JavaScriptObject> T parse(String jsonAsString) /*-{
+    public static native <T extends JavaScriptObject> T parse(String jsonAsString) /*-{
         return JSON.parse(jsonAsString);
     }-*/;
 
@@ -42,7 +42,7 @@ public class Json {
      *
      * @return JSON in string representation
      */
-    public native static String stringify(JavaScriptObject json) /*-{
+    public static native String stringify(JavaScriptObject json) /*-{
         return JSON.stringify(json);
     }-*/;
 

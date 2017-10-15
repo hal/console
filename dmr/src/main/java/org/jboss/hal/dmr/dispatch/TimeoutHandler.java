@@ -17,6 +17,7 @@ package org.jboss.hal.dmr.dispatch;
 
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
+
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -33,6 +34,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
 public interface TimeoutHandler {
+
     int INTERVAL = 500;
     Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
 
@@ -53,7 +55,9 @@ public interface TimeoutHandler {
         Single<ModelNode> execution = Single.fromEmitter(em -> dispatcher.execute(operation, em::onSuccess,
                 (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
                 (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
-        if (until == null) until = r -> !r.isFailure(); // default: until success
+        if (until == null) {
+            until = r -> !r.isFailure(); // default: until success
+        }
 
         return Observable
                 .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
@@ -62,8 +66,11 @@ public interface TimeoutHandler {
                 .toCompletable().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
                 .doOnError(e -> {
                     String msg = "Operation " + operation.asCli() + " ran into ";
-                    if (e instanceof TimeoutException) logger.warn(msg + "a timeout after " + timeout + " seconds");
-                    else logger.error(msg + "an error", e);
+                    if (e instanceof TimeoutException) {
+                        logger.warn(msg + "a timeout after " + timeout + " seconds");
+                    } else {
+                        logger.error(msg + "an error", e);
+                    }
                 });
     }
 
@@ -77,7 +84,9 @@ public interface TimeoutHandler {
         Single<CompositeResult> execution = Single.fromEmitter(em -> dispatcher.execute(composite, em::onSuccess,
                 (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
                 (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
-        if (until == null) until = r -> r.stream().noneMatch(ModelNode::isFailure); // default: until success
+        if (until == null) {
+            until = r -> r.stream().noneMatch(ModelNode::isFailure); // default: until success
+        }
 
         return Observable
                 .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
@@ -86,8 +95,11 @@ public interface TimeoutHandler {
                 .toCompletable().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
                 .doOnError(e -> {
                     String msg = "Composite operation " + composite.asCli() + " ran into ";
-                    if (e instanceof TimeoutException) logger.warn(msg + "a timeout after " + timeout + " seconds");
-                    else logger.error(msg + "an error", e);
+                    if (e instanceof TimeoutException) {
+                        logger.warn(msg + "a timeout after " + timeout + " seconds");
+                    } else {
+                        logger.error(msg + "an error", e);
+                    }
                 });
     }
 }

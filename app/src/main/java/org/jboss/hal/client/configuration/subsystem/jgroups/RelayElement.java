@@ -54,7 +54,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
 
         Metadata metadata = metadataRegistry.lookup(RELAY_TEMPLATE);
 
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.TABLE_SUFFIX), metadata)
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(RELAY_TEMPLATE, table -> presenter.addRelay()))
                 .button(tableButtonFactory.remove(RELAY_TEMPLATE,
                         table -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
@@ -65,7 +65,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
                     presenter.showStackInnerPage(REMOTE_SITE_ID);
                 })
                 .build();
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.FORM_SUFFIX), metadata)
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveSingleton(SELECTED_RELAY_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(Names.RELAY)))
                 .prepareReset(form -> presenter.resetSingleton(SELECTED_RELAY_TEMPLATE, Names.RELAY, form, metadata))

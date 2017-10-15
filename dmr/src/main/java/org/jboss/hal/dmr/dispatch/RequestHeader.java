@@ -26,7 +26,9 @@ public enum RequestHeader {
 
     private final String header;
 
-    RequestHeader(@NonNls final String header) {this.header = header;}
+    RequestHeader(@NonNls final String header) {
+        this.header = header;
+    }
 
     public String header() {
         return header;

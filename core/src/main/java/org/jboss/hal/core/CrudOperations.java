@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -73,62 +74,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @JsType
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public class CrudOperations {
-
-    /**
-     * Callback used in {@code add} methods
-     */
-    @JsFunction
-    @FunctionalInterface
-    public interface AddCallback {
-
-        /**
-         * Called after the resource has been added.
-         *
-         * @param name    the name of the resource
-         * @param address the resource address of the newly added resource
-         */
-        void execute(@Nullable String name, ResourceAddress address);
-    }
-
-
-    /**
-     * Callback used in {@code addSingleton} methods
-     */
-    @JsFunction
-    @FunctionalInterface
-    public interface AddSingletonCallback {
-
-        /**
-         * Called after the resource has been added.
-         *
-         * @param address the resource address of the newly added resource
-         */
-        void execute(ResourceAddress address);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface ReadCallback {
-
-        void execute(ModelNode result);
-    }
-
-
-    @FunctionalInterface
-    public interface ReadChildrenCallback {
-
-        void execute(List<Property> children);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface ReadCompositeCallback {
-
-        void execute(CompositeResult result);
-    }
-
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -1320,13 +1265,6 @@ public class CrudOperations {
 
     // ------------------------------------------------------ JS methods
 
-
-    @JsFunction
-    public interface JsReadChildrenCallback {
-
-        void execute(Property[] children);
-    }
-
     /**
      * Opens an add-resource dialog for the given resource type. The dialog contains fields for all required request
      * properties. When clicking "Add", a new resource is added using the specified address. After the resource has been
@@ -1344,7 +1282,7 @@ public class CrudOperations {
             @EsParam("string[]") String[] attributes,
             @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {
 
-        String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
+        String id = Ids.build(type, Ids.ADD, Ids.uniqueId());
         if (address instanceof AddressTemplate) {
             if (attributes != null) {
                 add(id, type, ((AddressTemplate) address), asList(attributes), callback);
@@ -1414,7 +1352,7 @@ public class CrudOperations {
             @EsParam("string[]") String[] attributes,
             @EsParam("function(address: ResourceAddress)") AddSingletonCallback callback) {
 
-        String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
+        String id = Ids.build(type, Ids.ADD, Ids.uniqueId());
         if (address instanceof AddressTemplate) {
             if (attributes != null) {
                 addSingleton(id, type, ((AddressTemplate) address), asList(attributes), callback);
@@ -1645,6 +1583,72 @@ public class CrudOperations {
             throw new IllegalArgumentException(
                     "Illegal 2nd argument: Use CrudOperations.removeSingleton(string, (AddressTemplate|ResourceAddress|string), function())");
         }
+    }
+
+
+    // ------------------------------------------------------ inner classes
+
+
+    /**
+     * Callback used in {@code add} methods
+     */
+    @JsFunction
+    @FunctionalInterface
+    public interface AddCallback {
+
+        /**
+         * Called after the resource has been added.
+         *
+         * @param name    the name of the resource
+         * @param address the resource address of the newly added resource
+         */
+        void execute(@Nullable String name, ResourceAddress address);
+    }
+
+
+    /**
+     * Callback used in {@code addSingleton} methods
+     */
+    @JsFunction
+    @FunctionalInterface
+    public interface AddSingletonCallback {
+
+        /**
+         * Called after the resource has been added.
+         *
+         * @param address the resource address of the newly added resource
+         */
+        void execute(ResourceAddress address);
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface ReadCallback {
+
+        void execute(ModelNode result);
+    }
+
+
+    @FunctionalInterface
+    public interface ReadChildrenCallback {
+
+        void execute(List<Property> children);
+    }
+
+
+    @JsFunction
+    public interface JsReadChildrenCallback {
+
+        void execute(Property[] children);
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface ReadCompositeCallback {
+
+        void execute(CompositeResult result);
     }
 }
 

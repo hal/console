@@ -468,7 +468,7 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_APPLICATION_ROLLBACKS = "number-of-application-rollbacks";
     String NUMBER_OF_COMMITTED_TRANSACTIONS = "number-of-committed-transactions";
     String NUMBER_OF_HEURISTICS_TRANSACTIONS = "number-of-heuristics";
-    String NUMBER_OF_INFLIGHT_TRANSACTIONS =  "number-of-inflight-transactions";
+    String NUMBER_OF_INFLIGHT_TRANSACTIONS = "number-of-inflight-transactions";
     String NUMBER_OF_NESTED_TRANSACTIONS = "number-of-nested-transactions";
     String NUMBER_OF_RESOURCE_ROLLBACKS = "number-of-resource-rollbacks";
     String NUMBER_OF_SYSTEM_ROLLBACKS = "number-of-system-rollbacks";
@@ -600,7 +600,7 @@ public interface ModelDescriptionConstants {
     String REPLICATION_SLAVE = "replication-slave";
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
-    String REQUEST_COUNT= "request-count";
+    String REQUEST_COUNT = "request-count";
     String REQUEST_PROPERTIES = "request-properties";
     String REQUIRED = "required";
     String REQUIRES = "requires";

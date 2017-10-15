@@ -170,6 +170,7 @@ abstract class ModelValue implements Cloneable {
             target.append(TAB_SIZE);
         }
     }
+
     private final ModelType type;
 
     protected ModelValue(final ModelType type) {

@@ -35,9 +35,9 @@
 
 package org.jboss.hal.dmr;
 
-import com.google.gwt.core.client.JsArrayInteger;
-
 import java.io.IOException;
+
+import com.google.gwt.core.client.JsArrayInteger;
 
 public class DataOutput {
 
@@ -50,8 +50,9 @@ public class DataOutput {
 
     public byte[] getBytes() {
         byte[] array = new byte[pos];
-        for (int i = 0; i < pos; i++) { array[i] = bytes[i]; }
-
+        for (int i = 0; i < pos; i++) {
+            array[i] = bytes[i];
+        }
         return array;
     }
 
@@ -150,7 +151,9 @@ public class DataOutput {
 
     public void write(byte[] bits) {
         growToFit(bits.length);
-        for (int i = 0; i < bits.length; i++) { bytes[pos++] = bits[i]; }
+        for (int i = 0; i < bits.length; i++) {
+            bytes[pos++] = bits[i];
+        }
     }
 
     public void write(byte[] b, int off, int len) {

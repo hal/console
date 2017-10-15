@@ -59,7 +59,9 @@ public class FlowContext {
     /**
      * @return {@code true} if the context stack is empty, {@code false} otherwise.
      */
-    public boolean emptyStack() {return stack.empty();}
+    public boolean emptyStack() {
+        return stack.empty();
+    }
 
     /**
      * Stores the value under the given key in the context map.

@@ -180,7 +180,7 @@ public class SocketBindingGroupPresenter
         Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE.append(socketBinding.templateSuffix()));
 
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(socketBinding.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(socketBinding.baseId, Ids.ADD), metadata)
                 .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .build();

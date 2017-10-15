@@ -19,4 +19,5 @@ import rx.Completable;
 import rx.functions.Func1;
 
 /** Marker interface for one work item inside a flow */
-public interface Task<C extends FlowContext> extends Func1<C, Completable> {}
+public interface Task<C extends FlowContext> extends Func1<C, Completable> {
+}

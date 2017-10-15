@@ -24,7 +24,7 @@ public class ResponseHeadersProcessors {
 
     @Inject
     public ResponseHeadersProcessors(final ProcessStateProcessor processStateProcessor) {
-        this.processors = new ResponseHeadersProcessor[] {
+        this.processors = new ResponseHeadersProcessor[]{
                 processStateProcessor
         };
     }

@@ -90,7 +90,7 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
                         (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
                         comparing(ConfigurationChange::getAccessMechanism)))
                 .toolbarAction(disableAction)
-                .toolbarAction(new Toolbar.Action(Ids.build(CONFIGURATION_CHANGES, Ids.REFRESH_SUFFIX),
+                .toolbarAction(new Toolbar.Action(Ids.build(CONFIGURATION_CHANGES, Ids.REFRESH),
                         constants.reload(), () -> presenter.reload()))
                 .noItems(constants.noItems(), messages.noItems())
                 .emptyState(empty, emptyState)

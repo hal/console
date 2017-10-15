@@ -84,7 +84,9 @@ final class TypeModelValue extends ModelValue {
                 return UNDEFINED;
         }
     }
+
     private final ModelType value;
+
     private TypeModelValue(final ModelType value) {
         super(ModelType.TYPE);
         this.value = value;

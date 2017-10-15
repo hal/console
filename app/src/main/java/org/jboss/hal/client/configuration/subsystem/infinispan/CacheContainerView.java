@@ -93,13 +93,13 @@ public class CacheContainerView extends HalViewImpl
         navigation.addPrimary(Ids.CACHE_CONTAINER_ENTRY, Names.CONFIGURATION, pfIcon("settings"), section);
 
         caches.forEach((cache, cacheElement) ->
-                navigation.addPrimary(Ids.build(cache.baseId, Ids.ENTRY_SUFFIX), cache.type, cache.icon,
+                navigation.addPrimary(Ids.build(cache.baseId, Ids.ENTRY), cache.type, cache.icon,
                         cacheElement.asElement()));
 
         navigation.addPrimary(Ids.CACHE_CONTAINER_THREAD_POOLS_ENTRY, Names.THREAD_POOLS, pfIcon("resource-pool"));
         threadPools.forEach((threadPool, threadPoolElement) ->
                 navigation.addSecondary(Ids.CACHE_CONTAINER_THREAD_POOLS_ENTRY,
-                        Ids.build(threadPool.baseId, Ids.ENTRY_SUFFIX), threadPool.type,
+                        Ids.build(threadPool.baseId, Ids.ENTRY), threadPool.type,
                         threadPoolElement.asElement()));
 
         navigation.addPrimary(Ids.CACHE_CONTAINER_TRANSPORT_ENTRY, Names.TRANSPORT, fontAwesome("road"),

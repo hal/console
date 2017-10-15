@@ -187,7 +187,7 @@ public class CacheContainerPresenter
 
     void addCache(final Cache cache) {
         Metadata metadata = metadataRegistry.lookup(cache.template);
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cache.baseId, Ids.ADD_SUFFIX),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cache.baseId, Ids.ADD),
                 resources.messages().addResourceTitle(cache.type), metadata,
                 (name, model) -> crud.add(cache.type, name, cacheAddress(cache, name), model, (n, a) -> reload()));
         dialog.show();
@@ -284,7 +284,7 @@ public class CacheContainerPresenter
         Metadata metadata = metadataRegistry.lookup(cacheType.template
                 .append(COMPONENT + "=" + BACKUPS)
                 .append(BACKUP + "=*"));
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, BACKUPS, Ids.ADD_SUFFIX),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, BACKUPS, Ids.ADD),
                 resources.messages().addResourceTitle(Names.BACKUP), metadata,
                 (name, model) -> {
                     ResourceAddress address = cacheBackupAddress(name);
@@ -341,7 +341,7 @@ public class CacheContainerPresenter
     void addCacheStore(final Store store) {
         if (store.addWithDialog) {
             Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
-            String id = Ids.build(cacheType.baseId, store.baseId, Ids.ADD_SUFFIX);
+            String id = Ids.build(cacheType.baseId, store.baseId, Ids.ADD);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
                     .fromRequestProperties()
                     .requiredOnly()
@@ -406,7 +406,7 @@ public class CacheContainerPresenter
 
             if (newStore.addWithDialog) {
                 Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + newStore.resource));
-                String id = Ids.build(cacheType.baseId, newStore.baseId, Ids.ADD_SUFFIX);
+                String id = Ids.build(cacheType.baseId, newStore.baseId, Ids.ADD);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
                         .fromRequestProperties()
                         .requiredOnly()

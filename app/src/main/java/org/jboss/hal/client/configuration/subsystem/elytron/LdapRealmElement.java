@@ -43,10 +43,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
-import static org.jboss.hal.resources.Ids.PAGE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.TAB;
 
 public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, HasPresenter<RealmsPresenter> {
 
@@ -66,7 +65,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
     LdapRealmElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
 
         // LDAP Realm
-        ldapRealmTable = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
+        ldapRealmTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addLdapRealm()))
                 .button(tableButtonFactory.remove(Names.LDAP_REALM, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapRealms()))
@@ -74,12 +73,12 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .column(Names.IDENTITY_ATTRIBUTE_MAPPING, this::showIdentityAttributeMapping, "15em") //NON-NLS
                 .build();
 
-        ldapRealmForm = new ModelNodeForm.Builder<NamedNode>(id(FORM_SUFFIX), metadata)
+        ldapRealmForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveLdapRealm(form, changedValues))
                 .build();
 
         Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING);
-        identityMappingForm = new ModelNodeForm.Builder<>(id(IDENTITY_MAPPING, FORM_SUFFIX), imMetadata)
+        identityMappingForm = new ModelNodeForm.Builder<>(id(IDENTITY_MAPPING, FORM), imMetadata)
                 .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES))
                 .onSave((form, changedValues) -> presenter.saveIdentityMappingComplexAttribute(selectedLdapRealm,
                         IDENTITY_MAPPING, Names.IDENTITY_MAPPING, changedValues))
@@ -90,7 +89,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         Metadata upMetadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(USER_PASSWORD_MAPPER);
-        userPasswordMapperForm = new ModelNodeForm.Builder<>(id(USER_PASSWORD_MAPPER, FORM_SUFFIX), upMetadata)
+        userPasswordMapperForm = new ModelNodeForm.Builder<>(id(USER_PASSWORD_MAPPER, FORM), upMetadata)
                 .singleton(
                         () -> presenter.pingIdentityMappingComplexAttribute(selectedLdapRealm, USER_PASSWORD_MAPPER),
                         () -> presenter.addIdentityMappingComplexAttribute(selectedLdapRealm, USER_PASSWORD_MAPPER,
@@ -106,7 +105,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         Metadata otpMetadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(OTP_CREDENTIAL_MAPPER);
-        otpCredentialMapperForm = new ModelNodeForm.Builder<>(id(OTP_CREDENTIAL_MAPPER, FORM_SUFFIX), otpMetadata)
+        otpCredentialMapperForm = new ModelNodeForm.Builder<>(id(OTP_CREDENTIAL_MAPPER, FORM), otpMetadata)
                 .singleton(
                         () -> presenter.pingIdentityMappingComplexAttribute(selectedLdapRealm, OTP_CREDENTIAL_MAPPER),
                         () -> presenter.addIdentityMappingComplexAttribute(selectedLdapRealm, OTP_CREDENTIAL_MAPPER,
@@ -122,7 +121,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         Metadata x509Metadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(X509_CREDENTIAL_MAPPER);
-        x509CredentialMapperForm = new ModelNodeForm.Builder<>(id(X509_CREDENTIAL_MAPPER, FORM_SUFFIX), x509Metadata)
+        x509CredentialMapperForm = new ModelNodeForm.Builder<>(id(X509_CREDENTIAL_MAPPER, FORM), x509Metadata)
                 .singleton(
                         () -> presenter.pingIdentityMappingComplexAttribute(selectedLdapRealm, X509_CREDENTIAL_MAPPER),
                         () -> presenter.addIdentityMappingComplexAttribute(selectedLdapRealm, X509_CREDENTIAL_MAPPER,
@@ -136,12 +135,12 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .build();
 
         Tabs tabs = new Tabs();
-        tabs.add(id(TAB_SUFFIX), resources.constants().attributes(), ldapRealmForm.asElement());
-        tabs.add(id(IDENTITY_MAPPING, TAB_SUFFIX), Names.IDENTITY_MAPPING, identityMappingForm.asElement());
-        tabs.add(id(USER_PASSWORD_MAPPER, TAB_SUFFIX), Names.USER_PASSWORD_MAPPER, userPasswordMapperForm.asElement());
-        tabs.add(id(OTP_CREDENTIAL_MAPPER, TAB_SUFFIX), Names.OTP_CREDENTIAL_MAPPER,
+        tabs.add(id(TAB), resources.constants().attributes(), ldapRealmForm.asElement());
+        tabs.add(id(IDENTITY_MAPPING, TAB), Names.IDENTITY_MAPPING, identityMappingForm.asElement());
+        tabs.add(id(USER_PASSWORD_MAPPER, TAB), Names.USER_PASSWORD_MAPPER, userPasswordMapperForm.asElement());
+        tabs.add(id(OTP_CREDENTIAL_MAPPER, TAB), Names.OTP_CREDENTIAL_MAPPER,
                 otpCredentialMapperForm.asElement());
-        tabs.add(id(X509_CREDENTIAL_MAPPER, TAB_SUFFIX), Names.X509_CREDENTIAL_MAPPER,
+        tabs.add(id(X509_CREDENTIAL_MAPPER, TAB), Names.X509_CREDENTIAL_MAPPER,
                 x509CredentialMapperForm.asElement());
 
         HTMLElement ldapRealmSection = section()
@@ -155,14 +154,14 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         Metadata iamMetadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
-        iamTable = new ModelNodeTable.Builder<>(id(ATTRIBUTE_MAPPING, TABLE_SUFFIX), iamMetadata)
+        iamTable = new ModelNodeTable.Builder<>(id(ATTRIBUTE_MAPPING, Ids.TABLE), iamMetadata)
                 .button(tableButtonFactory.add(iamMetadata.getTemplate(),
                         table -> presenter.addIdentityAttributeMapping(selectedLdapRealm)))
                 .button(tableButtonFactory.remove(iamMetadata.getTemplate(),
                         table -> presenter.removeIdentityAttributeMapping(selectedLdapRealm, iamIndex)))
                 .columns(FROM, TO)
                 .build();
-        iamForm = new ModelNodeForm.Builder<>(id(ATTRIBUTE_MAPPING, FORM_SUFFIX), iamMetadata)
+        iamForm = new ModelNodeForm.Builder<>(id(ATTRIBUTE_MAPPING, FORM), iamMetadata)
                 .onSave(((form, changedValues) -> presenter.saveIdentityAttributeMapping(selectedLdapRealm,
                         iamIndex, changedValues)))
                 .unsorted()
@@ -173,8 +172,8 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .addAll(iamTable, iamForm)
                 .asElement();
 
-        pages = new Pages(id(PAGE_SUFFIX), ldapRealmSection);
-        pages.addPage(id(PAGE_SUFFIX), id(ATTRIBUTE_MAPPING, PAGE_SUFFIX),
+        pages = new Pages(id(PAGE), ldapRealmSection);
+        pages.addPage(id(PAGE), id(ATTRIBUTE_MAPPING, PAGE),
                 () -> Names.LDAP_REALM + ": " + selectedLdapRealm,
                 () -> Names.IDENTITY_ATTRIBUTE_MAPPING,
                 iamSection);
@@ -240,7 +239,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         x509CredentialMapperForm.clear();
         ldapRealmTable.update(nodes);
 
-        if (id(ATTRIBUTE_MAPPING, PAGE_SUFFIX).equals(pages.getCurrentId())) {
+        if (id(ATTRIBUTE_MAPPING, PAGE).equals(pages.getCurrentId())) {
             nodes.stream()
                     .filter(resource -> selectedLdapRealm.equals(resource.getName()))
                     .findFirst()
@@ -254,6 +253,6 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         storeIndex(iamNodes);
         iamForm.clear();
         iamTable.update(iamNodes, modelNode -> Ids.build(modelNode.get(FROM).asString(), modelNode.get(TO).asString()));
-        pages.showPage(id(ATTRIBUTE_MAPPING, PAGE_SUFFIX));
+        pages.showPage(id(ATTRIBUTE_MAPPING, PAGE));
     }
 }
