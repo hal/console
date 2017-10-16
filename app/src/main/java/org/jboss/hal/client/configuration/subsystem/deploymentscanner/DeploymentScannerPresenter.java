@@ -48,30 +48,18 @@ public class DeploymentScannerPresenter
         extends MbuiPresenter<DeploymentScannerPresenter.MyView, DeploymentScannerPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.DEPLOYMENT_SCANNERS)
-    @Requires({DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS, DEPLOYMENTSCANNER_ADDRESS})
-    public interface MyProxy extends ProxyPlace<DeploymentScannerPresenter> {}
-
-    public interface MyView extends MbuiView<DeploymentScannerPresenter> {
-        void updateScanners(List<NamedNode> items);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
 
     @Inject
-    public DeploymentScannerPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public DeploymentScannerPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -100,4 +88,17 @@ public class DeploymentScannerPresenter
                 getView().updateScanners(
                         asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastName()))));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.DEPLOYMENT_SCANNERS)
+    @Requires({DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS, DEPLOYMENTSCANNER_ADDRESS})
+    public interface MyProxy extends ProxyPlace<DeploymentScannerPresenter> {
+    }
+
+    public interface MyView extends MbuiView<DeploymentScannerPresenter> {
+        void updateScanners(List<NamedNode> items);
+    }
+    // @formatter:on
 }

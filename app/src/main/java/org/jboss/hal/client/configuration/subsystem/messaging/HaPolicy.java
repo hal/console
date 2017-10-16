@@ -126,6 +126,8 @@ public enum HaPolicy {
             case ModelDescriptionConstants.SHARED_STORE_SLAVE:
                 result = SHARED_STORE_SLAVE;
                 break;
+            default:
+                break;
         }
         return result;
     }

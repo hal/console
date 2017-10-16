@@ -40,18 +40,6 @@ public class ModclusterPresenter
         extends MbuiPresenter<ModclusterPresenter.MyView, ModclusterPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.MODCLUSTER)
-    public interface MyProxy extends ProxyPlace<ModclusterPresenter> {}
-
-    public interface MyView extends MbuiView<ModclusterPresenter> {
-        void updateConfiguration(ModelNode payload);
-    }
-    // @formatter:on
-
-
     static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
@@ -60,13 +48,13 @@ public class ModclusterPresenter
     private final StatementContext statementContext;
 
     @Inject
-    public ModclusterPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public ModclusterPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -93,4 +81,17 @@ public class ModclusterPresenter
     protected void reload() {
         crud.read(ROOT_TEMPLATE, 2, result -> getView().updateConfiguration(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.MODCLUSTER)
+    public interface MyProxy extends ProxyPlace<ModclusterPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ModclusterPresenter> {
+        void updateConfiguration(ModelNode payload);
+    }
+    // @formatter:on
 }

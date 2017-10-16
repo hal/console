@@ -64,21 +64,10 @@ public class TransactionPresenter
         extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.TRANSACTIONS)
-    @Requires(TRANSACTIONS_SUBSYSTEM_ADDRESS)
-    public interface MyProxy extends ProxyPlace<TransactionPresenter> {}
-
-    public interface MyView extends MbuiView<TransactionPresenter> {
-        void updateConfiguration(ModelNode conf);
-    }
-    // @formatter:on
-
     private static final String PROCESS_ID_UUID = "process-id-uuid";
     private static final String PROCESS_ID_SOCKET_BINDING = "process-id-socket-binding";
     private static final String PROCESS_ID_SOCKET_MAX_PORTS = "process-id-socket-max-ports";
-    private final static ValidationResult invalid = ValidationResult
+    private static final ValidationResult invalid = ValidationResult
             .invalid("Validation error, see error messages below.");
 
     private final CrudOperations crud;
@@ -89,16 +78,16 @@ public class TransactionPresenter
     private final Resources resources;
 
     @Inject
-    public TransactionPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public TransactionPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Dispatcher dispatcher,
+            MetadataRegistry metadataRegistry,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -177,7 +166,7 @@ public class TransactionPresenter
         ResourceAddress address = TRANSACTIONS_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         crud.resetSingleton("Process", address, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
@@ -321,4 +310,17 @@ public class TransactionPresenter
     FormValidation<ModelNode> getJdbcFormValidation() {
         return jdbcFormValidation;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.TRANSACTIONS)
+    @Requires(TRANSACTIONS_SUBSYSTEM_ADDRESS)
+    public interface MyProxy extends ProxyPlace<TransactionPresenter> {
+    }
+
+    public interface MyView extends MbuiView<TransactionPresenter> {
+        void updateConfiguration(ModelNode conf);
+    }
+    // @formatter:on
 }

@@ -101,6 +101,8 @@ public class WebservicePresenter
                         return handlerChainType.resource;
                     case HANDLER_CHAIN_NAME:
                         return handlerChain != null ? handlerChain.getName() : null;
+                    default:
+                        break;
                 }
                 return null;
             }
@@ -346,7 +348,8 @@ public class WebservicePresenter
     @ProxyCodeSplit
     @NameToken(NameTokens.WEBSERVICES)
     @Requires(AddressTemplates.WEBSERVICES_ADDRESS)
-    public interface MyProxy extends ProxyPlace<WebservicePresenter> {}
+    public interface MyProxy extends ProxyPlace<WebservicePresenter> {
+    }
 
     public interface MyView extends HalView, HasPresenter<WebservicePresenter> {
         void update(ModelNode payload);

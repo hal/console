@@ -56,37 +56,6 @@ import static org.jboss.hal.resources.CSS.width;
  */
 class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
-    private static final class StoreTable {
-
-        final Store store;
-        final Table table;
-
-        private StoreTable(final Store store, final Table table) {
-            this.store = store;
-            this.table = table;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) { return true; }
-            if (!(o instanceof StoreTable)) { return false; }
-
-            StoreTable that = (StoreTable) o;
-
-            //noinspection SimplifiableIfStatement
-            if (store != that.store) { return false; }
-            return table == that.table;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = store.hashCode();
-            result = 31 * result + table.hashCode();
-            return result;
-        }
-    }
-
-
     private final EmptyState emptyState;
     private final HTMLElement headerForm;
     private final String selectStoreId;
@@ -285,5 +254,41 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         Elements.setVisible(emptyState.asElement(), false);
         Elements.setVisible(headerForm, true);
         tabs.forEach((s, t) -> Elements.setVisible(t.asElement(), s == store));
+    }
+
+
+    private static final class StoreTable {
+
+        final Store store;
+        final Table table;
+
+        private StoreTable(final Store store, final Table table) {
+            this.store = store;
+            this.table = table;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof StoreTable)) {
+                return false;
+            }
+
+            StoreTable that = (StoreTable) o;
+            //noinspection SimplifiableIfStatement
+            if (store != that.store) {
+                return false;
+            }
+            return table == that.table;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = store.hashCode();
+            result = 31 * result + table.hashCode();
+            return result;
+        }
     }
 }
