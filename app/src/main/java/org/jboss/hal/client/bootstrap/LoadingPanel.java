@@ -30,9 +30,9 @@ import static org.jboss.hal.resources.CSS.spinner;
 
 public class LoadingPanel implements IsElement {
 
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    static public LoadingPanel get() {
+    public static LoadingPanel get() {
         if (instance == null) {
             instance = new LoadingPanel();
             instance.off();

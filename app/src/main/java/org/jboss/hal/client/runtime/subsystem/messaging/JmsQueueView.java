@@ -16,12 +16,13 @@
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Toolbar;
 import org.jboss.hal.ballroom.Toolbar.Attribute;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.meta.Metadata;

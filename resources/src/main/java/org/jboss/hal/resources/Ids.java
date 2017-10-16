@@ -66,6 +66,7 @@ public interface Ids {
     String COOKIE = "hal-cookie";
     String ENTRY = "entry";
     String FORM = "form";
+    String ITEM = "item";
     String JDBC = "jdbc";
     String LOCATION = "location";
     String MASTER = "master";
@@ -262,7 +263,6 @@ public interface Ids {
     String ELYTRON_PERMISSION_MAPPINGS_PAGE = build(ELYTRON_PERMISSION_MAPPINGS, PAGE);
     String ELYTRON_PERMISSION_MAPPINGS_TABLE = build(ELYTRON_PERMISSION_MAPPINGS, TABLE);
     String ELYTRON_POLICY = build(ELYTRON, "policy");
-    String ELYTRON_POLICY_TABLE = build(ELYTRON, "policy", TABLE);
     String ELYTRON_PROPERTIES_REALM = build(ELYTRON, "properties-realm");
     String ELYTRON_PROVIDER_HTTP_SERVER_MECHANISM_FACTORY = build(ELYTRON, "provider-http-server-mechanism-factory");
     String ELYTRON_PROVIDER_LOADER = build(ELYTRON, "provider-loader");
@@ -608,7 +608,7 @@ public interface Ids {
     String SERVER_GROUP_REFRESH = build(SERVER_GROUP, REFRESH);
     String SERVER_REFRESH = build(SERVER, REFRESH);
     String SERVER_RUNTIME = build(SERVER, "runtime");
-    String SERVER_RUNTIME_ITEM = build(SERVER_RUNTIME, "item");
+    String SERVER_RUNTIME_ITEM = build(SERVER_RUNTIME, ITEM);
     String SERVER_RUNTIME_BOOTSTRAP_FORM = build(SERVER_RUNTIME, "bootstrap", FORM);
     String SERVER_RUNTIME_JVM_ATTRIBUTES_FORM = build(SERVER_RUNTIME, "jvm-attributes", FORM);
     String SERVER_RUNTIME_PROPERTIES_TABLE = build(SERVER_RUNTIME, "properties", TABLE);

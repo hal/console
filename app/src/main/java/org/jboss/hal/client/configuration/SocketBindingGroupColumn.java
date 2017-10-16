@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;

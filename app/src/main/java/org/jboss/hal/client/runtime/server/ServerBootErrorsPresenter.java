@@ -80,7 +80,8 @@ public class ServerBootErrorsPresenter
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVER_BOOT_ERRORS)
     @Requires(value = MANAGEMENT_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerBootErrorsPresenter> {}
+    public interface MyProxy extends ProxyPlace<ServerBootErrorsPresenter> {
+    }
 
     public interface MyView extends HalView {
         void update(List<ModelNode> bootErrors);

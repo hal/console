@@ -17,4 +17,5 @@ package org.jboss.hal.client.deployment;
 
 import org.jboss.hal.core.mvp.FinderViewImpl;
 
-public class DeploymentView extends FinderViewImpl implements DeploymentPresenter.MyView {}
+public class DeploymentView extends FinderViewImpl implements DeploymentPresenter.MyView {
+}

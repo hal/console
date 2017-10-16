@@ -98,7 +98,8 @@ public class BatchPresenter
     @ProxyCodeSplit
     @NameToken(NameTokens.BATCH_CONFIGURATION)
     @Requires({BATCH_SUBSYSTEM_ADDRESS, IN_MEMORY_JOB_REPO_ADDRESS, JDBC_JOB_REPO_ADDRESS, THREAD_FACTORY_ADDRESS, THREAD_POOL_ADDRESS})
-    public interface MyProxy extends ProxyPlace<BatchPresenter> {}
+    public interface MyProxy extends ProxyPlace<BatchPresenter> {
+    }
 
     public interface MyView extends MbuiView<BatchPresenter> {
         void updateConfiguration(ModelNode conf);

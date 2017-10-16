@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.jca;
 
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.resources.Names.LONG_RUNNING;
 import static org.jboss.hal.resources.Names.SHORT_RUNNING;

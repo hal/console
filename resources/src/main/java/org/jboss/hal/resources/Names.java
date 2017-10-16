@@ -28,6 +28,7 @@ public interface Names {
     String AJP_LISTENER = "AJP Listener";
     String ARCHIVE = "Archive";
     String APPLICATION_SECURITY_DOMAIN = "Application Security Domain";
+    String ASYNC_ACTION_HANDLER = "Async ActionHandler";
     String ASYNC_OPERATIONS = "Async Operations";
     String ATTRIBUTE_MAPPING = "Attribute Mapping";
     String AUDIT_LOG = "Audit Log";
@@ -52,6 +53,7 @@ public interface Names {
     String BUNDLED_EXTENSION = "Bundled Extension";
 
     String CACHE_CONTAINER = "Cache Container";
+    String CATEGORY = "Category";
     String CHANNEL = "Channel";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String CLIENT_MAPPING = "Client Mapping";
@@ -66,6 +68,7 @@ public interface Names {
     String CONNECTION_DEFINITION = "Connection Definition";
     String CONNECTIONS = "Connections";
     String CONNECTOR_SERVICE = "Connector Service";
+    String CONSOLE_ACTION_HANDLER = "Console ActionHandler";
     String CONTENT = "Content";
     String CONTEXT = "Context";
     String CONTEXT_ROOT = "Context Root";
@@ -75,6 +78,8 @@ public interface Names {
     String CRAWLER = "Crawler";
     String CREDENTIAL_REFERENCE = "Credential Reference";
     String CUSTOM = "Custom";
+    String CUSTOM_ACTION_HANDLER = "Custom ActionHandler";
+    String CUSTOM_FORMATTER = "Custom Formatter";
     String CUSTOM_POLICY = "Custom Policy";
 
     String DATASOURCE = "Datasource";
@@ -106,6 +111,7 @@ public interface Names {
 
     String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";
+    String FILE_ACTION_HANDLER = "File ActionHandler";
     String FILTER = "Filter";
     String FILTERS = "Filters";
     String FORK = "Fork";
@@ -223,6 +229,9 @@ public interface Names {
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PATTERN = "Pattern";
+    String PATTERN_FORMATTER = "Pattern Formatter";
+    String PERIODIC_ACTION_HANDLER = "Periodic ActionHandler";
+    String PERIODIC_SIZE_ACTION_HANDLER = "Periodic Size ActionHandler";
     String PERMISSIONS = "Permissions";
     String PERMISSION_MAPPINGS = "Permission Mappings";
     String PERSISTENCE = "Persistence";
@@ -263,7 +272,6 @@ public interface Names {
     String REST_RESOURCE = "REST Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
-    String RUNTIME_PROPERTIES = "Runtime Properties";
 
     String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
@@ -284,6 +292,7 @@ public interface Names {
     String SIMPLE_PERMISSION_MAPPER = "Simple Permission Mapper";
     String SINGLE_SIGN_ON = "Single Sign On";
     String SINGLETON_BEAN = "Singleton Bean";
+    String SIZE_ACTION_HANDLER = "Size ActionHandler";
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
     String SOCKET_BINDING = "Socket Binding";
@@ -303,6 +312,7 @@ public interface Names {
     String SUBDEPLOYMENTS = "Subdeployments";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
+    String SYSLOG_ACTION_HANDLER = "Syslog ActionHandler";
     String SYSTEM_PROPERTIES = "System Properties";
     String SYSTEM_PROPERTY = "System Property";
 

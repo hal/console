@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -113,7 +114,8 @@ public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
         FormItem<String> formItem = form.getFormItem(HOSTS);
         if (formItem != null) {
             if (table.hasSelection()) {
-                ResourceAddress filterRefAddress = HOST_TEMPLATE.append(FILTER_REF + "=" + table.selectedRow().getName())
+                ResourceAddress filterRefAddress = HOST_TEMPLATE.append(
+                        FILTER_REF + "=" + table.selectedRow().getName())
                         .resolve(mbuiContext.statementContext());
                 Operation filterRefOp = new Operation.Builder(filterRefAddress, READ_RESOURCE_OPERATION).build();
                 ResourceAddress locationFilterRefAddress = HOST_TEMPLATE

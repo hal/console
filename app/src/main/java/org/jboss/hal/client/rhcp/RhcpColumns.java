@@ -48,6 +48,7 @@ import static org.jboss.hal.resources.CSS.preview;
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public class RhcpColumns {
 
+    private static final String TITLE = "title";
     private static final String YEAR = "year";
 
 
@@ -163,12 +164,12 @@ public class RhcpColumns {
                         @Override
                         public HTMLElement asElement() {
                             return ItemDisplay
-                                    .withSubtitle(item.getString("title"), String.valueOf(item.getNumber(YEAR)));
+                                    .withSubtitle(item.getString(TITLE), String.valueOf(item.getNumber(YEAR)));
                         }
 
                         @Override
                         public String getTitle() {
-                            return item.getString("title");
+                            return item.getString(TITLE);
                         }
 
                         @Override
@@ -176,7 +177,7 @@ public class RhcpColumns {
                             return "rhcp-track";
                         }
                     })
-                    .onPreview(item -> new PreviewContent<>(item.getString("title"),
+                    .onPreview(item -> new PreviewContent<>(item.getString(TITLE),
                             "Released " + item.getString("released"),
                             elements()
                                     .add(img(item.getString("cover")).css(preview))
@@ -212,18 +213,18 @@ public class RhcpColumns {
                         @Override
                         public HTMLElement asElement() {
                             return ItemDisplay.withSubtitle(
-                                    String.valueOf(item.getNumber("track")) + ". " + item.getString("title"),
+                                    String.valueOf(item.getNumber("track")) + ". " + item.getString(TITLE),
                                     item.getString("length"));
                         }
 
                         @Override
                         public String getTitle() {
-                            return item.getString("title");
+                            return item.getString(TITLE);
                         }
 
                         @Override
                         public List<ItemAction<JsonObject>> actions() {
-                            if ("Under the Bridge".equals(item.getString("title"))) {
+                            if ("Under the Bridge".equals(item.getString(TITLE))) {
                                 return singletonList(itemActionFactory.view("utb"));
                             }
                             return ItemDisplay.super.actions();
@@ -245,7 +246,7 @@ public class RhcpColumns {
                                     .textContent("Writer: " + String.join(", ", writers))
                                     .asElement());
                         }
-                        return new PreviewContent<>(item.getString("title"), ul);
+                        return new PreviewContent<>(item.getString(TITLE), ul);
                     }));
         }
     }

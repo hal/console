@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.deploymentscanner;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.form.Form;

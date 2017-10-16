@@ -29,6 +29,7 @@ import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.form;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.InputType.file;
 import static org.jboss.hal.resources.CSS.*;

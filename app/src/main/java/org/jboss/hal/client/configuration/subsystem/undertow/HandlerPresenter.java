@@ -45,31 +45,20 @@ public class HandlerPresenter
         extends MbuiPresenter<HandlerPresenter.MyView, HandlerPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(HANDLER_ADDRESS)
-    @NameToken(NameTokens.UNDERTOW_HANDLER)
-    public interface MyProxy extends ProxyPlace<HandlerPresenter> {}
-
-    public interface MyView extends MbuiView<HandlerPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
-    public HandlerPresenter(final EventBus eventBus,
-            final HandlerPresenter.MyView view,
-            final HandlerPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public HandlerPresenter(EventBus eventBus,
+            HandlerPresenter.MyView view,
+            HandlerPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -99,4 +88,17 @@ public class HandlerPresenter
     protected void reload() {
         crud.readRecursive(HANDLER_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(HANDLER_ADDRESS)
+    @NameToken(NameTokens.UNDERTOW_HANDLER)
+    public interface MyProxy extends ProxyPlace<HandlerPresenter> {
+    }
+
+    public interface MyView extends MbuiView<HandlerPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

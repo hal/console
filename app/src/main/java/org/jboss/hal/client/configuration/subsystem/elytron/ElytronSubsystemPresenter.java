@@ -44,31 +44,20 @@ public class ElytronSubsystemPresenter
         extends MbuiPresenter<ElytronSubsystemPresenter.MyView, ElytronSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.ELYTRON)
-    @Requires(value = ELYTRON_SUBSYSTEM_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<ElytronSubsystemPresenter> {}
-
-    public interface MyView extends MbuiView<ElytronSubsystemPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
-    public ElytronSubsystemPresenter(final EventBus eventBus,
-            final ElytronSubsystemPresenter.MyView view,
-            final ElytronSubsystemPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public ElytronSubsystemPresenter(EventBus eventBus,
+            ElytronSubsystemPresenter.MyView view,
+            ElytronSubsystemPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -98,4 +87,17 @@ public class ElytronSubsystemPresenter
     protected void reload() {
         crud.read(ELYTRON_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.ELYTRON)
+    @Requires(value = ELYTRON_SUBSYSTEM_ADDRESS, recursive = false)
+    public interface MyProxy extends ProxyPlace<ElytronSubsystemPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ElytronSubsystemPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

@@ -121,7 +121,8 @@ public class InterfacePresenter
     @ProxyCodeSplit
     @Requires(ROOT_ADDRESS)
     @NameToken(NameTokens.INTERFACE)
-    public interface MyProxy extends ProxyPlace<InterfacePresenter> {}
+    public interface MyProxy extends ProxyPlace<InterfacePresenter> {
+    }
 
     public interface MyView extends MbuiView<InterfacePresenter> {
         void update(ModelNode interfce);

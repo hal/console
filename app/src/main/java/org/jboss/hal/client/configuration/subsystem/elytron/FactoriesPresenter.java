@@ -333,7 +333,8 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
             SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS})
     @NameToken(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS)
-    public interface MyProxy extends ProxyPlace<FactoriesPresenter> {}
+    public interface MyProxy extends ProxyPlace<FactoriesPresenter> {
+    }
 
 
     // @formatter:off

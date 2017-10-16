@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.datasource;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -69,6 +70,8 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 @AsyncColumn(Ids.DATA_SOURCE_RUNTIME)
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
+
+    private static final String EQ_WILDCARD = "=*";
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
@@ -360,20 +363,20 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     AddressTemplate dataSourceConfigurationTemplate(DataSource dataSource) {
         String resourceName = dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE;
         if (environment.isStandalone()) {
-            return AddressTemplate.of("/subsystem=datasources/" + resourceName + "=*");
+            return AddressTemplate.of("/subsystem=datasources/" + resourceName + EQ_WILDCARD);
         } else {
-            return AddressTemplate.of("/profile=*/subsystem=datasources/" + resourceName + "=*");
+            return AddressTemplate.of("/profile=*/subsystem=datasources/" + resourceName + EQ_WILDCARD);
         }
     }
 
     private ResourceAddress dataSourceConfigurationAddress(DataSource dataSource) {
         String resourceName = dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE;
         if (environment.isStandalone()) {
-            return AddressTemplate.of("/subsystem=datasources/" + resourceName + "=*")
+            return AddressTemplate.of("/subsystem=datasources/" + resourceName + EQ_WILDCARD)
                     .resolve(statementContext, dataSource.getName());
         } else {
             String profile = server.get(PROFILE_NAME).asString();
-            return AddressTemplate.of("/profile=*/subsystem=datasources/" + resourceName + "=*")
+            return AddressTemplate.of("/profile=*/subsystem=datasources/" + resourceName + EQ_WILDCARD)
                     .resolve(statementContext, profile, dataSource.getName());
         }
     }

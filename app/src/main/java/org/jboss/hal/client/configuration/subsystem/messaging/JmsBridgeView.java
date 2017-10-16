@@ -17,16 +17,17 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;

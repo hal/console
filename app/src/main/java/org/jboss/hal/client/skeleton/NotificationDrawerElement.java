@@ -81,6 +81,8 @@ class NotificationDrawerElement implements IsElement {
             case SUCCESS:
                 css = Icons.OK;
                 break;
+            default:
+                break;
         }
         iconContainer.className = css + " " + pullLeft;
     }

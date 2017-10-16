@@ -74,6 +74,7 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
     public interface MyProxy extends Proxy<RootPresenter> {
     }
 
-    public interface MyView extends View {}
+    public interface MyView extends View {
+    }
     // @formatter:on
 }

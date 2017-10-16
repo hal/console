@@ -36,6 +36,7 @@
 package org.jboss.hal.client.bootstrap.tasks;
 
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.config.AccessControlProvider;
@@ -69,6 +70,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ReadAuthentication implements BootstrapTask {
+
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadAuthentication.class);
     private static final AddressTemplate AUTHENTICATION_TEMPLATE = AddressTemplate.of(
             "/core-service=management/access=authorization");

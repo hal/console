@@ -66,6 +66,7 @@ public class RhcpPresenter extends FinderPresenter<RhcpPresenter.MyView, RhcpPre
     public interface MyProxy extends ProxyPlace<RhcpPresenter> {
     }
 
-    public interface MyView extends FinderView {}
+    public interface MyView extends FinderView {
+    }
     // @formatter:on
 }

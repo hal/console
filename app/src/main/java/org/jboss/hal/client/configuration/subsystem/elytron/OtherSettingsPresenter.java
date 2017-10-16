@@ -309,7 +309,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             SYSLOG_AUDIT_LOG_ADDRESS,
             TRUST_MANAGER_ADDRESS})
     @NameToken(NameTokens.ELYTRON_OTHER)
-    public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
+    public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {
+    }
 
 
     // @formatter:off

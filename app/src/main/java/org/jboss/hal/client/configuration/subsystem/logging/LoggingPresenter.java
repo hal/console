@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -47,50 +48,18 @@ public class LoggingPresenter
         extends MbuiPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.LOGGING_CONFIGURATION)
-    @Requires({LOGGING_SUBSYSTEM_ADDRESS, ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
-            ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
-            PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
-            SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
-            CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
-    public interface MyProxy extends ProxyPlace<LoggingPresenter> {}
-
-    public interface MyView extends MbuiView<LoggingPresenter> {
-        void updateLoggingConfig(ModelNode modelNode);
-
-        void updateRootLogger(ModelNode modelNode);
-        void noRootLogger();
-        void updateLogger(List<NamedNode> items);
-
-        void updateAsyncHandler(List<NamedNode> items);
-        void updateConsoleHandler(List<NamedNode> items);
-        void updateCustomHandler(List<NamedNode> items);
-        void updateFileHandler(List<NamedNode> items);
-        void updatePeriodicHandler(List<NamedNode> items);
-        void updatePeriodicSizeHandler(List<NamedNode> items);
-        void updateSizeHandlerHandler(List<NamedNode> items);
-        void updateSyslogHandler(List<NamedNode> items);
-
-        void updateCustomFormatter(List<NamedNode> items);
-        void updatePatternFormatter(List<NamedNode> items);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
 
     @Inject
-    public LoggingPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public LoggingPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -141,4 +110,37 @@ public class LoggingPresenter
             // @formatter:on
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.LOGGING_CONFIGURATION)
+    @Requires({LOGGING_SUBSYSTEM_ADDRESS, ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
+            ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
+            PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
+            SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
+            CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
+    public interface MyProxy extends ProxyPlace<LoggingPresenter> {
+    }
+
+    public interface MyView extends MbuiView<LoggingPresenter> {
+        void updateLoggingConfig(ModelNode modelNode);
+
+        void updateRootLogger(ModelNode modelNode);
+        void noRootLogger();
+        void updateLogger(List<NamedNode> items);
+
+        void updateAsyncHandler(List<NamedNode> items);
+        void updateConsoleHandler(List<NamedNode> items);
+        void updateCustomHandler(List<NamedNode> items);
+        void updateFileHandler(List<NamedNode> items);
+        void updatePeriodicHandler(List<NamedNode> items);
+        void updatePeriodicSizeHandler(List<NamedNode> items);
+        void updateSizeHandlerHandler(List<NamedNode> items);
+        void updateSyslogHandler(List<NamedNode> items);
+
+        void updateCustomFormatter(List<NamedNode> items);
+        void updatePatternFormatter(List<NamedNode> items);
+    }
+    // @formatter:on
 }

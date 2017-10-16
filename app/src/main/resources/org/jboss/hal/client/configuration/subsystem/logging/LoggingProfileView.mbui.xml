@@ -39,11 +39,11 @@
         <!--
             Categories / Logger
         -->
-        <item id="logging-profile-categories-item" title="Categories" icon="pficon pficon-repository">
+        <item id="logging-profile-category-item" title="Categories" icon="pficon pficon-repository">
             <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/logger=*">
                 <h1>Categories</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
-                <table id="logging-profile-categories-table" title="Category"
+                <table id="logging-profile-category-table" title="Category"
                        form-ref="logging-profile-categories-form">
                     <actions>
                         <action title="${mbuiContext.resources().constants().add()}" handler="${addLogger()}"
@@ -56,7 +56,7 @@
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-profile-categories-form" on-save="${saveLogger(form, changedValues)}"
+                <form id="logging-profile-category-form" on-save="${saveLogger(form, changedValues)}"
                       prepare-reset="${resetLogger(form)}">
                     <attributes>
                         <attribute name="category"/>

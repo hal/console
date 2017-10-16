@@ -162,4 +162,7 @@ class JdbcDriverTasks {
             return Completable.complete();
         }
     }
+
+    private JdbcDriverTasks() {
+    }
 }

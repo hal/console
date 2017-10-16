@@ -24,18 +24,6 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyWiz
 
 class HaPolicyWizard {
 
-    enum State {
-        CHOOSE_STRATEGY, CHOOSE_POLICY
-    }
-
-
-    static class Context {
-
-        boolean replication = true;
-        HaPolicy haPolicy = null;
-    }
-
-
     private final Wizard<Context, State> wizard;
 
     HaPolicyWizard(final Resources resources, Wizard.FinishCallback<Context, State> callback) {
@@ -48,6 +36,8 @@ class HaPolicyWizard {
                         case CHOOSE_POLICY:
                             state = CHOOSE_STRATEGY;
                             break;
+                        default:
+                            break;
                     }
                     return state;
                 })
@@ -57,6 +47,8 @@ class HaPolicyWizard {
                     switch (currentState) {
                         case CHOOSE_STRATEGY:
                             state = CHOOSE_POLICY;
+                            break;
+                        default:
                             break;
                     }
                     return state;
@@ -71,5 +63,17 @@ class HaPolicyWizard {
 
     void show() {
         wizard.show();
+    }
+
+
+    enum State {
+        CHOOSE_STRATEGY, CHOOSE_POLICY
+    }
+
+
+    static class Context {
+
+        boolean replication = true;
+        HaPolicy haPolicy = null;
     }
 }

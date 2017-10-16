@@ -46,7 +46,8 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
     private String profile;
 
 
-    public UndertowPreview(final Dispatcher dispatcher, final StatementContext statementContext, final Resources resources) {
+    public UndertowPreview(final Dispatcher dispatcher, final StatementContext statementContext,
+            final Resources resources) {
         super(Names.WEB, Names.UNDERTOW);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;

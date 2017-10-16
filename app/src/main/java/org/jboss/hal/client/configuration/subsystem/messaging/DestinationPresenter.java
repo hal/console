@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -71,27 +72,7 @@ public class DestinationPresenter
         extends ServerSettingsPresenter<DestinationPresenter.MyView, DestinationPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires({ADDRESS_SETTING_ADDRESS,
-            CORE_QUEUE_ADDRESS,
-            DIVERT_ADDRESS,
-            JMS_QUEUE_ADDRESS,
-            JMS_TOPIC_ADDRESS,
-            SECURITY_SETTING_ADDRESS})
-    @NameToken(NameTokens.MESSAGING_SERVER_DESTINATION)
-    public interface MyProxy extends ProxyPlace<DestinationPresenter> {}
-
-    public interface MyView extends MbuiView<DestinationPresenter> {
-        void updateCoreQueue(List<NamedNode> coreQueues);
-        void updateJmsQueue(List<NamedNode> jmsQueues);
-        void updateJmsTopic(List<NamedNode> jmsTopics);
-        void updateSecuritySetting(List<NamedNode> securitySettings);
-        void updateAddressSetting(List<NamedNode> addressSettings);
-        void updateDivert(List<NamedNode> diverts);
-    }
-    // @formatter:on
-
+    private static final String EQUALS = "=";
 
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
@@ -167,11 +148,11 @@ public class DestinationPresenter
         new AddResourceDialog(Names.SECURITY_SETTING, form, (name, model) -> {
             String pattern = patternItem.getValue();
             ResourceAddress securitySettingAddress = SELECTED_SERVER_TEMPLATE
-                    .append(SECURITY_SETTING + "=" + pattern)
+                    .append(SECURITY_SETTING + EQUALS + pattern)
                     .resolve(statementContext);
             ResourceAddress roleAddress = SELECTED_SERVER_TEMPLATE
-                    .append(SECURITY_SETTING + "=" + pattern)
-                    .append(ROLE + "=" + name)
+                    .append(SECURITY_SETTING + EQUALS + pattern)
+                    .append(ROLE + EQUALS + name)
                     .resolve(statementContext);
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
@@ -203,8 +184,8 @@ public class DestinationPresenter
         if (securitySetting != null) {
             String name = form.getModel().getName();
             ResourceAddress address = SERVER_TEMPLATE
-                    .append(SECURITY_SETTING + "=" + securitySetting)
-                    .append(ROLE + "=" + name)
+                    .append(SECURITY_SETTING + EQUALS + securitySetting)
+                    .append(ROLE + EQUALS + name)
                     .resolve(statementContext);
             Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
             crud.save(Names.SECURITY_SETTING, securitySetting + "/" + name, address, changedValues, metadata,
@@ -218,8 +199,8 @@ public class DestinationPresenter
         if (securitySetting != null) {
             String name = form.getModel().getName();
             ResourceAddress address = SERVER_TEMPLATE
-                    .append(SECURITY_SETTING + "=" + securitySetting)
-                    .append(ROLE + "=" + name)
+                    .append(SECURITY_SETTING + EQUALS + securitySetting)
+                    .append(ROLE + EQUALS + name)
                     .resolve(statementContext);
             Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
             crud.reset(Names.SECURITY_SETTING, securitySetting + "/" + name, address, form, metadata,
@@ -245,8 +226,8 @@ public class DestinationPresenter
                     () -> {
                         Task<FlowContext> removeRole = context -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
-                                    .append(SECURITY_SETTING + "=" + securitySetting)
-                                    .append(ROLE + "=" + roleName)
+                                    .append(SECURITY_SETTING + EQUALS + securitySetting)
+                                    .append(ROLE + EQUALS + roleName)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, REMOVE).build();
                             return dispatcher.execute(operation).toCompletable();
@@ -254,7 +235,7 @@ public class DestinationPresenter
 
                         Task<FlowContext> readRemainingRoles = context -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
-                                    .append(SECURITY_SETTING + "=" + securitySetting)
+                                    .append(SECURITY_SETTING + EQUALS + securitySetting)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                                     .param(CHILD_TYPE, ROLE)
@@ -268,7 +249,7 @@ public class DestinationPresenter
                             List<ModelNode> roles = context.pop();
                             if (roles.isEmpty()) {
                                 ResourceAddress address = SELECTED_SERVER_TEMPLATE
-                                        .append(SECURITY_SETTING + "=" + securitySetting)
+                                        .append(SECURITY_SETTING + EQUALS + securitySetting)
                                         .resolve(statementContext);
                                 Operation operation = new Operation.Builder(address, REMOVE).build();
                                 return dispatcher.execute(operation).toCompletable();
@@ -293,4 +274,27 @@ public class DestinationPresenter
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
         }
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires({ADDRESS_SETTING_ADDRESS,
+            CORE_QUEUE_ADDRESS,
+            DIVERT_ADDRESS,
+            JMS_QUEUE_ADDRESS,
+            JMS_TOPIC_ADDRESS,
+            SECURITY_SETTING_ADDRESS})
+    @NameToken(NameTokens.MESSAGING_SERVER_DESTINATION)
+    public interface MyProxy extends ProxyPlace<DestinationPresenter> {
+    }
+
+    public interface MyView extends MbuiView<DestinationPresenter> {
+        void updateCoreQueue(List<NamedNode> coreQueues);
+        void updateJmsQueue(List<NamedNode> jmsQueues);
+        void updateJmsTopic(List<NamedNode> jmsTopics);
+        void updateSecuritySetting(List<NamedNode> securitySettings);
+        void updateAddressSetting(List<NamedNode> addressSettings);
+        void updateDivert(List<NamedNode> diverts);
+    }
+    // @formatter:on
 }

@@ -62,6 +62,7 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
     public interface MyProxy extends ProxyPlace<RuntimePresenter> {
     }
 
-    public interface MyView extends FinderView {}
+    public interface MyView extends FinderView {
+    }
     // @formatter:on
 }

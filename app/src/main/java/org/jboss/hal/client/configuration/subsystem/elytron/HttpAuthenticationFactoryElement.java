@@ -110,7 +110,8 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .column(REALM_NAME)
                 .build();
         mrcForm = new ModelNodeForm.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, FORM), mrcMetadata)
-                .onSave(((form, changedValues) -> presenter.saveHttpMechanismRealmConfiguration(selectedFactory, mcIndex,
+                .onSave(((form, changedValues) -> presenter.saveHttpMechanismRealmConfiguration(selectedFactory,
+                        mcIndex,
                         mrcIndex, changedValues)))
                 .build();
         HTMLElement mrcSection = section()

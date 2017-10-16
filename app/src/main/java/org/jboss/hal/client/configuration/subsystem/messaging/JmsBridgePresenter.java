@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -54,17 +55,6 @@ public class JmsBridgePresenter
         extends MbuiPresenter<JmsBridgePresenter.MyView, JmsBridgePresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.JMS_BRIDGE)
-    @Requires(JMS_BRIDGE_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JmsBridgePresenter> {}
-
-    public interface MyView extends MbuiView<JmsBridgePresenter> {
-        void update(NamedNode server);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
@@ -74,15 +64,15 @@ public class JmsBridgePresenter
 
     @Inject
     public JmsBridgePresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -98,7 +88,7 @@ public class JmsBridgePresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         jmsBridgeName = request.getParameter(NAME, null);
     }
@@ -122,21 +112,33 @@ public class JmsBridgePresenter
                 result -> getView().update(new NamedNode(jmsBridgeName, result)));
     }
 
-    void saveJmsBridge(final Map<String, Object> changedValues) {
+    void saveJmsBridge(Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
         crud.save(Names.JMS_BRIDGE, jmsBridgeName, SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext),
                 changedValues, metadata, this::reload);
     }
 
-    void resetJmsBridge(final Form<NamedNode> form) {
+    void resetJmsBridge(Form<NamedNode> form) {
         Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
         crud.reset(Names.JMS_BRIDGE, jmsBridgeName, SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext), form,
                 metadata, new FinishReset<NamedNode>(form) {
                     @Override
-                    public void afterReset(final Form<NamedNode> form) {
+                    public void afterReset(Form<NamedNode> form) {
                         reload();
                     }
                 });
     }
 
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.JMS_BRIDGE)
+    @Requires(JMS_BRIDGE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JmsBridgePresenter> {
+    }
+
+    public interface MyView extends MbuiView<JmsBridgePresenter> {
+        void update(NamedNode server);
+    }
+    // @formatter:on
 }

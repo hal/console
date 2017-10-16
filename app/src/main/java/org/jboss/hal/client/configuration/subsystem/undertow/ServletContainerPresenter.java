@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -58,17 +59,6 @@ public class ServletContainerPresenter
         extends ApplicationFinderPresenter<ServletContainerPresenter.MyView, ServletContainerPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(SERVLET_CONTAINER_ADDRESS)
-    @NameToken(NameTokens.UNDERTOW_SERVLET_CONTAINER)
-    public interface MyProxy extends ProxyPlace<ServletContainerPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<ServletContainerPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final PropertiesOperations po;
     private final MetadataRegistry metadataRegistry;
@@ -79,16 +69,16 @@ public class ServletContainerPresenter
 
     @Inject
     public ServletContainerPresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final PropertiesOperations po,
-            final MetadataRegistry metadataRegistry,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            PropertiesOperations po,
+            MetadataRegistry metadataRegistry,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.po = po;
@@ -105,7 +95,7 @@ public class ServletContainerPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         servletContainerName = request.getParameter(NAME, null);
     }
@@ -130,97 +120,97 @@ public class ServletContainerPresenter
                 result -> getView().update(result));
     }
 
-    void saveServletContainer(final Map<String, Object> changedValues) {
+    void saveServletContainer(Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         crud.save(Names.SERVLET_CONTAINER, servletContainerName,
                 SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext), changedValues, metadata, this::reload);
     }
 
-    void resetServletContainer(final Form<ModelNode> form) {
+    void resetServletContainer(Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         crud.reset(Names.SERVLET_CONTAINER, servletContainerName,
                 SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext), form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         reload();
                     }
                 });
     }
 
-    void saveMimeMapping(final Map<String, String> properties) {
+    void saveMimeMapping(Map<String, String> properties) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         po.saveSingletonWithProperties(Names.MIME_MAPPING, address, emptyMap(), metadata, MIME_MAPPING, properties,
                 this::reload);
     }
 
-    void resetMimeMapping(final Form<ModelNode> form) {
+    void resetMimeMapping(Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         crud.resetSingleton(Names.MIME_MAPPING, address, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
     }
 
-    void saveWelcomeFile(final Map<String, String> properties) {
+    void saveWelcomeFile(Map<String, String> properties) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         po.saveSingletonWithProperties(Names.WELCOME_FILE, address, emptyMap(), metadata, WELCOME_FILE, properties,
                 this::reload);
     }
 
-    void resetWelcomeFile(final Form<ModelNode> form) {
+    void resetWelcomeFile(Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         crud.resetSingleton(Names.WELCOME_FILE, address, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
     }
 
-    void saveSettings(final ServletContainerSetting settingType, final Map<String, Object> changedValues) {
+    void saveSettings(ServletContainerSetting settingType, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix()));
         crud.saveSingleton(settingType.type, address, changedValues, metadata, this::reload);
     }
 
-    void resetSettings(final ServletContainerSetting settingType, final Form<ModelNode> form) {
+    void resetSettings(ServletContainerSetting settingType, Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix()));
         crud.resetSingleton(settingType.type, address, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
     }
 
-    void removeSettings(final ServletContainerSetting settingType, final Form<ModelNode> form) {
+    void removeSettings(ServletContainerSetting settingType, Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
         crud.removeSingleton(settingType.type, address, new FinishRemove<ModelNode>(form) {
             @Override
-            public void afterRemove(final Form<ModelNode> form) {
+            public void afterRemove(Form<ModelNode> form) {
                 reload();
             }
         });
     }
 
-    Operation pingSettings(final ServletContainerSetting settingType) {
+    Operation pingSettings(ServletContainerSetting settingType) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
         return new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
     }
 
-    void addSettingsSingleton(final ServletContainerSetting settingType) {
+    void addSettingsSingleton(ServletContainerSetting settingType) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
         crud.addSingleton(settingType.type, address, null, a -> reload());
@@ -231,4 +221,17 @@ public class ServletContainerPresenter
     StatementContext getStatementContext() {
         return statementContext;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(SERVLET_CONTAINER_ADDRESS)
+    @NameToken(NameTokens.UNDERTOW_SERVLET_CONTAINER)
+    public interface MyProxy extends ProxyPlace<ServletContainerPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<ServletContainerPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

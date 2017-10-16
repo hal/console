@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.remoting;
 
 import java.util.Map;
+
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 

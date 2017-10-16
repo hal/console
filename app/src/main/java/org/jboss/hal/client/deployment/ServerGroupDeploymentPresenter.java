@@ -168,7 +168,8 @@ public class ServerGroupDeploymentPresenter extends
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT)
     @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {}
+    public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {
+    }
 
     public interface MyView extends HalView, HasPresenter<ServerGroupDeploymentPresenter> {
         void update(String serverGroup, ServerGroupDeployment serverGroupDeployment);

@@ -50,6 +50,7 @@ class AccessControlPreview extends PreviewContent<Void> {
 
     @Override
     public void update(final Void item) {
-        Elements.setVisible(warning.asElement(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
+        Elements.setVisible(warning.asElement(),
+                environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
     }
 }

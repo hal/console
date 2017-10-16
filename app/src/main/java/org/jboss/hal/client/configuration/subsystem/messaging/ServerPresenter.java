@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -52,18 +53,6 @@ public class ServerPresenter
         extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.MESSAGING_SERVER)
-    @Requires(value = {SERVER_ADDRESS, BINDING_DIRECTORY_ADDRESS, JOURNAL_DIRECTORY_ADDRESS,
-            LARGE_MESSAGES_DIRECTORY_ADDRESS, PAGING_DIRECTORY_ADDRESS}, recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerPresenter> {}
-
-    public interface MyView extends MbuiView<ServerPresenter> {
-        void update(NamedNode server);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
@@ -73,15 +62,15 @@ public class ServerPresenter
 
     @Inject
     public ServerPresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -121,13 +110,13 @@ public class ServerPresenter
                 result -> getView().update(new NamedNode(serverName, result)));
     }
 
-    void saveServer(final Map<String, Object> changedValues) {
+    void saveServer(Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.save(Names.SERVER, serverName, SELECTED_SERVER_TEMPLATE.resolve(statementContext), changedValues, metadata,
                 this::reload);
     }
 
-    void resetServer(final Form<NamedNode> form) {
+    void resetServer(Form<NamedNode> form) {
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.reset(Names.SERVER, serverName, SELECTED_SERVER_TEMPLATE.resolve(statementContext), form, metadata,
                 new FinishReset<NamedNode>(form) {
@@ -137,4 +126,18 @@ public class ServerPresenter
                     }
                 });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.MESSAGING_SERVER)
+    @Requires(value = {SERVER_ADDRESS, BINDING_DIRECTORY_ADDRESS, JOURNAL_DIRECTORY_ADDRESS,
+            LARGE_MESSAGES_DIRECTORY_ADDRESS, PAGING_DIRECTORY_ADDRESS}, recursive = false)
+    public interface MyProxy extends ProxyPlace<ServerPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ServerPresenter> {
+        void update(NamedNode server);
+    }
+    // @formatter:on
 }

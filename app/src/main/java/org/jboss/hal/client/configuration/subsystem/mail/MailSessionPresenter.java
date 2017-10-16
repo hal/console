@@ -35,7 +35,6 @@ import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -73,11 +72,12 @@ public class MailSessionPresenter
         extends ApplicationFinderPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy>
         implements SupportsExpertMode {
 
+    private static final String EQUALS = "=";
+
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final CrudOperations crud;
-    private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private String mailSessionName;
@@ -88,7 +88,6 @@ public class MailSessionPresenter
             MyProxy proxy,
             Finder finder,
             CrudOperations crud,
-            ComplexAttributeOperations ca,
             FinderPathFactory finderPathFactory,
             Resources resources,
             Dispatcher dispatcher,
@@ -96,7 +95,6 @@ public class MailSessionPresenter
             MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
-        this.ca = ca;
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
@@ -194,7 +192,7 @@ public class MailSessionPresenter
                         (name, modelNode) -> {
                             String serverType = serverTypeItem.getValue().toLowerCase();
                             ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                                    .append(SERVER + "=" + serverType)
+                                    .append(SERVER + EQUALS + serverType)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, ModelDescriptionConstants.ADD)
                                     .payload(modelNode)
@@ -217,7 +215,7 @@ public class MailSessionPresenter
 
     void saveServer(String mailServer, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                .append(SERVER + "=" + mailServer)
+                .append(SERVER + EQUALS + mailServer)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.save(Names.SERVER, mailServer, address, changedValues, metadata, this::reload);
@@ -225,13 +223,13 @@ public class MailSessionPresenter
 
     ResourceAddress credentialReferenceTemplate(@Nullable String mailServer) {
         return mailServer != null
-                ? SELECTED_MAIL_SESSION_TEMPLATE.append(SERVER + "=" + mailServer).resolve(statementContext)
+                ? SELECTED_MAIL_SESSION_TEMPLATE.append(SERVER + EQUALS + mailServer).resolve(statementContext)
                 : null;
     }
 
     void resetServer(String mailServer, Form<NamedNode> form) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                .append(SERVER + "=" + mailServer)
+                .append(SERVER + EQUALS + mailServer)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.reset(Names.SERVER, mailSessionName, address, form, metadata, new FinishReset<NamedNode>(form) {
@@ -245,7 +243,7 @@ public class MailSessionPresenter
     void removeServer(NamedNode mailServer) {
         String name = mailServer.getName();
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                .append(SERVER + "=" + name)
+                .append(SERVER + EQUALS + name)
                 .resolve(statementContext);
         crud.remove(Names.SERVER, name, address, this::reload);
     }
@@ -255,7 +253,8 @@ public class MailSessionPresenter
     @ProxyCodeSplit
     @NameToken(NameTokens.MAIL_SESSION)
     @Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
-    public interface MyProxy extends ProxyPlace<MailSessionPresenter> {}
+    public interface MyProxy extends ProxyPlace<MailSessionPresenter> {
+    }
 
     public interface MyView extends HalView, HasPresenter<MailSessionPresenter> {
         void update(MailSession mailSession);

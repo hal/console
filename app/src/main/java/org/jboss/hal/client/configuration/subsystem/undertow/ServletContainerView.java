@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
+
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;

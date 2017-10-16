@@ -213,7 +213,10 @@ public class ConfigurationChangesPresenter extends
     @ProxyCodeSplit
     @NameToken(CONFIGURATION_CHANGES)
     @Requires(CONFIGURATION_CHANGES_ADDRESS)
-    public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {}
+    public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {
+
+    }
+
     public interface MyView extends HalView, HasPresenter<ConfigurationChangesPresenter> {
         void update(ModelNode model);
     }

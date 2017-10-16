@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.configurationchanges;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.EmptyState;

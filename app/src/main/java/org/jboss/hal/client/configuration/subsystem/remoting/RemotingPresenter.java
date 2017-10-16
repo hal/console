@@ -457,7 +457,8 @@ public class RemotingPresenter
     @Requires({REMOTING_SUBSYSTEM_ADDRESS,
             CONNECTOR_SECURITY_ADDRESS, CONNECTOR_SECURITY_POLICY_ADDRESS,
             HTTP_CONNECTOR_SECURITY_ADDRESS, HTTP_CONNECTOR_SECURITY_POLICY_ADDRESS})
-    public interface MyProxy extends ProxyPlace<RemotingPresenter> {}
+    public interface MyProxy extends ProxyPlace<RemotingPresenter> {
+    }
 
     public interface MyView extends MbuiView<RemotingPresenter> {
         void update(ModelNode payload);

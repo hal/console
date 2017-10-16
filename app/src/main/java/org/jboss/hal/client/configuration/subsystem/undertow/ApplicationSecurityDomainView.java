@@ -75,9 +75,11 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
         crForm = credentialReferenceForm(ssoMetadata, resources);
 
         Tabs tabs = new Tabs();
-        tabs.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB, resources.constants().attributes(), configurationForm.asElement());
+        tabs.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB, resources.constants().attributes(),
+                configurationForm.asElement());
         tabs.add(Ids.UNDERTOW_SINGLE_SIGN_ON_TAB, Names.SINGLE_SIGN_ON, ssoForm.asElement());
-        tabs.add(Ids.build(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB, CREDENTIAL_REFERENCE, Ids.TAB), Names.CREDENTIAL_REFERENCE, crForm.asElement());
+        tabs.add(Ids.build(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB, CREDENTIAL_REFERENCE, Ids.TAB),
+                Names.CREDENTIAL_REFERENCE, crForm.asElement());
 
         HTMLElement htmlSection = section()
                 .add(h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN))
@@ -102,7 +104,7 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(
                 Ids.build(Ids.UNDERTOW_APP_SECURITY_DOMAIN, CREDENTIAL_REFERENCE, Ids.FORM), crMetadata)
-                .singleton(() -> presenter.checkSingleSignOn() , noCredentialReference)
+                .singleton(() -> presenter.checkSingleSignOn(), noCredentialReference)
                 .onSave((f, changedValues) -> presenter.saveCredentialReference(changedValues))
                 .build();
 

@@ -18,6 +18,7 @@ package org.jboss.hal.client.deployment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -105,6 +106,7 @@ public class ContentColumn extends FinderColumn<Content> {
     static final String ROOT_ADDRESS = "/";
     static final String CONTENT_ADDRESS = "/deployment=*";
     static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/server-group=*/deployment=*";
+    private static final String SPACE = " ";
 
     static final AddressTemplate CONTENT_TEMPLATE = AddressTemplate.of(CONTENT_ADDRESS);
     private static final AddressTemplate SERVER_GROUP_DEPLOYMENT_TEMPLATE = AddressTemplate.of(
@@ -221,14 +223,14 @@ public class ContentColumn extends FinderColumn<Content> {
 
             @Override
             public String getFilterData() {
-                String status = String.join(" ",
+                String status = String.join(SPACE,
                         item.isExploded() ? resources.constants().exploded() : resources.constants().archived(),
                         item.isManaged() ? resources.constants().managed() : resources.constants().unmanaged());
                 String deployments = item.getServerGroupDeployments().isEmpty()
                         ? resources.constants().undeployed()
                         : item.getServerGroupDeployments().stream().map(ServerGroupDeployment::getServerGroup)
-                        .collect(joining(" "));
-                return getTitle() + " " + status + " " + deployments;
+                        .collect(joining(SPACE));
+                return getTitle() + SPACE + status + SPACE + deployments;
             }
 
             @Override

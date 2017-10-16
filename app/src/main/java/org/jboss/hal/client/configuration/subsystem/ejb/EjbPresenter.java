@@ -42,29 +42,18 @@ public class EjbPresenter
         extends MbuiPresenter<EjbPresenter.MyView, EjbPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.EJB3_CONFIGURATION)
-    @Requires({EJB_SUBSYSTEM_ADDRESS})
-    public interface MyProxy extends ProxyPlace<EjbPresenter> {}
-
-    public interface MyView extends MbuiView<EjbPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
 
     @Inject
-    public EjbPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public EjbPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -91,4 +80,17 @@ public class EjbPresenter
     protected void reload() {
         crud.readRecursive(EJB_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.EJB3_CONFIGURATION)
+    @Requires({EJB_SUBSYSTEM_ADDRESS})
+    public interface MyProxy extends ProxyPlace<EjbPresenter> {
+    }
+
+    public interface MyView extends MbuiView<EjbPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

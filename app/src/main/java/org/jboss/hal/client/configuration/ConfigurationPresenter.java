@@ -68,6 +68,7 @@ public class ConfigurationPresenter
     public interface MyProxy extends ProxyPlace<ConfigurationPresenter> {
     }
 
-    public interface MyView extends FinderView {}
+    public interface MyView extends FinderView {
+    }
     // @formatter:on
 }

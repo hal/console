@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -126,6 +127,8 @@ public class DataSourceWizard {
                         case REVIEW:
                             previous = TEST;
                             break;
+                        default:
+                            break;
                     }
                     return previous;
                 })
@@ -152,6 +155,8 @@ public class DataSourceWizard {
                             next = REVIEW;
                             break;
                         case REVIEW:
+                            break;
+                        default:
                             break;
                     }
                     return next;

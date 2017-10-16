@@ -21,6 +21,7 @@ public interface AddressTemplates {
 
     String WEBSERVICES_ADDRESS = "/subsystem=webservices";
 
-    AddressTemplate WEBSERVICES_RUNTIME_TEMPLATE = AddressTemplate.of("/{selected.host}/{selected.server}" + WEBSERVICES_ADDRESS);
+    AddressTemplate WEBSERVICES_RUNTIME_TEMPLATE = AddressTemplate.of(
+            "/{selected.host}/{selected.server}" + WEBSERVICES_ADDRESS);
     AddressTemplate WEBSERVICES_CONFIGURATION_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=webservices");
 }

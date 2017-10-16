@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;

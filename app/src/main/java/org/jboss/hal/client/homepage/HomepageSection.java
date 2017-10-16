@@ -37,6 +37,9 @@ import static org.jboss.hal.resources.CSS.in;
 @Templated("Homepage.html#homepage-section")
 abstract class HomepageSection implements IsElement {
 
+    private static final String FA_ANGLE_RIGHT = "fa-angle-right";
+    private static final String FA_ANGLE_DOWN = "fa-angle-down";
+
     // @formatter:off
     static HomepageSection create(final Places places, final Resources resources,
             final String id, final String token, final String header, final String intro,
@@ -65,12 +68,12 @@ abstract class HomepageSection implements IsElement {
     @PostConstruct
     void init() {
         if (open()) {
-            toggleIcon.classList.remove("fa-angle-right");
-            toggleIcon.classList.add("fa-angle-down");
+            toggleIcon.classList.remove(FA_ANGLE_RIGHT);
+            toggleIcon.classList.add(FA_ANGLE_DOWN);
             sectionBody.classList.add(in);
         } else {
-            toggleIcon.classList.remove("fa-angle-down");
-            toggleIcon.classList.add("fa-angle-right");
+            toggleIcon.classList.remove(FA_ANGLE_DOWN);
+            toggleIcon.classList.add(FA_ANGLE_RIGHT);
             sectionBody.classList.remove(in);
         }
         sectionHeader.innerHTML = header();
@@ -92,13 +95,13 @@ abstract class HomepageSection implements IsElement {
     }
 
     void toggle() {
-        boolean open = toggleIcon.classList.contains("fa-angle-down");
+        boolean open = toggleIcon.classList.contains(FA_ANGLE_DOWN);
         if (open) {
-            toggleIcon.classList.remove("fa-angle-down");
-            toggleIcon.classList.add("fa-angle-right");
+            toggleIcon.classList.remove(FA_ANGLE_DOWN);
+            toggleIcon.classList.add(FA_ANGLE_RIGHT);
         } else {
-            toggleIcon.classList.remove("fa-angle-right");
-            toggleIcon.classList.add("fa-angle-down");
+            toggleIcon.classList.remove(FA_ANGLE_RIGHT);
+            toggleIcon.classList.add(FA_ANGLE_DOWN);
         }
     }
 }

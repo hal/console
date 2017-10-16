@@ -16,6 +16,7 @@
 package org.jboss.hal.client.deployment;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.Lists;

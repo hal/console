@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -64,17 +65,6 @@ public class ApplicationSecurityDomainPresenter extends
         ApplicationFinderPresenter<ApplicationSecurityDomainPresenter.MyView, ApplicationSecurityDomainPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(APPLICATION_SECURITY_DOMAIN_ADDRESS)
-    @NameToken(NameTokens.UNDERTOW_APPLICATION_SECURITY_DOMAIN)
-    public interface MyProxy extends ProxyPlace<ApplicationSecurityDomainPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<ApplicationSecurityDomainPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
     private final MetadataRegistry metadataRegistry;
@@ -85,16 +75,16 @@ public class ApplicationSecurityDomainPresenter extends
 
     @Inject
     public ApplicationSecurityDomainPresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final MetadataRegistry metadataRegistry,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            ComplexAttributeOperations ca,
+            MetadataRegistry metadataRegistry,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.ca = ca;
@@ -103,7 +93,7 @@ public class ApplicationSecurityDomainPresenter extends
         this.statementContext = new FilteringStatementContext(statementContext,
                 new Filter() {
                     @Override
-                    public String filter(final String placeholder) {
+                    public String filter(String placeholder) {
                         if (SELECTION_KEY.equals(placeholder)) {
                             return appSecurityDomain;
                         }
@@ -111,7 +101,7 @@ public class ApplicationSecurityDomainPresenter extends
                     }
 
                     @Override
-                    public String[] filterTuple(final String placeholder) {
+                    public String[] filterTuple(String placeholder) {
                         return null;
                     }
                 });
@@ -125,7 +115,7 @@ public class ApplicationSecurityDomainPresenter extends
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         appSecurityDomain = request.getParameter(NAME, null);
     }
@@ -153,20 +143,20 @@ public class ApplicationSecurityDomainPresenter extends
         crud.readRecursive(SELECTED_APPLICATION_SECURITY_DOMAIN_TEMPLATE.resolve(statementContext), payload::accept);
     }
 
-    void save(final Map<String, Object> changedValues) {
+    void save(Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(APPLICATION_SECURITY_DOMAIN_TEMPLATE);
         crud.save(Names.APPLICATION_SECURITY_DOMAIN, appSecurityDomain,
                 SELECTED_APPLICATION_SECURITY_DOMAIN_TEMPLATE.resolve(statementContext), changedValues,
                 metadata, this::reload);
     }
 
-    void reset(final Form<ModelNode> form) {
+    void reset(Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(APPLICATION_SECURITY_DOMAIN_TEMPLATE);
         crud.reset(Names.APPLICATION_SECURITY_DOMAIN, appSecurityDomain,
                 SELECTED_APPLICATION_SECURITY_DOMAIN_TEMPLATE.resolve(statementContext), form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         reload();
                     }
                 });
@@ -209,28 +199,28 @@ public class ApplicationSecurityDomainPresenter extends
         dialog.show();
     }
 
-    void saveSingleSignOn(final Map<String, Object> changedValues) {
+    void saveSingleSignOn(Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
         crud.saveSingleton(Names.SINGLE_SIGN_ON, address, changedValues, metadata, this::reload);
     }
 
-    void resetSingleSignOn(final Form<ModelNode> form) {
+    void resetSingleSignOn(Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
         crud.resetSingleton(Names.SINGLE_SIGN_ON, address, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
     }
 
-    void removeSingleSignOn(final Form<ModelNode> form) {
+    void removeSingleSignOn(Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
         crud.removeSingleton(Names.SINGLE_SIGN_ON, address, new Form.FinishRemove<ModelNode>(form) {
             @Override
-            public void afterRemove(final Form<ModelNode> form) {
+            public void afterRemove(Form<ModelNode> form) {
                 reload();
             }
         });
@@ -238,8 +228,7 @@ public class ApplicationSecurityDomainPresenter extends
 
     // ------------------------------------------------------ single sign-on credential-reference
 
-
-    void saveCredentialReference(final Map<String, Object> changedValues) {
+    void saveCredentialReference(Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
         ca.save(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, address, changedValues, metadata, this::reload);
@@ -251,4 +240,16 @@ public class ApplicationSecurityDomainPresenter extends
         return statementContext;
     }
 
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(APPLICATION_SECURITY_DOMAIN_ADDRESS)
+    @NameToken(NameTokens.UNDERTOW_APPLICATION_SECURITY_DOMAIN)
+    public interface MyProxy extends ProxyPlace<ApplicationSecurityDomainPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<ApplicationSecurityDomainPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 

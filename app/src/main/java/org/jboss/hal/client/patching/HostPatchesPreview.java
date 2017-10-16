@@ -50,7 +50,8 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
     @SuppressWarnings("HardCodedStringLiteral")
     HostPatchesPreview(final HostActions hostActions, final NamedNode host,
             final Resources resources) {
-        super(host.getName(), host.get(MASTER).asBoolean() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
+        super(host.getName(), host.get(MASTER).asBoolean() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER,
+                resources);
         this.hostActions = hostActions;
         this.resources = resources;
 
@@ -74,7 +75,8 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
                     if ("base".equals(latest)) {
                         latest = resources.messages().noPatchesForHost();
                     }
-                    return new PreviewAttributes.PreviewAttribute(resources.messages().patchLatestInstalledLabel(), latest);
+                    return new PreviewAttributes.PreviewAttribute(resources.messages().patchLatestInstalledLabel(),
+                            latest);
                 });
         previewBuilder().addAll(attributes);
         update(host);

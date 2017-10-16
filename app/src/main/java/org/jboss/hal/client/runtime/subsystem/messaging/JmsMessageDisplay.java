@@ -35,6 +35,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
 
+    private static final String COLON = ": ";
+
     private final JmsMessage message;
     private final JmsQueuePresenter presenter;
     private final Resources resources;
@@ -58,11 +60,11 @@ class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
             @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
             builder.appendHtmlConstant("<p>");
             if (timestamp != null) {
-                builder.appendEscaped(JMS_TIMESTAMP + ": ").appendEscaped(Format.mediumDateTime(timestamp))
-                .appendHtmlConstant("<br/>");
+                builder.appendEscaped(JMS_TIMESTAMP + COLON).appendEscaped(Format.mediumDateTime(timestamp))
+                        .appendHtmlConstant("<br/>");
             }
             if (expiration != null) {
-                builder.appendEscaped(JMS_EXPIRATION + ": ").appendEscaped(Format.mediumDateTime(
+                builder.appendEscaped(JMS_EXPIRATION + COLON).appendEscaped(Format.mediumDateTime(
                         expiration));
             }
             return builder.toSafeHtml();
@@ -74,9 +76,9 @@ class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
     public SafeHtml getAdditionalInfoHtml() {
         @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<p>")
-                .appendEscaped(JMS_PRIORITY + ": " + message.get(JMS_PRIORITY).asInt())
+                .appendEscaped(JMS_PRIORITY + COLON + message.get(JMS_PRIORITY).asInt())
                 .appendHtmlConstant("</br/>")
-                .appendEscaped(JMS_DELIVERY_MODE + ": " + message.get(JMS_DELIVERY_MODE).asString())
+                .appendEscaped(JMS_DELIVERY_MODE + COLON + message.get(JMS_DELIVERY_MODE).asString())
                 .appendHtmlConstant("</p>");
         return builder.toSafeHtml();
     }

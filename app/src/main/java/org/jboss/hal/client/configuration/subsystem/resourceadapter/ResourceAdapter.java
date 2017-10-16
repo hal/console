@@ -16,8 +16,8 @@
 package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARCHIVE;

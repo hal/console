@@ -164,7 +164,8 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         String listenerType = listener.asModelNode().get(HAL_LISTENER_TYPE).asString();
         String webserver = listener.asModelNode().get(HAL_WEB_SERVER).asString();
 
-        ResourceAddress address = WEB_SERVER_CONFIGURATION_TEMPLATE.append("/" + listenerType + "=" + listener.getName())
+        ResourceAddress address = WEB_SERVER_CONFIGURATION_TEMPLATE.append(
+                "/" + listenerType + "=" + listener.getName())
                 .resolve(statementContext, profile, webserver);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, RECORD_REQUEST_START_TIME)

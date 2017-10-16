@@ -88,7 +88,8 @@ public class SystemPropertiesPresenter
     @ProxyCodeSplit
     @Requires(ROOT_ADDRESS)
     @NameToken(NameTokens.SYSTEM_PROPERTIES)
-    public interface MyProxy extends ProxyPlace<SystemPropertiesPresenter> {}
+    public interface MyProxy extends ProxyPlace<SystemPropertiesPresenter> {
+    }
 
     public interface MyView extends MbuiView<SystemPropertiesPresenter> {
         void update(List<NamedNode> systemProperties);

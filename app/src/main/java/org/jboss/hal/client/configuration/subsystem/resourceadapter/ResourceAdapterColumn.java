@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;

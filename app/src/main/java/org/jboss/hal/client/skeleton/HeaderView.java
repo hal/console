@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
@@ -354,6 +355,8 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 break;
             case INFO:
                 logger.info(message.getMessage().asString());
+                break;
+            default:
                 break;
         }
         toastNotifications.add(message);

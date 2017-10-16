@@ -71,26 +71,26 @@ public class PathsAutoComplete extends AutoComplete {
             series(new FlowContext(),
                     new TopologyTasks.RunningServersQuery(environment, dispatcher,
                             new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())))
-            .subscribe(new Outcome<FlowContext>() {
-                @Override
-                public void onError(FlowContext context, Throwable error) {
-                    logger.error("Unable to update operation for paths type-ahead: " +
-                            "Error reading running servers: {}", error.getMessage());
-                    operation = defaultOperation();
-                }
+                    .subscribe(new Outcome<FlowContext>() {
+                        @Override
+                        public void onError(FlowContext context, Throwable error) {
+                            logger.error("Unable to update operation for paths type-ahead: " +
+                                    "Error reading running servers: {}", error.getMessage());
+                            operation = defaultOperation();
+                        }
 
-                @Override
-                public void onSuccess(FlowContext context) {
-                    List<Server> servers = context.get(TopologyTasks.RUNNING_SERVERS);
-                    if (!servers.isEmpty() && servers.get(0).isStarted()) {
-                        operation = new Operation.Builder(servers.get(0).getServerAddress(),
-                                READ_CHILDREN_NAMES_OPERATION
-                        ).param(CHILD_TYPE, "path").build();
-                    } else {
-                        operation = defaultOperation();
-                    }
-                }
-            });
+                        @Override
+                        public void onSuccess(FlowContext context) {
+                            List<Server> servers = context.get(TopologyTasks.RUNNING_SERVERS);
+                            if (!servers.isEmpty() && servers.get(0).isStarted()) {
+                                operation = new Operation.Builder(servers.get(0).getServerAddress(),
+                                        READ_CHILDREN_NAMES_OPERATION
+                                ).param(CHILD_TYPE, "path").build();
+                            } else {
+                                operation = defaultOperation();
+                            }
+                        }
+                    });
         }
     }
 

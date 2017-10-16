@@ -53,6 +53,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
         COMMITTED, ABORTED, HEURISTICS, TIMEDOUT_ROLLBACK, SYSTEM_ROLLBACK, RESOURCE_ROLLBACK, APPLICATION_ROLLBACK
     }
 
+
     private Donut transactions;
     private EmptyState noStatistics;
     private Dispatcher dispatcher;

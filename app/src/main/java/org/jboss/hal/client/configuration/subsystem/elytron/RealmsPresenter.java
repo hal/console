@@ -66,13 +66,14 @@ import static org.jboss.hal.dmr.ModelNodeHelper.move;
 public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    final static String[] KEY_MAPPERS = new String[]{
+    static final String[] KEY_MAPPERS = new String[]{
             "clear-password-mapper",
             "bcrypt-mapper",
             "salted-simple-digest-mapper",
             "simple-digest-mapper",
             "scram-mapper"
     };
+    private static final String DOT = ".";
 
 
     private final CrudOperations crud;
@@ -387,7 +388,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             builder.requiredOnly();
         }
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type), builder.build(),
-                (name, model) -> ca.add(ldapRealm, IDENTITY_MAPPING + "." + complexAttribute, type,
+                (name, model) -> ca.add(ldapRealm, IDENTITY_MAPPING + DOT + complexAttribute, type,
                         LDAP_REALM_TEMPLATE, model, this::reloadLdapRealms));
         dialog.show();
     }
@@ -396,7 +397,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         if (ldapRealm != null) {
             ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
             return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                    .param(NAME, IDENTITY_MAPPING + "." + complexAttribute)
+                    .param(NAME, IDENTITY_MAPPING + DOT + complexAttribute)
                     .build();
         }
         return null;
@@ -408,7 +409,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
-        ca.save(IDENTITY_MAPPING + "." + complexAttribute, type, address, changedValues, metadata,
+        ca.save(IDENTITY_MAPPING + DOT + complexAttribute, type, address, changedValues, metadata,
                 this::reloadLdapRealms);
     }
 
@@ -418,12 +419,12 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
-        ca.reset(IDENTITY_MAPPING + "." + complexAttribute, type, address, metadata, form, this::reloadLdapRealms);
+        ca.reset(IDENTITY_MAPPING + DOT + complexAttribute, type, address, metadata, form, this::reloadLdapRealms);
     }
 
     void removeIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type,
             Form<ModelNode> form) {
-        ca.remove(ldapRealm, IDENTITY_MAPPING + "." + complexAttribute, type, LDAP_REALM_TEMPLATE,
+        ca.remove(ldapRealm, IDENTITY_MAPPING + DOT + complexAttribute, type, LDAP_REALM_TEMPLATE,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(Form<ModelNode> form) {
@@ -447,7 +448,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
                 form, (name, model) ->
-                ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+                ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
                         Names.IDENTITY_ATTRIBUTE_MAPPING, LDAP_REALM_TEMPLATE, model, this::reloadLdapRealms));
         dialog.show();
     }
@@ -455,13 +456,13 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     void saveIdentityAttributeMapping(String selectedLdapRealm, int iamIndex, Map<String, Object> changedValues) {
         // passed before attribute 'identity-mapping.attribute-mapping[n].search-recursive' can be correctly set"
 
-        ca.save(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+        ca.save(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
                 Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
                 changedValues, this::reloadLdapRealms);
     }
 
     void removeIdentityAttributeMapping(String selectedLdapRealm, int iamIndex) {
-        ca.remove(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+        ca.remove(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
                 Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
                 this::reloadLdapRealms);
     }
@@ -514,7 +515,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             SIMPLE_REGEX_REALM_MAPPER_ADDRESS,
             TOKEN_REALM_ADDRESS})
     @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
-    public interface MyProxy extends ProxyPlace<RealmsPresenter> {}
+    public interface MyProxy extends ProxyPlace<RealmsPresenter> {
+    }
 
 
     // @formatter:off

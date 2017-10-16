@@ -240,7 +240,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             SIMPLE_ROLE_DECODER_ADDRESS,
             X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS})
     @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
-    public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {}
+    public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {
+    }
 
 
     // @formatter:off

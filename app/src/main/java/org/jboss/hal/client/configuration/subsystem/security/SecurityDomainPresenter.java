@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.security;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -72,18 +73,7 @@ public class SecurityDomainPresenter
         extends MbuiPresenter<SecurityDomainPresenter.MyView, SecurityDomainPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(SECURITY_DOMAIN)
-    @Requires(SECURITY_DOMAIN_ADDRESS)
-    public interface MyProxy extends ProxyPlace<SecurityDomainPresenter> {}
-
-    public interface MyView extends MbuiView<SecurityDomainPresenter> {
-        void update(SecurityDomain securityDomain);
-    }
-    // @formatter:on
-
-
+    public static final String EQ_WILDCARD = "=*";
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
     private final Provider<Progress> progress;
@@ -201,10 +191,10 @@ public class SecurityDomainPresenter
                     public void onSuccess(FlowContext context) {
                         AddressTemplate metadataTemplate = SECURITY_DOMAIN_TEMPLATE
                                 .append(module.singleton)
-                                .append(module.resource + "=*");
+                                .append(module.resource + EQ_WILDCARD);
                         AddressTemplate selectionTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE
                                 .append(module.singleton)
-                                .append(module.resource + "=*");
+                                .append(module.resource + EQ_WILDCARD);
                         Metadata metadata = metadataRegistry.lookup(metadataTemplate);
                         AddResourceDialog dialog = new AddResourceDialog(module.id,
                                 resources.messages().addResourceTitle(module.type),
@@ -221,12 +211,12 @@ public class SecurityDomainPresenter
     void saveModule(Form<NamedNode> form, Map<String, Object> changedValues, Module module) {
         Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE
                 .append(module.singleton)
-                .append(module.resource + "=*"));
+                .append(module.resource + EQ_WILDCARD));
         String name = form.getModel().getName();
         crud.save(module.type, name,
                 SELECTED_SECURITY_DOMAIN_TEMPLATE
                         .append(module.singleton)
-                        .append(module.resource + "=*")
+                        .append(module.resource + EQ_WILDCARD)
                         .resolve(statementContext, name),
                 changedValues, metadata, this::reload);
     }
@@ -234,12 +224,12 @@ public class SecurityDomainPresenter
     void resetModule(Form<NamedNode> form, Module module) {
         Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE
                 .append(module.singleton)
-                .append(module.resource + "=*"));
+                .append(module.resource + EQ_WILDCARD));
         String name = form.getModel().getName();
         crud.reset(module.type, name,
                 SELECTED_SECURITY_DOMAIN_TEMPLATE
                         .append(module.singleton)
-                        .append(module.resource + "=*")
+                        .append(module.resource + EQ_WILDCARD)
                         .resolve(statementContext, name),
                 form, metadata, new FinishReset<NamedNode>(form) {
                     @Override
@@ -255,8 +245,21 @@ public class SecurityDomainPresenter
         crud.remove(module.type, name,
                 SELECTED_SECURITY_DOMAIN_TEMPLATE
                         .append(module.singleton)
-                        .append(module.resource + "=*")
+                        .append(module.resource + EQ_WILDCARD)
                         .resolve(statementContext, name),
                 this::reload);
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(SECURITY_DOMAIN)
+    @Requires(SECURITY_DOMAIN_ADDRESS)
+    public interface MyProxy extends ProxyPlace<SecurityDomainPresenter> {
+    }
+
+    public interface MyView extends MbuiView<SecurityDomainPresenter> {
+        void update(SecurityDomain securityDomain);
+    }
+    // @formatter:on
 }

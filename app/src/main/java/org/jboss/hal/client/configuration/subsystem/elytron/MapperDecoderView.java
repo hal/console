@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -105,7 +106,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
 
         Metadata spmMetadata = mbuiContext.metadataRegistry()
                 .lookup(AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE);
-        simplePermissionMapperElement = new SimplePermissionMapperElement(spmMetadata, mbuiContext.tableButtonFactory());
+        simplePermissionMapperElement = new SimplePermissionMapperElement(spmMetadata,
+                mbuiContext.tableButtonFactory());
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
                 Ids.build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, Ids.ENTRY),

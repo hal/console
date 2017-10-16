@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.jmx;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtml;

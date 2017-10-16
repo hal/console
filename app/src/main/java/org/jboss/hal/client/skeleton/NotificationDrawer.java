@@ -40,6 +40,8 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
 
+    private static final String DOT = ".";
+
     private final Resources resources;
     private final HTMLElement header;
     private final HTMLElement panelBody;
@@ -116,7 +118,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     int getUnreadCount() {
-        NodeList<Element> nodes = root.querySelectorAll("." + drawerPfNotification + "." + unread);
+        NodeList<Element> nodes = root.querySelectorAll(DOT + drawerPfNotification + DOT + unread);
         return nodes != null ? (int) nodes.length : 0;
     }
 
@@ -136,7 +138,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     private void markAllRead() {
-        Elements.stream(root.querySelectorAll("." + drawerPfNotification + "." + unread))
+        Elements.stream(root.querySelectorAll(DOT + drawerPfNotification + DOT + unread))
                 .forEach(element -> element.classList.remove(unread));
         updateElements();
         presenter.onMarkAllAsRead();

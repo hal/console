@@ -60,6 +60,28 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
  */
 class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
+    private static final Messages MESSAGES = GWT.create(Messages.class);
+
+    MultiValueListItem(String attribute) {
+        super(attribute, new LabelBuilder().label(attribute), MESSAGES.multiValueListHint(),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        HTMLElement element = (HTMLElement) document.getElementById(getId(READONLY));
+        if (element != null) {
+            element.style.whiteSpace = "pre";
+        }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue() == null || !getValue().isDefined();
+    }
+
+
     private static class MapMapping implements TagsMapping<ModelNode> {
 
         private static final String VALUE_SEPARATOR = ":";
@@ -116,27 +138,5 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
                             .collect(joining(VALUE_SEPARATOR)))
                     .collect(joining("\n"));
         }
-    }
-
-
-    private static final Messages MESSAGES = GWT.create(Messages.class);
-
-    MultiValueListItem(String attribute) {
-        super(attribute, new LabelBuilder().label(attribute), MESSAGES.multiValueListHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
-    }
-
-    @Override
-    public void attach() {
-        super.attach();
-        HTMLElement element = (HTMLElement) document.getElementById(getId(READONLY));
-        if (element != null) {
-            element.style.whiteSpace = "pre";
-        }
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getValue() == null || !getValue().isDefined();
     }
 }

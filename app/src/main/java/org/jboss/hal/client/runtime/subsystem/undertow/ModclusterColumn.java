@@ -46,7 +46,8 @@ public class ModclusterColumn extends FinderColumn<NamedNode> {
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_MODCLUSTER, Names.MODCLUSTER)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_MODCLUSTER_REFRESH))
                 .itemsProvider((context, callback) -> {
-                    ResourceAddress address = WEB_SUBSYSTEM_TEMPLATE.append("/configuration=filter").resolve(statementContext);
+                    ResourceAddress address = WEB_SUBSYSTEM_TEMPLATE.append("/configuration=filter")
+                            .resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, "mod-cluster")
                             .param(INCLUDE_RUNTIME, true)

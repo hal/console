@@ -65,6 +65,7 @@ public class PatchingFinderPresenter
     public interface MyProxy extends ProxyPlace<PatchingFinderPresenter> {
     }
 
-    public interface MyView extends FinderView {}
+    public interface MyView extends FinderView {
+    }
     // @formatter:on
 }

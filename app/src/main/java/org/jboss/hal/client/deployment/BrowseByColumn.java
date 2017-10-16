@@ -16,6 +16,7 @@
 package org.jboss.hal.client.deployment;
 
 import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;

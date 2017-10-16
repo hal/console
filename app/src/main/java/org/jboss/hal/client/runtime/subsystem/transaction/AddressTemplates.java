@@ -23,8 +23,11 @@ public interface AddressTemplates {
     String TRANSACTION_CONFIGURATION_ADDRESS = "/{selected.profile}/{selected.server}/subsystem=transactions";
 
     AddressTemplate TRANSACTION_RUNTIME_TEMPLATE = AddressTemplate.of(TRANSACTION_RUNTIME_ADDRESS);
-    AddressTemplate LOGSTORE_RUNTIME_TEMPLATE = AddressTemplate.of(TRANSACTION_RUNTIME_ADDRESS + "/log-store=log-store");
-    AddressTemplate TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE = AddressTemplate.of(TRANSACTION_RUNTIME_ADDRESS + "/log-store=log-store/transactions=*");
-    AddressTemplate PARTICIPANTS_LOGSTORE_RUNTIME_TEMPLATE = AddressTemplate.of(TRANSACTION_RUNTIME_ADDRESS + "/log-store=log-store/transactions=*/participants=*");
+    AddressTemplate LOGSTORE_RUNTIME_TEMPLATE = AddressTemplate.of(
+            TRANSACTION_RUNTIME_ADDRESS + "/log-store=log-store");
+    AddressTemplate TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE = AddressTemplate.of(
+            TRANSACTION_RUNTIME_ADDRESS + "/log-store=log-store/transactions=*");
+    AddressTemplate PARTICIPANTS_LOGSTORE_RUNTIME_TEMPLATE = AddressTemplate.of(
+            TRANSACTION_RUNTIME_ADDRESS + "/log-store=log-store/transactions=*/participants=*");
     AddressTemplate TRANSACTION_CONFIGURATION_TEMPLATE = AddressTemplate.of(TRANSACTION_CONFIGURATION_ADDRESS);
 }

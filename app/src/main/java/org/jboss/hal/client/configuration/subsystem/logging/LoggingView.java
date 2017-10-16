@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
@@ -61,8 +62,8 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @MbuiElement("logging-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("logging-config-form") Form<ModelNode> loggingConfigForm;
     @MbuiElement("logging-root-logger-form") Form<ModelNode> rootLoggerForm;
-    @MbuiElement("logging-categories-table") Table<NamedNode> loggerTable;
-    @MbuiElement("logging-categories-form") Form<NamedNode> loggerForm;
+    @MbuiElement("logging-category-table") Table<NamedNode> loggerTable;
+    @MbuiElement("logging-category-form") Form<NamedNode> loggerForm;
     @MbuiElement("logging-handler-console-table") Table<NamedNode> consoleHandlerTable;
     @MbuiElement("logging-handler-console-form") Form<NamedNode> consoleHandlerForm;
     @MbuiElement("logging-handler-file-table") Table<NamedNode> fileHandlerTable;

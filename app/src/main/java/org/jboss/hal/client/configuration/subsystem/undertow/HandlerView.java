@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.VerticalNavigation;

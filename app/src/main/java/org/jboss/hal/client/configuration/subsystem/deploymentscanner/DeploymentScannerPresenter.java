@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.deploymentscanner;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;

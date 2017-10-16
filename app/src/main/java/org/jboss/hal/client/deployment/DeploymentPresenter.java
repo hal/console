@@ -71,7 +71,8 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
     public interface MyProxy extends ProxyPlace<DeploymentPresenter> {
     }
 
-    public interface MyView extends FinderView {}
+    public interface MyView extends FinderView {
+    }
     // @formatter:on
 
 

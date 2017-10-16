@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -35,8 +36,8 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
@@ -60,29 +61,6 @@ public class HaPolicyPresenter
         extends ApplicationFinderPresenter<HaPolicyPresenter.MyView, HaPolicyPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires({LIVE_ONLY_ADDRESS,
-            REPLICATION_COLOCATED_ADDRESS,
-            REPLICATION_COLOCATED_MASTER_ADDRESS,
-            REPLICATION_COLOCATED_SLAVE_ADDRESS,
-            REPLICATION_MASTER_ADDRESS,
-            REPLICATION_SLAVE_ADDRESS,
-            SHARED_STORE_COLOCATED_ADDRESS,
-            SHARED_STORE_COLOCATED_MASTER_ADDRESS,
-            SHARED_STORE_COLOCATED_SLAVE_ADDRESS,
-            SHARED_STORE_MASTER_ADDRESS,
-            SHARED_STORE_SLAVE_ADDRESS})
-    @NameToken(NameTokens.MESSAGING_SERVER_HA_POLICY)
-    public interface MyProxy extends ProxyPlace<HaPolicyPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<HaPolicyPresenter> {
-        void empty();
-        void update(HaPolicy haPolicy, ModelNode modelNode);
-    }
-    // @formatter:on
-
-
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HaPolicyPresenter.class);
 
     private final Dispatcher dispatcher;
@@ -95,16 +73,16 @@ public class HaPolicyPresenter
     private HaPolicy haPolicy; // the 'top-level' policy selected in the wizard - not one of the *_COLOCATED_(MASTER|SLAVE) policies
 
     @Inject
-    public HaPolicyPresenter(final EventBus eventBus,
-            final HaPolicyPresenter.MyView view,
-            final HaPolicyPresenter.MyProxy proxy_,
-            final Finder finder,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public HaPolicyPresenter(EventBus eventBus,
+            HaPolicyPresenter.MyView view,
+            HaPolicyPresenter.MyProxy proxy_,
+            Finder finder,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy_, finder);
         this.dispatcher = dispatcher;
         this.crud = crud;
@@ -121,7 +99,7 @@ public class HaPolicyPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         serverName = request.getParameter(SERVER, null);
     }
@@ -173,7 +151,7 @@ public class HaPolicyPresenter
     void resetHaPolicy(HaPolicy haPolicy, Form<ModelNode> form) {
         haPolicy.reset(form, metadataRegistry, statementContext, crud, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
@@ -190,4 +168,28 @@ public class HaPolicyPresenter
             logger.error("Unable to remove HA policy: presenter.haPolicy == null");
         }
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires({LIVE_ONLY_ADDRESS,
+            REPLICATION_COLOCATED_ADDRESS,
+            REPLICATION_COLOCATED_MASTER_ADDRESS,
+            REPLICATION_COLOCATED_SLAVE_ADDRESS,
+            REPLICATION_MASTER_ADDRESS,
+            REPLICATION_SLAVE_ADDRESS,
+            SHARED_STORE_COLOCATED_ADDRESS,
+            SHARED_STORE_COLOCATED_MASTER_ADDRESS,
+            SHARED_STORE_COLOCATED_SLAVE_ADDRESS,
+            SHARED_STORE_MASTER_ADDRESS,
+            SHARED_STORE_SLAVE_ADDRESS})
+    @NameToken(NameTokens.MESSAGING_SERVER_HA_POLICY)
+    public interface MyProxy extends ProxyPlace<HaPolicyPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<HaPolicyPresenter> {
+        void empty();
+        void update(HaPolicy haPolicy, ModelNode modelNode);
+    }
+    // @formatter:on
 }

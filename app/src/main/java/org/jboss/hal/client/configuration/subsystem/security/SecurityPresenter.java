@@ -42,30 +42,18 @@ public class SecurityPresenter
         extends MbuiPresenter<SecurityPresenter.MyView, SecurityPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(SECURITY_CONFIGURATION)
-    @Requires(SECURITY_SUBSYSTEM_ADDRESS)
-    public interface MyProxy extends ProxyPlace<SecurityPresenter> {}
-
-    public interface MyView extends MbuiView<SecurityPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
 
     @Inject
-    public SecurityPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public SecurityPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
 
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
@@ -93,4 +81,17 @@ public class SecurityPresenter
     protected void reload() {
         crud.readRecursive(SECURITY_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(SECURITY_CONFIGURATION)
+    @Requires(SECURITY_SUBSYSTEM_ADDRESS)
+    public interface MyProxy extends ProxyPlace<SecurityPresenter> {
+    }
+
+    public interface MyView extends MbuiView<SecurityPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

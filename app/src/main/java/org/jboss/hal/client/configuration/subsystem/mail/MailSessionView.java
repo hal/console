@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.mail;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -25,12 +26,12 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Table;
+import org.jboss.hal.core.elytron.CredentialReference;
+import org.jboss.hal.core.elytron.CredentialReference.AlternativeValidation;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.elytron.CredentialReference;
-import org.jboss.hal.core.elytron.CredentialReference.AlternativeValidation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;

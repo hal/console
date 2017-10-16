@@ -54,9 +54,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
  */
 class EndpointDialog {
 
-    enum Mode {SELECT, ADD}
-
-
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final EndpointResources RESOURCES = GWT.create(EndpointResources.class);
@@ -229,5 +226,10 @@ class EndpointDialog {
                 .filter(Endpoint::isSelected)
                 .findAny()
                 .ifPresent(this::select);
+    }
+
+
+    enum Mode {
+        SELECT, ADD
     }
 }

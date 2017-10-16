@@ -51,7 +51,7 @@ public class MacroEditorPresenter
         extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
         implements HasTitle {
 
-    public final static String MACRO_PARAM = "macro";
+    public static final String MACRO_PARAM = "macro";
 
     private final Dispatcher dispatcher;
     private final Macros macros;

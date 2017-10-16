@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;

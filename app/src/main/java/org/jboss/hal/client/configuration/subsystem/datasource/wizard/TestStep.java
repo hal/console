@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;

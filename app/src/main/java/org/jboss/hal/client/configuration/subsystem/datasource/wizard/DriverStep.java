@@ -53,7 +53,8 @@ class DriverStep extends WizardStep<Context, State> {
                     .registerSuggestHandler(new StaticAutoComplete(new ArrayList<>(driversByName.keySet())));
             form.getFormItem(DRIVER_NAME)
                     .addValidationHandler(value ->
-                        driversByName.keySet().contains(value) ? ValidationResult.OK : ValidationResult.invalid("Invalid driver name")
+                            driversByName.keySet().contains(value) ? ValidationResult.OK : ValidationResult.invalid(
+                                    "Invalid driver name")
                     );
         }
         registerAttachable(form);

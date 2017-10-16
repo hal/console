@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -38,11 +39,11 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.ResponseHeader;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.dispatch.ResponseHeader;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -66,17 +67,6 @@ public class FilterPresenter
         extends MbuiPresenter<FilterPresenter.MyView, FilterPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(FILTER_ADDRESS)
-    @NameToken(NameTokens.UNDERTOW_FILTER)
-    public interface MyProxy extends ProxyPlace<FilterPresenter> {}
-
-    public interface MyView extends MbuiView<FilterPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
@@ -85,16 +75,16 @@ public class FilterPresenter
     private final Resources resources;
 
     @Inject
-    public FilterPresenter(final EventBus eventBus,
-            final FilterPresenter.MyView view,
-            final FilterPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final Dispatcher dispatcher,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public FilterPresenter(EventBus eventBus,
+            FilterPresenter.MyView view,
+            FilterPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.dispatcher = dispatcher;
@@ -162,7 +152,7 @@ public class FilterPresenter
         crud.reset(Names.RESPONSE_HEADER, form.getModel().getName(), RESPONSE_HEADER_TEMPLATE, form, metadata,
                 successMessage, new Form.FinishReset<NamedNode>(form) {
                     @Override
-                    public void afterReset(final Form<NamedNode> form) {
+                    public void afterReset(Form<NamedNode> form) {
                         reload();
                     }
                 });
@@ -184,4 +174,17 @@ public class FilterPresenter
                     });
                 });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(FILTER_ADDRESS)
+    @NameToken(NameTokens.UNDERTOW_FILTER)
+    public interface MyProxy extends ProxyPlace<FilterPresenter> {
+    }
+
+    public interface MyView extends MbuiView<FilterPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

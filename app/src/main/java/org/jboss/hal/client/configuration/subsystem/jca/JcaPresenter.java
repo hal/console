@@ -72,6 +72,8 @@ public class JcaPresenter
         extends ApplicationFinderPresenter<JcaPresenter.MyView, JcaPresenter.MyProxy>
         implements SupportsExpertMode {
 
+    private static final String EQUALS = "=";
+
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
@@ -216,8 +218,8 @@ public class JcaPresenter
                         (name, modelNode) -> {
                             String type = typeItem.getValue();
                             AddressTemplate tpTemplate = Names.LONG_RUNNING.equals(type)
-                                    ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + "=" + name)
-                                    : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + "=" + name);
+                                    ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + EQUALS + name)
+                                    : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + EQUALS + name);
                             ResourceAddress address = tpTemplate.resolve(statementContext, workmanager);
                             Operation operation = new Operation.Builder(address, ADD)
                                     .param(NAME, name)
@@ -288,8 +290,8 @@ public class JcaPresenter
     private ResourceAddress threadPoolAddress(AddressTemplate workmanagerTemplate, String workmanager,
             ThreadPool threadPool) {
         AddressTemplate template = threadPool.isLongRunning()
-                ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + "=" + threadPool.getName())
-                : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + "=" + threadPool.getName());
+                ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + EQUALS + threadPool.getName())
+                : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + EQUALS + threadPool.getName());
         return template.resolve(statementContext, workmanager);
     }
 
@@ -298,7 +300,8 @@ public class JcaPresenter
     @ProxyCodeSplit
     @Requires(JCA_ADDRESS)
     @NameToken(NameTokens.JCA)
-    public interface MyProxy extends ProxyPlace<JcaPresenter> {}
+    public interface MyProxy extends ProxyPlace<JcaPresenter> {
+    }
 
     public interface MyView extends HalView, HasPresenter<JcaPresenter> {
         void update(ModelNode payload);

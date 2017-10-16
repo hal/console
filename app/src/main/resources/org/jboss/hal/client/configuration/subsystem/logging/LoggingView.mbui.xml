@@ -65,11 +65,11 @@
         <!--
             Categories / Logger
         -->
-        <item id="logging-categories-item" title="Categories" icon="pficon pficon-repository">
+        <item id="logging-category-item" title="Categories" icon="pficon pficon-repository">
             <metadata address="/{selected.profile}/subsystem=logging/logger=*">
                 <h1>Categories</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
-                <table id="logging-categories-table" title="Category" form-ref="logging-categories-form">
+                <table id="logging-category-table" title="Category" form-ref="logging-category-form">
                     <actions>
                         <action handler-ref="add-resource">
                             <attributes>
@@ -101,7 +101,7 @@
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-categories-form" title="Category" auto-save="true" reset="true"
+                <form id="logging-category-form" title="Category" auto-save="true" reset="true"
                       name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="category"/>

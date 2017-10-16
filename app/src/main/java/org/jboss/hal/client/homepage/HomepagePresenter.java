@@ -55,6 +55,7 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {
     }
 
-    public interface MyView extends HalView, HasPresenter<HomepagePresenter> {}
+    public interface MyView extends HalView, HasPresenter<HomepagePresenter> {
+    }
     // @formatter:on
 }

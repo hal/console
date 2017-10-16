@@ -75,6 +75,7 @@ public class AccessControlPresenter extends
     public interface MyProxy extends ProxyPlace<AccessControlPresenter> {
     }
 
-    public interface MyView extends FinderView {}
+    public interface MyView extends FinderView {
+    }
     // @formatter:on
 }

@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;

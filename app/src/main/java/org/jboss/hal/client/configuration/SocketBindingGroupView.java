@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;

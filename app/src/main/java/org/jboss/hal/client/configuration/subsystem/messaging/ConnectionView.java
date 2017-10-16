@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
@@ -25,11 +26,11 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.table.Table;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -55,6 +56,8 @@ import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
         implements ConnectionPresenter.MyView {
+
+    public static final String EQ_WILDCARD = "=*";
 
     public static ConnectionView create(final MbuiContext mbuiContext) {
         return new Mbui_ConnectionView(mbuiContext);
@@ -161,10 +164,10 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
         // register the suggestion handlers here rather than in a @PostConstruct method
         // they need a valid presenter reference!
         List<AddressTemplate> templates = asList(
-                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
 
         connectionFactoryForm.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));

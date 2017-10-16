@@ -37,6 +37,7 @@ package org.jboss.hal.client.bootstrap.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;

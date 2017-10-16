@@ -160,7 +160,8 @@ public class HostPresenter
     @NameToken(NameTokens.HOST_CONFIGURATION)
     @Requires(value = {HOST_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
             SYSTEM_PROPERTY_ADDRESS}, recursive = false)
-    public interface MyProxy extends ProxyPlace<HostPresenter> {}
+    public interface MyProxy extends ProxyPlace<HostPresenter> {
+    }
 
     public interface MyView extends MbuiView<HostPresenter> {
         void updateHost(Host host);

@@ -21,18 +21,18 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 interface AddressTemplates {
 
-    String EE_ADDRESS                           = "/{selected.profile}/subsystem=ee";
-    String SERVICE_DEFAULT_BINDINGS_ADDRESS     = EE_ADDRESS + "/service=default-bindings";
-    String CONTEXT_SERVICE_ADDRESS              = EE_ADDRESS + "/context-service=*";
-    String MANAGED_EXECUTOR_ADDRESS             = EE_ADDRESS + "/managed-executor-service=*";
-    String MANAGED_EXECUTOR_SCHEDULED_ADDRESS   = EE_ADDRESS + "/managed-scheduled-executor-service=*";
-    String MANAGED_THREAD_FACTORY_ADDRESS       = EE_ADDRESS + "/managed-thread-factory=*";
+    String EE_ADDRESS = "/{selected.profile}/subsystem=ee";
+    String SERVICE_DEFAULT_BINDINGS_ADDRESS = EE_ADDRESS + "/service=default-bindings";
+    String CONTEXT_SERVICE_ADDRESS = EE_ADDRESS + "/context-service=*";
+    String MANAGED_EXECUTOR_ADDRESS = EE_ADDRESS + "/managed-executor-service=*";
+    String MANAGED_EXECUTOR_SCHEDULED_ADDRESS = EE_ADDRESS + "/managed-scheduled-executor-service=*";
+    String MANAGED_THREAD_FACTORY_ADDRESS = EE_ADDRESS + "/managed-thread-factory=*";
 
-    AddressTemplate SERVICE_DEFAULT_BINDINGS_TEMPLATE   = AddressTemplate.of(SERVICE_DEFAULT_BINDINGS_ADDRESS);
-    AddressTemplate CONTEXT_SERVICE_TEMPLATE            = AddressTemplate.of(CONTEXT_SERVICE_ADDRESS);
-    AddressTemplate MANAGED_EXECUTOR_TEMPLATE           = AddressTemplate.of(MANAGED_EXECUTOR_ADDRESS);
+    AddressTemplate SERVICE_DEFAULT_BINDINGS_TEMPLATE = AddressTemplate.of(SERVICE_DEFAULT_BINDINGS_ADDRESS);
+    AddressTemplate CONTEXT_SERVICE_TEMPLATE = AddressTemplate.of(CONTEXT_SERVICE_ADDRESS);
+    AddressTemplate MANAGED_EXECUTOR_TEMPLATE = AddressTemplate.of(MANAGED_EXECUTOR_ADDRESS);
     AddressTemplate MANAGED_EXECUTOR_SCHEDULED_TEMPLATE = AddressTemplate.of(MANAGED_EXECUTOR_SCHEDULED_ADDRESS);
-    AddressTemplate MANAGED_THREAD_FACTORY_TEMPLATE     = AddressTemplate.of(MANAGED_THREAD_FACTORY_ADDRESS);
+    AddressTemplate MANAGED_THREAD_FACTORY_TEMPLATE = AddressTemplate.of(MANAGED_THREAD_FACTORY_ADDRESS);
 
     AddressTemplate EE_SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=ee");
 }

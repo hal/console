@@ -17,6 +17,7 @@ package org.jboss.hal.client.homepage;
 
 import java.util.Arrays;
 import java.util.Collections;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -220,9 +221,9 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
 
         HTMLElement root = div()
                 .add(div().css(eapHomeRow)
-                    .add(header)
-                    .add(deployments)
-                    .add(configuration))
+                        .add(header)
+                        .add(deployments)
+                        .add(configuration))
                 .asElement();
         if (su) {
             root.appendChild(div().css(eapHomeRow)

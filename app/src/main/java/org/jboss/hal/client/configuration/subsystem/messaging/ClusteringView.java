@@ -26,11 +26,11 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.table.Table;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -56,6 +56,8 @@ import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
         implements ClusteringPresenter.MyView {
+
+    private static final String EQ_WILDCARD = "=*";
 
     public static ClusteringView create(final MbuiContext mbuiContext) {
         return new Mbui_ClusteringView(mbuiContext);
@@ -119,7 +121,8 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
         registerAttachable(bridgeTable, bridgeForm, crForm);
 
-        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY), null, Names.BRIDGE, "fa fa-road", bridgeSection);
+        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY), null, Names.BRIDGE, "fa fa-road",
+                bridgeSection);
     }
 
     @Override
@@ -141,10 +144,10 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
         // register the suggestion handlers here rather than in a @PostConstruct method
         // they need a valid presenter reference!
         List<AddressTemplate> templates = asList(
-                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
 
         broadcastGroupForm.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
@@ -155,11 +158,11 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
         clusterConnectionForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
 
         bridgeForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
         bridgeForm.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
     }

@@ -291,7 +291,8 @@ public class SocketBindingGroupPresenter
     @ProxyCodeSplit
     @Requires(ROOT_ADDRESS)
     @NameToken(NameTokens.SOCKET_BINDING_GROUP)
-    public interface MyProxy extends ProxyPlace<SocketBindingGroupPresenter> {}
+    public interface MyProxy extends ProxyPlace<SocketBindingGroupPresenter> {
+    }
 
     public interface MyView extends MbuiView<SocketBindingGroupPresenter> {
         void reveal();

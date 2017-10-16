@@ -28,6 +28,7 @@ class ApplicationSecurityDomainPreview extends PreviewContent<NamedNode> {
         super(model.getName());
 
         previewBuilder()
-                .addAll(new PreviewAttributes<>(model, asList("enable-jacc", "http-authentication-factory", "override-deployment-config")));
+                .addAll(new PreviewAttributes<>(model,
+                        asList("enable-jacc", "http-authentication-factory", "override-deployment-config")));
     }
 }

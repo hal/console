@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.transaction;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;

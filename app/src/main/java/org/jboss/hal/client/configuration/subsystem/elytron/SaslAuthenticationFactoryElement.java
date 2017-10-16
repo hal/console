@@ -40,7 +40,9 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
-import static org.jboss.hal.resources.Ids.*;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.TAB;
 
 class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
         HasPresenter<FactoriesPresenter> {
@@ -108,7 +110,8 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .column(REALM_NAME)
                 .build();
         mrcForm = new ModelNodeForm.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, FORM), mrcMetadata)
-                .onSave(((form, changedValues) -> presenter.saveSaslMechanismRealmConfiguration(selectedFactory, mcIndex,
+                .onSave(((form, changedValues) -> presenter.saveSaslMechanismRealmConfiguration(selectedFactory,
+                        mcIndex,
                         mrcIndex, changedValues)))
                 .build();
         HTMLElement mrcSection = section()

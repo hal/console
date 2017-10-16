@@ -25,7 +25,7 @@ import static org.jboss.hal.resources.CSS.*;
 
 public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
-    private  static final String SPACE = " ";
+    private static final String SPACE = " ";
 
     protected final Resources resources;
     protected HTMLElement alertContainer;

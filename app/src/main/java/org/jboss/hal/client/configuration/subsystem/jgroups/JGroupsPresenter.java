@@ -97,6 +97,8 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
                                 return currentFork;
                             case "selected.stack":
                                 return currentStack;
+                            default:
+                                break;
                         }
                         return null;
                     }
@@ -297,7 +299,8 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     @ProxyCodeSplit
     @NameToken(NameTokens.JGROUPS)
     @Requires(AddressTemplates.JGROUPS_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JGroupsPresenter> {}
+    public interface MyProxy extends ProxyPlace<JGroupsPresenter> {
+    }
 
     public interface MyView extends HalView, HasPresenter<JGroupsPresenter> {
         void update(ModelNode payload);

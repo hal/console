@@ -83,6 +83,7 @@ public interface ModelDescriptionConstants {
     String APPLICATION_SECURITY_DOMAIN = "application-security-domain";
     String APPLIED_AT = "applied-at";
     String ARCHIVE = "archive";
+    String ASYNC_HANDLER = "async-handler";
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTE_GROUP = "attribute-group";
     String ATTRIBUTE_MAPPING = "attribute-mapping";
@@ -161,6 +162,7 @@ public interface ModelDescriptionConstants {
     String CONNECTOR_NAME = "connector-name";
     String CONNECTOR_SERVICE = "connector-service";
     String CONNECTORS = "connectors";
+    String CONSOLE_HANDLER = "console-handler";
     String CONSTANT_PERMISSION_MAPPER = "constant-permission-mapper";
     String CONSTANT_PRINCIPAL_DECODER = "constant-principal-decoder";
     String CONSTANT_PRINCIPAL_TRANSFORMER = "constant-principal-transformer";
@@ -183,6 +185,8 @@ public interface ModelDescriptionConstants {
     String CURRENT_THREAD_COUNT = "current-thread-count";
     String CUSTOM = "custom";
     String CUSTOM_CREDENTIAL_SECURITY_FACTORY = "custom-credential-security-factory";
+    String CUSTOM_FORMATTER = "custom-formatter";
+    String CUSTOM_HANDLER = "custom-handler";
     String CUSTOM_MODIFIABLE_REALM = "custom-modifiable-realm";
     String CUSTOM_PERMISSION_MAPPER = "custom-permission-mapper";
     String CUSTOM_POLICY = "custom-policy";
@@ -274,6 +278,7 @@ public interface ModelDescriptionConstants {
     String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILE_AUDIT_LOG = "file-audit-log";
+    String FILE_HANDLER = "file-handler";
     String FILESYSTEM_REALM = "filesystem-realm";
     String FILTER = "filter";
     String FILTER_REF = "filter-ref";
@@ -285,6 +290,7 @@ public interface ModelDescriptionConstants {
     String FLUSH_IDLE_CONNECTION_IN_POOL = "flush-idle-connection-in-pool";
     String FLUSH_INVALID_CONNECTION_IN_POOL = "flush-invalid-connection-in-pool";
     String FORK = "fork";
+    String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
     String GLOBAL_MODULES = "global-modules";
@@ -395,8 +401,8 @@ public interface ModelDescriptionConstants {
     String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
     String LOCATION = "location";
     String LOCKING = "locking";
+    String LOGGER = "logger";
     String LOGGING = "logging";
-    String LOGGING_PROFILE = "logging-profile";
     String LOGICAL_PERMISSION_MAPPER = "logical-permission-mapper";
     String LOGICAL_ROLE_MAPPER = "logical-role-mapper";
     String LOGIN_MODULE = "login-module";
@@ -497,9 +503,12 @@ public interface ModelDescriptionConstants {
     String PATCHING = "patching";
     String PATTERN = "pattern";
     String PATTERN_FILTER = "pattern-filter";
+    String PATTERN_FORMATTER = "pattern-formatter";
     String PAUSE = "pause";
     String PAUSED = "paused";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
+    String PERIODIC_ROTATING_FILE_HANDLER = "periodic-rotating-file-handler";
+    String PERIODIC_SIZE_ROTATING_FILE_HANDLER = "periodic-size-rotating-file-handler";
     String PERMISSION_MAPPINGS = "permission-mappings";
     String PERMISSIONS = "permissions";
     String PERSISTENCE = "persistence";
@@ -688,6 +697,7 @@ public interface ModelDescriptionConstants {
     String SINGLE_SIGN_ON = "single-sign-on";
     String SINGLETON = "singleton";
     String SIZE_ROTATING_FILE_AUDIT_LOG = "size-rotating-file-audit-log";
+    String SIZE_ROTATING_FILE_HANDLER = "size-rotating-file-handler";
     String SLAVE = "slave";
     String SMTP = "smtp";
     String SOCKET_BINDING = "socket-binding";
@@ -739,6 +749,7 @@ public interface ModelDescriptionConstants {
     String SUSPEND_SERVERS = "suspend-servers";
     String SUSPEND_STATE = "suspend-state";
     String SYSLOG_AUDIT_LOG = "syslog-audit-log";
+    String SYSLOG_HANDLER = "syslog-handler";
     String SYSTEM_PROPERTY = "system-property";
     String SYSTEM_PROPERTIES = "system-properties";
     String TABLE = "table";
