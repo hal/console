@@ -34,16 +34,6 @@ import static org.jboss.hal.resources.CSS.*;
 
 public class Accordion implements IsElement {
 
-    @JsType(isNative = true)
-    static class Api {
-
-        @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Api select(String selector);
-
-        public native void collapse(String command);
-    }
-
-
     private final String id;
     private final HTMLDivElement root;
 
@@ -66,9 +56,9 @@ public class Accordion implements IsElement {
         HTMLDivElement div = div().css(panel, panelDefault)
                 .add(div().css(panelHeading).id(headerId)
                         .add(h(4).css(panelTitle)
-                                .add(a("#" + id)
+                                .add(a(UIConstants.HASH + id)
                                         .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
-                                        .data("parent", "#" + this.id)
+                                        .data("parent", UIConstants.HASH + this.id)
                                         .aria(UIConstants.CONTROLS, id)
                                         .aria(UIConstants.EXPANDED, String.valueOf(firstPanel))
                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
@@ -96,24 +86,34 @@ public class Accordion implements IsElement {
     }
 
     public void showPanel(final String id) {
-        Api.select("#" + id).collapse("show"); //NON-NLS
+        Api.select(UIConstants.HASH + id).collapse("show"); //NON-NLS
     }
 
     public void hidePanel(final String id) {
-        Api.select("#" + id).collapse("hide"); //NON-NLS
+        Api.select(UIConstants.HASH + id).collapse("hide"); //NON-NLS
     }
 
     public void togglePanel(final String id) {
-        Api.select("#" + id).collapse("toggle"); //NON-NLS
+        Api.select(UIConstants.HASH + id).collapse("toggle"); //NON-NLS
     }
 
     public void setContent(final String id, Element first, Element... rest) {
         if (id != null) {
-            Element body = document.querySelector("#" + id + " > ." + panelBody);
+            Element body = document.querySelector(UIConstants.HASH + id + " > ." + panelBody);
             if (body != null) {
                 Elements.removeChildrenFrom(body);
                 fillBody(body, first, rest);
             }
         }
+    }
+
+
+    @JsType(isNative = true)
+    static class Api {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public static native Api select(String selector);
+
+        public native void collapse(String command);
     }
 }

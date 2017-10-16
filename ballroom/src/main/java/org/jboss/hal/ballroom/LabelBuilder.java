@@ -33,6 +33,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
 public class LabelBuilder {
 
     private static final String QUOTE = "'";
+    private static final String SPACE = " ";
+
     @SuppressWarnings("HardCodedStringLiteral")
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
             .put("ajp", "AJP")
@@ -108,7 +110,7 @@ public class LabelBuilder {
                 return QUOTE + label(names.iterator().next()) + QUOTE;
             } else if (size == 2) {
                 return QUOTE + label(Iterables.getFirst(names, "")) + QUOTE +
-                        " " + conjunction + " " +
+                        SPACE + conjunction + SPACE +
                         QUOTE + label(Iterables.getLast(names)) + QUOTE;
             } else {
                 String last = Iterables.getLast(names);
@@ -118,7 +120,7 @@ public class LabelBuilder {
                 enumeration = allButLast.stream()
                         .map(name -> QUOTE + label(name) + QUOTE)
                         .collect(Collectors.joining(", "));
-                enumeration = enumeration + " " + conjunction + " " + QUOTE + label(last) + QUOTE;
+                enumeration = enumeration + SPACE + conjunction + SPACE + QUOTE + label(last) + QUOTE;
             }
         }
         return enumeration;
@@ -135,7 +137,7 @@ public class LabelBuilder {
             }
             replacedParts.add(replaced);
         }
-        return Joiner.on(" ").join(replacedParts);
+        return Joiner.on(SPACE).join(replacedParts);
     }
 
     private String capitalize(final String str) {

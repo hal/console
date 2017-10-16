@@ -78,6 +78,7 @@ import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.large;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 @SuppressWarnings("WeakerAccess")
 @Templated("MainLayout.html#header")
@@ -209,7 +210,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     private void initTlc(HTMLElement root, String[] tokens, String[] ids) {
         for (int i = 0; i < tokens.length; i++) {
-            HTMLElement element = (HTMLElement) root.querySelector("#" + ids[i]);
+            HTMLElement element = (HTMLElement) root.querySelector(HASH + ids[i]);
             if (element != null) {
                 tlc.put(tokens[i], element);
             }
@@ -475,7 +476,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 String id = Ids.build(segment.getColumnId(), VALUE);
                 value.appendChild(a = a().css(clickable)
                         .id(id)
-                        .data(UIConstants.TARGET, "#")
+                        .data(UIConstants.TARGET, HASH)
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)

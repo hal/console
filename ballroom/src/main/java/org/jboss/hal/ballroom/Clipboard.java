@@ -32,20 +32,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(name = "ZeroClipboard", namespace = GLOBAL, isNative = true)
 public class Clipboard {
 
-    @JsFunction
-    @FunctionalInterface
-    public interface ClipboardHandler {
-
-        void handleEvent(ClipboardEvent event);
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class ClipboardEvent {
-
-        public Clipboard client;
-    }
-
     @JsConstructor
     @SuppressWarnings("UnusedParameters")
     public Clipboard(HTMLElement element) {
@@ -59,4 +45,19 @@ public class Clipboard {
     }
 
     public native void setText(String text);
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface ClipboardHandler {
+
+        void handleEvent(ClipboardEvent event);
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class ClipboardEvent {
+
+        public Clipboard client;
+    }
 }

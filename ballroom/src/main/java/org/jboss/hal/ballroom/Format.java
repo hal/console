@@ -31,6 +31,7 @@ public final class Format {
     private static final DateTimeFormat TIME_MEDIUM = DateTimeFormat.getFormat(PredefinedFormat.TIME_MEDIUM);
     private static final NumberFormat SIZE_FORMAT = NumberFormat.getFormat("#,##0.#");
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String SPACE = " ";
 
 
     public static String time(Date date) {
@@ -46,16 +47,19 @@ public final class Format {
     }
 
     public static String humanReadableFileSize(long size) {
-        if (size <= 0) { return "0"; }
+        if (size <= 0) {
+            return "0";
+        }
         final String[] units = new String[]{"Bytes", "KB", "MB", "GB", "TB"}; //NON-NLS
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+        return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + SPACE + units[digitGroups];
     }
 
     /**
      * Formats the elapsed time (in milliseconds) to a human readable format: example 1 minute, 16 seconds.
      *
      * @param duration in milliseconds
+     *
      * @return The string representation of the human readable format.
      */
     public static String humanReadableDuration(long duration) {
@@ -79,31 +83,31 @@ public final class Format {
         String str = "";
         if (day > 0) {
             if (day > 1) {
-                str += day + " " + CONSTANTS.days() + ", ";
+                str += day + SPACE + CONSTANTS.days() + ", ";
             } else {
-                str += day + " " + CONSTANTS.day() + ", ";
+                str += day + SPACE + CONSTANTS.day() + ", ";
             }
         }
         // prints 0 hour in case days exists. Otherwise prints 2 days, 34 min, sounds weird.
         if (hour > 0 || (day > 0)) {
             if (hour > 1) {
-                str += hour + " " + CONSTANTS.hours() + ", ";
+                str += hour + SPACE + CONSTANTS.hours() + ", ";
             } else {
-                str += hour + " " + CONSTANTS.hour() + ", ";
+                str += hour + SPACE + CONSTANTS.hour() + ", ";
             }
         }
         if (min > 0) {
             if (min > 1) {
-                str += min + " " + CONSTANTS.minutes() + ", ";
+                str += min + SPACE + CONSTANTS.minutes() + ", ";
             } else {
-                str += min + " " + CONSTANTS.minute() + ", ";
+                str += min + SPACE + CONSTANTS.minute() + ", ";
             }
         }
         if (sec > 0) {
             if (sec > 1) {
-                str += sec + " " + CONSTANTS.seconds();
+                str += sec + SPACE + CONSTANTS.seconds();
             } else {
-                str += sec + " " + CONSTANTS.second();
+                str += sec + SPACE + CONSTANTS.second();
             }
         }
         return str;
@@ -113,6 +117,7 @@ public final class Format {
      * Formats the elapsed time (in nanoseconds) to a human readable format: example 1 minute, 16 seconds.
      *
      * @param duration in nanoseconds
+     *
      * @return The string representation of the human readable format.
      */
     public static String humanReadableDurationNanoseconds(long duration) {

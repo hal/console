@@ -71,6 +71,7 @@ import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.GROUP;
+import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
@@ -682,7 +683,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
             ulElement.appendChild(row.asElement());
         }
         updateHeader(items.size());
-        Tooltip.select("#" + id + " [data-" + UIConstants.TOGGLE + "=" + UIConstants.TOOLTIP + "]").init(); //NON-NLS
+        Tooltip.select(HASH + id + " [data-" + UIConstants.TOGGLE + "=" + UIConstants.TOOLTIP + "]").init(); //NON-NLS
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);

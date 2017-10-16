@@ -35,8 +35,42 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.uniqueId;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 public abstract class TagsItem<T> extends AbstractFormItem<T> {
+
+    private final Set<Decoration> editingDecorations;
+    private final TagsMapping<T> mapping;
+    private final TagsEditingAppearance editingAppearance;
+
+    protected TagsItem(final String name, final String label, final SafeHtml inputHelp,
+            final Set<Decoration> editingDecorations, final TagsMapping<T> mapping) {
+        super(name, label, null);
+
+        this.editingDecorations = editingDecorations;
+        this.mapping = mapping;
+
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new TagsReadOnlyAppearance());
+
+        // editing appearance
+        editingAppearance = new TagsEditingAppearance(input(text).css(formControl, tags).asElement(), inputHelp,
+                editingDecorations, mapping);
+        addAppearance(Form.State.EDITING, editingAppearance);
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return false;
+    }
+
+    @Override
+    public void onSuggest(final String suggestion) {
+        if (editingDecorations.contains(SUGGESTIONS)) {
+            editingAppearance.onSuggest(suggestion);
+        }
+    }
+
 
     private class TagsReadOnlyAppearance extends ReadOnlyAppearance<T> {
 
@@ -87,7 +121,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         public void attach() {
             super.attach();
             Options options = Defaults.get();
-            options.tagsContainer = "#" + tagsContainer.id;
+            options.tagsContainer = HASH + tagsContainer.id;
             options.validator = mapping.validator();
 
             TagsManager.Api api = TagsManager.Api.element(inputElement);
@@ -138,39 +172,6 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
             root.classList.remove(hasError);
             helpBlock.classList.add(CSS.hint);
             helpBlock.innerHTML = MESSAGES.propertiesHint().asString();
-        }
-    }
-
-
-    private final Set<Decoration> editingDecorations;
-    private final TagsMapping<T> mapping;
-    private final TagsEditingAppearance editingAppearance;
-
-    protected TagsItem(final String name, final String label, final SafeHtml inputHelp,
-            final Set<Decoration> editingDecorations, final TagsMapping<T> mapping) {
-        super(name, label, null);
-
-        this.editingDecorations = editingDecorations;
-        this.mapping = mapping;
-
-        // read-only appearance
-        addAppearance(Form.State.READONLY, new TagsReadOnlyAppearance());
-
-        // editing appearance
-        editingAppearance = new TagsEditingAppearance(input(text).css(formControl, tags).asElement(), inputHelp,
-                editingDecorations, mapping);
-        addAppearance(Form.State.EDITING, editingAppearance);
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return false;
-    }
-
-    @Override
-    public void onSuggest(final String suggestion) {
-        if (editingDecorations.contains(SUGGESTIONS)) {
-            editingAppearance.onSuggest(suggestion);
         }
     }
 }

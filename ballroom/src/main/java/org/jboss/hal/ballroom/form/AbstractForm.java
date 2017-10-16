@@ -468,6 +468,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 formLinks.setVisible(false, false, false, true);
                 prepareEditState();
                 break;
+            default:
+                break;
         }
     }
 
@@ -476,20 +478,23 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
-    protected void prepareEmptyState() {}
+    protected void prepareEmptyState() {
+    }
 
     /**
      * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
-    protected void prepareViewState() {}
+    protected void prepareViewState() {
+    }
 
     /**
      * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
-    protected void prepareEditState() {}
+    protected void prepareEditState() {
+    }
 
     protected void flip(State state) {
         // exit with ESC handler
@@ -509,6 +514,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                     // Exit *this* edit state by pressing ESC
                     escRegistration = bind(panels.get(EDITING), keyup, escCallback);
                 }
+                break;
+            default:
                 break;
         }
 

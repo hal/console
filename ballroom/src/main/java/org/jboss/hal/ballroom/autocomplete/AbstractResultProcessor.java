@@ -40,9 +40,9 @@ abstract class AbstractResultProcessor<T> implements ResultProcessor {
         return asJson(processToModel(query, compositeResult));
     }
 
-    protected abstract List<T> processToModel(final String query, final ModelNode nodes);
+    protected abstract List<T> processToModel(String query, ModelNode nodes);
 
-    protected abstract List<T> processToModel(final String query, final CompositeResult compositeResult);
+    protected abstract List<T> processToModel(String query, CompositeResult compositeResult);
 
-    abstract JsonObject[] asJson(final List<T> models);
+    abstract JsonObject[] asJson(List<T> models);
 }

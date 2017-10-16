@@ -58,25 +58,6 @@ import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWA
  */
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 
-    @FunctionalInterface
-    interface ExpressionCallback {
-
-        void resolveExpression(String expression);
-    }
-
-
-    static class ExpressionContext {
-
-        final String expression;
-        final ExpressionCallback callback;
-
-        ExpressionContext(final String expression, final ExpressionCallback callback) {
-            this.expression = expression;
-            this.callback = callback;
-        }
-    }
-
-
     private String name;
     private final String label;
     private final String hint;
@@ -654,5 +635,24 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     void setForm(final Form form) {
         this.form = form;
+    }
+
+
+    @FunctionalInterface
+    interface ExpressionCallback {
+
+        void resolveExpression(String expression);
+    }
+
+
+    static class ExpressionContext {
+
+        final String expression;
+        final ExpressionCallback callback;
+
+        ExpressionContext(final String expression, final ExpressionCallback callback) {
+            this.expression = expression;
+            this.callback = callback;
+        }
     }
 }

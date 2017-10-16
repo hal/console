@@ -39,7 +39,7 @@ import org.jboss.hal.resources.Constants;
 
 public class RequiredValidation<T> implements FormItemValidation<T> {
 
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final FormItem<T> formItem;
     private final String errorMessage;

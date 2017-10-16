@@ -212,7 +212,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     @Override
     public void attach() {
         SelectBoxBridge.Options options = SelectBoxBridge.Defaults.get();
-        $("#" + selectStoreId).selectpicker(options);
+        $(HASH + selectStoreId).selectpicker(options);
         SelectBoxBridge.Single.element(selectStore).onChange((event, index) -> {
             String value = SelectBoxBridge.Single.element(selectStore).getValue();
             Store store = Store.fromResource(value);

@@ -28,14 +28,23 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 class SelectorModifier {
 
-    // @formatter:off
-    enum Order {current, index}
-    enum Page {all, current}
-    enum Search {none, applied, removed}
-    // @formatter:on
-
     String order;
     String page;
     String search;
     Boolean selected;
+
+
+    enum Order {
+        current, index
+    }
+
+
+    enum Page {
+        all, current
+    }
+
+
+    enum Search {
+        none, applied, removed
+    }
 }

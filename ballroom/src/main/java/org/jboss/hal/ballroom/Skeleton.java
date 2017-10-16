@@ -59,5 +59,6 @@ public final class Skeleton {
         return height;
     }
 
-    private Skeleton() {}
+    private Skeleton() {
+    }
 }

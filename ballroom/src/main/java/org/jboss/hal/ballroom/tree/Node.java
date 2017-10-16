@@ -19,11 +19,22 @@ import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /** A node in a tree - used for both nodes and leafs. */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Node<T> {
+
+    public String id;
+    public String text;
+    public String icon;
+    public State state;
+    public String parent;
+    public String[] parents;
+    public boolean children;
+    public T data;
+
 
     public static class Builder<T> {
 
@@ -38,7 +49,7 @@ public class Node<T> {
         }
 
         public Builder<T> root() {
-            node.parent = "#";
+            node.parent = HASH;
             return this;
         }
 
@@ -91,14 +102,4 @@ public class Node<T> {
         public boolean disabled;
         public boolean checked;
     }
-
-
-    public String id;
-    public String text;
-    public String icon;
-    public State state;
-    public String parent;
-    public String[] parents;
-    public boolean children;
-    public T data;
 }

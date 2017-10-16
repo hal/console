@@ -26,6 +26,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * Options for a data table.
  *
  * @param <T> the row type
+ *
  * @see <a href="https://datatables.net/reference/option/">https://datatables.net/reference/option/</a>
  */
 @SuppressWarnings("WeakerAccess")

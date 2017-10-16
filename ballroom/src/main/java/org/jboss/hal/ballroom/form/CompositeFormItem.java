@@ -62,21 +62,6 @@ import static org.jboss.hal.resources.CSS.separator;
  */
 public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> implements ModelNodeItem {
 
-    private class FormItemChangeHandler implements ValueChangeHandler {
-
-        private final FormItem formItem;
-
-        private FormItemChangeHandler(final FormItem formItem) {this.formItem = formItem;}
-
-        @Override
-        public void onValueChange(final ValueChangeEvent event) {
-            formItem.setModified(true);
-            formItem.setUndefined(Strings.isNullOrEmpty(String.valueOf(event.getValue())));
-            setModified(true);
-        }
-    }
-
-
     private List<FormItem> formItems;
     private HTMLElement readOnlyContainer;
     private HTMLElement editingContainer;
@@ -286,5 +271,22 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     @Override
     public void setUndefined(final boolean undefined) {
         formItems.forEach(formItem -> formItem.setUndefined(undefined));
+    }
+
+
+    private class FormItemChangeHandler implements ValueChangeHandler {
+
+        private final FormItem formItem;
+
+        private FormItemChangeHandler(final FormItem formItem) {
+            this.formItem = formItem;
+        }
+
+        @Override
+        public void onValueChange(final ValueChangeEvent event) {
+            formItem.setModified(true);
+            formItem.setUndefined(Strings.isNullOrEmpty(String.valueOf(event.getValue())));
+            setModified(true);
+        }
     }
 }

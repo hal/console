@@ -83,7 +83,8 @@ public abstract class AbstractStateMachine implements StateMachine {
         }
     }
 
-    protected abstract <C> void safeExecute(final Operation operation, C context);
+    protected abstract <C> void safeExecute(Operation operation, C context);
 
-    @NonNls protected abstract String name();
+    @NonNls
+    protected abstract String name();
 }

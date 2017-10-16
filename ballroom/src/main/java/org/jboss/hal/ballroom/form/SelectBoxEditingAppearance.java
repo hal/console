@@ -157,6 +157,8 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             case HINT:
             case SUGGESTIONS:
                 break;
+            default:
+                break;
         }
     }
 
@@ -206,6 +208,8 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             case EXPRESSION:
             case HINT:
             case SUGGESTIONS:
+                break;
+            default:
                 break;
         }
     }

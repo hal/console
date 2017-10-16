@@ -27,6 +27,12 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 
 public class SwitchBridge {
 
+    private static final String STATE = "state";
+    private static final String DESTROY = "destroy";
+    private static final String DISABLED = "disabled";
+    private static final String CHANGE_EVENT = "switchChange.bootstrapSwitch";
+
+
     @JsFunction
     @FunctionalInterface
     public interface ChangeListener {
@@ -39,7 +45,7 @@ public class SwitchBridge {
     public static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Api element(HTMLInputElement element);
+        public static native Api element(HTMLInputElement element);
 
         public native boolean bootstrapSwitch(String method);
 
@@ -77,10 +83,4 @@ public class SwitchBridge {
             on(CHANGE_EVENT, listener);
         }
     }
-
-
-    private static final String STATE = "state";
-    private static final String DESTROY = "destroy";
-    private static final String DISABLED = "disabled";
-    private static final String CHANGE_EVENT = "switchChange.bootstrapSwitch";
 }

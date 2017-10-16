@@ -25,10 +25,21 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * Options for a column in a data table.
  *
  * @param <T> the row type
+ *
  * @see <a href="https://datatables.net/reference/option/columns">https://datatables.net/reference/option/columns</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Column<T> {
+
+    public String name;
+    public String title;
+    public RenderCallback<T, ?> render;
+    public boolean orderable;
+    public boolean searchable;
+    public String className;
+    public String type;
+    public String width;
+
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Meta {
@@ -62,14 +73,4 @@ public class Column<T> {
          */
         C render(C cell, String type, T row, Meta meta);
     }
-
-
-    public String name;
-    public String title;
-    public RenderCallback<T, ?> render;
-    public boolean orderable;
-    public boolean searchable;
-    public String className;
-    public String type;
-    public String width;
 }

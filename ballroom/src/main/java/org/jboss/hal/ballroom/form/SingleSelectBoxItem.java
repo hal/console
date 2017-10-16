@@ -29,60 +29,6 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
-    private static class SingleSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
-
-        SingleSelectBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
-        }
-
-        @Override
-        protected String name() {
-            return "SingleSelectBoxReadOnlyAppearance";
-        }
-    }
-
-
-    private class SingleSelectBoxEditingAppearance extends SelectBoxEditingAppearance<String> {
-
-        SingleSelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options,
-                final boolean allowEmpty) {
-            super(selectElement, options, allowEmpty);
-        }
-
-        @Override
-        public void attach() {
-            super.attach();
-            Single.element(selectElement).onChange((event, index) ->
-                    modifyValue(Single.element(selectElement).getValue()));
-        }
-
-        @Override
-        void refresh() {
-            Single.element(selectElement).refresh();
-        }
-
-        @Override
-        public void showValue(final String value) {
-            if (attached) {
-                Single.element(selectElement).setValue(value);
-            } else {
-                selectElement.value = value;
-            }
-        }
-
-        @Override
-        public void clearValue() {
-            if (allowEmpty) {
-                if (attached) {
-                    Single.element(selectElement).setValue("");
-                } else {
-                    selectElement.value = "";
-                }
-            }
-        }
-    }
-
-
     private final boolean allowEmpty;
 
     public SingleSelectBoxItem(final String name, final String label, List<String> options, boolean allowEmpty) {
@@ -136,6 +82,60 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         } else {
             // there's always a value and this form item can never get undefined!
             super.setUndefined(false);
+        }
+    }
+
+
+    private static class SingleSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
+
+        SingleSelectBoxReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "SingleSelectBoxReadOnlyAppearance";
+        }
+    }
+
+
+    private class SingleSelectBoxEditingAppearance extends SelectBoxEditingAppearance<String> {
+
+        SingleSelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options,
+                final boolean allowEmpty) {
+            super(selectElement, options, allowEmpty);
+        }
+
+        @Override
+        public void attach() {
+            super.attach();
+            Single.element(selectElement).onChange((event, index) ->
+                    modifyValue(Single.element(selectElement).getValue()));
+        }
+
+        @Override
+        void refresh() {
+            Single.element(selectElement).refresh();
+        }
+
+        @Override
+        public void showValue(final String value) {
+            if (attached) {
+                Single.element(selectElement).setValue(value);
+            } else {
+                selectElement.value = value;
+            }
+        }
+
+        @Override
+        public void clearValue() {
+            if (allowEmpty) {
+                if (attached) {
+                    Single.element(selectElement).setValue("");
+                } else {
+                    selectElement.value = "";
+                }
+            }
         }
     }
 }

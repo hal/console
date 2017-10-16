@@ -38,6 +38,32 @@ import static org.jboss.hal.resources.CSS.halFormLabel;
 
 public class ButtonItem extends AbstractFormItem<Void> {
 
+    private final HTMLButtonElement button;
+
+    public ButtonItem(final String name, final String label) {
+        super(name, label, null);
+
+        addAppearance(Form.State.READONLY, new ButtonReadOnlyAppearance(label));
+
+        button = button().textContent(label).css(Button.DEFAULT_CSS).asElement();
+        addAppearance(Form.State.EDITING, new ButtonEditingAppearance(button));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return false;
+    }
+
+    public void onClick(EventCallbackFn<MouseEvent> listener) {
+        bind(button, click, listener);
+    }
+
+
     private static class ButtonReadOnlyAppearance extends ReadOnlyAppearance<Void> {
 
         private final String label;
@@ -136,6 +162,9 @@ public class ButtonItem extends AbstractFormItem<Void> {
                 case REQUIRED:
                 case SUGGESTIONS:
                     break;
+
+                default:
+                    break;
             }
         }
 
@@ -159,6 +188,10 @@ public class ButtonItem extends AbstractFormItem<Void> {
                 case REQUIRED:
                 case RESTRICTED:
                 case SUGGESTIONS:
+                    break;
+
+                default:
+                    break;
             }
         }
 
@@ -185,31 +218,5 @@ public class ButtonItem extends AbstractFormItem<Void> {
         public void setTabIndex(final int index) {
             button.tabIndex = index;
         }
-    }
-
-
-    private final HTMLButtonElement button;
-
-    public ButtonItem(final String name, final String label) {
-        super(name, label, null);
-
-        addAppearance(Form.State.READONLY, new ButtonReadOnlyAppearance(label));
-
-        button = button().textContent(label).css(Button.DEFAULT_CSS).asElement();
-        addAppearance(Form.State.EDITING, new ButtonEditingAppearance(button));
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return false;
-    }
-
-    public void onClick(EventCallbackFn<MouseEvent> listener) {
-        bind(button, click, listener);
     }
 }

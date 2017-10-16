@@ -34,13 +34,6 @@ import static org.jboss.hal.resources.CSS.clickable;
  */
 public class Breadcrumb implements IsElement<HTMLElement> {
 
-    @FunctionalInterface
-    public interface SegmentHandler {
-
-        void onClick();
-    }
-
-
     private final HTMLElement root;
 
     public Breadcrumb() {
@@ -68,5 +61,12 @@ public class Breadcrumb implements IsElement<HTMLElement> {
     @Override
     public HTMLElement asElement() {
         return root;
+    }
+
+
+    @FunctionalInterface
+    public interface SegmentHandler {
+
+        void onClick();
     }
 }

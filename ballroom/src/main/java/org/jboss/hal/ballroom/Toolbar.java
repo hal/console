@@ -86,90 +86,6 @@ import static org.jboss.hal.resources.CSS.label;
  */
 public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachable {
 
-    public static class Attribute<T> {
-
-        private final String name;
-        private final String title;
-        private final Filter<T> filter;
-        private final Comparator<T> comparator;
-
-        public Attribute(String name, Filter<T> filter) {
-            this(name, new LabelBuilder().label(name), filter, null);
-        }
-
-        public Attribute(String name, Comparator<T> comparator) {
-            this(name, new LabelBuilder().label(name), null, comparator);
-        }
-
-        public Attribute(String name, Filter<T> filter, Comparator<T> comparator) {
-            this(name, new LabelBuilder().label(name), filter, comparator);
-        }
-
-        public Attribute(String name, String title, Filter<T> filter) {
-            this(name, title, filter, null);
-        }
-
-        public Attribute(String name, String title, Comparator<T> comparator) {
-            this(name, title, null, comparator);
-        }
-
-        public Attribute(String name, String title, Filter<T> filter, Comparator<T> comparator) {
-            this.name = name;
-            this.title = title;
-            this.filter = filter;
-            this.comparator = comparator;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) { return true; }
-            if (!(o instanceof Toolbar.Attribute)) { return false; }
-
-            Attribute<?> attribute = (Attribute<?>) o;
-
-            return name.equals(attribute.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return "Toolbar.Attribute(" + name + ")";
-        }
-    }
-
-
-    public static class Action {
-
-        private final String id;
-        private final String text;
-        private final Constraints constraints;
-        private final Callback callback;
-
-        public Action(String id, String text, Callback callback) {
-            this(id, text, Constraints.empty(), callback);
-        }
-
-        public Action(String id, String text, Constraint constraint, Callback callback) {
-            this(id, text, Constraints.single(constraint), callback);
-        }
-
-        public Action(String id, String text, Constraints constraints, Callback callback) {
-            this.id = id;
-            this.text = text;
-            this.constraints = constraints;
-            this.callback = callback;
-        }
-
-        public Constraints getConstraints() {
-            return constraints;
-        }
-    }
-
-
     private static final String DATA_FILTER = "filter";
     private static final String DATA_ACTIVE_FILTER = "activeFilter";
     private static final String DATA_ACTIVE_FILTER_VALUE = "activeFilterValue";
@@ -497,6 +413,93 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         Element li = ul.querySelector("li[data-" + data + "=" + attribute.name + "]"); //NON-NLS
         if (li != null) {
             li.classList.add(selected);
+        }
+    }
+
+
+    public static class Attribute<T> {
+
+        private final String name;
+        private final String title;
+        private final Filter<T> filter;
+        private final Comparator<T> comparator;
+
+        public Attribute(String name, Filter<T> filter) {
+            this(name, new LabelBuilder().label(name), filter, null);
+        }
+
+        public Attribute(String name, Comparator<T> comparator) {
+            this(name, new LabelBuilder().label(name), null, comparator);
+        }
+
+        public Attribute(String name, Filter<T> filter, Comparator<T> comparator) {
+            this(name, new LabelBuilder().label(name), filter, comparator);
+        }
+
+        public Attribute(String name, String title, Filter<T> filter) {
+            this(name, title, filter, null);
+        }
+
+        public Attribute(String name, String title, Comparator<T> comparator) {
+            this(name, title, null, comparator);
+        }
+
+        public Attribute(String name, String title, Filter<T> filter, Comparator<T> comparator) {
+            this.name = name;
+            this.title = title;
+            this.filter = filter;
+            this.comparator = comparator;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Toolbar.Attribute)) {
+                return false;
+            }
+
+            Attribute<?> attribute = (Attribute<?>) o;
+            return name.equals(attribute.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "Toolbar.Attribute(" + name + ")";
+        }
+    }
+
+
+    public static class Action {
+
+        private final String id;
+        private final String text;
+        private final Constraints constraints;
+        private final Callback callback;
+
+        public Action(String id, String text, Callback callback) {
+            this(id, text, Constraints.empty(), callback);
+        }
+
+        public Action(String id, String text, Constraint constraint, Callback callback) {
+            this(id, text, Constraints.single(constraint), callback);
+        }
+
+        public Action(String id, String text, Constraints constraints, Callback callback) {
+            this.id = id;
+            this.text = text;
+            this.constraints = constraints;
+            this.callback = callback;
+        }
+
+        public Constraints getConstraints() {
+            return constraints;
         }
     }
 }

@@ -62,14 +62,23 @@ public class PageInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof PageInfo)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PageInfo)) {
+            return false;
+        }
 
         PageInfo pageInfo = (PageInfo) o;
-
-        if (page != pageInfo.page) { return false; }
-        if (pageSize != pageInfo.pageSize) { return false; }
-        if (visible != pageInfo.visible) { return false; }
+        if (page != pageInfo.page) {
+            return false;
+        }
+        if (pageSize != pageInfo.pageSize) {
+            return false;
+        }
+        if (visible != pageInfo.visible) {
+            return false;
+        }
         return total == pageInfo.total;
     }
 
@@ -84,7 +93,7 @@ public class PageInfo {
 
     @Override
     public String toString() {
-        return "PageInfo(pageSize=" + pageSize + ", page=" + page+ ", visible=" + visible + ", total=" + total + ')';
+        return "PageInfo(pageSize=" + pageSize + ", page=" + page + ", visible=" + visible + ", total=" + total + ')';
     }
 
     public int getFrom() {

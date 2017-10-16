@@ -250,6 +250,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
             case REQUIRED:
             case SUGGESTIONS:
                 break;
+            default:
+                break;
         }
     }
 
@@ -291,6 +293,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
             case INVALID:
             case REQUIRED:
             case SUGGESTIONS:
+                break;
+            default:
                 break;
         }
     }

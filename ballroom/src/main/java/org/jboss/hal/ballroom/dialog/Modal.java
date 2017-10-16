@@ -27,6 +27,16 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true)
 public abstract class Modal {
 
+    @JsMethod(namespace = GLOBAL)
+    public static native Modal $(@NonNls String selector);
+
+    public native void modal(ModalOptions modalOptions);
+
+    public native void modal(@NonNls String action);
+
+    public native void on(@NonNls String event, JsCallback callback);
+
+
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class ModalOptions {
 
@@ -41,14 +51,4 @@ public abstract class Modal {
             return options;
         }
     }
-
-
-    @JsMethod(namespace = GLOBAL)
-    public native static Modal $(@NonNls String selector);
-
-    public native void modal(ModalOptions modalOptions);
-
-    public native void modal(@NonNls String action);
-
-    public native void on(@NonNls String event, JsCallback callback);
 }

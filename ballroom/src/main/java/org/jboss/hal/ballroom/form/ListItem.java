@@ -26,6 +26,20 @@ import static org.jboss.hal.ballroom.form.Decoration.*;
 
 public class ListItem extends TagsItem<List<String>> {
 
+    private static final Messages MESSAGES = GWT.create(Messages.class);
+
+    public ListItem(final String name, final String label) {
+        super(name, label, MESSAGES.listHint(),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                new ListMapping());
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue() == null || getValue().isEmpty();
+    }
+
+
     private static class ListMapping implements TagsMapping<List<String>> {
 
         @Override
@@ -45,19 +59,5 @@ public class ListItem extends TagsItem<List<String>> {
         public String asString(final List<String> value) {
             return String.join(", ", value);
         }
-    }
-
-
-    private static final Messages MESSAGES = GWT.create(Messages.class);
-
-    public ListItem(final String name, final String label) {
-        super(name, label, MESSAGES.listHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
-                new ListMapping());
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getValue() == null || getValue().isEmpty();
     }
 }

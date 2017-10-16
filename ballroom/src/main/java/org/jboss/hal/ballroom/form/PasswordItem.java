@@ -36,6 +36,32 @@ import static org.jboss.hal.resources.CSS.*;
 
 public class PasswordItem extends AbstractFormItem<String> {
 
+    private static final String FA_EYE_SLASH = "fa-eye-slash";
+    private static final String FA_EYE = "fa-eye";
+
+    public PasswordItem(final String name, final String label) {
+        super(name, label, null);
+
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new PasswordReadOnlyAppearance());
+
+        // editing appearance
+        HTMLInputElement inputElement = input(password).css(formControl).asElement();
+        addAppearance(EDITING, new PasswordEditingAppearance(inputElement));
+        remember(bind(inputElement, change, event -> modifyValue(inputElement.value)));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return Strings.isNullOrEmpty(getValue());
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return false;
+    }
+
+
     @SuppressWarnings({"ReplaceAllDot", "HardCodedStringLiteral"})
     private class PasswordReadOnlyAppearance extends ReadOnlyAppearance<String> {
 
@@ -52,13 +78,13 @@ public class PasswordItem extends AbstractFormItem<String> {
                         if (hidden) {
                             valueElement.textContent = getValue();
                             peekLink.title = CONSTANTS.hideSensitive();
-                            peekLink.classList.add("fa-eye-slash");
-                            peekLink.classList.remove("fa-eye");
+                            peekLink.classList.add(FA_EYE_SLASH);
+                            peekLink.classList.remove(FA_EYE);
                         } else {
                             valueElement.textContent = getValue().replaceAll(".", "\u25CF");
                             peekLink.title = CONSTANTS.showSensitive();
-                            peekLink.classList.add("fa-eye");
-                            peekLink.classList.remove("fa-eye-slash");
+                            peekLink.classList.add(FA_EYE);
+                            peekLink.classList.remove(FA_EYE_SLASH);
                         }
                         hidden = !hidden;
                     })
@@ -107,15 +133,15 @@ public class PasswordItem extends AbstractFormItem<String> {
                                     inputElement.type = "text";
                                     inputElement.focus();
                                     peekButton.title = CONSTANTS.hideSensitive();
-                                    peekIcon.classList.add("fa-eye-slash");
-                                    peekIcon.classList.remove("fa-eye");
+                                    peekIcon.classList.add(FA_EYE_SLASH);
+                                    peekIcon.classList.remove(FA_EYE);
 
                                 } else if ("text".equals(inputElement.type)) {
                                     inputElement.type = "password";
                                     inputElement.focus();
                                     peekButton.title = CONSTANTS.showSensitive();
-                                    peekIcon.classList.add("fa-eye");
-                                    peekIcon.classList.remove("fa-eye-slash");
+                                    peekIcon.classList.add(FA_EYE);
+                                    peekIcon.classList.remove(FA_EYE_SLASH);
                                 }
                             })
                             .add(peekIcon = i().css(fontAwesome("eye")).asElement())
@@ -140,27 +166,5 @@ public class PasswordItem extends AbstractFormItem<String> {
         public void clearValue() {
             inputElement.value = "";
         }
-    }
-
-    public PasswordItem(final String name, final String label) {
-        super(name, label, null);
-
-        // read-only appearance
-        addAppearance(Form.State.READONLY, new PasswordReadOnlyAppearance());
-
-        // editing appearance
-        HTMLInputElement inputElement = input(password).css(formControl).asElement();
-        addAppearance(EDITING, new PasswordEditingAppearance(inputElement));
-        remember(bind(inputElement, change, event -> modifyValue(inputElement.value)));
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return Strings.isNullOrEmpty(getValue());
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return false;
     }
 }

@@ -18,16 +18,15 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
-import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -38,6 +37,36 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
 
 public class SwitchItem extends AbstractFormItem<Boolean> {
+
+    private final SwitchEditingAppearance editingAppearance;
+
+    public SwitchItem(final String name, final String label) {
+        super(name, label, null);
+
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new SwitchReadOnlyAppearance());
+
+        // editing appearance
+        editingAppearance = new SwitchEditingAppearance();
+        addAppearance(Form.State.EDITING, editingAppearance);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return isExpressionValue() && Strings.isNullOrEmpty(getExpressionValue());
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return true;
+    }
+
+    @Override
+    public void setExpressionAllowed(final boolean expressionAllowed) {
+        super.setExpressionAllowed(expressionAllowed);
+        editingAppearance.setExpressionAllowed(expressionAllowed);
+    }
+
 
     private static class SwitchReadOnlyAppearance extends ReadOnlyAppearance<Boolean> {
 
@@ -281,37 +310,5 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             super.setTabIndex(index);
             expressionModeInput.tabIndex = index;
         }
-    }
-
-
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
-
-    private final SwitchEditingAppearance editingAppearance;
-
-    public SwitchItem(final String name, final String label) {
-        super(name, label, null);
-
-        // read-only appearance
-        addAppearance(Form.State.READONLY, new SwitchReadOnlyAppearance());
-
-        // editing appearance
-        editingAppearance = new SwitchEditingAppearance();
-        addAppearance(Form.State.EDITING, editingAppearance);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return isExpressionValue() && Strings.isNullOrEmpty(getExpressionValue());
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return true;
-    }
-
-    @Override
-    public void setExpressionAllowed(final boolean expressionAllowed) {
-        super.setExpressionAllowed(expressionAllowed);
-        editingAppearance.setExpressionAllowed(expressionAllowed);
     }
 }

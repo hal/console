@@ -1,25 +1,11 @@
 package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.resources.Messages;
-
 import com.google.gwt.core.client.GWT;
+import org.jboss.hal.resources.Messages;
 
 public class PatternValidation implements FormItemValidation<Object> {
 
-    public static class JndiNameValidation extends PatternValidation {
-
-        public JndiNameValidation() {
-            super("java:(jboss)?/.*"); //NON-NLS
-        }
-
-        @Override
-        protected String errorMessage() {
-            return MESSAGES.invalidJNDIName();
-        }
-    }
-
-
-    private final static Messages MESSAGES = GWT.create(Messages.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
 
     private String pattern;
 
@@ -34,5 +20,18 @@ public class PatternValidation implements FormItemValidation<Object> {
 
     protected String errorMessage() {
         return MESSAGES.invalidFormat();
+    }
+
+
+    public static class JndiNameValidation extends PatternValidation {
+
+        public JndiNameValidation() {
+            super("java:(jboss)?/.*"); //NON-NLS
+        }
+
+        @Override
+        protected String errorMessage() {
+            return MESSAGES.invalidJNDIName();
+        }
     }
 }

@@ -49,6 +49,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.logFileLoading;
 import static org.jboss.hal.resources.CSS.px;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 @Templated("LogFileView.html#root")
 public abstract class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
@@ -209,7 +210,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     public int visibleLines() {
         int lineHeight = 15;
         HTMLElement lineElement = (HTMLElement) document.querySelector(
-                "#" + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
+                HASH + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
         if (lineElement != null) {
             lineHeight = (int) lineElement.offsetHeight;
         }

@@ -33,6 +33,7 @@ import static org.jboss.hal.resources.CSS.hover;
 import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.CSS.tableBordered;
 import static org.jboss.hal.resources.CSS.tableStriped;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 /**
  * Table element which implements the DataTables plugin for jQuery. Using the data table consists of these steps:
@@ -103,7 +104,7 @@ public class DataTable<T> implements Table<T> {
     public void attach() {
         if (api == null) {
             options.id = id;
-            api = Api.<T>select("#" + id).dataTable(options);
+            api = Api.<T>select(HASH + id).dataTable(options);
         }
     }
 

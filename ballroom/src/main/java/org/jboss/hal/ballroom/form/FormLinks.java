@@ -35,11 +35,14 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.REMOVE;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 /**
  * Links for commons form {@linkplain Form.Operation operations} placed above the actual form. Depending on the
@@ -105,7 +108,7 @@ public class FormLinks<T> implements IsElement {
         }
         if (!helpTexts.isEmpty()) {
             helpLink = li()
-                    .add(a("#" + helpId)
+                    .add(a(HASH + helpId)
                             .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
                             .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                             .aria(UIConstants.CONTROLS, helpId)

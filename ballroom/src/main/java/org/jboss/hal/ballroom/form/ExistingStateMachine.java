@@ -95,6 +95,9 @@ public class ExistingStateMachine extends AbstractStateMachine implements StateM
                 assertState(EDITING);
                 transitionTo(READONLY);
                 break;
+
+            default:
+                break;
         }
     }
 

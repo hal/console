@@ -36,6 +36,7 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 /**
  * An item inside a {@link ListView}.
@@ -62,7 +63,7 @@ class ListItem<T> implements IsElement {
             root = div().id(id).css(listPfItem, listPfHeader)
                     .add(a("#" + idLongPanel)
                             .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
-                            .data("parent", "#" + this.id)
+                            .data("parent", HASH + this.id)
                             .aria(UIConstants.CONTROLS, idLongPanel)
                             .attr(UIConstants.ROLE, UIConstants.BUTTON)
                             .add(container = div().css(listPfContainer)

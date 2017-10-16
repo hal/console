@@ -37,148 +37,6 @@ import org.jboss.hal.spi.Callback;
 @JsType(namespace = "hal.ui")
 public interface Form<T> extends IsElement, Attachable {
 
-    // ------------------------------------------------------ states and operations
-
-
-    enum State {
-        /**
-         * No model is bound to the form
-         */
-        EMPTY,
-
-        /**
-         * The model is shown in read-only mode
-         */
-        READONLY,
-
-        /**
-         * The model is shown in edit mode
-         */
-        EDITING
-    }
-
-
-    enum Operation {
-        /**
-         * Takes the specified model and updates the read-only state with the values from the model.
-         */
-        VIEW,
-
-        /**
-         * Clears this form by removing the model reference and by clearing all bound form fields. Does not modify the
-         * model!
-         */
-        CLEAR,
-
-        /**
-         * Resets the model and updates the bound form field.
-         */
-        RESET,
-
-        /**
-         * Takes the specified model and populates the bound form fields with the values from the model.
-         */
-        EDIT,
-
-        /**
-         * Validates the form and its fields and upon successful validation persists the changes to the model and
-         * calls the save callback.
-         */
-        SAVE,
-
-        /**
-         * Cancels any modifications to the model and calls the cancel callback.
-         */
-        CANCEL,
-
-        /**
-         * Removes the model and calls the remove callback.
-         */
-        REMOVE
-    }
-
-
-    // ------------------------------------------------------ callbacks
-
-
-    @FunctionalInterface
-    interface SaveCallback<T> {
-
-        void onSave(Form<T> form, Map<String, Object> changedValues);
-    }
-
-
-    @FunctionalInterface
-    interface CancelCallback<T> {
-
-        void onCancel(Form<T> form);
-    }
-
-
-    /**
-     * Callback to prepare the reset operation. Use this callback if the reset operation is behind some kind of
-     * confirmation dialog. If the user confirms to reset, it's expected that you use an implementation of {@link
-     * FinishReset} to conclude the reset operation.
-     */
-    @FunctionalInterface
-    interface PrepareReset<T> {
-
-        void beforeReset(Form<T> form);
-    }
-
-
-    /**
-     * Callback to be used after the reset operation has been successfully executed. This callback takes care of calling
-     * {@link Form#reset()}. You just need to place your business logic into {@link #afterReset(Form)}.
-     */
-    abstract class FinishReset<T> implements Callback {
-
-        private final Form<T> form;
-
-        protected FinishReset(final Form<T> form) {this.form = form;}
-
-        @Override
-        public void execute() {
-            form.reset();
-            afterReset(form);
-        }
-
-        public abstract void afterReset(Form<T> form);
-    }
-
-
-    /**
-     * Callback to prepare the remove operation. Use this callback if the remove operation is behind some kind of
-     * confirmation dialog. If the user confirms to remove, it's expected that you use an implementation of {@link
-     * FinishRemove} to conclude the remove operation.
-     */
-    @FunctionalInterface
-    interface PrepareRemove<T> {
-
-        void beforeRemove(Form<T> form);
-    }
-
-
-    /**
-     * Callback to be used after the remove operation has been successfully executed. This callback takes care of
-     * calling {@link Form#remove()}. You just need to place your business logic into {@link #afterRemove(Form)}.
-     */
-    abstract class FinishRemove<T> implements Callback {
-
-        private final Form<T> form;
-
-        protected FinishRemove(final Form<T> form) {this.form = form;}
-
-        @Override
-        public void execute() {
-            form.remove();
-            afterRemove(form);
-        }
-
-        public abstract void afterRemove(Form<T> form);
-    }
-
-
     // ------------------------------------------------------ form API
 
     @JsProperty
@@ -279,4 +137,150 @@ public interface Form<T> extends IsElement, Attachable {
      */
     @JsIgnore
     void addFormValidation(FormValidation<T> formValidation);
+
+
+    // ------------------------------------------------------ states and operations
+
+
+    enum State {
+        /**
+         * No model is bound to the form
+         */
+        EMPTY,
+
+        /**
+         * The model is shown in read-only mode
+         */
+        READONLY,
+
+        /**
+         * The model is shown in edit mode
+         */
+        EDITING
+    }
+
+
+    enum Operation {
+        /**
+         * Takes the specified model and updates the read-only state with the values from the model.
+         */
+        VIEW,
+
+        /**
+         * Clears this form by removing the model reference and by clearing all bound form fields. Does not modify the
+         * model!
+         */
+        CLEAR,
+
+        /**
+         * Resets the model and updates the bound form field.
+         */
+        RESET,
+
+        /**
+         * Takes the specified model and populates the bound form fields with the values from the model.
+         */
+        EDIT,
+
+        /**
+         * Validates the form and its fields and upon successful validation persists the changes to the model and
+         * calls the save callback.
+         */
+        SAVE,
+
+        /**
+         * Cancels any modifications to the model and calls the cancel callback.
+         */
+        CANCEL,
+
+        /**
+         * Removes the model and calls the remove callback.
+         */
+        REMOVE
+    }
+
+
+    // ------------------------------------------------------ callbacks
+
+
+    @FunctionalInterface
+    interface SaveCallback<T> {
+
+        void onSave(Form<T> form, Map<String, Object> changedValues);
+    }
+
+
+    @FunctionalInterface
+    interface CancelCallback<T> {
+
+        void onCancel(Form<T> form);
+    }
+
+
+    /**
+     * Callback to prepare the reset operation. Use this callback if the reset operation is behind some kind of
+     * confirmation dialog. If the user confirms to reset, it's expected that you use an implementation of {@link
+     * FinishReset} to conclude the reset operation.
+     */
+    @FunctionalInterface
+    interface PrepareReset<T> {
+
+        void beforeReset(Form<T> form);
+    }
+
+
+    /**
+     * Callback to be used after the reset operation has been successfully executed. This callback takes care of calling
+     * {@link Form#reset()}. You just need to place your business logic into {@link #afterReset(Form)}.
+     */
+    abstract class FinishReset<T> implements Callback {
+
+        private final Form<T> form;
+
+        protected FinishReset(final Form<T> form) {
+            this.form = form;
+        }
+
+        @Override
+        public void execute() {
+            form.reset();
+            afterReset(form);
+        }
+
+        public abstract void afterReset(Form<T> form);
+    }
+
+
+    /**
+     * Callback to prepare the remove operation. Use this callback if the remove operation is behind some kind of
+     * confirmation dialog. If the user confirms to remove, it's expected that you use an implementation of {@link
+     * FinishRemove} to conclude the remove operation.
+     */
+    @FunctionalInterface
+    interface PrepareRemove<T> {
+
+        void beforeRemove(Form<T> form);
+    }
+
+
+    /**
+     * Callback to be used after the remove operation has been successfully executed. This callback takes care of
+     * calling {@link Form#remove()}. You just need to place your business logic into {@link #afterRemove(Form)}.
+     */
+    abstract class FinishRemove<T> implements Callback {
+
+        private final Form<T> form;
+
+        protected FinishRemove(final Form<T> form) {
+            this.form = form;
+        }
+
+        @Override
+        public void execute() {
+            form.remove();
+            afterRemove(form);
+        }
+
+        public abstract void afterRemove(Form<T> form);
+    }
 }

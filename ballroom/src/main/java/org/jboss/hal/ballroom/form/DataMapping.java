@@ -26,12 +26,11 @@ public interface DataMapping<T> {
 
     void populateFormItems(T model, Form<T> form);
 
-    void populateFormItem(final String id, String name, final ModelNode attributeDescription,
-            final ModelNode value, final FormItem formItem);
+    void populateFormItem(String id, String name, ModelNode attributeDescription, ModelNode value, FormItem formItem);
 
     void clearFormItems(Form<T> form);
 
     void persistModel(T model, Form<T> form);
 
-    void persistModel(String id, T model, final Iterable<FormItem> formItems);
+    void persistModel(String id, T model, Iterable<FormItem> formItems);
 }

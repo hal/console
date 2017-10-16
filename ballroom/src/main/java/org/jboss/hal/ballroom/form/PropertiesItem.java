@@ -34,6 +34,27 @@ import static org.jboss.hal.ballroom.form.Decoration.*;
 
 public class PropertiesItem extends TagsItem<Map<String, String>> {
 
+    private static final Messages MESSAGES = GWT.create(Messages.class);
+
+    public PropertiesItem(final String name) {
+        this(name, new LabelBuilder().label(name), MESSAGES.propertiesHint());
+    }
+
+    public PropertiesItem(final String name, final String label) {
+        this(name, label, MESSAGES.propertiesHint());
+    }
+
+    public PropertiesItem(final String name, final String label, final SafeHtml inputHelp) {
+        super(name, label, inputHelp, EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
+                new MapMapping());
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue() == null || getValue().isEmpty();
+    }
+
+
     private static class MapMapping implements TagsMapping<Map<String, String>> {
 
         private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:]+)$"); //NON-NLS
@@ -71,26 +92,5 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         public String asString(final Map<String, String> value) {
             return Joiner.on(", ").withKeyValueSeparator(" \u21D2 ").join(value);
         }
-    }
-
-
-    private static final Messages MESSAGES = GWT.create(Messages.class);
-
-    public PropertiesItem(final String name) {
-        this(name, new LabelBuilder().label(name), MESSAGES.propertiesHint());
-    }
-
-    public PropertiesItem(final String name, final String label) {
-        this(name, label, MESSAGES.propertiesHint());
-    }
-
-    public PropertiesItem(final String name, final String label, final SafeHtml inputHelp) {
-        super(name, label, inputHelp, EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
-                new MapMapping());
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getValue() == null || getValue().isEmpty();
     }
 }

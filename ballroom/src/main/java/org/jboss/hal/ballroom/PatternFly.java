@@ -58,5 +58,8 @@ public class PatternFly {
     }
 
     @JsMethod(namespace = "PR")
-    public native static void prettyPrint();
+    public static native void prettyPrint();
+
+    private PatternFly() {
+    }
 }

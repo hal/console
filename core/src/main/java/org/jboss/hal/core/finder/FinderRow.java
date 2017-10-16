@@ -41,6 +41,7 @@ import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
+import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.data;
 
 /** UI class for a single row in in a finder column. Only used internally in the finder. */
@@ -199,7 +200,7 @@ class FinderRow<T> implements IsElement {
             root.appendChild(buttonContainer);
             Elements.setVisible(buttonContainer, isSelected());
         }
-        PatternFly.initComponents("#" + display.getId());
+        PatternFly.initComponents(HASH + display.getId());
     }
 
     private HTMLAnchorElement actionLink(ItemAction<T> action, boolean li) {
@@ -265,7 +266,7 @@ class FinderRow<T> implements IsElement {
         previewContent.update(item);
 
         AuthorisationDecision ad = AuthorisationDecision.from(finder.environment(), finder.securityContextRegistry());
-        ElementGuard.processElements(ad, "#" + Ids.PREVIEW_ID + " [" + data(UIConstants.CONSTRAINT + "]"));
+        ElementGuard.processElements(ad, HASH + Ids.PREVIEW_ID + " [" + data(UIConstants.CONSTRAINT + "]"));
     }
 
     private boolean isSelected() {

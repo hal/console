@@ -71,73 +71,6 @@ import static org.jboss.hal.resources.CSS.*;
 // TODO of elements in the DOM matters! This should simplify the insert*() methods.
 public class VerticalNavigation implements Attachable {
 
-    @JsType(isNative = true)
-    static class Api {
-
-        @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Api select();
-
-        public native void setupVerticalNavigation(boolean handleItemSelections);
-    }
-
-
-    private static class Entry implements IsElement {
-
-        private final String id;
-        private final String parentId;
-        private final String text;
-        private final HTMLElement element;
-        private final LinkedHashSet<String> children;
-
-        private Entry(final String id, String parentId, final String text, final HTMLElement element) {
-            this.id = id;
-            this.parentId = parentId;
-            this.text = text;
-            this.element = element;
-            this.children = new LinkedHashSet<>();
-        }
-
-        @Override
-        public HTMLElement asElement() {
-            return element;
-        }
-
-        private void addChild(String id) {
-            children.add(id);
-        }
-
-        private boolean hasChildren() {
-            return !children.isEmpty();
-        }
-
-        private String firstChild() {
-            return children.iterator().next();
-        }
-    }
-
-
-    private static class Pane implements IsElement {
-
-        private final String id;
-        private final HTMLElement element;
-
-        private Pane(final String id, final HTMLElement element) {
-            this.id = id;
-            this.element = element;
-        }
-
-        private Pane(final String id, final IsElement isElement) {
-            this.id = id;
-            this.element = isElement.asElement();
-        }
-
-        @Override
-        public HTMLElement asElement() {
-            return element;
-        }
-    }
-
-
     private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
     private static final int SECONDARY_VISIBLE_TEXT_LENGTH = 23;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
@@ -522,5 +455,72 @@ public class VerticalNavigation implements Attachable {
 
     private boolean hasSecondary() {
         return entries.values().stream().anyMatch(entry -> !entry.children.isEmpty());
+    }
+
+
+    @JsType(isNative = true)
+    static class Api {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public static native Api select();
+
+        public native void setupVerticalNavigation(boolean handleItemSelections);
+    }
+
+
+    private static class Entry implements IsElement {
+
+        private final String id;
+        private final String parentId;
+        private final String text;
+        private final HTMLElement element;
+        private final LinkedHashSet<String> children;
+
+        private Entry(final String id, String parentId, final String text, final HTMLElement element) {
+            this.id = id;
+            this.parentId = parentId;
+            this.text = text;
+            this.element = element;
+            this.children = new LinkedHashSet<>();
+        }
+
+        @Override
+        public HTMLElement asElement() {
+            return element;
+        }
+
+        private void addChild(String id) {
+            children.add(id);
+        }
+
+        private boolean hasChildren() {
+            return !children.isEmpty();
+        }
+
+        private String firstChild() {
+            return children.iterator().next();
+        }
+    }
+
+
+    private static class Pane implements IsElement {
+
+        private final String id;
+        private final HTMLElement element;
+
+        private Pane(final String id, final HTMLElement element) {
+            this.id = id;
+            this.element = element;
+        }
+
+        private Pane(final String id, final IsElement isElement) {
+            this.id = id;
+            this.element = isElement.asElement();
+        }
+
+        @Override
+        public HTMLElement asElement() {
+            return element;
+        }
     }
 }

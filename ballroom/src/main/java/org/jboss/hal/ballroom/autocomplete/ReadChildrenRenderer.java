@@ -31,7 +31,7 @@ import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
 final class ReadChildrenRenderer implements ItemRenderer<JsonObject> {
 
     @Override
-    public final String render(final JsonObject item, final String query) {
+    public String render(JsonObject item, String query) {
         String name = item.get(NAME).asString();
         @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<div class=\"" + autocompleteSuggestion + "\" data-val=\"" + name + "\">");

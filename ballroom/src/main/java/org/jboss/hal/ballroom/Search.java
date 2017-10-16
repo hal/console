@@ -26,53 +26,13 @@ import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.search;
 import static org.jboss.hal.resources.CSS.*;
 
 public class Search implements IsElement<HTMLElement> {
-
-    @FunctionalInterface
-    public interface SearchHandler {
-
-        void search(String query);
-    }
-
-
-    public static class Builder {
-
-        private final String id;
-        private final SearchHandler onSearch;
-        private Callback onClear;
-        private SearchHandler onPrevious;
-        private SearchHandler onNext;
-
-        public Builder(final String id, final SearchHandler onSearch) {
-            this.id = id;
-            this.onSearch = onSearch;
-        }
-
-        public Builder onClear(Callback onClear) {
-            this.onClear = onClear;
-            return this;
-        }
-
-        public Builder onPrevious(SearchHandler onPrevious) {
-            this.onPrevious = onPrevious;
-            return this;
-        }
-
-        public Builder onNext(SearchHandler onNext) {
-            this.onNext = onNext;
-            return this;
-        }
-
-        public Search build() {
-            return new Search(this);
-        }
-    }
-
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
@@ -144,5 +104,46 @@ public class Search implements IsElement<HTMLElement> {
 
     public void focus() {
         searchBox.focus();
+    }
+
+
+    @FunctionalInterface
+    public interface SearchHandler {
+
+        void search(String query);
+    }
+
+
+    public static class Builder {
+
+        private final String id;
+        private final SearchHandler onSearch;
+        private Callback onClear;
+        private SearchHandler onPrevious;
+        private SearchHandler onNext;
+
+        public Builder(final String id, final SearchHandler onSearch) {
+            this.id = id;
+            this.onSearch = onSearch;
+        }
+
+        public Builder onClear(Callback onClear) {
+            this.onClear = onClear;
+            return this;
+        }
+
+        public Builder onPrevious(SearchHandler onPrevious) {
+            this.onPrevious = onPrevious;
+            return this;
+        }
+
+        public Builder onNext(SearchHandler onNext) {
+            this.onNext = onNext;
+            return this;
+        }
+
+        public Search build() {
+            return new Search(this);
+        }
     }
 }

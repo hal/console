@@ -39,28 +39,6 @@ import static org.jboss.hal.resources.CSS.page;
  */
 public class Pages implements IsElement {
 
-    private static class Page implements IsElement {
-
-        private final String parentId;
-        private final Supplier<String> parentTitle;
-        private final Supplier<String> title;
-        private final HTMLElement element;
-
-        private Page(final String parentId, final Supplier<String> parentTitle, final Supplier<String> title,
-                final HTMLElement element) {
-            this.parentId = parentId;
-            this.parentTitle = parentTitle;
-            this.title = title;
-            this.element = element;
-        }
-
-        @Override
-        public HTMLElement asElement() {
-            return element;
-        }
-    }
-
-
     private final String mainId;
     private final HTMLElement mainPage;
     private final Breadcrumb breadcrumb;
@@ -190,5 +168,27 @@ public class Pages implements IsElement {
     @Override
     public HTMLElement asElement() {
         return root;
+    }
+
+
+    private static class Page implements IsElement {
+
+        private final String parentId;
+        private final Supplier<String> parentTitle;
+        private final Supplier<String> title;
+        private final HTMLElement element;
+
+        private Page(final String parentId, final Supplier<String> parentTitle, final Supplier<String> title,
+                final HTMLElement element) {
+            this.parentId = parentId;
+            this.parentTitle = parentTitle;
+            this.title = title;
+            this.element = element;
+        }
+
+        @Override
+        public HTMLElement asElement() {
+            return element;
+        }
     }
 }

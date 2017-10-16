@@ -29,6 +29,33 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
+    public MultiSelectBoxItem(final String name, final String label, List<String> options) {
+        super(name, label, null);
+
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new MultiSelectBoxReadOnlyAppearance());
+
+        // editing appearance
+        HTMLSelectElement selectElement = select()
+                .apply(select -> {
+                    select.size = 1;
+                    select.multiple = true;
+                })
+                .asElement();
+        addAppearance(Form.State.EDITING, new MultiSelectBoxEditingAppearance(selectElement, options));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue() == null || getValue().isEmpty();
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return false;
+    }
+
+
     private static class MultiSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<List<String>> {
 
         MultiSelectBoxReadOnlyAppearance() {
@@ -87,32 +114,5 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
                 }
             }
         }
-    }
-
-
-    public MultiSelectBoxItem(final String name, final String label, List<String> options) {
-        super(name, label, null);
-
-        // read-only appearance
-        addAppearance(Form.State.READONLY, new MultiSelectBoxReadOnlyAppearance());
-
-        // editing appearance
-        HTMLSelectElement selectElement = select()
-                .apply(select -> {
-                    select.size = 1;
-                    select.multiple = true;
-                })
-                .asElement();
-        addAppearance(Form.State.EDITING, new MultiSelectBoxEditingAppearance(selectElement, options));
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getValue() == null || getValue().isEmpty();
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return false;
     }
 }

@@ -39,7 +39,9 @@ package org.jboss.hal.ballroom.form;
 @FunctionalInterface
 public interface FormItemValidation<T> {
 
-    enum ValidationRule {IF_MODIFIED, ALWAYS}
+    enum ValidationRule {
+        IF_MODIFIED, ALWAYS
+    }
 
     default ValidationRule validateIf() {
         return ValidationRule.IF_MODIFIED;

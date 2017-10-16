@@ -29,23 +29,6 @@ import org.jboss.hal.ballroom.form.Form;
 @JsType(namespace = "hal.ui")
 public interface Table<T> extends IsElement, Attachable {
 
-    /**
-     * Convenience handler when a <em>row</em> selection <em>or</em> deselection takes place.
-     *
-     * @param <T> the row type
-     */
-    @JsFunction
-    @FunctionalInterface
-    interface SelectionChangeHandler<T> {
-
-        /**
-         * Called when a selection changed. That is when a row is selected <em>or</em> deselected.
-         *
-         * @param table the table instance
-         */
-        void onSelectionChanged(Table<T> table);
-    }
-
     @JsIgnore
     void show();
 
@@ -95,4 +78,22 @@ public interface Table<T> extends IsElement, Attachable {
 
     @JsIgnore
     void update(Iterable<T> data, RefreshMode mode, Function<T, String> identifier);
+
+
+    /**
+     * Convenience handler when a <em>row</em> selection <em>or</em> deselection takes place.
+     *
+     * @param <T> the row type
+     */
+    @JsFunction
+    @FunctionalInterface
+    interface SelectionChangeHandler<T> {
+
+        /**
+         * Called when a selection changed. That is when a row is selected <em>or</em> deselected.
+         *
+         * @param table the table instance
+         */
+        void onSelectionChanged(Table<T> table);
+    }
 }

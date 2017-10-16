@@ -41,6 +41,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.JACC_POLICY;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.formLinkLabel;
 import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
 
@@ -101,7 +102,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     private void injectRemove(Form<ModelNode> form, Callback callback) {
         // hacky way to inject the remove link into the form tools,  depends on FormLink internals!
         String linksId = Ids.build(form.getId(), "links");
-        Element formLinks = form.asElement().querySelector("#" + linksId);
+        Element formLinks = form.asElement().querySelector(HASH + linksId);
         if (formLinks != null) {
             HTMLLIElement removeLink = li().add(a().css(clickable).on(click, event -> callback.execute())
                     .add(i().css(pfIcon("remove")))

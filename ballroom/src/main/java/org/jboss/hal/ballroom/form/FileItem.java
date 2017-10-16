@@ -38,6 +38,34 @@ import static org.jboss.hal.resources.CSS.*;
 
 public class FileItem extends AbstractFormItem<File> {
 
+    private final HTMLInputElement fileInput;
+
+    public FileItem(String name, String label) {
+        super(name, label, null);
+        addAppearance(Form.State.READONLY, new FileReadOnlyAppearance());
+
+        fileInput = input(file).css(formControl).asElement();
+        FileEditingAppearance editingAppearance = new FileEditingAppearance(fileInput);
+        addAppearance(Form.State.EDITING, editingAppearance);
+
+        remember(bind(fileInput, change, event -> {
+            setValue(fileInput.files.getAt(0), true);
+            setModified(true);
+            setUndefined(false);
+        }));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return fileInput.files.length == 0;
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return false;
+    }
+
+
     private static class FileReadOnlyAppearance extends ReadOnlyAppearance<File> {
 
         FileReadOnlyAppearance() {
@@ -94,33 +122,5 @@ public class FileItem extends AbstractFormItem<File> {
         public void clearValue() {
             filename.value = "";
         }
-    }
-
-
-    private final HTMLInputElement fileInput;
-
-    public FileItem(String name, String label) {
-        super(name, label, null);
-        addAppearance(Form.State.READONLY, new FileReadOnlyAppearance());
-
-        fileInput = input(file).css(formControl).asElement();
-        FileEditingAppearance editingAppearance = new FileEditingAppearance(fileInput);
-        addAppearance(Form.State.EDITING, editingAppearance);
-
-        remember(bind(fileInput, change, event -> {
-            setValue(fileInput.files.getAt(0), true);
-            setModified(true);
-            setUndefined(false);
-        }));
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return fileInput.files.length == 0;
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return false;
     }
 }

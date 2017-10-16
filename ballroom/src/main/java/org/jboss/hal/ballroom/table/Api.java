@@ -53,153 +53,10 @@ class Api<T> {
     // ------------------------------------------------------ initialization
 
     @JsMethod(namespace = GLOBAL, name = "$")
-    native static <T> Api<T> select(@NonNls String selector);
+    static native <T> Api<T> select(@NonNls String selector);
 
     @JsMethod(name = "DataTable")
     native Api<T> dataTable(Options options);
-
-
-    // ------------------------------------------------------ button(s)
-
-
-    /**
-     * Custom data tables button.
-     *
-     * @author Harald Pehl
-     * @see <a href="https://datatables.net/extensions/buttons/custom">https://datatables.net/extensions/buttons/custom</a>
-     */
-    @SuppressWarnings("WeakerAccess")
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Button<T> {
-
-
-        /**
-         * Action handler for a custom button.
-         *
-         * @see <a href="https://datatables.net/reference/option/buttons.buttons.action">https://datatables.net/reference/option/buttons.buttons.action</a>
-         */
-        @JsFunction
-        interface ActionHandler<T> {
-
-            void action(Object event, Object api, Object node, Button<T> btn);
-        }
-
-
-        String text;
-        ActionHandler<T> action;
-        String extend;
-        String constraint;
-        // not part of the DataTables API, but used to have a reference back to the table in ActionHandler
-        Table<T> table;
-    }
-
-
-    /**
-     * Buttons options.
-     *
-     * @param <T> the row type
-     *
-     * @author Harald Pehl
-     * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
-     */
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Buttons<T> {
-
-        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-        static class Dom {
-
-            @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-            static class Factory {
-
-                public String tag;
-                public String className;
-            }
-
-
-            Factory container;
-            Factory button;
-        }
-
-
-        Button<T>[] buttons;
-        Dom dom;
-    }
-
-
-    // ------------------------------------------------------ rows
-
-
-    /**
-     * Represents the {@code row} property in a data table.
-     *
-     * @param <T> the row type
-     *
-     * @author Harald Pehl
-     */
-    @JsType(isNative = true)
-    static class Row<T> {
-
-        /**
-         * Adds a new row to the table.
-         */
-        native Api<T> add(T data);
-    }
-
-
-    /**
-     * Function to be used as a row selector in {@link Api#rows(RowSelection)}.
-     *
-     * @author Harald Pehl
-     * @see <a href="https://datatables.net/reference/type/row-selector#Function">https://datatables.net/reference/type/row-selector#Function</a>
-     */
-    @JsFunction
-    interface RowSelection<T> {
-
-        boolean select(int index, T data, HTMLElement tr);
-    }
-
-
-    // ------------------------------------------------------ selection
-
-
-    /**
-     * Select options.
-     *
-     * @author Harald Pehl
-     * @see <a href="https://datatables.net/reference/option/#select">https://datatables.net/reference/option/#select</a>
-     */
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Select {
-
-        @JsOverlay
-        @SuppressWarnings("HardCodedStringLiteral")
-        static Select build(boolean multiselect) {
-            Select select = new Select();
-            select.info = false;
-            select.items = "row";
-            select.style = multiselect ? "multi" : "single";
-            return select;
-        }
-
-        boolean info;
-        String items;
-        String style;
-    }
-
-
-    /**
-     * Callback used for all kind of "select" and "deselect" events.
-     *
-     * @param <T> the row type
-     *
-     * @see <a href="https://datatables.net/reference/event/select">https://datatables.net/reference/event/select</a>
-     * @see <a href="https://datatables.net/reference/event/deselect">https://datatables.net/reference/event/deselect</a>
-     */
-    @JsFunction
-    interface SelectCallback<T> {
-
-        void onSelect(Object event, Api<T> api, String type);
-    }
 
 
     // ------------------------------------------------------ properties
@@ -330,5 +187,147 @@ class Api<T> {
             return Collections.emptyList();
         }
         return asList(selection);
+    }
+
+
+    // ------------------------------------------------------ button(s)
+
+
+    /**
+     * Custom data tables button.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/extensions/buttons/custom">https://datatables.net/extensions/buttons/custom</a>
+     */
+    @SuppressWarnings("WeakerAccess")
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Button<T> {
+
+        String text;
+        ActionHandler<T> action;
+        String extend;
+        String constraint;
+        // not part of the DataTables API, but used to have a reference back to the table in ActionHandler
+        Table<T> table;
+
+
+        /**
+         * Action handler for a custom button.
+         *
+         * @see <a href="https://datatables.net/reference/option/buttons.buttons.action">https://datatables.net/reference/option/buttons.buttons.action</a>
+         */
+        @JsFunction
+        interface ActionHandler<T> {
+
+            void action(Object event, Object api, Object node, Button<T> btn);
+        }
+    }
+
+
+    /**
+     * Buttons options.
+     *
+     * @param <T> the row type
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
+     */
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Buttons<T> {
+
+        Button<T>[] buttons;
+        Dom dom;
+
+
+        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+        static class Dom {
+
+            Factory container;
+            Factory button;
+
+
+            @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+            static class Factory {
+
+                public String tag;
+                public String className;
+            }
+        }
+    }
+
+
+    // ------------------------------------------------------ rows
+
+
+    /**
+     * Represents the {@code row} property in a data table.
+     *
+     * @param <T> the row type
+     *
+     * @author Harald Pehl
+     */
+    @JsType(isNative = true)
+    static class Row<T> {
+
+        /**
+         * Adds a new row to the table.
+         */
+        native Api<T> add(T data);
+    }
+
+
+    /**
+     * Function to be used as a row selector in {@link Api#rows(RowSelection)}.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/type/row-selector#Function">https://datatables.net/reference/type/row-selector#Function</a>
+     */
+    @JsFunction
+    interface RowSelection<T> {
+
+        boolean select(int index, T data, HTMLElement tr);
+    }
+
+
+    // ------------------------------------------------------ selection
+
+
+    /**
+     * Select options.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/option/#select">https://datatables.net/reference/option/#select</a>
+     */
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Select {
+
+        @JsOverlay
+        @SuppressWarnings("HardCodedStringLiteral")
+        static Select build(boolean multiselect) {
+            Select select = new Select();
+            select.info = false;
+            select.items = "row";
+            select.style = multiselect ? "multi" : "single";
+            return select;
+        }
+
+        boolean info;
+        String items;
+        String style;
+    }
+
+
+    /**
+     * Callback used for all kind of "select" and "deselect" events.
+     *
+     * @param <T> the row type
+     *
+     * @see <a href="https://datatables.net/reference/event/select">https://datatables.net/reference/event/select</a>
+     * @see <a href="https://datatables.net/reference/event/deselect">https://datatables.net/reference/event/deselect</a>
+     */
+    @JsFunction
+    interface SelectCallback<T> {
+
+        void onSelect(Object event, Api<T> api, String type);
     }
 }

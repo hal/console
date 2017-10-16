@@ -54,12 +54,17 @@ public class SelectionInfo<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof SelectionInfo)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SelectionInfo)) {
+            return false;
+        }
 
         SelectionInfo<?> other = (SelectionInfo<?>) o;
-
-        if (multiSelect != other.multiSelect) { return false; }
+        if (multiSelect != other.multiSelect) {
+            return false;
+        }
         return selection.equals(other.selection);
     }
 
@@ -72,7 +77,7 @@ public class SelectionInfo<T> {
 
     @Override
     public String toString() {
-        return "SelectionInfo(multiSelect=" + multiSelect+ ", selection=" + getSelection() + ')';
+        return "SelectionInfo(multiSelect=" + multiSelect + ", selection=" + getSelection() + ')';
     }
 
     public List<T> getSelection() {
