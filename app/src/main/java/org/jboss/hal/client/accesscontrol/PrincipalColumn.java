@@ -18,6 +18,7 @@ package org.jboss.hal.client.accesscontrol;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;

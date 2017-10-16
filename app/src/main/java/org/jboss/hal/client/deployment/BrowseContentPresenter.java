@@ -44,17 +44,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 public class BrowseContentPresenter
         extends ApplicationFinderPresenter<BrowseContentPresenter.MyView, BrowseContentPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.BROWSE_CONTENT)
-    @Requires(value = ContentColumn.CONTENT_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {}
-
-    public interface MyView extends HalView {
-        void setContent(Content content);
-    }
-    // @formatter:on
-
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final Environment environment;
@@ -97,4 +86,17 @@ public class BrowseContentPresenter
             // TODO Fallback when browse-content is not supported
         }
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.BROWSE_CONTENT)
+    @Requires(value = ContentColumn.CONTENT_ADDRESS, recursive = false)
+    public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {
+    }
+
+    public interface MyView extends HalView {
+        void setContent(Content content);
+    }
+    // @formatter:on
 }

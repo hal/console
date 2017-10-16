@@ -23,8 +23,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
-import org.jboss.hal.core.mvp.SupportsExternalMode;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.SupportsExternalMode;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
@@ -37,23 +37,10 @@ public class ModelBrowserPresenter
         extends ApplicationPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy>
         implements HasTitle, SupportsExternalMode {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.MODEL_BROWSER)
-    public interface MyProxy extends ProxyPlace<ModelBrowserPresenter> {}
-
-    public interface MyView extends HalView {
-        void setRoot(ResourceAddress root);
-    }
-    // @formatter:on
-
     private final Resources resources;
 
     @Inject
-    public ModelBrowserPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Resources resources) {
+    public ModelBrowserPresenter(EventBus eventBus, MyView view, MyProxy proxy, Resources resources) {
         super(eventBus, view, proxy);
         this.resources = resources;
     }
@@ -68,4 +55,16 @@ public class ModelBrowserPresenter
         super.onReset();
         getView().setRoot(ResourceAddress.root());
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.MODEL_BROWSER)
+    public interface MyProxy extends ProxyPlace<ModelBrowserPresenter> {
+    }
+
+    public interface MyView extends HalView {
+        void setRoot(ResourceAddress root);
+    }
+    // @formatter:on
 }

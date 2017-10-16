@@ -165,7 +165,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                             @Override
                             public void onMetadata(final Metadata metadata) {
                                 Metadata metadataRollback = metadata.forOperation(ROLLBACK_OPERATION);
-                                new RollbackWizard(resources, environment, patchId, metadataRollback, statementContext,
+                                new RollbackWizard(patchId, resources, environment, metadataRollback, statementContext,
                                         dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
                                         .show();
                             }

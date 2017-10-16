@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.transaction;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -43,27 +44,12 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.LOGSTORE_RUNTIME_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_RUNTIME_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROBE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class TransactionsPresenter
         extends ApplicationFinderPresenter<TransactionsPresenter.MyView, TransactionsPresenter.MyProxy>
         implements SupportsExpertMode {
-
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(TRANSACTION_RUNTIME_ADDRESS)
-    @NameToken(NameTokens.TRANSACTIONS_RUNTIME)
-    public interface MyProxy extends ProxyPlace<TransactionsPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<TransactionsPresenter> {
-        void update(List<NamedNode> model);
-    }
-    // @formatter:on
 
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
@@ -72,14 +58,14 @@ public class TransactionsPresenter
 
     @Inject
     public TransactionsPresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final Dispatcher dispatcher,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
@@ -128,4 +114,17 @@ public class TransactionsPresenter
     StatementContext getStatementContext() {
         return statementContext;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(TRANSACTION_RUNTIME_ADDRESS)
+    @NameToken(NameTokens.TRANSACTIONS_RUNTIME)
+    public interface MyProxy extends ProxyPlace<TransactionsPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<TransactionsPresenter> {
+        void update(List<NamedNode> model);
+    }
+    // @formatter:on
 }

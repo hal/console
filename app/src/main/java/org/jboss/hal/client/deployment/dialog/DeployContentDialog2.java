@@ -42,13 +42,6 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 /** Dialog used to deploy one or several one content items to one server group. */
 public class DeployContentDialog2 {
 
-    @FunctionalInterface
-    public interface DeployCallback {
-
-        void deploy(String serverGroup, List<Content> content, boolean enable);
-    }
-
-
     private final String serverGroup;
     private final List<Content> content;
     private final DeployCallback deployCallback;
@@ -57,8 +50,8 @@ public class DeployContentDialog2 {
     private final HTMLInputElement enable;
     private final Dialog dialog;
 
-    public DeployContentDialog2(final String serverGroup, final List<Content> content, final Resources resources,
-            final DeployCallback deployCallback) {
+    public DeployContentDialog2(String serverGroup, List<Content> content, Resources resources,
+            DeployCallback deployCallback) {
         this.serverGroup = serverGroup;
         this.content = content.stream()
                 .sorted(comparing(Content::getName))
@@ -110,5 +103,12 @@ public class DeployContentDialog2 {
         Elements.setVisible(noContentSelected.asElement(), false);
         table.update(content);
         SwitchBridge.Api.element(enable).setValue(false);
+    }
+
+
+    @FunctionalInterface
+    public interface DeployCallback {
+
+        void deploy(String serverGroup, List<Content> content, boolean enable);
     }
 }

@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -65,36 +66,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.move;
 public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    @ProxyCodeSplit
-    @Requires(value = {
-            AGGREGATE_REALM_ADDRESS,
-            CACHING_REALM_ADDRESS,
-            CONSTANT_REALM_MAPPER_ADDRESS,
-            CUSTOM_MODIFIABLE_REALM_ADDRESS,
-            CUSTOM_REALM_ADDRESS,
-            CUSTOM_REALM_MAPPER_ADDRESS,
-            FILESYSTEM_REALM_ADDRESS,
-            IDENTITY_REALM_ADDRESS,
-            JDBC_REALM_ADDRESS,
-            KEY_STORE_REALM_ADDRESS,
-            LDAP_REALM_ADDRESS,
-            MAPPED_REGEX_REALM_MAPPER_ADDRESS,
-            PROPERTIES_REALM_ADDRESS,
-            SIMPLE_REGEX_REALM_MAPPER_ADDRESS,
-            TOKEN_REALM_ADDRESS})
-    @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
-    public interface MyProxy extends ProxyPlace<RealmsPresenter> {}
-
-
-    // @formatter:off
-    public interface MyView extends MbuiView<RealmsPresenter> {
-        void updateResourceElement(String resource, List<NamedNode> nodes);
-        void updateJdbcRealm(List<NamedNode> nodes);
-        void updateLdapRealm(List<NamedNode> nodes);
-    }
-    // @formatter:on
-
-
     final static String[] KEY_MAPPERS = new String[]{
             "clear-password-mapper",
             "bcrypt-mapper",
@@ -112,16 +83,16 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     private MetadataRegistry metadataRegistry;
 
     @Inject
-    public RealmsPresenter(final EventBus eventBus,
-            final RealmsPresenter.MyView view,
-            final RealmsPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public RealmsPresenter(EventBus eventBus,
+            RealmsPresenter.MyView view,
+            RealmsPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            ComplexAttributeOperations ca,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.ca = ca;
@@ -250,7 +221,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void addKeyMapper(String jdbcRealm, ModelNode principalQuery, int pqIndex,
-            final String keyMapper) {
+            String keyMapper) {
         // WFLYELY00034: A principal query can only have a single key mapper
         boolean moreThanOne = false;
         for (String km : KEY_MAPPERS) {
@@ -306,7 +277,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         ca.reset(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, JDBC_REALM_TEMPLATE,
                 metadata, form, new Form.FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         reloadJdbcRealms();
                     }
                 });
@@ -317,7 +288,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         ca.remove(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, JDBC_REALM_TEMPLATE,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
-                    public void afterRemove(final Form<ModelNode> form) {
+                    public void afterRemove(Form<ModelNode> form) {
                         reloadJdbcRealms();
                     }
                 });
@@ -339,7 +310,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void saveAttributeMapping(String jdbcRealm, int pqIndex, int amIndex,
-            final Map<String, Object> changedValues) {
+            Map<String, Object> changedValues) {
         ca.save(jdbcRealm, attributeMappingAttribute(pqIndex), Names.ATTRIBUTE_MAPPING, amIndex,
                 JDBC_REALM_TEMPLATE, changedValues, this::reloadJdbcRealms);
     }
@@ -399,7 +370,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 }).show();
     }
 
-    void saveLdapRealm(final Form<NamedNode> form, final Map<String, Object> changedValues) {
+    void saveLdapRealm(Form<NamedNode> form, Map<String, Object> changedValues) {
         crud.save(Names.LDAP_REALM, form.getModel().getName(), AddressTemplates.LDAP_REALM_TEMPLATE, changedValues,
                 this::reloadLdapRealms);
     }
@@ -465,7 +436,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     // If 'search-rekursive' which requires 'filter' and which defaults to true is not touched
     // and 'filter' is set, the RequiredByValidation does not detect an validation error, because
     // 'search-rekursive' isEmptyOrDefault()
-    void addIdentityAttributeMapping(final String selectedLdapRealm) {
+    void addIdentityAttributeMapping(String selectedLdapRealm) {
         Metadata iamMetadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
@@ -481,8 +452,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         dialog.show();
     }
 
-    void saveIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex,
-            final Map<String, Object> changedValues) {
+    void saveIdentityAttributeMapping(String selectedLdapRealm, int iamIndex, Map<String, Object> changedValues) {
         // passed before attribute 'identity-mapping.attribute-mapping[n].search-recursive' can be correctly set"
 
         ca.save(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
@@ -490,7 +460,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 changedValues, this::reloadLdapRealms);
     }
 
-    void removeIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex) {
+    void removeIdentityAttributeMapping(String selectedLdapRealm, int iamIndex) {
         ca.remove(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
                 Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
                 this::reloadLdapRealms);
@@ -524,4 +494,34 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                             getView().updateResourceElement(PROPERTIES_REALM, nodes)));
         }).show();
     }
+
+
+    @ProxyCodeSplit
+    @Requires(value = {
+            AGGREGATE_REALM_ADDRESS,
+            CACHING_REALM_ADDRESS,
+            CONSTANT_REALM_MAPPER_ADDRESS,
+            CUSTOM_MODIFIABLE_REALM_ADDRESS,
+            CUSTOM_REALM_ADDRESS,
+            CUSTOM_REALM_MAPPER_ADDRESS,
+            FILESYSTEM_REALM_ADDRESS,
+            IDENTITY_REALM_ADDRESS,
+            JDBC_REALM_ADDRESS,
+            KEY_STORE_REALM_ADDRESS,
+            LDAP_REALM_ADDRESS,
+            MAPPED_REGEX_REALM_MAPPER_ADDRESS,
+            PROPERTIES_REALM_ADDRESS,
+            SIMPLE_REGEX_REALM_MAPPER_ADDRESS,
+            TOKEN_REALM_ADDRESS})
+    @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
+    public interface MyProxy extends ProxyPlace<RealmsPresenter> {}
+
+
+    // @formatter:off
+    public interface MyView extends MbuiView<RealmsPresenter> {
+        void updateResourceElement(String resource, List<NamedNode> nodes);
+        void updateJdbcRealm(List<NamedNode> nodes);
+        void updateLdapRealm(List<NamedNode> nodes);
+    }
+    // @formatter:on
 }

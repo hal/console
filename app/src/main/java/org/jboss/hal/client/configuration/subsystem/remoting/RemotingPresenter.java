@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.remoting;
 
 import java.util.Map;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -68,25 +69,6 @@ import static org.jboss.hal.flow.Flow.series;
 public class RemotingPresenter
         extends MbuiPresenter<RemotingPresenter.MyView, RemotingPresenter.MyProxy>
         implements SupportsExpertMode {
-
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.REMOTING)
-    @Requires({REMOTING_SUBSYSTEM_ADDRESS,
-            CONNECTOR_SECURITY_ADDRESS, CONNECTOR_SECURITY_POLICY_ADDRESS,
-            HTTP_CONNECTOR_SECURITY_ADDRESS, HTTP_CONNECTOR_SECURITY_POLICY_ADDRESS})
-    public interface MyProxy extends ProxyPlace<RemotingPresenter> {}
-
-    public interface MyView extends MbuiView<RemotingPresenter> {
-        void update(ModelNode payload);
-        void updateConnector(@Nullable NamedNode connector);
-        void updateHttpConnector(@Nullable NamedNode httpConnector);
-        void updateLocalOutbound(@Nullable NamedNode localOutbound);
-        void updateOutbound(@Nullable NamedNode outbound);
-        void updateRemoteOutbound(@Nullable NamedNode remoteOutbound);
-    }
-    // @formatter:on
-
 
     private final CrudOperations crud;
     private final PropertiesOperations propertiesOperations;
@@ -467,4 +449,23 @@ public class RemotingPresenter
                     }
                 });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.REMOTING)
+    @Requires({REMOTING_SUBSYSTEM_ADDRESS,
+            CONNECTOR_SECURITY_ADDRESS, CONNECTOR_SECURITY_POLICY_ADDRESS,
+            HTTP_CONNECTOR_SECURITY_ADDRESS, HTTP_CONNECTOR_SECURITY_POLICY_ADDRESS})
+    public interface MyProxy extends ProxyPlace<RemotingPresenter> {}
+
+    public interface MyView extends MbuiView<RemotingPresenter> {
+        void update(ModelNode payload);
+        void updateConnector(@Nullable NamedNode connector);
+        void updateHttpConnector(@Nullable NamedNode httpConnector);
+        void updateLocalOutbound(@Nullable NamedNode localOutbound);
+        void updateOutbound(@Nullable NamedNode outbound);
+        void updateRemoteOutbound(@Nullable NamedNode remoteOutbound);
+    }
+    // @formatter:on
 }

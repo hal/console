@@ -45,28 +45,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 public class GenericSubsystemPresenter
         extends ApplicationFinderPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.GENERIC_SUBSYSTEM)
-    public interface MyProxy extends ProxyPlace<GenericSubsystemPresenter> {}
-
-    public interface MyView extends HalView {
-        void setRoot(ResourceAddress root);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private ResourceAddress address;
 
     @Inject
-    public GenericSubsystemPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public GenericSubsystemPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+            Finder finder, FinderPathFactory finderPathFactory, StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
@@ -74,7 +59,7 @@ public class GenericSubsystemPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         String parameter = request.getParameter(ADDRESS_PARAM, null);
         if (parameter != null) {
             address = AddressTemplate.of(parameter).resolve(statementContext);
@@ -96,4 +81,16 @@ public class GenericSubsystemPresenter
     public FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(address.lastValue());
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.GENERIC_SUBSYSTEM)
+    public interface MyProxy extends ProxyPlace<GenericSubsystemPresenter> {
+    }
+
+    public interface MyView extends HalView {
+        void setRoot(ResourceAddress root);
+    }
+    // @formatter:on
 }

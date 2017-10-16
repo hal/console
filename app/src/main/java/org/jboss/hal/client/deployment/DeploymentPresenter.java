@@ -38,10 +38,38 @@ import static elemental2.dom.DomGlobal.document;
 
 public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
 
+    private final Environment environment;
+    private final Resources resources;
+
+    @Inject
+    public DeploymentPresenter(
+            EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            Environment environment,
+            Resources resources) {
+        super(eventBus, view, proxy, finder, resources);
+        this.environment = environment;
+        this.resources = resources;
+    }
+
+    @Override
+    protected String initialColumn() {
+        return environment.isStandalone() ? Ids.DEPLOYMENT : Ids.DEPLOYMENT_BROWSE_BY;
+    }
+
+    @Override
+    protected PreviewContent initialPreview() {
+        return new InitialPreview();
+    }
+
+
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.DEPLOYMENTS)
-    public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
+    public interface MyProxy extends ProxyPlace<DeploymentPresenter> {
+    }
 
     public interface MyView extends FinderView {}
     // @formatter:on
@@ -62,32 +90,5 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
                         JsHelper.supportsAdvancedUpload());
             }
         }
-    }
-
-
-    private final Environment environment;
-    private final Resources resources;
-
-    @Inject
-    public DeploymentPresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final Environment environment,
-            final Resources resources) {
-        super(eventBus, view, proxy, finder, resources);
-        this.environment = environment;
-        this.resources = resources;
-    }
-
-    @Override
-    protected String initialColumn() {
-        return environment.isStandalone() ? Ids.DEPLOYMENT : Ids.DEPLOYMENT_BROWSE_BY;
-    }
-
-    @Override
-    protected PreviewContent initialPreview() {
-        return new InitialPreview();
     }
 }

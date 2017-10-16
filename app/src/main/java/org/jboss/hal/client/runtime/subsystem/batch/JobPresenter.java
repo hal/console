@@ -48,18 +48,6 @@ import static org.jboss.hal.meta.token.NameTokens.JOB;
 
 public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView, JobPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(JOB)
-    @Requires(BATCH_DEPLOYMENT_JOB_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JobPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<JobPresenter> {
-        void update(JobNode job);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -69,14 +57,14 @@ public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView
     private String job;
 
     @Inject
-    public JobPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public JobPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -91,7 +79,7 @@ public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         deployment = request.getParameter(DEPLOYMENT, null);
         subdeployment = request.getParameter(SUBDEPLOYMENT, null);
@@ -142,4 +130,17 @@ public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView
         }
         return address;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(JOB)
+    @Requires(BATCH_DEPLOYMENT_JOB_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JobPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<JobPresenter> {
+        void update(JobNode job);
+    }
+    // @formatter:on
 }

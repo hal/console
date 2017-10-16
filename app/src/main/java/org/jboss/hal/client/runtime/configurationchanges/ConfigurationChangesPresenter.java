@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.configurationchanges;
 
 import java.util.Optional;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -66,16 +67,6 @@ import static org.jboss.hal.resources.Ids.ADD;
 public class ConfigurationChangesPresenter extends
         ApplicationFinderPresenter<ConfigurationChangesPresenter.MyView, ConfigurationChangesPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(CONFIGURATION_CHANGES)
-    @Requires(CONFIGURATION_CHANGES_ADDRESS)
-    public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {}
-    public interface MyView extends HalView, HasPresenter<ConfigurationChangesPresenter> {
-        void update(ModelNode model);
-    }
-    // @formatter:on
-
     public static final String CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
     public static final AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             CONFIGURATION_CHANGES_ADDRESS);
@@ -91,17 +82,17 @@ public class ConfigurationChangesPresenter extends
     private MetadataRegistry metadataRegistry;
 
     @Inject
-    public ConfigurationChangesPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final Environment environment,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final CrudOperations crud,
-            final Resources resources) {
+    public ConfigurationChangesPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            Environment environment,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            CrudOperations crud,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.environment = environment;
         this.finderPathFactory = finderPathFactory;
@@ -191,7 +182,7 @@ public class ConfigurationChangesPresenter extends
                 });
     }
 
-    void viewRawChange(final ConfigurationChange change) {
+    void viewRawChange(ConfigurationChange change) {
         HTMLPreElement elem = pre().css(formControlStatic, wrap).asElement();
         elem.textContent = change.asModelNode().toString();
 
@@ -216,4 +207,15 @@ public class ConfigurationChangesPresenter extends
     public StatementContext getStatementContext() {
         return statementContext;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(CONFIGURATION_CHANGES)
+    @Requires(CONFIGURATION_CHANGES_ADDRESS)
+    public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {}
+    public interface MyView extends HalView, HasPresenter<ConfigurationChangesPresenter> {
+        void update(ModelNode model);
+    }
+    // @formatter:on
 }

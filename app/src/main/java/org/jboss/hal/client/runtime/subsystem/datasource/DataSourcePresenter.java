@@ -46,23 +46,6 @@ import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 public class DataSourcePresenter
         extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(DATA_SOURCE_RUNTIME)
-    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS,
-            OPTIONAL + DATA_SOURCE_POOL_ADDRESS,
-            OPTIONAL + DATA_SOURCE_JDBC_ADDRESS,
-            OPTIONAL + XA_DATA_SOURCE_POOL_ADDRESS,
-            OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS})
-    public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
-        void setup();
-        void update(DataSource dataSource);
-    }
-    // @formatter:on
-
-
     static final String XA_PARAM = "xa";
 
     private final FinderPathFactory finderPathFactory;
@@ -73,14 +56,14 @@ public class DataSourcePresenter
     private boolean xa;
 
     @Inject
-    public DataSourcePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public DataSourcePresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -95,7 +78,7 @@ public class DataSourcePresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         name = request.getParameter(NAME, null);
         xa = Boolean.valueOf(request.getParameter(XA_PARAM, String.valueOf(false)));
@@ -127,4 +110,22 @@ public class DataSourcePresenter
     boolean isXa() {
         return xa;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(DATA_SOURCE_RUNTIME)
+    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS,
+            OPTIONAL + DATA_SOURCE_POOL_ADDRESS,
+            OPTIONAL + DATA_SOURCE_JDBC_ADDRESS,
+            OPTIONAL + XA_DATA_SOURCE_POOL_ADDRESS,
+            OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS})
+    public interface MyProxy extends ProxyPlace<DataSourcePresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
+        void setup();
+        void update(DataSource dataSource);
+    }
+    // @formatter:on
 }

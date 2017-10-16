@@ -36,18 +36,8 @@ import static org.jboss.hal.resources.CSS.preview;
 @SuppressWarnings("HardCodedStringLiteral")
 public class RhcpPresenter extends FinderPresenter<RhcpPresenter.MyView, RhcpPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken("rhcp")
-    public interface MyProxy extends ProxyPlace<RhcpPresenter> {}
-
-    public interface MyView extends FinderView {}
-    // @formatter:on
-
-
     @Inject
-    public RhcpPresenter(final EventBus eventBus, final MyView view, final MyProxy myProxy, final Finder finder,
-            final Resources resources) {
+    public RhcpPresenter(EventBus eventBus, MyView view, MyProxy myProxy, Finder finder, Resources resources) {
         super(eventBus, view, myProxy, finder, resources);
     }
 
@@ -68,4 +58,14 @@ public class RhcpPresenter extends FinderPresenter<RhcpPresenter.MyView, RhcpPre
                         .css(preview));
         return new PreviewContent("Red Hot Chili Peppers", elements);
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken("rhcp")
+    public interface MyProxy extends ProxyPlace<RhcpPresenter> {
+    }
+
+    public interface MyView extends FinderView {}
+    // @formatter:on
 }

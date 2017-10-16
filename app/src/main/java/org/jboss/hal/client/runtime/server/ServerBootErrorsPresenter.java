@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.server;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -28,9 +29,9 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -44,31 +45,18 @@ public class ServerBootErrorsPresenter
     static final String MANAGEMENT_ADDRESS = "/{selected.host}/{selected.server}/core-service=management";
     static final AddressTemplate MANAGEMENT_TEMPLATE = AddressTemplate.of(MANAGEMENT_ADDRESS);
 
-
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.SERVER_BOOT_ERRORS)
-    @Requires(value = MANAGEMENT_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerBootErrorsPresenter> {}
-
-    public interface MyView extends HalView {
-        void update(List<ModelNode> bootErrors);
-    }
-    // @formatter:on
-
-
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
 
     @Inject
-    public ServerBootErrorsPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final FinderPathFactory finderPathFactory) {
+    public ServerBootErrorsPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            StatementContext statementContext,
+            Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory) {
         super(eventBus, view, myProxy, finder);
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -86,4 +74,16 @@ public class ServerBootErrorsPresenter
         Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
         dispatcher.execute(operation, result -> getView().update(result.asList()));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.SERVER_BOOT_ERRORS)
+    @Requires(value = MANAGEMENT_ADDRESS, recursive = false)
+    public interface MyProxy extends ProxyPlace<ServerBootErrorsPresenter> {}
+
+    public interface MyView extends HalView {
+        void update(List<ModelNode> bootErrors);
+    }
+    // @formatter:on
 }

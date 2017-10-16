@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -61,30 +62,6 @@ import static org.jboss.hal.resources.Ids.JGROUPS_REMOTE_SITE;
 public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresenter.MyView, JGroupsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.JGROUPS)
-    @Requires(AddressTemplates.JGROUPS_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JGroupsPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<JGroupsPresenter> {
-        void update(ModelNode payload);
-
-        // stack resources
-        void updateProtocols(List<NamedNode> model);
-        void updateTransports(List<NamedNode> model);
-        void updateRelays(List<NamedNode> model);
-        void updateRemoteSite(List<NamedNode> model);
-        void showStackInnerPage(String id);
-
-        // channel resources
-        void showChannelInnerPage(String id);
-        void updateForks(List<NamedNode> model);
-        void updateChannelProtocols(List<NamedNode> model);
-    }
-    // @formatter:on
-
-
     private Resources resources;
     private MetadataRegistry metadataRegistry;
     private final FinderPathFactory finderPathFactory;
@@ -95,13 +72,13 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     private StatementContext filterStatementContext;
 
     @Inject
-    public JGroupsPresenter(final EventBus eventBus,
-            final MyView view, final Resources resources,
-            final MyProxy myProxy, MetadataRegistry metadataRegistry,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final CrudOperations crud) {
+    public JGroupsPresenter(EventBus eventBus,
+            MyView view, Resources resources,
+            MyProxy myProxy, MetadataRegistry metadataRegistry,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            CrudOperations crud) {
 
         super(eventBus, view, myProxy, finder);
         this.resources = resources;
@@ -112,7 +89,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
                 new FilteringStatementContext.Filter() {
                     @Override
                     @SuppressWarnings("HardCodedStringLiteral")
-                    public String filter(final String filterKey) {
+                    public String filter(String filterKey) {
                         switch (filterKey) {
                             case "selected.channel":
                                 return currentChannel;
@@ -125,7 +102,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
                     }
 
                     @Override
-                    public String[] filterTuple(final String placeholder) {
+                    public String[] filterTuple(String placeholder) {
                         return null;
                     }
                 });
@@ -196,41 +173,39 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         crud.readRecursive(JGROUPS_TEMPLATE, payload::accept);
     }
 
-    void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
-            final SafeHtml successMessage) {
+    void saveSingleton(AddressTemplate template, Map<String, Object> changedValues, SafeHtml successMessage) {
         Metadata metadata = metadataRegistry.lookup(template);
         crud.saveSingleton(template.resolve(filterStatementContext), changedValues, metadata, successMessage,
                 this::reload);
     }
 
-    void saveResource(final AddressTemplate template, final String resourceName,
-            final Map<String, Object> changedValues, final Metadata metadata, final SafeHtml successMessage) {
+    void saveResource(AddressTemplate template, String resourceName, Map<String, Object> changedValues,
+            Metadata metadata, SafeHtml successMessage) {
         crud.save(template.resolve(filterStatementContext, resourceName), changedValues, metadata, successMessage,
                 this::reload);
     }
 
-    <T> void resetSingleton(final AddressTemplate template, final String type, final Form<T> form,
-            final Metadata metadata) {
+    <T> void resetSingleton(AddressTemplate template, String type, Form<T> form, Metadata metadata) {
         crud.resetSingleton(type, template.resolve(filterStatementContext), form, metadata, new FinishReset<T>(form) {
             @Override
-            public void afterReset(final Form<T> form) {
+            public void afterReset(Form<T> form) {
                 reload();
             }
         });
     }
 
-    void resetResource(final AddressTemplate template, final String resourceName, final String type,
-            final Form<NamedNode> form, final Metadata metadata) {
+    void resetResource(AddressTemplate template, String resourceName, String type, Form<NamedNode> form,
+            Metadata metadata) {
         crud.reset(type, resourceName, template.resolve(filterStatementContext, resourceName), form, metadata,
                 new FinishReset<NamedNode>(form) {
                     @Override
-                    public void afterReset(final Form<NamedNode> form) {
+                    public void afterReset(Form<NamedNode> form) {
                         reload();
                     }
                 });
     }
 
-    void removeResource(final AddressTemplate template, String name, String displayName) {
+    void removeResource(AddressTemplate template, String name, String displayName) {
         ResourceAddress address = template.resolve(filterStatementContext, name);
         crud.remove(displayName, name, address, this::reload);
     }
@@ -277,7 +252,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
     // remote sites
 
-    void showRemoteSites(final NamedNode row) {
+    void showRemoteSites(NamedNode row) {
         List<NamedNode> model = asNamedNodes(failSafePropertyList(row.asModelNode(), JGROUPS_REMOTE_SITE));
         getView().updateRemoteSite(model);
     }
@@ -316,4 +291,28 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     String getCurrentFork() {
         return currentFork;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.JGROUPS)
+    @Requires(AddressTemplates.JGROUPS_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JGroupsPresenter> {}
+
+    public interface MyView extends HalView, HasPresenter<JGroupsPresenter> {
+        void update(ModelNode payload);
+
+        // stack resources
+        void updateProtocols(List<NamedNode> model);
+        void updateTransports(List<NamedNode> model);
+        void updateRelays(List<NamedNode> model);
+        void updateRemoteSite(List<NamedNode> model);
+        void showStackInnerPage(String id);
+
+        // channel resources
+        void showChannelInnerPage(String id);
+        void updateForks(List<NamedNode> model);
+        void updateChannelProtocols(List<NamedNode> model);
+    }
+    // @formatter:on
 }

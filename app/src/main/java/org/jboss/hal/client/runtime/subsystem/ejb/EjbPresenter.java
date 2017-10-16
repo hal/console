@@ -47,18 +47,6 @@ import static org.jboss.hal.meta.token.NameTokens.EJB3_RUNTIME;
 public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView, EjbPresenter.MyProxy> implements
         SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(EJB3_RUNTIME)
-    @Requires(EJB3_DEPLOYMENT_ADDRESS)
-    public interface MyProxy extends ProxyPlace<EjbPresenter> {}
-
-    public interface MyView extends HalView {
-        void update(EjbNode ejb);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -69,14 +57,14 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
     private String ejb;
 
     @Inject
-    public EjbPresenter(final EventBus eventBus,
-            final EjbPresenter.MyView view,
-            final EjbPresenter.MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public EjbPresenter(EventBus eventBus,
+            EjbPresenter.MyView view,
+            EjbPresenter.MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -85,7 +73,7 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         deployment = request.getParameter(DEPLOYMENT, null);
         subdeployment = request.getParameter(SUBDEPLOYMENT, null);
@@ -129,4 +117,17 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
         }
         return address;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(EJB3_RUNTIME)
+    @Requires(EJB3_DEPLOYMENT_ADDRESS)
+    public interface MyProxy extends ProxyPlace<EjbPresenter> {
+    }
+
+    public interface MyView extends HalView {
+        void update(EjbNode ejb);
+    }
+    // @formatter:on
 }

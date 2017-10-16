@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.ejb;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;

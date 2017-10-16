@@ -39,18 +39,6 @@ public class IiopPresenter
         extends MbuiPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyStandard
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.IIOP)
-    public interface MyProxy extends ProxyPlace<IiopPresenter> {}
-
-    public interface MyView extends MbuiView<IiopPresenter> {
-        void update(ModelNode modelNode);
-    }
-    // @formatter:on
-
-
     static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=iiop-openjdk";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
@@ -59,13 +47,13 @@ public class IiopPresenter
     private final StatementContext statementContext;
 
     @Inject
-    public IiopPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public IiopPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -92,4 +80,17 @@ public class IiopPresenter
     protected void reload() {
         crud.read(ROOT_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.IIOP)
+    public interface MyProxy extends ProxyPlace<IiopPresenter> {
+    }
+
+    public interface MyView extends MbuiView<IiopPresenter> {
+        void update(ModelNode modelNode);
+    }
+    // @formatter:on
 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.LinkedListMultimap;
@@ -199,10 +200,10 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         return section()
                 .add(h(1).textContent(title))
                 .add(p().css(clearfix)
-                    .add(span().textContent(metadata.getDescription().getDescription()))
-                    .add(a().css(clickable, pullRight).on(click, event -> refresh())
-                        .add(span().css(fontAwesome("refresh"), marginRight5))
-                        .add(span().textContent(resources.constants().refresh()))))
+                        .add(span().textContent(metadata.getDescription().getDescription()))
+                        .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                .add(span().css(fontAwesome("refresh"), marginRight5))
+                                .add(span().textContent(resources.constants().refresh()))))
                 .add(table.asElement())
                 .add(form.asElement())
                 .asElement();

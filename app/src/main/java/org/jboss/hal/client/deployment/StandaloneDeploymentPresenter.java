@@ -51,18 +51,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 public class StandaloneDeploymentPresenter extends
         ApplicationFinderPresenter<StandaloneDeploymentPresenter.MyView, StandaloneDeploymentPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.DEPLOYMENT)
-    @Requires(value = DEPLOYMENT_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<StandaloneDeploymentPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<StandaloneDeploymentPresenter> {
-        void reset();
-        void update(Deployment deployment, int tab);
-    }
-    // @formatter:on
-
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
@@ -129,4 +117,18 @@ public class StandaloneDeploymentPresenter extends
             reload(1);
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.DEPLOYMENT)
+    @Requires(value = DEPLOYMENT_ADDRESS, recursive = false)
+    public interface MyProxy extends ProxyPlace<StandaloneDeploymentPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<StandaloneDeploymentPresenter> {
+        void reset();
+        void update(Deployment deployment, int tab);
+    }
+    // @formatter:on
 }

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.logging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;

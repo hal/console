@@ -18,6 +18,7 @@ package org.jboss.hal.client.rhcp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.Maps;
@@ -107,9 +108,7 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
     private UnderTheBridgePresenter presenter;
 
     @Inject
-    public UnderTheBridgeView(final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Environment environment) {
+    public UnderTheBridgeView(Dispatcher dispatcher, StatementContext statementContext, Environment environment) {
         this.forms = new ArrayList<>();
 
         Tabs tabs = new Tabs();
@@ -156,12 +155,12 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
     }
 
     @Override
-    public void setPresenter(final UnderTheBridgePresenter presenter) {
+    public void setPresenter(UnderTheBridgePresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void show(final ModelNode model) {
+    public void show(ModelNode model) {
         for (ModelNodeForm<ModelNode> form : forms) {
             form.view(model);
         }

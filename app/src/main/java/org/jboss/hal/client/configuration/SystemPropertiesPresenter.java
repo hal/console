@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -44,29 +45,17 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class SystemPropertiesPresenter
         extends MbuiPresenter<SystemPropertiesPresenter.MyView, SystemPropertiesPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.SYSTEM_PROPERTIES)
-    public interface MyProxy extends ProxyPlace<SystemPropertiesPresenter> {}
-
-    public interface MyView extends MbuiView<SystemPropertiesPresenter> {
-        void update(List<NamedNode> systemProperties);
-    }
-    // @formatter:on
-
-
     static final String ROOT_ADDRESS = "/system-property=*";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
     private final CrudOperations crud;
 
     @Inject
-    public SystemPropertiesPresenter(final EventBus eventBus,
-            final SystemPropertiesPresenter.MyView view,
-            final SystemPropertiesPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud) {
+    public SystemPropertiesPresenter(EventBus eventBus,
+            SystemPropertiesPresenter.MyView view,
+            SystemPropertiesPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
     }
@@ -93,4 +82,16 @@ public class SystemPropertiesPresenter
         crud.add(Ids.SYSTEM_PROPERTY_ADD, Names.SYSTEM_PROPERTY, ROOT_TEMPLATE, asList(VALUE, BOOT_TIME),
                 (name, model) -> reload());
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.SYSTEM_PROPERTIES)
+    public interface MyProxy extends ProxyPlace<SystemPropertiesPresenter> {}
+
+    public interface MyView extends MbuiView<SystemPropertiesPresenter> {
+        void update(List<NamedNode> systemProperties);
+    }
+    // @formatter:on
 }

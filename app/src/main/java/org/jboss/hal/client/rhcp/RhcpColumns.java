@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.Iterators;
@@ -46,6 +47,9 @@ import static org.jboss.hal.resources.CSS.preview;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public class RhcpColumns {
+
+    private static final String YEAR = "year";
+
 
     @AsyncColumn("rhcp-color")
     public static class Color extends StaticItemColumn {
@@ -119,14 +123,14 @@ public class RhcpColumns {
         static final Map<String, Predicate<JsonObject>> DECADES = new LinkedHashMap<>();
 
         static {
-            DECADES.put("1980 - 1989", input -> input != null && (int) input.getNumber("year") >= 1980 && (int) input
-                    .getNumber("year") < 1990);
-            DECADES.put("1990 - 1999", input -> input != null && (int) input.getNumber("year") >= 1990 && (int) input
-                    .getNumber("year") < 2000);
-            DECADES.put("2000 - 2010", input -> input != null && (int) input.getNumber("year") >= 2000 && (int) input
-                    .getNumber("year") < 2010);
-            DECADES.put("2010 - 2020", input -> input != null && (int) input.getNumber("year") >= 2010 && (int) input
-                    .getNumber("year") < 2020);
+            DECADES.put("1980 - 1989", input -> input != null && (int) input.getNumber(YEAR) >= 1980 && (int) input
+                    .getNumber(YEAR) < 1990);
+            DECADES.put("1990 - 1999", input -> input != null && (int) input.getNumber(YEAR) >= 1990 && (int) input
+                    .getNumber(YEAR) < 2000);
+            DECADES.put("2000 - 2010", input -> input != null && (int) input.getNumber(YEAR) >= 2000 && (int) input
+                    .getNumber(YEAR) < 2010);
+            DECADES.put("2010 - 2020", input -> input != null && (int) input.getNumber(YEAR) >= 2010 && (int) input
+                    .getNumber(YEAR) < 2020);
         }
 
         @Inject
@@ -159,7 +163,7 @@ public class RhcpColumns {
                         @Override
                         public HTMLElement asElement() {
                             return ItemDisplay
-                                    .withSubtitle(item.getString("title"), String.valueOf(item.getNumber("year")));
+                                    .withSubtitle(item.getString("title"), String.valueOf(item.getNumber(YEAR)));
                         }
 
                         @Override

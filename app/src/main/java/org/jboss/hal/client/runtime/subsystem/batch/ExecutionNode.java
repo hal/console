@@ -27,8 +27,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 
 class ExecutionNode extends NamedNode {
 
-    enum BatchStatus {STARTED, STOPPED, COMPLETED, FAILED, ABANDONED, UNKNOWN}
-
     private final int executionId;
     private final int instanceId;
 
@@ -76,5 +74,10 @@ class ExecutionNode extends NamedNode {
 
     Date getLastUpdatedTime() {
         return failSafeDate(this, LAST_UPDATED_TIME);
+    }
+
+
+    enum BatchStatus {
+        STARTED, STOPPED, COMPLETED, FAILED, ABANDONED, UNKNOWN
     }
 }

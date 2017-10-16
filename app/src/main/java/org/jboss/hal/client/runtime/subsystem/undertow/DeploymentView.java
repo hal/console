@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -95,7 +96,8 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .column(Names.WEBSOCKET, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        websocketsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET, FORM), websocketMetadata)
+        websocketsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET, FORM),
+                websocketMetadata)
                 .includeRuntime()
                 .readOnly()
                 .build();
@@ -108,8 +110,10 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .asElement();
 
         navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, SERVLET, ENTRY), Names.SERVLET, pfIcon("enterprise"), servletSection);
-        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, ENTRY), Names.WEBSOCKETS, pfIcon("replicator"), websocketSection);
+        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, SERVLET, ENTRY), Names.SERVLET, pfIcon("enterprise"),
+                servletSection);
+        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, ENTRY), Names.WEBSOCKETS, pfIcon("replicator"),
+                websocketSection);
 
         registerAttachable(navigation, servletsTable, servletsForm, websocketsTable, websocketsForm);
 

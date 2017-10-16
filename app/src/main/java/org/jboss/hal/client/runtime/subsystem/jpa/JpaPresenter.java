@@ -47,18 +47,6 @@ import static org.jboss.hal.meta.token.NameTokens.JPA_RUNTIME;
 // TODO Support sub-deployments!
 public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(JPA_RUNTIME)
-    @Requires(JPA_DEPLOYMENT_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JpaPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<JpaPresenter> {
-        void update(JpaStatistic statistic);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -69,14 +57,14 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     private String persistenceUnit;
 
     @Inject
-    public JpaPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public JpaPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -126,4 +114,17 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
         }
         return address;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(JPA_RUNTIME)
+    @Requires(JPA_DEPLOYMENT_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JpaPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<JpaPresenter> {
+        void update(JpaStatistic statistic);
+    }
+    // @formatter:on
 }

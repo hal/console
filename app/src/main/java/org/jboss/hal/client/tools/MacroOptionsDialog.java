@@ -38,16 +38,10 @@ import static org.jboss.hal.dmr.macro.MacroOptions.RESOURCES;
  */
 public class MacroOptionsDialog {
 
-    public interface MacroOptionsCallback {
-
-        void onOptions(MacroOptions options);
-    }
-
-
     private final Dialog dialog;
     private final Form<MacroOptions> form;
 
-    public MacroOptionsDialog(final Macros macros, final Resources resources, final MacroOptionsCallback callback) {
+    public MacroOptionsDialog(Macros macros, Resources resources, MacroOptionsCallback callback) {
         Metadata metadata = Metadata.staticDescription(RESOURCES.macroOptions());
 
         form = new ModelNodeForm.Builder<MacroOptions>(Ids.MACRO_OPTIONS, metadata)
@@ -71,5 +65,11 @@ public class MacroOptionsDialog {
     public void show() {
         form.edit(new MacroOptions());
         dialog.show();
+    }
+
+
+    public interface MacroOptionsCallback {
+
+        void onOptions(MacroOptions options);
     }
 }

@@ -42,29 +42,17 @@ public class ExpertModePresenter
         extends ApplicationPresenter<ExpertModePresenter.MyView, ExpertModePresenter.MyProxy>
         implements SupportsExternalMode {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.EXPERT_MODE)
-    public interface MyProxy extends ProxyPlace<ExpertModePresenter> {}
-
-    public interface MyView extends HalView {
-        void setRoot(ResourceAddress root);
-    }
-    // @formatter:on
-
-
     private final StatementContext statementContext;
     private ResourceAddress address;
 
     @Inject
-    public ExpertModePresenter(final EventBus eventBus, final MyView view, final MyProxy myProxy,
-            StatementContext statementContext) {
+    public ExpertModePresenter(EventBus eventBus, MyView view, MyProxy myProxy, StatementContext statementContext) {
         super(eventBus, view, myProxy);
         this.statementContext = statementContext;
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String parameter = request.getParameter(Places.ADDRESS_PARAM, null);
         if (parameter != null) {
@@ -88,4 +76,16 @@ public class ExpertModePresenter
         super.onReset();
         getView().setRoot(address);
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.EXPERT_MODE)
+    public interface MyProxy extends ProxyPlace<ExpertModePresenter> {
+    }
+
+    public interface MyView extends HalView {
+        void setRoot(ResourceAddress root);
+    }
+    // @formatter:on
 }

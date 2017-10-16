@@ -31,26 +31,19 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-public class PatchingFinderPresenter extends FinderPresenter<PatchingFinderPresenter.MyView, PatchingFinderPresenter.MyProxy> {
-
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.PATCHING)
-    public interface MyProxy extends ProxyPlace<PatchingFinderPresenter> {}
-
-    public interface MyView extends FinderView {}
-    // @formatter:on
+public class PatchingFinderPresenter
+        extends FinderPresenter<PatchingFinderPresenter.MyView, PatchingFinderPresenter.MyProxy> {
 
     private final Environment environment;
 
     @Inject
     public PatchingFinderPresenter(
-            final EventBus eventBus,
-            final PatchingFinderPresenter.MyView view,
-            final PatchingFinderPresenter.MyProxy proxy,
-            final Finder finder,
-            final Resources resources,
-            final Environment environment) {
+            EventBus eventBus,
+            PatchingFinderPresenter.MyView view,
+            PatchingFinderPresenter.MyProxy proxy,
+            Finder finder,
+            Resources resources,
+            Environment environment) {
         super(eventBus, view, proxy, finder, resources);
         this.environment = environment;
     }
@@ -64,4 +57,14 @@ public class PatchingFinderPresenter extends FinderPresenter<PatchingFinderPrese
     protected PreviewContent initialPreview() {
         return new PreviewContent(Names.PATCHING, resources.previews().patching());
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.PATCHING)
+    public interface MyProxy extends ProxyPlace<PatchingFinderPresenter> {
+    }
+
+    public interface MyView extends FinderView {}
+    // @formatter:on
 }

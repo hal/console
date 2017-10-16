@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
 import javax.inject.Provider;
 
 import com.google.common.base.Strings;
@@ -107,6 +108,7 @@ import static org.jboss.hal.resources.CSS.*;
 class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHandler, HostResultHandler,
         ServerGroupActionHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {
 
+    private static final String DOT = ".";
     private static final String CONTAINER = "container";
 
     private final SecurityContextRegistry securityContextRegistry;
@@ -185,7 +187,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(HOST_STATE)
                 .append(RUNNING_MODE)
                 .append(model -> new PreviewAttribute(labelBuilder.label(MANAGEMENT_VERSION),
-                        String.join(".",
+                        String.join(DOT,
                                 model.get(MANAGEMENT_MAJOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MINOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MICRO_VERSION).asString())
@@ -284,7 +286,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
         // remember selection
-        HTMLElement element = (HTMLElement) document.querySelector("." + topology + " ." + selected);
+        HTMLElement element = (HTMLElement) document.querySelector(DOT + topology + " ." + selected);
         String hostName = element != null ? String.valueOf(element.dataset.get("host")) : null;
         String serverGroupName = element != null ? String.valueOf(element.dataset.get("serverGroup")) : null;
         String serverName = element != null ? String.valueOf(element.dataset.get("server")) : null;
@@ -578,7 +580,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void adjustTdHeight() {
-        NodeList<Element> servers = document.querySelectorAll("." + topology + " ." + CSS.servers);
+        NodeList<Element> servers = document.querySelectorAll(DOT + topology + " ." + CSS.servers);
         Elements.stream(servers)
                 .filter(htmlElements())
                 .map(asHtmlElement())
@@ -595,7 +597,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void clearSelected() {
-        NodeList<Element> selectedNodes = document.querySelectorAll("." + topology + " ." + selected);
+        NodeList<Element> selectedNodes = document.querySelectorAll(DOT + topology + " ." + selected);
         Elements.elements(selectedNodes).forEach(element -> element.classList.remove(selected));
     }
 
@@ -857,7 +859,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Set<String> status = new HashSet<>();
         ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
             @Override
-            protected void onPending(final Server server) {}
+            protected void onPending(final Server server) {
+            }
 
             @Override
             protected void onBootErrors(final Server server) {
@@ -875,7 +878,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             }
 
             @Override
-            protected void onStarting(final Server server) {}
+            protected void onStarting(final Server server) {
+            }
 
             @Override
             protected void onSuspended(final Server server) {

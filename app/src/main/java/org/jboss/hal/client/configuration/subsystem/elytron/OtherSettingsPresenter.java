@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -60,39 +61,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
         implements SupportsExpertMode {
-
-    @ProxyCodeSplit
-    @Requires(value = {AGGREGATE_PROVIDERS_ADDRESS,
-            AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS,
-            AUTHENTICATION_CONFIGURATION_ADDRESS,
-            AUTHENTICATION_CONTEXT_ADDRESS,
-            CLIENT_SSL_CONTEXT_ADDRESS,
-            CREDENTIAL_STORE_ADDRESS,
-            DIR_CONTEXT_ADDRESS,
-            FILE_AUDIT_LOG_ADDRESS,
-            FILTERING_KEY_STORE_ADDRESS,
-            KEY_MANAGER_ADDRESS,
-            KEY_STORE_ADDRESS,
-            LDAP_KEY_STORE_ADDRESS,
-            PERIODIC_FILE_AUDIT_LOG_ADDRESS,
-            POLICY_ADDRESS,
-            PROVIDER_LOADER_ADDRESS,
-            SECURITY_DOMAIN_ADDRESS,
-            SERVER_SSL_CONTEXT_ADDRESS,
-            SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
-            SYSLOG_AUDIT_LOG_ADDRESS,
-            TRUST_MANAGER_ADDRESS})
-    @NameToken(NameTokens.ELYTRON_OTHER)
-    public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
-
-
-    // @formatter:off
-    public interface MyView extends MbuiView<OtherSettingsPresenter> {
-        void updateResourceElement(String resource, List<NamedNode> nodes);
-        void updateLdapKeyStore(List<NamedNode> model);
-        void updatePolicy(NamedNode policy);
-    }
-    // @formatter:on
 
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
@@ -317,4 +285,38 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                     }
                 });
     }
+
+
+    @ProxyCodeSplit
+    @Requires(value = {AGGREGATE_PROVIDERS_ADDRESS,
+            AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS,
+            AUTHENTICATION_CONFIGURATION_ADDRESS,
+            AUTHENTICATION_CONTEXT_ADDRESS,
+            CLIENT_SSL_CONTEXT_ADDRESS,
+            CREDENTIAL_STORE_ADDRESS,
+            DIR_CONTEXT_ADDRESS,
+            FILE_AUDIT_LOG_ADDRESS,
+            FILTERING_KEY_STORE_ADDRESS,
+            KEY_MANAGER_ADDRESS,
+            KEY_STORE_ADDRESS,
+            LDAP_KEY_STORE_ADDRESS,
+            PERIODIC_FILE_AUDIT_LOG_ADDRESS,
+            POLICY_ADDRESS,
+            PROVIDER_LOADER_ADDRESS,
+            SECURITY_DOMAIN_ADDRESS,
+            SERVER_SSL_CONTEXT_ADDRESS,
+            SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
+            SYSLOG_AUDIT_LOG_ADDRESS,
+            TRUST_MANAGER_ADDRESS})
+    @NameToken(NameTokens.ELYTRON_OTHER)
+    public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
+
+
+    // @formatter:off
+    public interface MyView extends MbuiView<OtherSettingsPresenter> {
+        void updateResourceElement(String resource, List<NamedNode> nodes);
+        void updateLdapKeyStore(List<NamedNode> model);
+        void updatePolicy(NamedNode policy);
+    }
+    // @formatter:on
 }

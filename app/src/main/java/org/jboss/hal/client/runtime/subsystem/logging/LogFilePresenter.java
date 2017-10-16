@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.logging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -49,29 +50,10 @@ import static elemental2.dom.DomGlobal.setInterval;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.token.NameTokens.LOG_FILE;
 
 public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresenter.MyView, LogFilePresenter.MyProxy> {
-
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(LOG_FILE)
-    @Requires(LOG_FILE_ADDRESS)
-    public interface MyProxy extends ProxyPlace<LogFilePresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<LogFilePresenter> {
-        void loading();
-        void show(LogFile logFile, int lines, String content);
-        void refresh(int lines, String content);
-        int visibleLines();
-    }
-    // @formatter:on
-
 
     private static final int REFRESH_INTERVAL = 1000;
 
@@ -84,14 +66,14 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     private double intervalHandle;
 
     @Inject
-    public LogFilePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public LogFilePresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -110,7 +92,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         logFileName = request.getParameter(NAME, null);
     }
@@ -191,7 +173,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         }
     }
 
-    void toggleTailMode(final boolean on) {
+    void toggleTailMode(boolean on) {
         if (logFile != null) {
             if (on) {
                 if (!inTailMode()) {
@@ -210,4 +192,20 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     private boolean inTailMode() {
         return intervalHandle != -1;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(LOG_FILE)
+    @Requires(LOG_FILE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<LogFilePresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<LogFilePresenter> {
+        void loading();
+        void show(LogFile logFile, int lines, String content);
+        void refresh(int lines, String content);
+        int visibleLines();
+    }
+    // @formatter:on
 }

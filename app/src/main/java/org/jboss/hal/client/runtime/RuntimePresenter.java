@@ -33,25 +33,11 @@ import org.jboss.hal.resources.Resources;
 
 public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, RuntimePresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.RUNTIME)
-    public interface MyProxy extends ProxyPlace<RuntimePresenter> {}
-
-    public interface MyView extends FinderView {}
-    // @formatter:on
-
-
     private final Environment environment;
 
     @Inject
-    public RuntimePresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final Resources resources,
-            final Environment environment) {
+    public RuntimePresenter(EventBus eventBus, MyView view, MyProxy proxy,
+            Finder finder, Resources resources, Environment environment) {
         super(eventBus, view, proxy, finder, resources);
         this.environment = environment;
     }
@@ -68,4 +54,14 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
                         resources.previews().runtimeStandalone() :
                         resources.previews().runtimeDomain());
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.RUNTIME)
+    public interface MyProxy extends ProxyPlace<RuntimePresenter> {
+    }
+
+    public interface MyView extends FinderView {}
+    // @formatter:on
 }

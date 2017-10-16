@@ -34,14 +34,6 @@ import org.jboss.hal.core.mvp.Slots;
 /** Presenter which assembles the root layout: header, main content and footer. */
 public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter.MyProxy> implements Slots {
 
-    // @formatter:off
-    @ProxyStandard
-    public interface MyProxy extends Proxy<RootPresenter> {}
-
-    public interface MyView extends View {}
-    // @formatter:on
-
-
     static final IsSingleSlot<HeaderPresenter> SLOT_HEADER_CONTENT = new PermanentSlot<>();
     static final IsSingleSlot<FooterPresenter> SLOT_FOOTER_CONTENT = new PermanentSlot<>();
 
@@ -75,4 +67,13 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
         super.onReveal();
         getEventBus().fireEvent(new ApplicationReadyEvent());
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    public interface MyProxy extends Proxy<RootPresenter> {
+    }
+
+    public interface MyView extends View {}
+    // @formatter:on
 }

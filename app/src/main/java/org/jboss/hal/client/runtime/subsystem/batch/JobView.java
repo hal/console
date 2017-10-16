@@ -17,9 +17,9 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.Toolbar.Action;
 import org.jboss.hal.ballroom.Toolbar.Attribute;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;

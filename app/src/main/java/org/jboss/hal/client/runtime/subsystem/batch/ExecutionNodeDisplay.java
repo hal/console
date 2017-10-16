@@ -48,6 +48,9 @@ import static org.jboss.hal.resources.FontAwesomeSize.x2;
 
 class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
 
+    private static final String COLON = ": ";
+    private static final String BR = "<br/>";
+
     private final ExecutionNode item;
     private final JobPresenter presenter;
     private final Resources resources;
@@ -85,24 +88,26 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
             case UNKNOWN:
                 builder.css(pfIcon("help"));
                 break;
+            default:
+                break;
         }
         return builder.asElement();
     }
 
     @Override
     public String getTitle() {
-        return Names.EXECUTION_ID + ": " + item.getExecutionId();
+        return Names.EXECUTION_ID + COLON + item.getExecutionId();
     }
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public SafeHtml getDescriptionHtml() {
         SafeHtmlBuilder html = new SafeHtmlBuilder();
-        html.appendEscaped(Names.INSTANCE_ID + ": " + item.getInstanceId())
-                .appendHtmlConstant("<br/>")
-                .appendEscaped(Names.BATCH_STATUS + ": " + item.getBatchStatus());
+        html.appendEscaped(Names.INSTANCE_ID + COLON + item.getInstanceId())
+                .appendHtmlConstant(BR)
+                .appendEscaped(Names.BATCH_STATUS + COLON + item.getBatchStatus());
         if (item.getExitError() != null) {
-            html.appendHtmlConstant("<br/>").appendEscaped(item.getExitError());
+            html.appendHtmlConstant(BR).appendEscaped(item.getExitError());
         }
         return html.toSafeHtml();
     }
@@ -113,14 +118,14 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
         ElementsBuilder elements = elements();
         elements.add(div().css(halExecutionTime)
                 .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
-                        .appendEscaped(resources.constants().start() + ": ")
+                        .appendEscaped(resources.constants().start() + COLON)
                         .appendEscaped(mediumDateTime(item.getCreateTime()))
-                        .appendHtmlConstant("<br/>")
-                        .appendEscaped(resources.constants().finished() + ": ")
+                        .appendHtmlConstant(BR)
+                        .appendEscaped(resources.constants().finished() + COLON)
                         .appendEscaped(failsSafeTime(item, END_TIME,
                                 itm -> mediumDateTime(item.getEndTime())))
-                        .appendHtmlConstant("<br/>")
-                        .appendEscaped(resources.constants().lastModified() + ": ")
+                        .appendHtmlConstant(BR)
+                        .appendEscaped(resources.constants().lastModified() + COLON)
                         .appendEscaped(failsSafeTime(item, LAST_UPDATED_TIME,
                                 itm -> mediumDateTime(item.getLastUpdatedTime())))
                         .toSafeHtml())));

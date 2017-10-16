@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -42,14 +43,14 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -71,19 +72,6 @@ public class JcaPresenter
         extends ApplicationFinderPresenter<JcaPresenter.MyView, JcaPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(JCA_ADDRESS)
-    @NameToken(NameTokens.JCA)
-    public interface MyProxy extends ProxyPlace<JcaPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<JcaPresenter> {
-        void update(ModelNode payload);
-        void updateThreadPools(AddressTemplate workmanagerTemplate, String workmanager,
-                List<Property> lrt, List<Property> srt);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
@@ -92,16 +80,16 @@ public class JcaPresenter
     private final Resources resources;
 
     @Inject
-    public JcaPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public JcaPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -135,44 +123,41 @@ public class JcaPresenter
 
     // ------------------------------------------------------ generic crud
 
-    void add(final String type, final String name, final AddressTemplate template, final ModelNode payload) {
+    void add(String type, String name, AddressTemplate template, ModelNode payload) {
         crud.add(type, name, template, payload, (n, a) -> reload());
     }
 
-    void saveResource(final AddressTemplate template, final String name, final Map<String, Object> changedValues,
-            final SafeHtml successMessage) {
+    void saveResource(AddressTemplate template, String name, Map<String, Object> changedValues,
+            SafeHtml successMessage) {
         crud.save(name, template, changedValues, successMessage, this::reload);
     }
 
-    void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
-            final SafeHtml successMessage) {
+    void saveSingleton(AddressTemplate template, Map<String, Object> changedValues, SafeHtml successMessage) {
         crud.saveSingleton(template, changedValues, successMessage, this::reload);
     }
 
-    void resetResource(final AddressTemplate template, final String type, final String name,
-            final Form<NamedNode> form, final Metadata metadata) {
+    void resetResource(AddressTemplate template, String type, String name, Form<NamedNode> form, Metadata metadata) {
         crud.reset(type, name, template, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
-            public void afterReset(final Form<NamedNode> form) {
+            public void afterReset(Form<NamedNode> form) {
                 reload();
             }
         });
     }
 
-    void resetSingleton(final String type, final AddressTemplate template, final Form<ModelNode> form,
-            final Metadata metadata) {
+    void resetSingleton(String type, AddressTemplate template, Form<ModelNode> form, Metadata metadata) {
         crud.resetSingleton(type, template, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
     }
 
-    void removeSingleton(final String type, final AddressTemplate template, final Form<ModelNode> form) {
+    void removeSingleton(String type, AddressTemplate template, Form<ModelNode> form) {
         crud.removeSingleton(type, template, new FinishRemove<ModelNode>(form) {
             @Override
-            public void afterRemove(final Form<ModelNode> form) {
+            public void afterRemove(Form<ModelNode> form) {
                 reload();
             }
         });
@@ -274,7 +259,7 @@ public class JcaPresenter
         ResourceAddress address = threadPoolAddress(workmanagerTemplate, workmanager, threadPool);
         crud.reset(THREAD_POOL, threadPool.getName(), address, form, metadata, new FinishReset<ThreadPool>(form) {
             @Override
-            public void afterReset(final Form<ThreadPool> form) {
+            public void afterReset(Form<ThreadPool> form) {
                 loadThreadPools(workmanagerTemplate, workmanager);
             }
         });
@@ -286,7 +271,7 @@ public class JcaPresenter
                 () -> loadThreadPools(workmanagerTemplate, workmanager));
     }
 
-    private Composite threadPoolsOperation(final AddressTemplate template, final String name) {
+    private Composite threadPoolsOperation(AddressTemplate template, String name) {
         Operation lrtOp = new Operation.Builder(template.resolve(statementContext, name),
                 READ_CHILDREN_RESOURCES_OPERATION
         )
@@ -307,4 +292,18 @@ public class JcaPresenter
                 : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + "=" + threadPool.getName());
         return template.resolve(statementContext, workmanager);
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(JCA_ADDRESS)
+    @NameToken(NameTokens.JCA)
+    public interface MyProxy extends ProxyPlace<JcaPresenter> {}
+
+    public interface MyView extends HalView, HasPresenter<JcaPresenter> {
+        void update(ModelNode payload);
+        void updateThreadPools(AddressTemplate workmanagerTemplate, String workmanager,
+                List<Property> lrt, List<Property> srt);
+    }
+    // @formatter:on
 }

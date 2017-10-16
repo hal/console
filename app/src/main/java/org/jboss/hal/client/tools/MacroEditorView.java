@@ -16,6 +16,7 @@
 package org.jboss.hal.client.tools;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
@@ -24,17 +25,17 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
-import org.jboss.hal.ballroom.listview.ListView;
-import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
+import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;

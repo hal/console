@@ -27,9 +27,9 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -43,18 +43,6 @@ import static org.jboss.hal.meta.token.NameTokens.SERVER_RUNTIME;
 public class ServerRuntimePresenter
         extends ApplicationFinderPresenter<ServerRuntimePresenter.MyView, ServerRuntimePresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(SERVER_RUNTIME)
-    @Requires(SERVER_RUNTIME_ADDRESS)
-    public interface MyProxy extends ProxyPlace<ServerRuntimePresenter> {}
-
-    public interface MyView extends HalView {
-        void update(ModelNode modelNode);
-    }
-    // @formatter:on
-
-
     static final String SERVER_RUNTIME_ADDRESS = "/{selected.host}/{selected.server}/core-service=platform-mbean/type=runtime";
     static final AddressTemplate SERVER_RUNTIME_TEMPLATE = AddressTemplate.of(SERVER_RUNTIME_ADDRESS);
 
@@ -64,14 +52,14 @@ public class ServerRuntimePresenter
     private final Resources resources;
 
     @Inject
-    public ServerRuntimePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public ServerRuntimePresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -94,4 +82,17 @@ public class ServerRuntimePresenter
                 .build();
         dispatcher.execute(operation, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(SERVER_RUNTIME)
+    @Requires(SERVER_RUNTIME_ADDRESS)
+    public interface MyProxy extends ProxyPlace<ServerRuntimePresenter> {
+    }
+
+    public interface MyView extends HalView {
+        void update(ModelNode modelNode);
+    }
+    // @formatter:on
 }

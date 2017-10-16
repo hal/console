@@ -34,25 +34,16 @@ import org.jboss.hal.resources.Resources;
 public class ConfigurationPresenter
         extends FinderPresenter<ConfigurationPresenter.MyView, ConfigurationPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.CONFIGURATION)
-    public interface MyProxy extends ProxyPlace<ConfigurationPresenter> {}
-
-    public interface MyView extends FinderView {}
-    // @formatter:on
-
-
     private final Environment environment;
 
     @Inject
     public ConfigurationPresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final Resources resources,
-            final Environment environment) {
+            EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            Resources resources,
+            Environment environment) {
         super(eventBus, view, proxy, finder, resources);
         this.environment = environment;
     }
@@ -69,4 +60,14 @@ public class ConfigurationPresenter
                         resources.previews().configurationStandalone() :
                         resources.previews().configurationDomain());
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.CONFIGURATION)
+    public interface MyProxy extends ProxyPlace<ConfigurationPresenter> {
+    }
+
+    public interface MyView extends FinderView {}
+    // @formatter:on
 }

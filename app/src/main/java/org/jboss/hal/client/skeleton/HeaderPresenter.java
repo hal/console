@@ -79,7 +79,8 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
  * Presenter which controls the header. The header is a central UI element in HAL showing global state such as
- * reload state, notifications or the current user. Additionally it contains the navigation which is either the top level
+ * reload state, notifications or the current user. Additionally it contains the navigation which is either the top
+ * level
  * categories (tlc) or the breadcrumb.
  * <p>
  * The breadcrumb shows path like information such as the selected finder path or the selected address in the model
@@ -110,39 +111,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         HostResultHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler,
         ProcessStateHandler, UserChangedHandler, RolesChangedHandler, IsElement {
 
-    // @formatter:off
-    public interface MyView extends HalView, HasPresenter<HeaderPresenter> {
-        void init(Environment environment, Endpoints endpoints, Settings settings, User user);
-        void updateRoles(Environment environment, Settings settings, User user);
-
-        void topLevelCategoryMode();
-        void applicationMode();
-
-        void showReload(String text, String tooltip);
-        void hideReload();
-        void hideReconnect();
-
-        void onMessage(Message message);
-        void onMarkAllAsRead();
-        void onClearMessage();
-
-        void selectTopLevelCategory(String nameToken);
-        void updateLinks(FinderContext finderContext);
-
-        void updateBreadcrumb(String title);
-        void updateBreadcrumb(FinderContext finderContext);
-        void updateBreadcrumb(ModelBrowserPath modelBrowserPath);
-
-        void showBackToNormalMode();
-        void showExpertMode(ResourceAddress address);
-        void hideSwitchMode();
-
-        void showExternal(PlaceRequest placeRequest);
-        void hideExternal();
-    }
-    // @formatter:on
-
-
     static final int MAX_BREADCRUMB_VALUE_LENGTH = 20;
 
     private final PlaceManager placeManager;
@@ -160,16 +128,16 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     private ServerState serverState;
 
     @Inject
-    public HeaderPresenter(final EventBus eventBus,
-            final MyView view,
-            final PlaceManager placeManager,
-            final Places places,
-            final Environment environment,
-            final Endpoints endpoints,
-            final Settings settings,
-            final User user,
-            final ServerActions serverActions,
-            final Resources resources) {
+    public HeaderPresenter(EventBus eventBus,
+            MyView view,
+            PlaceManager placeManager,
+            Places places,
+            Environment environment,
+            Endpoints endpoints,
+            Settings settings,
+            User user,
+            ServerActions serverActions,
+            Resources resources) {
         super(eventBus, view);
         this.placeManager = placeManager;
         this.places = places;
@@ -217,7 +185,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     // ------------------------------------------------------ reload / restart
 
     @Override
-    public void onProcessState(final ProcessStateEvent event) {
+    public void onProcessState(ProcessStateEvent event) {
         serverState = event.getProcessState().first();
         if (environment.isStandalone()) {
             if (serverState.getState() == State.RELOAD_REQUIRED) {
@@ -254,22 +222,22 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     @Override
-    public void onServerAction(final ServerActionEvent event) {
+    public void onServerAction(ServerActionEvent event) {
         resetServerState();
     }
 
     @Override
-    public void onServerResult(final ServerResultEvent event) {
+    public void onServerResult(ServerResultEvent event) {
         resetServerState();
     }
 
     @Override
-    public void onHostResult(final HostResultEvent event) {
+    public void onHostResult(HostResultEvent event) {
         resetServerState();
     }
 
     @Override
-    public void onServerGroupResult(final ServerGroupResultEvent event) {
+    public void onServerGroupResult(ServerGroupResultEvent event) {
         resetServerState();
     }
 
@@ -282,7 +250,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     // ------------------------------------------------------ messages & global state
 
     @Override
-    public void onMessage(final MessageEvent event) {
+    public void onMessage(MessageEvent event) {
         getView().onMessage(event.getMessage());
     }
 
@@ -315,7 +283,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     // ------------------------------------------------------ tlc & breadcrumb
 
     @Override
-    public void onHeaderMode(final HeaderModeEvent event) {
+    public void onHeaderMode(HeaderModeEvent event) {
         presenterType = event.getPresenterType();
         if (presenterType == PresenterType.TOP_LEVEL_CATEGORY) {
             getView().topLevelCategoryMode();
@@ -347,7 +315,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     @Override
-    public void onFinderContext(final FinderContextEvent event) {
+    public void onFinderContext(FinderContextEvent event) {
         getView().updateLinks(event.getFinderContext());
         if (presenterType == PresenterType.APPLICATION) {
             lastFinderContext = event.getFinderContext();
@@ -356,7 +324,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     @Override
-    public void onModelBrowserAddress(final ModelBrowserPathEvent event) {
+    public void onModelBrowserAddress(ModelBrowserPathEvent event) {
         if (presenterType == PresenterType.APPLICATION) {
             getView().updateBreadcrumb(event.getPath());
         }
@@ -370,16 +338,16 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     // ------------------------------------------------------ user & roles
 
     @Override
-    public void onUserChanged(final UserChangedEvent event) {
+    public void onUserChanged(UserChangedEvent event) {
         getView().updateRoles(environment, settings, user);
     }
 
     @Override
-    public void onRolesChanged(final RolesChangedEvent event) {
+    public void onRolesChanged(RolesChangedEvent event) {
         getView().updateRoles(environment, settings, user);
     }
 
-    void runAs(final String role) {
+    void runAs(String role) {
         DialogFactory.showConfirmation(resources.constants().runAsRoleTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, role);
@@ -415,11 +383,47 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         }
     }
 
-    void goTo(final String token) {
+    void goTo(String token) {
         goTo(new PlaceRequest.Builder().nameToken(token).build());
     }
 
     void goTo(PlaceRequest placeRequest) {
         placeManager.revealPlace(placeRequest);
     }
+
+
+    // ------------------------------------------------------ inner classes
+
+
+    // @formatter:off
+    public interface MyView extends HalView, HasPresenter<HeaderPresenter> {
+        void init(Environment environment, Endpoints endpoints, Settings settings, User user);
+        void updateRoles(Environment environment, Settings settings, User user);
+
+        void topLevelCategoryMode();
+        void applicationMode();
+
+        void showReload(String text, String tooltip);
+        void hideReload();
+        void hideReconnect();
+
+        void onMessage(Message message);
+        void onMarkAllAsRead();
+        void onClearMessage();
+
+        void selectTopLevelCategory(String nameToken);
+        void updateLinks(FinderContext finderContext);
+
+        void updateBreadcrumb(String title);
+        void updateBreadcrumb(FinderContext finderContext);
+        void updateBreadcrumb(ModelBrowserPath modelBrowserPath);
+
+        void showBackToNormalMode();
+        void showExpertMode(ResourceAddress address);
+        void hideSwitchMode();
+
+        void showExternal(PlaceRequest placeRequest);
+        void hideExternal();
+    }
+    // @formatter:on
 }

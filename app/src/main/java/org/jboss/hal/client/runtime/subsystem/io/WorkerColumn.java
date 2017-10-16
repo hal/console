@@ -45,6 +45,8 @@ import static org.jboss.hal.resources.CSS.itemText;
 @Requires(WORKER_ADDRESS)
 public class WorkerColumn extends FinderColumn<NamedNode> {
 
+    private static final String SLASH = " / ";
+
     @Inject
     public WorkerColumn(Finder finder,
             Dispatcher dispatcher,
@@ -69,11 +71,11 @@ public class WorkerColumn extends FinderColumn<NamedNode> {
                     @Override
                     public HTMLElement asElement() {
                         LabelBuilder labelBuilder = new LabelBuilder();
-                        String threadPool = item.get(CORE_POOL_SIZE).asInt() + " / " +
-                                item.get(MAX_POOL_SIZE).asInt() + " / " +
+                        String threadPool = item.get(CORE_POOL_SIZE).asInt() + SLASH +
+                                item.get(MAX_POOL_SIZE).asInt() + SLASH +
                                 item.get(TASK_MAX_THREADS).asInt();
-                        String threadPoolTitle = labelBuilder.label(CORE_POOL_SIZE) + " / " +
-                                labelBuilder.label(MAX_POOL_SIZE) + " / " +
+                        String threadPoolTitle = labelBuilder.label(CORE_POOL_SIZE) + SLASH +
+                                labelBuilder.label(MAX_POOL_SIZE) + SLASH +
                                 labelBuilder.label(TASK_MAX_THREADS);
                         return span().css(itemText)
                                 .add(span().textContent(item.getName()))

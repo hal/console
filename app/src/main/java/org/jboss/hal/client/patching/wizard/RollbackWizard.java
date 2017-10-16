@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.client.patching.wizard;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Consumer;
 import javax.inject.Provider;
 
 import org.jboss.hal.ballroom.wizard.Wizard;
@@ -46,7 +43,88 @@ import static org.jboss.hal.client.patching.wizard.PatchState.ROLLBACK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
-public class RollbackWizard {
+public class RollbackWizard extends PatchWizard {
+
+    private final String patchId;
+
+    public RollbackWizard(String patchId, Resources resources, Environment environment, Metadata metadata,
+            StatementContext statementContext, Dispatcher dispatcher,
+            Provider<Progress> progress, ServerActions serverActions, Callback callback) {
+        super(resources, environment, metadata, statementContext, dispatcher, progress, serverActions, callback);
+        this.patchId = patchId;
+    }
+
+    public void show() {
+        Messages messages = resources.messages();
+        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(resources.constants().rollback(),
+                new PatchContext());
+
+        checkServersState(servers -> {
+            if (servers != null) {
+                wb.addStep(CHECK_SERVERS, new CheckRunningServersStep(resources, servers,
+                        statementContext.selectedHost()));
+            }
+            wb.addStep(ROLLBACK, new org.jboss.hal.client.patching.wizard.RollbackStep(metadata, resources,
+                    statementContext.selectedHost(), patchId))
+
+                    .onBack((context, currentState) -> {
+                        PatchState previous = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                break;
+                            case ROLLBACK:
+                                previous = CHECK_SERVERS;
+                                break;
+                            default:
+                                break;
+                        }
+                        return previous;
+                    })
+                    .onNext((context, currentState) -> {
+                        PatchState next = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                next = ROLLBACK;
+                                break;
+                            case ROLLBACK:
+                                break;
+                            default:
+                                break;
+                        }
+                        return next;
+                    })
+
+                    .stayOpenAfterFinish()
+                    .onFinish((wzd, context) -> {
+                        String name = context.patchId;
+                        wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
+
+                        series(new FlowContext(progress.get()),
+                                new RollbackTask(statementContext, dispatcher, serverActions, context))
+                                .subscribe(new Outcome<FlowContext>() {
+                                    @Override
+                                    public void onError(FlowContext context, Throwable error) {
+                                        wzd.showError(resources.constants().rollbackError(),
+                                                messages.rollbackError(error.getMessage()),
+                                                error.getMessage());
+                                    }
+
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        callback.execute();
+                                        wzd.showSuccess(
+                                                resources.constants().rollbackSuccessful(),
+                                                messages.rollbackSucessful(name),
+                                                messages.view(Names.PATCH),
+                                                cxt -> { /* nothing to do, content is already selected */ });
+                                    }
+                                });
+                    });
+            Wizard<PatchContext, PatchState> wizard = wb.build();
+            wizard.show();
+        });
+    }
+
 
     static class RollbackTask implements Task<FlowContext> {
 
@@ -93,136 +171,4 @@ public class RollbackWizard {
             return dispatcher.execute(operation).toCompletable();
         }
     }
-
-
-    private Resources resources;
-    private Environment environment;
-    private String patchId;
-    private Metadata metadata;
-    private StatementContext statementContext;
-    private Dispatcher dispatcher;
-    private Provider<Progress> progress;
-    private ServerActions serverActions;
-    private Callback callback;
-
-    public RollbackWizard(Resources resources, Environment environment, String patchId, Metadata metadata,
-            StatementContext statementContext, Dispatcher dispatcher, Provider<Progress> progress,
-            ServerActions serverActions, Callback callback) {
-
-        this.resources = resources;
-        this.environment = environment;
-        this.patchId = patchId;
-        this.metadata = metadata;
-        this.statementContext = statementContext;
-        this.dispatcher = dispatcher;
-        this.progress = progress;
-        this.serverActions = serverActions;
-        this.callback = callback;
-    }
-
-    public void show() {
-        Messages messages = resources.messages();
-        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(resources.constants().rollback(),
-                new PatchContext());
-
-        checkServersState(servers -> {
-            if (servers != null) {
-                wb.addStep(CHECK_SERVERS, new CheckRunningServersStep(resources, servers,
-                        statementContext.selectedHost()));
-            }
-            wb.addStep(ROLLBACK, new org.jboss.hal.client.patching.wizard.RollbackStep(metadata, resources,
-                    statementContext.selectedHost(), patchId))
-
-                    .onBack((context, currentState) -> {
-                        PatchState previous = null;
-                        switch (currentState) {
-                            case CHECK_SERVERS:
-                                break;
-                            case ROLLBACK:
-                                previous = CHECK_SERVERS;
-                                break;
-                        }
-                        return previous;
-                    })
-                    .onNext((context, currentState) -> {
-                        PatchState next = null;
-                        switch (currentState) {
-                            case CHECK_SERVERS:
-                                next = ROLLBACK;
-                                break;
-                            case ROLLBACK:
-                                break;
-                        }
-                        return next;
-                    })
-
-                    .stayOpenAfterFinish()
-                    .onFinish((wzd, context) -> {
-                        String name = context.patchId;
-                        wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
-
-                        series(new FlowContext(progress.get()),
-                                new RollbackTask(statementContext, dispatcher, serverActions, context))
-                                .subscribe(new Outcome<FlowContext>() {
-                                    @Override
-                                    public void onError(FlowContext context, Throwable error) {
-                                        wzd.showError(resources.constants().rollbackError(),
-                                                messages.rollbackError(error.getMessage()),
-                                                error.getMessage());
-                                    }
-
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        callback.execute();
-                                        wzd.showSuccess(
-                                                resources.constants().rollbackSuccessful(),
-                                                messages.rollbackSucessful(name),
-                                                messages.view(Names.PATCH),
-                                                cxt -> { /* nothing to do, content is already selected */ });
-                                    }
-                                });
-                    });
-            Wizard<PatchContext, PatchState> wizard = wb.build();
-            wizard.show();
-        });
-    }
-
-    /**
-     * Checks if each servers of a host is stopped, if the server is started, asks the user to stop them.
-     * It is a good practice to apply/rollback a patch to a stopped server to prevent application and internal services
-     * from failing.
-     */
-    private void checkServersState(Consumer<List<Property>> callback) {
-        if (environment.isStandalone()) {
-            callback.accept(null);
-        } else {
-
-            String host = statementContext.selectedHost();
-            ResourceAddress address = new ResourceAddress().add(HOST, host);
-            Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(CHILD_TYPE, SERVER_CONFIG)
-                    .build();
-
-            dispatcher.execute(operation, result -> {
-                List<Property> servers = result.asPropertyList();
-                boolean anyServerStarted = false;
-                for (Iterator<Property> iter = servers.iterator(); iter.hasNext(); ) {
-                    Property serverProp = iter.next();
-                    Server server = new Server(host, serverProp);
-                    if (!server.isStopped()) {
-                        anyServerStarted = true;
-                    } else {
-                        iter.remove();
-                    }
-                }
-                if (anyServerStarted) {
-                    callback.accept(servers);
-                } else {
-                    callback.accept(null);
-                }
-            });
-        }
-    }
-
 }

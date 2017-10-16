@@ -32,21 +32,10 @@ import org.jboss.hal.dmr.ModelNode;
 public class UnderTheBridgePresenter
         extends ApplicationFinderPresenter<UnderTheBridgePresenter.MyView, UnderTheBridgePresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken("utb")
-    public interface MyProxy extends ProxyPlace<UnderTheBridgePresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<UnderTheBridgePresenter> {
-        void show(ModelNode model);
-    }
-    // @formatter:on
-
     private ModelNode model;
 
     @Inject
-    public UnderTheBridgePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-            final Finder finder) {
+    public UnderTheBridgePresenter(EventBus eventBus, MyView view, MyProxy proxy, Finder finder) {
         super(eventBus, view, proxy, finder);
         model = new ModelNode();
         model.get("string-required").set("Foo");
@@ -85,8 +74,20 @@ public class UnderTheBridgePresenter
                 .append("rhcp-track", "under-the-bridge", "Track", "Under the Bridge");
     }
 
-    void saveModel(final ModelNode model) {
+    void saveModel(ModelNode model) {
         this.model = model;
         getView().show(model);
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken("utb")
+    public interface MyProxy extends ProxyPlace<UnderTheBridgePresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<UnderTheBridgePresenter> {
+        void show(ModelNode model);
+    }
+    // @formatter:on
 }

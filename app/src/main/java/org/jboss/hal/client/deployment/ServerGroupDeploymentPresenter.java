@@ -16,6 +16,7 @@
 package org.jboss.hal.client.deployment;
 
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -62,18 +63,6 @@ import static org.jboss.hal.flow.Flow.series;
 
 public class ServerGroupDeploymentPresenter extends
         ApplicationFinderPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
-
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT)
-    @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<ServerGroupDeploymentPresenter> {
-        void update(String serverGroup, ServerGroupDeployment serverGroupDeployment);
-    }
-    // @formatter:on
-
 
     private final Environment environment;
     private final FinderPathFactory finderPathFactory;
@@ -173,4 +162,16 @@ public class ServerGroupDeploymentPresenter extends
                     .fire(getEventBus(), Message.success(resources.messages().deploymentEnabledSuccess(deployment)));
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT)
+    @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
+    public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {}
+
+    public interface MyView extends HalView, HasPresenter<ServerGroupDeploymentPresenter> {
+        void update(String serverGroup, ServerGroupDeployment serverGroupDeployment);
+    }
+    // @formatter:on
 }
