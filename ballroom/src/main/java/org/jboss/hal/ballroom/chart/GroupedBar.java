@@ -56,6 +56,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
     private final Options options;
     private Api api;
 
+    @SuppressWarnings("unchecked")
     private GroupedBar(Builder builder) {
         this.builder = builder;
 
@@ -78,7 +79,6 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
                 names.push(builder.names.get(id));
             }
             options.data.groups = new Array<>();
-            //noinspection unchecked
             options.data.groups.push(names);
         }
         options.data.names = JsHelper.asJsMap(builder.names);

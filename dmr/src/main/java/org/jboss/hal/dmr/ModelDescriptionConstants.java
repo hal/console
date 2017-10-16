@@ -403,6 +403,7 @@ public interface ModelDescriptionConstants {
     String LOCKING = "locking";
     String LOGGER = "logger";
     String LOGGING = "logging";
+    String LOGGING_PROFILE = "logging-profile";
     String LOGICAL_PERMISSION_MAPPER = "logical-permission-mapper";
     String LOGICAL_ROLE_MAPPER = "logical-role-mapper";
     String LOGIN_MODULE = "login-module";

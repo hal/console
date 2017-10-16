@@ -43,7 +43,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
-import static org.jboss.hal.client.management.AddExtensionWizard.State.REVIEW;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class AddExtensionWizard {
@@ -59,11 +58,11 @@ class AddExtensionWizard {
         String title = resources.messages().addResourceTitle(Names.EXTENSION);
         wizard = new Wizard.Builder<Context, State>(title, new Context())
 
-                .addStep(URL, new UrlStep(extensionRegistry, resources))
-                .addStep(REVIEW, new ReviewStep(resources))
+                .addStep(State.URL, new UrlStep(extensionRegistry, resources))
+                .addStep(State.REVIEW, new ReviewStep(resources))
 
-                .onBack((context, currentState) -> currentState == REVIEW ? URL : null)
-                .onNext((context, currentState) -> currentState == URL ? REVIEW : null)
+                .onBack((context, currentState) -> currentState == State.REVIEW ? State.URL : null)
+                .onNext((context, currentState) -> currentState == State.URL ? State.REVIEW : null)
 
                 .onFinish((wzd, context) -> {
                     extensionStorage.add(context.extension);

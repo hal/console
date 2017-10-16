@@ -74,7 +74,7 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /** Column which is used for both XA and normal data sources. */
-@AsyncColumn(Ids.DATA_SOURCE_CONFIGURATION)
+@AsyncColumn("ds-configuration")
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
