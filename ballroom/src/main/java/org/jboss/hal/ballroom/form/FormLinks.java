@@ -92,18 +92,18 @@ public class FormLinks<T> implements IsElement {
                         .add(helpContent = div().asElement()));
 
         if (stateMachine.supports(EDIT)) {
-            editLink = link(CONSTANTS.edit(), pfIcon("edit"), onEdit);
+            editLink = link(EDIT, CONSTANTS.edit(), pfIcon("edit"), onEdit);
             links.appendChild(editLink);
         }
         if (stateMachine.supports(RESET)) {
-            resetLink = link(CONSTANTS.reset(), fontAwesome("undo"), onReset);
+            resetLink = link(RESET, CONSTANTS.reset(), fontAwesome("undo"), onReset);
             resetLink.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
             resetLink.dataset.set(UIConstants.PLACEMENT, "right"); //NON-NLS
             resetLink.title = CONSTANTS.formResetDesc();
             links.appendChild(resetLink);
         }
         if (stateMachine.supports(REMOVE)) {
-            removeLink = link(CONSTANTS.remove(), CSS.pfIcon("remove"), onRemove);
+            removeLink = link(REMOVE, CONSTANTS.remove(), CSS.pfIcon("remove"), onRemove);
             links.appendChild(removeLink);
         }
         if (!helpTexts.isEmpty()) {
@@ -123,9 +123,11 @@ public class FormLinks<T> implements IsElement {
         root = rootBuilder.asElement();
     }
 
-    private HTMLLIElement link(String text, String css, EventCallbackFn<MouseEvent> onclick) {
+    private HTMLLIElement link(Form.Operation operation, String text, String css, EventCallbackFn<MouseEvent> onclick) {
         return li()
-                .add(a().css(clickable).on(click, onclick)
+                .add(a().css(clickable)
+                        .data("operation", operation.name().toLowerCase())
+                        .on(click, onclick)
                         .add(i().css(css))
                         .add(span().css(formLinkLabel).textContent(text)))
                 .asElement();
