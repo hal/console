@@ -109,7 +109,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         // ============================================
         // global modules
-        Metadata globalModulesMetadata = EEPresenter.globalModulesMetadata(metadataRegistry);
+        Metadata globalModulesMetadata = eeMetadata.forComplexAttribute(GLOBAL_MODULES);
 
         globalModulesTable = new ModelNodeTable.Builder<>(Ids.EE_GLOBAL_MODULES_TABLE, globalModulesMetadata)
                 .columns(NAME, "slot", "annotations", "services", "meta-inf")

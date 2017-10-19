@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
@@ -43,7 +42,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 class JpaPreview extends PreviewContent<JpaStatistic> {
 
     private final Dispatcher dispatcher;
-    private final ResourceAddress address;
     private final EmptyState noStatistics;
     private final HTMLElement refresh;
     private final HTMLElement header;
@@ -56,7 +54,6 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
 
         super(jpaStatistic.getPersistenceUnit(), jpaStatistic.getPath());
         this.dispatcher = dispatcher;
-        this.address = jpaStatistic.getAddress();
 
         FinderPath path = finderPathFactory.deployment(jpaStatistic.getDeployment());
         PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
@@ -78,7 +75,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
                 environment.isStandalone(), false);
 
-        getHeaderContainer().appendChild(refresh = refreshLink(() -> update(null)));
+        getHeaderContainer().appendChild(refresh = refreshLink(() -> update(jpaStatistic)));
         previewBuilder()
                 .add(noStatistics)
                 .add(header = h(2).textContent(resources.constants().sessions()).asElement())
@@ -89,17 +86,12 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     }
 
     @Override
-    public void update(final JpaStatistic item) {
-        if (item == null) {
-            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build();
-            dispatcher.execute(operation, result -> internalUpdate(new JpaStatistic(address, result)));
-
-        } else {
-            internalUpdate(item);
-        }
+    public void update(final JpaStatistic jpaStatistics) {
+        Operation operation = new Operation.Builder(jpaStatistics.getAddress(), READ_RESOURCE_OPERATION)
+                .param(INCLUDE_RUNTIME, true)
+                .param(RECURSIVE, true)
+                .build();
+        dispatcher.execute(operation, result -> internalUpdate(new JpaStatistic(jpaStatistics.getAddress(), result)));
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
