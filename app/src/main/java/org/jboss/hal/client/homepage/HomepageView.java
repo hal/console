@@ -126,7 +126,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                             resources.constants().homepageDeploymentsStepEnable()), true));
             deployments = HomepageModule.create(places,
                     org.jboss.hal.meta.token.NameTokens.DEPLOYMENTS,
-                    Names.DEPLOYMENTS, //NON-NLS
+                    Names.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSubHeader(),
                     resources.images().deployments(),
                     sections).asElement();
