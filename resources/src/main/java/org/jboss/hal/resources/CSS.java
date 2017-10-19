@@ -156,6 +156,7 @@ public interface CSS {
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
     String halSearch = "hal-search";
+    String halTableButtons = "hal-table-buttons";
     String hasButton = "has-button";
     String hasClear = "has-clear";
     String hasError = "has-error";
