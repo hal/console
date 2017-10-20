@@ -23,6 +23,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
@@ -58,6 +59,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
                         .add(a().css(drawerPfToggleExpand, fontAwesome("angle-double-left"), hiddenXs)
                                 .on(click, event -> toggleWidth()))
                         .add(a().css(drawerPfClose, pfIcon("close"))
+                                .id(Ids.NOTIFICATION_DRAWER_CLOSE)
                                 .on(click, event -> close()))
                         .add(header = h(3, resources.messages().notifications(0))
                                 .css(textCenter)
@@ -79,10 +81,12 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
                                                 .add(markAllRead = div().css(drawerPfActionLink)
                                                         .add(button(resources.constants().markAllRead())
                                                                 .css(btn, btnLink)
+                                                                .id(Ids.NOTIFICATION_DRAWER_MARK_ALL_READ)
                                                                 .on(click, event -> markAllRead()))
                                                         .asElement())
                                                 .add(div().css(drawerPfActionLink)
                                                         .add(button().css(btn, btnLink)
+                                                                .id(Ids.NOTIFICATION_DRAWER_CLEAR_ALL)
                                                                 .on(click, event -> clear())
                                                                 .add(span().css(pfIcon("close")))
                                                                 .add(resources.constants().clearAll())))
