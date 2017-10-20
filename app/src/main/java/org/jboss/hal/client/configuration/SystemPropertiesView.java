@@ -94,6 +94,12 @@ public class SystemPropertiesView extends HalViewImpl implements SystemPropertie
     }
 
     @Override
+    public void attach() {
+        super.attach();
+        table.bindForm(form);
+    }
+
+    @Override
     public void setPresenter(SystemPropertiesPresenter presenter) {
         this.presenter = presenter;
     }
