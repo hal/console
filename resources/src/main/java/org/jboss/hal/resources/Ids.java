@@ -541,7 +541,7 @@ public interface Ids {
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
     String NOTIFICATION_DRAWER = "notification-drawer";
     String NOTIFICATION_DRAWER_MARK_ALL_READ = build(NOTIFICATION_DRAWER, "mark-all-read");
-    String NOTIFICATION_DRAWER_CLEAR_ALL= build(NOTIFICATION_DRAWER, "clear-all");
+    String NOTIFICATION_DRAWER_CLEAR_ALL = build(NOTIFICATION_DRAWER, "clear-all");
     String NOTIFICATION_DRAWER_CLOSE = build(NOTIFICATION_DRAWER, "close");
     String PATCH_ADD = build("patch", ADD);
     String PATCH_UPLOAD_NAMES_FORM = build("patch", "names", FORM);
