@@ -179,6 +179,7 @@ public interface ModelDescriptionConstants {
     String CORE_SERVICE_PATCHING = "core-service-patching";
     String COUNT_MESSAGES = "count-messages";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
+    String CREATE = "create";
     String CREATE_TIME = "create-time";
     String CREDENTIAL_REFERENCE = "credential-reference";
     String CREDENTIAL_STORE = "credential-store";

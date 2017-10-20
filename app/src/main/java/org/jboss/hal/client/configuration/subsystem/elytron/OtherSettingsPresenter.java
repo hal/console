@@ -21,6 +21,8 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -29,6 +31,8 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
+import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -39,6 +43,7 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -58,6 +63,7 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.move;
 
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -180,6 +186,119 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     void reload(String resource, Consumer<List<NamedNode>> callback) {
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, resource,
                 children -> callback.accept(asNamedNodes(children)));
+    }
+
+    // -------------------------------------------- Credential Store
+
+    void addCredentialStore() {
+        Metadata metadata = metadataRegistry.lookup(CREDENTIAL_STORE_TEMPLATE);
+        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
+        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
+
+        String id = Ids.build(Ids.ELYTRON_CREDENTIAL_STORE, Ids.ADD);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(CREATE, RELATIVE_TO, STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .unsorted()
+                .build();
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), form, resources));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_STORE), form, (name, model) -> {
+            if (model != null) {
+                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
+                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
+                move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
+                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
+            }
+            ResourceAddress address = CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.CREDENTIAL_STORE, name, address, model, (n, a) ->
+                    reload(CREDENTIAL_STORE, nodes ->
+                            getView().updateResourceElement(CREDENTIAL_STORE, nodes)));
+        }).show();
+    }
+
+    // ------------------------------------------------------ key store
+
+    void addKeyStore() {
+        Metadata metadata = metadataRegistry.lookup(KEY_STORE_TEMPLATE);
+        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
+        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, CLEAR_TEXT), metadata);
+
+        String id = Ids.build(Ids.ELYTRON_KEY_STORE, Ids.ADD);
+        NameItem nameItem = new NameItem();
+
+        // there is a special handling for "type" attribute, as this attribute name exists in key-store and
+        // credential-reference complex attribute. We must create an unbound form item for credential-reference-type
+        String crType = "credential-reference-type";
+        String crTypeLabel = new LabelBuilder().label(crType);
+        TextBoxItem crTypeItem = new TextBoxItem(crType, crTypeLabel);
+        SafeHtml crTypeItemHelp = SafeHtmlUtils.fromString(metadata.getDescription()
+                .get(ATTRIBUTES)
+                .get(CREDENTIAL_REFERENCE)
+                .get(VALUE_TYPE)
+                .get(TYPE)
+                .get(DESCRIPTION)
+                .asString());
+
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(TYPE, PATH, RELATIVE_TO, STORE, ALIAS, CLEAR_TEXT)
+                .unboundFormItem(crTypeItem, 7, crTypeItemHelp)
+                .unsorted()
+                .build();
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), form, resources));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_STORE), form, (name, model) -> {
+            if (model != null) {
+                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
+                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
+                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
+                if (!crTypeItem.isEmpty()) {
+                    model.get(CREDENTIAL_REFERENCE).get(TYPE).set(crTypeItem.getValue());
+                }
+            }
+            ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.KEY_STORE, name, address, model, (n, a) ->
+                    reload(KEY_STORE, nodes ->
+                            getView().updateResourceElement(KEY_STORE, nodes)));
+        }).show();
+    }
+
+
+    // ------------------------------------------------------ key manager
+
+    void addKeyManager() {
+        Metadata metadata = metadataRegistry.lookup(KEY_MANAGER_TEMPLATE);
+        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
+        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
+
+        String id = Ids.build(Ids.ELYTRON_KEY_MANAGER, Ids.ADD);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .unsorted()
+                .build();
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), form, resources));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_MANAGER), form, (name, model) -> {
+            if (model != null) {
+                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
+                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
+                move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
+                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
+            }
+            ResourceAddress address = KEY_MANAGER_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.KEY_MANAGER, name, address, model, (n, a) ->
+                    reload(KEY_MANAGER, nodes ->
+                            getView().updateResourceElement(KEY_MANAGER, nodes)));
+        }).show();
     }
 
     // ------------------------------------------------------ LDAP key store

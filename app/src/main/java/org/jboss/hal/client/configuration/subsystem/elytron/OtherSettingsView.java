@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -38,6 +39,7 @@ import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 
 public class OtherSettingsView extends HalViewImpl implements OtherSettingsPresenter.MyView {
@@ -70,13 +72,14 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         // ===== store
 
-        addResourceElement(CREDENTIAL_STORE,
-                CREDENTIAL_STORE.resourceElementBuilder(mbuiContext,
-                        () -> presenter.reload(CREDENTIAL_STORE.resource,
-                                nodes -> updateResourceElement(CREDENTIAL_STORE.resource, nodes)))
-                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
-                        .build(),
-                primaryIdStores,
+        ResourceElement credentialStoreElement = CREDENTIAL_STORE.resourceElementBuilder(mbuiContext,
+                () -> presenter.reload(CREDENTIAL_STORE.resource,
+                        nodes -> updateResourceElement(CREDENTIAL_STORE.resource, nodes)))
+                .onAdd(() -> presenter.addCredentialStore())
+                .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                .build();
+        credentialStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+        addResourceElement(CREDENTIAL_STORE, credentialStoreElement, primaryIdStores,
                 Ids.build(CREDENTIAL_STORE.baseId, Ids.ENTRY),
                 labelBuilder.label(CREDENTIAL_STORE.resource));
 
@@ -88,12 +91,15 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(FILTERING_KEY_STORE.baseId, Ids.ENTRY),
                 labelBuilder.label(FILTERING_KEY_STORE.resource));
 
+        ResourceElement keyStoreElement = KEY_STORE.resourceElementBuilder(mbuiContext,
+                () -> presenter.reload(KEY_STORE.resource,
+                        nodes -> updateResourceElement(KEY_STORE.resource, nodes)))
+                .onAdd(() -> presenter.addKeyStore())
+                .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                .build();
+        keyStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(KEY_STORE,
-                KEY_STORE.resourceElementBuilder(mbuiContext,
-                        () -> presenter.reload(KEY_STORE.resource,
-                                nodes -> updateResourceElement(KEY_STORE.resource, nodes)))
-                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
-                        .build(),
+                keyStoreElement,
                 primaryIdStores,
                 Ids.build(KEY_STORE.baseId, Ids.ENTRY),
                 labelBuilder.label(KEY_STORE.resource));
@@ -127,6 +133,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 KEY_MANAGER.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(KEY_MANAGER.resource,
                                 nodes -> updateResourceElement(KEY_MANAGER.resource, nodes)))
+                        .onAdd(() -> presenter.addKeyManager())
                         .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
                         .build(),
                 primaryIdSsl,
