@@ -31,10 +31,10 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.Mbui_InterfaceView;
 import org.jboss.hal.client.configuration.Mbui_PathsView;
 import org.jboss.hal.client.configuration.Mbui_SocketBindingGroupView;
-import org.jboss.hal.client.configuration.Mbui_SystemPropertiesView;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.SocketBindingGroupPresenter;
 import org.jboss.hal.client.configuration.SystemPropertiesPresenter;
+import org.jboss.hal.client.configuration.SystemPropertiesView;
 import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView;
@@ -565,7 +565,7 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         bindPresenter(SystemPropertiesPresenter.class,
                 SystemPropertiesPresenter.MyView.class,
-                Mbui_SystemPropertiesView.class,
+                SystemPropertiesView.class,
                 SystemPropertiesPresenter.MyProxy.class);
 
         bindPresenter(TransactionPresenter.class,

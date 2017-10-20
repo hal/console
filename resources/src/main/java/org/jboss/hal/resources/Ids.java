@@ -637,7 +637,10 @@ public interface Ids {
     String SOCKET_BINDING_GROUP_REFRESH = build(SOCKET_BINDING_GROUP, REFRESH);
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
-    String SYSTEM_PROPERTY_ADD = "system-property-add";
+    String SYSTEM_PROPERTY = "system-property";
+    String SYSTEM_PROPERTY_ADD = Ids.build(SYSTEM_PROPERTY, ADD);
+    String SYSTEM_PROPERTY_FORM = Ids.build(SYSTEM_PROPERTY, FORM);
+    String SYSTEM_PROPERTY_TABLE = Ids.build(SYSTEM_PROPERTY, TABLE);
     String TASKS = "tasks";
     String TASKS_ACTIVE = build(TASKS, "active");
     String TASKS_COMPLETED = build(TASKS, "completed");
