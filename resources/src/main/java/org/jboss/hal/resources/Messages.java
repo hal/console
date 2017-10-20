@@ -54,7 +54,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String alternativesHelp(String alternatives);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
-    String atLeastOneIsRequired(String attribute1, String attribute2);
+    String atLeastOneIsRequired(String attributes);
     String available(double value);
 
     String bootErrors();

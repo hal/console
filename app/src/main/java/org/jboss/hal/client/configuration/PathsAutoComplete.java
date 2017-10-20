@@ -82,7 +82,10 @@ public class PathsAutoComplete extends AutoComplete {
                         @Override
                         public void onSuccess(FlowContext context) {
                             List<Server> servers = context.get(TopologyTasks.RUNNING_SERVERS);
-                            if (!servers.isEmpty() && servers.get(0).isStarted()) {
+                            boolean readPathsFromServer = !servers.isEmpty() && (servers.get(0)
+                                    .isStarted() || servers.get(0).needsReload() || servers.get(0)
+                                    .needsRestart());
+                            if (readPathsFromServer) {
                                 operation = new Operation.Builder(servers.get(0).getServerAddress(),
                                         READ_CHILDREN_NAMES_OPERATION
                                 ).param(CHILD_TYPE, "path").build();

@@ -77,6 +77,7 @@ public interface Names {
     String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
     String CREDENTIAL_REFERENCE = "Credential Reference";
+    String CREDENTIAL_STORE = "Credential Store";
     String CUSTOM = "Custom";
     String CUSTOM_ACTION_HANDLER = "Custom ActionHandler";
     String CUSTOM_FORMATTER = "Custom Formatter";
@@ -170,6 +171,9 @@ public interface Names {
     String JMS_TOPIC = "JMS Topic";
     String JSP = "JSP";
     String JVM_ATTRIBUTES = "JVM Attributes";
+
+    String KEY_MANAGER = "Key Manager";
+    String KEY_STORE = "Key Store";
 
     String LARGE_MESSAGES_DIRECTORY = "Large Messages Directory";
     String LDAP_KEY_STORE = "LDAP Key Store";

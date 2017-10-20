@@ -329,6 +329,9 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         return Ids.build(builder.baseId, builder.clAttribute, Ids.PAGE);
     }
 
+    public Form<NamedNode> getForm() {
+        return form;
+    }
 
     public static class Builder {
 
