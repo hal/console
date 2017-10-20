@@ -40,14 +40,12 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -65,18 +63,7 @@ public class EEPresenter
 
     static Metadata globalModulesMetadata(MetadataRegistry metadataRegistry) {
         Metadata metadata = metadataRegistry.lookup(EE_SUBSYSTEM_TEMPLATE);
-
-        ResourceDescription globalModulesDescription;
-        Property globalModules = metadata.getDescription().findAttribute(ATTRIBUTES, GLOBAL_MODULES);
-        if (globalModules != null && globalModules.getValue().hasDefined(VALUE_TYPE)) {
-            ModelNode repackaged = new ModelNode();
-            repackaged.get(DESCRIPTION).set(globalModules.getValue().get(DESCRIPTION).asString());
-            repackaged.get(ATTRIBUTES).set(globalModules.getValue().get(VALUE_TYPE));
-            globalModulesDescription = new ResourceDescription(repackaged);
-        } else {
-            globalModulesDescription = new ResourceDescription(new ModelNode());
-        }
-        return metadata.customResourceDescription(globalModulesDescription);
+        return metadata.forComplexAttribute(GLOBAL_MODULES);
     }
 
     private final CrudOperations crud;

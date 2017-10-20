@@ -206,11 +206,6 @@ public class Metadata {
         return new Metadata(template, () -> operationContext, new ResourceDescription(payload), capabilities);
     }
 
-    @JsIgnore
-    public Metadata customResourceDescription(ResourceDescription resourceDescription) {
-        return new Metadata(template, securityContext, resourceDescription, capabilities);
-    }
-
     /**
      * @return the address template
      */
