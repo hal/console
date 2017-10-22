@@ -135,7 +135,9 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         } else {
             valueElement.classList.remove(empty);
         }
-
+        if (!Strings.isNullOrEmpty(backupValue)) {
+            backupValue = stringValue;
+        }
         if (isApplied(SENSITIVE)) {
             if (masked) {
                 mask();
