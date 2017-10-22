@@ -26,9 +26,7 @@ import org.slf4j.LoggerFactory;
 /** A segment inside a {@link FinderPath}. */
 public class FinderSegment<T> {
 
-    /**
-     * Separator is used in URL tokens. Please choose a string which is safe to use in URLs
-     */
+    /** Separator is used in URL tokens. Please choose a string which is safe to use in URLs */
     static final String SEPARATOR = "~";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
@@ -39,19 +37,19 @@ public class FinderSegment<T> {
 
     private FinderColumn<T> column;
 
-    FinderSegment(final String columnId, final String itemId) {
+    FinderSegment(String columnId, String itemId) {
         this(columnId, itemId, columnId, itemId);
     }
 
-    FinderSegment(final String columnId, final String itemId,
-            final String columnTitle, final String itemTitle) {
+    FinderSegment(String columnId, String itemId,
+            String columnTitle, String itemTitle) {
         this.columnId = columnId;
         this.itemId = itemId;
         this.columnTitle = columnTitle;
         this.itemTitle = itemTitle;
     }
 
-    FinderSegment(final FinderColumn<T> column) {
+    FinderSegment(FinderColumn<T> column) {
         this.columnId = column.getId();
         this.columnTitle = column.getTitle();
         this.column = column;
@@ -67,7 +65,7 @@ public class FinderSegment<T> {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -138,17 +136,17 @@ public class FinderSegment<T> {
         return false;
     }
 
-    public void dropdown(final FinderContext context, DropdownCallback<T> callback) {
+    public void dropdown(FinderContext context, DropdownCallback<T> callback) {
         List<DropdownItem<T>> elements = new ArrayList<>();
         AsyncCallback<List<T>> asyncCallback = new AsyncCallback<List<T>>() {
             @Override
-            public void onFailure(final Throwable caught) {
+            public void onFailure(Throwable caught) {
                 logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this,
                         caught.getMessage());
             }
 
             @Override
-            public void onSuccess(final List<T> result) {
+            public void onSuccess(List<T> result) {
                 collectDropdownElements(elements, result);
                 callback.onItems(elements);
             }
