@@ -82,7 +82,7 @@ class FinderRow<T> implements IsElement {
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent<>(
                 display.getTitle());
 
-        root = li().asElement();
+        root = li().css(finderItem).asElement();
         folderElement = null;
         if (column.isPinnable()) {
             root.className = pinned ? CSS.pinned : unpinned;

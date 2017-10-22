@@ -133,6 +133,7 @@ public interface CSS {
     String filter = "filter";
     String finder = "finder";
     String finderColumn = "finder-column";
+    String finderItem = "finder-item";
     String finderPreview = "finder-preview";
     String flexRow = "flex-row";
     String folder = "folder";
