@@ -183,7 +183,7 @@ public class ApplicationSecurityDomainPresenter extends
                 .include(KEY_ALIAS, KEY_STORE, STORE, ALIAS, TYPE, CLEAR_TEXT)
                 .unsorted()
                 .build();
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), form, resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
 
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.SINGLE_SIGN_ON),
                 form, (name, model) -> {

@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
+import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.NamedNode;
@@ -37,10 +38,25 @@ import org.jetbrains.annotations.NonNls;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_PROVIDERS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AUTHENTICATION_CONFIGURATION;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AUTHENTICATION_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CLIENT_SSL_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CREDENTIAL_STORE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.DIR_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.FILE_AUDIT_LOG;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.FILTERING_KEY_STORE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.KEY_MANAGER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.KEY_STORE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.PROVIDER_LOADER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SECURITY_DOMAIN;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SERVER_SSL_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SYSLOG_AUDIT_LOG;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.TRUST_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class OtherSettingsView extends HalViewImpl implements OtherSettingsPresenter.MyView {
 
@@ -76,7 +92,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 () -> presenter.reload(CREDENTIAL_STORE.resource,
                         nodes -> updateResourceElement(CREDENTIAL_STORE.resource, nodes)))
                 .onAdd(() -> presenter.addCredentialStore())
-                .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
+                        new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                 .build();
         credentialStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(CREDENTIAL_STORE, credentialStoreElement, primaryIdStores,
@@ -95,7 +112,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 () -> presenter.reload(KEY_STORE.resource,
                         nodes -> updateResourceElement(KEY_STORE.resource, nodes)))
                 .onAdd(() -> presenter.addKeyStore())
-                .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
+                        new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                 .build();
         keyStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(KEY_STORE,
@@ -134,7 +152,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         () -> presenter.reload(KEY_MANAGER.resource,
                                 nodes -> updateResourceElement(KEY_MANAGER.resource, nodes)))
                         .onAdd(() -> presenter.addKeyManager())
-                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
+                                new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                         .build(),
                 primaryIdSsl,
                 Ids.build(KEY_MANAGER.baseId, Ids.ENTRY),

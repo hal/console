@@ -32,6 +32,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.ComplexAttributeOperations;
@@ -130,7 +131,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             tabs.add(Ids.build(builder.baseId, ATTRIBUTES, Ids.TAB),
                     builder.mbuiContext.resources().constants().attributes(), form.asElement());
 
-            for (String complexAttribute : builder.coAttributes) {
+            for (String complexAttribute : builder.coAttributes.keySet()) {
                 // is the complex attribute *itself* required?
                 boolean requiredComplexAttribute = false;
                 Property attribute = builder.metadata.getDescription().findAttribute(ATTRIBUTES, complexAttribute);
@@ -165,7 +166,10 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                         Ids.build(builder.baseId, complexAttribute, Ids.FORM), metadata)
                         .singleton(ping, callback)
-                        .onSave((f, changedValues) -> alert(Names.NYI))
+                        .onSave((f, changedValues) -> {
+                            builder.mbuiContext.ca().save(selectedResource, complexAttribute, type,
+                                    metadata.getTemplate(), changedValues, builder.crudCallback);
+                        })
                         .prepareReset(f -> builder.mbuiContext.ca().reset(selectedResource, complexAttribute, type,
                                 metadata.getTemplate(), f, new Form.FinishReset<ModelNode>(f) {
                                     @Override
@@ -184,6 +188,10 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                                     }));
                 }
                 Form<ModelNode> form = formBuilder.build();
+                FormValidation coFormValidation = builder.coAttributes.get(complexAttribute);
+                if (coFormValidation != null) {
+                    form.addFormValidation(coFormValidation);
+                }
 
                 tabs.add(Ids.build(builder.baseId, complexAttribute, Ids.TAB), type, form.asElement());
                 coForms.put(complexAttribute, form);
@@ -341,7 +349,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         private final MbuiContext mbuiContext;
         private final ModelNodeTable.Builder<NamedNode> tableBuilder;
         private String type;
-        private List<String> coAttributes; // co = complex object
+        private Map<String, FormValidation> coAttributes; // co = complex object
         private String clAttribute; // cl = complex list
         private final List<String> clColumns;
         private final List<String> clAddAttributes;
@@ -357,7 +365,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
             this.tableBuilder = new ModelNodeTable.Builder<>(Ids.build(baseId, Ids.TABLE), metadata);
             this.type = new LabelBuilder().label(resource);
-            this.coAttributes = new ArrayList<>();
+            this.coAttributes = new HashMap<>();
             this.clAttribute = null;
             this.clColumns = new ArrayList<>();
             this.clAddAttributes = new ArrayList<>();
@@ -391,7 +399,16 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
          * complex attribute.
          */
         public Builder addComplexObjectAttribute(String name) {
-            coAttributes.add(name);
+            coAttributes.put(name, null);
+            return this;
+        }
+
+        /**
+         * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the
+         * complex attribute. Also adds a form validation for the specific complex attribute form.
+         */
+        public Builder addComplexObjectAttribute(String name, FormValidation formValidation) {
+            coAttributes.put(name, formValidation);
             return this;
         }
 
