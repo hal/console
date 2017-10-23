@@ -83,13 +83,13 @@ public class LabelBuilder {
             .put("wsdl", "WSDL")
             .build();
 
-    public String label(final Property property) {
+    public String label(Property property) {
         return property.getValue().hasDefined(HAL_LABEL)
                 ? label(property.getValue().get(HAL_LABEL).asString())
                 : label(property.getName());
     }
 
-    public String label(final String name) {
+    public String label(String name) {
         String label = name;
         label = label.replace('-', ' ');
         label = replaceSpecial(label);
@@ -103,7 +103,7 @@ public class LabelBuilder {
      *
      * @return The list of names as human readable string or an empty string if the names are null or empty.
      */
-    public String enumeration(final Iterable<String> names, final String conjunction) {
+    public String enumeration(Iterable<String> names, String conjunction) {
         String enumeration = "";
         if (names != null && !Iterables.isEmpty(names)) {
             int size = Iterables.size(names);
@@ -127,7 +127,7 @@ public class LabelBuilder {
         return enumeration;
     }
 
-    private String replaceSpecial(final String label) {
+    private String replaceSpecial(String label) {
         List<String> replacedParts = new ArrayList<>();
         for (String part : Splitter.on(' ').split(label)) {
             String replaced = part;
@@ -141,7 +141,7 @@ public class LabelBuilder {
         return Joiner.on(SPACE).join(replacedParts);
     }
 
-    private String capitalize(final String str) {
+    private String capitalize(String str) {
         final char[] buffer = str.toCharArray();
         boolean capitalizeNext = true;
         for (int i = 0; i < buffer.length; i++) {
