@@ -40,7 +40,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.gwt.dom.client.Document;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
@@ -896,10 +895,9 @@ public interface Ids {
         return ids.stream().map(Ids::asId).collect(joining(String.valueOf(separator)));
     }
 
-    /**
-     * Only available in GWT!
-     */
+    Counter counter = new Counter();
+
     static String uniqueId() {
-        return Document.get().createUniqueId();
+        return "hal-uid-" + counter.value++;
     }
 }

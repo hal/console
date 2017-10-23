@@ -35,15 +35,15 @@ public class RequireAtLeastOneAttributeValidation<T extends ModelNode> implement
     private Resources resources;
 
 
-    public RequireAtLeastOneAttributeValidation(final List<String> requiresAtLeast, final ModelNodeForm<T> form,
-            final Resources resources) {
+    public RequireAtLeastOneAttributeValidation(List<String> requiresAtLeast, ModelNodeForm<T> form,
+            Resources resources) {
         this.requiresAtLeast = requiresAtLeast;
         this.resources = resources;
         this.form = form;
     }
 
     @Override
-    public ValidationResult validate(final Form<T> form) {
+    public ValidationResult validate(Form<T> form) {
         LabelBuilder labelBuilder = new LabelBuilder();
         List<String> nonEmptyItems = requiresAtLeast.stream()
                 .map(form::getFormItem)

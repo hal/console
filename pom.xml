@@ -129,6 +129,7 @@
         <module>spi</module>
         <module>standalone</module>
         <module>themes</module>
+        <module>testsuite</module>
         <module>yarn</module>
     </modules>
 

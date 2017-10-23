@@ -103,6 +103,11 @@
             </dependency>
             <dependency>
                 <groupId>com.google.elemental2</groupId>
+                <artifactId>elemental2-dom</artifactId>
+                <version>${elemental.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.elemental2</groupId>
                 <artifactId>elemental2-webstorage</artifactId>
                 <version>${elemental.version}</version>
             </dependency>
@@ -139,6 +144,11 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava-gwt</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
             <dependency>
