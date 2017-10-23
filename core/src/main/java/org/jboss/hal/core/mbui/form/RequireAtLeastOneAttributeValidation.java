@@ -30,16 +30,13 @@ import static java.util.stream.Collectors.toList;
 
 public class RequireAtLeastOneAttributeValidation<T extends ModelNode> implements FormValidation<T> {
 
-    private final ModelNodeForm<T> form;
-    private List<String> requiresAtLeast;
-    private Resources resources;
+    private final List<String> requiresAtLeast;
+    private final Resources resources;
 
 
-    public RequireAtLeastOneAttributeValidation(List<String> requiresAtLeast, ModelNodeForm<T> form,
-            Resources resources) {
+    public RequireAtLeastOneAttributeValidation(List<String> requiresAtLeast, Resources resources) {
         this.requiresAtLeast = requiresAtLeast;
         this.resources = resources;
-        this.form = form;
     }
 
     @Override
@@ -47,7 +44,7 @@ public class RequireAtLeastOneAttributeValidation<T extends ModelNode> implement
         LabelBuilder labelBuilder = new LabelBuilder();
         List<String> nonEmptyItems = requiresAtLeast.stream()
                 .map(form::getFormItem)
-                .filter(formItem -> formItem != null && !this.form.isEmptyOrDefault(formItem))
+                .filter(formItem -> formItem != null &&  !formItem.isEmpty())
                 .map(FormItem::getName)
                 .collect(toList());
 
@@ -63,7 +60,7 @@ public class RequireAtLeastOneAttributeValidation<T extends ModelNode> implement
             // show an error on each related form item
             requiresAtLeast.forEach(requiredAttribute -> {
                 FormItem<Object> formItem = form.getFormItem(requiredAttribute);
-                if (this.form.isEmptyOrDefault(formItem)) {
+                if (formItem.isEmpty()) {
                     formItem.showError(resources.messages().exactlyOneAlternativeError(
                             labelBuilder.enumeration(attributesLabels, resources.constants().or())));
                 }

@@ -93,7 +93,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         nodes -> updateResourceElement(CREDENTIAL_STORE.resource, nodes)))
                 .onAdd(() -> presenter.addCredentialStore())
                 .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
-                        new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
+                        new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                 .build();
         credentialStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(CREDENTIAL_STORE, credentialStoreElement, primaryIdStores,
@@ -113,7 +113,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         nodes -> updateResourceElement(KEY_STORE.resource, nodes)))
                 .onAdd(() -> presenter.addKeyStore())
                 .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
-                        new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
+                        new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                 .build();
         keyStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(KEY_STORE,
@@ -153,7 +153,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                                 nodes -> updateResourceElement(KEY_MANAGER.resource, nodes)))
                         .onAdd(() -> presenter.addKeyManager())
                         .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
-                                new RequireAtLeastOneAttributeValidation(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
+                                new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                         .build(),
                 primaryIdSsl,
                 Ids.build(KEY_MANAGER.baseId, Ids.ENTRY),

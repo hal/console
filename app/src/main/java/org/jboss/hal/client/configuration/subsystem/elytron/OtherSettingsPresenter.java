@@ -204,7 +204,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .unsorted()
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), form, resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_STORE), form, (name, model) -> {
             if (model != null) {
@@ -251,7 +251,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .unsorted()
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), form, resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_STORE), form, (name, model) -> {
             if (model != null) {
@@ -285,7 +285,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
                 .unsorted()
                 .build();
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), form, resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_MANAGER), form, (name, model) -> {
             if (model != null) {

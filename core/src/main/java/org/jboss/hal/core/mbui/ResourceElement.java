@@ -188,7 +188,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                                     }));
                 }
                 Form<ModelNode> form = formBuilder.build();
-                FormValidation coFormValidation = builder.coAttributes.get(complexAttribute);
+                FormValidation<ModelNode> coFormValidation = builder.coAttributes.get(complexAttribute);
                 if (coFormValidation != null) {
                     form.addFormValidation(coFormValidation);
                 }
