@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -37,6 +38,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -107,32 +109,47 @@ public class CredentialReference {
 
         final String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
         Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
+
+        EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(resources.constants().noResource());
+
+        if (crMetadata.getSecurityContext().isWritable()) {
+            emptyStateBuilder.primaryAction(resources.constants().add(), () -> {
+                        if (alternativeName != null && alternativeValue != null &&
+                                !Strings.isNullOrEmpty(alternativeValue.get())) {
+                            String alternativeLabel = new LabelBuilder().label(alternativeName);
+                            DialogFactory.showConfirmation(
+                                    resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
+                                    resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
+                                    () -> setTimeout(
+                                            o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
+                                                    alternativeName,
+                                                    address, callback),
+                                            SHORT_TIMEOUT));
+                        } else {
+                            addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
+                                    callback);
+                        }
+                    },
+                    Constraint.executable(metadata.getTemplate(), ADD))
+                    .description(resources.messages().noResource());
+        } else {
+            emptyStateBuilder.description(resources.constants().restricted());
+        }
+        EmptyState noCredentialReference = emptyStateBuilder.build();
+
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
                 .singleton(
                         () -> {
                             ResourceAddress fqAddress = address.get();
-                            return fqAddress != null ? new Operation.Builder(address.get(),
-                                    READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, credentialReferenceName).build() : null;
-                        },
-                        () -> {
-                            if (alternativeName != null && alternativeValue != null &&
-                                    !Strings.isNullOrEmpty(alternativeValue.get())) {
-                                String alternativeLabel = new LabelBuilder().label(alternativeName);
-                                DialogFactory.showConfirmation(
-                                        resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
-                                        resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
-                                        () -> setTimeout(
-                                                o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
-                                                        alternativeName,
-                                                        address, callback),
-                                                SHORT_TIMEOUT));
-                            } else {
-                                addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
-                                        callback);
+                            Operation operation = null;
+                            if (fqAddress != null && crMetadata.getSecurityContext().isReadable()) {
+                                operation = new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
+                                        .param(NAME, credentialReferenceName).build();
                             }
-                        })
+                            return operation;
+                        },
+                        noCredentialReference)
                 .onSave(((f, changedValues) -> {
                     ResourceAddress fqa = address.get();
                     if (fqa != null) {
