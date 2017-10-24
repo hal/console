@@ -46,6 +46,7 @@ public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCEPTOR = "acceptor";
+    String ACCESS = "access";
     String ACCESS_CONSTRAINTS = "access-constraints";
     String ACCESS_CONTROL = "access-control";
     String ACCESS_LOG = "access-log";
@@ -92,6 +93,7 @@ public interface ModelDescriptionConstants {
     String AUTHENTICATION_CONFIGURATION = "authentication-configuration";
     String AUTHENTICATION_CONTEXT = "authentication-context";
     String AUTHOR = "author";
+    String AUTHORIZATION = "authorization";
     String AUTO_START = "auto-start";
     String AVERAGE_COMMIT_TIME = "average-commit-time";
     String AVERAGE_PROCESSING_TIME = "average-processing-time";
