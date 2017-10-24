@@ -49,7 +49,11 @@
                 <p>${metadata.getDescription().getDescription()}</p>
                 <table id="host-interface-table" form-ref="host-interface-form">
                     <actions>
-                        <action handler-ref="add-resource"/>
+                        <action handler-ref="add-resource">
+                            <attributes>
+                                <attribute name="inet-address" />
+                            </attributes>
+                        </action>
                         <action handler-ref="remove-resource" scope="selected"
                                 name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
