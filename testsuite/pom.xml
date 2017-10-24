@@ -81,6 +81,16 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
+                                    <artifactId>hal-core</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>
+                                        ${project.build.directory}/generated-sources/unpack
+                                    </outputDirectory>
+                                    <overWrite>true</overWrite>
+                                    <includes>org/jboss/hal/core/Strings.java</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>hal-dmr</artifactId>
                                     <version>${project.version}</version>
                                     <outputDirectory>
