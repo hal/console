@@ -65,12 +65,12 @@ class FinderRow<T> implements IsElement {
     private HTMLElement folderElement;
     private HTMLElement buttonContainer;
 
-    FinderRow(final Finder finder,
-            final FinderColumn<T> column,
-            final T item,
-            final boolean pinned,
-            final ItemDisplay<T> display,
-            final PreviewCallback<T> previewCallback) {
+    FinderRow(Finder finder,
+            FinderColumn<T> column,
+            T item,
+            boolean pinned,
+            ItemDisplay<T> display,
+            PreviewCallback<T> previewCallback) {
 
         this.finder = finder;
         this.column = column;
@@ -82,24 +82,25 @@ class FinderRow<T> implements IsElement {
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent<>(
                 display.getTitle());
 
-        root = li().css(finderItem).asElement();
+        root = li().asElement();
         folderElement = null;
         if (column.isPinnable()) {
             root.className = pinned ? CSS.pinned : unpinned;
         }
+        root.classList.add(finderItem);
         updateItem(item);
         drawItem();
         bind(root, click, event -> onClick(((HTMLElement) event.target)));
     }
 
-    private List<ItemAction<T>> allowedActions(final List<ItemAction<T>> actions) {
+    private List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
         return actions.stream()
                 .filter(action -> AuthorisationDecision.from(finder.environment(),
                         finder.securityContextRegistry()).isAllowed(action.constraints))
                 .collect(toList());
     }
 
-    private void updateItem(final T item) {
+    private void updateItem(T item) {
         this.id = display.getId();
         this.item = item;
     }
@@ -228,7 +229,7 @@ class FinderRow<T> implements IsElement {
         onClick(null);
     }
 
-    private void onClick(final HTMLElement target) {
+    private void onClick(HTMLElement target) {
         if (target != null && Boolean.parseBoolean(String.valueOf(target.dataset.get(PREVENT_SET_ITEMS)))) {
             return;
         }
