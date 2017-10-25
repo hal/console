@@ -111,7 +111,7 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
     public UnderTheBridgeView(Dispatcher dispatcher, StatementContext statementContext, Environment environment) {
         this.forms = new ArrayList<>();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs("utb-tab-container");
         ResourceDescription description = StaticResourceDescription.from(RhcpResources.INSTANCE.underTheBridge());
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveModel(form.getModel());
 

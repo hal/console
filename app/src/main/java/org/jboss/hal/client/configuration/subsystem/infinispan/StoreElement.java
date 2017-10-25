@@ -88,7 +88,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         selectStore.id = selectStoreId;
 
         for (Store store : Store.values()) {
-            Tabs storeTabs = new Tabs();
+            Tabs storeTabs = new Tabs(Ids.build(cache.baseId, store.baseId, Ids.TAB_CONTAINER));
             tabs.put(store, storeTabs);
 
             Metadata metadata = metadataRegistry.lookup(cache.template.append(STORE + "=" + store.resource));

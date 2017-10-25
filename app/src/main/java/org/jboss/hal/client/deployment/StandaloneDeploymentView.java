@@ -54,7 +54,7 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
         deploymentModel = new DeploymentModelElement(modelBrowser, resources);
 
         if (supportsReadContent) {
-            tabs = new Tabs()
+            tabs = new Tabs(Ids.DEPLOYMENT_TAB_CONTAINER)
                     .add(Ids.CONTENT_TAB, resources.constants().content(), browseContent.asElement())
                     .add(Ids.DEPLOYMENT_TAB, Names.MANAGEMENT_MODEL, deploymentModel.asElements());
             ((HTMLElement) tabs.asElement().querySelector("." + navTabsHal)).style.marginTop =

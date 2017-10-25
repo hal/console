@@ -63,7 +63,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
     private Form<ModelNode> currentSlaveForm;
 
     @Inject
-    public HaPolicyView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public HaPolicyView(MetadataRegistry metadataRegistry, Resources resources) {
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
 
@@ -113,7 +113,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         Form<ModelNode> masterForm = form(haPolicy.master);
         Form<ModelNode> slaveForm = form(haPolicy.slave);
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.build(haPolicy.baseId, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(haPolicy.baseId, Ids.TAB), resources.constants().attributes(),
                 colocatedForm.asElement());
         tabs.add(Ids.build(haPolicy.master.baseId, Ids.TAB), Names.MASTER, masterForm.asElement());
@@ -161,7 +161,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
     }
 
     @Override
-    public void setPresenter(final HaPolicyPresenter presenter) {
+    public void setPresenter(HaPolicyPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -173,7 +173,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
     }
 
     @Override
-    public void update(final HaPolicy haPolicy, final ModelNode modelNode) {
+    public void update(HaPolicy haPolicy, ModelNode modelNode) {
         HTMLElement element = policyElements.get(haPolicy);
         Form<ModelNode> form = policyForms.get(haPolicy);
 

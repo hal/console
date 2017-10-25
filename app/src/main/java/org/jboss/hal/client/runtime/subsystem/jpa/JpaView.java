@@ -125,7 +125,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         this.childTables = new HashMap<>();
 
         // main attributes
-        Tabs mainAttributesTabs = new Tabs();
+        Tabs mainAttributesTabs = new Tabs(Ids.JPA_RUNTIME_TAB_CONTAINER);
         String baseId = Ids.build(Ids.JPA_RUNTIME);
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JPA_DEPLOYMENT_TEMPLATE);
 

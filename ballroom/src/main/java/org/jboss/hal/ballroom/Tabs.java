@@ -44,8 +44,8 @@ public class Tabs implements IsElement {
     private final Map<Integer, String> indexToId;
     private final Map<String, HTMLElement> paneElements;
 
-    public Tabs() {
-        root = div()
+    public Tabs(String id) {
+        root = div().id(id)
                 .add(tabs = ul()
                         .css(nav, navTabs, navTabsPf, navTabsHal)
                         .attr(UIConstants.ROLE, UIConstants.TABLIST)

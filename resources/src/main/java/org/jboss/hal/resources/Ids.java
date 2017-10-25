@@ -139,6 +139,7 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_JDBC_TAB = "ds-runtime-jdbc-tab";
     String DATA_SOURCE_RUNTIME_POOL_FORM = "ds-runtime-pool-form";
     String DATA_SOURCE_RUNTIME_POOL_TAB = "ds-runtime-pool-tab";
+    String DATA_SOURCE_RUNTIME_TAB_CONTAINER = "ds-runtime-tab-container";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = "deployment-add-actions";
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
@@ -147,6 +148,7 @@ public interface Ids {
     String DEPLOYMENT_REFRESH = "deployment-refresh";
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_TAB = "deployment-tab";
+    String DEPLOYMENT_TAB_CONTAINER = "deployment-tab-container";
     String DEPLOYMENT_UNMANAGED_ADD = "deployment-unmanaged-add";
     String DEPLOYMENT_UPLOAD = "deployment-upload";
     String DISTRIBUTED_CACHE = "distributed-cache";
@@ -325,6 +327,7 @@ public interface Ids {
     String JCA_DISTRIBUTED_WORKMANAGER_FORM = "jca-distributed-workmanager-form";
     String JCA_DISTRIBUTED_WORKMANAGER_PAGE = "jca-distributed-workmanager-page";
     String JCA_DISTRIBUTED_WORKMANAGER_TABLE = "jca-distributed-workmanager-table";
+    String JCA_TAB_CONTAINER = "jca-tab-container";
     String JCA_THREAD_POOL = "thread-pool";
     String JCA_THREAD_POOL_ADD = "thread-pool-add";
     String JCA_THREAD_POOL_ATTRIBUTES_FORM = "thread-pool-attributes-form";
@@ -332,6 +335,7 @@ public interface Ids {
     String JCA_THREAD_POOL_PAGE = "thread-pool-page";
     String JCA_THREAD_POOL_SIZING_FORM = "thread-pool-sizing-form";
     String JCA_THREAD_POOL_SIZING_TAB = "thread-pool-sizing-tab";
+    String JCA_THREAD_POOL_TAB_CONTAINER = "thread-pool-tab-container";
     String JCA_THREAD_POOL_TABLE = "thread-pool-table";
     String JCA_TRACER_ENTRY = "jca-tracer-entry";
     String JCA_TRACER_FORM = "jca-tracer-form";
@@ -366,6 +370,7 @@ public interface Ids {
     String JGROUPS_TRANSPORT_THREADPOOL_INTERNAL_TAB = "jgroups-transport-thread-pool-internal-tab";
     String JGROUPS_TRANSPORT_THREADPOOL_OOB_FORM = "jgroups-transport-thread-pool-oob-form";
     String JGROUPS_TRANSPORT_THREADPOOL_OOB_TAB = "jgroups-transport-thread-pool-oob-tab";
+    String JGROUPS_TRANSPORT_THREADPOOL_TAB_CONTAINER = "jgroups-transport-thread-pool-tab-container";
     String JGROUPS_TRANSPORT_THREADPOOL_TIMER_FORM = "jgroups-transport-thread-pool-timer-form";
     String JGROUPS_TRANSPORT_THREADPOOL_TIMER_TAB = "jgroups-transport-thread-pool-timer-tab";
     String JMS_BRIDGE = "jms-bridge";
@@ -415,6 +420,7 @@ public interface Ids {
     String JPA_RUNTIME_ENTITY_ENTRY = "jpa-runtime-entity-entry";
     String JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY = "jpa-runtime-main-attributes-entry";
     String JPA_RUNTIME_QUERY_CACHE_ENTRY = "jpa-runtime-query-cache-entry";
+    String JPA_RUNTIME_TAB_CONTAINER = "jpa-runtime-tab-container";
     String LOCAL_CACHE = "local-cache";
     String LOCATION = "location";
     String LOG_FILE = "lf";
@@ -434,6 +440,7 @@ public interface Ids {
     String MAIL_SERVER_DIALOG = "mail-server-add-form";
     String MAIL_SERVER_ENTRY = "mail-server-entry";
     String MAIL_SERVER_FORM = "mail-server-form";
+    String MAIL_SERVER_TAB_CONTAINER = "mail-server-tab-container";
     String MAIL_SERVER_TABLE = "mail-server-table";
     String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ADD = "mail-session-add";
@@ -538,12 +545,14 @@ public interface Ids {
     String REMOTING_CONNECTOR_SECURITY_POLICY_TAB = "remoting-connector-security-policy-tab";
     String REMOTING_CONNECTOR_SECURITY_TAB = "remoting-connector-security-tab";
     String REMOTING_CONNECTOR_TAB = "remoting-connector-tab";
+    String REMOTING_CONNECTOR_TAB_CONTAINER = "remoting-connector-tab-container";
     String REMOTING_HTTP_CONNECTOR_FORM = "remoting-http-connector-form";
     String REMOTING_HTTP_CONNECTOR_SECURITY_FORM = "remoting-http-connector-security-form";
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_FORM = "remoting-http-connector-security-policy-form";
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = "remoting-http-connector-security-policy-tab";
     String REMOTING_HTTP_CONNECTOR_SECURITY_TAB = "remoting-http-connector-security-tab";
     String REMOTING_HTTP_CONNECTOR_TAB = "remoting-http-connector-tab";
+    String REMOTING_HTTP_CONNECTOR_TAB_CONTAINER = "remoting-http-connector-tab-container";
     String REPLICATED_CACHE = "replicated-cache";
     String RESOLVE_EXPRESSION = "resolve-expression";
     String RESOLVE_EXPRESSION_FORM = "resolve-expression-form";
@@ -621,6 +630,7 @@ public interface Ids {
     String SYSTEM_PROPERTY_FORM = "system-property-form";
     String SYSTEM_PROPERTY_TABLE = "system-property-table";
     String TAB = "tab";
+    String TAB_CONTAINER = "tab-container";
     String TABLE = "table";
     String TASKS = "tasks";
     String TASKS_ACTIVE = "tasks-active";
@@ -644,7 +654,8 @@ public interface Ids {
     String UNDERTOW_APP_SECURITY_DOMAIN_ADD = "undertow-application-security-domain-add";
     String UNDERTOW_APP_SECURITY_DOMAIN_FORM = "undertow-application-security-domain-form";
     String UNDERTOW_APP_SECURITY_DOMAIN_REFRESH = "undertow-application-security-domain-refresh";
-    String UNDERTOW_APP_SECURITY_DOMAIN_TAB = "undertow-application-security-domain-table";
+    String UNDERTOW_APP_SECURITY_DOMAIN_TAB = "undertow-application-security-domain-tab";
+    String UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER = "undertow-application-security-domain-tab-container";
     String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
     String UNDERTOW_HOST = "undertow-host";
     String UNDERTOW_HOST_ACCESS_LOG = "undertow-host-access-log";
@@ -671,6 +682,7 @@ public interface Ids {
     String UNDERTOW_HOST_LOCATION_TABLE = "undertow-host-location-table";
     String UNDERTOW_HOST_MAIN_PAGE = "undertow-host-main-page";
     String UNDERTOW_HOST_SINGLE_SIGN_ON = "undertow-host-single-sign-on";
+    String UNDERTOW_HOST_TAB_CONTAINER = "undertow-host-tab-container";
     String UNDERTOW_HOST_TABLE = "undertow-host-table";
     String UNDERTOW_LISTENER_REFRESH = "undertow-listener-refresh";
     String UNDERTOW_MODCLUSTER = "undertow-modcluster";
@@ -710,6 +722,7 @@ public interface Ids {
     String UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB = "undertow-servlet-container-mime-mapping-tab";
     String UNDERTOW_SERVLET_CONTAINER_REFRESH = "undertow-servlet-container-refresh";
     String UNDERTOW_SERVLET_CONTAINER_SESSION = "undertow-servlet-container-session";
+    String UNDERTOW_SERVLET_CONTAINER_TAB_CONTAINER = "undertow-servlet-container-tab-container";
     String UNDERTOW_SERVLET_CONTAINER_WEBSOCKET = "undertow-servlet-container-websocket";
     String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM = "undertow-servlet-container-welcome-file-form";
     String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB = "undertow-servlet-container-welcome-file-tab";
@@ -743,6 +756,7 @@ public interface Ids {
     String XA_DATA_SOURCE_RUNTIME_JDBC_TAB = "xa-data-source-runtime-jdbc-tab";
     String XA_DATA_SOURCE_RUNTIME_POOL_FORM = "xa-data-source-runtime-pool-form";
     String XA_DATA_SOURCE_RUNTIME_POOL_TAB = "xa-data-source-runtime-pool-tab";
+    String XA_DATA_SOURCE_RUNTIME_TAB_CONTAINER = "xa-data-source-runtime-tab-container";
 
 
     // ------------------------------------------------------ resource ids (a-z)

@@ -80,8 +80,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     @Inject
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    public ServerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory, final Resources resources) {
+    public ServerView(Dispatcher dispatcher, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory, Resources resources) {
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
 
@@ -133,7 +133,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
             hostSettingForms.put(setting, hostSetting(setting));
         }
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
         for (HostSetting setting : HostSetting.values()) {
             tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
@@ -261,7 +261,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         .addAll(navigation.panes())));
     }
 
-    private Form<ModelNode> hostSetting(final HostSetting hostSetting) {
+    private Form<ModelNode> hostSetting(HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
         return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM), metadata)
                 .singleton(() -> presenter.hostSettingOperation(hostSetting),
@@ -295,7 +295,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final ServerPresenter presenter) {
+    public void setPresenter(ServerPresenter presenter) {
         this.presenter = presenter;
         this.listener.values().forEach(l -> l.setPresenter(presenter));
 
@@ -310,7 +310,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void update(final ModelNode payload) {
+    public void update(ModelNode payload) {
         configurationForm.view(payload);
 
         hostForm.clear();
@@ -324,21 +324,21 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void updateFilterRef(final List<NamedNode> filters) {
+    public void updateFilterRef(List<NamedNode> filters) {
         filterRefForm.clear();
         filterRefTable.update(filters);
         hostPages.showPage(Ids.UNDERTOW_HOST_FILTER_REF_PAGE);
     }
 
     @Override
-    public void updateLocation(final List<NamedNode> locations) {
+    public void updateLocation(List<NamedNode> locations) {
         locationForm.clear();
         locationTable.update(locations);
         hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_PAGE);
     }
 
     @Override
-    public void updateLocationFilterRef(final List<NamedNode> filters) {
+    public void updateLocationFilterRef(List<NamedNode> filters) {
         locationFilterRefForm.clear();
         locationFilterRefTable.update(filters);
         hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE);

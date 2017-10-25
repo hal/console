@@ -127,7 +127,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .prepareReset(f -> presenter.resetSingleton(bvType, BEAN_VALIDATION_TEMPLATE, f, bvMetadata))
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.JCA_TAB_CONTAINER);
         tabs.add(Ids.JCA_CCM_TAB, ccmType, ccmForm.asElement());
         tabs.add(Ids.JCA_ARCHIVE_VALIDATION_TAB, avType, avForm.asElement());
         tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.asElement());

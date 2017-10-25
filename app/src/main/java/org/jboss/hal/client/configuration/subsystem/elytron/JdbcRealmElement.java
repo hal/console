@@ -50,6 +50,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
 import static org.jboss.hal.resources.Ids.TAB;
+import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
 class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresenter<RealmsPresenter> {
 
@@ -93,7 +94,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .column(Names.ATTRIBUTE_MAPPING, this::showAttributeMappings, "12em") //NON-NLS
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(id(PRINCIPAL_QUERY, TAB_CONTAINER));
 
         pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, TAB), pqMetadata)
                 .include(SQL, DATA_SOURCE)

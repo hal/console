@@ -127,7 +127,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         // complex attributes of type OBJECT
         coForms = new HashMap<>();
         if (!builder.coAttributes.isEmpty()) {
-            Tabs tabs = new Tabs();
+            Tabs tabs = new Tabs(Ids.build(builder.baseId, Ids.TAB_CONTAINER));
             tabs.add(Ids.build(builder.baseId, ATTRIBUTES, Ids.TAB),
                     builder.mbuiContext.resources().constants().attributes(), form.asElement());
 

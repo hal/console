@@ -77,7 +77,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     private CredentialReference cr;
     private Form<ModelNode> crForm;
 
-    ClusteringView(final MbuiContext mbuiContext) {
+    ClusteringView(MbuiContext mbuiContext) {
         super(mbuiContext);
         cr = new CredentialReference(mbuiContext.eventBus(), mbuiContext.dispatcher(), mbuiContext.ca(),
                 mbuiContext.resources());
@@ -106,7 +106,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 .prepareReset(form -> presenter.reset(ServerSubResource.BRIDGE, form))
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.build(MESSAGING_SERVER, BRIDGE, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, ATTRIBUTES, Ids.TAB),
                 mbuiContext.resources().constants().attributes(), bridgeForm.asElement());
         tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, CREDENTIAL_REFERENCE, Ids.TAB),

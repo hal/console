@@ -103,7 +103,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
                 .build();
         attachables.add(sizingForm);
 
-        Tabs tabs = new Tabs()
+        Tabs tabs = new Tabs(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TAB_CONTAINER))
                 .add(Ids.build(prefixId, Ids.JCA_THREAD_POOL_ATTRIBUTES_TAB), resources.constants().attributes(),
                         attributesForm.asElement())
                 .add(Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_TAB), resources.constants().sizing(),

@@ -75,9 +75,9 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
     @Inject
     @SuppressWarnings("ConstantConditions")
-    public ServletContainerView(final Dispatcher dispatcher,
-            final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public ServletContainerView(Dispatcher dispatcher,
+            MetadataRegistry metadataRegistry,
+            Resources resources) {
         this.dispatcher = dispatcher;
 
         Metadata configurationMetadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
@@ -109,7 +109,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .prepareReset(form -> presenter.resetWelcomeFile(form))
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.UNDERTOW_SERVLET_CONTAINER_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_TAB, resources.constants().attributes(),
                 configurationForm.asElement());
         tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB, Names.MIME_MAPPING, mimeMappingForm.asElement());
@@ -180,12 +180,12 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
     }
 
     @Override
-    public void setPresenter(final ServletContainerPresenter presenter) {
+    public void setPresenter(ServletContainerPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void update(final ModelNode payload) {
+    public void update(ModelNode payload) {
         configurationForm.view(payload);
         mimeMappingForm.view(new ModelNode());
         mimeMappingItem.setValue(failSafePropertyList(payload, MIME_MAPPING).stream()

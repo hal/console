@@ -89,7 +89,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     private CredentialReference cr;
     private Form<ModelNode> crForm;
 
-    ConnectionView(final MbuiContext mbuiContext) {
+    ConnectionView(MbuiContext mbuiContext) {
         super(mbuiContext);
         cr = new CredentialReference(mbuiContext.eventBus(), mbuiContext.dispatcher(), mbuiContext.ca(),
                 mbuiContext.resources());
@@ -97,7 +97,6 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
     @PostConstruct
     void init() {
-
         Metadata metadata = mbuiContext.metadataRegistry().lookup(POOLED_CONNECTION_FACTORY_TEMPLATE);
         crForm = cr.form(Ids.MESSAGING_SERVER, metadata, CREDENTIAL_REFERENCE, PASSWORD,
                 () -> pooledConnectionFactoryForm.<String>getFormItem(PASSWORD).getValue(),
@@ -125,7 +124,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                 .prepareReset(form -> presenter.reset(ServerSubResource.POOLED_CONNECTION_FACTORY, form))
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ATTRIBUTES, Ids.TAB),
                 mbuiContext.resources().constants().attributes(), pooledConnectionFactoryForm.asElement());
         tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, CREDENTIAL_REFERENCE, Ids.TAB),
@@ -158,7 +157,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     }
 
     @Override
-    public void setPresenter(final ConnectionPresenter presenter) {
+    public void setPresenter(ConnectionPresenter presenter) {
         super.setPresenter(presenter);
 
         // register the suggestion handlers here rather than in a @PostConstruct method
@@ -176,75 +175,75 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     }
 
     @Override
-    public void updateAcceptor(final List<NamedNode> acceptors) {
+    public void updateAcceptor(List<NamedNode> acceptors) {
         acceptorForm.clear();
         acceptorTable.update(acceptors);
         navigation.updateBadge("messaging-acceptor-entry", acceptors.size());
     }
 
     @Override
-    public void updateInVmAcceptor(final List<NamedNode> inVmAcceptors) {
+    public void updateInVmAcceptor(List<NamedNode> inVmAcceptors) {
         inVmAcceptorForm.clear();
         inVmAcceptorTable.update(inVmAcceptors);
         navigation.updateBadge("messaging-in-vm-acceptor-entry", inVmAcceptors.size());
     }
 
     @Override
-    public void updateHttpAcceptor(final List<NamedNode> httpAcceptors) {
+    public void updateHttpAcceptor(List<NamedNode> httpAcceptors) {
         httpAcceptorForm.clear();
         httpAcceptorTable.update(httpAcceptors);
         navigation.updateBadge("messaging-http-acceptor-entry", httpAcceptors.size());
     }
 
     @Override
-    public void updateRemoteAcceptor(final List<NamedNode> remoteAcceptors) {
+    public void updateRemoteAcceptor(List<NamedNode> remoteAcceptors) {
         remoteAcceptorForm.clear();
         remoteAcceptorTable.update(remoteAcceptors);
         navigation.updateBadge("messaging-remote-acceptor-entry", remoteAcceptors.size());
     }
 
     @Override
-    public void updateConnector(final List<NamedNode> connectors) {
+    public void updateConnector(List<NamedNode> connectors) {
         connectorForm.clear();
         connectorTable.update(connectors);
         navigation.updateBadge("messaging-connector-entry", connectors.size());
     }
 
     @Override
-    public void updateInVmConnector(final List<NamedNode> inVmConnectors) {
+    public void updateInVmConnector(List<NamedNode> inVmConnectors) {
         inVmConnectorForm.clear();
         inVmConnectorTable.update(inVmConnectors);
         navigation.updateBadge("messaging-in-vm-connector-entry", inVmConnectors.size());
     }
 
     @Override
-    public void updateHttpConnector(final List<NamedNode> httpConnectors) {
+    public void updateHttpConnector(List<NamedNode> httpConnectors) {
         httpConnectorForm.clear();
         httpConnectorTable.update(httpConnectors);
         navigation.updateBadge("messaging-http-connector-entry", httpConnectors.size());
     }
 
     @Override
-    public void updateRemoteConnector(final List<NamedNode> remoteConnectors) {
+    public void updateRemoteConnector(List<NamedNode> remoteConnectors) {
         remoteConnectorForm.clear();
         remoteConnectorTable.update(remoteConnectors);
         navigation.updateBadge("messaging-remote-connector-entry", remoteConnectors.size());
     }
 
     @Override
-    public void updateConnectorService(final List<NamedNode> connectorServices) {
+    public void updateConnectorService(List<NamedNode> connectorServices) {
         connectorServiceForm.clear();
         connectorServiceTable.update(connectorServices);
     }
 
     @Override
-    public void updateConnectionFactory(final List<NamedNode> connectionFactories) {
+    public void updateConnectionFactory(List<NamedNode> connectionFactories) {
         connectionFactoryForm.clear();
         connectionFactoryTable.update(connectionFactories);
     }
 
     @Override
-    public void updatePooledConnectionFactory(final List<NamedNode> pooledConnectionFactories) {
+    public void updatePooledConnectionFactory(List<NamedNode> pooledConnectionFactories) {
         crForm.clear();
         pooledConnectionFactoryForm.clear();
         pooledConnectionFactoryTable.update(pooledConnectionFactories);

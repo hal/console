@@ -115,7 +115,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         }
         table = builder.build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.build(cache.baseId, Ids.TAB_CONTAINER));
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveCache(cache, form.getModel().getName(), changedValues))
                 .prepareReset(form -> presenter.resetCache(cache, form.getModel().getName(), form))

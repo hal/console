@@ -43,6 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.TAB;
+import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
 class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
 
@@ -85,7 +86,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .prepareRemove(form -> presenter.removeNewItemTemplate(table.selectedRow().getName(), form))
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(id(TAB_CONTAINER));
         tabs.add(id(TAB), resources.constants().attributes(), attributes.asElement());
         tabs.add(id(NEW_ITEM_TEMPLATE, TAB), Names.NEW_ITEM_TEMPLATE, newItemTemplate.asElement());
 

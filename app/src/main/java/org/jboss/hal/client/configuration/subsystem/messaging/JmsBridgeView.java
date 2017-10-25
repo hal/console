@@ -50,7 +50,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
     private JmsBridgePresenter presenter;
 
     @Inject
-    JmsBridgeView(final MbuiContext mbuiContext, CredentialReference cr) {
+    JmsBridgeView(MbuiContext mbuiContext, CredentialReference cr) {
 
         Metadata jmsBridgeMetadata = mbuiContext.metadataRegistry().lookup(JMS_BRIDGE_TEMPLATE);
 
@@ -104,7 +104,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
         registerAttachable(attributesForm, sourceForm, targetForm, crSource, crTarget);
 
         LabelBuilder labelBuilder = new LabelBuilder();
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.build(Ids.JMS_BRIDGE, Ids.TAB_CONTAINER));
         tabs.add(Ids.JMS_BRIDGE_TAB, mbuiContext.resources().constants().attributes(), attributesForm.asElement());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), Names.SOURCE, sourceForm.asElement());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE_CREDENTIAL_REFERENCE, Ids.TAB),
@@ -123,7 +123,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
     }
 
     @Override
-    public void update(final NamedNode model) {
+    public void update(NamedNode model) {
         attributesForm.view(model);
         sourceForm.view(model);
         targetForm.view(model);
@@ -132,7 +132,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
     }
 
     @Override
-    public void setPresenter(final JmsBridgePresenter presenter) {
+    public void setPresenter(JmsBridgePresenter presenter) {
         this.presenter = presenter;
     }
 }

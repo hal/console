@@ -46,6 +46,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
 import static org.jboss.hal.resources.Ids.TAB;
+import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
 public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, HasPresenter<RealmsPresenter> {
 
@@ -134,7 +135,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                         X509_CREDENTIAL_MAPPER, Names.X509_CREDENTIAL_MAPPER, form))
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(id(TAB_CONTAINER));
         tabs.add(id(TAB), resources.constants().attributes(), ldapRealmForm.asElement());
         tabs.add(id(IDENTITY_MAPPING, TAB), Names.IDENTITY_MAPPING, identityMappingForm.asElement());
         tabs.add(id(USER_PASSWORD_MAPPER, TAB), Names.USER_PASSWORD_MAPPER, userPasswordMapperForm.asElement());
