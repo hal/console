@@ -57,7 +57,7 @@
                         <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
-                <form id="batch-jdbc-job-repo-form" title="JDBC Job Repository" auto-save="true" reset="true"
+                <form id="batch-jdbc-job-repo-form" title="JDBC Job Repository" auto-save="true"
                       name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="data-source">
