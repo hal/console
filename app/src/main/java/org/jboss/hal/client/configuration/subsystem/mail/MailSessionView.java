@@ -95,7 +95,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .add(p().textContent(mailSessionMetadata.getDescription().getDescription()))
                 .add(mailSessionForm.asElement())
                 .asElement();
-        navigation.addPrimary(Ids.MAIL_SESSION_ENTRY, resources.constants().attributes(),
+        navigation.addPrimary(Ids.MAIL_SESSION_ITEM, resources.constants().attributes(),
                 fontAwesome("envelope"), mailSessionElement);
 
         // ============================================
@@ -143,7 +143,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .add(p().textContent(serverMetadata.getDescription().getDescription()))
                 .addAll(serverTable, serverTabs)
                 .asElement();
-        navigation.addPrimary(Ids.MAIL_SERVER_ENTRY, Names.SERVER, pfIcon("server"), mailSessionElement);
+        navigation.addPrimary(Ids.MAIL_SERVER_ITEM, Names.SERVER, pfIcon("server"), mailSessionElement);
 
         // ============================================
         // main layout

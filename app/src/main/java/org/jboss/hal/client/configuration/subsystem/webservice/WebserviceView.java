@@ -72,13 +72,13 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
         endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, tableButtonFactory);
 
         VerticalNavigation navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.WEBSERVICES_ENTRY, Names.CONFIGURATION, pfIcon("settings"), webservicesSection);
-        navigation.addPrimary(Ids.WEBSERVICES_CLIENT_CONFIG_ENTRY, Names.CLIENT_CONFIGURATION,
+        navigation.addPrimary(Ids.WEBSERVICES_ITEM, Names.CONFIGURATION, pfIcon("settings"), webservicesSection);
+        navigation.addPrimary(Ids.WEBSERVICES_CLIENT_CONFIG_ITEM, Names.CLIENT_CONFIGURATION,
                 fontAwesome("laptop"), clientConfig);
-        navigation.onShow(Ids.WEBSERVICES_CLIENT_CONFIG_ENTRY, () -> presenter.selectConfig(CLIENT_CONFIG));
-        navigation.addPrimary(Ids.WEBSERVICES_ENDPOINT_CONFIG_ENTRY, Names.ENDPOINT_CONFIGURATION,
+        navigation.onShow(Ids.WEBSERVICES_CLIENT_CONFIG_ITEM, () -> presenter.selectConfig(CLIENT_CONFIG));
+        navigation.addPrimary(Ids.WEBSERVICES_ENDPOINT_CONFIG_ITEM, Names.ENDPOINT_CONFIGURATION,
                 pfIcon("service"), endpointConfig);
-        navigation.onShow(Ids.WEBSERVICES_ENDPOINT_CONFIG_ENTRY, () -> presenter.selectConfig(ENDPOINT_CONFIG));
+        navigation.onShow(Ids.WEBSERVICES_ENDPOINT_CONFIG_ITEM, () -> presenter.selectConfig(ENDPOINT_CONFIG));
 
         registerAttachables(asList(navigation, webservicesForm, clientConfig, endpointConfig));
 

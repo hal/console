@@ -49,7 +49,6 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.Ids.ENTRY;
 import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 
 @MbuiView
@@ -139,7 +138,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
         registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
 
-        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ENTRY), null,
+        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, Ids.ITEM), null,
                 Names.POOLED_CONNECTION_FACTORY, "pficon pficon-replicator", htmlSection);
 
     }
@@ -178,56 +177,56 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     public void updateAcceptor(List<NamedNode> acceptors) {
         acceptorForm.clear();
         acceptorTable.update(acceptors);
-        navigation.updateBadge("messaging-acceptor-entry", acceptors.size());
+        navigation.updateBadge("messaging-acceptor-item", acceptors.size());
     }
 
     @Override
     public void updateInVmAcceptor(List<NamedNode> inVmAcceptors) {
         inVmAcceptorForm.clear();
         inVmAcceptorTable.update(inVmAcceptors);
-        navigation.updateBadge("messaging-in-vm-acceptor-entry", inVmAcceptors.size());
+        navigation.updateBadge("messaging-in-vm-acceptor-item", inVmAcceptors.size());
     }
 
     @Override
     public void updateHttpAcceptor(List<NamedNode> httpAcceptors) {
         httpAcceptorForm.clear();
         httpAcceptorTable.update(httpAcceptors);
-        navigation.updateBadge("messaging-http-acceptor-entry", httpAcceptors.size());
+        navigation.updateBadge("messaging-http-acceptor-item", httpAcceptors.size());
     }
 
     @Override
     public void updateRemoteAcceptor(List<NamedNode> remoteAcceptors) {
         remoteAcceptorForm.clear();
         remoteAcceptorTable.update(remoteAcceptors);
-        navigation.updateBadge("messaging-remote-acceptor-entry", remoteAcceptors.size());
+        navigation.updateBadge("messaging-remote-acceptor-item", remoteAcceptors.size());
     }
 
     @Override
     public void updateConnector(List<NamedNode> connectors) {
         connectorForm.clear();
         connectorTable.update(connectors);
-        navigation.updateBadge("messaging-connector-entry", connectors.size());
+        navigation.updateBadge("messaging-connector-item", connectors.size());
     }
 
     @Override
     public void updateInVmConnector(List<NamedNode> inVmConnectors) {
         inVmConnectorForm.clear();
         inVmConnectorTable.update(inVmConnectors);
-        navigation.updateBadge("messaging-in-vm-connector-entry", inVmConnectors.size());
+        navigation.updateBadge("messaging-in-vm-connector-item", inVmConnectors.size());
     }
 
     @Override
     public void updateHttpConnector(List<NamedNode> httpConnectors) {
         httpConnectorForm.clear();
         httpConnectorTable.update(httpConnectors);
-        navigation.updateBadge("messaging-http-connector-entry", httpConnectors.size());
+        navigation.updateBadge("messaging-http-connector-item", httpConnectors.size());
     }
 
     @Override
     public void updateRemoteConnector(List<NamedNode> remoteConnectors) {
         remoteConnectorForm.clear();
         remoteConnectorTable.update(remoteConnectors);
-        navigation.updateBadge("messaging-remote-connector-entry", remoteConnectors.size());
+        navigation.updateBadge("messaging-remote-connector-item", remoteConnectors.size());
     }
 
     @Override

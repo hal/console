@@ -138,7 +138,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(tabs)
                 .asElement();
 
-        navigation.addPrimary(Ids.JCA_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"), configLayout);
+        navigation.addPrimary(Ids.JCA_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
 
 
@@ -163,7 +163,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(tracerForm)
                 .asElement();
 
-        navigation.addPrimary(Ids.JCA_TRACER_ENTRY, tracerType, fontAwesome("bug"), tracerLayout);
+        navigation.addPrimary(Ids.JCA_TRACER_ITEM, tracerType, fontAwesome("bug"), tracerLayout);
         registerAttachable(tracerForm);
 
 
@@ -211,7 +211,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(bcForm)
                 .asElement();
 
-        navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ENTRY, bcType, fontAwesome("play"), bcLayout);
+        navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ITEM, bcType, fontAwesome("play"), bcLayout);
         registerAttachable(bcTable, bcForm);
 
         // ------------------------------------------------------ workmanager
@@ -249,7 +249,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 wmTpEditor.asElement());
         pages.put(WORKMANAGER_TEMPLATE, wmPages);
 
-        navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cog"), wmPages);
+        navigation.addPrimary(Ids.JCA_WORKMANAGER_ITEM, wmType, fontAwesome("cog"), wmPages);
         registerAttachable(wmTable);
 
         // ------------------------------------------------------ distributed workmanager
@@ -303,7 +303,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 dwmTpEditor.asElement());
         pages.put(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmPages);
 
-        navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ENTRY, dwmType, fontAwesome("cogs"), dwmPages);
+        navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ITEM, dwmType, fontAwesome("cogs"), dwmPages);
         registerAttachable(dwmTable, dwmForm);
 
         // ------------------------------------------------------ main layout

@@ -56,11 +56,11 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
 
         Metadata metadata = metadataRegistry.lookup(CHANNEL_FORK_TEMPLATE);
 
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_FORK_ENTRY, Ids.TABLE),
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_FORK_ITEM, Ids.TABLE),
                 metadata)
                 .button(tableButtonFactory.add(CHANNEL_FORK_TEMPLATE,
                         table -> presenter.addResourceDialog(SELECTED_CHANNEL_FORK_TEMPLATE,
-                                Ids.JGROUPS_CHANNEL_FORK_ENTRY, Names.FORK)))
+                                Ids.JGROUPS_CHANNEL_FORK_ITEM, Names.FORK)))
                 .button(tableButtonFactory.remove(CHANNEL_FORK_TEMPLATE,
                         table -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
                                 table.selectedRow().getName(), Names.FORK)))

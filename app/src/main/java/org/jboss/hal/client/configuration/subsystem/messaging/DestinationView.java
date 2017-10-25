@@ -102,7 +102,7 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
                 .asElement();
 
         //noinspection HardCodedStringLiteral
-        navigation.insertPrimary(Ids.MESSAGING_SECURITY_SETTING_ROLE_ENTRY, "messaging-address-setting-entry",
+        navigation.insertPrimary(Ids.MESSAGING_SECURITY_SETTING_ROLE_ITEM, "messaging-address-setting-item",
                 Names.SECURITY_SETTING, fontAwesome("lock"), roleSection);
     }
 

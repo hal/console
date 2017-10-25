@@ -135,10 +135,10 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         }
 
         VerticalNavigation navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_ENTRY, Names.CONFIGURATION,
+        navigation.addPrimary(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_ITEM, Names.CONFIGURATION,
                 pfIcon("settings"), configurationSection);
         for (ServletContainerSetting setting : NAVIGATION_ORDER) {
-            navigation.addPrimary(Ids.build(setting.baseId, Ids.ENTRY), setting.type, setting.icon,
+            navigation.addPrimary(Ids.build(setting.baseId, Ids.ITEM), setting.type, setting.icon,
                     settingsSections.get(setting));
         }
 

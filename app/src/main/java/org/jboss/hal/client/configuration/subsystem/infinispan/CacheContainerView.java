@@ -91,19 +91,19 @@ public class CacheContainerView extends HalViewImpl
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(configurationForm)
                 .asElement();
-        navigation.addPrimary(Ids.CACHE_CONTAINER_ENTRY, Names.CONFIGURATION, pfIcon("settings"), section);
+        navigation.addPrimary(Ids.CACHE_CONTAINER_ITEM, Names.CONFIGURATION, pfIcon("settings"), section);
 
         caches.forEach((cache, cacheElement) ->
-                navigation.addPrimary(Ids.build(cache.baseId, Ids.ENTRY), cache.type, cache.icon,
+                navigation.addPrimary(Ids.build(cache.baseId, Ids.ITEM), cache.type, cache.icon,
                         cacheElement.asElement()));
 
-        navigation.addPrimary(Ids.CACHE_CONTAINER_THREAD_POOLS_ENTRY, Names.THREAD_POOLS, pfIcon("resource-pool"));
+        navigation.addPrimary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM, Names.THREAD_POOLS, pfIcon("resource-pool"));
         threadPools.forEach((threadPool, threadPoolElement) ->
-                navigation.addSecondary(Ids.CACHE_CONTAINER_THREAD_POOLS_ENTRY,
-                        Ids.build(threadPool.baseId, Ids.ENTRY), threadPool.type,
+                navigation.addSecondary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM,
+                        Ids.build(threadPool.baseId, Ids.ITEM), threadPool.type,
                         threadPoolElement.asElement()));
 
-        navigation.addPrimary(Ids.CACHE_CONTAINER_TRANSPORT_ENTRY, Names.TRANSPORT, fontAwesome("road"),
+        navigation.addPrimary(Ids.CACHE_CONTAINER_TRANSPORT_ITEM, Names.TRANSPORT, fontAwesome("road"),
                 transport.asElement());
 
         registerAttachable(navigation);
@@ -137,7 +137,7 @@ public class CacheContainerView extends HalViewImpl
             threadPoolElement.update(modelNode);
         });
 
-        navigation.setVisible(Ids.CACHE_CONTAINER_TRANSPORT_ENTRY, jgroups);
+        navigation.setVisible(Ids.CACHE_CONTAINER_TRANSPORT_ITEM, jgroups);
         if (jgroups) {
             List<Property> transports = failSafePropertyList(cacheContainer, TRANSPORT);
             transport.update(transports);

@@ -80,8 +80,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     @Inject
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    public ServerView(Dispatcher dispatcher, MetadataRegistry metadataRegistry,
-            TableButtonFactory tableButtonFactory, Resources resources) {
+    public ServerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry,
+            final TableButtonFactory tableButtonFactory, final Resources resources) {
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
 
@@ -133,7 +133,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
             hostSettingForms.put(setting, hostSetting(setting));
         }
 
-        Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_TAB_CONTAINER);
+        Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB);
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
         for (HostSetting setting : HostSetting.values()) {
             tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
@@ -236,15 +236,15 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         listener.put(HTTPS, new ListenerElement(HTTPS, metadataRegistry, tableButtonFactory));
 
         navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.UNDERTOW_SERVER_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"),
+        navigation.addPrimary(Ids.UNDERTOW_SERVER_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"),
                 configurationSection);
-        navigation.addPrimary(Ids.UNDERTOW_HOST_ENTRY, Names.HOSTS, pfIcon("enterprise"), hostPages);
-        navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Names.LISTENER, fontAwesome("headphones"));
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(AJP.baseId, Ids.ENTRY),
+        navigation.addPrimary(Ids.UNDERTOW_HOST_ITEM, Names.HOSTS, pfIcon("enterprise"), hostPages);
+        navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Names.LISTENER, fontAwesome("headphones"));
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(AJP.baseId, Ids.ITEM),
                 AJP.type, listener.get(AJP).asElement());
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTP.baseId, Ids.ENTRY),
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTP.baseId, Ids.ITEM),
                 HTTP.type, listener.get(HTTP).asElement());
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTPS.baseId, Ids.ENTRY),
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTPS.baseId, Ids.ITEM),
                 HTTPS.type, listener.get(HTTPS).asElement());
 
         registerAttachable(navigation,
@@ -261,7 +261,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         .addAll(navigation.panes())));
     }
 
-    private Form<ModelNode> hostSetting(HostSetting hostSetting) {
+    private Form<ModelNode> hostSetting(final HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
         return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM), metadata)
                 .singleton(() -> presenter.hostSettingOperation(hostSetting),
@@ -295,7 +295,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(ServerPresenter presenter) {
+    public void setPresenter(final ServerPresenter presenter) {
         this.presenter = presenter;
         this.listener.values().forEach(l -> l.setPresenter(presenter));
 
@@ -310,7 +310,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void update(ModelNode payload) {
+    public void update(final ModelNode payload) {
         configurationForm.view(payload);
 
         hostForm.clear();
@@ -319,26 +319,26 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         listener.forEach((l, e) -> {
             List<NamedNode> items = asNamedNodes(failSafePropertyList(payload, l.resource));
             e.update(items);
-            navigation.updateBadge(Ids.build(l.baseId, Ids.ENTRY), items.size());
+            navigation.updateBadge(Ids.build(l.baseId, Ids.ITEM), items.size());
         });
     }
 
     @Override
-    public void updateFilterRef(List<NamedNode> filters) {
+    public void updateFilterRef(final List<NamedNode> filters) {
         filterRefForm.clear();
         filterRefTable.update(filters);
         hostPages.showPage(Ids.UNDERTOW_HOST_FILTER_REF_PAGE);
     }
 
     @Override
-    public void updateLocation(List<NamedNode> locations) {
+    public void updateLocation(final List<NamedNode> locations) {
         locationForm.clear();
         locationTable.update(locations);
         hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_PAGE);
     }
 
     @Override
-    public void updateLocationFilterRef(List<NamedNode> filters) {
+    public void updateLocationFilterRef(final List<NamedNode> filters) {
         locationFilterRefForm.clear();
         locationFilterRefTable.update(filters);
         hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE);

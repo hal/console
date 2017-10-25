@@ -18,8 +18,8 @@
 <view>
     <vertical-navigation id="messaging-connection-vertical-navigation">
 
-        <item id="messaging-acceptor-group-entry" title="Acceptor" icon="fa fa-sign-in">
-            <sub-item id="messaging-acceptor-entry" title="Generic">
+        <item id="messaging-acceptor-group-item" title="Acceptor" icon="fa fa-sign-in">
+            <sub-item id="messaging-acceptor-item" title="Generic">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/acceptor=*">
                     <h1>Generic Acceptor</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -52,7 +52,7 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="messaging-in-vm-acceptor-entry" title="In VM">
+            <sub-item id="messaging-in-vm-acceptor-item" title="In VM">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/in-vm-acceptor=*">
                     <h1>In VM Acceptor</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -80,7 +80,7 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="messaging-http-acceptor-entry" title="HTTP">
+            <sub-item id="messaging-http-acceptor-item" title="HTTP">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/http-acceptor=*">
                     <h1>HTTP Acceptor</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -115,7 +115,7 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="messaging-remote-acceptor-entry" title="Remote">
+            <sub-item id="messaging-remote-acceptor-item" title="Remote">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/remote-acceptor=*">
                     <h1>Remote Acceptor</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -151,8 +151,8 @@
             </sub-item>
         </item>
 
-        <item id="messaging-connector-group-entry" title="Connector" icon="fa fa-link">
-            <sub-item id="messaging-connector-entry" title="Generic">
+        <item id="messaging-connector-group-item" title="Connector" icon="fa fa-link">
+            <sub-item id="messaging-connector-item" title="Generic">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/connector=*">
                     <h1>Generic Connector</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -185,7 +185,7 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="messaging-in-vm-connector-entry" title="In VM">
+            <sub-item id="messaging-in-vm-connector-item" title="In VM">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/in-vm-connector=*">
                     <h1>In VM Connector</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -213,7 +213,7 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="messaging-http-connector-entry" title="HTTP">
+            <sub-item id="messaging-http-connector-item" title="HTTP">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/http-connector=*">
                     <h1>HTTP Connector</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -254,7 +254,7 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="messaging-remote-connector-entry" title="Remote">
+            <sub-item id="messaging-remote-connector-item" title="Remote">
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/remote-connector=*">
                     <h1>Remote Connector</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
@@ -290,7 +290,7 @@
             </sub-item>
         </item>
 
-        <item id="messaging-connector-service-entry" title="Connector Service" icon="pficon pficon-service">
+        <item id="messaging-connector-service-item" title="Connector Service" icon="pficon pficon-service">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/connector-service=*">
                 <h1>Connector Service</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -318,7 +318,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-connection-factory-entry" title="Connection Factory" icon="fa fa-cubes">
+        <item id="messaging-connection-factory-item" title="Connection Factory" icon="fa fa-cubes">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/connection-factory=*">
                 <h1>Connection Factory</h1>
                 <p>${metadata.getDescription().getDescription()}</p>

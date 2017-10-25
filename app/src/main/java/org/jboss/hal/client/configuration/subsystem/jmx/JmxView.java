@@ -102,7 +102,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .add(configForm)
                 .asElement();
 
-        navigation.addPrimary(Ids.JMX_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"), configLayout);
+        navigation.addPrimary(Ids.JMX_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(configForm);
 
         // ------------------------------------------------------ audit log
@@ -151,7 +151,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .add(this.alForm)
                 .asElement();
 
-        navigation.addPrimary(Ids.JMX_AUDIT_LOG_ENTRY, Names.AUDIT_LOG, fontAwesome("file-text-o"), alLayout);
+        navigation.addPrimary(Ids.JMX_AUDIT_LOG_ITEM, Names.AUDIT_LOG, fontAwesome("file-text-o"), alLayout);
         registerAttachable(this.alForm);
 
         // ------------------------------------------------------ remoting connector
@@ -188,7 +188,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .add(this.rcForm)
                 .asElement();
 
-        navigation.addPrimary(Ids.JMX_REMOTING_CONNECTOR_ENTRY, type, pfIcon("topology"), rcLayout);
+        navigation.addPrimary(Ids.JMX_REMOTING_CONNECTOR_ITEM, type, pfIcon("topology"), rcLayout);
         registerAttachable(this.rcForm);
 
         // ------------------------------------------------------ main layout

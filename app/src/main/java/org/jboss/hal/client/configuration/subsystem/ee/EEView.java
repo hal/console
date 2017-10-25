@@ -105,7 +105,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(p().textContent(eeMetadata.getDescription().getDescription()))
                 .add(eeAttributesForm)
                 .asElement();
-        navigation.addPrimary(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), navigationElement);
+        navigation.addPrimary(EE_ATTRIBUTES_ITEM, Names.DEPLOYMENTS, fontAwesome("archive"), navigationElement);
 
         // ============================================
         // global modules
@@ -125,7 +125,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(p().textContent(globalModulesMetadata.getDescription().getDescription()))
                 .add(globalModulesTable)
                 .asElement();
-        navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cubes"), navigationElement);
+        navigation.addPrimary(EE_GLOBAL_MODULES_ITEM, Names.GLOBAL_MODULES, fontAwesome("cubes"), navigationElement);
 
         // ============================================
         // service=default-bindings
@@ -147,21 +147,21 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(p().textContent(defaultBindingsMetadata.getDescription().getDescription()))
                 .add(defaultBindingsForm)
                 .asElement();
-        navigation.addPrimary(EE_DEFAULT_BINDINGS_ENTRY, DEFAULT_BINDINGS_NAME, fontAwesome("link"),
+        navigation.addPrimary(EE_DEFAULT_BINDINGS_ITEM, DEFAULT_BINDINGS_NAME, fontAwesome("link"),
                 navigationElement);
 
         // ============================================
         // services
-        navigation.addPrimary(EE_SERVICES_ENTRY, SERVICES_NAME, pfIcon("service"));
+        navigation.addPrimary(EE_SERVICES_ITEM, SERVICES_NAME, pfIcon("service"));
 
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_CONTEXT_SERVICE, CONTEXT_SERVICE_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_CONTEXT_SERVICE, CONTEXT_SERVICE_NAME,
                 buildServicePanel(EE_CONTEXT_SERVICE, CONTEXT_SERVICE_TEMPLATE, CONTEXT_SERVICE_NAME));
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_NAME,
                 buildServicePanel(EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_TEMPLATE, MANAGED_EXECUTOR_NAME));
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_NAME,
                 buildServicePanel(EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_TEMPLATE,
                         MANAGED_EXECUTOR_SCHEDULED_NAME));
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_NAME,
                 buildServicePanel(EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_TEMPLATE,
                         MANAGED_THREAD_FACTORY_NAME));
 

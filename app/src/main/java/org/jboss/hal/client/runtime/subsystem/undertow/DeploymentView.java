@@ -44,7 +44,6 @@ import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.W
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_WEBSOCKETS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
-import static org.jboss.hal.resources.Ids.ENTRY;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.UNDERTOW_RUNTIME;
 
@@ -110,9 +109,9 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .asElement();
 
         navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, SERVLET, ENTRY), Names.SERVLET, pfIcon("enterprise"),
+        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, SERVLET, Ids.ITEM), Names.SERVLET, pfIcon("enterprise"),
                 servletSection);
-        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, ENTRY), Names.WEBSOCKETS, pfIcon("replicator"),
+        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, Ids.ITEM), Names.WEBSOCKETS, pfIcon("replicator"),
                 websocketSection);
 
         registerAttachable(navigation, servletsTable, servletsForm, websocketsTable, websocketsForm);

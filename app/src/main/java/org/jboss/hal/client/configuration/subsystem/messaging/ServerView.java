@@ -187,7 +187,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .build();
 
 
-        String primaryIdDirectory = "messaging-server-directory-entry";
+        String primaryIdDirectory = "messaging-server-directory-item";
 
         HTMLElement pagingDirectoryElement = section()
                 .add(h(1).textContent(Names.PAGING_DIRECTORY))
@@ -215,19 +215,19 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
 
         verticalNavigation.addPrimary(primaryIdDirectory, "Directories", "pficon pficon-repository");
-        verticalNavigation.addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_PAGING_DIRECTORY, Ids.ENTRY),
+        verticalNavigation.addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_PAGING_DIRECTORY, Ids.ITEM),
                 "Paging",
                 pagingDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_BINDING_DIRECTORY, Ids.ENTRY),
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_BINDING_DIRECTORY, Ids.ITEM),
                         "Bindings",
                         bindingsDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY, Ids.ENTRY),
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY, Ids.ITEM),
                         "Large Messages",
                         largeMessagesElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY, Ids.ENTRY),
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY, Ids.ITEM),
                         "Journal",
                         journalElement);
 

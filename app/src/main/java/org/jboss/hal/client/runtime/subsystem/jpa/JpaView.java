@@ -158,18 +158,18 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
-        navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
+        navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ITEM, resources.constants().mainAttributes(),
                 fontAwesome("list-ul"), section);
 
         // child resources
         buildChildPanel(baseId, AddressTemplates.ENTITY_DEPLOYMENT_TEMPLATE, "entity");
-        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_ENTRY, Names.ENTITY, fontAwesome("cubes"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_ITEM, Names.ENTITY, fontAwesome("cubes"),
                 buildChildPanel(baseId, AddressTemplates.ENTITY_DEPLOYMENT_TEMPLATE, Names.ENTITY));
-        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_CACHE_ENTRY, Names.ENTITY_CACHE, fontAwesome("database"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_CACHE_ITEM, Names.ENTITY_CACHE, fontAwesome("database"),
                 buildChildPanel(baseId, AddressTemplates.ENTITY_CACHE_DEPLOYMENT_TEMPLATE, Names.ENTITY_CACHE));
-        navigation.addPrimary(Ids.JPA_RUNTIME_QUERY_CACHE_ENTRY, Names.QUERY_CACHE, pfIcon("storage-domain"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_QUERY_CACHE_ITEM, Names.QUERY_CACHE, pfIcon("storage-domain"),
                 buildChildPanel(baseId, AddressTemplates.QUERY_CACHE_DEPLOYMENT_TEMPLATE, Names.QUERY_CACHE));
-        navigation.addPrimary(Ids.JPA_RUNTIME_COLLECTION_ENTRY, Names.COLLECTION, fontAwesome("tasks"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_COLLECTION_ITEM, Names.COLLECTION, fontAwesome("tasks"),
                 buildChildPanel(baseId, AddressTemplates.COLLECTION_DEPLOYMENT_TEMPLATE, Names.COLLECTION));
 
         initElement(row()

@@ -130,7 +130,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     .add(appSecurityDomainTable)
                     .add(appSecurityDomainForm)
                     .asElement();
-            navigation.insertPrimary(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ENTRY, null, Names.SECURITY_DOMAIN,
+            navigation.insertPrimary(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ITEM, null, Names.SECURITY_DOMAIN,
                     fontAwesome("link"), section);
         }
     }

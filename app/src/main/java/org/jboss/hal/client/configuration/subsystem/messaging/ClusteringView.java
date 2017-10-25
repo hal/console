@@ -49,7 +49,6 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.Ids.ENTRY;
 import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 
 @MbuiView
@@ -121,7 +120,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
         registerAttachable(bridgeTable, bridgeForm, crForm);
 
-        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY), null, Names.BRIDGE, "fa fa-road",
+        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, Ids.ITEM), null, Names.BRIDGE, "fa fa-road",
                 bridgeSection);
     }
 

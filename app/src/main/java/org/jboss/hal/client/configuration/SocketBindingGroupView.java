@@ -142,7 +142,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 () -> Names.INBOUND + ": " + presenter.inbound, () -> Names.CLIENT_MAPPINGS,
                 clientMappingSection);
 
-        navigation.insertPrimary(Ids.build(INBOUND.baseId, Ids.ENTRY),
+        navigation.insertPrimary(Ids.build(INBOUND.baseId, Ids.ITEM),
                 "socket-binding-group-outbound-local-item", //NON-NLS
                 Names.INBOUND, fontAwesome("arrow-circle-o-left"), inboundPages);
 
