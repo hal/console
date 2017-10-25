@@ -62,6 +62,12 @@ public class Alert implements IsElement {
 
     public Alert(final String icon, final SafeHtml text, final String linkText,
             final EventCallbackFn<MouseEvent> linkHandler, final Constraint constraint) {
+        this(icon, text, null, linkText, linkHandler, constraint);
+
+    }
+
+    public Alert(final String icon, final SafeHtml text, String additionalText, final String linkText,
+            final EventCallbackFn<MouseEvent> linkHandler, final Constraint constraint) {
         this.root = div().css(alert, alertCss(icon))
                 .add(this.icon = span().css(icon).asElement())
                 .add(this.text = span().asElement())
@@ -80,6 +86,11 @@ public class Alert implements IsElement {
             if (constraint != null) {
                 a.dataset.set(UIConstants.CONSTRAINT, constraint.data());
             }
+        }
+        if (additionalText != null) {
+            HTMLElement additionalDescription = span().asElement();
+            this.root.appendChild(additionalDescription);
+            additionalDescription.innerHTML = additionalText;
         }
     }
 

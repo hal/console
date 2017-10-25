@@ -49,20 +49,26 @@ class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployme
 
         Deployment deployment = sgd.getDeployment();
         if (deployment != null) {
+            String referenceServerMsg = resources.messages()
+                    .referenceServer(sgd.getDeployment().getReferenceServer().getName());
             if (deployment.getStatus() == Status.FAILED) {
-                previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName())));
+                previewBuilder().add(
+                        new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName()), referenceServerMsg,
+                                null));
             } else if (deployment.getStatus() == Status.STOPPED) {
                 previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(sgd.getName()),
+                        referenceServerMsg,
                         resources.constants().enable(), event -> column.enable(sgd),
                         Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, DEPLOY)));
             } else if (deployment.getStatus() == Status.OK) {
-                previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentActive(sgd.getName()),
-                        resources.constants().disable(), event -> column.disable(sgd),
-                        Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
+                previewBuilder().add(
+                        new Alert(Icons.OK, resources.messages().deploymentActive(sgd.getName()), referenceServerMsg,
+                                resources.constants().disable(), event -> column.disable(sgd),
+                                Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
             } else {
                 previewBuilder()
                         .add(new Alert(Icons.UNKNOWN, resources.messages().deploymentUnknownState(sgd.getName()),
-                                resources.constants().disable(), event -> column.disable(sgd),
+                                referenceServerMsg, resources.constants().disable(), event -> column.disable(sgd),
                                 Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
             }
         } else {

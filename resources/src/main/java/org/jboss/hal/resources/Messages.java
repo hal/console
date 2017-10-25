@@ -306,6 +306,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml recordingStarted();
     SafeHtml recordingStopped();
 
+    String referenceServer(String server);
     String reload(String name);
     SafeHtml reloadDomainControllerPending(String name);
     SafeHtml reloadDomainControllerQuestion(String name);
