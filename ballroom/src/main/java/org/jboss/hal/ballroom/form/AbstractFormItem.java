@@ -496,8 +496,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         this.suggestHandler = suggestHandler;
-        this.suggestHandler.setFormItem(this);
-        apply(SUGGESTIONS, suggestHandler);
+        if (suggestHandler != null) {
+            this.suggestHandler.setFormItem(this);
+            apply(SUGGESTIONS, suggestHandler);
+        } else {
+            unapply(SUGGESTIONS);
+        }
     }
 
     public void onSuggest(final String suggestion) {

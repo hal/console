@@ -184,6 +184,7 @@ public interface Ids {
     String ELYTRON_AGGREGATE_ROLE_MAPPER = "elytron-aggregate-role-mapper";
     String ELYTRON_AGGREGATE_SASL_SERVER_FACTORY = "elytron-aggregate-sasl-server-factory";
     String ELYTRON_AGGREGATE_SECURITY_EVENT_LISTENER = "elytron-aggregate-security-event-listener";
+    String ELYTRON_AUTHENTICATION_ITEM = "authentication-item";
     String ELYTRON_AUTHENTICATION_CONFIGURATION = "elytron-authentication-configuration";
     String ELYTRON_AUTHENTICATION_CONTEXT = "elytron-authentication-context";
     String ELYTRON_CACHING_REALM = "elytron-caching-realm";
@@ -225,8 +226,10 @@ public interface Ids {
     String ELYTRON_LDAP_REALM = "elytron-ldap-realm";
     String ELYTRON_LOGICAL_PERMISSION_MAPPER = "elytron-logical-permission-mapper";
     String ELYTRON_LOGICAL_ROLE_MAPPER = "elytron-logical-role-mapper";
+    String ELYTRON_LOGS_ITEM = "logs-item";
     String ELYTRON_MAPPED_REGEX_REALM_MAPPER = "elytron-mapped-regex-realm-mapper";
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "elytron-mechanism-provider-filtering-sasl-server-factory";
+    String ELYTRON_OTHER_ITEM = "other-item";
     String ELYTRON_PERIODIC_ROTATING_FILE_AUDIT_LOG = "elytron-periodic-rotating-file-audit-log";
     String ELYTRON_PERMISSION_MAPPINGS = "elytron-permission-mappings";
     String ELYTRON_PERMISSION_MAPPINGS_ADD = "elytron-permission-mappings-add";
@@ -258,6 +261,8 @@ public interface Ids {
     String ELYTRON_SIMPLE_REGEX_REALM_MAPPER = "elytron-single-regex-realm-mapper";
     String ELYTRON_SIMPLE_ROLE_DECODER = "elytron-simple-role-decoder";
     String ELYTRON_SIZE_ROTATING_FILE_AUDIT_LOG = "elytron-size-rotating-file-audit-log";
+    String ELYTRON_SSL_ITEM = "ssl-item";
+    String ELYTRON_STORE_ITEM = "stores-item";
     String ELYTRON_SYSLOG_AUDIT_LOG = "elytron-syslog-audit-log";
     String ELYTRON_TOKEN_REALM = "elytron-token-realm";
     String ELYTRON_TRUST_MANAGER = "elytron-trust-manager";

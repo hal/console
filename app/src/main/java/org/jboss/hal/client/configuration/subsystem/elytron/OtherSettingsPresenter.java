@@ -28,6 +28,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
@@ -50,6 +51,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -74,12 +76,14 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
+    private Dispatcher dispatcher;
 
     @Inject
     public OtherSettingsPresenter(EventBus eventBus,
             OtherSettingsPresenter.MyView view,
             OtherSettingsPresenter.MyProxy proxy,
             Finder finder,
+            Dispatcher dispatcher,
             CrudOperations crud,
             ComplexAttributeOperations ca,
             FinderPathFactory finderPathFactory,
@@ -87,6 +91,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             MetadataRegistry metadataRegistry,
             Resources resources) {
         super(eventBus, view, proxy, finder);
+        this.dispatcher = dispatcher;
         this.crud = crud;
         this.ca = ca;
         this.finderPathFactory = finderPathFactory;
@@ -217,6 +222,44 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             crud.add(Names.CREDENTIAL_STORE, name, address, model, (n, a) ->
                     reload(CREDENTIAL_STORE, nodes ->
                             getView().updateResourceElement(CREDENTIAL_STORE, nodes)));
+        }).show();
+    }
+
+    // -------------------------------------------- Security Domain
+
+    void addSecurityDomain() {
+        Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
+        // emulate capability-reference on default-realm
+        String capabilityReference = metadata.getDescription()
+                .findAttribute(ATTRIBUTES + "/" + REALMS + "/" + VALUE_TYPE, REALM)
+                .getValue()
+                .get(CAPABILITY_REFERENCE)
+                .asString();
+
+        String id = Ids.build(Ids.ELYTRON_SECURITY_DOMAIN, Ids.ADD);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(DEFAULT_REALM)
+                .unsorted()
+                .build();
+        form.getFormItem(DEFAULT_REALM)
+                .registerSuggestHandler(
+                        new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, capabilityReference,
+                                metadata.getTemplate()));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.SECURITY_DOMAIN), form, (name, model) -> {
+            if (model != null) {
+                // add the default-realm in the list of realms
+                ModelNode realm = new ModelNode();
+                realm.get(REALM).set(model.get(DEFAULT_REALM).asString());
+                model.get(REALMS).add(realm);
+            }
+            ResourceAddress address = SECURITY_DOMAIN_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.SECURITY_DOMAIN, name, address, model, (n, a) ->
+                    reload(SECURITY_DOMAIN, nodes ->
+                            getView().updateResourceElement(SECURITY_DOMAIN, nodes)));
         }).show();
     }
 

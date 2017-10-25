@@ -73,16 +73,11 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
-        String primaryIdStores = "stores-item";
-        String primaryIdSsl = "ssl-item";
-        String primaryIdAuth = "authentication-item";
-        String primaryIdLogs = "logs-item";
-        String primaryIdOther = "other-item";
-        navigation.addPrimary(primaryIdStores, "Stores", "fa fa-exchange");
-        navigation.addPrimary(primaryIdSsl, "SSL", "fa fa-file-o");
-        navigation.addPrimary(primaryIdAuth, "Authentication", "fa fa-terminal");
-        navigation.addPrimary(primaryIdLogs, "Logs", "fa fa-folder-o");
-        navigation.addPrimary(primaryIdOther, "Other Settings", "fa fa-address-card-o");
+        navigation.addPrimary(Ids.ELYTRON_STORE_ITEM, "Stores", "fa fa-exchange");
+        navigation.addPrimary(Ids.ELYTRON_SSL_ITEM, "SSL", "fa fa-file-o");
+        navigation.addPrimary(Ids.ELYTRON_AUTHENTICATION_ITEM, "Authentication", "fa fa-terminal");
+        navigation.addPrimary(Ids.ELYTRON_LOGS_ITEM, "Logs", "fa fa-folder-o");
+        navigation.addPrimary(Ids.ELYTRON_OTHER_ITEM, "Other Settings", "fa fa-address-card-o");
 
         LabelBuilder labelBuilder = new LabelBuilder();
 
@@ -96,7 +91,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                 .build();
         credentialStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
-        addResourceElement(CREDENTIAL_STORE, credentialStoreElement, primaryIdStores,
+        addResourceElement(CREDENTIAL_STORE, credentialStoreElement, Ids.ELYTRON_STORE_ITEM,
                 Ids.build(CREDENTIAL_STORE.baseId, Ids.ITEM),
                 labelBuilder.label(CREDENTIAL_STORE.resource));
 
@@ -104,7 +99,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 FILTERING_KEY_STORE.resourceElement(mbuiContext,
                         () -> presenter.reload(FILTERING_KEY_STORE.resource,
                                 nodes -> updateResourceElement(FILTERING_KEY_STORE.resource, nodes))),
-                primaryIdStores,
+                Ids.ELYTRON_STORE_ITEM,
                 Ids.build(FILTERING_KEY_STORE.baseId, Ids.ITEM),
                 labelBuilder.label(FILTERING_KEY_STORE.resource));
 
@@ -118,7 +113,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         keyStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(KEY_STORE,
                 keyStoreElement,
-                primaryIdStores,
+                Ids.ELYTRON_STORE_ITEM,
                 Ids.build(KEY_STORE.baseId, Ids.ITEM),
                 labelBuilder.label(KEY_STORE.resource));
 
@@ -126,7 +121,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         ldapKeyStoreElement = new LdapKeyStoreElement(metadata, mbuiContext.tableButtonFactory(),
                 mbuiContext.resources());
         registerAttachable(ldapKeyStoreElement);
-        navigation.addSecondary(primaryIdStores, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE,
+        navigation.addSecondary(Ids.ELYTRON_STORE_ITEM, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE,
                 ldapKeyStoreElement.asElement());
 
         // ==== SSL elements
@@ -135,7 +130,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 AGGREGATE_PROVIDERS.resourceElement(mbuiContext,
                         () -> presenter.reload(AGGREGATE_PROVIDERS.resource,
                                 nodes -> updateResourceElement(AGGREGATE_PROVIDERS.resource, nodes))),
-                primaryIdSsl,
+                Ids.ELYTRON_SSL_ITEM,
                 Ids.build(AGGREGATE_PROVIDERS.baseId, Ids.ITEM),
                 labelBuilder.label(AGGREGATE_PROVIDERS.resource));
 
@@ -143,7 +138,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 CLIENT_SSL_CONTEXT.resourceElement(mbuiContext,
                         () -> presenter.reload(CLIENT_SSL_CONTEXT.resource,
                                 nodes -> updateResourceElement(CLIENT_SSL_CONTEXT.resource, nodes))),
-                primaryIdSsl,
+                Ids.ELYTRON_SSL_ITEM,
                 Ids.build(CLIENT_SSL_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(CLIENT_SSL_CONTEXT.resource));
 
@@ -155,7 +150,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
                                 new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
                         .build(),
-                primaryIdSsl,
+                Ids.ELYTRON_SSL_ITEM,
                 Ids.build(KEY_MANAGER.baseId, Ids.ITEM),
                 labelBuilder.label(KEY_MANAGER.resource));
 
@@ -163,7 +158,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 PROVIDER_LOADER.resourceElement(mbuiContext,
                         () -> presenter.reload(PROVIDER_LOADER.resource,
                                 nodes -> updateResourceElement(PROVIDER_LOADER.resource, nodes))),
-                primaryIdSsl,
+                Ids.ELYTRON_SSL_ITEM,
                 Ids.build(PROVIDER_LOADER.baseId, Ids.ITEM),
                 labelBuilder.label(PROVIDER_LOADER.resource));
 
@@ -171,17 +166,22 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 SERVER_SSL_CONTEXT.resourceElement(mbuiContext,
                         () -> presenter.reload(SERVER_SSL_CONTEXT.resource,
                                 nodes -> updateResourceElement(SERVER_SSL_CONTEXT.resource, nodes))),
-                primaryIdSsl,
+                Ids.ELYTRON_SSL_ITEM,
                 Ids.build(SERVER_SSL_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(SERVER_SSL_CONTEXT.resource));
 
+        ResourceElement securityDomainElement = SECURITY_DOMAIN.resourceElementBuilder(mbuiContext,
+                () -> presenter.reload(SECURITY_DOMAIN.resource,
+                        nodes -> updateResourceElement(SECURITY_DOMAIN.resource, nodes)))
+                .onAdd(() -> presenter.addSecurityDomain())
+                .setComplexListAttribute(REALMS, REALM)
+                .build();
+        // user cannot modify realm name if it is referenced in default-realm attribute
+        securityDomainElement.getFormComplexList().getFormItem(REALM).setEnabled(false);
+        securityDomainElement.getFormComplexList().getFormItem(REALM).registerSuggestHandler(null);
         addResourceElement(SECURITY_DOMAIN,
-                SECURITY_DOMAIN.resourceElementBuilder(mbuiContext,
-                        () -> presenter.reload(SECURITY_DOMAIN.resource,
-                                nodes -> updateResourceElement(SECURITY_DOMAIN.resource, nodes)))
-                        .setComplexListAttribute("realms", "realm")
-                        .build(),
-                primaryIdSsl,
+                securityDomainElement,
+                Ids.ELYTRON_SSL_ITEM,
                 Ids.build(SECURITY_DOMAIN.baseId, Ids.ITEM),
                 labelBuilder.label(SECURITY_DOMAIN.resource));
 
@@ -191,7 +191,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                                 nodes -> updateResourceElement(TRUST_MANAGER.resource, nodes)))
                         .addComplexObjectAttribute("certificate-revocation-list")
                         .build(),
-                primaryIdSsl,
+                Ids.ELYTRON_SSL_ITEM,
                 Ids.build(TRUST_MANAGER.baseId, Ids.ITEM),
                 labelBuilder.label(TRUST_MANAGER.resource));
 
@@ -203,7 +203,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                                 nodes -> updateResourceElement(AUTHENTICATION_CONFIGURATION.resource, nodes)))
                         .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
                         .build(),
-                primaryIdAuth,
+                Ids.ELYTRON_AUTHENTICATION_ITEM,
                 Ids.build(AUTHENTICATION_CONFIGURATION.baseId, Ids.ITEM),
                 labelBuilder.label(AUTHENTICATION_CONFIGURATION.resource));
 
@@ -226,7 +226,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                                 ModelDescriptionConstants.AUTHENTICATION_CONFIGURATION,
                                 SSL_CONTEXT))
                         .build(),
-                primaryIdAuth,
+                Ids.ELYTRON_AUTHENTICATION_ITEM,
                 Ids.build(AUTHENTICATION_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(AUTHENTICATION_CONTEXT.resource));
 
@@ -236,7 +236,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 FILE_AUDIT_LOG.resourceElement(mbuiContext,
                         () -> presenter.reload(FILE_AUDIT_LOG.resource,
                                 nodes -> updateResourceElement(FILE_AUDIT_LOG.resource, nodes))),
-                primaryIdLogs,
+                Ids.ELYTRON_LOGS_ITEM,
                 Ids.build(FILE_AUDIT_LOG.baseId, Ids.ITEM),
                 labelBuilder.label(FILE_AUDIT_LOG.resource));
 
@@ -244,7 +244,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 PERIODIC_ROTATING_FILE_AUDIT_LOG.resourceElement(mbuiContext,
                         () -> presenter.reload(PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
                                 nodes -> updateResourceElement(PERIODIC_ROTATING_FILE_AUDIT_LOG.resource, nodes))),
-                primaryIdLogs,
+                Ids.ELYTRON_LOGS_ITEM,
                 Ids.build(PERIODIC_ROTATING_FILE_AUDIT_LOG.baseId, Ids.ITEM),
                 labelBuilder.label(PERIODIC_ROTATING_FILE_AUDIT_LOG.resource));
 
@@ -252,7 +252,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 SIZE_ROTATING_FILE_AUDIT_LOG.resourceElement(mbuiContext,
                         () -> presenter.reload(SIZE_ROTATING_FILE_AUDIT_LOG.resource,
                                 nodes -> updateResourceElement(SIZE_ROTATING_FILE_AUDIT_LOG.resource, nodes))),
-                primaryIdLogs,
+                Ids.ELYTRON_LOGS_ITEM,
                 Ids.build(SIZE_ROTATING_FILE_AUDIT_LOG.baseId, Ids.ITEM),
                 labelBuilder.label(SIZE_ROTATING_FILE_AUDIT_LOG.resource));
 
@@ -260,7 +260,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 SYSLOG_AUDIT_LOG.resourceElement(mbuiContext,
                         () -> presenter.reload(SYSLOG_AUDIT_LOG.resource,
                                 nodes -> updateResourceElement(SYSLOG_AUDIT_LOG.resource, nodes))),
-                primaryIdLogs,
+                Ids.ELYTRON_LOGS_ITEM,
                 Ids.build(SYSLOG_AUDIT_LOG.baseId, Ids.ITEM),
                 labelBuilder.label(SYSLOG_AUDIT_LOG.resource));
 
@@ -268,7 +268,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 AGGREGATE_SECURITY_EVENT_LISTENER.resourceElement(mbuiContext,
                         () -> presenter.reload(AGGREGATE_SECURITY_EVENT_LISTENER.resource,
                                 nodes -> updateResourceElement(AGGREGATE_SECURITY_EVENT_LISTENER.resource, nodes))),
-                primaryIdLogs,
+                Ids.ELYTRON_LOGS_ITEM,
                 Ids.build(AGGREGATE_SECURITY_EVENT_LISTENER.baseId, Ids.ITEM),
                 labelBuilder.label(AGGREGATE_SECURITY_EVENT_LISTENER.resource));
 
@@ -277,7 +277,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         Metadata policyMetadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.POLICY_TEMPLATE);
         policyElement = new PolicyElement(policyMetadata, mbuiContext.resources());
         registerAttachable(policyElement);
-        navigation.addSecondary(primaryIdOther, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.asElement());
+        navigation.addSecondary(Ids.ELYTRON_OTHER_ITEM, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.asElement());
 
         addResourceElement(DIR_CONTEXT,
                 DIR_CONTEXT.resourceElementBuilder(mbuiContext,
@@ -285,7 +285,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                                 nodes -> updateResourceElement(DIR_CONTEXT.resource, nodes)))
                         .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
                         .build(),
-                primaryIdOther,
+                Ids.ELYTRON_OTHER_ITEM,
                 Ids.build(DIR_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(DIR_CONTEXT.resource));
 

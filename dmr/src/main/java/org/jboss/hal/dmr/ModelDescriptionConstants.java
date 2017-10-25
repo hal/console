@@ -209,6 +209,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT_HOST = "default-host";
     String DEFAULT_INTERFACE = "default-interface";
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
+    String DEFAULT_REALM = "default-realm";
     String DEFAULT_THREAD_POOL = "default-thread-pool";
     String DEFAULT_WEB_MODULE = "default-web-module";
     String DELIVERING_COUNT = "delivering-count";
@@ -577,6 +578,7 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
+    String REALMS = "realms";
     String REALM_NAME = "realm-name";
     String REASON = "reason";
     String RECORD_REQUEST_START_TIME = "record-request-start-time";
