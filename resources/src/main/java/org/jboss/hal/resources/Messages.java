@@ -75,6 +75,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml cleanPatchHistoryFailure(String error);
     SafeHtml cloneProfileSuccess(String from, String to);
     SafeHtml closeToLogout();
+    String configurationChangesDescription();
     String configurePatchTitle();
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);

@@ -586,8 +586,8 @@ class BrowseContentElement implements IsElement, Attachable {
         Node<ContentEntry> selection = tree.getSelected();
         if (selection != null) {
             String path = selection.data.path;
-            DialogFactory.showConfirmation(resources.constants().removeContent(),
-                    resources.messages().removeContentQuestion(content.getName(), path), () -> {
+            DialogFactory.buildConfirmation(resources.constants().removeContent(),
+                    resources.messages().removeContentQuestion(content.getName(), path), null, Dialog.Size.MEDIUM, () -> {
                         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
                         Operation operation = new Operation.Builder(address, REMOVE_CONTENT)
                                 .param(PATHS, new ModelNode().add(path))
@@ -601,7 +601,7 @@ class BrowseContentElement implements IsElement, Attachable {
                                             resources.messages().removeContentSuccess(content.getName(), path)));
                                     noSelection();
                                 });
-                    });
+                    }).show();
         }
     }
 

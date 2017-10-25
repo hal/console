@@ -58,11 +58,13 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
         Messages messages = resources.messages();
         EmptyState notEnabledState = new EmptyState.Builder(resources.constants().configurationChangesNotEnabled())
                 .icon(Icons.INFO)
+                .description(resources.messages().configurationChangesDescription())
                 .primaryAction(resources.constants().enableConfigurationChanges(), () -> presenter.launchAdd())
                 .build();
 
         EmptyState emptyState = new EmptyState.Builder(resources.constants().noItems())
-                .description(resources.messages().noItems())
+                .description(resources.messages().noItems().asString() + " " + resources.messages()
+                        .configurationChangesDescription())
                 .icon(Icons.INFO)
                 .primaryAction(resources.constants().reload(), () -> presenter.reload())
                 .secondaryAction(resources.constants().disableConfigurationChanges(), () -> presenter.disable())
