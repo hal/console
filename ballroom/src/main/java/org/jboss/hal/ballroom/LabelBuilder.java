@@ -38,6 +38,7 @@ public class LabelBuilder {
     @SuppressWarnings("HardCodedStringLiteral")
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
             .put("ajp", "AJP")
+            .put("ccm", "CCM")
             .put("dn", "DN")
             .put("ear", "EAR")
             .put("ee", "EE")
@@ -80,6 +81,7 @@ public class LabelBuilder {
             .put("uri", "URI")
             .put("url", "URL")
             .put("uuid", "UUID")
+            .put("xa", "XA")
             .put("wsdl", "WSDL")
             .build();
 

@@ -55,6 +55,10 @@ public class Alert implements IsElement {
         this(icon, text, null, null);
     }
 
+    public Alert(final String icon, final SafeHtml text, String additionalText) {
+        this(icon, text, additionalText, null, null, null);
+    }
+
     public Alert(final String icon, final SafeHtml text, final String linkText,
             final EventCallbackFn<MouseEvent> linkHandler) {
         this(icon, text, linkText, linkHandler, null);

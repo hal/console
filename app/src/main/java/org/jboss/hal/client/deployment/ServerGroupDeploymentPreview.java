@@ -53,8 +53,8 @@ class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployme
                     .referenceServer(sgd.getDeployment().getReferenceServer().getName());
             if (deployment.getStatus() == Status.FAILED) {
                 previewBuilder().add(
-                        new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName()), referenceServerMsg,
-                                null));
+                        new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName()),
+                                referenceServerMsg));
             } else if (deployment.getStatus() == Status.STOPPED) {
                 previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(sgd.getName()),
                         referenceServerMsg,
