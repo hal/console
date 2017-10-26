@@ -40,7 +40,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
 
     private EmptyState noStatistics;
-    private HTMLElement descriptionPreview;
     private Dispatcher dispatcher;
     private StatementContext statementContext;
     private String profile;
@@ -76,12 +75,11 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
 
         });
 
-        descriptionPreview = section().asElement();
+        HTMLElement descriptionPreview = section().asElement();
         Previews.innerHtml(descriptionPreview, resources.previews().runtimeWeb());
 
         previewBuilder()
                 .add(descriptionPreview);
-        Elements.setVisible(descriptionPreview, false);
     }
 
     @Override
@@ -93,7 +91,6 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
         dispatcher.execute(opWeb, result -> {
             boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
             Elements.setVisible(noStatistics.asElement(), !statsEnabled);
-            Elements.setVisible(descriptionPreview, statsEnabled);
         });
     }
 
@@ -107,7 +104,6 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
                 .build();
         dispatcher.execute(operation, result -> {
             Elements.setVisible(noStatistics.asElement(), false);
-            Elements.setVisible(descriptionPreview, true);
         });
     }
 }

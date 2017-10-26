@@ -139,8 +139,8 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                         callback.onSuccess(deployments);
                     });
                 })
-                .onPreview(item -> new DeploymentPreview(item, finderPathFactory, places, environment, dispatcher,
-                        statementContext, serverActions))
+                .onPreview(item -> new DeploymentPreview(item, finderPathFactory, places, resources, environment,
+                        dispatcher, statementContext, serverActions))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount()

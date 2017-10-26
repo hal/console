@@ -45,6 +45,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String active();
     String activeFilters();
     String activeLower();
+    String activeSessions();
     String add();
     String addContent();
     String address();
@@ -155,6 +156,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludes();
     String expertMode();
     String expire();
+    String expiredSessions();
     String explode();
     String exploded();
     String expression();
@@ -306,6 +308,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String managementVersion();
     String manyMessages();
     String markAllRead();
+    String maxActiveSessions();
     String maxProcessingTime();
     String maxUsed();
     String maximum();
@@ -407,6 +410,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String rejected();
     String references();
     String refresh();
+    String rejectedSessions();
     String releaseName();
     String releaseVersion();
     String reload();
@@ -460,7 +464,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String serverName();
     String serverUrlCustom();
     String serverUrlManagementModel();
+    String sessionTime();
     String sessions();
+    String sessionsCreated();
+    String sessionsAvgAliveTime();
+    String sessionsMaxAliveTime();
     String settings();
     String showAll();
     String showSensitive();
