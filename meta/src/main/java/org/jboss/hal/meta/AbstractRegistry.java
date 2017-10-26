@@ -20,16 +20,16 @@ import org.jboss.hal.dmr.ResourceAddress;
 /** Abstract registry which uses the specified statement context to resolve the address template. */
 public abstract class AbstractRegistry<T> implements Registry<T> {
 
-    private final StatementContext statementContext;
+    private StatementContext statementContext;
     private final String type;
 
-    protected AbstractRegistry(final StatementContext statementContext, final String type) {
+    protected AbstractRegistry(StatementContext statementContext, String type) {
         this.statementContext = statementContext;
         this.type = type;
     }
 
     @Override
-    public T lookup(final AddressTemplate template) throws MissingMetadataException {
+    public T lookup(AddressTemplate template) throws MissingMetadataException {
         ResourceAddress address = resolveTemplate(template);
         T metadata = lookupAddress(address);
         if (metadata == null) {
@@ -39,12 +39,12 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     }
 
     @Override
-    public boolean contains(final AddressTemplate template) {
+    public boolean contains(AddressTemplate template) {
         ResourceAddress address = resolveTemplate(template);
         return lookupAddress(address) != null;
     }
 
-    protected ResourceAddress resolveTemplate(final AddressTemplate template) {
+    protected ResourceAddress resolveTemplate(AddressTemplate template) {
         return template.resolve(statementContext);
     }
 

@@ -47,7 +47,7 @@ import static java.util.stream.StreamSupport.stream;
 public class ResourceDescriptionTemplateProcessor implements Function<AddressTemplate, AddressTemplate> {
 
     @Override
-    public AddressTemplate apply(final AddressTemplate template) {
+    public AddressTemplate apply(AddressTemplate template) {
         if (template != null && !AddressTemplate.ROOT.equals(template)) {
             List<String[]> segments = stream(template.spliterator(), false)
                     .map(segment -> {

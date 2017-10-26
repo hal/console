@@ -32,18 +32,18 @@ public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
     private final Map<ResourceAddress, SecurityContext> registry;
 
     @Inject
-    public SecurityContextRegistry(final StatementContext statementContext, final Environment environment) {
+    public SecurityContextRegistry(StatementContext statementContext, Environment environment) {
         super(new SecurityContextStatementContext(statementContext, environment), SECURITY_CONTEXT_TYPE);
         this.registry = new HashMap<>();
     }
 
     @Override
-    protected SecurityContext lookupAddress(final ResourceAddress address) {
+    protected SecurityContext lookupAddress(ResourceAddress address) {
         return registry.get(address);
     }
 
     @Override
-    public void add(final ResourceAddress address, final SecurityContext securityContext) {
+    public void add(ResourceAddress address, SecurityContext securityContext) {
         registry.put(address, securityContext);
     }
 }

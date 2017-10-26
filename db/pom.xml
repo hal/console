@@ -26,15 +26,20 @@
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
-    <artifactId>hal-flow</artifactId>
-    <name>HAL :: Flow</name>
-    <description>Async Flow based on RxGWT</description>
+    <artifactId>hal-db</artifactId>
+    <name>HAL :: DB</name>
+    <description>Local database based on PouchDB</description>
     <packaging>gwt-lib</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.intendia.gwt.rxgwt</groupId>
-            <artifactId>rxgwt</artifactId>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.elemental2</groupId>
+            <artifactId>elemental2-promise</artifactId>
+            <version>${elemental.version}</version>
         </dependency>
     </dependencies>
 
@@ -44,7 +49,7 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
-                    <moduleName>org.jboss.hal.Flow</moduleName>
+                    <moduleName>org.jboss.hal.DB</moduleName>
                 </configuration>
             </plugin>
         </plugins>

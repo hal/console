@@ -35,24 +35,24 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
     private final ResourceDescriptionTemplateProcessor templateProcessor;
 
     @Inject
-    public ResourceDescriptionRegistry(final StatementContext statementContext, final Environment environment) {
+    public ResourceDescriptionRegistry(StatementContext statementContext, Environment environment) {
         super(new ResourceDescriptionStatementContext(statementContext, environment), RESOURCE_DESCRIPTION_TYPE);
         this.registry = new HashMap<>();
         this.templateProcessor = new ResourceDescriptionTemplateProcessor();
     }
 
     @Override
-    protected ResourceDescription lookupAddress(final ResourceAddress address) {
+    protected ResourceDescription lookupAddress(ResourceAddress address) {
         return registry.get(address);
     }
 
     @Override
-    public void add(final ResourceAddress address, final ResourceDescription description) {
+    public void add(ResourceAddress address, ResourceDescription description) {
         registry.put(address, description);
     }
 
     @Override
-    protected ResourceAddress resolveTemplate(final AddressTemplate template) {
+    protected ResourceAddress resolveTemplate(AddressTemplate template) {
         return super.resolveTemplate(templateProcessor.apply(template));
     }
 }

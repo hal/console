@@ -36,7 +36,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ResourceDescription extends ModelNode {
 
     @JsIgnore
-    public ResourceDescription(final ModelNode payload) {
+    public ResourceDescription(ModelNode payload) {
         set(payload);
     }
 
@@ -49,7 +49,7 @@ public class ResourceDescription extends ModelNode {
     }
 
     @JsIgnore
-    public List<Property> getAttributes(final String path) {
+    public List<Property> getAttributes(String path) {
         ModelNode attributes = ModelNodeHelper.failSafeGet(this, path);
         if (attributes.isDefined()) {
             return attributes.asPropertyList();
@@ -58,7 +58,7 @@ public class ResourceDescription extends ModelNode {
     }
 
     @JsIgnore
-    public List<Property> getAttributes(final String path, final String group) {
+    public List<Property> getAttributes(String path, String group) {
         List<Property> attributes = getAttributes(path);
         return attributes.stream()
                 .filter(property -> {
@@ -70,7 +70,7 @@ public class ResourceDescription extends ModelNode {
     }
 
     @JsIgnore
-    public List<Property> getRequiredAttributes(final String path) {
+    public List<Property> getRequiredAttributes(String path) {
         return getAttributes(path).stream()
                 .filter(property -> {
                     ModelNode attributeDescription = property.getValue();
@@ -90,7 +90,7 @@ public class ResourceDescription extends ModelNode {
     }
 
     @JsIgnore
-    public Property findAttribute(final String path, final String name) {
+    public Property findAttribute(String path, String name) {
         for (Property property : getAttributes(path)) {
             if (name.equals(property.getName())) {
                 return property;
@@ -109,7 +109,7 @@ public class ResourceDescription extends ModelNode {
      * attribute {@code name}
      */
     @JsIgnore
-    public List<String> findAlternatives(final String path, final String name) {
+    public List<String> findAlternatives(String path, String name) {
         Property attribute = findAttribute(path, name);
         if (attribute != null) {
             if (attribute.getValue().hasDefined(ALTERNATIVES)) {
@@ -131,7 +131,7 @@ public class ResourceDescription extends ModelNode {
      * no attribute {@code name}
      */
     @JsIgnore
-    public List<String> findRequires(final String path, final String name) {
+    public List<String> findRequires(String path, String name) {
         return getAttributes(path).stream()
                 .filter(attribute -> {
                     if (attribute.getValue().hasDefined(REQUIRES)) {
@@ -147,7 +147,7 @@ public class ResourceDescription extends ModelNode {
     }
 
     @JsIgnore
-    public boolean isDefaultValue(final String path, final String name, final Object value) {
+    public boolean isDefaultValue(String path, String name, Object value) {
         Property property = findAttribute(path, name);
         if (property != null) {
             ModelNode attribute = property.getValue();
@@ -174,7 +174,7 @@ public class ResourceDescription extends ModelNode {
     @EsReturn("Property[]")
     public Property[] jsGetAttributes() {
         List<Property> attributes = getAttributes(ATTRIBUTES);
-            return attributes.toArray(new Property[attributes.size()]);
+        return attributes.toArray(new Property[attributes.size()]);
     }
 
     /**

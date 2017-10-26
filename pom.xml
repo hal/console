@@ -117,6 +117,7 @@
         <module>bom</module>
         <module>core</module>
         <module>config</module>
+        <module>db</module>
         <module>dmr</module>
         <module>flow</module>
         <module>fraction</module>
