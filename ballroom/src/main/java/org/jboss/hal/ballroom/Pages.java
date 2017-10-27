@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -104,10 +105,7 @@ public class Pages implements IsElement {
      */
     public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
             HTMLElement element) {
-        if (element.id == null) {
-            element.id = id;
-        }
-        Page page = new Page(parentId, parentTitle, title, element);
+        Page page = new Page(parentId, parentTitle, id, title, element);
         Elements.setVisible(page.asElement(), false);
 
         pages.put(id, page);
@@ -181,11 +179,16 @@ public class Pages implements IsElement {
         private final Supplier<String> title;
         private final HTMLElement element;
 
-        private Page(String parentId, Supplier<String> parentTitle, Supplier<String> title, HTMLElement element) {
+        private Page(String parentId, Supplier<String> parentTitle, String id, Supplier<String> title,
+                HTMLElement element) {
             this.parentId = parentId;
             this.parentTitle = parentTitle;
             this.title = title;
             this.element = element;
+
+            if (Strings.isNullOrEmpty(element.id)) {
+                element.id = id;
+            }
         }
 
         @Override
