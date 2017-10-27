@@ -56,7 +56,7 @@
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <undertow.version>1.4.20.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
-        <wildfly.version>11.0.0.CR1</wildfly.version>
+        <wildfly.version>11.0.0.Final</wildfly.version>
         <wildfly-core.version>3.0.3.Final</wildfly-core.version>
         <wildfly-swarm.version>2017.9.5</wildfly-swarm.version>
         <yarn.version>v1.1.0</yarn.version>
