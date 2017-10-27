@@ -50,7 +50,7 @@
                         <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
                         <compilerArg>-generateJsInteropExports</compilerArg>
                         <compilerArg>-Xnamespace</compilerArg>
-                        <compilerArg>${gwt.namespace}</compilerArg>
+                        <compilerArg>NONE</compilerArg>
                     </compilerArgs>
                     <moduleName/> <!-- need to be overridden in sub modules -->
                     <sourceLevel>1.8</sourceLevel>
