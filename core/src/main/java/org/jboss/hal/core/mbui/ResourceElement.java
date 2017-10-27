@@ -341,12 +341,11 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         return form;
     }
 
-    /**
-     * @return The form that represents the complex attribute of type LIST
-     */
+    /** @return The form that represents the complex attribute of type LIST */
     public Form<ModelNode> getFormComplexList() {
         return clForm;
     }
+
 
     public static class Builder {
 

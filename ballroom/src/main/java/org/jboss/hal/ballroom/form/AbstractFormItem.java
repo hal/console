@@ -125,7 +125,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ element and appearance
 
     @Override
-    public HTMLElement asElement(final State state) {
+    public HTMLElement asElement(State state) {
         if (appearances.containsKey(state)) {
             return appearances.get(state).asElement();
         } else {
@@ -195,7 +195,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ id, value & name
 
     @Override
-    public String getId(final State state) {
+    public String getId(State state) {
         Appearance<T> appearance = appearance(state);
         return appearance != null ? appearance.getId() : null;
     }
@@ -211,7 +211,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setValue(final T value) {
+    public void setValue(T value) {
         setValue(value, false);
     }
 
@@ -221,7 +221,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      * mapping.
      */
     @Override
-    public void setValue(final T value, final boolean fireEvent) {
+    public void setValue(T value, boolean fireEvent) {
         this.value = value;
         this.expressionValue = null;
 
@@ -281,11 +281,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      * show the default value.
      */
     @Override
-    public void assignDefaultValue(final T defaultValue) {
+    public void assignDefaultValue(T defaultValue) {
         this.defaultValue = defaultValue;
     }
 
-    private void markDefaultValue(final boolean on) {
+    private void markDefaultValue(boolean on) {
         if (on) {
             appearances.values().forEach(a -> a.apply(DEFAULT, a.asString(defaultValue)));
         } else {
@@ -303,17 +303,17 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         unapply(SENSITIVE);
     }
 
-    private void signalChange(final T value) {
+    private void signalChange(T value) {
         ValueChangeEvent.fire(this, value);
     }
 
     @Override
-    public void fireEvent(final GwtEvent<?> gwtEvent) {
+    public void fireEvent(GwtEvent<?> gwtEvent) {
         eventBus.fireEvent(gwtEvent);
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> valueChangeHandler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> valueChangeHandler) {
         return eventBus.addHandler(ValueChangeEvent.getType(), valueChangeHandler);
     }
 
@@ -323,7 +323,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
         appearances.values().forEach(a -> a.setName(name));
     }
@@ -413,7 +413,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setExpressionAllowed(final boolean expressionAllowed) {
+    public void setExpressionAllowed(boolean expressionAllowed) {
         this.expressionAllowed = expressionAllowed;
     }
 
@@ -433,7 +433,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      * {@code undefined} flags. Should be called from business code like form mapping.
      */
     @Override
-    public void setExpressionValue(final String expressionValue) {
+    public void setExpressionValue(String expressionValue) {
         this.value = null;
         this.expressionValue = expressionValue;
 
@@ -494,7 +494,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ suggestion handler
 
     @Override
-    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
+    public void registerSuggestHandler(SuggestHandler suggestHandler) {
         this.suggestHandler = suggestHandler;
         if (suggestHandler != null) {
             this.suggestHandler.setFormItem(this);
@@ -504,7 +504,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
-    public void onSuggest(final String suggestion) {
+    public void onSuggest(String suggestion) {
         // nop
     }
 
@@ -517,7 +517,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setRestricted(final boolean restricted) {
+    public void setRestricted(boolean restricted) {
         if (this.restricted != restricted) {
             this.restricted = restricted;
             if (restricted) {
@@ -534,7 +534,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setEnabled(final boolean enabled) {
+    public void setEnabled(boolean enabled) {
         if (this.enabled != enabled) {
             this.enabled = enabled;
             if (enabled) {
@@ -552,7 +552,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setTabIndex(final int index) {
+    public void setTabIndex(int index) {
         Appearance<T> appearance = appearance(State.EDITING);
         if (appearance != null) {
             appearance.setTabIndex(index);
@@ -560,7 +560,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setAccessKey(final char accessKey) {
+    public void setAccessKey(char accessKey) {
         Appearance<T> appearance = appearance(State.EDITING);
         if (appearance != null) {
             appearance.setAccessKey(accessKey);
@@ -568,7 +568,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setFocus(final boolean focus) {
+    public void setFocus(boolean focus) {
         Appearance<T> appearance = appearance(State.EDITING);
         if (appearance != null) {
             appearance.setFocus(focus);
@@ -581,7 +581,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setLabel(final String label) {
+    public void setLabel(String label) {
         appearances.values().forEach(a -> a.setLabel(label));
     }
 
@@ -628,7 +628,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setDeprecated(final Deprecation deprecation) {
+    public void setDeprecated(Deprecation deprecation) {
         this.deprecation = deprecation;
         if (deprecation != null && deprecation.isDefined()) {
             apply(DEPRECATED, deprecation);
@@ -637,7 +637,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
-    void setForm(final Form form) {
+    void setForm(Form form) {
         this.form = form;
     }
 
