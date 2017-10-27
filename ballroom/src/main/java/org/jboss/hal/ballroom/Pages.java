@@ -29,7 +29,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.main;
 import static org.jboss.hal.resources.CSS.page;
 
 /**
