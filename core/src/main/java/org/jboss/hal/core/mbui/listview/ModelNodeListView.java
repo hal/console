@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
 
@@ -236,12 +237,13 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             this.multiSelect = false;
             this.stacked = true;
 
-            emptyStates.put(NO_ITEMS, new EmptyState.Builder(CONSTANTS.noItems())
+            emptyStates.put(NO_ITEMS, new EmptyState.Builder(Ids.build(id, Ids.EMPTY), CONSTANTS.noItems())
                     .description(MESSAGES.noItems())
                     .build());
-            emptyStates.put(NO_MATCHING_ITEMS, new EmptyState.Builder(CONSTANTS.noMatchingItems())
-                    .description(MESSAGES.noMatchingItems())
-                    .build());
+            emptyStates.put(NO_MATCHING_ITEMS,
+                    new EmptyState.Builder(Ids.build(id, Ids.NO_MATCH), CONSTANTS.noMatchingItems())
+                            .description(MESSAGES.noMatchingItems())
+                            .build());
         }
 
         public Builder<T> stacked(boolean stacked) {

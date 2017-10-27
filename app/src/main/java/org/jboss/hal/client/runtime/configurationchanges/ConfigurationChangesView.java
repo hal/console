@@ -56,13 +56,14 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
                 .forOperation(LIST_CHANGES_OPERATION);
 
         Messages messages = resources.messages();
-        EmptyState notEnabledState = new EmptyState.Builder(resources.constants().configurationChangesNotEnabled())
+        EmptyState notEnabledState = new EmptyState.Builder(Ids.CONFIGURATION_CHANGES_NOT_ENABLED,
+                resources.constants().configurationChangesNotEnabled())
                 .icon(Icons.INFO)
                 .description(resources.messages().configurationChangesDescription())
                 .primaryAction(resources.constants().enableConfigurationChanges(), () -> presenter.launchAdd())
                 .build();
 
-        EmptyState emptyState = new EmptyState.Builder(resources.constants().noItems())
+        EmptyState emptyState = new EmptyState.Builder(Ids.CONFIGURATION_CHANGES_EMPTY, resources.constants().noItems())
                 .description(resources.messages().noItems().asString() + " " + resources.messages()
                         .configurationChangesDescription())
                 .icon(Icons.INFO)

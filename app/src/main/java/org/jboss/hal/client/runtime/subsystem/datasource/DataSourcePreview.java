@@ -45,6 +45,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -116,11 +117,13 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                     .asElement());
         }
 
-        fromDeployment = new EmptyState.Builder(resources.constants().statisticsNotAvailableHeader())
+        fromDeployment = new EmptyState.Builder(Ids.DATA_SOURCE_RUNTIME_STATISTICS_NOT_AVAILABLE,
+                resources.constants().statisticsNotAvailableHeader())
                 .description(resources.messages().dataSourceStatisticsFromDeployment())
                 .icon(fontAwesome("line-chart"))
                 .build();
-        noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
+        noStatistics = new EmptyState.Builder(Ids.DATA_SOURCE_RUNTIME_STATISTICS_NOT_ENABLED,
+                resources.constants().statisticsDisabledHeader())
                 .description(resources.messages().dataSourceStatisticsDisabled(dataSource.getName()))
                 .icon(fontAwesome("line-chart"))
                 .primaryAction(resources.constants().enableStatistics(), () -> column.enableStatistics(dataSource),

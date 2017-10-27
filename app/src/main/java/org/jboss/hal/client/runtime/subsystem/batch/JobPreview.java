@@ -27,6 +27,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -53,7 +54,7 @@ class JobPreview extends PreviewContent<JobNode> {
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))
                 .asElement());
 
-        empty = new EmptyState.Builder(resources.constants().noExecutions())
+        empty = new EmptyState.Builder(Ids.JOP_EXECUTION_EMPTY, resources.constants().noExecutions())
                 .description(resources.messages().noExecutions())
                 .build();
 

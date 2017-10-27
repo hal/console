@@ -33,6 +33,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -84,7 +85,8 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         dispatcher.execute(operation, result -> {
 
             profile = result.get(PROFILE_NAME).asString();
-            noProcessingTime = new EmptyState.Builder(resources.constants().undertowListenerProcessingDisabledHeader())
+            noProcessingTime = new EmptyState.Builder(Ids.UNDERTOW_LISTENER_PROCESSING_DISABLED,
+                    resources.constants().undertowListenerProcessingDisabledHeader())
                     .icon(fontAwesome("line-chart"))
                     .primaryAction(resources.constants().enable(), () -> recordProcessingTime(server))
                     .build();

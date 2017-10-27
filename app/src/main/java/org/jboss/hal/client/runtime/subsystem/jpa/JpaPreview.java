@@ -29,6 +29,7 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -63,7 +64,8 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))
                 .asElement());
 
-        noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
+        noStatistics = new EmptyState.Builder(Ids.JPA_RUNTIME_STATISTICS_DISABLED,
+                resources.constants().statisticsDisabledHeader())
                 .description(resources.messages()
                         .jpaStatisticsDisabled(jpaStatistic.getName(), jpaStatistic.getDeployment()))
                 .icon(fontAwesome("line-chart"))

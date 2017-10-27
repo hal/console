@@ -55,8 +55,7 @@ public enum Store {
     final boolean addWithDialog;
     final Table[] tables;
 
-    Store(final String baseId, final String type, final String resource, final boolean addWithDialog,
-            final Table... tables) {
+    Store(String baseId, String type, String resource, boolean addWithDialog, Table... tables) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;

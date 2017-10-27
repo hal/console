@@ -120,7 +120,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     @PostConstruct
     void init() {
-        noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
+        noRootLogger = new EmptyState.Builder(Ids.LOGGING_PROFILE + "-root-logger-empty",
+                mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon(fontAwesome("sitemap"))
                 .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
@@ -154,7 +155,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updateRootLogger(final ModelNode modelNode) {
+    public void updateRootLogger(ModelNode modelNode) {
         rootLoggerVisibility(true);
         rootLoggerForm.view(modelNode);
     }
@@ -164,7 +165,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         rootLoggerVisibility(false);
     }
 
-    private void rootLoggerVisibility(final boolean visible) {
+    private void rootLoggerVisibility(boolean visible) {
         Elements.setVisible((HTMLElement) document.getElementById(Ids.LOGGING_PROFILE + "-root-logger-header"),
                 visible);
         Elements.setVisible((HTMLElement) document.getElementById(Ids.LOGGING_PROFILE + "-root-logger-description"),
@@ -299,7 +300,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updateFileHandler(final List<NamedNode> items) {
+    public void updateFileHandler(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-file", Ids.ITEM), items.size());
         fileHandlerForm.clear();
         fileHandlerTable.update(items);
@@ -338,7 +339,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updatePeriodicHandler(final List<NamedNode> items) {
+    public void updatePeriodicHandler(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-periodic-rotating-file", Ids.ITEM),
                 items.size());
         periodicHandlerForm.clear();
@@ -378,7 +379,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updatePeriodicSizeHandler(final List<NamedNode> items) {
+    public void updatePeriodicSizeHandler(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-periodic-size-rotating-file", Ids.ITEM),
                 items.size());
         periodicSizeHandlerForm.clear();
@@ -417,7 +418,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updateSizeHandler(final List<NamedNode> items) {
+    public void updateSizeHandler(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-file-size-rotating-file", Ids.ITEM),
                 items.size());
         sizeHandlerForm.clear();
@@ -476,7 +477,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updateAsyncHandler(final List<NamedNode> items) {
+    public void updateAsyncHandler(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-async", Ids.ITEM), items.size());
         asyncHandlerForm.clear();
         asyncHandlerTable.update(items);
@@ -514,7 +515,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updateCustomHandler(final List<NamedNode> items) {
+    public void updateCustomHandler(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-custom", Ids.ITEM), items.size());
         customHandlerForm.clear();
         customHandlerTable.update(items);
@@ -553,7 +554,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updateSyslogHandler(final List<NamedNode> items) {
+    public void updateSyslogHandler(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-syslog", Ids.ITEM), items.size());
         syslogHandlerForm.clear();
         syslogHandlerTable.update(items);
@@ -591,7 +592,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updateCustomFormatter(final List<NamedNode> items) {
+    public void updateCustomFormatter(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "formatter-custom", Ids.ITEM), items.size());
         customFormatterForm.clear();
         customFormatterTable.update(items);
@@ -629,7 +630,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     @Override
-    public void updatePatternFormatter(final List<NamedNode> items) {
+    public void updatePatternFormatter(List<NamedNode> items) {
         navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "formatter-pattern", Ids.ITEM), items.size());
         patternFormatterForm.clear();
         patternFormatterTable.update(items);

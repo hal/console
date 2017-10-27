@@ -67,14 +67,14 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
-    StoreElement(final Cache cache, final MetadataRegistry metadataRegistry, final Resources resources) {
+    StoreElement(Cache cache, MetadataRegistry metadataRegistry, Resources resources) {
         this.tabs = new HashMap<>();
         this.storeForms = new HashMap<>();
         this.writeElements = new HashMap<>();
         this.tableForms = new HashMap<>();
 
         HTMLSelectElement emptyStoreSelect = storeSelect();
-        emptyState = new EmptyState.Builder(resources.constants().noStore())
+        emptyState = new EmptyState.Builder(Ids.build(cache.baseId, STORE, Ids.EMPTY), resources.constants().noStore())
                 .description(resources.messages().noStore())
                 .add(emptyStoreSelect)
                 .primaryAction(resources.constants().add(), () -> {
@@ -209,12 +209,12 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(final CacheContainerPresenter presenter) {
+    public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
         writeElements.values().forEach(we -> we.setPresenter(presenter));
     }
 
-    void update(final List<Property> stores) {
+    void update(List<Property> stores) {
         if (stores.isEmpty() || NONE.equals(stores.get(0).getName())) {
             emptyStateMode();
 

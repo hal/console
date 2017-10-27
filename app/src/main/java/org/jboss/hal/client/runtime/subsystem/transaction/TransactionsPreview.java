@@ -36,6 +36,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -62,8 +63,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
     private PreviewAttributes<ModelNode> attributes;
 
 
-    public TransactionsPreview(final Dispatcher dispatcher, final StatementContext statementContext,
-            final Resources resources) {
+    public TransactionsPreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
         super(Names.TRANSACTION);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -77,7 +77,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
         dispatcher.execute(operation, result -> {
 
             String profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(cons.statisticsDisabledHeader())
+            noStatistics = new EmptyState.Builder(Ids.TRANSACTION_STATISTICS_DISABLED, cons.statisticsDisabledHeader())
                     .description(resources.messages().statisticsDisabled(Names.TRANSACTIONS, profile))
                     .icon(fontAwesome("line-chart"))
                     .primaryAction(cons.enableStatistics(), () -> enableStatistics(profile),
@@ -132,7 +132,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
     }
 
     @Override
-    public void update(final SubsystemMetadata item) {
+    public void update(SubsystemMetadata item) {
         ResourceAddress addressWeb = TRANSACTION_RUNTIME_TEMPLATE.resolve(statementContext);
         Operation opWeb = new Operation.Builder(addressWeb, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)

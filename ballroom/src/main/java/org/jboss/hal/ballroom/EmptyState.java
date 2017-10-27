@@ -56,7 +56,7 @@ public class EmptyState implements IsElement<HTMLElement> {
     private final HTMLElement primaryActionDiv;
 
     private EmptyState(Builder builder) {
-        HtmlContentBuilder<HTMLDivElement> rb = div().css(blankSlatePf);
+        HtmlContentBuilder<HTMLDivElement> rb = div().id(builder.id).css(blankSlatePf);
         if (builder.icon != null) {
             rb.add(div().css(blankSlatePfIcon).add(icon = i().css(builder.icon).asElement()).asElement());
         } else {
@@ -150,13 +150,15 @@ public class EmptyState implements IsElement<HTMLElement> {
 
     public static class Builder {
 
+        private final String id;
         private final String title;
         private final List<HTMLElement> elements;
         private final List<Action> secondaryActions;
         private String icon;
         private Action primaryAction;
 
-        public Builder(final String title) {
+        public Builder(String id, String title) {
+            this.id = id;
             this.title = title;
             this.elements = new ArrayList<>();
             this.secondaryActions = new ArrayList<>();

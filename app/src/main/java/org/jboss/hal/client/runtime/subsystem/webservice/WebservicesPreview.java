@@ -28,6 +28,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -64,7 +65,8 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
         dispatcher.execute(operation, result -> {
 
             profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
+            noStatistics = new EmptyState.Builder(Ids.WEBSERVICES_STATISTICS_DISABLED,
+                    resources.constants().statisticsDisabledHeader())
                     .description(resources.messages().statisticsDisabled(Names.WEBSERVICES, profile))
                     .icon(fontAwesome("line-chart"))
                     .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,

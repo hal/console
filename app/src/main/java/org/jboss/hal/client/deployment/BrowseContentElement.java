@@ -205,22 +205,23 @@ class BrowseContentElement implements IsElement, Attachable {
                 .build();
         contentSearch.asElement().classList.add(marginRightSmall);
 
-        pleaseSelect = new EmptyState.Builder(resources.constants().nothingSelected())
+        pleaseSelect = new EmptyState.Builder(Ids.BROWSE_CONTENT_SELECT_EMPTY, resources.constants().nothingSelected())
                 .icon(Icons.INFO)
                 .description(resources.messages().noContentSelectedInDeployment())
                 .build();
 
-        deploymentPreview = new EmptyState.Builder(Names.DEPLOYMENT)
+        deploymentPreview = new EmptyState.Builder(Ids.BROWSE_CONTENT_DEPLOYMENT_EMPTY, Names.DEPLOYMENT)
                 .icon(fontAwesome("archive"))
                 .description(resources.messages().deploymentPreview())
                 .build();
 
-        explodedPreview = new EmptyState.Builder(Names.DEPLOYMENT)
+        explodedPreview = new EmptyState.Builder(Ids.BROWSE_CONTENT_EXPLODED_EMPTY, Names.DEPLOYMENT)
                 .icon(fontAwesome("folder-open"))
                 .description(resources.messages().explodedPreview())
                 .build();
 
-        unsupportedFileType = new EmptyState.Builder(resources.constants().unsupportedFileType())
+        unsupportedFileType = new EmptyState.Builder(Ids.BROWSE_CONTENT_UNSUPPORTED_EMPTY,
+                resources.constants().unsupportedFileType())
                 .icon(Icons.UNKNOWN)
                 .description(resources.messages().unsupportedFileTypeDescription())
                 .primaryAction(resources.constants().download(),
@@ -587,7 +588,8 @@ class BrowseContentElement implements IsElement, Attachable {
         if (selection != null) {
             String path = selection.data.path;
             DialogFactory.buildConfirmation(resources.constants().removeContent(),
-                    resources.messages().removeContentQuestion(content.getName(), path), null, Dialog.Size.MEDIUM, () -> {
+                    resources.messages().removeContentQuestion(content.getName(), path), null, Dialog.Size.MEDIUM,
+                    () -> {
                         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
                         Operation operation = new Operation.Builder(address, REMOVE_CONTENT)
                                 .param(PATHS, new ModelNode().add(path))

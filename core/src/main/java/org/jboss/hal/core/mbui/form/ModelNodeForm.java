@@ -67,6 +67,7 @@ import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.EsParam;
@@ -100,7 +101,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private Metadata metadata;
 
     @SuppressWarnings("unchecked")
-    protected ModelNodeForm(final Builder<T> builder) {
+    protected ModelNodeForm(Builder<T> builder) {
         super(builder.id, builder.stateMachine(),
                 builder.dataMapping != null
                         ? builder.dataMapping
@@ -285,7 +286,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
-    protected void prepare(final State state) {
+    protected void prepare(State state) {
         super.prepare(state);
 
         SecurityContext securityContext = metadata.getSecurityContext();
@@ -531,8 +532,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * which will trigger the specified add action.
          */
         @JsIgnore
-        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping, final Callback addAction) {
-            EmptyState emptyState = new EmptyState.Builder(CONSTANTS.noResource())
+        public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping, Callback addAction) {
+            EmptyState emptyState = new EmptyState.Builder(Ids.build(id, Ids.EMPTY), CONSTANTS.noResource())
                     .description(MESSAGES.noResource())
                     .primaryAction(CONSTANTS.add(), addAction, Constraint.executable(metadata.getTemplate(), ADD))
                     .build();
@@ -552,8 +553,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * to it.
          */
         @JsIgnore
-        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping,
-                final EmptyState emptyState) {
+        public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping,
+                EmptyState emptyState) {
             this.singleton = true;
             this.ping = ping;
             this.emptyState = emptyState;
@@ -566,53 +567,53 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         @JsIgnore
-        public Builder<T> customFormItem(@NonNls final String attribute, final FormItemProvider provider) {
+        public Builder<T> customFormItem(@NonNls String attribute, FormItemProvider provider) {
             includes.add(attribute);
             providers.put(attribute, provider);
             return this;
         }
 
         @JsIgnore
-        public Builder<T> unboundFormItem(final FormItem formItem) {
+        public Builder<T> unboundFormItem(FormItem formItem) {
             return unboundFormItem(formItem, -1, null);
         }
 
         @JsIgnore
-        public Builder<T> unboundFormItem(final FormItem formItem, final int position) {
+        public Builder<T> unboundFormItem(FormItem formItem, int position) {
             return unboundFormItem(formItem, position, null);
         }
 
         @JsIgnore
-        public Builder<T> unboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
+        public Builder<T> unboundFormItem(FormItem formItem, int position, SafeHtml helpText) {
             this.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
             return this;
         }
 
-        Builder<T> unboundFormItem(final UnboundFormItem unboundFormItem) {
+        Builder<T> unboundFormItem(UnboundFormItem unboundFormItem) {
             this.unboundFormItems.add(unboundFormItem);
             return this;
         }
 
         @JsIgnore
-        public Builder<T> onSave(final SaveCallback<T> saveCallback) {
+        public Builder<T> onSave(SaveCallback<T> saveCallback) {
             this.saveCallback = saveCallback;
             return this;
         }
 
         @JsIgnore
-        public Builder<T> onCancel(final CancelCallback<T> cancelCallback) {
+        public Builder<T> onCancel(CancelCallback<T> cancelCallback) {
             this.cancelCallback = cancelCallback;
             return this;
         }
 
         @JsIgnore
-        public Builder<T> prepareReset(final PrepareReset<T> prepareReset) {
+        public Builder<T> prepareReset(PrepareReset<T> prepareReset) {
             this.prepareReset = prepareReset;
             return this;
         }
 
         @JsIgnore
-        public Builder<T> prepareRemove(final PrepareRemove<T> removeCallback) {
+        public Builder<T> prepareRemove(PrepareRemove<T> removeCallback) {
             this.prepareRemove = removeCallback;
             return this;
         }

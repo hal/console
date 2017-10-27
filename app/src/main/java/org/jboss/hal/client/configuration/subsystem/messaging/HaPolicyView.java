@@ -67,7 +67,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
 
-        emptyState = new EmptyState.Builder(resources.constants().noHaPolicy())
+        emptyState = new EmptyState.Builder(Ids.MESSAGING_HA_POLICY_EMPTY, resources.constants().noHaPolicy())
                 .icon(CSS.pfIcon("cluster"))
                 .description(resources.messages().addHaPolicy())
                 .primaryAction(resources.messages().addResourceTitle(Names.HA_POLICY), () -> presenter.addHaPolicy())

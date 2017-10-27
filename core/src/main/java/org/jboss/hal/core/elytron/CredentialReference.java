@@ -110,7 +110,8 @@ public class CredentialReference {
         final String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
         Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
 
-        EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(resources.constants().noResource());
+        EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(Ids.build(baseId, Ids.EMPTY),
+                resources.constants().noResource());
 
         if (crMetadata.getSecurityContext().isWritable()) {
             emptyStateBuilder.primaryAction(resources.constants().add(), () -> {

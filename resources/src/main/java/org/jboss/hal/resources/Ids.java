@@ -69,9 +69,14 @@ public interface Ids {
     String ATTRIBUTES = "attributes";
     String BOOT_ERRORS = "boot-errors";
     String BOOT_ERRORS_ADDRESS_COLUMN = "boot-errors-address-column";
+    String BOOT_ERRORS_EMPTY = "boot-errors-empty";
     String BOOT_ERRORS_FORM = "boot-errors-form";
     String BOOT_ERRORS_OPERATION_COLUMN = "boot-errors-operation-column";
     String BOOT_ERRORS_TABLE = "boot-errors-table";
+    String BROWSE_CONTENT_SELECT_EMPTY = "browse-content-select-empty";
+    String BROWSE_CONTENT_DEPLOYMENT_EMPTY = "browse-content-deployment-empty";
+    String BROWSE_CONTENT_EXPLODED_EMPTY = "browse-content-exploded-empty";
+    String BROWSE_CONTENT_UNSUPPORTED_EMPTY = "browse-content-unsupported-empty";
     String CACHE_COMPONENT_BACKUP_FOR = "cache-component-backup-for";
     String CACHE_COMPONENT_EVICTION = "cache-component-eviction";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
@@ -94,6 +99,7 @@ public interface Ids {
     String CACHE_CONTAINER_THREAD_POOL_TRANSPORT = "cc-thread-pool-transport";
     String CACHE_CONTAINER_THREAD_POOLS_ITEM = "cc-thread-pools-item";
     String CACHE_CONTAINER_TRANSPORT = "cc-transport";
+    String CACHE_CONTAINER_TRANSPORT_EMPTY = "cc-transport-empty";
     String CACHE_CONTAINER_TRANSPORT_FORM = "cc-transport-form";
     String CACHE_CONTAINER_TRANSPORT_ITEM = "cc-transport-item";
     String CACHE_STORE_BINARY_JDBC = "cache-store-binary-jdbc";
@@ -108,6 +114,8 @@ public interface Ids {
     String CACHE_STORE_WRITE_THROUGH = "write";
     String CONFIGURATION = "configuration";
     String CONFIGURATION_CHANGES = "configuration-changes";
+    String CONFIGURATION_CHANGES_EMPTY = "configuration-changes-empty";
+    String CONFIGURATION_CHANGES_NOT_ENABLED = "configuration-changes-not-enabled";
     String CONFIGURATION_SUBSYSTEM = "css";
     String CONTENT = "content";
     String CONTENT_ADD = "content-add";
@@ -138,12 +146,15 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_JDBC_TAB = "ds-runtime-jdbc-tab";
     String DATA_SOURCE_RUNTIME_POOL_FORM = "ds-runtime-pool-form";
     String DATA_SOURCE_RUNTIME_POOL_TAB = "ds-runtime-pool-tab";
+    String DATA_SOURCE_RUNTIME_STATISTICS_NOT_AVAILABLE = "ds-runtime-statistics-na";
+    String DATA_SOURCE_RUNTIME_STATISTICS_NOT_ENABLED = "ds-runtime-statistics-disabled";
     String DATA_SOURCE_RUNTIME_TAB_CONTAINER = "ds-runtime-tab-container";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = "deployment-add-actions";
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
     String DEPLOYMENT_EMPTY_CREATE = "deployment-empty-create";
     String DEPLOYMENT_EMPTY_FORM = "deployment-empty-form";
+    String DEPLOYMENT_NOT_ENABLED_EMPTY = "deployment-not-enabled-empty";
     String DEPLOYMENT_REFRESH = "deployment-refresh";
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_TAB = "deployment-tab";
@@ -202,6 +213,7 @@ public interface Ids {
     String ELYTRON_CUSTOM_CREDENTIAL_SECURITY_FACTORY = "elytron-custom-credential-security-factory";
     String ELYTRON_CUSTOM_MODIFIABLE_REALM = "elytron-custom-modifiable-realm";
     String ELYTRON_CUSTOM_PERMISSION_MAPPER = "elytron-custom-permission-mapper";
+    String ELYTRON_CUSTOM_POLICY_EMPTY = "elytron-custom-policy-empty";
     String ELYTRON_CUSTOM_POLICY_FORM = "elytron-custom-policy-form";
     String ELYTRON_CUSTOM_PRINCIPAL_DECODER = "elytron-custom-principal-decoder";
     String ELYTRON_CUSTOM_PRINCIPAL_TRANSFORMER = "elytron-custom-principal-transformer";
@@ -266,7 +278,8 @@ public interface Ids {
     String ELYTRON_SYSLOG_AUDIT_LOG = "elytron-syslog-audit-log";
     String ELYTRON_TOKEN_REALM = "elytron-token-realm";
     String ELYTRON_TRUST_MANAGER = "elytron-trust-manager";
-    String ELYTRON_X500_ATTRIBUTE_PRINCIPAL_DECODER = build("elytron", "x500-attribute-principal-decoder");
+    String ELYTRON_X500_ATTRIBUTE_PRINCIPAL_DECODER = "elytron-x500-attribute-principal-decoder";
+    String EMPTY = "empty";
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = "endpoint-add";
     String ENDPOINT_PING = "endpoint-ping";
@@ -394,6 +407,7 @@ public interface Ids {
     String JMS_MESSAGE_LIST_REMOVE = "jms-message-list-remove";
     String JMS_MESSAGE_LIST_SELECT_ALL = "jms-message-list-select-all";
     String JMS_MESSAGE_LIST_SEND_TO_DEAD_LETTER = "jms-message-list-send-to-dead-letter";
+    String JMS_MESSAGE_LIST_TOO_MANY = "jms-message-list-too-many";
     String JMS_MESSAGE_MOVE = "jms-message-move";
     String JMS_MESSAGE_MOVE_FORM = "jms-message-move-form";
     String JMS_MESSAGE_REMOVE = "jms-message-remove";
@@ -414,6 +428,7 @@ public interface Ids {
     String JOB = "job";
     String JOB_LIST = "job-list";
     String JOB_REFRESH = "job-refresh";
+    String JOP_EXECUTION_EMPTY = "job-execution-empty";
     String JOP_EXECUTION_REFRESH = "job-execution-refresh";
     String JOP_EXECUTION_RESTART = "job-execution-restart";
     String JOP_EXECUTION_STOP = "job-execution-stop";
@@ -423,6 +438,7 @@ public interface Ids {
     String JPA_RUNTIME_ENTITY_ITEM = "jpa-runtime-entity-item";
     String JPA_RUNTIME_MAIN_ATTRIBUTES_ITEM = "jpa-runtime-main-attributes-item";
     String JPA_RUNTIME_QUERY_CACHE_ITEM = "jpa-runtime-query-cache-item";
+    String JPA_RUNTIME_STATISTICS_DISABLED = "jpa-runtime-statistics-disabled";
     String JPA_RUNTIME_TAB_CONTAINER = "jpa-runtime-tab-container";
     String LOCAL_CACHE = "local-cache";
     String LOCATION = "location";
@@ -436,6 +452,7 @@ public interface Ids {
     String LOGGING_PROFILE_ADD = "logging-profile-add";
     String MACRO = "macro";
     String MACRO_EDITOR = "macro-editor";
+    String MACRO_EMPTY = "macro-empty";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
     String MACRO_STORAGE = "hal-local-storage-macro";
@@ -473,6 +490,7 @@ public interface Ids {
     String MESSAGING_GROUPING_HANDLER = "messaging-grouping-handler";
     String MESSAGING_HA = "messaging-ha";
     String MESSAGING_HA_CHOOSE_STRATEGY = "messaging-ha-choose-strategy";
+    String MESSAGING_HA_POLICY_EMPTY = "messaging-ha-policy=empty";
     String MESSAGING_HA_REPLICATION = "messaging-ha-replication";
     String MESSAGING_HA_REPLICATION_COLOCATED = "messaging-ha-replication-colocated";
     String MESSAGING_HA_REPLICATION_COLOCATED_MASTER = "messaging-ha-replication-colocated-master";
@@ -523,6 +541,7 @@ public interface Ids {
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = "model-browser-create-singleton-form";
     String MODEL_BROWSER_ROOT = "model-browser-root";
+    String NO_MATCH = "no-match";
     String NOTIFICATION_DRAWER = "notification-drawer";
     String NOTIFICATION_DRAWER_CLEAR_ALL = "notification-drawer-clear-all";
     String NOTIFICATION_DRAWER_CLOSE = "notification-drawer-close";
@@ -540,6 +559,7 @@ public interface Ids {
     String PROFILE_ADD = "profile-add";
     String PROFILE_CLONE = "profile-clone";
     String PROFILE_REFRESH = "profile-refresh";
+    String REFERENCE_SERVER_EMPTY = "reference-server-empty";
     String REFRESH = "refresh";
     String REMOTING = "remoting";
     String REMOTING_CONNECTOR_FORM = "remoting-connector-form";
@@ -653,12 +673,14 @@ public interface Ids {
     String TOOLBAR_FILTER = "toolbar-filter";
     String TRANSACTION = "transaction";
     String TRANSACTION_PARTICIPANTS_PAGE = "transaction-Participants-page";
+    String TRANSACTION_STATISTICS_DISABLED = "transaction-statistics-disabled";
     String UNDERTOW_APP_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_APP_SECURITY_DOMAIN_ADD = "undertow-application-security-domain-add";
     String UNDERTOW_APP_SECURITY_DOMAIN_FORM = "undertow-application-security-domain-form";
     String UNDERTOW_APP_SECURITY_DOMAIN_REFRESH = "undertow-application-security-domain-refresh";
     String UNDERTOW_APP_SECURITY_DOMAIN_TAB = "undertow-application-security-domain-tab";
     String UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER = "undertow-application-security-domain-tab-container";
+    String UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED = "undertow-deployment-statistics-disabled";
     String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
     String UNDERTOW_HOST = "undertow-host";
     String UNDERTOW_HOST_ACCESS_LOG = "undertow-host-access-log";
@@ -687,6 +709,7 @@ public interface Ids {
     String UNDERTOW_HOST_SINGLE_SIGN_ON = "undertow-host-single-sign-on";
     String UNDERTOW_HOST_TAB_CONTAINER = "undertow-host-tab-container";
     String UNDERTOW_HOST_TABLE = "undertow-host-table";
+    String UNDERTOW_LISTENER_PROCESSING_DISABLED = "undertow-listener-processing-disabled";
     String UNDERTOW_LISTENER_REFRESH = "undertow-listener-refresh";
     String UNDERTOW_MODCLUSTER = "undertow-modcluster";
     String UNDERTOW_MODCLUSTER_BALANCER_NODE_CONTEXT_REFRESH = "undertow-modcluster-balancer-node-context-refresh";
@@ -734,6 +757,7 @@ public interface Ids {
     String UNDERTOW_SINGLE_SIGN_ON_ADD = "undertow-single-sign-on-add";
     String UNDERTOW_SINGLE_SIGN_ON_FORM = "undertow-single-sign-on-form";
     String UNDERTOW_SINGLE_SIGN_ON_TAB = "undertow-single-sign-on-table";
+    String UNDERTOW_STATISTICS_DISABLED = "undertow-statistics-disabled";
     String UNMANAGED = "unmanaged";
     String UNMANAGED_FORM = "unmanaged-form";
     String UPLOAD = "upload";
@@ -750,6 +774,7 @@ public interface Ids {
     String WEBSERVICES_HANDLER_CHAIN_ADD = "webservices-handler-chain-add";
     String WEBSERVICES_HANDLER_CHAIN_COLUMN = "webservices-handler-chain-column";
     String WEBSERVICES_ITEM = "webservices-item";
+    String WEBSERVICES_STATISTICS_DISABLED = "webservices-statistics-disabled";
     String WORKER = "worker";
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = "xa-data-source-add";

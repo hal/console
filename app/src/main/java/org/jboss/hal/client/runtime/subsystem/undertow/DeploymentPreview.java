@@ -126,7 +126,8 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
         dispatcher.execute(operation, result -> {
 
             profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
+            noStatistics = new EmptyState.Builder(Ids.UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED,
+                    resources.constants().statisticsDisabledHeader())
                     .description(resources.messages().statisticsDisabled(Names.UNDERTOW, profile))
                     .icon(fontAwesome("line-chart"))
                     .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,

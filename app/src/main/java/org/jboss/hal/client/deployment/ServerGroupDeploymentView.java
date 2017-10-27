@@ -28,6 +28,7 @@ import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -41,11 +42,12 @@ public class ServerGroupDeploymentView extends HalViewImpl implements ServerGrou
     private ServerGroupDeploymentPresenter presenter;
 
     @Inject
-    public ServerGroupDeploymentView(final ModelBrowser modelBrowser, final Resources resources) {
+    public ServerGroupDeploymentView(ModelBrowser modelBrowser, Resources resources) {
         this.deploymentModel = new DeploymentModelElement(modelBrowser, resources);
         this.resources = resources;
 
-        noReferenceServer = new EmptyState.Builder(resources.constants().noReferenceServer())
+        noReferenceServer = new EmptyState.Builder(Ids.REFERENCE_SERVER_EMPTY,
+                resources.constants().noReferenceServer())
                 .icon(CSS.pfIcon("server"))
                 .build();
         noReferenceServer.asElement().classList.add(marginTopLarge);
@@ -57,12 +59,12 @@ public class ServerGroupDeploymentView extends HalViewImpl implements ServerGrou
     }
 
     @Override
-    public void setPresenter(final ServerGroupDeploymentPresenter presenter) {
+    public void setPresenter(ServerGroupDeploymentPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void update(final String serverGroup, final ServerGroupDeployment sgd) {
+    public void update(String serverGroup, ServerGroupDeployment sgd) {
         if (sgd.getDeployment() == null) {
             Elements.setVisible(noReferenceServer.asElement(), true);
             deploymentModel.asElements().forEach(element -> Elements.setVisible(element, false));

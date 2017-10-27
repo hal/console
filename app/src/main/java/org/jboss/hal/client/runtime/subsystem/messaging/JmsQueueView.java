@@ -53,7 +53,7 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
 
         dataProvider = new DataProvider<>(JmsMessage::getName, true);
         Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
-        tooManyMessages = new EmptyState.Builder(resources.constants().manyMessages())
+        tooManyMessages = new EmptyState.Builder(Ids.JMS_MESSAGE_LIST_TOO_MANY, resources.constants().manyMessages())
                 .icon(Icons.WARNING)
                 .primaryAction(resources.constants().allMessagesAlways(), () -> presenter.readAllMessages(true))
                 .secondaryAction(resources.constants().allMessagesOnce(), () -> presenter.readAllMessages(false))

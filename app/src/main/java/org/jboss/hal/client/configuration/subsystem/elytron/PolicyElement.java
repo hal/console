@@ -60,7 +60,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         this.metadata = metadata;
         this.resources = resources;
 
-        emptyState = new EmptyState.Builder(resources.constants().noPolicy())
+        emptyState = new EmptyState.Builder(Ids.ELYTRON_CUSTOM_POLICY_EMPTY, resources.constants().noPolicy())
                 .add(div().innerHtml(resources.messages().noPolicy()).asElement())
                 .secondaryAction(resources.messages().addResourceTitle(Names.CUSTOM_POLICY),
                         () -> presenter.addPolicy(CUSTOM_POLICY, Names.CUSTOM_POLICY))
