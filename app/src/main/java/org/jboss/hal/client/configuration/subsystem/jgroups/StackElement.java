@@ -119,7 +119,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                 metadataRegistry.lookup(TRANSPORT_TEMPLATE), resources, SELECTED_TRANSPORT_TEMPLATE, Names.TRANSPORT,
                 Ids.JGROUPS_TRANSPORT);
 
-        innerPages = new Pages(STACK_ID, section);
+        innerPages = new Pages(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.PAGES), STACK_ID, section);
         // Relay page
         innerPages.addPage(STACK_ID, RELAY_ID,
                 () -> Names.STACK + ": " + selectedStack,

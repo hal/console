@@ -73,6 +73,7 @@ public interface Ids {
     String BOOT_ERRORS_FORM = "boot-errors-form";
     String BOOT_ERRORS_OPERATION_COLUMN = "boot-errors-operation-column";
     String BOOT_ERRORS_TABLE = "boot-errors-table";
+    String BREADCRUMB = "breadcrumb";
     String BROWSE_CONTENT_SELECT_EMPTY = "browse-content-select-empty";
     String BROWSE_CONTENT_DEPLOYMENT_EMPTY = "browse-content-deployment-empty";
     String BROWSE_CONTENT_EXPLODED_EMPTY = "browse-content-exploded-empty";
@@ -269,6 +270,7 @@ public interface Ids {
     String ELYTRON_SIMPLE_PERMISSION_MAPPER_ADD = "elytron-simple-permission-mapper-add";
     String ELYTRON_SIMPLE_PERMISSION_MAPPER_FORM = "elytron-simple-permission-mapper-form";
     String ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE = "elytron-simple-permission-mapper-page";
+    String ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGES = "elytron-simple-permission-mapper-pages";
     String ELYTRON_SIMPLE_PERMISSION_MAPPER_TABLE = "elytron-simple-permission-mapper-table";
     String ELYTRON_SIMPLE_REGEX_REALM_MAPPER = "elytron-single-regex-realm-mapper";
     String ELYTRON_SIMPLE_ROLE_DECODER = "elytron-simple-role-decoder";
@@ -342,6 +344,7 @@ public interface Ids {
     String JCA_DISTRIBUTED_WORKMANAGER_FORM = "jca-distributed-workmanager-form";
     String JCA_DISTRIBUTED_WORKMANAGER_ITEM = "jca-distributed-workmanager-item";
     String JCA_DISTRIBUTED_WORKMANAGER_PAGE = "jca-distributed-workmanager-page";
+    String JCA_DISTRIBUTED_WORKMANAGER_PAGES = "jca-distributed-workmanager-pages";
     String JCA_DISTRIBUTED_WORKMANAGER_TABLE = "jca-distributed-workmanager-table";
     String JCA_TAB_CONTAINER = "jca-tab-container";
     String JCA_THREAD_POOL = "thread-pool";
@@ -359,6 +362,7 @@ public interface Ids {
     String JCA_WORKMANAGER_ADD = "jca-workmanager-add";
     String JCA_WORKMANAGER_ITEM = "jca-workmanager-item";
     String JCA_WORKMANAGER_PAGE = "jca-workmanager-page";
+    String JCA_WORKMANAGER_PAGES = "jca-workmanager-pages";
     String JCA_WORKMANAGER_TABLE = "jca-workmanager-table";
     String JDBC = "jdbc";
     String JDBC_DRIVER = "jdbc-driver";
@@ -707,6 +711,7 @@ public interface Ids {
     String UNDERTOW_HOST_LOCATION_PAGE = "undertow-host-location-page";
     String UNDERTOW_HOST_LOCATION_TABLE = "undertow-host-location-table";
     String UNDERTOW_HOST_MAIN_PAGE = "undertow-host-main-page";
+    String UNDERTOW_HOST_PAGES = "undertow-host-pages";
     String UNDERTOW_HOST_SINGLE_SIGN_ON = "undertow-host-single-sign-on";
     String UNDERTOW_HOST_TAB_CONTAINER = "undertow-host-tab-container";
     String UNDERTOW_HOST_TABLE = "undertow-host-table";

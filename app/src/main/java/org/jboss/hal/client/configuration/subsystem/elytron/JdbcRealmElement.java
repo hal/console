@@ -49,6 +49,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.PAGES;
 import static org.jboss.hal.resources.Ids.TAB;
 import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
@@ -135,7 +136,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .addAll(amTable, amForm)
                 .asElement();
 
-        pages = new Pages(id(PAGE), jdbcRealmSection);
+        pages = new Pages(id(PAGES), id(PAGE), jdbcRealmSection);
         pages.addPage(id(PAGE), id(PRINCIPAL_QUERY, PAGE),
                 () -> Names.JDBC_REALM + ": " + selectedJdbcRealm,
                 () -> Names.PRINCIPAL_QUERY,

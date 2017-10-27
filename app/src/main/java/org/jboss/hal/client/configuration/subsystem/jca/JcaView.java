@@ -243,7 +243,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, tableButtonFactory, resources);
         registerAttachable(wmTpEditor);
 
-        Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGE, wmLayout);
+        Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGES, Ids.JCA_WORKMANAGER_PAGE, wmLayout);
         wmPages.addPage(Ids.JCA_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(wmType) + ": " + selectedWorkmanager, () -> Names.THREAD_POOLS,
                 wmTpEditor.asElement());
@@ -297,7 +297,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 resources);
         registerAttachable(dwmTpEditor);
 
-        Pages dwmPages = new Pages(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, dwmLayout);
+        Pages dwmPages = new Pages(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGES, Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE,
+                dwmLayout);
         dwmPages.addPage(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(dwmType) + ": " + selectedWorkmanager, () -> Names.THREAD_POOLS,
                 dwmTpEditor.asElement());

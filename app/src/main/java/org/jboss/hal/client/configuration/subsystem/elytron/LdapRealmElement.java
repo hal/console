@@ -45,6 +45,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.PAGES;
 import static org.jboss.hal.resources.Ids.TAB;
 import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
@@ -173,7 +174,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .addAll(iamTable, iamForm)
                 .asElement();
 
-        pages = new Pages(id(PAGE), ldapRealmSection);
+        pages = new Pages(id(PAGES), id(PAGE), ldapRealmSection);
         pages.addPage(id(PAGE), id(ATTRIBUTE_MAPPING, PAGE),
                 () -> Names.LDAP_REALM + ": " + selectedLdapRealm,
                 () -> Names.IDENTITY_ATTRIBUTE_MAPPING,

@@ -29,6 +29,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.main;
 import static org.jboss.hal.resources.CSS.page;
 
 /**
@@ -47,19 +48,24 @@ public class Pages implements IsElement {
     private final HTMLElement root;
 
     /** Create a new instance with the main page id and element. */
-    public Pages(String id, IsElement element) {
-        this(id, element.asElement());
+    public Pages(String id, String mainId, IsElement element) {
+        this(id, mainId, element.asElement());
     }
 
     /** Create a new instance with the main page id and element. */
-    public Pages(String id, HTMLElement element) {
-        mainId = id;
-        mainPage = element;
+    public Pages(String id, String mainId, HTMLElement element) {
+        this.mainId = mainId;
+        this.mainPage = element;
+        this.pages = new HashMap<>();
+        this.breadcrumb = new Breadcrumb();
 
-        breadcrumb = new Breadcrumb();
+        if (mainPage.id == null) {
+            mainPage.id = mainId;
+        }
         breadcrumb.asElement().classList.add(page);
-        pages = new HashMap<>();
-        root = div().id(Ids.build(id, Ids.PAGES))
+        breadcrumb.asElement().id = Ids.build(id, Ids.BREADCRUMB);
+
+        root = div().id(id)
                 .add(mainPage)
                 .add(breadcrumb)
                 .asElement();
@@ -99,6 +105,9 @@ public class Pages implements IsElement {
      */
     public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
             HTMLElement element) {
+        if (element.id == null) {
+            element.id = id;
+        }
         Page page = new Page(parentId, parentTitle, title, element);
         Elements.setVisible(page.asElement(), false);
 

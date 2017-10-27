@@ -213,7 +213,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
         // complex attributes of type LIST
         if (builder.clAttribute != null) {
-            pages = new Pages(mainPageId(), section);
+            pages = new Pages(Ids.build(builder.baseId, Ids.PAGES), mainPageId(), section);
 
             Metadata metadata = builder.metadata.forComplexAttribute(builder.clAttribute);
             clTable = new ModelNodeTable.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.TABLE),

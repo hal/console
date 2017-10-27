@@ -107,8 +107,9 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         handlerChain = new HandlerChainElement(configType, metadataRegistry, tableButtonFactory);
         handler = new HandlerElement(configType, metadataRegistry, tableButtonFactory);
 
+        String id = Ids.build(configType.baseId, Ids.PAGES);
         String mainId = Ids.build(configType.baseId, Ids.PAGE);
-        pages = new Pages(mainId, section);
+        pages = new Pages(id, mainId, section);
         pages.addPage(mainId, handlerChainPageId(configType),
                 () -> presenter.configSegment(),
                 () -> presenter.handlerChainTypeSegment(),

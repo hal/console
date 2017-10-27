@@ -45,6 +45,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTIONS;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.PAGES;
 import static org.jboss.hal.resources.Ids.TABLE;
 
 public class TransactionsView extends HalViewImpl implements TransactionsPresenter.MyView {
@@ -105,8 +106,9 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
                 .add(participantsForm)
                 .asElement();
 
+        String id = Ids.build(TRANSACTIONS, PAGES);
         String txPageId = Ids.build(TRANSACTIONS, PAGE);
-        pages = new Pages(txPageId, section);
+        pages = new Pages(id, txPageId, section);
         pages.addPage(txPageId, Ids.TRANSACTION_PARTICIPANTS_PAGE,
                 () -> Names.TRANSACTION + ": " + selectedTx, () -> Names.PARTICIPANTS, sectionParticipants);
 

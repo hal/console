@@ -97,7 +97,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 tableButtonFactory, resources, SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE, Names.PROTOCOL,
                 Ids.JGROUPS_CHANNEL_FORK_PROTOCOL);
 
-        innerPages = new Pages(CHANNEL_ID, section);
+        innerPages = new Pages(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.PAGES), CHANNEL_ID, section);
         // Fork page
         innerPages.addPage(CHANNEL_ID, FORK_ID,
                 () -> Names.CHANNEL + ": " + selectedChannel,

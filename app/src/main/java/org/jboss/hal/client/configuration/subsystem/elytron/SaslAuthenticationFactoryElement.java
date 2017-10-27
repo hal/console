@@ -42,6 +42,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.PAGES;
 import static org.jboss.hal.resources.Ids.TAB;
 
 class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
@@ -120,7 +121,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .addAll(mrcTable, mrcForm)
                 .asElement();
 
-        pages = new Pages(id(PAGE), factorySection);
+        pages = new Pages(id(PAGES), id(PAGE), factorySection);
         pages.addPage(id(PAGE), id(MECHANISM_CONFIGURATIONS, PAGE),
                 () -> Names.SASL_AUTHENTICATION_FACTORY + ": " + selectedFactory,
                 () -> Names.MECHANISM_CONFIGURATIONS,

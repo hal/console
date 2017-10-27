@@ -136,8 +136,9 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .add(clientMappingForm)
                 .asElement();
 
+        String id = Ids.build(INBOUND.baseId, Ids.PAGES);
         String parentId = Ids.build(INBOUND.baseId, Ids.PAGE);
-        inboundPages = new Pages(parentId, inboundSection);
+        inboundPages = new Pages(id, parentId, inboundSection);
         inboundPages.addPage(parentId, Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_PAGE,
                 () -> Names.INBOUND + ": " + presenter.inbound, () -> Names.CLIENT_MAPPINGS,
                 clientMappingSection);

@@ -222,7 +222,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         // ------------------------------------------------------ pages, listener and navigation
 
-        hostPages = new Pages(Ids.UNDERTOW_HOST_MAIN_PAGE, hostSection);
+        hostPages = new Pages(Ids.UNDERTOW_HOST_PAGES, Ids.UNDERTOW_HOST_MAIN_PAGE, hostSection);
         hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_FILTER_REF_PAGE,
                 () -> presenter.hostSegment(), () -> Names.FILTERS, filterRefSection);
         hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_LOCATION_PAGE,

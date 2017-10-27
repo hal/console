@@ -132,7 +132,8 @@ public class SimplePermissionMapperElement
                 .addAll(permissionsTable, permissionsForm)
                 .asElement();
 
-        pages = new Pages(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE, primarySection);
+        pages = new Pages(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGES, Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE,
+                primarySection);
         pages.addPage(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE, Ids.ELYTRON_PERMISSION_MAPPINGS_PAGE,
                 () -> Names.SIMPLE_PERMISSION_MAPPER + COLON + selectedSimplePermissionMapper,
                 () -> Names.PERMISSION_MAPPINGS,

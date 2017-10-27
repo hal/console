@@ -147,8 +147,9 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .add(tabs)
                 .asElement();
 
+        String id = Ids.build(cache.baseId, Ids.PAGES);
         String mainId = Ids.build(cache.baseId, Ids.PAGE);
-        pages = new Pages(mainId, root);
+        pages = new Pages(id, mainId, root);
         pages.addPage(mainId, Ids.build(cache.baseId, STORE, Ids.PAGE),
                 () -> presenter.cacheSegment(), () -> presenter.storeSegment(), storeElement);
 
