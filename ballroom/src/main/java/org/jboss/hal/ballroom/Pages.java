@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.page;
@@ -45,24 +46,20 @@ public class Pages implements IsElement {
     private final Map<String, Page> pages;
     private final HTMLElement root;
 
-    /**
-     * Create a new instance with the main page id and element.
-     */
-    public Pages(String id, final IsElement element) {
+    /** Create a new instance with the main page id and element. */
+    public Pages(String id, IsElement element) {
         this(id, element.asElement());
     }
 
-    /**
-     * Create a new instance with the main page id and element.
-     */
-    public Pages(String id, final HTMLElement element) {
+    /** Create a new instance with the main page id and element. */
+    public Pages(String id, HTMLElement element) {
         mainId = id;
         mainPage = element;
 
         breadcrumb = new Breadcrumb();
         breadcrumb.asElement().classList.add(page);
         pages = new HashMap<>();
-        root = div()
+        root = div().id(Ids.build(id, Ids.PAGES))
                 .add(mainPage)
                 .add(breadcrumb)
                 .asElement();
@@ -86,9 +83,8 @@ public class Pages implements IsElement {
      * @param title       the title of the page being added
      * @param element     the page element
      */
-    public void addPage(final String parentId, final String id,
-            final Supplier<String> parentTitle, final Supplier<String> title,
-            final IsElement element) {
+    public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
+            IsElement element) {
         addPage(parentId, id, parentTitle, title, element.asElement());
     }
 
@@ -101,9 +97,8 @@ public class Pages implements IsElement {
      * @param title       the title of the page being added
      * @param element     the page element
      */
-    public void addPage(final String parentId, final String id,
-            final Supplier<String> parentTitle, final Supplier<String> title,
-            final HTMLElement element) {
+    public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
+            HTMLElement element) {
         Page page = new Page(parentId, parentTitle, title, element);
         Elements.setVisible(page.asElement(), false);
 
@@ -178,8 +173,7 @@ public class Pages implements IsElement {
         private final Supplier<String> title;
         private final HTMLElement element;
 
-        private Page(final String parentId, final Supplier<String> parentTitle, final Supplier<String> title,
-                final HTMLElement element) {
+        private Page(String parentId, Supplier<String> parentTitle, Supplier<String> title, HTMLElement element) {
             this.parentId = parentId;
             this.parentTitle = parentTitle;
             this.title = title;

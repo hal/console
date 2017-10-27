@@ -547,6 +547,7 @@ public interface Ids {
     String NOTIFICATION_DRAWER_CLOSE = "notification-drawer-close";
     String NOTIFICATION_DRAWER_MARK_ALL_READ = "notification-drawer-mark-all-read";
     String PAGE = "page";
+    String PAGES = "pages";
     String PATCH_ADD = "patch-add";
     String PATCH_UPLOAD_NAMES_FORM = "patch-names-form";
     String PATCHES_AGEOUT = "patching-ageout-history";
