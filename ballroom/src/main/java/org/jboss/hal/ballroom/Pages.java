@@ -59,7 +59,7 @@ public class Pages implements IsElement {
         this.pages = new HashMap<>();
         this.breadcrumb = new Breadcrumb();
 
-        if (mainPage.id == null) {
+        if (Strings.isNullOrEmpty(mainPage.id)) {
             mainPage.id = mainId;
         }
         breadcrumb.asElement().classList.add(page);
