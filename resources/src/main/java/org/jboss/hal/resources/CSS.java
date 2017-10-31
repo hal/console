@@ -128,8 +128,12 @@ public interface CSS {
     String expressionModeSwitcher = "expression-mode-switcher";
     String external = "external";
 
+    String faAngleDown = "fa-angle-down";
     String fade = "fade";
     String faSpin = "fa-spin";
+    String fieldSectionTogglePf = "field-section-toggle-pf";
+    String fieldsSectionPf = "fields-section-pf";
+    String fieldsSectionHeaderPf = "fields-section-header-pf";
     String filter = "filter";
     String finder = "finder";
     String finderColumn = "finder-column";

@@ -407,6 +407,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         PrepareReset<T> prepareReset;
         PrepareRemove<T> prepareRemove;
         DataMapping<T> dataMapping;
+        boolean panelForOptionalAttributes;
 
 
         // ------------------------------------------------------ configure required and optional settings
@@ -618,6 +619,16 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             return this;
         }
 
+        /**
+         * By default the non-requried attributes are displayed together with the required attributes.
+         * Call this method to put the non-required attributes on a collapsible panel beneath the required attributes.
+         */
+        @JsIgnore
+        public Builder<T> panelForOptionalAttributes() {
+            this.panelForOptionalAttributes = true;
+            return this;
+        }
+
 
         // ------------------------------------------------------ build
 
@@ -627,7 +638,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         @EsReturn("Form")
         public ModelNodeForm<T> build() {
             validate();
-            return new ModelNodeForm<>(this);
+            ModelNodeForm<T> form = new ModelNodeForm<>(this);
+            form.separateOptionalFields(panelForOptionalAttributes);
+            return form;
         }
 
         void validate() {

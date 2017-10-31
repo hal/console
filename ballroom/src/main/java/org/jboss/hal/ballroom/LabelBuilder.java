@@ -64,6 +64,7 @@ public class LabelBuilder {
             .put("jsr", "JSR")
             .put("jts", "JTS")
             .put("jwt", "JWT")
+            .put("mcp", "MCP")
             .put("mdb", "MDB")
             .put("mbean", "MBean")
             .put("oauth2", "OAuth 2")

@@ -373,6 +373,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operationSuccessful();
     String operation();
     String operations();
+    String optionalFields();
     String or();
     String orDragItHere();
     String outcome();

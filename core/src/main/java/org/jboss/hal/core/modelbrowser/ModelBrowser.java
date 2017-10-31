@@ -30,6 +30,7 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.tree.Node;
@@ -38,6 +39,8 @@ import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
@@ -395,13 +398,20 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                 @Override
                 public void onMetadata(Metadata metadata) {
+                    String title = new LabelBuilder().label(parent.text);
+                    NameItem nameItem = new NameItem();
+                    String id = Ids.build(parent.id, "add");
+                    ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                            .unboundFormItem(nameItem, 0)
+                            .fromRequestProperties()
+                            .panelForOptionalAttributes()
+                            .build();
+
                     AddResourceDialog dialog = new AddResourceDialog(
-                            Ids.build(parent.id, "add"),
-                            resources.messages().addResourceTitle(parent.text),
-                            metadata,
-                            (name, modelNode) ->
-                                    crud.add(parent.text, name, fqAddress(parent, name), modelNode,
-                                            (n, a) -> refresh(parent)));
+                            resources.messages().addResourceTitle(title),
+                            form, (name1, model) ->
+                            crud.add(title, nameItem.getValue(), fqAddress(parent, nameItem.getValue()),
+                                    model, (n, a) -> refresh(parent)));
                     dialog.show();
                 }
             });
