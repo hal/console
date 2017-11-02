@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.db.PouchDB;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractDatabase;
 import org.jboss.hal.meta.StatementContext;
@@ -30,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Single;
 
-public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescription> {
+public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescriptionDocument> {
 
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionDatabase.class);
@@ -47,10 +46,9 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     }
 
     @Override
-    protected Single<ResourceDescription> lookupAddress(ResourceAddress address) {
+    protected Single<ResourceDescriptionDocument> lookupAddress(ResourceAddress address) {
         return Single.create(em -> database().get(address.toString()).then(document -> {
-                    ResourceDescription rd = new ResourceDescription(ModelNode.fromBase64(document.data));
-                    em.onSuccess(rd);
+                    em.onSuccess(document);
                     return null;
                 },
                 failure -> {
@@ -60,8 +58,7 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     }
 
     @Override
-    public void add(ResourceAddress address, ResourceDescription resourceDescription) {
-        ResourceDescriptionDocument document = new ResourceDescriptionDocument(address, resourceDescription);
+    public void add(ResourceDescriptionDocument document) {
         database().put(document)
                 .then(id -> {
                     logger.debug("Add resource description for {}", id);

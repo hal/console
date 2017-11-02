@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.db.PouchDB;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractDatabase;
 import org.jboss.hal.meta.StatementContext;
@@ -29,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Single;
 
-public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
+public class SecurityContextDatabase extends AbstractDatabase<SecurityContextDocument> {
 
     private static final String SECURITY_CONTEXT_TYPE = "security context";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(SecurityContextDatabase.class);
@@ -44,10 +43,9 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
     }
 
     @Override
-    protected Single<SecurityContext> lookupAddress(ResourceAddress address) {
+    protected Single<SecurityContextDocument> lookupAddress(ResourceAddress address) {
         return Single.create(em -> database().get(address.toString()).then(document -> {
-                    SecurityContext sc = new SecurityContext(ModelNode.fromBase64(document.data));
-                    em.onSuccess(sc);
+                    em.onSuccess(document);
                     return null;
                 },
                 failure -> {
@@ -57,8 +55,7 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
     }
 
     @Override
-    public void add(ResourceAddress address, SecurityContext securityContext) {
-        SecurityContextDocument document = new SecurityContextDocument(address, securityContext);
+    public void add(SecurityContextDocument document) {
         database().put(document)
                 .then(id -> {
                     logger.debug("Add resource description for {}", id);

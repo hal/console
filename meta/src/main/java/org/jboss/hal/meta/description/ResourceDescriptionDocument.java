@@ -15,20 +15,31 @@
  */
 package org.jboss.hal.meta.description;
 
+import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.db.Document;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
+@JsType
+public class ResourceDescriptionDocument extends Document {
 
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-class ResourceDescriptionDocument extends Document {
+    String payload;
 
-    String data;
-
-    ResourceDescriptionDocument(ResourceAddress address, ResourceDescription data) {
+    public ResourceDescriptionDocument(ResourceAddress address, ResourceDescription payload) {
         this._id = address.toString();
-        this.data = data.toBase64String();
+        this.payload = payload.toBase64String();
+    }
+
+    @JsIgnore
+    public ResourceAddress getAddress() {
+        return AddressTemplate.of(_id).resolve(StatementContext.NOOP);
+    }
+
+    @JsIgnore
+    public ResourceDescription getResourceDescription() {
+        return new ResourceDescription(ModelNode.fromBase64(payload));
     }
 }

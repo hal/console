@@ -88,7 +88,7 @@ public class SecurityContext extends ModelNode {
     };
 
     @JsIgnore
-    public SecurityContext(final ModelNode payload) {
+    public SecurityContext(ModelNode payload) {
         set(payload);
     }
 
@@ -113,7 +113,7 @@ public class SecurityContext extends ModelNode {
      *
      * @return whether the attribute is readable
      */
-    public boolean isReadable(final String attribute) {
+    public boolean isReadable(String attribute) {
         return hasDefined(ATTRIBUTES) &&
                 get(ATTRIBUTES).hasDefined(attribute) &&
                 get(ATTRIBUTES).get(attribute).get(READ).asBoolean();
@@ -124,7 +124,7 @@ public class SecurityContext extends ModelNode {
      *
      * @return whether the attribute is writable
      */
-    public boolean isWritable(final String attribute) {
+    public boolean isWritable(String attribute) {
         return hasDefined(ATTRIBUTES) &&
                 get(ATTRIBUTES).hasDefined(attribute) &&
                 get(ATTRIBUTES).get(attribute).get(WRITE).asBoolean();

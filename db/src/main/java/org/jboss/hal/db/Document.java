@@ -23,6 +23,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Document {
 
-    public String _id;
-    public String _rev;
+    protected String _id;
+    protected String _rev;
 }

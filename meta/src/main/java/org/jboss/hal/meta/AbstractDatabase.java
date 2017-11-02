@@ -34,13 +34,6 @@ public abstract class AbstractDatabase<T> implements Database<T> {
         return lookupAddress(resolveTemplate(template));
     }
 
-    @Override
-    public Single<Boolean> contains(AddressTemplate template) {
-        return lookup(template)
-                .map(result -> true)
-                .onErrorReturn(error -> false);
-    }
-
     protected ResourceAddress resolveTemplate(AddressTemplate template) {
         return template.resolve(statementContext);
     }

@@ -15,20 +15,31 @@
  */
 package org.jboss.hal.meta.security;
 
+import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.db.Document;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
+@JsType
+public class SecurityContextDocument extends Document {
 
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-class SecurityContextDocument extends Document {
+    String payload;
 
-    String data;
-
-    SecurityContextDocument(ResourceAddress address, SecurityContext data) {
+    public SecurityContextDocument(ResourceAddress address, SecurityContext payload) {
         this._id = address.toString();
-        this.data = data.toBase64String();
+        this.payload = payload.toBase64String();
+    }
+
+    @JsIgnore
+    public ResourceAddress getAddress() {
+        return AddressTemplate.of(_id).resolve(StatementContext.NOOP);
+    }
+
+    @JsIgnore
+    public SecurityContext getSecurityContext() {
+        return new SecurityContext(ModelNode.fromBase64(payload));
     }
 }

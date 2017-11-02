@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.meta;
+package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.dmr.ResourceAddress;
-import rx.Single;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-public interface Database<T> {
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.meta.AddressTemplate;
 
-    Single<T> lookup(AddressTemplate template);
+class LookupContext extends FlowContext {
 
-    void add(T document);
+    final LookupResult lookupResult;
+    final List<RrdResult> rrdResults;
+
+    LookupContext(Set<AddressTemplate> template, boolean recursive) {
+        this.lookupResult = new LookupResult(template, recursive);
+        this.rrdResults = new ArrayList<>();
+    }
 }

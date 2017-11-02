@@ -26,7 +26,9 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 
-@JsType(isNative = true)
+import static jsinterop.annotations.JsPackage.GLOBAL;
+
+@JsType(isNative = true, namespace = GLOBAL)
 public class PouchDB<T extends Document> {
 
     @JsConstructor

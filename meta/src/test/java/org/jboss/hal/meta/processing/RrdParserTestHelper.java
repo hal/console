@@ -210,6 +210,7 @@ import org.jboss.hal.meta.StatementContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("CheckStyle")
 class RrdParserTestHelper {
 
     static void assertResourceDescriptions(RrdResult rrdResult, int size, String... addresses) {

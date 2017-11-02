@@ -31,7 +31,7 @@ public class CreateRrdOperationsTest {
     public void setUp() {
         Environment environment = Mockito.mock(Environment.class);
         statementContext = StatementContext.NOOP;
-        rrdOps = new CreateRrdOperations(statementContext, environment);
+        rrdOps = new CreateRrdOperations(environment, statementContext, MetadataProcessor.RRD_DEPTH);
     }
 
     @Test
