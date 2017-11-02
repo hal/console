@@ -16,37 +16,34 @@
 package org.jboss.hal.meta;
 
 import org.jboss.hal.dmr.ResourceAddress;
+import rx.Single;
 
-/** Abstract registry which uses the specified statement context to resolve the address template. */
-public abstract class AbstractRegistry<T> implements Registry<T> {
+/** Abstract database which uses the specified statement context to resolve the address template. */
+public abstract class AbstractDatabase<T> implements Database<T> {
 
-    private final StatementContext statementContext;
+    private StatementContext statementContext;
     private final String type;
 
-    protected AbstractRegistry(StatementContext statementContext, String type) {
+    protected AbstractDatabase(StatementContext statementContext, String type) {
         this.statementContext = statementContext;
         this.type = type;
     }
 
     @Override
-    public T lookup(AddressTemplate template) throws MissingMetadataException {
-        ResourceAddress address = resolveTemplate(template);
-        T metadata = lookupAddress(address);
-        if (metadata == null) {
-            throw new MissingMetadataException(type, template);
-        }
-        return metadata;
+    public Single<T> lookup(AddressTemplate template) {
+        return lookupAddress(resolveTemplate(template));
     }
 
     @Override
-    public boolean contains(AddressTemplate template) {
-        ResourceAddress address = resolveTemplate(template);
-        return lookupAddress(address) != null;
+    public Single<Boolean> contains(AddressTemplate template) {
+        return lookup(template)
+                .map(result -> true)
+                .onErrorReturn(error -> false);
     }
 
     protected ResourceAddress resolveTemplate(AddressTemplate template) {
         return template.resolve(statementContext);
     }
 
-    protected abstract T lookupAddress(ResourceAddress address);
+    protected abstract Single<T> lookupAddress(ResourceAddress address);
 }

@@ -80,6 +80,11 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-db</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-dmr</artifactId>
                 <version>${project.version}</version>
             </dependency>

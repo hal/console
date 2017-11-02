@@ -49,7 +49,7 @@ class SettingsDialog {
     private final boolean multipleLocales;
     private boolean changes;
 
-    SettingsDialog(final Environment environment, final Settings settings, final Resources resources) {
+    SettingsDialog(Environment environment, Settings settings, Resources resources) {
         this.settings = settings;
         this.changes = false;
 

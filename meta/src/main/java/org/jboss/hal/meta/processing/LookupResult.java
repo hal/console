@@ -37,7 +37,7 @@ class LookupResult {
     private final Map<AddressTemplate, Integer> templates;
     private final boolean recursive;
 
-    LookupResult(final Set<AddressTemplate> templates, final boolean recursive) {
+    LookupResult(Set<AddressTemplate> templates, boolean recursive) {
         this.templates = new HashMap<>();
         for (AddressTemplate template : templates) {
             this.templates.put(template, NOTHING_PRESENT);

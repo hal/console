@@ -15,8 +15,15 @@
  */
 package org.jboss.hal.db;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import elemental2.core.Array;
 import elemental2.promise.Promise;
 import jsinterop.annotations.JsConstructor;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 
 @JsType(isNative = true)
@@ -26,7 +33,39 @@ public class PouchDB<T extends Document> {
     public PouchDB(String name) {
     }
 
+
+    // ------------------------------------------------------ get
+
     public native Promise<T> get(String id);
 
-    public native Promise<Response> put(T document);
+    native Promise<AllDocsResponse<T>> allDocs(AllDocsOptions options);
+
+    @JsOverlay
+    public final Promise<List<T>> getAll(Set<String> ids) {
+        AllDocsOptions options = new AllDocsOptions();
+        options.include_docs = true;
+        options.keys = new Array<>();
+        for (String id : ids) {
+            options.keys.push(id);
+        }
+
+        return allDocs(options).then(response -> {
+            List<T> documents = new ArrayList<>();
+            for (int i = 0; i < response.rows.getLength(); i++) {
+                documents.add(response.rows.getAt(i).doc);
+            }
+            return Promise.resolve(documents);
+        });
+    }
+
+
+    // ------------------------------------------------------ put
+
+    @JsOverlay
+    public final Promise<String> put(T document) {
+        return internalPut(document).then(response -> Promise.resolve(response.id));
+    }
+
+    @JsMethod(name = "put")
+    native Promise<PutResponse> internalPut(T document);
 }

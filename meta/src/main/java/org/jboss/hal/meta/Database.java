@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.db;
+package org.jboss.hal.meta;
 
-import jsinterop.annotations.JsType;
+import java.util.Set;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
+import org.jboss.hal.dmr.ResourceAddress;
+import rx.Single;
 
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Response {
+public interface Database<T> {
 
-    public boolean ok;
-    public String id;
-    public String rev;
+    Single<T> lookup(AddressTemplate template);
+
+    Single<Boolean> contains(AddressTemplate template);
+
+    void add(ResourceAddress address, T metadata);
 }

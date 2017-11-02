@@ -38,8 +38,10 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.resource.RequiredResources;
+import org.jboss.hal.meta.security.SecurityContextDatabase;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
@@ -53,19 +55,15 @@ import static org.jboss.hal.flow.Flow.series;
 
 /**
  * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link
- * MetadataRegistry}. If you're sure the metadata is present you can use the {@link MetadataRegistry} instead.
+ * MetadataRegistry}. If you're sure the metadata is present, use the {@link MetadataRegistry} instead.
  */
 @JsType(namespace = "hal.meta")
 public class MetadataProcessor {
 
-    /**
-     * Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size
-     */
+    /** Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size */
     static final int RRD_DEPTH = 3;
 
-    /**
-     * Number of r-r-d operations part of one composite operation.
-     */
+    /** Number of r-r-d operations part of one composite operation. */
     private static final int BATCH_SIZE = 3;
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
@@ -73,7 +71,9 @@ public class MetadataProcessor {
     private final Dispatcher dispatcher;
     private final RequiredResources requiredResources;
     private final MetadataRegistry metadataRegistry;
+    private final ResourceDescriptionDatabase resourceDescriptionDatabase;
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
+    private final SecurityContextDatabase securityContextDatabase;
     private final SecurityContextRegistry securityContextRegistry;
     private final Lookup lookup;
     private final CreateRrdOperations rrdOps;
@@ -85,12 +85,16 @@ public class MetadataProcessor {
             StatementContext statementContext,
             RequiredResources requiredResources,
             MetadataRegistry metadataRegistry,
+            SecurityContextDatabase securityContextDatabase,
             SecurityContextRegistry securityContextRegistry,
+            ResourceDescriptionDatabase resourceDescriptionDatabase,
             ResourceDescriptionRegistry resourceDescriptionRegistry) {
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
         this.requiredResources = requiredResources;
+        this.securityContextDatabase = securityContextDatabase;
         this.securityContextRegistry = securityContextRegistry;
+        this.resourceDescriptionDatabase = resourceDescriptionDatabase;
         this.resourceDescriptionRegistry = resourceDescriptionRegistry;
         this.lookup = new Lookup(securityContextRegistry, resourceDescriptionRegistry);
         this.rrdOps = new CreateRrdOperations(statementContext, environment);
