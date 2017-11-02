@@ -28,10 +28,6 @@ import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
-import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
-import org.jboss.hal.meta.security.SecurityContextDatabase;
-import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +35,7 @@ import rx.Completable;
 import rx.Single;
 import rx.functions.Action1;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /** Creates, executes and parses the {@code read-resource-description} operations to read the missing metadata. */

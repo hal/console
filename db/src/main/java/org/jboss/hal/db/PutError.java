@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.meta;
+package org.jboss.hal.db;
 
-import java.util.List;
-import java.util.Set;
+import jsinterop.annotations.JsType;
 
-import rx.Single;
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-public interface Database<T> {
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+class PutError {
 
-    Single<T> lookup(AddressTemplate template);
-
-    Single<Set<String>> addAll(List<T> document);
+    boolean error;
+    String status;
+    String name;
+    String message;
 }

@@ -16,6 +16,7 @@
 package org.jboss.hal.db;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -68,6 +69,27 @@ public class PouchDB<T extends Document> {
         return internalPut(document).then(response -> Promise.resolve(response.id));
     }
 
+    @JsOverlay
+    public final Promise<Set<String>> putAll(List<T> documents) {
+        Array<T> docs = new Array<>();
+        for (T document : documents) {
+            docs.push(document);
+        }
+        return bulkDocs(docs).then(response -> {
+            Set<String> ids = new HashSet<>();
+            for (int i = 0; i < response.getLength(); i++) {
+                BulkDocsSingleUnionType unionType = response.getAt(i);
+                if (unionType.isSuccess()) {
+                    ids.add(unionType.asSuccess().id);
+                }
+            }
+            return Promise.resolve(ids);
+        });
+    }
+
     @JsMethod(name = "put")
     native Promise<PutResponse> internalPut(T document);
+
+    @JsMethod
+    native Promise<Array<BulkDocsSingleUnionType>> bulkDocs(Array<T> documents);
 }

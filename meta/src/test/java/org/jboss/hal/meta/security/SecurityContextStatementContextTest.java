@@ -63,13 +63,15 @@ public class SecurityContextStatementContextTest {
 
     @Test
     public void selectedServerConfig() throws Exception {
-        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server-config}/foo=bar").resolve(statementContext);
+        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server-config}/foo=bar")
+                .resolve(statementContext);
         assertEquals("/host=master/server-config=*/foo=bar", address.toString());
     }
 
     @Test
     public void selectedServer() throws Exception {
-        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server}/foo=bar").resolve(statementContext);
+        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server}/foo=bar")
+                .resolve(statementContext);
         assertEquals("/host=master/server=server-one/foo=bar", address.toString());
     }
 

@@ -16,6 +16,7 @@
 package org.jboss.hal.meta.processing;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 
@@ -98,14 +99,16 @@ public class MetadataProcessor {
     @JsIgnore
     public void process(String id, Progress progress, AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
-        logger.debug("Process required resources {} for id {}", resources, id);
+        boolean recursive = requiredResources.isRecursive(id);
+        logger.debug("Process required resources {} for id {}({})", resources, id,
+                recursive ? "recursive" : "non-recursive");
         if (resources.isEmpty()) {
             logger.debug("No required resources found -> callback.onSuccess(null)");
             callback.onSuccess(null);
 
         } else {
             Set<AddressTemplate> templates = resources.stream().map(AddressTemplate::of).collect(toSet());
-            processInternal(templates, requiredResources.isRecursive(id), progress, callback);
+            processInternal(templates, recursive, progress, callback);
         }
     }
 
@@ -142,12 +145,12 @@ public class MetadataProcessor {
             RrdTask rrd = new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH);
             UpdateRegistryTask updateRegistries = new UpdateRegistryTask(resourceDescriptionRegistry,
                     securityContextRegistry);
-            UpdateDatabaseTask updateDatabases = new UpdateDatabaseTask(resourceDescriptionDatabase,
+            UpdateDatabase updateDatabases = new UpdateDatabase(resourceDescriptionDatabase,
                     securityContextDatabase);
 
             Stopwatch stopwatch = Stopwatch.createStarted();
             LookupContext context = new LookupContext(templates, recursive);
-            series(context, lookupRegistries, lookupDatabases, rrd, updateRegistries, updateDatabases)
+            series(context, lookupRegistries, lookupDatabases, rrd, updateRegistries)
                     .subscribe(new Outcome<LookupContext>() {
                         @Override
                         public void onError(LookupContext context, Throwable error) {
@@ -158,8 +161,16 @@ public class MetadataProcessor {
                         @Override
                         public void onSuccess(LookupContext context) {
                             stopwatch.stop();
+                            SortedSet<String> resourceDescriptions = context.newResourceDescriptions();
+                            SortedSet<String> securityContexts = context.newSecurityContexts();
                             logger.debug("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
+                            logger.debug("Add {} resource descriptions: {}", resourceDescriptions.size(),
+                                    resourceDescriptions);
+                            logger.debug("Add {} security contexts: {}", securityContexts.size(), securityContexts);
                             callback.onSuccess(null);
+
+                            // database update is *not* part of the flow!
+                            updateDatabases.update(context.rrdResults);
                         }
                     });
         }

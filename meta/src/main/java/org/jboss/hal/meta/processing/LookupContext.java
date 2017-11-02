@@ -18,9 +18,14 @@ package org.jboss.hal.meta.processing;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
+
+import static java.util.stream.Collectors.toSet;
 
 class LookupContext extends FlowContext {
 
@@ -30,5 +35,25 @@ class LookupContext extends FlowContext {
     LookupContext(Set<AddressTemplate> template, boolean recursive) {
         this.lookupResult = new LookupResult(template, recursive);
         this.rrdResults = new ArrayList<>();
+    }
+
+    SortedSet<String> newResourceDescriptions() {
+        SortedSet<String> result = new TreeSet<>();
+        for (RrdResult rrdResult : rrdResults) {
+            result.addAll(rrdResult.resourceDescriptions.keySet().stream()
+                    .map(ResourceAddress::toString)
+                    .collect(toSet()));
+        }
+        return result;
+    }
+
+    SortedSet<String> newSecurityContexts() {
+        SortedSet<String> result = new TreeSet<>();
+        for (RrdResult rrdResult : rrdResults) {
+            result.addAll(rrdResult.securityContexts.keySet().stream()
+                    .map(ResourceAddress::toString)
+                    .collect(toSet()));
+        }
+        return result;
     }
 }

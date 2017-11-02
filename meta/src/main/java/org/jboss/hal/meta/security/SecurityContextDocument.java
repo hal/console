@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.meta.security;
 
+import com.google.common.base.Stopwatch;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.db.Document;
@@ -23,14 +24,19 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
+import static elemental2.dom.DomGlobal.console;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 @JsType
 public class SecurityContextDocument extends Document {
 
     String payload;
 
     public SecurityContextDocument(ResourceAddress address, SecurityContext payload) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         this._id = address.toString();
         this.payload = payload.toBase64String();
+        console.log("SCD(" + address.toString() + "): " + stopwatch.stop().elapsed(MILLISECONDS));
     }
 
     @JsIgnore

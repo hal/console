@@ -20,19 +20,13 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.db.PouchDB;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractDatabase;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rx.Single;
 
 public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescriptionDocument> {
 
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionDatabase.class);
 
     private final Environment environment;
     private final Settings settings;
@@ -46,31 +40,7 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     }
 
     @Override
-    protected Single<ResourceDescriptionDocument> lookupAddress(ResourceAddress address) {
-        return Single.create(em -> database().get(address.toString()).then(document -> {
-                    em.onSuccess(document);
-                    return null;
-                },
-                failure -> {
-                    em.onError(new RuntimeException(String.valueOf(failure)));
-                    return null;
-                }));
-    }
-
-    @Override
-    public void add(ResourceDescriptionDocument document) {
-        database().put(document)
-                .then(id -> {
-                    logger.debug("Add resource description for {}", id);
-                    return null;
-                })
-                .catch_(error -> {
-                    logger.error("Unable ");
-                    return null;
-                });
-    }
-
-    private PouchDB<ResourceDescriptionDocument> database() {
+    protected PouchDB<ResourceDescriptionDocument> database() {
         if (database == null) {
             String name = Ids.build("hal-db-rd",
                     environment.getHalBuild().name(),

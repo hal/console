@@ -19,19 +19,13 @@ import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.db.PouchDB;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractDatabase;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rx.Single;
 
 public class SecurityContextDatabase extends AbstractDatabase<SecurityContextDocument> {
 
     private static final String SECURITY_CONTEXT_TYPE = "security context";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(SecurityContextDatabase.class);
 
     private final Environment environment;
     private PouchDB<SecurityContextDocument> database;
@@ -43,32 +37,7 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContextDoc
     }
 
     @Override
-    protected Single<SecurityContextDocument> lookupAddress(ResourceAddress address) {
-        return Single.create(em -> database().get(address.toString()).then(document -> {
-                    em.onSuccess(document);
-                    return null;
-                },
-                failure -> {
-                    em.onError(new RuntimeException(String.valueOf(failure)));
-                    return null;
-                }));
-    }
-
-    @Override
-    public void add(SecurityContextDocument document) {
-        database().put(document)
-                .then(id -> {
-                    logger.debug("Add resource description for {}", id);
-                    return null;
-                })
-                .catch_(error -> {
-                    logger.error("Unable ");
-                    return null;
-                });
-
-    }
-
-    private PouchDB<SecurityContextDocument> database() {
+    protected PouchDB<SecurityContextDocument> database() {
         if (database == null) {
             String name = Ids.build("hal-db-sc",
                     environment.getHalBuild().name(),

@@ -15,11 +15,16 @@
  */
 package org.jboss.hal.meta;
 
+import java.util.List;
+import java.util.Set;
+
+import org.jboss.hal.db.Document;
+import org.jboss.hal.db.PouchDB;
 import org.jboss.hal.dmr.ResourceAddress;
 import rx.Single;
 
 /** Abstract database which uses the specified statement context to resolve the address template. */
-public abstract class AbstractDatabase<T> implements Database<T> {
+public abstract class AbstractDatabase<T extends Document> implements Database<T> {
 
     private StatementContext statementContext;
     private final String type;
@@ -31,12 +36,30 @@ public abstract class AbstractDatabase<T> implements Database<T> {
 
     @Override
     public Single<T> lookup(AddressTemplate template) {
-        return lookupAddress(resolveTemplate(template));
+        ResourceAddress address = template.resolve(statementContext);
+        return Single.create(em -> database().get(address.toString())
+                .then(document -> {
+                    em.onSuccess(document);
+                    return null;
+                })
+                .catch_(failure -> {
+                    em.onError(new RuntimeException(String.valueOf(failure)));
+                    return null;
+                }));
     }
 
-    protected ResourceAddress resolveTemplate(AddressTemplate template) {
-        return template.resolve(statementContext);
+    @Override
+    public Single<Set<String>> addAll(List<T> documents) {
+        return Single.create(em -> database().putAll(documents)
+                .then(ids -> {
+                    em.onSuccess(ids);
+                    return null;
+                })
+                .catch_(failure -> {
+                    em.onError(new RuntimeException(String.valueOf(failure)));
+                    return null;
+                }));
     }
 
-    protected abstract Single<T> lookupAddress(ResourceAddress address);
+    protected abstract PouchDB<T> database();
 }
