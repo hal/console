@@ -18,10 +18,7 @@ package org.jboss.hal.dmr;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;

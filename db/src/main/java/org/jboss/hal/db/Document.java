@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.db;
 
-import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
@@ -26,7 +25,7 @@ import jsinterop.base.JsPropertyMapOfAny;
 @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
 public interface Document extends JsPropertyMapOfAny {
 
-    @JsIgnore String ID = "_id";
+    String ID = "_id";
 
     @JsOverlay
     static Document of(String id) {

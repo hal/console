@@ -35,7 +35,6 @@ import rx.Completable;
 import rx.Single;
 import rx.functions.Action1;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /** Creates, executes and parses the {@code read-resource-description} operations to read the missing metadata. */

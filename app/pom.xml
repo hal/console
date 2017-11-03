@@ -253,7 +253,9 @@
                                 <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
@@ -282,7 +284,9 @@
                                 <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
@@ -314,7 +318,9 @@
                                 <source>../ballroom/src/main/java</source>
                                 <source>../config/src/main/java</source>
                                 <source>../core/src/main/java</source>
+                                <source>../db/src/main/java</source>
                                 <source>../dmr/src/main/java</source>
+                                <source>../flow/src/main/java</source>
                                 <source>../json/src/main/java</source>
                                 <source>../meta/src/main/java</source>
                                 <source>../resources/src/main/java</source>

@@ -18,16 +18,12 @@ package org.jboss.hal.meta.processing;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-
-import static java.util.stream.Collectors.toSet;
 
 class LookupContext extends FlowContext {
 
