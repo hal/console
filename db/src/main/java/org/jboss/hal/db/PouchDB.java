@@ -15,9 +15,10 @@
  */
 package org.jboss.hal.db;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import elemental2.core.Array;
@@ -26,11 +27,12 @@ import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.db.AllDocsResponse.Row;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
 @JsType(isNative = true, namespace = GLOBAL)
-public class PouchDB<T extends Document> {
+public class PouchDB {
 
     @JsConstructor
     public PouchDB(String name) {
@@ -39,12 +41,13 @@ public class PouchDB<T extends Document> {
 
     // ------------------------------------------------------ get
 
-    public native Promise<T> get(String id);
+    public native Promise<Document> get(String id);
 
-    native Promise<AllDocsResponse<T>> allDocs(AllDocsOptions options);
+    native Promise<AllDocsResponse> allDocs(AllDocsOptions options);
 
+    /** Returns a map with documents for the specified ids. The map contains {@code null} for nonexistent documents. */
     @JsOverlay
-    public final Promise<List<T>> getAll(Set<String> ids) {
+    public final Promise<Map<String, Document>> getAll(Set<String> ids) {
         AllDocsOptions options = new AllDocsOptions();
         options.include_docs = true;
         options.keys = new Array<>();
@@ -53,9 +56,14 @@ public class PouchDB<T extends Document> {
         }
 
         return allDocs(options).then(response -> {
-            List<T> documents = new ArrayList<>();
+            Map<String, Document> documents = new HashMap<>();
             for (int i = 0; i < response.rows.getLength(); i++) {
-                documents.add(response.rows.getAt(i).doc);
+                Document document = null;
+                Row row = response.rows.getAt(i);
+                if (!"not_found".equals(row.error)) {
+                    document = row.doc;
+                }
+                documents.put(row.key, document);
             }
             return Promise.resolve(documents);
         });
@@ -65,14 +73,14 @@ public class PouchDB<T extends Document> {
     // ------------------------------------------------------ put
 
     @JsOverlay
-    public final Promise<String> put(T document) {
+    public final Promise<String> put(Document document) {
         return internalPut(document).then(response -> Promise.resolve(response.id));
     }
 
     @JsOverlay
-    public final Promise<Set<String>> putAll(List<T> documents) {
-        Array<T> docs = new Array<>();
-        for (T document : documents) {
+    public final Promise<Set<String>> putAll(List<Document> documents) {
+        Array<Document> docs = new Array<>();
+        for (Document document : documents) {
             docs.push(document);
         }
         return bulkDocs(docs).then(response -> {
@@ -88,8 +96,8 @@ public class PouchDB<T extends Document> {
     }
 
     @JsMethod(name = "put")
-    native Promise<PutResponse> internalPut(T document);
+    native Promise<PutResponse> internalPut(Document document);
 
     @JsMethod
-    native Promise<Array<BulkDocsSingleUnionType>> bulkDocs(Array<T> documents);
+    native Promise<Array<BulkDocsSingleUnionType>> bulkDocs(Array<Document> documents);
 }

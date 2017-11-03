@@ -18,17 +18,20 @@ package org.jboss.hal.meta.security;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.db.Document;
 import org.jboss.hal.db.PouchDB;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractDatabase;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 
-public class SecurityContextDatabase extends AbstractDatabase<SecurityContextDocument> {
+public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
 
     private static final String SECURITY_CONTEXT_TYPE = "security context";
 
     private final Environment environment;
-    private PouchDB<SecurityContextDocument> database;
+    private PouchDB database;
 
     @Inject
     public SecurityContextDatabase(StatementContext statementContext, Environment environment) {
@@ -37,12 +40,25 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContextDoc
     }
 
     @Override
-    protected PouchDB<SecurityContextDocument> database() {
+    protected SecurityContext asMetadata(Document document) {
+        return new SecurityContext(ModelNode.fromBase64(document.getAny(PAYLOAD).asString()));
+    }
+
+    @Override
+    protected Document asDocument(ResourceAddress address, SecurityContext securityContext) {
+        Document document = Document.of(address.toString());
+        document.set(PAYLOAD, securityContext.toBase64String());
+        return document;
+
+    }
+
+    @Override
+    protected PouchDB database() {
         if (database == null) {
             String name = Ids.build("hal-db-sc",
                     environment.getHalBuild().name(),
                     environment.getManagementVersion().toString());
-            database = new PouchDB<>(name);
+            database = new PouchDB(name);
         }
         return database;
     }

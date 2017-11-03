@@ -15,16 +15,18 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
-import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
+import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
-import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,66 +41,70 @@ class LookupDatabaseTask implements Task<LookupContext> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(LookupDatabaseTask.class);
 
-    private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
-    private final SecurityContextRegistry securityContextRegistry;
     private final SecurityContextDatabase securityContextDatabase;
 
-    LookupDatabaseTask(ResourceDescriptionRegistry resourceDescriptionRegistry,
-            ResourceDescriptionDatabase resourceDescriptionDatabase,
-            SecurityContextRegistry securityContextRegistry,
+    LookupDatabaseTask(ResourceDescriptionDatabase resourceDescriptionDatabase,
             SecurityContextDatabase securityContextDatabase) {
-        this.resourceDescriptionRegistry = resourceDescriptionRegistry;
         this.resourceDescriptionDatabase = resourceDescriptionDatabase;
-        this.securityContextRegistry = securityContextRegistry;
         this.securityContextDatabase = securityContextDatabase;
     }
 
     @Override
     public Completable call(LookupContext context) {
         LookupResult lookupResult = context.lookupResult;
-        List<Completable> completables = new ArrayList<>();
+        Set<AddressTemplate> rdTemplates = new HashSet<>();
+        Set<AddressTemplate> scTemplates = new HashSet<>();
+
         for (AddressTemplate template : lookupResult.templates()) {
             int missingMetadata = lookupResult.missingMetadata(template);
             if (missingMetadata == NOTHING_PRESENT) {
-                completables.add(lookupResourceDescription(lookupResult, template));
-                completables.add(lookupSecurityContext(lookupResult, template));
-
+                rdTemplates.add(template);
+                scTemplates.add(template);
             } else if (missingMetadata == RESOURCE_DESCRIPTION_PRESENT) {
-                completables.add(lookupSecurityContext(lookupResult, template));
-
+                scTemplates.add(template);
             } else if (missingMetadata == SECURITY_CONTEXT_PRESENT) {
-                completables.add(lookupResourceDescription(lookupResult, template));
+                rdTemplates.add(template);
             }
         }
-        return Completable
-                .merge(completables)
+
+        Map<ResourceAddress, AddressTemplate> rdLookup = resourceDescriptionDatabase.addressLookup(rdTemplates);
+        Completable c1 = resourceDescriptionDatabase.getAll(rdTemplates)
+                .flatMapCompletable(resourceDescriptions -> {
+                    for (Map.Entry<ResourceAddress, ResourceDescription> entry : resourceDescriptions.entrySet()) {
+                        ResourceAddress address = entry.getKey();
+                        ResourceDescription resourceDescription = entry.getValue();
+                        if (resourceDescription != null) {
+                            AddressTemplate template = rdLookup.get(address);
+                            if (template != null) {
+                                lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                                context.toResourceDescriptionRegistry.put(address, resourceDescription);
+                            }
+                        }
+                    }
+                    return Completable.complete();
+                });
+
+        Map<ResourceAddress, AddressTemplate> scLookup = securityContextDatabase.addressLookup(scTemplates);
+        Completable c2 = securityContextDatabase.getAll(scTemplates)
+                .flatMapCompletable(securityContexts -> {
+                    for (Map.Entry<ResourceAddress, SecurityContext> entry : securityContexts.entrySet()) {
+                        ResourceAddress address = entry.getKey();
+                        SecurityContext securityContext = entry.getValue();
+                        if (securityContext != null) {
+                            AddressTemplate template = rdLookup.get(address);
+                            if (template != null) {
+                                lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                                context.toSecurityContextRegistry.put(address, securityContext);
+                            }
+                        }
+                    }
+                    return Completable.complete();
+                });
+
+        return Completable.merge(c1, c2)
                 .andThen(Completable.fromAction(() -> {
                     logger.debug("Database lookup: {}", lookupResult.toString());
                 }));
-    }
-
-    private Completable lookupResourceDescription(LookupResult lookupResult, AddressTemplate template) {
-        return resourceDescriptionDatabase.lookup(template)
-                .flatMapCompletable(document -> {
-                    ResourceAddress address = document.getAddress();
-                    logger.debug("Add resource description for {}", address);
-                    resourceDescriptionRegistry.add(address, document.getResourceDescription());
-                    lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
-                    return Completable.complete();
-                })
-                .onErrorComplete(); // leave the bits in LookupResult unchanged!
-    }
-
-    private Completable lookupSecurityContext(LookupResult lookupResult, AddressTemplate template) {
-        return securityContextDatabase.lookup(template)
-                .flatMapCompletable(document -> {
-                    ResourceAddress address = document.getAddress();
-                    logger.debug("Add security context for {}", address);
-                    securityContextRegistry.add(address, document.getSecurityContext());
-                    lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
-                    return Completable.complete();
-                })
-                .onErrorComplete(); // leave the bits in LookupResult unchanged!
     }
 }

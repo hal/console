@@ -15,7 +15,9 @@
  */
 package org.jboss.hal.meta;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.hal.db.Document;
@@ -23,8 +25,12 @@ import org.jboss.hal.db.PouchDB;
 import org.jboss.hal.dmr.ResourceAddress;
 import rx.Single;
 
-/** Abstract database which uses the specified statement context to resolve the address template. */
-public abstract class AbstractDatabase<T extends Document> implements Database<T> {
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
+/** Abstract database which uses the specified statement context to resolve address templates. */
+public abstract class AbstractDatabase<T> implements Database<T> {
 
     private StatementContext statementContext;
     private final String type;
@@ -35,11 +41,25 @@ public abstract class AbstractDatabase<T extends Document> implements Database<T
     }
 
     @Override
-    public Single<T> lookup(AddressTemplate template) {
-        ResourceAddress address = template.resolve(statementContext);
-        return Single.create(em -> database().get(address.toString())
-                .then(document -> {
-                    em.onSuccess(document);
+    public Map<ResourceAddress, AddressTemplate> addressLookup(Set<AddressTemplate> templates) {
+        return templates.stream().collect(toMap(template -> template.resolve(statementContext), identity()));
+    }
+
+    @Override
+    public Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates) {
+        Map<String, ResourceAddress> idToAddress = templates.stream()
+                .map(template -> template.resolve(statementContext))
+                .collect(toMap(address -> address.toString(), identity()));
+
+        return Single.create(em -> database().getAll(idToAddress.keySet())
+                .then(documents -> {
+                    Map<ResourceAddress, T> metadata = new HashMap<>();
+                    for (Map.Entry<String, Document> entry : documents.entrySet()) {
+                        String id = entry.getKey();
+                        Document document = entry.getValue();
+                        metadata.put(idToAddress.get(id), asMetadata(document));
+                    }
+                    em.onSuccess(metadata);
                     return null;
                 })
                 .catch_(failure -> {
@@ -49,7 +69,10 @@ public abstract class AbstractDatabase<T extends Document> implements Database<T
     }
 
     @Override
-    public Single<Set<String>> addAll(List<T> documents) {
+    public Single<Set<String>> putAll(Map<ResourceAddress, T> metadata) {
+        List<Document> documents = metadata.entrySet().stream()
+                .map(entry -> asDocument(entry.getKey(), entry.getValue()))
+                .collect(toList());
         return Single.create(em -> database().putAll(documents)
                 .then(ids -> {
                     em.onSuccess(ids);
@@ -61,5 +84,9 @@ public abstract class AbstractDatabase<T extends Document> implements Database<T
                 }));
     }
 
-    protected abstract PouchDB<T> database();
+    protected abstract T asMetadata(Document document);
+
+    protected abstract Document asDocument(ResourceAddress address, T metadata);
+
+    protected abstract PouchDB database();
 }

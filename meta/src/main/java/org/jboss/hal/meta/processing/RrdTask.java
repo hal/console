@@ -98,7 +98,11 @@ class RrdTask implements Task<LookupContext> {
 
     private Action1<CompositeResult> parseRrdAction(LookupContext context, Composite composite) {
         return (CompositeResult compositeResult) -> {
-            context.rrdResults.add(new CompositeRrdParser(composite).parse(compositeResult));
+            RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
+            context.toResourceDescriptionRegistry.putAll(rrdResult.resourceDescriptions);
+            context.toResourceDescriptionDatabase.putAll(rrdResult.resourceDescriptions);
+            context.toSecurityContextRegistry.putAll(rrdResult.securityContexts);
+            context.toSecurityContextDatabase.putAll(rrdResult.securityContexts);
         };
     }
 }

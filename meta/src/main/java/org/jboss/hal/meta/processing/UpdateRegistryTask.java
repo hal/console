@@ -23,9 +23,14 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 class UpdateRegistryTask implements Task<LookupContext> {
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(UpdateRegistryTask.class);
 
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final SecurityContextRegistry securityContextRegistry;
@@ -38,14 +43,14 @@ class UpdateRegistryTask implements Task<LookupContext> {
 
     @Override
     public Completable call(LookupContext context) {
-        for (RrdResult rrdResult : context.rrdResults) {
-            for (Map.Entry<ResourceAddress, ResourceDescription> entry : rrdResult.resourceDescriptions.entrySet()) {
-                resourceDescriptionRegistry.add(entry.getKey(), entry.getValue());
-            }
-            for (Map.Entry<ResourceAddress, SecurityContext> entry : rrdResult.securityContexts.entrySet()) {
-                securityContextRegistry.add(entry.getKey(), entry.getValue());
-            }
+        for (Map.Entry<ResourceAddress, ResourceDescription> entry : context.toResourceDescriptionRegistry.entrySet()) {
+            resourceDescriptionRegistry.add(entry.getKey(), entry.getValue());
         }
+        logger.debug("Added resource descriptions for {} to registry", context.toResourceDescriptionRegistry.keySet());
+        for (Map.Entry<ResourceAddress, SecurityContext> entry : context.toSecurityContextRegistry.entrySet()) {
+            securityContextRegistry.add(entry.getKey(), entry.getValue());
+        }
+        logger.debug("Added security contexts for {} to registry", context.toSecurityContextRegistry.keySet());
         return Completable.complete();
     }
 }

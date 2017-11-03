@@ -15,18 +15,9 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Stopwatch;
-import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
-import org.jboss.hal.meta.description.ResourceDescriptionDocument;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
-import org.jboss.hal.meta.security.SecurityContextDocument;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,27 +37,16 @@ class UpdateDatabase {
         this.securityContextDatabase = securityContextDatabase;
     }
 
-    void update(List<RrdResult> rrdResults) {
-        Stopwatch pdWatch = Stopwatch.createStarted();
-        List<ResourceDescriptionDocument> resourceDescriptionDocuments = new ArrayList<>();
-        List<SecurityContextDocument> securityContextDocuments = new ArrayList<>();
-        for (RrdResult rrdResult : rrdResults) {
-            for (Map.Entry<ResourceAddress, ResourceDescription> entry : rrdResult.resourceDescriptions.entrySet()) {
-                resourceDescriptionDocuments.add(new ResourceDescriptionDocument(entry.getKey(), entry.getValue()));
-            }
-            for (Map.Entry<ResourceAddress, SecurityContext> entry : rrdResult.securityContexts.entrySet()) {
-                securityContextDocuments.add(new SecurityContextDocument(entry.getKey(), entry.getValue()));
-            }
-        }
-        logger.debug("Prepared documents for database update in {} ms", pdWatch.stop().elapsed(MILLISECONDS));
-
+    void update(LookupContext context) {
         Stopwatch rdWatch = Stopwatch.createStarted();
-        resourceDescriptionDatabase.addAll(resourceDescriptionDocuments).subscribe(ids -> {
-            logger.debug("Updated resource description database in {} ms", rdWatch.stop().elapsed(MILLISECONDS));
+        resourceDescriptionDatabase.putAll(context.toResourceDescriptionDatabase).subscribe(ids -> {
+            rdWatch.stop();
+            logger.debug("Added resource descriptions for {} to database in {} ms", ids, rdWatch.elapsed(MILLISECONDS));
         });
         Stopwatch scWatch = Stopwatch.createStarted();
-        securityContextDatabase.addAll(securityContextDocuments).subscribe(ids -> {
-            logger.debug("Updated security context database in {} ms", scWatch.stop().elapsed(MILLISECONDS));
+        securityContextDatabase.putAll(context.toSecurityContextDatabase).subscribe(ids -> {
+            scWatch.stop();
+            logger.debug("Added security contexts for {} to database in {} ms", ids, scWatch.elapsed(MILLISECONDS));
         });
     }
 }

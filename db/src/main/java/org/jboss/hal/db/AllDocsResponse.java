@@ -23,20 +23,21 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /** Response for {@link PouchDB#allDocs(AllDocsOptions)} */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-class AllDocsResponse<T extends Document> {
+class AllDocsResponse {
 
     int offset;
     int total_rows;
-    Array<Row<T>> rows;
+    Array<Row> rows;
 
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Row<T extends Document> {
+    static class Row {
 
         String id;
         String key;
+        String error;
         Value value;
-        T doc;
+        Document doc;
     }
 
 

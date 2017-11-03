@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,36 +24,24 @@ import java.util.TreeSet;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.security.SecurityContext;
 
 import static java.util.stream.Collectors.toSet;
 
 class LookupContext extends FlowContext {
 
     final LookupResult lookupResult;
-    final List<RrdResult> rrdResults;
+    final Map<ResourceAddress, ResourceDescription> toResourceDescriptionRegistry;
+    final Map<ResourceAddress, ResourceDescription> toResourceDescriptionDatabase;
+    final Map<ResourceAddress, SecurityContext> toSecurityContextRegistry;
+    final Map<ResourceAddress, SecurityContext> toSecurityContextDatabase;
 
     LookupContext(Set<AddressTemplate> template, boolean recursive) {
         this.lookupResult = new LookupResult(template, recursive);
-        this.rrdResults = new ArrayList<>();
-    }
-
-    SortedSet<String> newResourceDescriptions() {
-        SortedSet<String> result = new TreeSet<>();
-        for (RrdResult rrdResult : rrdResults) {
-            result.addAll(rrdResult.resourceDescriptions.keySet().stream()
-                    .map(ResourceAddress::toString)
-                    .collect(toSet()));
-        }
-        return result;
-    }
-
-    SortedSet<String> newSecurityContexts() {
-        SortedSet<String> result = new TreeSet<>();
-        for (RrdResult rrdResult : rrdResults) {
-            result.addAll(rrdResult.securityContexts.keySet().stream()
-                    .map(ResourceAddress::toString)
-                    .collect(toSet()));
-        }
-        return result;
+        toResourceDescriptionRegistry = new HashMap<>();
+        toResourceDescriptionDatabase = new HashMap<>();
+        toSecurityContextRegistry = new HashMap<>();
+        toSecurityContextDatabase = new HashMap<>();
     }
 }

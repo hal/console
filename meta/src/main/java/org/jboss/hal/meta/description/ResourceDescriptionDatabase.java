@@ -19,18 +19,21 @@ import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.db.Document;
 import org.jboss.hal.db.PouchDB;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractDatabase;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 
-public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescriptionDocument> {
+public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescription> {
 
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
 
     private final Environment environment;
     private final Settings settings;
-    private PouchDB<ResourceDescriptionDocument> database;
+    private PouchDB database;
 
     @Inject
     public ResourceDescriptionDatabase(StatementContext statementContext, Environment environment, Settings settings) {
@@ -40,13 +43,25 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     }
 
     @Override
-    protected PouchDB<ResourceDescriptionDocument> database() {
+    protected ResourceDescription asMetadata(Document document) {
+        return new ResourceDescription(ModelNode.fromBase64(document.getAny(PAYLOAD).asString()));
+    }
+
+    @Override
+    protected Document asDocument(ResourceAddress address, ResourceDescription resourceDescription) {
+        Document document = Document.of(address.toString());
+        document.set(PAYLOAD, resourceDescription.toBase64String());
+        return document;
+    }
+
+    @Override
+    protected PouchDB database() {
         if (database == null) {
             String name = Ids.build("hal-db-rd",
                     environment.getHalBuild().name(),
                     settings.get(Settings.Key.LOCALE).value(),
                     environment.getManagementVersion().toString());
-            database = new PouchDB<>(name);
+            database = new PouchDB(name);
         }
         return database;
     }

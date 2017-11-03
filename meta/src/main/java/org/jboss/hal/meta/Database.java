@@ -15,14 +15,23 @@
  */
 package org.jboss.hal.meta;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.jboss.hal.dmr.ResourceAddress;
 import rx.Single;
 
 public interface Database<T> {
 
-    Single<T> lookup(AddressTemplate template);
+    String PAYLOAD = "payload";
 
-    Single<Set<String>> addAll(List<T> document);
+    /** Turns the templates into resource addresses and return a map for later lookup. */
+    Map<ResourceAddress, AddressTemplate> addressLookup(Set<AddressTemplate> templates);
+
+    /**
+     * Returns a map with metadata for the specified templates. The map contains {@code null} for nonexistent templates.
+     */
+    Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates);
+
+    Single<Set<String>> putAll(Map<ResourceAddress, T> metadata);
 }

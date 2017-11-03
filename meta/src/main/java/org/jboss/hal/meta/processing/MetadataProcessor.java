@@ -16,7 +16,6 @@
 package org.jboss.hal.meta.processing;
 
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.inject.Inject;
 
@@ -57,7 +56,7 @@ import static org.jboss.hal.flow.Flow.series;
 public class MetadataProcessor {
 
     /** Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size */
-    static final int RRD_DEPTH = 3;
+    static final int RRD_DEPTH = 2;
 
     /** Number of r-r-d operations part of one composite operation. */
     private static final int BATCH_SIZE = 3;
@@ -140,8 +139,8 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            LookupDatabaseTask lookupDatabases = new LookupDatabaseTask(resourceDescriptionRegistry,
-                    resourceDescriptionDatabase, securityContextRegistry, securityContextDatabase);
+            LookupDatabaseTask lookupDatabases = new LookupDatabaseTask(resourceDescriptionDatabase,
+                    securityContextDatabase);
             RrdTask rrd = new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH);
             UpdateRegistryTask updateRegistries = new UpdateRegistryTask(resourceDescriptionRegistry,
                     securityContextRegistry);
@@ -161,16 +160,11 @@ public class MetadataProcessor {
                         @Override
                         public void onSuccess(LookupContext context) {
                             stopwatch.stop();
-                            SortedSet<String> resourceDescriptions = context.newResourceDescriptions();
-                            SortedSet<String> securityContexts = context.newSecurityContexts();
                             logger.debug("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
-                            logger.debug("Add {} resource descriptions: {}", resourceDescriptions.size(),
-                                    resourceDescriptions);
-                            logger.debug("Add {} security contexts: {}", securityContexts.size(), securityContexts);
                             callback.onSuccess(null);
 
                             // database update is *not* part of the flow!
-                            updateDatabases.update(context.rrdResults);
+                            updateDatabases.update(context);
                         }
                     });
         }

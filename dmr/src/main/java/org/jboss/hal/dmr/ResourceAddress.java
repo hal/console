@@ -18,7 +18,10 @@ package org.jboss.hal.dmr;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -31,9 +34,7 @@ import jsinterop.annotations.JsType;
 @JsType
 public class ResourceAddress extends ModelNode {
 
-    /**
-     * @return the empty (root) address
-     */
+    /** @return the empty (root) address */
     public static ResourceAddress root() {
         // Do not replace this with a static constant! In most cases the returned address is modified somehow.
         return new ResourceAddress();

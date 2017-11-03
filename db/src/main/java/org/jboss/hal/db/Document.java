@@ -15,14 +15,23 @@
  */
 package org.jboss.hal.db;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsOverlay;
+import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
+import jsinterop.base.Js;
+import jsinterop.base.JsPropertyMap;
+import jsinterop.base.JsPropertyMapOfAny;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
+@JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
+public interface Document extends JsPropertyMapOfAny {
 
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Document {
+    @JsIgnore String ID = "_id";
 
-    protected String _id;
-    protected String _rev;
+    @JsOverlay
+    static Document of(String id) {
+        Document document = Js.cast(JsPropertyMap.of());
+        document.set(ID, id);
+        return document;
+    }
 }
