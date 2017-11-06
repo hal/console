@@ -57,12 +57,15 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;
+import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @Column(Ids.STANDALONE_SERVER)
-@Requires(value = {"/", MANAGEMENT_ADDRESS, CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
+@Requires(value = {"/", MANAGEMENT_ADDRESS, CONFIGURATION_CHANGES_ADDRESS, MANAGEMENT_OPERATIONS_ADDRESS},
+        recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static final String MANAGEMENT_ADDRESS = "/core-service=management";
@@ -170,6 +173,11 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                         actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
                                 ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
                     }
+                    PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
+                            .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();
+                    actions.add(itemActionFactory.placeRequest(resources.constants().managementOperations(),
+                            moPlaceRequest, Constraint.executable(MANAGEMENT_OPERATIONS_TEMPLATE,
+                                    READ_RESOURCE_OPERATION)));
                     actions.add(new ItemAction.Builder<Server>()
                             .title(resources.constants().editURL())
                             .handler(itm -> serverActions.editUrl(itm, () -> refresh(RESTORE_SELECTION)))

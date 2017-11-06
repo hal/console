@@ -56,6 +56,7 @@ public interface ModelDescriptionConstants {
     String ACTION = "action";
     String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
+    String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_SESSIONS = "active-sessions";
     String ADD = "add";
     String ADD_CONTENT = "add-content";
@@ -127,6 +128,10 @@ public interface ModelDescriptionConstants {
     String CACHE_SIZE = "cache-size";
     String CACHE_TYPE = "cache-type";
     String CACHING_REALM = "caching-realm";
+    String CALLER_THREAD = "caller-thread";
+    String CANCEL_OPERATION = "cancel";
+    String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
+    String CANCELLED = "cancelled";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
@@ -231,6 +236,7 @@ public interface ModelDescriptionConstants {
     String DISCOVERY_GROUP = "discovery-group";
     String DIVERT = "divert";
     String DOMAIN_UUID = "domain-uuid";
+    String DOMAIN_ROLLOUT = "domain-rollout";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
     String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
@@ -260,8 +266,10 @@ public interface ModelDescriptionConstants {
     String EXCEPTION_SORTER_CLASS_NAME = "exception-sorter-class-name";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
+    String EXCLUSIVE_RUNNING_TIME = "exclusive-running-time";
     String EXECUTE = "execute";
     String EXECUTION = "execution";
+    String EXECUTION_STATUS = "execution-status";
     String EXECUTION_TIME = "execution-time";
     String EXIT_STATUS = "exit-status";
     String EXPIRATION = "expiration";
@@ -288,6 +296,7 @@ public interface ModelDescriptionConstants {
     String FILTER_REF = "filter-ref";
     String FILTERING_KEY_STORE = "filtering-key-store";
     String FILTERS = "filters";
+    String FIND_NON_PROGRESSING_OPERATION = "find-non-progressing-operation";
     String FIXED_PORT = "fixed-port";
     String FLUSH_ALL_CONNECTION_IN_POOL = "flush-all-connection-in-pool";
     String FLUSH_GRACEFULLY_CONNECTION_IN_POOL = "flush-gracefully-connection-in-pool";
@@ -648,6 +657,7 @@ public interface ModelDescriptionConstants {
     String ROLLBACK_TO = "rollback-to";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
+    String RUNNING_TIME = "running-time";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
     String SAME_RM_OVERRIDE = "same-rm-override";

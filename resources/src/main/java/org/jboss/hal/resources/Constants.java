@@ -67,7 +67,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String browse();
     String browseBy();
 
+    String callerThread();
     String cancel();
+    String cancelActiveOperation();
+    String cancelNonProgressingOperation();
     String category();
     String changePriority();
     String chooseFile();
@@ -154,6 +157,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludeRole();
     String excludeUserGroup();
     String excludes();
+    String exclusiveRunningTime();
+    String executionStatus();
     String expertMode();
     String expire();
     String expiredSessions();
@@ -168,6 +173,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String failed();
     String failedExecutions();
     String filter();
+    String findNonProgressingOperation();
     String finish();
     String finished();
     String firstPage();
@@ -305,6 +311,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String macroEditor();
     String mainAttributes();
     String managed();
+    String managementOperations();
     String managementVersion();
     String manyMessages();
     String markAllRead();
@@ -452,6 +459,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String runAs();
     String runAsRoleTitle();
     String running();
+    String runningTime();
 
     String sameOrigin();
     String save();

@@ -221,6 +221,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .css(btn, btnDefault)
                             .id(actionId)
                             .textContent(action.text)
+                            .title(action.title)
                             .on(click, e -> action.callback.execute())
                             .apply(b -> b.type = UIConstants.BUTTON)
                             .asElement());
@@ -480,20 +481,26 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
         private final String id;
         private final String text;
+        private final String title;
         private final Constraints constraints;
         private final Callback callback;
 
         public Action(String id, String text, Callback callback) {
-            this(id, text, Constraints.empty(), callback);
+            this(id, text, null, Constraints.empty(), callback);
+        }
+
+        public Action(String id, String text, String title, Callback callback) {
+            this(id, text, title, Constraints.empty(), callback);
         }
 
         public Action(String id, String text, Constraint constraint, Callback callback) {
-            this(id, text, Constraints.single(constraint), callback);
+            this(id, text, null, Constraints.single(constraint), callback);
         }
 
-        public Action(String id, String text, Constraints constraints, Callback callback) {
+        public Action(String id, String text, String title, Constraints constraints, Callback callback) {
             this.id = id;
             this.text = text;
+            this.title = title != null ? title : "";
             this.constraints = constraints;
             this.callback = callback;
         }

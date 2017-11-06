@@ -39,11 +39,13 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
+    SafeHtml accessMechanismLabel(String name);
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
     SafeHtml addResourceError(String name, String cause);
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String type);
+    SafeHtml addressLabel(String address);
     SafeHtml addServerHostHelp();
     String addServerTitle();
     SafeHtml addSingleResourceSuccess(String type);
@@ -61,6 +63,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String blacklist(String blacklist);
 
     String cacheStore();
+    SafeHtml callerThreadLabel(String name);
+    SafeHtml cancelActiveOperation(String operation);
+    SafeHtml cancelledLabel(boolean name);
+    SafeHtml cancelledOperation(String name);
     SafeHtml changePrioritySuccess(int priority);
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
@@ -134,6 +140,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String destinationFilterDescription();
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
+    String domainUuidLabel(String uuid);
+    SafeHtml domainRolloutLabel(boolean name);
     SafeHtml dropSubscriptionsQuestion(String topic);
     SafeHtml dropSubscriptionsSuccess(String topic);
 
@@ -148,6 +156,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml endpointOk(String url);
     String exactlyOneAlternativeError(String alternatives);
     String exactlyOneAlternativesError(String alternatives);
+    SafeHtml exclusiveRunningTimeLabel(String name);
+    SafeHtml executionStatusLabel(String status, String description);
     SafeHtml expireMessageQuestion();
     SafeHtml expireMessagesQuestion();
     SafeHtml expireMessageSuccess();
@@ -229,6 +239,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
     String mailColumnFilterDescription();
+    SafeHtml managementOperationsFindNoResult();
     SafeHtml manyMessages(long number);
     SafeHtml mappingHint();
     String membershipColumnFilterDescription();
@@ -257,6 +268,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noMatchingItems();
     SafeHtml noMessagesSelected();
     SafeHtml noMacrosDescription(String startMacro);
+    String nonProgressingOperation();
     SafeHtml noPolicy();
     String nonEmptyRequires(String fields);
     String noPatchesForHost();
@@ -275,6 +287,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml normalLogFile(String size);
     String notifications(@PluralCount int count);
 
+    SafeHtml operationLabel(String name);
     String operations(int size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
@@ -389,6 +402,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
     String roleColumnFilterDescription();
+    SafeHtml runningTimeLabel(String name);
 
     SafeHtml saveContentSuccess(String deployment, String file);
     String securityDomainColumnFilterDescription();

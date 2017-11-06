@@ -61,6 +61,8 @@ public interface Ids {
     String ABOUT_MODAL = "about-modal";
     String ABOUT_MODAL_TITLE = "about-modal-title";
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
+    String ACTIVE_OPERATION = "active-operation";
+    String ACTIVE_OPERATION_EMPTY = "active-operation-empty";
     String ADD = "add";
     String ADD_ACTIONS = "add-actions";
     String ASSIGNMENT = "assignement";
@@ -113,6 +115,7 @@ public interface Ids {
     String CACHE_STORE_STRING_TABLE = "string-table";
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
+    String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
     String CONFIGURATION = "configuration";
     String CONFIGURATION_CHANGES = "configuration-changes";
     String CONFIGURATION_CHANGES_EMPTY = "configuration-changes-empty";
@@ -293,6 +296,7 @@ public interface Ids {
     String EXTENSION_REVIEW_FORM = "extension-review-form";
     String EXTENSION_STORAGE = "hal-local-storage-extension";
     String EXTENSION_URL_FORM = "extension-url-form";
+    String FIND_NON_PROGRESSING_OPERATION = "find-non-progressing-operation";
     String FINDER = "hal-finder";
     String FOOTER_EXTENSIONS = "footer-extensions";
     String FOOTER_EXTENSIONS_DROPDOWN = "footer-extensions-dropdown";
@@ -473,6 +477,7 @@ public interface Ids {
     String MAIL_SESSION_ITEM = "mail-session-item";
     String MAIL_SESSION_REFRESH = "mail-session-refresh";
     String MANAGEMENT = "management";
+    String MANAGEMENT_OPERATIONS = "management-operations";
     String MASTER = "master";
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_EXCLUDE = "membership-exclude";

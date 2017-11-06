@@ -138,6 +138,8 @@ import org.jboss.hal.client.runtime.group.Mbui_ServerGroupView;
 import org.jboss.hal.client.runtime.group.ServerGroupPresenter;
 import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView;
+import org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter;
+import org.jboss.hal.client.runtime.managementoperations.ManagementOperationsView;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
 import org.jboss.hal.client.runtime.server.ServerRuntimePresenter;
@@ -432,6 +434,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 ManagementPresenter.MyView.class,
                 ManagementView.class,
                 ManagementPresenter.MyProxy.class);
+
+        bindPresenter(ManagementOperationsPresenter.class,
+                ManagementOperationsPresenter.MyView.class,
+                ManagementOperationsView.class,
+                ManagementOperationsPresenter.MyProxy.class);
 
         bindPresenter(MapperDecoderPresenter.class,
                 MapperDecoderPresenter.MyView.class,
