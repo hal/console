@@ -35,8 +35,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 class UpdateDatabase {
 
-    private static final int BUCKET_SIZE = 10;
-    private static final long INTERVAL = 1000; // ms
+    private static final int BUCKET_SIZE = 5;
+    private static final long INTERVAL = 500; // ms
     @NonNls private static final Logger logger = LoggerFactory.getLogger(UpdateDatabase.class);
 
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
@@ -57,8 +57,7 @@ class UpdateDatabase {
             Observable.interval(INTERVAL, INTERVAL, MILLISECONDS)
                     .take(buckets.size())
                     .subscribe(next -> buckets.get(next.intValue()).write(),
-                            error -> logger.error("Unable to update database: {}", error.getMessage()),
-                            () -> logger.debug("Database update finished"));
+                            error -> logger.error("Unable to update database: {}", error.getMessage()));
         }
     }
 
