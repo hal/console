@@ -45,8 +45,9 @@ public class ResourceAddress extends ModelNode {
         if (Strings.isNullOrEmpty(address)) {
             throw new IllegalArgumentException("Address must not be null or empty");
         }
+        String safeAddress = address.startsWith("/") ? address.substring(1) : address;
         ResourceAddress ra = new ResourceAddress();
-        Map<String, String> segments = Splitter.on('/').withKeyValueSeparator('=').split(address);
+        Map<String, String> segments = Splitter.on('/').withKeyValueSeparator('=').split(safeAddress);
         for (Map.Entry<String, String> entry : segments.entrySet()) {
             ra.add(entry.getKey(), entry.getValue());
         }

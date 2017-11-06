@@ -17,12 +17,11 @@ package org.jboss.hal.meta.processing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Database;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
@@ -36,8 +35,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 class UpdateDatabase {
 
-    private static final int BUCKET_SIZE = 20;
-    private static final long INTERVAL = 500; // ms
+    private static final int BUCKET_SIZE = 10;
+    private static final long INTERVAL = 1000; // ms
     @NonNls private static final Logger logger = LoggerFactory.getLogger(UpdateDatabase.class);
 
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
@@ -50,44 +49,28 @@ class UpdateDatabase {
     }
 
     void update(LookupContext context) {
-        LinkedList<WriteBucket> buckets = new LinkedList<>();
-        if (!context.toResourceDescriptionDatabase.isEmpty()) {
-            if (context.toResourceDescriptionDatabase.size() > BUCKET_SIZE) {
-                buckets.addAll(partition(resourceDescriptionDatabase, "resource description",
-                        context.toResourceDescriptionDatabase, BUCKET_SIZE));
-            }
-        }
-        if (!context.toSecurityContextDatabase.isEmpty()) {
-            if (context.toSecurityContextDatabase.size() > BUCKET_SIZE) {
-                buckets.addAll(partition(securityContextDatabase, "security context",
-                        context.toSecurityContextDatabase, BUCKET_SIZE));
-            }
-        }
+        List<WriteBucket> buckets = new ArrayList<>();
+        buckets.addAll(partition(resourceDescriptionDatabase, context.toResourceDescriptionDatabase, BUCKET_SIZE));
+        buckets.addAll(partition(securityContextDatabase, context.toSecurityContextDatabase, BUCKET_SIZE));
+
         if (!buckets.isEmpty()) {
-            Observable.interval(INTERVAL, MILLISECONDS)
-                    .takeUntil(l -> !buckets.isEmpty())
-                    .doOnEach(l -> buckets.removeFirst().write())
-                    .subscribe();
+            Observable.interval(INTERVAL, INTERVAL, MILLISECONDS)
+                    .take(buckets.size())
+                    .subscribe(next -> buckets.get(next.intValue()).write(),
+                            error -> logger.error("Unable to update database: {}", error.getMessage()),
+                            () -> logger.debug("Database update finished"));
         }
     }
 
-    private <T> List<WriteBucket<T>> partition(Database<T> database, String type, Map<ResourceAddress, T> metadata,
-            int size) {
-        int index = 0;
-        Map<ResourceAddress, T> chunk = new HashMap<>();
+    private <T> List<WriteBucket<T>> partition(Database<T> database, Map<ResourceAddress, T> metadata, int size) {
         List<WriteBucket<T>> buckets = new ArrayList<>();
-
-        for (Iterator<ResourceAddress> iterator = metadata.keySet().iterator(); iterator.hasNext(); ) {
-            ResourceAddress address = iterator.next();
-            if (index < size) {
-                chunk.put(address, metadata.get(address));
-                index++;
-            } else {
-                buckets.add(new WriteBucket<>(database, type, chunk));
-                index = 0;
-                chunk = new HashMap<>();
+        List<List<ResourceAddress>> partitions = Lists.partition(new ArrayList<>(metadata.keySet()), size);
+        for (List<ResourceAddress> keys : partitions) {
+            Map<ResourceAddress, T> chunk = new HashMap<>();
+            for (ResourceAddress key : keys) {
+                chunk.put(key, metadata.get(key));
             }
-            iterator.remove();
+            buckets.add(new WriteBucket<>(database, chunk));
         }
         return buckets;
     }
@@ -96,19 +79,17 @@ class UpdateDatabase {
     private static class WriteBucket<T> {
 
         private final Database<T> database;
-        private final String type;
         private final Map<ResourceAddress, T> metadata;
 
-        private WriteBucket(Database<T> database, String type, Map<ResourceAddress, T> metadata) {
+        private WriteBucket(Database<T> database, Map<ResourceAddress, T> metadata) {
             this.database = database;
-            this.type = type;
             this.metadata = metadata;
         }
 
         private void write() {
             Stopwatch watch = Stopwatch.createStarted();
             database.putAll(metadata).subscribe(ids -> {
-                logger.debug("Added {} {} to resource description database in {} ms", ids.size(), type,
+                logger.debug("Added {} {}s to the database in {} ms", ids.size(), database.type(),
                         watch.stop().elapsed(MILLISECONDS));
             });
         }

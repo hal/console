@@ -28,11 +28,14 @@ public interface Database<T> {
     /** Turns the templates into resource addresses and returns a map for later lookup. */
     Map<ResourceAddress, AddressTemplate> addressLookup(Set<AddressTemplate> templates);
 
-    /** Returns a map with metadata whose address starts with the specified template */
-    Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template);
-
     /** Returns a map with metadata for the specified templates. */
     Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates);
 
+    /** Returns a map with metadata whose address starts with the specified template */
+    Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template);
+
     Single<Set<String>> putAll(Map<ResourceAddress, T> metadata);
+
+    /** The type of this database. */
+    String type();
 }

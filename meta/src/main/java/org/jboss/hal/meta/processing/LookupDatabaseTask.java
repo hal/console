@@ -83,11 +83,13 @@ class LookupDatabaseTask implements Task<LookupContext> {
     private Completable lookupResourceDescription(LookupContext context, AddressTemplate template) {
         return resourceDescriptionDatabase.getRecursive(template)
                 .doOnSuccess(resourceDescriptions -> {
-                    context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
-                    for (Map.Entry<ResourceAddress, ResourceDescription> entry : resourceDescriptions.entrySet()) {
-                        ResourceAddress address = entry.getKey();
-                        ResourceDescription resourceDescription = entry.getValue();
-                        context.toResourceDescriptionRegistry.put(address, resourceDescription);
+                    if (!resourceDescriptions.isEmpty()) {
+                        context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                        for (Map.Entry<ResourceAddress, ResourceDescription> entry : resourceDescriptions.entrySet()) {
+                            ResourceAddress address = entry.getKey();
+                            ResourceDescription resourceDescription = entry.getValue();
+                            context.toResourceDescriptionRegistry.put(address, resourceDescription);
+                        }
                     }
                 })
                 .toCompletable()
@@ -97,11 +99,13 @@ class LookupDatabaseTask implements Task<LookupContext> {
     private Completable lookupSecurityContext(LookupContext context, AddressTemplate template) {
         return securityContextDatabase.getRecursive(template)
                 .doOnSuccess(securityContexts -> {
-                    context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
-                    for (Map.Entry<ResourceAddress, SecurityContext> entry : securityContexts.entrySet()) {
-                        ResourceAddress address = entry.getKey();
-                        SecurityContext securityContext = entry.getValue();
-                        context.toSecurityContextRegistry.put(address, securityContext);
+                    if (!securityContexts.isEmpty()) {
+                        context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                        for (Map.Entry<ResourceAddress, SecurityContext> entry : securityContexts.entrySet()) {
+                            ResourceAddress address = entry.getKey();
+                            SecurityContext securityContext = entry.getValue();
+                            context.toSecurityContextRegistry.put(address, securityContext);
+                        }
                     }
                 })
                 .toCompletable()

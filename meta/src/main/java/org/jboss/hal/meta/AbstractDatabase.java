@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.meta;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,9 +52,12 @@ public abstract class AbstractDatabase<T> implements Database<T> {
     }
 
     @Override
-    public Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template) {
-        String id = template.resolve(statementContext).toString();
-        return Single.create(em -> database().prefixSearch(id)
+    public Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates) {
+        Set<String> ids = templates.stream()
+                .map(template -> template.resolve(statementContext).toString())
+                .collect(toSet());
+
+        return Single.create(em -> database().getAll(ids)
                 .then(documents -> {
                     Map<ResourceAddress, T> metadata = documents.stream().collect(toMap(
                             document -> ResourceAddress.from(document.getId()),
@@ -68,12 +72,9 @@ public abstract class AbstractDatabase<T> implements Database<T> {
     }
 
     @Override
-    public Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates) {
-        Set<String> ids = templates.stream()
-                .map(template -> template.resolve(statementContext).toString())
-                .collect(toSet());
-
-        return Single.create(em -> database().getAll(ids)
+    public Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template) {
+        String id = template.resolve(statementContext).toString();
+        return Single.create(em -> database().prefixSearch(id)
                 .then(documents -> {
                     Map<ResourceAddress, T> metadata = documents.stream().collect(toMap(
                             document -> ResourceAddress.from(document.getId()),
@@ -101,6 +102,11 @@ public abstract class AbstractDatabase<T> implements Database<T> {
                     em.onError(new RuntimeException(String.valueOf(failure)));
                     return null;
                 }));
+    }
+
+    @Override
+    public String type() {
+        return type;
     }
 
     protected abstract T asMetadata(Document document);
