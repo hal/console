@@ -30,14 +30,15 @@ import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.NOTHING_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
-import static org.jboss.hal.meta.processing.MetadataProcessor.RRD_DEPTH;
 
 class CreateRrdOperations {
 
     private final SecurityContextStatementContext securityContextStatementContext;
     private final ResourceDescriptionStatementContext resourceDescriptionStatementContext;
+    private final int depth;
 
-    CreateRrdOperations(final StatementContext statementContext, final Environment environment) {
+    CreateRrdOperations(Environment environment, StatementContext statementContext, int depth) {
+        this.depth = depth;
         securityContextStatementContext = new SecurityContextStatementContext(statementContext, environment);
         resourceDescriptionStatementContext = new ResourceDescriptionStatementContext(statementContext, environment);
     }
@@ -73,7 +74,7 @@ class CreateRrdOperations {
 
                         if (builder != null) {
                             if (lookupResult.recursive()) {
-                                builder.param(RECURSIVE_DEPTH, RRD_DEPTH);
+                                builder.param(RECURSIVE_DEPTH, depth);
                             }
                             operations.add(builder.build());
                         }

@@ -17,33 +17,53 @@ package org.jboss.hal.meta.processing;
 
 import java.util.Set;
 
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.Completable;
 
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 
-class Lookup {
+/** Task which checks whether metadata is present in the registries. */
+class LookupRegistryTask implements Task<LookupContext> {
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(LookupRegistryTask.class);
+
+    private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final SecurityContextRegistry securityContextRegistry;
-    private final ResourceDescriptionRegistry descriptionRegistry;
 
-    Lookup(SecurityContextRegistry securityContextRegistry, ResourceDescriptionRegistry descriptionRegistry) {
+    LookupRegistryTask(ResourceDescriptionRegistry resourceDescriptionRegistry,
+            SecurityContextRegistry securityContextRegistry) {
+        this.resourceDescriptionRegistry = resourceDescriptionRegistry;
         this.securityContextRegistry = securityContextRegistry;
-        this.descriptionRegistry = descriptionRegistry;
     }
 
-    public LookupResult check(Set<AddressTemplate> templates, boolean recursive) {
+    @Override
+    public Completable call(LookupContext context) {
+        check(context.lookupResult);
+        logger.debug("Registry lookup: {}", context.lookupResult.toString());
+        return Completable.complete();
+    }
+
+    boolean allPresent(Set<AddressTemplate> templates, boolean recursive) {
         LookupResult lookupResult = new LookupResult(templates, recursive);
+        check(lookupResult);
+        return lookupResult.allPresent();
+    }
+
+    private void check(LookupResult lookupResult) {
         for (AddressTemplate template : lookupResult.templates()) {
-            if (descriptionRegistry.contains(template)) {
+            if (resourceDescriptionRegistry.contains(template)) {
                 lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
             }
             if (securityContextRegistry.contains(template)) {
                 lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
             }
         }
-        return lookupResult;
     }
 }

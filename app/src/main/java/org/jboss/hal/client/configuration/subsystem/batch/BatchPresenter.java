@@ -97,7 +97,12 @@ public class BatchPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.BATCH_CONFIGURATION)
-    @Requires({BATCH_SUBSYSTEM_ADDRESS, IN_MEMORY_JOB_REPO_ADDRESS, JDBC_JOB_REPO_ADDRESS, THREAD_FACTORY_ADDRESS, THREAD_POOL_ADDRESS})
+    @Requires(value = {BATCH_SUBSYSTEM_ADDRESS,
+            IN_MEMORY_JOB_REPO_ADDRESS,
+            JDBC_JOB_REPO_ADDRESS,
+            THREAD_FACTORY_ADDRESS,
+            THREAD_POOL_ADDRESS},
+            recursive = false)
     public interface MyProxy extends ProxyPlace<BatchPresenter> {
     }
 

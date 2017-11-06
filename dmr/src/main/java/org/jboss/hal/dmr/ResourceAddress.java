@@ -18,7 +18,10 @@ package org.jboss.hal.dmr;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -31,12 +34,24 @@ import jsinterop.annotations.JsType;
 @JsType
 public class ResourceAddress extends ModelNode {
 
-    /**
-     * @return the empty (root) address
-     */
+    /** @return the empty (root) address */
     public static ResourceAddress root() {
         // Do not replace this with a static constant! In most cases the returned address is modified somehow.
         return new ResourceAddress();
+    }
+
+    /** Creates a new resource address from the specified string. */
+    public static ResourceAddress from(String address) {
+        if (Strings.isNullOrEmpty(address)) {
+            throw new IllegalArgumentException("Address must not be null or empty");
+        }
+        String safeAddress = address.startsWith("/") ? address.substring(1) : address;
+        ResourceAddress ra = new ResourceAddress();
+        Map<String, String> segments = Splitter.on('/').withKeyValueSeparator('=').split(safeAddress);
+        for (Map.Entry<String, String> entry : segments.entrySet()) {
+            ra.add(entry.getKey(), entry.getValue());
+        }
+        return ra;
     }
 
     @JsIgnore
@@ -58,7 +73,7 @@ public class ResourceAddress extends ModelNode {
      * @return this address with the specified segment added
      */
     @JsMethod(name = "addSegment")
-    public ResourceAddress add(final String propertyName, final String propertyValue) {
+    public ResourceAddress add(String propertyName, String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }

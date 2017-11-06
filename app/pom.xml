@@ -253,7 +253,9 @@
                                 <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
@@ -282,7 +284,9 @@
                                 <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
@@ -314,7 +318,9 @@
                                 <source>../ballroom/src/main/java</source>
                                 <source>../config/src/main/java</source>
                                 <source>../core/src/main/java</source>
+                                <source>../db/src/main/java</source>
                                 <source>../dmr/src/main/java</source>
+                                <source>../flow/src/main/java</source>
                                 <source>../json/src/main/java</source>
                                 <source>../meta/src/main/java</source>
                                 <source>../resources/src/main/java</source>
@@ -378,6 +384,15 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
+                    <compilerArgs>
+                        <compilerArg>-gen</compilerArg>
+                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
+                        <compilerArg>-generateJsInteropExports</compilerArg>
+                        <compilerArg>-Xnamespace</compilerArg>
+                        <compilerArg>NONE</compilerArg>
+                        <compilerArg>-setProperty</compilerArg>
+                        <compilerArg>gwt.logging.logLevel=${gwt.logLevel}</compilerArg>
+                    </compilerArgs>
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
@@ -386,7 +401,6 @@
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
                     <localWorkers>1C</localWorkers>
-                    <logLevel>${gwt.logLevel}</logLevel>
                     <moduleName>org.jboss.hal.Console</moduleName>
                     <moduleShortName>hal</moduleShortName>
                     <optimize>${gwt.optimize}</optimize>

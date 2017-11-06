@@ -15,15 +15,35 @@
  */
 package org.jboss.hal.db;
 
+import elemental2.core.Array;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
+/** Response for {@link PouchDB#allDocs(AllDocsOptions)} */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Response {
+class AllDocsResponse {
 
-    public boolean ok;
-    public String id;
-    public String rev;
+    int offset;
+    int total_rows;
+    Array<Row> rows;
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Row {
+
+        String id;
+        String key;
+        String error;
+        Value value;
+        Document doc;
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Value {
+
+        String rev;
+    }
 }

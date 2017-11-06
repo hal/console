@@ -27,7 +27,10 @@ import org.jboss.hal.meta.security.SecurityContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/** This class does the bulk of work when it comes to parse the r-r-d response and collect the results. */
+/**
+ * This class does the bulk of work when it comes to parse the {@code read-resource-description} response and collect
+ * the results.
+ */
 class SingleRrdParser {
 
     private final RrdResult rrdResult;
@@ -52,6 +55,8 @@ class SingleRrdParser {
 
     private void parseSingle(ResourceAddress address, ModelNode modelNode) {
         // resource description
+        // to reduce the payload we only use the flat model node w/o children
+        ModelNode childrenNode = modelNode.hasDefined(CHILDREN) ? modelNode.remove(CHILDREN) : new ModelNode();
         if (!rrdResult.containsResourceDescription(address) && modelNode.hasDefined(DESCRIPTION)) {
             rrdResult.addResourceDescription(addressProcessor.apply(address), new ResourceDescription(modelNode));
         }
@@ -77,8 +82,8 @@ class SingleRrdParser {
         }
 
         // children
-        if (modelNode.hasDefined(CHILDREN)) {
-            List<Property> children = modelNode.get(CHILDREN).asPropertyList();
+        if (childrenNode.isDefined()) {
+            List<Property> children = childrenNode.asPropertyList();
             for (Property child : children) {
                 String addressKey = child.getName();
                 if (child.getValue().hasDefined(MODEL_DESCRIPTION)) {

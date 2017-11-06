@@ -16,24 +16,36 @@
 package org.jboss.hal.db;
 
 import jsinterop.annotations.JsOverlay;
-import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
-import jsinterop.base.JsPropertyMap;
-import jsinterop.base.JsPropertyMapOfAny;
 
-@JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
-public interface Document extends JsPropertyMapOfAny {
+import static jsinterop.annotations.JsPackage.GLOBAL;
+
+@JsType(isNative = true, namespace = GLOBAL, name = "?")
+public interface BulkDocsSingleUnionType {
 
     @JsOverlay
-    static Document of(String id) {
-        Document document = Js.cast(JsPropertyMap.of());
-        document.set("_id", id);
-        return document;
+    static BulkDocsSingleUnionType of(Object o) {
+        return Js.cast(o);
     }
 
     @JsOverlay
-    default String getId() {
-        return getAny("_id").asString();
+    default PutResponse asSuccess() {
+        return Js.cast(this);
+    }
+
+    @JsOverlay
+    default PutError asError() {
+        return Js.cast(this);
+    }
+
+    @JsOverlay
+    default boolean isSuccess() {
+        return (Object) this instanceof PutResponse;
+    }
+
+    @JsOverlay
+    default boolean isError() {
+        return (Object) this instanceof PutError;
     }
 }

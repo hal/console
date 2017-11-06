@@ -15,25 +15,16 @@
  */
 package org.jboss.hal.db;
 
-import jsinterop.annotations.JsOverlay;
-import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
-import jsinterop.base.Js;
-import jsinterop.base.JsPropertyMap;
-import jsinterop.base.JsPropertyMapOfAny;
 
-@JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
-public interface Document extends JsPropertyMapOfAny {
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-    @JsOverlay
-    static Document of(String id) {
-        Document document = Js.cast(JsPropertyMap.of());
-        document.set("_id", id);
-        return document;
-    }
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+class PutError {
 
-    @JsOverlay
-    default String getId() {
-        return getAny("_id").asString();
-    }
+    boolean error;
+    String status;
+    String name;
+    String message;
 }

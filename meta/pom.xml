@@ -38,6 +38,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-dmr</artifactId>
         </dependency>
         <dependency>
@@ -65,6 +69,10 @@
         <dependency>
             <groupId>com.google.gwt.inject</groupId>
             <artifactId>gin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.intendia.gwt.rxgwt</groupId>
+            <artifactId>rxgwt</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

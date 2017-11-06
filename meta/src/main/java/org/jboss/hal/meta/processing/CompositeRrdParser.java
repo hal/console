@@ -35,7 +35,7 @@ class CompositeRrdParser {
 
     private final Composite composite;
 
-    CompositeRrdParser(final Composite composite) {
+    CompositeRrdParser(Composite composite) {
         this.composite = composite;
     }
 

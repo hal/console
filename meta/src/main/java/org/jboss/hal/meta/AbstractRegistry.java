@@ -20,7 +20,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 /** Abstract registry which uses the specified statement context to resolve the address template. */
 public abstract class AbstractRegistry<T> implements Registry<T> {
 
-    private StatementContext statementContext;
+    private final StatementContext statementContext;
     private final String type;
 
     protected AbstractRegistry(StatementContext statementContext, String type) {

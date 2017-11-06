@@ -15,31 +15,28 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Stopwatch;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.resource.RequiredResources;
+import org.jboss.hal.meta.security.SecurityContextDatabase;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
@@ -47,36 +44,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singleton;
-import static java.util.stream.Collectors.toList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.flow.Flow.series;
 
 /**
- * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link
- * MetadataRegistry}. If you're sure the metadata is present you can use the {@link MetadataRegistry} instead.
+ * Reads resource {@linkplain Metadata metadata} using read-resource-description operations and stores it into the
+ * {@link MetadataRegistry}. If you're sure the metadata is present, use the {@link MetadataRegistry} instead.
  */
 @JsType(namespace = "hal.meta")
 public class MetadataProcessor {
 
-    /**
-     * Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size
-     */
+    /** Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size */
     static final int RRD_DEPTH = 3;
 
-    /**
-     * Number of r-r-d operations part of one composite operation.
-     */
+    /** Number of r-r-d operations part of one composite operation. */
     private static final int BATCH_SIZE = 3;
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
 
+    private final Environment environment;
     private final Dispatcher dispatcher;
     private final RequiredResources requiredResources;
+    private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
+    private final ResourceDescriptionDatabase resourceDescriptionDatabase;
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
+    private final SecurityContextDatabase securityContextDatabase;
     private final SecurityContextRegistry securityContextRegistry;
-    private final Lookup lookup;
-    private final CreateRrdOperations rrdOps;
 
     @Inject
     @JsIgnore
@@ -85,28 +80,34 @@ public class MetadataProcessor {
             StatementContext statementContext,
             RequiredResources requiredResources,
             MetadataRegistry metadataRegistry,
+            SecurityContextDatabase securityContextDatabase,
             SecurityContextRegistry securityContextRegistry,
+            ResourceDescriptionDatabase resourceDescriptionDatabase,
             ResourceDescriptionRegistry resourceDescriptionRegistry) {
+        this.environment = environment;
         this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
         this.metadataRegistry = metadataRegistry;
         this.requiredResources = requiredResources;
+        this.securityContextDatabase = securityContextDatabase;
         this.securityContextRegistry = securityContextRegistry;
+        this.resourceDescriptionDatabase = resourceDescriptionDatabase;
         this.resourceDescriptionRegistry = resourceDescriptionRegistry;
-        this.lookup = new Lookup(securityContextRegistry, resourceDescriptionRegistry);
-        this.rrdOps = new CreateRrdOperations(statementContext, environment);
     }
 
     @JsIgnore
     public void process(String id, Progress progress, AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
-        logger.debug("Process required resources {} for id {}", resources, id);
+        boolean recursive = requiredResources.isRecursive(id);
+        logger.debug("Process required resources {} for id '{}' ({})", resources, id,
+                recursive ? "recursive" : "non-recursive");
         if (resources.isEmpty()) {
             logger.debug("No required resources found -> callback.onSuccess(null)");
             callback.onSuccess(null);
 
         } else {
             Set<AddressTemplate> templates = resources.stream().map(AddressTemplate::of).collect(toSet());
-            processInternal(templates, requiredResources.isRecursive(id), progress, callback);
+            processInternal(templates, recursive, progress, callback);
         }
     }
 
@@ -129,56 +130,43 @@ public class MetadataProcessor {
 
     private void processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress,
             AsyncCallback<Void> callback) {
-        LookupResult lookupResult = lookup.check(templates, recursive);
-        if (lookupResult.allPresent()) {
+        LookupRegistryTask lookupRegistries = new LookupRegistryTask(resourceDescriptionRegistry,
+                securityContextRegistry);
+
+        // we can skip the RX tasks if all metadata is already in the regisries
+        if (lookupRegistries.allPresent(templates, recursive)) {
             logger.debug("All metadata have been already processed -> callback.onSuccess(null)");
             callback.onSuccess(null);
+
         } else {
-            logger.debug("{}", lookupResult);
+            LookupDatabaseTask lookupDatabases = new LookupDatabaseTask(resourceDescriptionDatabase,
+                    securityContextDatabase);
+            RrdTask rrd = new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH);
+            UpdateRegistryTask updateRegistries = new UpdateRegistryTask(resourceDescriptionRegistry,
+                    securityContextRegistry);
+            UpdateDatabase updateDatabases = new UpdateDatabase(resourceDescriptionDatabase,
+                    securityContextDatabase);
 
-            // create and partition non-optional operations
-            List<Operation> operations = rrdOps.create(lookupResult, false);
-            List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
-            List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
-            List<RrdTask> tasks = composites.stream()
-                    .map(composite -> new RrdTask(securityContextRegistry, resourceDescriptionRegistry,
-                            dispatcher, composite, false))
-                    .collect(toList());
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            LookupContext context = new LookupContext(templates, recursive);
+            series(context, lookupRegistries, lookupDatabases, rrd, updateRegistries)
+                    .subscribe(new Outcome<LookupContext>() {
+                        @Override
+                        public void onError(LookupContext context, Throwable error) {
+                            logger.debug("Failed to process metadata: {}", error.getMessage());
+                            callback.onFailure(error);
+                        }
 
-            // create optional operations w/o partitioning!
-            List<Operation> optionalOperations = rrdOps.create(lookupResult, true);
-            // Do not refactor to
-            // List<Composite> optionalComposites = optionalOperations.stream().map(Composite::new).collect(toList());
-            // the GWT compiler will crash with an ArrayIndexOutOfBoundsException!
-            List<Composite> optionalComposites = new ArrayList<>();
-            optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operation)));
-            List<RrdTask> optionalTasks = optionalComposites.stream()
-                    .map(composite -> new RrdTask(securityContextRegistry, resourceDescriptionRegistry,
-                            dispatcher, composite, true))
-                    .collect(toList());
+                        @Override
+                        public void onSuccess(LookupContext context) {
+                            stopwatch.stop();
+                            logger.debug("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
+                            callback.onSuccess(null);
 
-            logger.debug("About to execute {} composite operations", composites.size() + optionalComposites.size());
-            Outcome<FlowContext> outcome = new Outcome<FlowContext>() {
-                @Override
-                public void onError(FlowContext context, Throwable error) {
-                    logger.debug("Failed to process metadata: {}", error.getMessage());
-                    callback.onFailure(error);
-                }
-
-                @Override
-                public void onSuccess(FlowContext context) {
-                    logger.debug("Successfully processed metadata");
-                    callback.onSuccess(null);
-                }
-            };
-
-            List<RrdTask> allTasks = new ArrayList<>();
-            allTasks.addAll(tasks);
-            allTasks.addAll(optionalTasks);
-            // Unfortunately we cannot use Async.parallel() here unless someone finds a way
-            // to unambiguously map parallel r-r-d operations to their results (multiple "step-1" results)
-            //noinspection SuspiciousToArrayCall
-            series(new FlowContext(progress), allTasks).subscribe(outcome);
+                            // database update is *not* part of the flow!
+                            updateDatabases.update(context);
+                        }
+                    });
         }
     }
 
