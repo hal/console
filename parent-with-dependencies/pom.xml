@@ -41,7 +41,7 @@
         <elemento.version>HEAD-SNAPSHOT</elemento.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>23.0</guava.version>
-        <gwt.version>HEAD-SNAPSHOT</gwt.version>
+        <gwt.version>2.8.2</gwt.version>
         <gwtp.version>1.6</gwtp.version>
         <javax.enterprise.version>1.2</javax.enterprise.version>
         <javax.inject.version>1</javax.inject.version>

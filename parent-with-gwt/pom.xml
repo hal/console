@@ -45,6 +45,7 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
+                    <logLevel>INFO</logLevel>
                     <moduleName/> <!-- need to be overridden in sub modules -->
                     <sourceLevel>1.8</sourceLevel>
                 </configuration>

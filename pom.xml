@@ -100,7 +100,7 @@
         <plugin.docker.version>0.22.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
-        <plugin.gwt.version>1.0-SNAPSHOT</plugin.gwt.version>
+        <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
         <plugin.processor.version>3.2.0</plugin.processor.version>
         <plugin.swarm.version>60</plugin.swarm.version>
 
