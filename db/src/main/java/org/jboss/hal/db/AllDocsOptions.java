@@ -25,5 +25,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 class AllDocsOptions {
 
     boolean include_docs;
+    String startkey;
+    String endkey;
     Array<String> keys;
 }

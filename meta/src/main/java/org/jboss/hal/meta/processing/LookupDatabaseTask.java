@@ -15,7 +15,9 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,6 +53,63 @@ class LookupDatabaseTask implements Task<LookupContext> {
 
     @Override
     public Completable call(LookupContext context) {
+        Completable completable = context.lookupResult.recursive() ? lookupRecursive(context) : bulkLookup(context);
+        return completable.andThen(Completable.fromAction(() -> {
+            logger.debug("Database lookup: {}", context.lookupResult.toString());
+        }));
+
+    }
+
+    private Completable lookupRecursive(LookupContext context) {
+        LookupResult lookupResult = context.lookupResult;
+        List<Completable> completables = new ArrayList<>();
+
+        for (AddressTemplate template : lookupResult.templates()) {
+            int missingMetadata = lookupResult.missingMetadata(template);
+            if (missingMetadata == NOTHING_PRESENT) {
+                completables.add(lookupResourceDescription(context, template));
+                completables.add(lookupSecurityContext(context, template));
+
+            } else if (missingMetadata == RESOURCE_DESCRIPTION_PRESENT) {
+                completables.add(lookupSecurityContext(context, template));
+
+            } else if (missingMetadata == SECURITY_CONTEXT_PRESENT) {
+                completables.add(lookupResourceDescription(context, template));
+            }
+        }
+        return Completable.merge(completables);
+    }
+
+    private Completable lookupResourceDescription(LookupContext context, AddressTemplate template) {
+        return resourceDescriptionDatabase.getRecursive(template)
+                .doOnSuccess(resourceDescriptions -> {
+                    context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                    for (Map.Entry<ResourceAddress, ResourceDescription> entry : resourceDescriptions.entrySet()) {
+                        ResourceAddress address = entry.getKey();
+                        ResourceDescription resourceDescription = entry.getValue();
+                        context.toResourceDescriptionRegistry.put(address, resourceDescription);
+                    }
+                })
+                .toCompletable()
+                .onErrorComplete(); // leave the bits in LookupResult unchanged!
+    }
+
+    private Completable lookupSecurityContext(LookupContext context, AddressTemplate template) {
+        return securityContextDatabase.getRecursive(template)
+                .doOnSuccess(securityContexts -> {
+                    context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                    for (Map.Entry<ResourceAddress, SecurityContext> entry : securityContexts.entrySet()) {
+                        ResourceAddress address = entry.getKey();
+                        SecurityContext securityContext = entry.getValue();
+                        context.toSecurityContextRegistry.put(address, securityContext);
+                    }
+                })
+                .toCompletable()
+                .onErrorComplete(); // leave the bits in LookupResult unchanged!
+    }
+
+    private Completable bulkLookup(LookupContext context) {
+        // collect all templates and do a bulk lookup
         LookupResult lookupResult = context.lookupResult;
         Set<AddressTemplate> rdTemplates = new HashSet<>();
         Set<AddressTemplate> scTemplates = new HashSet<>();
@@ -68,24 +127,22 @@ class LookupDatabaseTask implements Task<LookupContext> {
         }
 
         Map<ResourceAddress, AddressTemplate> rdLookup = resourceDescriptionDatabase.addressLookup(rdTemplates);
-        Completable c1 = resourceDescriptionDatabase.getAll(rdTemplates)
+        Completable rdCompletable = resourceDescriptionDatabase.getAll(rdTemplates)
                 .flatMapCompletable(resourceDescriptions -> {
                     for (Map.Entry<ResourceAddress, ResourceDescription> entry : resourceDescriptions.entrySet()) {
                         ResourceAddress address = entry.getKey();
                         ResourceDescription resourceDescription = entry.getValue();
-                        if (resourceDescription != null) {
-                            AddressTemplate template = rdLookup.get(address);
-                            if (template != null) {
-                                lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
-                                context.toResourceDescriptionRegistry.put(address, resourceDescription);
-                            }
+                        AddressTemplate template = rdLookup.get(address);
+                        if (template != null) {
+                            lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                            context.toResourceDescriptionRegistry.put(address, resourceDescription);
                         }
                     }
                     return Completable.complete();
                 });
 
         Map<ResourceAddress, AddressTemplate> scLookup = securityContextDatabase.addressLookup(scTemplates);
-        Completable c2 = securityContextDatabase.getAll(scTemplates)
+        Completable scCompletable = securityContextDatabase.getAll(scTemplates)
                 .flatMapCompletable(securityContexts -> {
                     for (Map.Entry<ResourceAddress, SecurityContext> entry : securityContexts.entrySet()) {
                         ResourceAddress address = entry.getKey();
@@ -101,9 +158,6 @@ class LookupDatabaseTask implements Task<LookupContext> {
                     return Completable.complete();
                 });
 
-        return Completable.merge(c1, c2)
-                .andThen(Completable.fromAction(() -> {
-                    logger.debug("Database lookup: {}", lookupResult.toString());
-                }));
+        return Completable.merge(rdCompletable, scCompletable);
     }
 }

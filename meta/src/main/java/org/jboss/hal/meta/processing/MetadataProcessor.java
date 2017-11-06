@@ -56,7 +56,7 @@ import static org.jboss.hal.flow.Flow.series;
 public class MetadataProcessor {
 
     /** Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size */
-    static final int RRD_DEPTH = 2;
+    static final int RRD_DEPTH = 3;
 
     /** Number of r-r-d operations part of one composite operation. */
     private static final int BATCH_SIZE = 3;
@@ -99,7 +99,7 @@ public class MetadataProcessor {
     public void process(String id, Progress progress, AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
         boolean recursive = requiredResources.isRecursive(id);
-        logger.debug("Process required resources {} for id {}({})", resources, id,
+        logger.debug("Process required resources {} for id '{}' ({})", resources, id,
                 recursive ? "recursive" : "non-recursive");
         if (resources.isEmpty()) {
             logger.debug("No required resources found -> callback.onSuccess(null)");

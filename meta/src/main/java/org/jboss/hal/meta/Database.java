@@ -25,12 +25,13 @@ public interface Database<T> {
 
     String PAYLOAD = "payload";
 
-    /** Turns the templates into resource addresses and return a map for later lookup. */
+    /** Turns the templates into resource addresses and returns a map for later lookup. */
     Map<ResourceAddress, AddressTemplate> addressLookup(Set<AddressTemplate> templates);
 
-    /**
-     * Returns a map with metadata for the specified templates. The map contains {@code null} for nonexistent templates.
-     */
+    /** Returns a map with metadata whose address starts with the specified template */
+    Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template);
+
+    /** Returns a map with metadata for the specified templates. */
     Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates);
 
     Single<Set<String>> putAll(Map<ResourceAddress, T> metadata);

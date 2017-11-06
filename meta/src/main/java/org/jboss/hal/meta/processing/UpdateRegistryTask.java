@@ -43,14 +43,20 @@ class UpdateRegistryTask implements Task<LookupContext> {
 
     @Override
     public Completable call(LookupContext context) {
-        for (Map.Entry<ResourceAddress, ResourceDescription> entry : context.toResourceDescriptionRegistry.entrySet()) {
-            resourceDescriptionRegistry.add(entry.getKey(), entry.getValue());
+        if (!context.toResourceDescriptionRegistry.isEmpty()) {
+            for (Map.Entry<ResourceAddress, ResourceDescription> entry : context.toResourceDescriptionRegistry.entrySet()) {
+                resourceDescriptionRegistry.add(entry.getKey(), entry.getValue());
+            }
+            logger.debug("Added {} resource descriptions to resource description registry",
+                    context.toResourceDescriptionRegistry.keySet().size());
         }
-        logger.debug("Added resource descriptions for {} to registry", context.toResourceDescriptionRegistry.keySet());
-        for (Map.Entry<ResourceAddress, SecurityContext> entry : context.toSecurityContextRegistry.entrySet()) {
-            securityContextRegistry.add(entry.getKey(), entry.getValue());
+        if (!context.toSecurityContextRegistry.isEmpty()) {
+            for (Map.Entry<ResourceAddress, SecurityContext> entry : context.toSecurityContextRegistry.entrySet()) {
+                securityContextRegistry.add(entry.getKey(), entry.getValue());
+            }
+            logger.debug("Added {} security contexts to security context registry",
+                    context.toSecurityContextRegistry.keySet().size());
         }
-        logger.debug("Added security contexts for {} to registry", context.toSecurityContextRegistry.keySet());
         return Completable.complete();
     }
 }

@@ -25,12 +25,15 @@ import jsinterop.base.JsPropertyMapOfAny;
 @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
 public interface Document extends JsPropertyMapOfAny {
 
-    String ID = "_id";
-
     @JsOverlay
     static Document of(String id) {
         Document document = Js.cast(JsPropertyMap.of());
-        document.set(ID, id);
+        document.set("_id", id);
         return document;
+    }
+
+    @JsOverlay
+    default String getId() {
+        return getAny("_id").asString();
     }
 }

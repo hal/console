@@ -15,10 +15,9 @@
  */
 package org.jboss.hal.db;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import elemental2.core.Array;
@@ -43,11 +42,9 @@ public class PouchDB {
 
     public native Promise<Document> get(String id);
 
-    native Promise<AllDocsResponse> allDocs(AllDocsOptions options);
-
-    /** Returns a map with documents for the specified ids. The map contains {@code null} for nonexistent documents. */
+    /** Returns the documents for the specified ids. Only documents with existing IDs will be returned. */
     @JsOverlay
-    public final Promise<Map<String, Document>> getAll(Set<String> ids) {
+    public final Promise<List<Document>> getAll(Set<String> ids) {
         AllDocsOptions options = new AllDocsOptions();
         options.include_docs = true;
         options.keys = new Array<>();
@@ -56,18 +53,40 @@ public class PouchDB {
         }
 
         return allDocs(options).then(response -> {
-            Map<String, Document> documents = new HashMap<>();
+            List<Document> documents = new ArrayList<>();
             for (int i = 0; i < response.rows.getLength(); i++) {
                 Document document = null;
                 Row row = response.rows.getAt(i);
                 if (!"not_found".equals(row.error)) {
-                    document = row.doc;
+                    documents.add(row.doc);
                 }
-                documents.put(row.key, document);
             }
             return Promise.resolve(documents);
         });
     }
+
+    /** Returns all documents whose ID starts with the specified ID. */
+    @JsOverlay
+    public final Promise<List<Document>> prefixSearch(String id) {
+        AllDocsOptions options = new AllDocsOptions();
+        options.include_docs = true;
+        options.startkey = id;
+        options.endkey = id + "\ufff0";
+
+        return allDocs(options).then(response -> {
+            List<Document> documents = new ArrayList<>();
+            for (int i = 0; i < response.rows.getLength(); i++) {
+                Document document = null;
+                Row row = response.rows.getAt(i);
+                if (!"not_found".equals(row.error)) {
+                    documents.add(row.doc);
+                }
+            }
+            return Promise.resolve(documents);
+        });
+    }
+
+    native Promise<AllDocsResponse> allDocs(AllDocsOptions options);
 
 
     // ------------------------------------------------------ put
