@@ -88,7 +88,7 @@
         <grunt-task>dev</grunt-task>
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>
-        <gwt.logLevel>DEBUG</gwt.logLevel>
+        <gwt.logLevel>FINE</gwt.logLevel>
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>PRETTY</gwt.style>
         <hal.version>${project.version}</hal.version>
