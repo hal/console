@@ -143,5 +143,4 @@ If you want to replace the current console with HAL.next for an an existing Wild
 
 1. `mvn clean install -P prod,theme-wildfly`
 1. `cp app/target/hal-console-<version>-resources.jar WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main`
-1. Edit `WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main/module.xml` and adjust the `<resources/>` config:  
-`<resource-root path="hal-console-<version>-resources.jar"/>`
+1. Edit `WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main/module.xml` and adjust the `<resources/>` config: `<resource-root path="hal-console-<version>-resources.jar"/>`
