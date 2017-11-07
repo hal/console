@@ -47,7 +47,10 @@ public class ResourceAddress extends ModelNode {
         }
         String safeAddress = address.startsWith("/") ? address.substring(1) : address;
         ResourceAddress ra = new ResourceAddress();
-        Map<String, String> segments = Splitter.on('/').withKeyValueSeparator('=').split(safeAddress);
+        Map<String, String> segments = Splitter.on('/')
+                .omitEmptyStrings()
+                .withKeyValueSeparator('=')
+                .split(safeAddress);
         for (Map.Entry<String, String> entry : segments.entrySet()) {
             ra.add(entry.getKey(), entry.getValue());
         }
