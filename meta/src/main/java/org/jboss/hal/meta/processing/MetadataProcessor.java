@@ -139,17 +139,18 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            LookupDatabaseTask lookupDatabases = new LookupDatabaseTask(resourceDescriptionDatabase,
-                    securityContextDatabase);
+            // Unless the web worker isn't ready, disable the DB tasks
+            // LookupDatabaseTask lookupDatabases = new LookupDatabaseTask(resourceDescriptionDatabase,
+            //         securityContextDatabase);
             RrdTask rrd = new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH);
             UpdateRegistryTask updateRegistries = new UpdateRegistryTask(resourceDescriptionRegistry,
                     securityContextRegistry);
-            UpdateDatabase updateDatabases = new UpdateDatabase(resourceDescriptionDatabase,
-                    securityContextDatabase);
+            // UpdateDatabase updateDatabases = new UpdateDatabase(resourceDescriptionDatabase,
+            //         securityContextDatabase);
 
             Stopwatch stopwatch = Stopwatch.createStarted();
             LookupContext context = new LookupContext(templates, recursive);
-            series(context, lookupRegistries, lookupDatabases, rrd, updateRegistries)
+            series(context, lookupRegistries, /*lookupDatabases, */rrd, updateRegistries)
                     .subscribe(new Outcome<LookupContext>() {
                         @Override
                         public void onError(LookupContext context, Throwable error) {
@@ -164,7 +165,7 @@ public class MetadataProcessor {
                             callback.onSuccess(null);
 
                             // database update is *not* part of the flow!
-                            updateDatabases.update(context);
+                            // updateDatabases.update(context);
                         }
                     });
         }
