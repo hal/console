@@ -25,7 +25,7 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.wizard.Wizard;

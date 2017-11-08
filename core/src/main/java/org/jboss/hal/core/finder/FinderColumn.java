@@ -41,7 +41,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Key;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.AuthorisationDecision;

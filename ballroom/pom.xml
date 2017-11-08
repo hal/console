@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-json</artifactId>
+            <artifactId>hal-js</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>

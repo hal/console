@@ -43,12 +43,20 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     }
 
     @Override
-    protected ResourceDescription asMetadata(Document document) {
+    public String name() {
+        return Ids.build("hal-db-rd",
+                environment.getHalBuild().name(),
+                settings.get(Settings.Key.LOCALE).value(),
+                environment.getManagementVersion().toString());
+    }
+
+    @Override
+    public ResourceDescription asMetadata(Document document) {
         return new ResourceDescription(ModelNode.fromBase64(document.getAny(PAYLOAD).asString()));
     }
 
     @Override
-    protected Document asDocument(ResourceAddress address, ResourceDescription resourceDescription) {
+    public Document asDocument(ResourceAddress address, ResourceDescription resourceDescription) {
         Document document = Document.of(address.toString());
         document.set(PAYLOAD, resourceDescription.toBase64String());
         return document;
@@ -57,11 +65,7 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     @Override
     protected PouchDB database() {
         if (database == null) {
-            String name = Ids.build("hal-db-rd",
-                    environment.getHalBuild().name(),
-                    settings.get(Settings.Key.LOCALE).value(),
-                    environment.getManagementVersion().toString());
-            database = new PouchDB(name);
+            database = new PouchDB(name());
         }
         return database;
     }

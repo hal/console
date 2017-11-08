@@ -33,7 +33,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.hal.ballroom.JsCallback;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;

@@ -25,7 +25,7 @@ import jsinterop.base.JsPropertyMap;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.window;

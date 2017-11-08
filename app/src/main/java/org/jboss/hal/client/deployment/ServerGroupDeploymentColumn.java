@@ -25,7 +25,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.DeploymentTasks.AddServerGroupDeployment;
 import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;

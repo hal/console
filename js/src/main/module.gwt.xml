@@ -15,5 +15,5 @@
   ~ limitations under the License.
   -->
 <module>
-    <source path="json"/>
+    <source path="js"/>
 </module>

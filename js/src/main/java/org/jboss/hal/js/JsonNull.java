@@ -13,30 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.json;
+package org.jboss.hal.js;
 
-/** Represents a Json number value. */
-public class JsonNumber extends JsonValue {
+/** Represents the Json null value. */
+public class JsonNull extends JsonValue {
 
-    public static JsonNumber create(double number) {
-        return createProd(number);
+    public static JsonNull create() {
+        return createProd();
     }
 
     /*
-     * MAGIC: primitive number cast to object interface.
+     * MAGIC: If the implementation of JSOs ever changes, this could cause
+     * errors.
      */
-    private static native JsonNumber createProd(double number) /*-{
-        return Object(number);
+    private static native JsonNull createProd() /*-{
+        return null;
     }-*/;
 
-    protected JsonNumber() {
+    protected JsonNull() {
     }
-
-    public final double getNumber() {
-        return valueProd();
-    }
-
-    private native double valueProd() /*-{
-        return this && this.valueOf();
-    }-*/;
 }

@@ -13,31 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.json;
+package org.jboss.hal.js;
 
-/** Represents a Json String value. */
-public class JsonString extends JsonValue {
+/** Represents a Json boolean. */
+public class JsonBoolean extends JsonValue {
 
-    public static JsonString create(String string) {
-        return createProd(string);
+    public static JsonBoolean create(boolean bool) {
+        return createProd(bool);
     }
 
     /*
-     * MAGIC: String cast to object interface.
+     * MAGIC: primitive boolean cast to object interface.
      */
-    private static native JsonString createProd(String string) /*-{
-        // no need to box String for ProdMode and DevMode
-        return string;
+    private static native JsonBoolean createProd(boolean bool) /*-{
+        return Object(bool);
     }-*/;
 
-    protected JsonString() {
+    protected JsonBoolean() {
     }
 
-    public final String getString() {
+    public final boolean getBoolean() {
         return valueProd();
     }
 
-    private native String valueProd() /*-{
-        return @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this);
+    private native boolean valueProd() /*-{
+        return this && this.valueOf();
     }-*/;
 }

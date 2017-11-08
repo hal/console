@@ -21,7 +21,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;

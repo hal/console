@@ -81,6 +81,17 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
+                                    <artifactId>hal-console</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>resources</classifier>
+                                    <outputDirectory>
+                                        ${project.build.directory}/generated-sources/unpack
+                                    </outputDirectory>
+                                    <overWrite>true</overWrite>
+                                    <includes>**/*.mbui.xml</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>hal-core</artifactId>
                                     <version>${project.version}</version>
                                     <outputDirectory>
