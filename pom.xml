@@ -120,7 +120,7 @@
         <module>dmr</module>
         <module>flow</module>
         <module>fraction</module>
-        <module>json</module>
+        <module>js</module>
         <module>meta</module>
         <module>parent-with-dependencies</module>
         <module>parent-with-gwt</module>

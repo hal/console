@@ -30,7 +30,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
-import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -144,23 +143,16 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            Task<LookupContext>[] tasks;
-            RrdTask rrd = new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH);
-            UpdateRegistryTask updateRegistries = new UpdateRegistryTask(resourceDescriptionRegistry,
-                    securityContextRegistry);
-
-            if (JsHelper.supportsWorker()) {
-                LookupDatabaseTask lookupDatabases = new LookupDatabaseTask(resourceDescriptionDatabase,
-                        securityContextDatabase);
-                UpdateDatabaseTask updateDatabases = new UpdateDatabaseTask(workerChannel);
-                tasks = new Task[]{lookupRegistries, lookupDatabases, rrd, updateRegistries, updateDatabases};
-            } else {
-                tasks = new Task[]{lookupRegistries, rrd, updateRegistries};
-            }
+            Task[] tasks = new Task[]{
+                    lookupRegistries,
+                    new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase),
+                    new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH),
+                    new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry),
+                    new UpdateDatabaseTask(workerChannel)
+            };
 
             Stopwatch stopwatch = Stopwatch.createStarted();
-            LookupContext context = new LookupContext(templates, recursive);
-            series(context, tasks)
+            series(new LookupContext(templates, recursive), tasks)
                     .subscribe(new Outcome<LookupContext>() {
                         @Override
                         public void onError(LookupContext context, Throwable error) {

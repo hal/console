@@ -49,11 +49,6 @@ public final class JsHelper {
             'FormData' in window && 'FileReader' in window;
     }-*/;
 
-    public static native boolean supportsWorker(); /*-{
-        return (typeof(Worker) !== "undefined");
-    }-*/
-
-
     public static HandlerRegistration addDropHandler(HTMLElement element, EventCallbackFn<DragEvent> handler) {
         EventCallbackFn<DragEvent> noop = event -> {
             event.preventDefault();

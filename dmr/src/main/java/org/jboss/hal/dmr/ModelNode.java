@@ -50,8 +50,8 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.json.Json;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.Json;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.EsReturn;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;

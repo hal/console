@@ -111,7 +111,8 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
         navigation = new VerticalNavigation();
         navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, SERVLET, Ids.ITEM), Names.SERVLET, pfIcon("enterprise"),
                 servletSection);
-        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, Ids.ITEM), Names.WEBSOCKETS, pfIcon("replicator"),
+        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, Ids.ITEM), Names.WEBSOCKETS,
+                pfIcon("replicator"),
                 websocketSection);
 
         registerAttachable(navigation, servletsTable, servletsForm, websocketsTable, websocketsForm);

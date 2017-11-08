@@ -18,8 +18,8 @@ package org.jboss.hal.ballroom.autocomplete;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jboss.hal.json.JsonArray;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonArray;
+import org.jboss.hal.js.JsonObject;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;

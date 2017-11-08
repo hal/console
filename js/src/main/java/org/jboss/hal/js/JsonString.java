@@ -38,6 +38,6 @@ public class JsonString extends JsonValue {
     }
 
     private native String valueProd() /*-{
-        return @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this);
+        return @org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this);
     }-*/;
 }

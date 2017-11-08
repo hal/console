@@ -18,11 +18,9 @@ package org.jboss.hal.meta.processing;
 import javax.inject.Inject;
 
 import elemental2.dom.Worker;
-import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.db.Document;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -44,21 +42,23 @@ public class WorkerChannel {
             SecurityContextDatabase securityContextDatabase) {
         this.resourceDescriptionDatabase = resourceDescriptionDatabase;
         this.securityContextDatabase = securityContextDatabase;
-        this.worker = JsHelper.supportsWorker() ? new Worker(WORKER_JS) : null;
+        this.worker = new Worker(WORKER_JS);
     }
 
     public void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
         if (worker != null) {
-            Document document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
-            UpdateMessage message = new UpdateMessage(resourceDescriptionDatabase.name(), document);
+            UpdateMessage message = new UpdateMessage();
+            message.db = resourceDescriptionDatabase.name();
+            message.document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
             worker.postMessage(message);
         }
     }
 
     public void postSecurityContext(ResourceAddress address, SecurityContext securityContext) {
         if (worker != null) {
-            Document document = securityContextDatabase.asDocument(address, securityContext);
-            UpdateMessage message = new UpdateMessage(securityContextDatabase.name(), document);
+            UpdateMessage message = new UpdateMessage();
+            message.db = securityContextDatabase.name();
+            message.document = securityContextDatabase.asDocument(address, securityContext);
             worker.postMessage(message);
         }
     }
@@ -69,11 +69,5 @@ public class WorkerChannel {
 
         String db;
         Document document;
-
-        @JsIgnore
-        public UpdateMessage(String db, Document document) {
-            this.db = db;
-            this.document = document;
-        }
     }
 }

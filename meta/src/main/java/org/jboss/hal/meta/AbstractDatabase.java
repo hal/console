@@ -15,11 +15,9 @@
  */
 package org.jboss.hal.meta;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.hal.db.Document;
 import org.jboss.hal.db.PouchDB;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
@@ -28,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import rx.Single;
 
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 

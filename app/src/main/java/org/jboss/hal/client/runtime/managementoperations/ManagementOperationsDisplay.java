@@ -70,7 +70,7 @@ class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
                 .css(listHalIconBig);
         if (operation.isNonProgressing()) {
             builder.css(pfIcon(errorCircleO), listHalIconError)
-            .title(resources.messages().nonProgressingOperation());
+                    .title(resources.messages().nonProgressingOperation());
         } else {
             builder.css(pfIcon(ok), listHalIconSuccess);
         }

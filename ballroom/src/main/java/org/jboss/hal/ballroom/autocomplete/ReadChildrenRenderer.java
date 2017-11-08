@@ -16,8 +16,8 @@
 package org.jboss.hal.ballroom.autocomplete;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import org.jboss.hal.json.JsonArray;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonArray;
+import org.jboss.hal.js.JsonObject;
 import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.ballroom.autocomplete.ItemRenderer.highlight;

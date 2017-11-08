@@ -28,8 +28,10 @@ class ManagementOperations extends NamedNode {
 
         // description copied from https://docs.jboss.org/author/display/WFLY/Canceling+Management+Operations
         EXECUTING("executing", "The caller thread is actively executing"),
-        AWAITING_OTHER_OPERATION("awaiting-other-operation", "The caller thread is blocking waiting for another operation to release the exclusive execution lock"),
-        AWAITING_STABILITY("awaiting-stability", "The caller thread has made changes to the service container and is waiting for the service container to stabilize"),
+        AWAITING_OTHER_OPERATION("awaiting-other-operation",
+                "The caller thread is blocking waiting for another operation to release the exclusive execution lock"),
+        AWAITING_STABILITY("awaiting-stability",
+                "The caller thread has made changes to the service container and is waiting for the service container to stabilize"),
         COMPLETING("completing", "The operation is committed and is completing execution"),
         ROLLING_BACK("rolling-back", "The operation is rolling back");
 
@@ -42,7 +44,7 @@ class ManagementOperations extends NamedNode {
         }
 
         static ExecutionStatus find(String name) {
-            for (ExecutionStatus status: values()) {
+            for (ExecutionStatus status : values()) {
                 if (status.name.equals(name)) {
                     return status;
                 }
@@ -50,6 +52,7 @@ class ManagementOperations extends NamedNode {
             return null;
         }
     }
+
 
     private String address;
     private boolean nonProgressing;
@@ -70,7 +73,7 @@ class ManagementOperations extends NamedNode {
     }
 
     public String getAccessMechanism() {
-        return hasDefined(ACCESS_MECHANISM) ?  get(ACCESS_MECHANISM).asString() : "";
+        return hasDefined(ACCESS_MECHANISM) ? get(ACCESS_MECHANISM).asString() : "";
     }
 
     public String getAddress() {

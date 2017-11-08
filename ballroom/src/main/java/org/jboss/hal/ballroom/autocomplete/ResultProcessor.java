@@ -17,7 +17,7 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 
 interface ResultProcessor {
 
