@@ -25,13 +25,17 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class WorkerChannel {
 
-    private static final String WORKER_JS = "worker.js";
+    private static final String WORKER_JS = "js/worker.js";
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(WorkerChannel.class);
 
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
     private final SecurityContextDatabase securityContextDatabase;
@@ -48,7 +52,7 @@ public class WorkerChannel {
     public void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
         if (worker != null) {
             UpdateMessage message = new UpdateMessage();
-            message.db = resourceDescriptionDatabase.name();
+            message.database = resourceDescriptionDatabase.name();
             message.document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
             worker.postMessage(message);
         }
@@ -57,7 +61,7 @@ public class WorkerChannel {
     public void postSecurityContext(ResourceAddress address, SecurityContext securityContext) {
         if (worker != null) {
             UpdateMessage message = new UpdateMessage();
-            message.db = securityContextDatabase.name();
+            message.database = securityContextDatabase.name();
             message.document = securityContextDatabase.asDocument(address, securityContext);
             worker.postMessage(message);
         }
@@ -67,7 +71,7 @@ public class WorkerChannel {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     private static class UpdateMessage {
 
-        String db;
+        String database;
         Document document;
     }
 }
