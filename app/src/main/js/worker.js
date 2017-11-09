@@ -18,13 +18,13 @@ self.addEventListener("message", function (e) {
     var db = new PouchDB(e.data.database);
     db.put(e.data.document)
         .then(function (response) {
-            console.log("Successfully put " + e.data.database + ":/" + response.id);
+            console.log("Successfully put " + e.data.database + response.id);
         })
         .catch(function (error) {
             if (error.name === 'conflict') {
-                console.log("Ignore conflict for " + e.data.database + ":/" + e.data.document._id);
+                console.log("Ignore conflict for " + e.data.database + e.data.document._id);
             } else {
-                console.log("Unable to put " + e.data.database + ":/" + e.data.document._id + ": " + failure);
+                console.log("Unable to put " + e.data.database + e.data.document._id + ": " + failure);
             }
         });
 }, false);
