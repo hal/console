@@ -31,10 +31,6 @@ public final class Property implements Cloneable {
 
     @JsConstructor
     public Property(String name, ModelNode value) {
-        this(name, value, true);
-    }
-
-    Property(String name, ModelNode value, boolean copy) {
         if (name == null) {
             throw new IllegalArgumentException("name is null");
         }
@@ -42,7 +38,7 @@ public final class Property implements Cloneable {
             throw new IllegalArgumentException("value is null");
         }
         this.name = name;
-        this.value = copy ? value.clone() : value;
+        this.value = value.clone();
     }
 
     @JsProperty

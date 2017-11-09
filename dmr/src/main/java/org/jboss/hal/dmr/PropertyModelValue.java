@@ -50,10 +50,6 @@ final class PropertyModelValue extends ModelValue {
         property = new Property(name, node);
     }
 
-    PropertyModelValue(String key, ModelNode node, boolean copy) {
-        this(new Property(key, node, copy));
-    }
-
     @Override
     void writeExternal(DataOutput out) {
         out.write(ModelType.PROPERTY.typeChar);

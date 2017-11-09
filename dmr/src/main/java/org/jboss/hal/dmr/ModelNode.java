@@ -727,7 +727,7 @@ public class ModelNode {
     @JsIgnore
     public ModelNode set(String propertyName, ModelNode propertyValue) {
         checkProtect();
-        value = new PropertyModelValue(propertyName, propertyValue, true);
+        value = new PropertyModelValue(propertyName, propertyValue);
         return this;
     }
 
