@@ -94,10 +94,10 @@ public class Macros {
         for (Operation operation : macro.getOperations()) {
             modelNode.get(OPERATIONS).add(operation);
         }
-        return modelNode.toBase64String();
+        return modelNode.toBase64();
     }
 
-    public void remove(final Macro macro) {
+    public void remove(Macro macro) {
         macros.remove(macro.getName());
         if (storage != null) {
             storage.removeItem(macro.getId());
@@ -113,7 +113,7 @@ public class Macros {
         return macros.isEmpty();
     }
 
-    public boolean contains(final Macro macro) {
+    public boolean contains(Macro macro) {
         return macros.containsKey(macro.getName());
     }
 

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dmr2.stream;
+package org.jboss.hal.dmr.stream;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.jboss.hal.dmr.dmr2.ModelType;
+import org.jboss.hal.dmr.ModelType;
 
 import static java.lang.Math.min;
 import static java.lang.String.valueOf;
-import static org.jboss.hal.dmr.dmr2.stream.ModelConstants.*;
-import static org.jboss.hal.dmr.dmr2.stream.Utils.*;
+import static org.jboss.hal.dmr.stream.ModelConstants.*;
+import static org.jboss.hal.dmr.stream.Utils.*;
 
 /**
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>

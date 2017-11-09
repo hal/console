@@ -13,46 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-import org.jboss.hal.js.Json;
-import org.jboss.hal.js.JsonObject;
-import org.jboss.hal.spi.EsReturn;
+import org.jboss.hal.dmr.stream.ModelException;
+import org.jboss.hal.dmr.stream.ModelStreamFactory;
+import org.jboss.hal.dmr.stream.ModelWriter;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
@@ -60,66 +36,147 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUCCESS;
 
 /**
  * A dynamic model representation node object.
+ * <p>
+ * A node can be of any type specified in the {@link ModelType} enumeration.  The type can
+ * be queried via {@link #getType()} and updated via any of the {@code set*()} methods.  The
+ * value of the node can be acquired via the {@code as<type>()} methods, where {@code <type>} is
+ * the desired value type.  If the type is not the same as the node type, a conversion is attempted between
+ * the types.
+ * <p>A node can be made read-only by way of its {@link #protect()} method, which will prevent
+ * any further changes to the node or its sub-nodes.
+ * <p>Instances of this class are <b>not</b> thread-safe and need to be synchronized externally.
  *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
+ * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  */
-@JsType
-public class ModelNode implements Cloneable {
+public class ModelNode {
 
-    /**
-     * Creates a new node from a base64 encoded string
-     *
-     * @param encoded The base64 encoded string.
-     *
-     * @return the new model node
-     */
-    public static ModelNode fromBase64(String encoded) {
-        ModelNode node = new ModelNode();
-        String decoded = atob(encoded);
-        try {
-            node.readExternal(new DataInput(toBytes(decoded)));
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
-        return node;
-    }
-
-    private static native String atob(String value) /*-{
-        return $wnd.atob(value);
-    }-*/;
-
-    private static native String btoa(String value) /*-{
-        return $wnd.btoa(value);
-    }-*/;
-
-    private static native byte[] toBytes(String str) /*-{
-        var bytes = [];
-        for (var i = 0; i < str.length; ++i) {
-            bytes.push(str.charCodeAt(i));
-        }
-        return bytes;
-    }-*/;
-
+    private static final String VALUE_IS_NULL = "value is null";
     private static final String NEW_VALUE_IS_NULL = "newValue is null";
 
     private boolean protect = false;
     private ModelValue value = ModelValue.UNDEFINED;
-    private HashMap<String, Object> tags;
 
-    @JsIgnore
+    /**
+     * Creates a new {@code ModelNode} with an undefined value.
+     */
     public ModelNode() {
-        this.value = ModelValue.UNDEFINED;
     }
 
-    ModelNode(final ModelValue value) {
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value. Cannot be {@code null}
+     *
+     * @throws IllegalArgumentException if {@code value} is {@code null}
+     */
+    public ModelNode(BigDecimal value) {
+        if (value == null) {
+            throw new IllegalArgumentException(VALUE_IS_NULL);
+        }
+        this.value = new BigDecimalModelValue(value);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value. Cannot be {@code null}
+     *
+     * @throws IllegalArgumentException if {@code value} is {@code null}
+     */
+    public ModelNode(BigInteger value) {
+        if (value == null) {
+            throw new IllegalArgumentException(VALUE_IS_NULL);
+        }
+        this.value = new BigIntegerModelValue(value);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value.
+     */
+    public ModelNode(boolean value) {
+        this(value ? BooleanModelValue.TRUE : BooleanModelValue.FALSE);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value. Cannot be {@code null}
+     *
+     * @throws IllegalArgumentException if {@code value} is {@code null}
+     */
+    public ModelNode(byte[] value) {
+        if (value == null) {
+            throw new IllegalArgumentException(VALUE_IS_NULL);
+        }
+        this.value = new BytesModelValue(value);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value.
+     */
+    public ModelNode(double value) {
+        this.value = new DoubleModelValue(value);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value.
+     */
+    public ModelNode(int value) {
+        this.value = new IntModelValue(value);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value.
+     */
+    public ModelNode(long value) {
+        this.value = new LongModelValue(value);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value. Cannot be {@code null}
+     *
+     * @throws IllegalArgumentException if {@code value} is {@code null}
+     */
+    public ModelNode(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException(VALUE_IS_NULL);
+        }
+        this.value = new StringModelValue(value);
+    }
+
+    /**
+     * Creates a new {@code ModelNode} with the given {@code value}.
+     *
+     * @param value the value. Cannot be {@code null}
+     *
+     * @throws IllegalArgumentException if {@code value} is {@code null}
+     */
+    public ModelNode(ModelType value) {
+        if (value == null) {
+            throw new IllegalArgumentException(VALUE_IS_NULL);
+        }
+        this.value = TypeModelValue.of(value);
+    }
+
+    ModelNode(ModelValue value) {
         this.value = value;
     }
 
     /**
-     * Prevent further modifications to this node and its sub-nodes. Note that copies
+     * Prevent further modifications to this node and its sub-nodes.  Note that copies
      * of this node made after this method call will not be protected.
      */
-    @JsIgnore
     public void protect() {
         if (!protect) {
             protect = true;
@@ -128,282 +185,242 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Get the value of this node as a {@code long}. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * Get the value of this node as a {@code long}.  Collection types will return the size
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
      * @return the long value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
-    @JsIgnore
     public long asLong() throws IllegalArgumentException {
         return value.asLong();
     }
 
     /**
-     * Get the value of this node as a {@code long}. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * Get the value of this node as a {@code long}.  Collection types will return the size
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
-     * @param defVal the default value if no conversion is possible
+     * @param defVal the default value to return if this node is not {@link #isDefined() defined}
      *
      * @return the long value
+     *
+     * @throws NumberFormatException    if this node's {@link #getType() type} is {@link ModelType#STRING} and a numeric
+     *                                  conversion of the string value is not possible
+     * @throws IllegalArgumentException if this node's {@link #getType() type} is one where no numeric conversion is
+     *                                  possible
      */
-    @JsIgnore
-    public long asLong(final long defVal) {
+    public long asLong(long defVal) {
         return value.asLong(defVal);
     }
 
     /**
-     * Get the value of this node as number. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * Get the value of this node as an {@code int}.  Collection types will return the size
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
-     * @return the numeric value
+     * @return the int value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
     public int asInt() throws IllegalArgumentException {
         return value.asInt();
     }
 
     /**
-     * Get the value of this node as number. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * Get the value of this node as an {@code int}.  Collection types will return the size
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
-     * @param defVal the default value if no conversion is possible
+     * @param defVal the default value to return if this node is not {@link #isDefined() defined}
      *
      * @return the int value
+     *
+     * @throws NumberFormatException    if this node's {@link #getType() type} is {@link ModelType#STRING} and a numeric
+     *                                  conversion of the string value is not possible
+     * @throws IllegalArgumentException if this node's {@link #getType() type} is one where no numeric conversion is
+     *                                  possible
      */
-    @JsIgnore
-    public int asInt(final int defVal) {
+    public int asInt(int defVal) {
         return value.asInt(defVal);
     }
 
     /**
-     * Get the value of this node as a boolean. Collection types return true for non-empty collections. Numerical types
-     * return true for non-zero values.
+     * Get the value of this node as a {@code boolean}.  Collection types return {@code true} for non-empty
+     * collections.  Numerical types return {@code true} for non-zero values.
      *
      * @return the boolean value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
     public boolean asBoolean() throws IllegalArgumentException {
         return value.asBoolean();
     }
 
     /**
-     * Get the value of this node as a {@code boolean}. Collection types return {@code true} for non-empty
-     * collections. Numerical types return {@code true} for non-zero values.
+     * Get the value of this node as a {@code boolean}.  Collection types return {@code true} for non-empty
+     * collections.  Numerical types return {@code true} for non-zero values.
      *
-     * @param defVal the default value if no conversion is possible
+     * @param defVal the default value to return if this node is not {@link #isDefined() defined}
      *
      * @return the boolean value
+     *
+     * @throws IllegalArgumentException if this node's {@link #getType() type} is one where no numeric conversion is
+     *                                  possible or if the type is {@link ModelType#STRING} and the string value is not
+     *                                  equal, ignoring case, to the literal {@code true} or {@code false}
      */
-    @JsIgnore
-    public boolean asBoolean(final boolean defVal) {
+    public boolean asBoolean(boolean defVal) {
         return value.asBoolean(defVal);
     }
 
+
     /**
-     * Get the value as a string. This is the literal value of this model node. More than one node type may
+     * Get the value as a string.  This is the literal value of this model node.  More than one node type may
      * yield the same value for this method.
      *
-     * @return the string value
+     * @return the string value. A node that is not {@link #isDefined() defined} returns the literal string {@code undefined}
      */
     public String asString() {
         return value.asString();
     }
 
     /**
-     * Get the value of this node as a {@code double}. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * Get the value as a string.  This is the literal value of this model node.  More than one node type may
+     * yield the same value for this method.
+     *
+     * @param defVal the default value to return if this node is not {@link #isDefined() defined}
+     *
+     * @return the string value.
+     */
+    public String asString(String defVal) {
+        return isDefined() ? value.asString() : defVal;
+    }
+
+    /**
+     * Get the value of this node as a {@code double}.  Collection types will return the size
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
      * @return the double value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
-    @JsIgnore
     public double asDouble() throws IllegalArgumentException {
         return value.asDouble();
     }
 
     /**
-     * Get the value of this node as an {@code double}. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * Get the value of this node as an {@code double}.  Collection types will return the size
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
-     * @param defVal the default value if no conversion is possible
+     * @param defVal the default value to return if this node is not {@link #isDefined() defined}
      *
      * @return the int value
+     *
+     * @throws NumberFormatException    if this node's {@link #getType() type} is {@link ModelType#STRING} and a numeric
+     *                                  conversion of the string value is not possible
+     * @throws IllegalArgumentException if this node's {@link #getType() type} is one where no numeric conversion is
+     *                                  possible
      */
-    @JsIgnore
-    public double asDouble(final double defVal) {
+    public double asDouble(double defVal) {
         return value.asDouble(defVal);
     }
 
     /**
-     * Get the value of this node as a type, expressed using the {@code ModelType} enum. The string
+     * Get the value of this node as a type, expressed using the {@code ModelType} enum.  The string
      * value of this node must be convertible to a type.
      *
      * @return the {@code ModelType} value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
-    @JsIgnore
     public ModelType asType() throws IllegalArgumentException {
         return value.asType();
     }
 
     /**
      * Get the value of this node as a {@code BigDecimal}. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
      * @return the {@code BigDecimal} value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
-    @JsIgnore
     public BigDecimal asBigDecimal() throws IllegalArgumentException {
         return value.asBigDecimal();
     }
 
     /**
-     * Get the value of this node as a {@code BigInteger}. Collection types will return the size
-     * of the collection for this value. Other types may attempt a string conversion.
+     * Get the value of this node as a {@code BigInteger}.  Collection types will return the size
+     * of the collection for this value.  Other types may attempt a string conversion.
      *
      * @return the {@code BigInteger} value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
-    @JsIgnore
     public BigInteger asBigInteger() throws IllegalArgumentException {
         return value.asBigInteger();
     }
 
     /**
-     * Get the value of this node as a byte array. Strings and string-like values will return
-     * the UTF-8 encoding of the string. Numerical values will return the byte representation of the
+     * Get the value of this node as a byte array.  Strings and string-like values will return
+     * the UTF-8 encoding of the string.  Numerical values will return the byte representation of the
      * number.
      *
      * @return the bytes
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
-    @JsIgnore
     public byte[] asBytes() throws IllegalArgumentException {
         return value.asBytes();
     }
 
     /**
-     * Get the value of this node as a property. Object values will return a property if there is exactly one
-     * property in the object. List values will return a property if there are exactly two items in the list,
+     * Get the value of this node as a property.  Object values will return a property if there is exactly one
+     * property in the object.  List values will return a property if there are exactly two items in the list,
      * and if the first is convertible to a string.
      *
      * @return the property value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
     public Property asProperty() throws IllegalArgumentException {
         return value.asProperty();
     }
 
     /**
-     * Get the value of this node as a property list. Object values will return a list of properties representing
-     * each key-value pair in the object. List values will return all the values of the list, failing if any of the
+     * Get the value of this node as a property list.  Object values will return a list of properties representing
+     * each key-value pair in the object.  List values will return all the values of the list, failing if any of the
      * values are not convertible to a property value.
      *
      * @return the property list value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
-    @JsIgnore
     public List<Property> asPropertyList() throws IllegalArgumentException {
         return value.asPropertyList();
     }
 
     /**
-     * Get a copy of this value as an object. Object values will simply copy themselves.
-     * <p>
-     * Property values will return a single-entry object whose key and value are copied from the property key and value.
-     * <p>
+     * Get a copy of this value as an object.  Object values will simply copy themselves as by the {@link #clone()}
+     * method.
+     * Property values will return a single-entry object whose key and value are copied from the property key and
+     * value.
      * List values will attempt to interpolate the list into an object by iterating each item, mapping each property
      * into an object entry and otherwise taking pairs of list entries, converting the first to a string, and using the
-     * pair of entries as a single object entry. If an object key appears more than once in the source object, the
-     * last key takes precedence.
+     * pair of entries as a single object entry.  If an object key appears more than once in the source object, the
+     * last
+     * key takes precedence.
      *
      * @return the object value
      *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
     public ModelNode asObject() throws IllegalArgumentException {
         return value.asObject();
     }
 
     /**
-     * Get the value of this node as {@code type}. This method simply delegates to the various {@code asXXX()}
-     * methods depending on the specified type.
+     * Determine whether this node is defined.  Equivalent to the expression: {@code getType() != ModelType.UNDEFINED}.
      *
-     * @return the value as {@code type} or null if the type is {@link ModelType#UNDEFINED}
-     *
-     * @throws IllegalArgumentException if no conversion is possible
+     * @return {@code true} if this node's value is defined
      */
-    @JsIgnore
-    public Object as(ModelType type) {
-        Object result;
-        switch (type) {
-            case BIG_DECIMAL:
-                result = asBigDecimal();
-                break;
-            case BIG_INTEGER:
-                result = asBigInteger();
-                break;
-            case BOOLEAN:
-                result = asBoolean();
-                break;
-            case BYTES:
-                result = asBytes();
-                break;
-            case DOUBLE:
-                result = asDouble();
-                break;
-            case EXPRESSION:
-                result = asString();
-                break;
-            case INT:
-                result = asInt();
-                break;
-            case LIST:
-                result = asList();
-                break;
-            case LONG:
-                result = asLong();
-                break;
-            case OBJECT:
-                result = asObject();
-                break;
-            case PROPERTY:
-                result = asProperty();
-                break;
-            case STRING:
-                result = asString();
-                break;
-            case TYPE:
-                result = asType();
-                break;
-            case UNDEFINED:
-                result = null;
-                break;
-            default:
-                result = null;
-                break;
-        }
-        return result;
-    }
-
-    /**
-     * Determine whether this node is defined.
-     *
-     * @return true if this node's value is defined, false otherwise
-     */
-    @JsProperty
     public boolean isDefined() {
         return getType() != ModelType.UNDEFINED;
     }
@@ -415,8 +432,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setNumber")
-    public ModelNode set(final int newValue) {
+    public ModelNode set(int newValue) {
         checkProtect();
         value = new IntModelValue(newValue);
         return this;
@@ -429,8 +445,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final long newValue) {
+    public ModelNode set(long newValue) {
         checkProtect();
         value = new LongModelValue(newValue);
         return this;
@@ -443,8 +458,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final double newValue) {
+    public ModelNode set(double newValue) {
         checkProtect();
         value = new DoubleModelValue(newValue);
         return this;
@@ -457,8 +471,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setBoolean")
-    public ModelNode set(final boolean newValue) {
+    public ModelNode set(boolean newValue) {
         checkProtect();
         value = BooleanModelValue.valueOf(newValue);
         return this;
@@ -470,8 +483,11 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      *
      * @return this node
+     *
+     * @deprecated Use {@link #set(ValueExpression)} instead.
      */
-    public ModelNode setExpression(final String newValue) {
+    @Deprecated
+    public ModelNode setExpression(String newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
@@ -487,39 +503,12 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setString")
-    public ModelNode set(final String newValue) {
+    public ModelNode set(ValueExpression newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
-        value = new StringModelValue(newValue);
-        return this;
-    }
-
-    @JsIgnore
-    public ModelNode set(ModelType type, Object propValue) {
-        if (type.equals(ModelType.STRING)) {
-            set((String) propValue);
-        } else if (type.equals(ModelType.INT)) {
-            set((Integer) propValue);
-        } else if (type.equals(ModelType.DOUBLE)) {
-            set((Double) propValue);
-        } else if (type.equals(ModelType.LONG)) {
-            set((Long) propValue);
-        } else if (type.equals(ModelType.BOOLEAN)) {
-            set((Boolean) propValue);
-        } else if (type.equals(ModelType.LIST)) {
-            setEmptyList();
-            List list = (List) propValue;
-
-            for (Object item : list) {
-                add(String.valueOf(item));
-            }
-        } else {
-            throw new RuntimeException("Type conversion not implemented for " + type);
-        }
-
+        value = new ExpressionValue(newValue);
         return this;
     }
 
@@ -530,8 +519,23 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final BigDecimal newValue) {
+    public ModelNode set(String newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
+        }
+        checkProtect();
+        value = new StringModelValue(newValue);
+        return this;
+    }
+
+    /**
+     * Change this node's value to the given value.
+     *
+     * @param newValue the new value
+     *
+     * @return this node
+     */
+    public ModelNode set(BigDecimal newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
@@ -547,8 +551,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final BigInteger newValue) {
+    public ModelNode set(BigInteger newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
@@ -558,14 +561,13 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Change this node's value to the given value. The value is copied from the parameter.
+     * Change this node's value to the given value.  The value is copied from the parameter.
      *
      * @param newValue the new value
      *
      * @return this node
      */
-    @JsMethod(name = "setNode")
-    public ModelNode set(final ModelNode newValue) {
+    public ModelNode set(ModelNode newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
@@ -581,16 +583,12 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final byte[] newValue) {
+    public ModelNode set(byte[] newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
-        byte[] clone = new byte[newValue.length];
-        System.arraycopy(newValue, 0, clone, 0, newValue.length);
-
-        value = new BytesModelValue(newValue.length == 0 ? newValue : clone);
+        value = new BytesModelValue(newValue.length == 0 ? newValue : newValue.clone());
         return this;
     }
 
@@ -601,8 +599,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final ModelType newValue) {
+    public ModelNode set(ModelType newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
@@ -618,8 +615,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setProperty")
-    public ModelNode set(final Property newValue) {
+    public ModelNode set(Property newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
@@ -635,10 +631,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final ModelNode propertyValue) {
+    public ModelNode set(String propertyName, ModelNode propertyValue) {
         checkProtect();
-        value = new PropertyModelValue(propertyName, propertyValue);
+        value = new PropertyModelValue(propertyName, propertyValue, true);
         return this;
     }
 
@@ -650,10 +645,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final int propertyValue) {
+    public ModelNode set(String propertyName, int propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -667,10 +661,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final long propertyValue) {
+    public ModelNode set(String propertyName, long propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -684,10 +677,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final double propertyValue) {
+    public ModelNode set(String propertyName, double propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -701,10 +693,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final boolean propertyValue) {
+    public ModelNode set(String propertyName, boolean propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -718,10 +709,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final String propertyValue) {
+    public ModelNode set(String propertyName, String propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -734,12 +724,14 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property expression value
      *
      * @return this node
+     *
+     * @deprecated Use {@link #set(String, ValueExpression)} instead.
      */
-    @JsIgnore
-    public ModelNode setExpression(final String propertyName, final String propertyValue) {
+    @Deprecated
+    public ModelNode setExpression(String propertyName, String propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
-        node.setExpression(propertyValue);
+        ModelNode node = new ModelNode();
+        node.set(new ValueExpression(propertyValue));
         value = new PropertyModelValue(propertyName, node);
         return this;
     }
@@ -752,10 +744,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final BigDecimal propertyValue) {
+    public ModelNode set(String propertyName, ValueExpression propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -769,10 +760,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final BigInteger propertyValue) {
+    public ModelNode set(String propertyName, BigDecimal propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -786,10 +776,9 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final byte[] propertyValue) {
+    public ModelNode set(String propertyName, BigInteger propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -803,10 +792,25 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final String propertyName, final ModelType propertyValue) {
+    public ModelNode set(String propertyName, byte[] propertyValue) {
         checkProtect();
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
+        node.set(propertyValue);
+        value = new PropertyModelValue(propertyName, node);
+        return this;
+    }
+
+    /**
+     * Change this node's value to a property with the given name and value.
+     *
+     * @param propertyName  the property name
+     * @param propertyValue the property value
+     *
+     * @return this node
+     */
+    public ModelNode set(String propertyName, ModelType propertyValue) {
+        checkProtect();
+        ModelNode node = new ModelNode();
         node.set(propertyValue);
         value = new PropertyModelValue(propertyName, node);
         return this;
@@ -819,14 +823,13 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
-    public ModelNode set(final Collection<ModelNode> newValue) {
+    public ModelNode set(Collection<ModelNode> newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
-        final ArrayList<ModelNode> list = new ArrayList<>(newValue.size());
-        for (final ModelNode node : newValue) {
+        ArrayList<ModelNode> list = new ArrayList<>(newValue.size());
+        for (ModelNode node : newValue) {
             if (node == null) {
                 list.add(new ModelNode());
             } else {
@@ -860,7 +863,7 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Clear this node's value and change its type to undefined.
+     * Clear this node's value and change its type to {@link ModelType#UNDEFINED}.
      *
      * @return this node
      */
@@ -871,8 +874,8 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Get the child of this node with the given name. If no such child exists, create it. If the node is undefined,
-     * it will be initialized to be of type object.
+     * Get the child of this node with the given name.  If no such child exists, create it.  If the node is undefined,
+     * it will be initialized to be of type {@link ModelType#OBJECT}.
      * <p>
      * When called on property values, the name must match the property name.
      *
@@ -882,19 +885,18 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if this node does not support getting a child with the given name
      */
-    public ModelNode get(final String name) {
+    public ModelNode get(String name) {
         ModelValue value = this.value;
         if (value == ModelValue.UNDEFINED) {
             checkProtect();
-            this.value = new ObjectModelValue();
-            return this.value.getChild(name);
+            return (this.value = new ObjectModelValue()).getChild(name);
         }
         return value.getChild(name);
     }
 
     /**
-     * Require the existence of a child of this node with the given name, returning the child. If no such child
-     * exists, an exception is thrown.
+     * Require the existence of a child of this node with the given name, returning the child.  If no such child exists,
+     * an exception is thrown.
      * <p>
      * When called on property values, the name must match the property name.
      *
@@ -904,30 +906,44 @@ public class ModelNode implements Cloneable {
      *
      * @throws NoSuchElementException if the element does not exist
      */
-    @JsIgnore
-    public ModelNode require(final String name) throws NoSuchElementException {
+    public ModelNode require(String name) throws NoSuchElementException {
         return value.requireChild(name);
     }
 
     /**
-     * Remove a child of this node, returning the child. If no such child exists, an exception is thrown.
+     * Remove a child of this node, returning the child.  If no such child exists,
+     * {@code null} is returned.
      * <p>
      * When called on property values, the name must match the property name.
      *
      * @param name the child name
      *
-     * @return the child
-     *
-     * @throws NoSuchElementException if the element does not exist
+     * @return the child, or {@code null} if no child with the given {@code name} exists
      */
-    @JsIgnore
-    public ModelNode remove(final String name) throws NoSuchElementException {
+    public ModelNode remove(String name) throws NoSuchElementException {
         return value.removeChild(name);
     }
 
     /**
-     * Get the child of this node with the given index. If no such child exists, create it (adding list entries as
-     * needed). If the node is undefined, it will be initialized to be of type {@link ModelType#LIST}.
+     * Remove a child of this list, returning the child.  If no such child exists,
+     * an exception is thrown.
+     * <p>
+     * When called on property values, the name must match the property name.
+     *
+     * @param index the child index
+     *
+     * @return the child
+     *
+     * @throws NoSuchElementException if the element does not exist
+     */
+    public ModelNode remove(int index) throws NoSuchElementException {
+        return value.removeChild(index);
+    }
+
+    /**
+     * Get the child of this node with the given index.  If no such child exists, create it (adding list entries as
+     * needed).
+     * If the node is undefined, it will be initialized to be of type {@link ModelType#LIST}.
      * <p>
      * When called on property values, the index must be zero.
      *
@@ -937,9 +953,8 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if this node does not support getting a child with the given index
      */
-    @JsIgnore
-    public ModelNode get(final int index) {
-        final ModelValue value = this.value;
+    public ModelNode get(int index) {
+        ModelValue value = this.value;
         if (value == ModelValue.UNDEFINED) {
             checkProtect();
             return (this.value = new ListModelValue()).getChild(index);
@@ -948,8 +963,9 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Require the existence of a child of this node with the given index, returning the child. If no such child
-     * exists, an exception is thrown.
+     * Require the existence of a child of this node with the given index, returning the child.  If no such child
+     * exists,
+     * an exception is thrown.
      * <p>
      * When called on property values, the index must be zero.
      *
@@ -959,405 +975,595 @@ public class ModelNode implements Cloneable {
      *
      * @throws NoSuchElementException if the element does not exist
      */
-    @JsIgnore
-    public ModelNode require(final int index) {
+    public ModelNode require(int index) {
         return value.requireChild(index);
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final int newValue) {
+    public ModelNode add(int newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final long newValue) {
+    public ModelNode add(long newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final double newValue) {
+    public ModelNode add(double newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final boolean newValue) {
+    public ModelNode add(boolean newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add the given expression to the end of this node's value list. If the node is undefined, it will be initialized
-     * to be of type {@link ModelType#LIST}.
+     * Add the given expression to the end of this node's value list.  If the node is undefined, it will be initialized
+     * to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
+     * @deprecated Use {@link #add(ValueExpression)} instead.
      */
-    @JsIgnore
-    public ModelNode addExpression(final String newValue) {
-        add().setExpression(newValue);
+    @Deprecated
+    public ModelNode addExpression(String newValue) {
+        add().set(new ValueExpression(newValue));
         return this;
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String newValue) {
+    public ModelNode add(ValueExpression newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final BigDecimal newValue) {
+    public ModelNode add(String newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final BigInteger newValue) {
+    public ModelNode add(BigDecimal newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add a copy of the given value to the end of this node's value list. If the node is undefined, it will be
-     * initialized to be of type {@link ModelType#LIST}.
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final ModelNode newValue) {
+    public ModelNode add(BigInteger newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add the given value to the end of this node's value list. If the node is undefined, it will be initialized to
-     * be of type {@link ModelType#LIST}.
+     * Add a copy of the given value to the end of this node's value list.  If the node is undefined, it will be
+     * initialized to be
+     * of type {@link ModelType#LIST}.
      *
      * @param newValue the new value to add
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final byte[] newValue) {
+    public ModelNode add(ModelNode newValue) {
         add().set(newValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * insert copy of the given value to provided index of this node's value list.  If the node is undefined, it will be
+     * initialized to be
+     * of type {@link ModelType#LIST}. An index equal to the current number of child elements
+     * held by this node is allowed (thus adding a child) but an index greater than that is not allowed (i.e.
+     * adding intervening elements is not supported.)
+     *
+     * @param newValue the new value to add
+     *
+     * @return this node
+     *
+     * @throws IndexOutOfBoundsException if {@code index} is greater than zero and is greater than the number of child
+     *                                   nodes currently stored in this node
+     * @throws IllegalArgumentException  if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                   not {@link ModelType#LIST}
+     */
+    public ModelNode insert(ModelNode newValue, int index) {
+        insert(index).set(newValue);
+        return this;
+    }
+
+    /**
+     * Add the given value to the end of this node's value list.  If the node is undefined, it will be initialized to be
+     * of type {@link ModelType#LIST}.
+     *
+     * @param newValue the new value to add
+     *
+     * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
+     */
+    public ModelNode add(byte[] newValue) {
+        add().set(newValue);
+        return this;
+    }
+
+    /**
+     * Add a property to the end of this node's value list.  If the node is undefined, it
+     * will be initialized to be of type {@link ModelType#LIST}.
+     *
+     * @param property the property
+     *
+     * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
+     */
+    public ModelNode add(Property property) {
+        add().set(property);
+        return this;
+    }
+
+    /**
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final int propertyValue) {
+    public ModelNode add(String propertyName, int propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final long propertyValue) {
+    public ModelNode add(String propertyName, long propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final double propertyValue) {
+    public ModelNode add(String propertyName, double propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final boolean propertyValue) {
+    public ModelNode add(String propertyName, boolean propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final String propertyValue) {
+    public ModelNode add(String propertyName, ValueExpression propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final BigDecimal propertyValue) {
+    public ModelNode add(String propertyName, String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final BigInteger propertyValue) {
+    public ModelNode add(String propertyName, BigDecimal propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final ModelNode propertyValue) {
+    public ModelNode add(String propertyName, BigInteger propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a property with the given name and value to the end of this node's value list. If the node is undefined, it
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
      * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @param propertyName  the property name
      * @param propertyValue the property value
      *
      * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
-    public ModelNode add(final String propertyName, final byte[] propertyValue) {
+    public ModelNode add(String propertyName, ModelNode propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
     /**
-     * Add a node to the end of this node's value list and return it. If the node is undefined, it will be initialized
-     * to be of type list.
+     * Add a property with the given name and value to the end of this node's value list.  If the node is undefined, it
+     * will be initialized to be of type {@link ModelType#LIST}.
+     *
+     * @param propertyName  the property name
+     * @param propertyValue the property value
+     *
+     * @return this node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
+     */
+    public ModelNode add(String propertyName, byte[] propertyValue) {
+        add().set(propertyName, propertyValue);
+        return this;
+    }
+
+    /**
+     * Add a node to the end of this node's value list and return it.  If the node is undefined, it
+     * will be initialized to be of type {@link ModelType#LIST}.
      *
      * @return the new node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
     public ModelNode add() {
         checkProtect();
         ModelValue value = this.value;
         if (value == ModelValue.UNDEFINED) {
-            this.value = new ListModelValue();
-            return this.value.addChild();
+            return (this.value = new ListModelValue()).addChild();
         }
         return value.addChild();
     }
 
     /**
-     * Add a node of type {@link ModelType#LIST} to the end of this node's value list and return it. If this node is
+     * Insert a node at provided index of this node's value list and return it.  If the node is undefined, it
+     * will be initialized to be of type {@link ModelType#LIST}. An index equal to the current number of child elements
+     * held by this node is allowed (thus adding a child) but an index greater than that is not allowed (i.e.
+     * adding intervening elements is not supported.)
+     *
+     * @param index where in list to put it
+     *
+     * @return the new node
+     *
+     * @throws IndexOutOfBoundsException if {@code index} is greater than zero and is greater than the number of child
+     *                                   nodes currently stored in this node
+     * @throws IllegalArgumentException  if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                   not {@link ModelType#LIST}
+     */
+    public ModelNode insert(int index) {
+        checkProtect();
+        ModelValue value = this.value;
+        if (value == ModelValue.UNDEFINED) {
+            return (this.value = new ListModelValue()).insertChild(index);
+        }
+        return value.insertChild(index);
+    }
+
+    /**
+     * Add a node of type {@link ModelType#LIST} to the end of this node's value list and return it.  If this node is
      * undefined, it will be initialized to be of type {@link ModelType#LIST}.
      *
      * @return the new node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
     public ModelNode addEmptyList() {
-        final ModelNode node = add();
+        ModelNode node = add();
         node.setEmptyList();
         return node;
     }
 
     /**
-     * Add a node of type {@link ModelType#OBJECT} to the end of this node's value list and return it. If this node is
+     * Add a node of type {@link ModelType#OBJECT} to the end of this node's value list and return it.  If this node is
      * undefined, it will be initialized to be of type {@link ModelType#LIST}.
      *
      * @return the new node
+     *
+     * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
+     *                                  not {@link ModelType#LIST}
      */
-    @JsIgnore
     public ModelNode addEmptyObject() {
-        final ModelNode node = add();
+        ModelNode node = add();
         node.setEmptyObject();
         return node;
     }
 
     /**
-     * Determine whether this node has a child with the given index. Property node types always contain exactly one
+     * Determine whether this node has a child with the given index.  Property node types always contain exactly one
      * value.
      *
      * @param index the index
      *
      * @return {@code true} if there is a (possibly undefined) node at the given index
      */
-    @JsIgnore
-    public boolean has(final int index) {
+    public boolean has(int index) {
         return value.has(index);
     }
 
     /**
-     * Determine whether this node has a child with the given name. Property node types always contain exactly one
+     * Determine whether this node has a child with the given name.  Property node types always contain exactly one
      * value with a key equal to the property name.
      *
      * @param key the name
      *
-     * @return true if there is a (possibly undefined) node at the given key
+     * @return {@code true} if there is a (possibly undefined) node at the given key
      */
-    public boolean has(final String key) {
+    public boolean has(String key) {
         return value.has(key);
     }
 
     /**
-     * Determine whether this node has a defined child with the given index. Property node types always contain
-     * exactly one value.
+     * Recursively determine whether this node has children with the given names. If any child along the path does not
+     * exist, return {@code false}.
+     *
+     * @param names the child names
+     *
+     * @return {@code true} if a call to {@link #get(String...)} with the given {@code names} would succeed without
+     * needing to create any new nodes; {@code false} otherwise
+     */
+    public boolean has(String... names) {
+        ModelNode current = this;
+        for (String part : names) {
+            if (current.has(part)) {
+                current = current.get(part);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Determine whether this node has a defined child with the given index.  Property node types always contain exactly
+     * one
+     * value.
      *
      * @param index the index
      *
      * @return {@code true} if there is a node at the given index and its {@link #getType() type} is not {@link
      * ModelType#UNDEFINED}
      */
-    @JsIgnore
     public boolean hasDefined(int index) {
         return value.has(index) && get(index).isDefined();
     }
 
     /**
-     * Determine whether this node has a defined child with the given name. Property node types always contain exactly
-     * one value with a key equal to the property name.
+     * Determine whether this node has a defined child with the given name.  Property node types always contain exactly
+     * one
+     * value with a key equal to the property name.
      *
      * @param key the name
      *
-     * @return true if there is a node at the given index and its type is not undefined
+     * @return {@code true} if there is a node at the given index and its {@link #getType() type} is not {@link
+     * ModelType#UNDEFINED}
      */
     public boolean hasDefined(String key) {
         return value.has(key) && get(key).isDefined();
     }
 
     /**
-     * Get the set of keys contained in this object. Property node types always contain exactly one value with a key
-     * equal to the property name. Other non-object types will return an empty set.
+     * Recursively determine whether this node has defined children with the given names. If any child along the path
+     * does not
+     * exist or is not defined, return {@code false}.
+     *
+     * @param names the child names
+     *
+     * @return {@code true} if a call to {@link #get(String...)} with the given {@code names} would succeed without
+     * needing to create any new nodes and without traversing any undefined nodes; {@code false} otherwise
+     */
+    public boolean hasDefined(String... names) {
+        ModelNode current = this;
+        for (String part : names) {
+            if (current.hasDefined(part)) {
+                current = current.get(part);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Get the set of keys contained in this object.  Property node types always contain exactly one value with a key
+     * equal to the property name.  Other non-object types will throw an exception.
      *
      * @return the key set
+     *
+     * @throws IllegalArgumentException if this node's {@link #getType() type} is not {@link ModelType#OBJECT} or {@link
+     *                                  ModelType#PROPERTY}
      */
-    @JsIgnore
     public Set<String> keys() {
         return value.getKeys();
     }
 
     /**
-     * Get the list of entries contained in this object. Property node types always contain exactly one entry
-     * (itself). Lists will return an unmodifiable view of their contained list.  Objects will return a list of
-     * properties corresponding to the mappings within the object. Other types will return an empty list.
+     * Get the list of entries contained in this object.  Property node types always contain exactly one entry
+     * (itself).
+     * Lists will return an unmodifiable view of their contained list.  Objects will return a list of properties
+     * corresponding
+     * to the mappings within the object.  Other {@link #isDefined()} types will return an empty list.
      *
      * @return the entry list
+     *
+     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined}
      */
-    @JsIgnore
     public List<ModelNode> asList() {
         return value.asList();
     }
 
     /**
-     * Recursively get the children of this node with the given names. If any child along the path does not exist,
-     * create it. If any node is the path is undefined, it will be initialized to be of type {@link ModelType#OBJECT}.
+     * Recursively get the children of this node with the given names.  If any child along the path does not exist,
+     * create it.  If any node is the path is undefined, it will be initialized to be of type {@link ModelType#OBJECT}.
      *
      * @param names the child names
      *
@@ -1365,10 +1571,9 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if a node does not support getting a child with the given name path
      */
-    @JsIgnore
-    public ModelNode get(final String... names) {
+    public ModelNode get(String... names) {
         ModelNode current = this;
-        for (final String part : names) {
+        for (String part : names) {
             current = current.get(part);
         }
         return current;
@@ -1385,44 +1590,88 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Get a JSON string representation of this model node, formatted nicely, if requested.
+     * Output the DMR string representation of this model node, formatted nicely, if requested to the supplied
+     * PrintWriter instance.
      *
+     * @param writer  A PrintWriter instance used to output the DMR string.
      * @param compact Flag that indicates whether or not the string should be all on one line (i.e. {@code true}) or
      *                should be printed on multiple lines ({@code false}).
-     *
-     * @return The JSON string.
      */
-    @JsIgnore
-    public String toJSONString(final boolean compact) {
-        return value.toJSONString(compact);
-    }
-
-    @JsIgnore
-    public String toJSONString() {
-        return value.toJSONString(false);
-    }
-
-    public String toBase64String() {
-        DataOutput out = new DataOutput();
-        writeExternal(out);
-        try {
-            return btoa(new String(out.getBytes(), "ISO-8859-1"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Failed to encode string: " + e.getMessage());
+    public void writeString(PrintWriter writer, boolean compact) {
+        if (compact) {
+            ModelWriter modelWriter = ModelStreamFactory.getInstance(false).newModelWriter(writer);
+            try {
+                value.write(modelWriter);
+                modelWriter.flush();
+                modelWriter.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e); // should never happen because PrintWriter swallows IOExceptions
+            } catch (ModelException e) {
+                throw new RuntimeException(e); // should never happen because this model serialization is always correct
+            }
+        } else {
+            value.writeString(writer, compact);
         }
     }
 
     /**
-     * Return a copy of this model node, with all system property expressions locally resolved. The caller must have
-     * permission to access all of the system properties named in the node tree.
+     * Get a JSON string representation of this model node, formatted nicely, if requested.
      *
-     * @return the resolved copy
+     * @param compact Flag that indicates whether or not the string should be all on
+     *                one line (i.e. {@code true}) or should be printed on multiple lines ({@code false}).
+     *
+     * @return The JSON string.
      */
-    @JsIgnore
-    public ModelNode resolve() {
-        final ModelNode newNode = new ModelNode();
-        newNode.value = value.resolve();
-        return newNode;
+    public String toJSONString(boolean compact) {
+        return value.toJSONString(compact);
+    }
+
+    /**
+     * Output the JSON string representation of this model node, formatted nicely, if requested to the supplied
+     * PrintWriter
+     * instance.
+     *
+     * @param writer  A PrintWriter instance used to output the JSON string.
+     * @param compact Flag that indicates whether or not the string should be all on one line (i.e. {@code true}) or
+     *                should be
+     *                printed on multiple lines ({@code false}).
+     */
+    public void writeJSONString(PrintWriter writer, boolean compact) {
+        if (compact) {
+            ModelWriter modelWriter = ModelStreamFactory.getInstance(true).newModelWriter(writer);
+            try {
+                value.write(modelWriter);
+                modelWriter.flush();
+                modelWriter.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e); // should never happen because PrintWriter swallows IOExceptions
+            } catch (ModelException e) {
+                throw new RuntimeException(e); // should never happen because this model serialization is always correct
+            }
+        } else {
+            value.writeJSONString(writer, compact);
+        }
+    }
+
+    final void write(ModelWriter writer) throws IOException, ModelException {
+        value.write(writer);
+    }
+
+    /**
+     * Reads base64 data from the passed string,
+     * and deserializes the decoded result.
+     *
+     * @return the decoded model node
+     *
+     * @throws IOException if the passed stream has an issue
+     * @see #toBase64()
+     */
+    public static ModelNode fromBase64(String encoded) {
+        String decoded = Base64.decode(encoded);
+        DataInput dataInput = new DataInput(decoded.getBytes());
+        ModelNode node = new ModelNode();
+        node.readExternal(dataInput);
+        return node;
     }
 
     /**
@@ -1433,8 +1682,7 @@ public class ModelNode implements Cloneable {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
-    @JsIgnore
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         return other instanceof ModelNode && equals((ModelNode) other);
     }
 
@@ -1445,8 +1693,7 @@ public class ModelNode implements Cloneable {
      *
      * @return {@code true} if they are equal, {@code false} otherwise
      */
-    @JsIgnore
-    public boolean equals(final ModelNode other) {
+    public boolean equals(ModelNode other) {
         return this == other || other != null && other.value.equals(value);
     }
 
@@ -1456,7 +1703,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the hash code
      */
-    @JsIgnore
     @Override
     public int hashCode() {
         return value.hashCode();
@@ -1467,25 +1713,19 @@ public class ModelNode implements Cloneable {
      *
      * @return the clone
      */
-    @JsIgnore
+    @Override
     public ModelNode clone() {
-        final ModelNode clone = new ModelNode();
+        ModelNode clone = new ModelNode();
         clone.value = value.copy();
-
-        if (tags != null) {
-            for (String k : tags.keySet()) {
-                clone.setTag(k, tags.get(k));
-            }
-        }
         return clone;
     }
 
-    protected void format(final StringBuilder builder, final int indent, final boolean multiLine) {
-        value.format(builder, indent, multiLine);
+    void format(PrintWriter writer, int indent, boolean multiLine) {
+        value.format(writer, indent, multiLine);
     }
 
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
-        value.formatAsJSON(builder, indent, multiLine);
+    void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
+        value.formatAsJSON(writer, indent, multiLine);
     }
 
     /**
@@ -1493,7 +1733,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the node type
      */
-    @JsIgnore
     public ModelType getType() {
         return value.getType();
     }
@@ -1505,82 +1744,72 @@ public class ModelNode implements Cloneable {
      *
      * @throws IOException if an I/O error occurs
      */
-    public void writeExternal(final DataOutput out) {
-        final ModelValue value = this.value;
-        final ModelType type = value.getType();
-        try {
-            out.writeByte(type.getTypeChar());
-            value.writeExternal(out);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write to external data output: " + e.getMessage());
-        }
+    public void writeExternal(DataOutput out) {
+        value.writeExternal(out);
     }
 
     /**
      * Read this node's content in binary format from the given source.
      *
      * @param in the source from which the content should be read
-     *
-     * @throws IOException if an I/O error occurs
      */
-    void readExternal(final DataInput in) throws IOException {
+    void readExternal(DataInput in) {
         checkProtect();
-        byte[] b; // used by some of these
-        try {
-            final ModelType type = ModelType.forChar((char) (in.readByte() & 0xff));
-            switch (type) {
-                case UNDEFINED:
-                    value = ModelValue.UNDEFINED;
-                    return;
-                case BIG_DECIMAL:
-                    value = new BigDecimalModelValue(in);
-                    return;
-                case BIG_INTEGER:
-                    b = new byte[in.readInt()];
-                    in.readFully(b);
-                    value = new BigIntegerModelValue(new BigInteger(b));
-                    return;
-                case BOOLEAN:
-                    value = BooleanModelValue.valueOf(in.readBoolean());
-                    return;
-                case BYTES:
-                    b = new byte[in.readInt()];
-                    in.readFully(b);
-                    new BytesModelValue(b);
-                    return;
-                case DOUBLE:
-                    value = new DoubleModelValue(in.readDouble());
-                    return;
-                case EXPRESSION:
-                    value = new ExpressionValue(in.readUTF());
-                    return;
-                case INT:
-                    value = new IntModelValue(in.readInt());
-                    return;
-                case LIST:
-                    value = new ListModelValue(in);
-                    return;
-                case LONG:
-                    value = new LongModelValue(in.readLong());
-                    return;
-                case OBJECT:
-                    value = new ObjectModelValue(in);
-                    return;
-                case PROPERTY:
-                    value = new PropertyModelValue(in);
-                    return;
-                case STRING:
-                    value = new StringModelValue(in.readUTF());
-                    return;
-                case TYPE:
-                    value = TypeModelValue.of(ModelType.forChar((char) (in.readByte() & 0xff)));
-                    return;
-                default:
-                    throw new IllegalStateException("Invalid type read: " + type);
-            }
-        } catch (final IllegalArgumentException e) {
-            throw new IllegalStateException(e.getMessage(), e.getCause());
+        char c = (char) (in.readByte() & 0xff);
+        ModelType type = ModelType.forChar(c);
+        switch (type) {
+            case UNDEFINED:
+                value = ModelValue.UNDEFINED;
+                return;
+            case BIG_DECIMAL:
+                value = new BigDecimalModelValue(in);
+                return;
+            case BIG_INTEGER:
+                value = new BigIntegerModelValue(in);
+                return;
+            case BOOLEAN:
+                value = BooleanModelValue.valueOf(in.readBoolean());
+                return;
+            case BYTES:
+                value = new BytesModelValue(in);
+                return;
+            case DOUBLE:
+                value = new DoubleModelValue(in.readDouble());
+                return;
+            case EXPRESSION:
+                value = new ExpressionValue(in.readUTF());
+                return;
+            case INT:
+                value = new IntModelValue(in.readInt());
+                return;
+            case LIST:
+                value = new ListModelValue(in);
+                return;
+            case LONG:
+                value = new LongModelValue(in.readLong());
+                return;
+            case OBJECT:
+                value = new ObjectModelValue(in);
+                return;
+            case PROPERTY:
+                value = new PropertyModelValue(in);
+                return;
+            case STRING:
+                value = new StringModelValue(c, in);
+                return;
+            case TYPE:
+                value = TypeModelValue.of(ModelType.forChar((char) (in.readByte() & 0xff)));
+                return;
+            default:
+                throw new RuntimeException("Invalid type read: " + type);
         }
+    }
+
+    /** Encodes the serialized representation in base64 form. */
+    public String toBase64() {
+        DataOutput out = new DataOutput();
+        writeExternal(out);
+        return Base64.encode(out.toString());
     }
 
     private void checkProtect() {
@@ -1599,76 +1828,9 @@ public class ModelNode implements Cloneable {
     @JsProperty
     public String getFailureDescription() {
         if (hasDefined(FAILURE_DESCRIPTION)) {
-            StringBuilder failure = new StringBuilder();
-            get(FAILURE_DESCRIPTION).format(failure, 0, true);
-            return failure.toString();
+            return get(FAILURE_DESCRIPTION).toJSONString(false);
         } else {
             return "No failure-description provided";
         }
-    }
-
-    @JsIgnore
-    public void setTag(String name, Object value) {
-        if (tags == null) {
-            tags = new HashMap<>(2);
-        }
-        tags.put(name, value);
-    }
-
-    @JsIgnore
-    public Object getTag(String name) {
-        if (tags == null) {
-            return null;
-        } else {
-            return tags.get(name);
-        }
-    }
-
-
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * Creates a new undefined model node
-     *
-     * @return the new model node
-     */
-    @JsMethod(name = "create")
-    public static ModelNode jsCreate() {
-        return new ModelNode();
-    }
-
-    /**
-     * @return the model node as JSON
-     */
-    @JsMethod(name = "getJSON")
-    @EsReturn("json")
-    public JsonObject jsGetJSONString() {
-        return Json.parse(toJSONString(true));
-    }
-
-    /**
-     * @return this model node as an {@link Property} array
-     */
-    @JsMethod(name = "asProperties")
-    @EsReturn("Property[]")
-    public Property[] jsAsProperties() {
-        List<Property> properties = value.asPropertyList();
-        if (properties != null) {
-            return properties.toArray(new Property[properties.size()]);
-        }
-        return new Property[0];
-    }
-
-    /**
-     * @return this model node as an array.
-     */
-    @JsMethod(name = "asList")
-    @EsReturn("ModelNode[]")
-    public ModelNode[] jsAsList() {
-        List<ModelNode> modelNodes = value.asList();
-        if (modelNodes != null) {
-            return modelNodes.toArray(new ModelNode[modelNodes.size()]);
-        }
-        return new ModelNode[0];
     }
 }

@@ -13,167 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.jboss.hal.dmr.stream.ModelException;
+import org.jboss.hal.dmr.stream.ModelWriter;
+
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-@SuppressWarnings("HardCodedStringLiteral")
 abstract class ModelValue implements Cloneable {
-
-    private static final String TAB_SIZE = "  ";
-
-    static final ModelValue UNDEFINED = new ModelValue(ModelType.UNDEFINED) {
-
-        @Override
-        String asString() {
-            return "undefined";
-        }
-
-        @Override
-        long asLong(final long defVal) {
-            return defVal;
-        }
-
-        @Override
-        int asInt(final int defVal) {
-            return defVal;
-        }
-
-        @Override
-        boolean asBoolean(final boolean defVal) {
-            return defVal;
-        }
-
-        @Override
-        double asDouble(final double defVal) {
-            return defVal;
-        }
-
-        @Override
-        public boolean equals(final Object other) {
-            return other == this;
-        }
-
-        @Override
-        void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
-            builder.append("null");
-        }
-
-        @Override
-        public int hashCode() {
-            return 7113;
-        }
-    };
-
-    protected static String quote(final String orig) {
-        final int length = orig.length();
-        final StringBuilder builder = new StringBuilder(length + 32);
-        builder.append('"');
-        for (int i = 0; i < length; i = orig.offsetByCodePoints(i, 1)) {
-            final char cp = orig.charAt(i);
-            if (cp == '"' || cp == '\\') {
-                builder.append('\\').append(cp);
-            } else {
-                builder.append(cp);
-            }
-        }
-        builder.append('"');
-        return builder.toString();
-    }
-
-    /**
-     * Escapes the original string for inclusion in a JSON string.
-     *
-     * @param orig A string to be included in a JSON string.
-     *
-     * @return The string appropriately escaped to produce valid JSON.
-     */
-    protected static String jsonEscape(final String orig) {
-        final int length = orig.length();
-        final StringBuilder builder = new StringBuilder(length + 32);
-        builder.append('"');
-        for (int i = 0; i < length; i = orig.offsetByCodePoints(i, 1)) {
-            final char cp = orig.charAt(i);
-            switch (cp) {
-                case '"':
-                    builder.append("\\\"");
-                    break;
-                case '\\':
-                    builder.append("\\\\");
-                    break;
-                case '\b':
-                    builder.append("\\b");
-                    break;
-                case '\f':
-                    builder.append("\\f");
-                    break;
-                case '\n':
-                    builder.append("\\n");
-                    break;
-                case '\r':
-                    builder.append("\\r");
-                    break;
-                case '\t':
-                    builder.append("\\t");
-                    break;
-                case '/':
-                    builder.append("\\/");
-                    break;
-                default:
-                    if ((cp >= '\u0000' && cp <= '\u001F') || (cp >= '\u007F' && cp <= '\u009F') || (cp >= '\u2000' && cp <= '\u20FF')) {
-                        final String hexString = Integer.toHexString(cp);
-                        builder.append("\\u");
-                        for (int k = 0; k < 4 - hexString.length(); k++) {
-                            builder.append('0');
-                        }
-                        builder.append(hexString.toUpperCase());
-                    } else {
-                        builder.append(cp);
-                    }
-                    break;
-            }
-        }
-        builder.append('"');
-        return builder.toString();
-    }
-
-    protected static void indent(final StringBuilder target, final int count) {
-        for (int i = 0; i < count; i++) {
-            target.append(TAB_SIZE);
-        }
-    }
 
     private final ModelType type;
 
-    protected ModelValue(final ModelType type) {
+    protected ModelValue(ModelType type) {
         this.type = type;
     }
 
@@ -185,7 +46,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    long asLong(final long defVal) {
+    long asLong(long defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -193,7 +54,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    int asInt(final int defVal) {
+    int asInt(int defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -201,7 +62,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    boolean asBoolean(final boolean defVal) {
+    boolean asBoolean(boolean defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -209,7 +70,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    double asDouble(final double defVal) {
+    double asDouble(double defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -239,15 +100,19 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    ModelNode getChild(final String name) {
+    ModelNode getChild(String name) {
         throw new IllegalArgumentException();
     }
 
-    ModelNode removeChild(final String name) {
+    ModelNode removeChild(String name) {
         throw new IllegalArgumentException();
     }
 
-    ModelNode getChild(final int index) {
+    ModelNode removeChild(int index) {
+        throw new IllegalArgumentException();
+    }
+
+    ModelNode getChild(int index) {
         throw new IllegalArgumentException();
     }
 
@@ -255,14 +120,9 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    //    @Override
-    //    protected final ModelValue clone() {
-    //        try {
-    //            return (ModelValue) super.clone();
-    //        } catch (final CloneNotSupportedException e) {
-    //            throw new RuntimeException(e);
-    //        }
-    //    }
+    ModelNode insertChild(int index) {
+        throw new IllegalArgumentException();
+    }
 
     Set<String> getKeys() {
         throw new IllegalArgumentException();
@@ -280,9 +140,141 @@ abstract class ModelValue implements Cloneable {
         return this;
     }
 
+    @Override
+    protected final ModelValue clone() {
+        try {
+            return (ModelValue) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected static String quote(String orig) {
+        int length = orig.length();
+        StringBuilder builder = new StringBuilder(length + 32);
+        builder.append('"');
+        for (int i = 0; i < length; i = orig.offsetByCodePoints(i, 1)) {
+            int cp = orig.codePointAt(i);
+            if (cp == '"' || cp == '\\') {
+                builder.append('\\').appendCodePoint(cp);
+            } else {
+                builder.appendCodePoint(cp);
+            }
+        }
+        builder.append('"');
+        return builder.toString();
+    }
+
+    /**
+     * Escapes the original string for inclusion in a JSON string.
+     *
+     * @param orig A string to be included in a JSON string.
+     *
+     * @return The string appropriately escaped to produce valid JSON.
+     */
+    static String jsonEscape(String orig) {
+        int length = orig.length();
+        StringBuilder builder = new StringBuilder(length + 32);
+        builder.append('"');
+        for (int i = 0; i < length; i = orig.offsetByCodePoints(i, 1)) {
+            int cp = orig.codePointAt(i);
+            switch (cp) {
+                case '"':
+                    builder.append("\\\"");
+                    break;
+                case '\\':
+                    builder.append("\\\\");
+                    break;
+                case '\b':
+                    builder.append("\\b");
+                    break;
+                case '\f':
+                    builder.append("\\f");
+                    break;
+                case '\n':
+                    builder.append("\\n");
+                    break;
+                case '\r':
+                    builder.append("\\r");
+                    break;
+                case '\t':
+                    builder.append("\\t");
+                    break;
+                default:
+                    // Only escape control characters 0x00 through 0x1F (space is 0x20)
+                    // Reference: http://www.ietf.org/rfc/rfc4627.txt
+                    if (cp < 0x20) {
+                        String hexString = Integer.toHexString(cp);
+                        builder.append("\\u");
+                        for (int k = 0; k < 4 - hexString.length(); k++) {
+                            builder.append('0');
+                        }
+                        builder.append(hexString.toUpperCase());
+                    } else {
+                        builder.appendCodePoint(cp);
+                    }
+            }
+        }
+        builder.append('"');
+        return builder.toString();
+    }
+
     ModelValue copy() {
         return this;
     }
+
+    static final ModelValue UNDEFINED = new ModelValue(ModelType.UNDEFINED) {
+
+        @Override
+        String asString() {
+            return "undefined";
+        }
+
+        @Override
+        long asLong(long defVal) {
+            return defVal;
+        }
+
+        @Override
+        int asInt(int defVal) {
+            return defVal;
+        }
+
+        @Override
+        boolean asBoolean(boolean defVal) {
+            return defVal;
+        }
+
+        @Override
+        double asDouble(double defVal) {
+            return defVal;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return other == this;
+        }
+
+        @Override
+        void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
+            writer.append("null");
+        }
+
+        @Override
+        void writeExternal(DataOutput out) {
+            out.write(ModelType.UNDEFINED.typeChar);
+        }
+
+        @Override
+        void write(ModelWriter out) throws IOException, ModelException {
+            out.writeUndefined();
+        }
+
+        @Override
+        public int hashCode() {
+            return 7113;
+        }
+    };
 
     @Override
     public abstract boolean equals(Object other);
@@ -290,64 +282,100 @@ abstract class ModelValue implements Cloneable {
     @Override
     public abstract int hashCode();
 
-    void format(final StringBuilder builder, final int indent, final boolean multiLine) {
-        builder.append(asString());
+    /**
+     * Adds the number of indentations (4 spaces each) specified to the writer's output.
+     *
+     * @param writer The PrintWriter instance containing the current output.
+     * @param count  The number of indentations to be written.
+     */
+    protected static void indent(PrintWriter writer, int count) {
+        for (int i = 0; i < count; i++) {
+            writer.append("    ");
+        }
+    }
+
+    /**
+     * Formats the current value object as part of a DMR string.
+     *
+     * @param writer    A PrintWriter instance containing the generated DMR string representation.
+     * @param indent    The number of tabs to indent the current generated string.
+     * @param multiLine Flag indicating whether or not the string should begin on a new line.
+     */
+    void format(PrintWriter writer, int indent, boolean multiLine) {
+        writer.append(asString());
     }
 
     /**
      * Formats the current value object as part of a JSON string.
      *
-     * @param builder   A StringBuilder instance containing the JSON string.
+     * @param writer    A PrintWriter instance containing the JSON string.
      * @param indent    The number of tabs to indent the current generated string.
      * @param multiLine Flag that indicates whether or not the string should
      *                  begin on a new line.
      */
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
-        builder.append(asString());
+    void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
+        writer.append(asString());
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        format(builder, 0, true);
-        return builder.toString();
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter, true);
+        writeString(writer, false);
+        return stringWriter.toString();
+    }
+
+    /**
+     * Outputs the DMR representation of this value to the supplied PrintWriter instance.
+     *
+     * @param writer  A PrintWriter instance use to output the DMR string.
+     * @param compact Flag indicating whether or not to include new lines in the generated string representation.
+     */
+    public void writeString(PrintWriter writer, boolean compact) {
+        format(writer, 0, !compact);
     }
 
     /**
      * Converts this value to a JSON string representation.
      *
-     * @param compact Flag indicating whether or not to include new lines
-     *                in the generated string representation.
+     * @param compact Flag indicating whether or not to include new lines in the generated string representation.
      *
-     * @return The JSON formatted string.
+     * @return The JSON formatted string representation of this value.
      */
-    public String toJSONString(final boolean compact) {
-        final StringBuilder builder = new StringBuilder();
-        formatAsJSON(builder, 0, !compact);
-        return builder.toString();
+    String toJSONString(boolean compact) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter, true);
+        writeJSONString(writer, compact);
+        return stringWriter.toString();
     }
 
-    ModelValue resolve() {
-        return copy();
+    /**
+     * Outputs this value as a JSON string representation to the supplied PrintWriter instance.
+     *
+     * @param writer  A PrintWriter instance use to output the JSON string.
+     * @param compact Flag indicating whether or not to include new lines in the generated string representation.
+     */
+    void writeJSONString(PrintWriter writer, boolean compact) {
+        formatAsJSON(writer, 0, !compact);
     }
 
-    void writeExternal(final DataOutput out) throws IOException {
-        // nothing by default
-    }
+    abstract void write(ModelWriter writer) throws IOException, ModelException;
 
-    boolean has(final int index) {
+    abstract void writeExternal(DataOutput out);
+
+    boolean has(int index) {
         return false;
     }
 
-    boolean has(final String key) {
+    boolean has(String key) {
         return false;
     }
 
-    ModelNode requireChild(final String name) throws NoSuchElementException {
+    ModelNode requireChild(String name) throws NoSuchElementException {
         throw new NoSuchElementException("No child '" + name + "' exists");
     }
 
-    ModelNode requireChild(final int index) throws NoSuchElementException {
+    ModelNode requireChild(int index) throws NoSuchElementException {
         throw new NoSuchElementException("No child exists at index [" + index + "]");
     }
 }

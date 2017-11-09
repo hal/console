@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dmr2.stream;
+package org.jboss.hal.dmr.stream;
 
 /**
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
@@ -36,15 +36,11 @@ final class ModelConstants {
 
     static final char FORMFEED = '\f';
 
-    static final char MINUS = '-';
-
     static final char NL = '\n';
 
     static final char OBJECT_END = '}';
 
     static final char OBJECT_START = '{';
-
-    static final char PLUS = '+';
 
     static final char BYTES_END = '}';
 
@@ -60,15 +56,11 @@ final class ModelConstants {
 
     static final char EQUAL = '=';
 
-    static final char GREATER_THAN = '>';
-
     static final char TAB = '\t';
 
     static final String ARROW = "=>";
 
     static final String BIG = "big";
-
-    static final String BOOLEAN = "boolean";
 
     static final String BYTES = "bytes";
 
@@ -78,17 +70,9 @@ final class ModelConstants {
 
     static final String FALSE = "false";
 
-    static final String INFINITY = "Infinity";
-
     static final String INTEGER = "integer";
 
-    static final String NAN = "NaN";
-
     static final String NULL = "null";
-
-    static final String NUMBER = "number";
-
-    static final String STRING = "string";
 
     static final String TRUE = "true";
 
@@ -103,5 +87,4 @@ final class ModelConstants {
     private ModelConstants() {
         // forbidden instantiation
     }
-
 }

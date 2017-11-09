@@ -13,50 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import org.jboss.hal.dmr.stream.ModelException;
+import org.jboss.hal.dmr.stream.ModelWriter;
 
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
 final class PropertyModelValue extends ModelValue {
 
-    /**
-     * JSON Key used to identify PropertyModelValue.
-     */
-    public static final String TYPE_KEY = "PROPERTY_VALUE";
     private final Property property;
 
-    PropertyModelValue(final String name, final ModelNode value) {
+    PropertyModelValue(String name, ModelNode value) {
         this(new Property(name, value));
     }
 
-    PropertyModelValue(final Property property) {
+    private PropertyModelValue(Property property) {
         super(ModelType.PROPERTY);
         if (property == null) {
             throw new IllegalArgumentException("property is null");
@@ -64,16 +44,21 @@ final class PropertyModelValue extends ModelValue {
         this.property = property;
     }
 
-    PropertyModelValue(final DataInput in) throws IOException {
+    PropertyModelValue(DataInput in) {
         super(ModelType.PROPERTY);
-        final ModelNode node = new ModelNode();
-        final String name = in.readUTF();
+        ModelNode node = new ModelNode();
+        String name = in.readUTF();
         node.readExternal(in);
         property = new Property(name, node);
     }
 
+    PropertyModelValue(String key, ModelNode node, boolean copy) {
+        this(new Property(key, node, copy));
+    }
+
     @Override
-    void writeExternal(final DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
+        out.write(ModelType.PROPERTY.typeChar);
         out.writeUTF(property.getName());
         property.getValue().writeExternal(out);
     }
@@ -86,7 +71,7 @@ final class PropertyModelValue extends ModelValue {
 
     @Override
     String asString() {
-        return "(" + quote(property.getName()) + " => " + property.getValue() + ")";
+        return String.format("(%s => %s)", quote(property.getName()), property.getValue());
     }
 
     @Override
@@ -101,7 +86,7 @@ final class PropertyModelValue extends ModelValue {
 
     @Override
     ModelNode asObject() {
-        final ModelNode node = new ModelNode();
+        ModelNode node = new ModelNode();
         node.get(property.getName()).set(property.getValue());
         return node;
     }
@@ -117,12 +102,12 @@ final class PropertyModelValue extends ModelValue {
     }
 
     @Override
-    ModelNode getChild(final String name) {
+    ModelNode getChild(String name) {
         return property.getName().equals(name) ? property.getValue() : super.getChild(name);
     }
 
     @Override
-    ModelNode getChild(final int index) {
+    ModelNode getChild(int index) {
         return index == 0 ? property.getValue() : super.getChild(index);
     }
 
@@ -132,18 +117,13 @@ final class PropertyModelValue extends ModelValue {
     }
 
     @Override
-    ModelValue resolve() {
-        return new PropertyModelValue(property.getName(), property.getValue().resolve());
-    }
-
-    @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         return other instanceof PropertyModelValue && equals((PropertyModelValue) other);
     }
 
-    public boolean equals(final PropertyModelValue other) {
-        return this == other || other != null && other.property.getName().equals(property.getName()) && other.property
-                .getValue().equals(property.getValue());
+    public boolean equals(PropertyModelValue other) {
+        return this == other || other != null && other.property.getName().equals(property.getName())
+                && other.property.getValue().equals(property.getValue());
     }
 
     @Override
@@ -152,43 +132,17 @@ final class PropertyModelValue extends ModelValue {
     }
 
     @Override
-    boolean has(final String key) {
+    boolean has(String key) {
         return key.equals(property.getName());
     }
 
     @Override
-    ModelNode requireChild(final String name) throws NoSuchElementException {
+    ModelNode requireChild(String name) throws NoSuchElementException {
         return property.getName().equals(name) ? property.getValue() : super.requireChild(name);
     }
 
     @Override
-    /*void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLineRequested) {
-        builder.append('{');
-        builder.append(quote(property.getName()));
-        builder.append(" : ");
-        property.getValue().formatAsJSON(builder, indent, multiLineRequested);
-        builder.append('}');
-    }     */
-
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLineRequested) {
-        builder.append('{');
-        if (multiLineRequested) {
-            indent(builder.append('\n'), indent + 1);
-        } else {
-            builder.append(' ');
-        }
-        builder.append(jsonEscape(TYPE_KEY));
-        builder.append(" : ");
-        formatPropertyAsJSON(builder, indent + 1, multiLineRequested);
-        if (multiLineRequested) {
-            indent(builder.append('\n'), indent);
-        } else {
-            builder.append(' ');
-        }
-        builder.append('}');
-    }
-
-    private void formatPropertyAsJSON(final StringBuilder writer, final int indent, final boolean multiLineRequested) {
+    void formatAsJSON(PrintWriter writer, int indent, boolean multiLineRequested) {
         writer.append('{');
         if (multiLineRequested) {
             indent(writer.append('\n'), indent + 1);
@@ -205,4 +159,13 @@ final class PropertyModelValue extends ModelValue {
         }
         writer.append('}');
     }
+
+    @Override
+    void write(ModelWriter writer) throws IOException, ModelException {
+        writer.writePropertyStart();
+        writer.writeString(property.getName());
+        property.getValue().write(writer);
+        writer.writePropertyEnd();
+    }
+
 }

@@ -13,73 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
+class DataInput {
 
-/**
- * see also http://quake2-gwt-port.googlecode.com/hg/src/com/google/gwt/corp/emul/java/io/DataInputStream.java?r=5c7c4b545ff4a8875b4cab5d77492d37e150d46b
- */
-public class DataInput {
-
+    private static final int EOF = -1;
     private final byte[] bytes;
-    private int pos = 0;
+    private int pos;
 
-    public DataInput(byte[] bytes) {
+    DataInput(byte[] bytes) {
         this.bytes = bytes;
+        this.pos = 0;
     }
 
-    public int read() throws IOException {
+    // ------------------------------------------------------ read a-z
+
+    private int read() {
         if (pos >= bytes.length) {
-            return -1;
+            return EOF;
         }
         return bytes[pos++] & 0xFF;
     }
 
-    public boolean readBoolean() throws IOException {
+    boolean readBoolean() {
         return readByte() != 0;
     }
 
-    public byte readByte() throws IOException {
+    byte readByte() {
         int i = read();
-        if (i == -1) {
+        if (i == EOF) {
             throw new RuntimeException("EOF");
         }
         return (byte) i;
     }
 
-    public char readChar() throws IOException {
-        int a = readUnsignedByte();
-        int b = readUnsignedByte();
-        return (char) ((a << 8) | b);
-    }
-
-    public double readDouble() throws IOException {
+    double readDouble() {
         // See  https://issues.jboss.org/browse/AS7-4126
-        //return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
+        // return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
         byte[] doubleBytes = new byte[8];
         readFully(doubleBytes);
-
         return IEEE754.toDouble(
                 doubleBytes[0],
                 doubleBytes[1],
@@ -91,11 +63,13 @@ public class DataInput {
                 doubleBytes[7]);
     }
 
-    public float readFloat() throws IOException {
-        return IEEE754.toFloat(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
+    void readFully(byte[] b) {
+        for (int i = 0; i < b.length; i++) {
+            b[i] = bytes[pos++];
+        }
     }
 
-    public int readInt() throws IOException {
+    int readInt() {
         int a = readUnsignedByte();
         int b = readUnsignedByte();
         int c = readUnsignedByte();
@@ -103,14 +77,9 @@ public class DataInput {
         return (a << 24) | (b << 16) | (c << 8) | d;
     }
 
-    public String readLine() throws IOException {
-        throw new RuntimeException("readline NYI");
-    }
-
-    public long readLong() throws IOException {
+    long readLong() {
         byte[] longBytes = new byte[8];
         readFully(longBytes);
-
         return (((long) longBytes[0] << 56) +
                 ((long) (longBytes[1] & 255) << 48) +
                 ((long) (longBytes[2] & 255) << 40) +
@@ -119,27 +88,33 @@ public class DataInput {
                 ((longBytes[5] & 255) << 16) +
                 ((longBytes[6] & 255) << 8) +
                 ((longBytes[7] & 255) << 0));
-
     }
 
-    public short readShort() throws IOException {
+    int readUnsignedByte() {
+        int i = read();
+        if (i == EOF) {
+            throw new RuntimeException("EOF");
+        }
+        return i;
+    }
+
+    private int readUnsignedShort() {
         int a = readUnsignedByte();
         int b = readUnsignedByte();
-        return (short) ((a << 8) | b);
+        return ((a << 8) | b);
     }
 
-    public String readUTF() throws IOException {
+    String readUTF() {
         int bytes = readUnsignedShort();
         StringBuilder sb = new StringBuilder();
 
         while (bytes > 0) {
-            bytes -= readUtfChar(sb);
+            bytes -= readUTFChar(sb);
         }
-
         return sb.toString();
     }
 
-    private int readUtfChar(StringBuilder sb) throws IOException {
+    private int readUTFChar(StringBuilder sb) {
         int a = readUnsignedByte();
         if (a < 0x80) {
             sb.append((char) a);
@@ -176,31 +151,6 @@ public class DataInput {
         } else {
             sb.append('?');
             return 1;
-        }
-    }
-
-    public int readUnsignedByte() throws IOException {
-        int i = read();
-        if (i == -1) {
-            throw new RuntimeException("EOF");
-        }
-        return i;
-    }
-
-    public int readUnsignedShort() throws IOException {
-        int a = readUnsignedByte();
-        int b = readUnsignedByte();
-        return ((a << 8) | b);
-    }
-
-    public int skipBytes(int n) throws IOException {
-        // note: This is actually a valid implementation of this method, rendering it quite useless...
-        return 0;
-    }
-
-    public void readFully(byte[] b) {
-        for (int i = 0; i < b.length; i++) {
-            b[i] = bytes[pos++];
         }
     }
 }

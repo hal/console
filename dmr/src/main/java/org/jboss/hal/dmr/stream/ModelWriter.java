@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dmr2.stream;
+package org.jboss.hal.dmr.stream;
 
 import java.io.Flushable;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.jboss.hal.dmr.dmr2.ModelType;
+import org.jboss.hal.dmr.ModelType;
 
 /**
  * DMR writer. Instances of this interface are not thread safe.

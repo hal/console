@@ -13,29 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -44,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import org.jboss.hal.dmr.stream.ModelException;
+import org.jboss.hal.dmr.stream.ModelWriter;
 
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
@@ -57,18 +42,18 @@ final class ObjectModelValue extends ModelValue {
         map = new LinkedHashMap<>();
     }
 
-    private ObjectModelValue(final Map<String, ModelNode> map) {
+    private ObjectModelValue(Map<String, ModelNode> map) {
         super(ModelType.OBJECT);
         this.map = map;
     }
 
-    ObjectModelValue(final DataInput in) throws IOException {
+    ObjectModelValue(DataInput in) {
         super(ModelType.OBJECT);
-        final int count = in.readInt();
-        final LinkedHashMap<String, ModelNode> map = new LinkedHashMap<>();
+        int count = in.readInt();
+        LinkedHashMap<String, ModelNode> map = new LinkedHashMap<>();
         for (int i = 0; i < count; i++) {
-            final String key = in.readUTF();
-            final ModelNode value = new ModelNode();
+            String key = in.readUTF();
+            ModelNode value = new ModelNode();
             value.readExternal(in);
             map.put(key, value);
         }
@@ -76,11 +61,12 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(final DataOutput out) throws IOException {
-        final Map<String, ModelNode> map = this.map;
-        final int size = map.size();
+    void writeExternal(DataOutput out) {
+        out.write(ModelType.OBJECT.typeChar);
+        Map<String, ModelNode> map = this.map;
+        int size = map.size();
         out.writeInt(size);
-        for (final Map.Entry<String, ModelNode> entry : map.entrySet()) {
+        for (Map.Entry<String, ModelNode> entry : map.entrySet()) {
             out.writeUTF(entry.getKey());
             entry.getValue().writeExternal(out);
         }
@@ -88,8 +74,8 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     ModelValue protect() {
-        final Map<String, ModelNode> map = this.map;
-        for (final ModelNode node : map.values()) {
+        Map<String, ModelNode> map = this.map;
+        for (ModelNode node : map.values()) {
             node.protect();
         }
         return map.getClass() == LinkedHashMap.class ? new ObjectModelValue(Collections.unmodifiableMap(map)) : this;
@@ -101,21 +87,21 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    ModelNode getChild(final String name) {
+    ModelNode getChild(String name) {
         if (name == null) {
             return null;
         }
-        final ModelNode node = map.get(name);
+        ModelNode node = map.get(name);
         if (node != null) {
             return node;
         }
-        final ModelNode newNode = new ModelNode();
+        ModelNode newNode = new ModelNode();
         map.put(name, newNode);
         return newNode;
     }
 
     @Override
-    ModelNode removeChild(final String name) {
+    ModelNode removeChild(String name) {
         if (name == null) {
             return null;
         }
@@ -128,7 +114,7 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    int asInt(final int defVal) {
+    int asInt(int defVal) {
         return asInt();
     }
 
@@ -138,7 +124,7 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    long asLong(final long defVal) {
+    long asLong(long defVal) {
         return asInt();
     }
 
@@ -148,14 +134,14 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    boolean asBoolean(final boolean defVal) {
+    boolean asBoolean(boolean defVal) {
         return !map.isEmpty();
     }
 
     @Override
     Property asProperty() {
         if (map.size() == 1) {
-            final Map.Entry<String, ModelNode> entry = map.entrySet().iterator().next();
+            Map.Entry<String, ModelNode> entry = map.entrySet().iterator().next();
             return new Property(entry.getKey(), entry.getValue());
         }
         return super.asProperty();
@@ -163,8 +149,8 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     List<Property> asPropertyList() {
-        final List<Property> propertyList = new ArrayList<>();
-        for (final Map.Entry<String, ModelNode> entry : map.entrySet()) {
+        List<Property> propertyList = new ArrayList<>();
+        for (Map.Entry<String, ModelNode> entry : map.entrySet()) {
             propertyList.add(new Property(entry.getKey(), entry.getValue()));
         }
         return propertyList;
@@ -172,27 +158,18 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     ModelValue copy() {
-        return copy(false);
-    }
-
-    @Override
-    ModelValue resolve() {
-        return copy(true);
-    }
-
-    ModelValue copy(final boolean resolve) {
-        final LinkedHashMap<String, ModelNode> newMap = new LinkedHashMap<>();
-        for (final Map.Entry<String, ModelNode> entry : map.entrySet()) {
-            newMap.put(entry.getKey(), resolve ? entry.getValue().resolve() : entry.getValue().clone());
+        LinkedHashMap<String, ModelNode> newMap = new LinkedHashMap<>();
+        for (Map.Entry<String, ModelNode> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), entry.getValue().clone());
         }
         return new ObjectModelValue(newMap);
     }
 
     @Override
     List<ModelNode> asList() {
-        final ArrayList<ModelNode> nodes = new ArrayList<>();
-        for (final Map.Entry<String, ModelNode> entry : map.entrySet()) {
-            final ModelNode node = new ModelNode();
+        ArrayList<ModelNode> nodes = new ArrayList<>();
+        for (Map.Entry<String, ModelNode> entry : map.entrySet()) {
+            ModelNode node = new ModelNode();
             node.set(entry.getKey(), entry.getValue());
             nodes.add(node);
         }
@@ -206,65 +183,66 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     String asString() {
-        final StringBuilder builder = new StringBuilder();
-        format(builder, 0, false);
-        return builder.toString();
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter, true);
+        format(writer, 0, false);
+        return stringWriter.toString();
     }
 
     @Override
-    void format(final StringBuilder builder, final int indent, final boolean multiLineRequested) {
-        builder.append('{');
-        final boolean multiLine = multiLineRequested && map.size() > 1;
+    void format(PrintWriter writer, int indent, boolean multiLineRequested) {
+        writer.append('{');
+        boolean multiLine = multiLineRequested && map.size() > 1;
         if (multiLine) {
-            indent(builder.append('\n'), indent + 1);
+            indent(writer.append('\n'), indent + 1);
         }
-        final Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            final Map.Entry<String, ModelNode> entry = iterator.next();
-            builder.append(quote(entry.getKey()));
-            final ModelNode value = entry.getValue();
-            builder.append(" => ");
-            value.format(builder, multiLine ? indent + 1 : indent, multiLineRequested);
+            Map.Entry<String, ModelNode> entry = iterator.next();
+            writer.append(quote(entry.getKey()));
+            ModelNode value = entry.getValue();
+            writer.append(" => ");
+            value.format(writer, multiLine ? indent + 1 : indent, multiLineRequested);
             if (iterator.hasNext()) {
                 if (multiLine) {
-                    indent(builder.append(",\n"), indent + 1);
+                    indent(writer.append(",\n"), indent + 1);
                 } else {
-                    builder.append(',');
+                    writer.append(',');
                 }
             }
         }
         if (multiLine) {
-            indent(builder.append('\n'), indent);
+            indent(writer.append('\n'), indent);
         }
-        builder.append('}');
+        writer.append('}');
     }
 
     @Override
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLineRequested) {
-        builder.append('{');
-        final boolean multiLine = multiLineRequested && map.size() > 1;
+    void formatAsJSON(PrintWriter writer, int indent, boolean multiLineRequested) {
+        writer.append('{');
+        boolean multiLine = multiLineRequested && map.size() > 1;
         if (multiLine) {
-            indent(builder.append('\n'), indent + 1);
+            indent(writer.append('\n'), indent + 1);
         }
-        final Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            final Map.Entry<String, ModelNode> entry = iterator.next();
-            builder.append(quote(entry.getKey()));
-            builder.append(" : ");
-            final ModelNode value = entry.getValue();
-            value.formatAsJSON(builder, multiLine ? indent + 1 : indent, multiLineRequested);
+            Map.Entry<String, ModelNode> entry = iterator.next();
+            writer.append(quote(entry.getKey()));
+            writer.append(" : ");
+            ModelNode value = entry.getValue();
+            value.formatAsJSON(writer, multiLine ? indent + 1 : indent, multiLineRequested);
             if (iterator.hasNext()) {
                 if (multiLine) {
-                    indent(builder.append(",\n"), indent + 1);
+                    indent(writer.append(",\n"), indent + 1);
                 } else {
-                    builder.append(", ");
+                    writer.append(", ");
                 }
             }
         }
         if (multiLine) {
-            indent(builder.append('\n'), indent);
+            indent(writer.append('\n'), indent);
         }
-        builder.append('}');
+        writer.append('}');
     }
 
     /**
@@ -275,7 +253,7 @@ final class ObjectModelValue extends ModelValue {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         return other instanceof ObjectModelValue && equals((ObjectModelValue) other);
     }
 
@@ -286,7 +264,7 @@ final class ObjectModelValue extends ModelValue {
      *
      * @return {@code true} if they are equal, {@code false} otherwise
      */
-    public boolean equals(final ObjectModelValue other) {
+    public boolean equals(ObjectModelValue other) {
         return this == other || other != null && other.map.equals(map);
     }
 
@@ -296,16 +274,30 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    boolean has(final String key) {
+    boolean has(String key) {
         return map.containsKey(key);
     }
 
     @Override
-    ModelNode requireChild(final String name) throws NoSuchElementException {
-        final ModelNode node = map.get(name);
+    ModelNode requireChild(String name) throws NoSuchElementException {
+        ModelNode node = map.get(name);
         if (node != null) {
             return node;
         }
         return super.requireChild(name);
     }
+
+    @Override
+    void write(ModelWriter writer) throws IOException, ModelException {
+        writer.writeObjectStart();
+        Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
+        Map.Entry<String, ModelNode> entry;
+        while (iterator.hasNext()) {
+            entry = iterator.next();
+            writer.writeString(entry.getKey());
+            entry.getValue().write(writer);
+        }
+        writer.writeObjectEnd();
+    }
+
 }

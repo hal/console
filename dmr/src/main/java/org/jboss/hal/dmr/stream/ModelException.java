@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dmr2.stream;
+package org.jboss.hal.dmr.stream;
 
 /**
  * DMR encoding exception.

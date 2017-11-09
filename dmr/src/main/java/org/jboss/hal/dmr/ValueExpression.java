@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dmr2;
+package org.jboss.hal.dmr;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public final class ValueExpression implements Externalizable {
      *
      * @param expressionString the expression string
      */
-    public ValueExpression(String expressionString) {
+    ValueExpression(String expressionString) {
         if (expressionString == null) {
             throw new IllegalArgumentException("expressionString is null");
         }
@@ -81,7 +81,7 @@ public final class ValueExpression implements Externalizable {
      *
      * @return the raw expression string (will not be {@code null})
      */
-    public String getExpressionString() {
+    String getExpressionString() {
         return expressionString;
     }
 

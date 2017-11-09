@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dmr2.stream;
+package org.jboss.hal.dmr.stream;
 
 /**
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
@@ -30,7 +30,7 @@ final class ModelGrammarAnalyzer {
     private boolean expectedPropertyEnd;
     private byte[] stack = new byte[8];
     private int index;
-    ModelEvent currentEvent;
+    private ModelEvent currentEvent;
     boolean finished;
 
     ModelGrammarAnalyzer() {
@@ -314,7 +314,7 @@ final class ModelGrammarAnalyzer {
         canWriteComma = false;
     }
 
-    String getExpectingTokensMessage() {
+    private String getExpectingTokensMessage() {
         if (index == 0) {
             if (!finished) {
                 return "Expecting OBJECT_START or LIST_START or PROPERTY_START or STRING or EXPRESSION or BYTES or NUMBER or BOOLEAN or TYPE or UNDEFINED";
@@ -367,11 +367,4 @@ final class ModelGrammarAnalyzer {
         currentEvent = null;
         return new ModelException(s);
     }
-
-    ModelException newModelException(String s, Throwable t) {
-        finished = true;
-        currentEvent = null;
-        return new ModelException(s, t);
-    }
-
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dmr2.stream;
+package org.jboss.hal.dmr.stream;
 
 /**
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
@@ -22,12 +22,11 @@ final class Utils {
 
     static final char[] ONES;
     static final char[] TENS;
-    static final byte[] EMPTY_BYTES = new byte[0];
     static final char[] BASE64_ENC_TABLE = new char[64];
     static final char[] BASE64_NEWLINE = "\\r\\n".toCharArray();
-    static final int[] BASE64_DEC_TABLE = new int[256];
-    static final int[] HEX_TABLE = new int[256];
-    static final int INCORRECT_DATA = -1;
+    private static final int[] BASE64_DEC_TABLE = new int[256];
+    private static final int[] HEX_TABLE = new int[256];
+    private static final int INCORRECT_DATA = -1;
 
     static {
         // initialize matrices for fast numbers encoding
@@ -81,32 +80,8 @@ final class Utils {
         }
     }
 
-    private Utils() {
-        // forbidden instantiation
-    }
-
     static boolean isControl(int c) {
         return c <= '\u001F';
-    }
-
-    static boolean isBase64Char(int c) {
-        return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || c == '+' || c == '/' || c == '=';
-    }
-
-    static boolean isWhitespace(int c) {
-        return c == ' ' || c == '\t' || c == '\r' || c == '\n';
-    }
-
-    static boolean isNumberChar(int c) {
-        return '0' <= c && c <= '9' || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E';
-    }
-
-    static boolean isDigit(int c) {
-        return '0' <= c && c <= '9';
-    }
-
-    static boolean isHexNumberChar(int c) {
-        return '0' <= c && c <= '9' || 'a' <= c && c <= 'f' || 'A' <= c && c <= 'F' || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E';
     }
 
     static int stringSizeOf(long l) {
@@ -141,4 +116,6 @@ final class Utils {
         return 10 + signSize;
     }
 
+    private Utils() {
+    }
 }
