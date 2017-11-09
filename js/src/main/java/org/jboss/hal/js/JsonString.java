@@ -13,23 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.json;
+package org.jboss.hal.js;
 
-/** Represents the Json null value. */
-public class JsonNull extends JsonValue {
+/** Represents a Json String value. */
+public class JsonString extends JsonValue {
 
-    public static JsonNull create() {
-        return createProd();
+    public static JsonString create(String string) {
+        return createProd(string);
     }
 
     /*
-     * MAGIC: If the implementation of JSOs ever changes, this could cause
-     * errors.
+     * MAGIC: String cast to object interface.
      */
-    private static native JsonNull createProd() /*-{
-        return null;
+    private static native JsonString createProd(String string) /*-{
+        // no need to box String for ProdMode and DevMode
+        return string;
     }-*/;
 
-    protected JsonNull() {
+    protected JsonString() {
     }
+
+    public final String getString() {
+        return valueProd();
+    }
+
+    private native String valueProd() /*-{
+        return @org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this);
+    }-*/;
 }

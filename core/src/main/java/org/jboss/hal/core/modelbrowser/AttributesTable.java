@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NonNls;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.UIConstants.NBSP;
 
 class AttributesTable implements IsElement {

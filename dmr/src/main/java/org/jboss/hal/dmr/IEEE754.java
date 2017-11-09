@@ -138,20 +138,32 @@ public class IEEE754 {
 
 
     public static native JsArrayInteger fromDoubleClosure(double a) /*-{
+        var f = 11; // ebits
+        var c = 52; // fbits
         var b = (1 << f - 1) - 1, d, e;
-        if (isNaN(a)) e = (1 << b) - 1, b = 1, d = 0; else if (Infinity === a || -Infinity === a) e = (1 << b) - 1, b = 0, d = 0 > a ? 1 : 0; else if (0 === a) b = e = 0, d = -Infinity === 1 / a ? 1 : 0; else if (d = 0 > a, a = Math.abs(a), a >= Math.pow(2, 1 - b)) {
+        if (isNaN(a))
+            e = (1 << b) - 1, b = 1, d = 0;
+        else if (Infinity === a || -Infinity === a)
+            e = (1 << b) - 1, b = 0, d = 0 > a ? 1 : 0;
+        else if (0 === a)
+            b = e = 0, d = -Infinity === 1 / a ? 1 : 0;
+        else if (d = 0 > a, a = Math.abs(a), a >= Math.pow(2, 1 - b)) {
             var g = Math.min(Math.floor(Math.log(a) / Math.LN2), b);
             e = g + b;
             b = a * Math.pow(2, c - g) - Math.pow(2, c)
-        } else e = 0, b = a / Math.pow(2, 1 - b - c);
-        for (a = []; c; c -= 1) a.push(b % 2 ? 1 : 0), b = Math.floor(b / 2);
-        for (c = f; c; c -= 1) a.push(e % 2 ? 1 : 0), e = Math.floor(e / 2);
+        }
+        else
+            e = 0, b = a / Math.pow(2, 1 - b - c);
+        for (a = []; c; c -= 1)
+            a.push(b % 2 ? 1 : 0), b = Math.floor(b / 2);
+        for (c = f; c; c -= 1)
+            a.push(e % 2 ? 1 : 0), e = Math.floor(e / 2);
         a.push(d ? 1 : 0);
         a.reverse();
         f = a.join("");
-        for (d = []; f.length;) d.push(parseInt(f.substring(0,
-            8), 2)), f = f.substring(8);
-        return d
+        for (d = []; f.length;)
+            d.push(parseInt(f.substring(0, 8), 2)), f = f.substring(8);
+        return d;
     }-*/;
 
 
@@ -290,6 +302,12 @@ public class IEEE754 {
             return s * 0;
         }
     }-*/;
+
+
+    //    function fromIEEE754Double(b) { return fromIEEE754(b, 11, 52); }
+    //    function   toIEEE754Double(v) { return   toIEEE754(v, 11, 52); }
+    //    function fromIEEE754Single(b) { return fromIEEE754(b,  8, 23); }
+    //    function   toIEEE754Single(v) { return   toIEEE754(v,  8, 23); }
 
     private IEEE754() {
     }

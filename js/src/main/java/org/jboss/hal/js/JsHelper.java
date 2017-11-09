@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.js;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +26,8 @@ import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
-
-import static org.jboss.gwt.elemento.core.EventType.*;
-import static org.jboss.hal.resources.CSS.ondrag;
+import org.jboss.gwt.elemento.core.EventType;
+import org.jboss.hal.resources.CSS;
 
 public final class JsHelper {
 
@@ -57,21 +56,21 @@ public final class JsHelper {
         };
         EventCallbackFn<DragEvent> addDragIndicator = event -> {
             noop.onEvent(event);
-            element.classList.add(ondrag);
+            element.classList.add(CSS.ondrag);
         };
         EventCallbackFn<DragEvent> removeDragIndicator = event -> {
             noop.onEvent(event);
-            element.classList.remove(ondrag);
+            element.classList.remove(CSS.ondrag);
         };
 
         return HandlerRegistrations.compose(
-                bind(element, drag, noop),
-                bind(element, dragstart, noop),
-                bind(element, dragenter, addDragIndicator),
-                bind(element, dragover, addDragIndicator),
-                bind(element, dragleave, removeDragIndicator),
-                bind(element, dragend, removeDragIndicator),
-                bind(element, drop, event -> {
+                EventType.bind(element, EventType.drag, noop),
+                EventType.bind(element, EventType.dragstart, noop),
+                EventType.bind(element, EventType.dragenter, addDragIndicator),
+                EventType.bind(element, EventType.dragover, addDragIndicator),
+                EventType.bind(element, EventType.dragleave, removeDragIndicator),
+                EventType.bind(element, EventType.dragend, removeDragIndicator),
+                EventType.bind(element, EventType.drop, event -> {
                     noop.onEvent(event);
                     removeDragIndicator.onEvent(event);
                     handler.onEvent(event);

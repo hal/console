@@ -393,7 +393,8 @@ public class CacheContainerPresenter
             }
 
             if (newStore.addWithDialog) {
-                Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + EQUALS + newStore.resource));
+                Metadata metadata = metadataRegistry.lookup(
+                        cacheType.template.append(STORE + EQUALS + newStore.resource));
                 String id = Ids.build(cacheType.baseId, newStore.baseId, Ids.ADD);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
                         .fromRequestProperties()

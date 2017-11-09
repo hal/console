@@ -18,6 +18,7 @@ package org.jboss.hal.meta;
 import java.util.Map;
 import java.util.Set;
 
+import org.jboss.hal.db.Document;
 import org.jboss.hal.dmr.ResourceAddress;
 import rx.Single;
 
@@ -34,8 +35,15 @@ public interface Database<T> {
     /** Returns a map with metadata whose address starts with the specified template */
     Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template);
 
-    Single<Set<String>> putAll(Map<ResourceAddress, T> metadata);
+    /** Returns metadata for a given document */
+    T asMetadata(Document document);
+
+    /** Returns a document for a given metadata */
+    Document asDocument(ResourceAddress address, T metadata);
 
     /** The type of this database. */
     String type();
+
+    /** The databas name */
+    String name();
 }

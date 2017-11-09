@@ -26,12 +26,20 @@
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
-    <artifactId>hal-json</artifactId>
-    <name>HAL :: JSON</name>
-    <description>JSON related code</description>
+    <artifactId>hal-js</artifactId>
+    <name>HAL :: JavaScrip</name>
+    <description>Low level JavaScript code</description>
     <packaging>gwt-lib</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.gwt.elemento</groupId>
+            <artifactId>elemento-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.elemental2</groupId>
             <artifactId>elemental2-core</artifactId>
@@ -44,7 +52,7 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
-                    <moduleName>org.jboss.hal.Json</moduleName>
+                    <moduleName>org.jboss.hal.JS</moduleName>
                 </configuration>
             </plugin>
         </plugins>

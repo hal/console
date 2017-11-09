@@ -21,6 +21,7 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.WorkerChannel;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.GinModule;
@@ -37,5 +38,6 @@ public class MetaModule extends AbstractGinModule {
         bind(ResourceDescriptionRegistry.class).in(Singleton.class);
         bind(SecurityContextDatabase.class).in(Singleton.class);
         bind(SecurityContextRegistry.class).in(Singleton.class);
+        bind(WorkerChannel.class).in(Singleton.class);
     }
 }

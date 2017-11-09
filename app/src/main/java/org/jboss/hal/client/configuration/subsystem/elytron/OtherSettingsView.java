@@ -148,7 +148,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                                 nodes -> updateResourceElement(KEY_MANAGER.resource, nodes)))
                         .onAdd(() -> presenter.addKeyManager())
                         .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
-                                new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
+                                new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT),
+                                        mbuiContext.resources()))
                         .build(),
                 Ids.ELYTRON_SSL_ITEM,
                 Ids.build(KEY_MANAGER.baseId, Ids.ITEM),

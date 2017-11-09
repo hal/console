@@ -40,4 +40,12 @@ class LookupContext extends FlowContext {
         toSecurityContextRegistry = new HashMap<>();
         toSecurityContextDatabase = new HashMap<>();
     }
+
+    boolean updateDatabase() {
+        return !toResourceDescriptionDatabase.isEmpty() || !toSecurityContextDatabase.isEmpty();
+    }
+
+    boolean updateRegistry() {
+        return !toResourceDescriptionRegistry.isEmpty() || !toSecurityContextRegistry.isEmpty();
+    }
 }

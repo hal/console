@@ -40,12 +40,19 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
     }
 
     @Override
-    protected SecurityContext asMetadata(Document document) {
+    public String name() {
+        return Ids.build("hal-db-sc",
+                environment.getHalBuild().name(),
+                environment.getManagementVersion().toString());
+    }
+
+    @Override
+    public SecurityContext asMetadata(Document document) {
         return new SecurityContext(ModelNode.fromBase64(document.getAny(PAYLOAD).asString()));
     }
 
     @Override
-    protected Document asDocument(ResourceAddress address, SecurityContext securityContext) {
+    public Document asDocument(ResourceAddress address, SecurityContext securityContext) {
         Document document = Document.of(address.toString());
         document.set(PAYLOAD, securityContext.toBase64String());
         return document;
@@ -55,10 +62,7 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
     @Override
     protected PouchDB database() {
         if (database == null) {
-            String name = Ids.build("hal-db-sc",
-                    environment.getHalBuild().name(),
-                    environment.getManagementVersion().toString());
-            database = new PouchDB(name);
+            database = new PouchDB(name());
         }
         return database;
     }

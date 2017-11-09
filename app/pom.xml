@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-json</artifactId>
+            <artifactId>hal-js</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -163,10 +163,6 @@
                         </fileset>
                         <fileset>
                             <directory>src/main/resources/org/jboss/hal/public/js</directory>
-                            <excludes>
-                                <exclude>mode-logfile.js</exclude>
-                                <exclude>theme-logfile.js</exclude>
-                            </excludes>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -256,7 +252,7 @@
                                 <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../js/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
@@ -287,7 +283,7 @@
                                 <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../js/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
@@ -321,7 +317,7 @@
                                 <source>../db/src/main/java</source>
                                 <source>../dmr/src/main/java</source>
                                 <source>../flow/src/main/java</source>
-                                <source>../json/src/main/java</source>
+                                <source>../js/src/main/java</source>
                                 <source>../meta/src/main/java</source>
                                 <source>../resources/src/main/java</source>
                                 <source>../spi/src/main/java</source>
@@ -353,19 +349,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>mbui</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>mbui</classifier>
-                            <includes>
-                                <include>**/*.mbui.xml</include>
-                            </includes>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>resource-jar</id>
                         <phase>package</phase>

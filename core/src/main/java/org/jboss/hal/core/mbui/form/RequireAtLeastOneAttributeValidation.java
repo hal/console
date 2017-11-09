@@ -44,7 +44,7 @@ public class RequireAtLeastOneAttributeValidation<T extends ModelNode> implement
         LabelBuilder labelBuilder = new LabelBuilder();
         List<String> nonEmptyItems = requiresAtLeast.stream()
                 .map(form::getFormItem)
-                .filter(formItem -> formItem != null &&  !formItem.isEmpty())
+                .filter(formItem -> formItem != null && !formItem.isEmpty())
                 .map(FormItem::getName)
                 .collect(toList());
 

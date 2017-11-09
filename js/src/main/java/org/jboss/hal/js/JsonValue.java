@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.json;
+package org.jboss.hal.js;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
@@ -32,12 +32,12 @@ public class JsonValue extends JavaScriptObject {
     }-*/;
 
     static native String getJsType(Object obj) /*-{
-        return typeof @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(obj);
+        return typeof @org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(obj);
     }-*/;
 
     static native boolean isArray(Object obj) /*-{
         // ensure that array detection works cross-frame
-        return Object.prototype.toString.apply(@org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(obj)) === '[object Array]';
+        return Object.prototype.toString.apply(@org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(obj)) === '[object Array]';
     }-*/;
 
     private static native boolean isNull(JsonValue jsJsonValue) /*-{
@@ -50,8 +50,8 @@ public class JsonValue extends JavaScriptObject {
 
     public final native boolean asBoolean() /*-{
         return @com.google.gwt.core.client.GWT::isScript()() || this == null ?
-            !!@org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this) :
-            (!!@org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this)).valueOf();
+            !!@org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this) :
+            (!!@org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this)).valueOf();
     }-*/;
 
     public final native double asNumber() /*-{
@@ -59,14 +59,14 @@ public class JsonValue extends JavaScriptObject {
             return 0;
         }
         return @com.google.gwt.core.client.GWT::isScript()() ?
-            +@org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this) :
-            (+@org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this)).valueOf();
+            +@org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this) :
+            (+@org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this)).valueOf();
     }-*/;
 
     // avoid casts, as compiler will throw CCE trying to cast a raw JS String to an interface
     public final native String asString() /*-{
         return this == null ? null :
-            ("" + @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this));
+            ("" + @org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this));
     }-*/;
 
     public final JsonType getType() {
@@ -88,8 +88,8 @@ public class JsonValue extends JavaScriptObject {
     }
 
     public final native boolean jsEquals(JsonValue value) /*-{
-        return @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this)
-            === @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(value);
+        return @org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this)
+            === @org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(value);
     }-*/;
 
     public final native String toJson() /*-{
@@ -103,6 +103,6 @@ public class JsonValue extends JavaScriptObject {
     }-*/;
 
     public final native Object toNative() /*-{
-        return @org.jboss.hal.json.JsonValue::debox(Lorg/jboss/hal/json/JsonValue;)(this);
+        return @org.jboss.hal.js.JsonValue::debox(Lorg/jboss/hal/js/JsonValue;)(this);
     }-*/;
 }

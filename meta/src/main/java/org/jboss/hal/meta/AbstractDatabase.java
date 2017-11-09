@@ -15,11 +15,9 @@
  */
 package org.jboss.hal.meta;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.hal.db.Document;
 import org.jboss.hal.db.PouchDB;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
@@ -28,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import rx.Single;
 
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
@@ -88,29 +85,9 @@ public abstract class AbstractDatabase<T> implements Database<T> {
     }
 
     @Override
-    public Single<Set<String>> putAll(Map<ResourceAddress, T> metadata) {
-        List<Document> documents = metadata.entrySet().stream()
-                .map(entry -> asDocument(entry.getKey(), entry.getValue()))
-                .collect(toList());
-        return Single.create(em -> database().putAll(documents)
-                .then(ids -> {
-                    em.onSuccess(ids);
-                    return null;
-                })
-                .catch_(failure -> {
-                    em.onError(new RuntimeException(String.valueOf(failure)));
-                    return null;
-                }));
-    }
-
-    @Override
     public String type() {
         return type;
     }
-
-    protected abstract T asMetadata(Document document);
-
-    protected abstract Document asDocument(ResourceAddress address, T metadata);
 
     protected abstract PouchDB database();
 }

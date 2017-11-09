@@ -25,6 +25,7 @@ module.exports = function (grunt) {
         config: {
             version: '0.9.2-SNAPSHOT',
             bower: 'bower_components',
+            js: 'src/main/js',
             less: 'src/main/less',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
@@ -40,10 +41,7 @@ module.exports = function (grunt) {
                 '<%= config.public %>/css/**',
                 '<%= config.public %>/fonts/**',
                 '<%= config.public %>/img/**',
-                '<%= config.public %>/js/*.js',
-                '<%= config.public %>/js/*.swf',
-                '!<%= config.public %>/js/mode-logfile.js',
-                '!<%= config.public %>/js/theme-logfile.js'
+                '<%= config.public %>/js/**'
             ]
         },
 
@@ -72,6 +70,18 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= config.bower %>/zeroclipboard/dist',
                         src: 'ZeroClipboard.swf',
+                        dest: '<%= config.public %>/js'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= config.bower %>/pouchdb/dist',
+                        src: ['pouchdb.js', 'pouchdb.min.js'],
+                        dest: '<%= config.public %>/js'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= config.js %>',
+                        src: '*.js',
                         dest: '<%= config.public %>/js'
                     },
                     {

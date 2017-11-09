@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.autocomplete;
-
-import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.js.JsonObject;
-
-interface ResultProcessor {
-
-    JsonObject[] process(String query, ModelNode nodes);
-
-    JsonObject[] process(String query, CompositeResult compositeResult);
-}
+self.importScripts("pouchdb.min.js");
+self.addEventListener("message", function (e) {
+    var db = new PouchDB(e.data.database);
+    db.put(e.data.document)
+        .then(function (response) {
+            console.log("Successfully put " + e.data.database + response.id);
+        })
+        .catch(function (error) {
+            if (error.name === 'conflict') {
+                console.log("Ignore conflict for " + e.data.database + e.data.document._id);
+            } else {
+                console.log("Unable to put " + e.data.database + e.data.document._id + ": " + failure);
+            }
+        });
+}, false);

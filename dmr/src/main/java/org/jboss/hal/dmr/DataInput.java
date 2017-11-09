@@ -111,7 +111,6 @@ public class DataInput {
         byte[] longBytes = new byte[8];
         readFully(longBytes);
 
-        //noinspection PointlessBitwiseExpression
         return (((long) longBytes[0] << 56) +
                 ((long) (longBytes[1] & 255) << 48) +
                 ((long) (longBytes[2] & 255) << 40) +
@@ -204,5 +203,4 @@ public class DataInput {
             b[i] = bytes[pos++];
         }
     }
-
 }

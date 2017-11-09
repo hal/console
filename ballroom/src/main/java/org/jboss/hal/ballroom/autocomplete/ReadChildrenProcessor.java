@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -65,6 +65,11 @@
             <distribution>repo</distribution>
         </license>
         <license>
+            <name>GNU Lesser General Public License v3.0 only</name>
+            <url>http://repository.jboss.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
             <name>MIT License</name>
             <url>http://repository.jboss.org/licenses/mit.txt</url>
             <distribution>repo</distribution>
@@ -120,7 +125,7 @@
         <module>dmr</module>
         <module>flow</module>
         <module>fraction</module>
-        <module>json</module>
+        <module>js</module>
         <module>meta</module>
         <module>parent-with-dependencies</module>
         <module>parent-with-gwt</module>

@@ -25,7 +25,9 @@ import com.google.common.collect.ImmutableMap;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
 
-import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.*;
+import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.DB2;
+import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.POSTGRE_SQL;
+import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.SQL_SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** List of well known datasource templates */
@@ -79,7 +81,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         xaDataSource.get(USER_NAME).set(SA);
         xaDataSource.get(PASSWORD).set(SA);
         xaDataSource.get(BACKGROUND_VALIDATION).set(false);
-        setup.add(new DataSourceTemplate("h2-xa", DataSourceTemplate.Vendor.H2, xaDataSource, driver, properties("URL", "jdbc:h2:mem:test")));
+        setup.add(new DataSourceTemplate("h2-xa", DataSourceTemplate.Vendor.H2, xaDataSource, driver,
+                properties("URL", "jdbc:h2:mem:test")));
 
 
         // ------------------------------------------------------ PostgreSQL

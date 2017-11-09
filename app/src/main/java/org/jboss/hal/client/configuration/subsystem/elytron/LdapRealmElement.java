@@ -43,11 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
-import static org.jboss.hal.resources.Ids.FORM;
-import static org.jboss.hal.resources.Ids.PAGE;
-import static org.jboss.hal.resources.Ids.PAGES;
-import static org.jboss.hal.resources.Ids.TAB;
-import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
+import static org.jboss.hal.resources.Ids.*;
 
 public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, HasPresenter<RealmsPresenter> {
 

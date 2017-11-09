@@ -79,12 +79,12 @@ import org.slf4j.LoggerFactory;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.ballroom.JsHelper.asJsMap;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
+import static org.jboss.hal.js.JsHelper.asJsMap;
 
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 

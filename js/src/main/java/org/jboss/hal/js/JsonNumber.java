@@ -13,9 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.json;
+package org.jboss.hal.js;
 
-/** Represents the type of the underlying JsonValue. */
-public enum JsonType {
-    OBJECT, ARRAY, STRING, NUMBER, BOOLEAN, NULL;
+/** Represents a Json number value. */
+public class JsonNumber extends JsonValue {
+
+    public static JsonNumber create(double number) {
+        return createProd(number);
+    }
+
+    /*
+     * MAGIC: primitive number cast to object interface.
+     */
+    private static native JsonNumber createProd(double number) /*-{
+        return Object(number);
+    }-*/;
+
+    protected JsonNumber() {
+    }
+
+    public final double getNumber() {
+        return valueProd();
+    }
+
+    private native double valueProd() /*-{
+        return this && this.valueOf();
+    }-*/;
 }

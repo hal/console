@@ -23,8 +23,8 @@ import com.google.gwt.safehtml.shared.UriUtils;
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.json.JsonArray;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonArray;
+import org.jboss.hal.js.JsonObject;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SCRIPT;

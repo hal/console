@@ -32,7 +32,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;

@@ -50,8 +50,8 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.json.Json;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.Json;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.EsReturn;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
@@ -64,7 +64,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUCCESS;
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
 @JsType
-@SuppressWarnings({"HardCodedStringLiteral", "Duplicates", "DuplicateStringLiteralInspection"})
 public class ModelNode implements Cloneable {
 
     /**
@@ -302,7 +301,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @SuppressWarnings("WeakerAccess")
     public Property asProperty() throws IllegalArgumentException {
         return value.asProperty();
     }
@@ -335,7 +333,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @SuppressWarnings("WeakerAccess")
     public ModelNode asObject() throws IllegalArgumentException {
         return value.asObject();
     }
@@ -739,7 +736,6 @@ public class ModelNode implements Cloneable {
      * @return this node
      */
     @JsIgnore
-    @SuppressWarnings("unused")
     public ModelNode setExpression(final String propertyName, final String propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -846,7 +842,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
     public ModelNode setEmptyList() {
         checkProtect();
         value = new ListModelValue();
@@ -858,7 +853,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @SuppressWarnings("UnusedReturnValue")
     public ModelNode setEmptyObject() {
         checkProtect();
         value = new ObjectModelValue();
@@ -1035,7 +1029,6 @@ public class ModelNode implements Cloneable {
      * @return this node
      */
     @JsIgnore
-    @SuppressWarnings("unused")
     public ModelNode addExpression(final String newValue) {
         add().setExpression(newValue);
         return this;
@@ -1269,7 +1262,6 @@ public class ModelNode implements Cloneable {
      * @return the new node
      */
     @JsIgnore
-    @SuppressWarnings("unused")
     public ModelNode addEmptyList() {
         final ModelNode node = add();
         node.setEmptyList();
@@ -1283,7 +1275,6 @@ public class ModelNode implements Cloneable {
      * @return the new node
      */
     @JsIgnore
-    @SuppressWarnings("unused")
     public ModelNode addEmptyObject() {
         final ModelNode node = add();
         node.setEmptyObject();
@@ -1402,28 +1393,22 @@ public class ModelNode implements Cloneable {
      * @return The JSON string.
      */
     @JsIgnore
-    @SuppressWarnings("unused")
     public String toJSONString(final boolean compact) {
         return value.toJSONString(compact);
     }
 
     @JsIgnore
-    @SuppressWarnings("unused")
     public String toJSONString() {
         return value.toJSONString(false);
     }
 
     public String toBase64String() {
         DataOutput out = new DataOutput();
-        try {
-            writeExternal(out);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        writeExternal(out);
         try {
             return btoa(new String(out.getBytes(), "ISO-8859-1"));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Failed to encode string:" + e.getMessage());
+            throw new RuntimeException("Failed to encode string: " + e.getMessage());
         }
     }
 
@@ -1474,7 +1459,6 @@ public class ModelNode implements Cloneable {
     @JsIgnore
     @Override
     public int hashCode() {
-        //noinspection NonFinalFieldReferencedInHashCode
         return value.hashCode();
     }
 
@@ -1484,7 +1468,6 @@ public class ModelNode implements Cloneable {
      * @return the clone
      */
     @JsIgnore
-    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public ModelNode clone() {
         final ModelNode clone = new ModelNode();
         clone.value = value.copy();
@@ -1522,11 +1505,15 @@ public class ModelNode implements Cloneable {
      *
      * @throws IOException if an I/O error occurs
      */
-    void writeExternal(final DataOutput out) throws IOException {
+    public void writeExternal(final DataOutput out) {
         final ModelValue value = this.value;
         final ModelType type = value.getType();
-        out.writeByte(type.getTypeChar());
-        value.writeExternal(out);
+        try {
+            out.writeByte(type.getTypeChar());
+            value.writeExternal(out);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write to external data output: " + e.getMessage());
+        }
     }
 
     /**
@@ -1621,7 +1608,6 @@ public class ModelNode implements Cloneable {
     }
 
     @JsIgnore
-    @SuppressWarnings({"unused", "WeakerAccess"})
     public void setTag(String name, Object value) {
         if (tags == null) {
             tags = new HashMap<>(2);
@@ -1630,7 +1616,6 @@ public class ModelNode implements Cloneable {
     }
 
     @JsIgnore
-    @SuppressWarnings("unused")
     public Object getTag(String name) {
         if (tags == null) {
             return null;

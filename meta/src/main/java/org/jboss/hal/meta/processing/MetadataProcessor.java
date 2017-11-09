@@ -29,6 +29,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -72,6 +73,7 @@ public class MetadataProcessor {
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final SecurityContextDatabase securityContextDatabase;
     private final SecurityContextRegistry securityContextRegistry;
+    private final WorkerChannel workerChannel;
 
     @Inject
     @JsIgnore
@@ -83,7 +85,8 @@ public class MetadataProcessor {
             SecurityContextDatabase securityContextDatabase,
             SecurityContextRegistry securityContextRegistry,
             ResourceDescriptionDatabase resourceDescriptionDatabase,
-            ResourceDescriptionRegistry resourceDescriptionRegistry) {
+            ResourceDescriptionRegistry resourceDescriptionRegistry,
+            WorkerChannel workerChannel) {
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -93,6 +96,7 @@ public class MetadataProcessor {
         this.securityContextRegistry = securityContextRegistry;
         this.resourceDescriptionDatabase = resourceDescriptionDatabase;
         this.resourceDescriptionRegistry = resourceDescriptionRegistry;
+        this.workerChannel = workerChannel;
     }
 
     @JsIgnore
@@ -139,18 +143,15 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            // Unless the web worker isn't ready, disable the DB tasks
-            // LookupDatabaseTask lookupDatabases = new LookupDatabaseTask(resourceDescriptionDatabase,
-            //         securityContextDatabase);
-            RrdTask rrd = new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH);
-            UpdateRegistryTask updateRegistries = new UpdateRegistryTask(resourceDescriptionRegistry,
-                    securityContextRegistry);
-            // UpdateDatabase updateDatabases = new UpdateDatabase(resourceDescriptionDatabase,
-            //         securityContextDatabase);
+            Task<LookupContext>[] tasks = new Task[]{
+                    lookupRegistries,
+                    new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase),
+                    new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH),
+                    new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry)
+            };
 
             Stopwatch stopwatch = Stopwatch.createStarted();
-            LookupContext context = new LookupContext(templates, recursive);
-            series(context, lookupRegistries, /*lookupDatabases, */rrd, updateRegistries)
+            series(new LookupContext(templates, recursive), tasks)
                     .subscribe(new Outcome<LookupContext>() {
                         @Override
                         public void onError(LookupContext context, Throwable error) {
@@ -165,7 +166,7 @@ public class MetadataProcessor {
                             callback.onSuccess(null);
 
                             // database update is *not* part of the flow!
-                            // updateDatabases.update(context);
+                            new UpdateDatabase(workerChannel).post(context);
                         }
                     });
         }

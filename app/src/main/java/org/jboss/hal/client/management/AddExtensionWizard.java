@@ -33,7 +33,7 @@ import org.jboss.hal.core.extension.InstalledExtensionResources;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;

@@ -105,7 +105,8 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                         if (Strings.isNullOrEmpty(archive) && Strings.isNullOrEmpty(module)) {
                             LabelBuilder labelBuilder = new LabelBuilder();
                             return ValidationResult.invalid(resources.messages()
-                                    .atLeastOneIsRequired(labelBuilder.enumeration(asList(ARCHIVE, MODULE), resources.constants().or())));
+                                    .atLeastOneIsRequired(labelBuilder.enumeration(asList(ARCHIVE, MODULE),
+                                            resources.constants().or())));
                         }
                         return ValidationResult.OK;
                     });

@@ -13,30 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.json;
+package org.jboss.hal.js;
 
-/** Represents a Json boolean. */
-public class JsonBoolean extends JsonValue {
-
-    public static JsonBoolean create(boolean bool) {
-        return createProd(bool);
-    }
-
-    /*
-     * MAGIC: primitive boolean cast to object interface.
-     */
-    private static native JsonBoolean createProd(boolean bool) /*-{
-        return Object(bool);
-    }-*/;
-
-    protected JsonBoolean() {
-    }
-
-    public final boolean getBoolean() {
-        return valueProd();
-    }
-
-    private native boolean valueProd() /*-{
-        return this && this.valueOf();
-    }-*/;
+/** Represents the type of the underlying JsonValue. */
+public enum JsonType {
+    OBJECT, ARRAY, STRING, NUMBER, BOOLEAN, NULL;
 }

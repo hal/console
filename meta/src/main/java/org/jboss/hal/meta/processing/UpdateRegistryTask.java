@@ -43,14 +43,12 @@ class UpdateRegistryTask implements Task<LookupContext> {
 
     @Override
     public Completable call(LookupContext context) {
-        if (!context.toResourceDescriptionRegistry.isEmpty()) {
+        if (context.updateRegistry()) {
             for (Map.Entry<ResourceAddress, ResourceDescription> entry : context.toResourceDescriptionRegistry.entrySet()) {
                 resourceDescriptionRegistry.add(entry.getKey(), entry.getValue());
             }
             logger.debug("Added {} resource descriptions to the registry",
                     context.toResourceDescriptionRegistry.keySet().size());
-        }
-        if (!context.toSecurityContextRegistry.isEmpty()) {
             for (Map.Entry<ResourceAddress, SecurityContext> entry : context.toSecurityContextRegistry.entrySet()) {
                 securityContextRegistry.add(entry.getKey(), entry.getValue());
             }

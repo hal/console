@@ -34,7 +34,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
