@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -33,8 +34,9 @@ class LookupContext extends FlowContext {
     final Map<ResourceAddress, SecurityContext> toSecurityContextRegistry;
     final Map<ResourceAddress, SecurityContext> toSecurityContextDatabase;
 
-    LookupContext(Set<AddressTemplate> template, boolean recursive) {
-        this.lookupResult = new LookupResult(template, recursive);
+    LookupContext(Progress progress, Set<AddressTemplate> template, boolean recursive) {
+        super(progress);
+        lookupResult = new LookupResult(template, recursive);
         toResourceDescriptionRegistry = new HashMap<>();
         toResourceDescriptionDatabase = new HashMap<>();
         toSecurityContextRegistry = new HashMap<>();

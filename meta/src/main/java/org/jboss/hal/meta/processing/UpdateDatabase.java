@@ -45,6 +45,7 @@ class UpdateDatabase {
         this.workerChannel = workerChannel;
     }
 
+    @SuppressWarnings("unchecked")
     public void post(LookupContext context) {
         if (context.updateDatabase()) {
             List<Map<ResourceAddress, ResourceDescription>> rdBuckets = partition(context.toResourceDescriptionDatabase,

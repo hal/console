@@ -570,7 +570,6 @@ public class ModelNode {
      *
      * @deprecated Use {@link #set(ValueExpression)} instead.
      */
-    @Deprecated
     public ModelNode setExpression(String newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);

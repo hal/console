@@ -94,6 +94,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
     private String selectedResource;
     private int clIndex;
 
+    @SuppressWarnings("unchecked")
     private ResourceElement(Builder builder) {
         this.builder = builder;
         this.selectedResource = null;
