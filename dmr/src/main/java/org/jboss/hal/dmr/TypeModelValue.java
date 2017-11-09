@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.jboss.hal.dmr.stream.ModelException;
 import org.jboss.hal.dmr.stream.ModelWriter;
 
@@ -113,22 +110,22 @@ final class TypeModelValue extends ModelValue {
     }
 
     @Override
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
-        writer.append('{');
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append('{');
         if (multiLine) {
-            indent(writer.append('\n'), indent + 1);
+            indent(builder.append('\n'), indent + 1);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
-        writer.append(jsonEscape(TYPE_KEY));
-        writer.append(" : ");
-        writer.append(jsonEscape(asString()));
+        builder.append(jsonEscape(TYPE_KEY));
+        builder.append(" : ");
+        builder.append(jsonEscape(asString()));
         if (multiLine) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
-        writer.append('}');
+        builder.append('}');
     }
 
     /**
@@ -160,8 +157,7 @@ final class TypeModelValue extends ModelValue {
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         writer.writeType(value);
     }
-
 }

@@ -25,7 +25,7 @@ import jsinterop.annotations.JsMethod;
  * @author rob@iharder.net
  * @version 2.1
  */
-class Base64 {
+public class Base64 {
 
     /** The equals sign (=) as a byte. */
     private static final byte EQUALS_SIGN = (byte) '=';
@@ -41,9 +41,9 @@ class Base64 {
     // ------------------------------------------------------ encode
 
     @JsMethod(namespace = "Window", name = "btoa")
-    static native String encode(String decoded);
+    public static native String encode(String decoded);
 
-    static String encodeBytes(byte[] source) {
+    public static String encodeBytes(byte[] source) {
         int len43 = source.length * 4 / 3;
         byte[] outBuff = new byte[(len43)   // Main 4:3
                 + ((source.length % 3) > 0 ? 4 : 0)]; // Account for padding
@@ -136,7 +136,7 @@ class Base64 {
     // ------------------------------------------------------ decode
 
     @JsMethod(namespace = "Window", name = "atob")
-    static native String decode(String encoded);
+    public static native String decode(String encoded);
 
     /** Defeats instantiation. */
     private Base64() {

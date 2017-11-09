@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -106,9 +104,9 @@ final class BigIntegerModelValue extends ModelValue {
     }
 
     @Override
-    void format(PrintWriter writer, int indent, boolean ignored) {
-        writer.append("big integer ");
-        writer.append(asString());
+    void format(StringBuilder builder, int indent, boolean ignored) {
+        builder.append("big integer ");
+        builder.append(asString());
     }
 
     /**
@@ -140,7 +138,7 @@ final class BigIntegerModelValue extends ModelValue {
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         writer.writeBigInteger(value);
     }
 

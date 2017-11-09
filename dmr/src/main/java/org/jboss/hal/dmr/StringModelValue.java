@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -193,13 +191,13 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    void format(PrintWriter writer, int indent, boolean multiLine) {
-        writer.append(quote(value));
+    void format(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append(quote(value));
     }
 
     @Override
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
-        writer.append(jsonEscape(asString()));
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append(jsonEscape(asString()));
     }
 
     /**
@@ -231,8 +229,7 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         writer.writeString(value);
     }
-
 }

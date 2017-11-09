@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -183,66 +180,65 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     String asString() {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter, true);
-        format(writer, 0, false);
-        return stringWriter.toString();
+        StringBuilder builder = new StringBuilder();
+        format(builder, 0, false);
+        return builder.toString();
     }
 
     @Override
-    void format(PrintWriter writer, int indent, boolean multiLineRequested) {
-        writer.append('{');
+    void format(StringBuilder builder, int indent, boolean multiLineRequested) {
+        builder.append('{');
         boolean multiLine = multiLineRequested && map.size() > 1;
         if (multiLine) {
-            indent(writer.append('\n'), indent + 1);
+            indent(builder.append('\n'), indent + 1);
         }
         Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, ModelNode> entry = iterator.next();
-            writer.append(quote(entry.getKey()));
+            builder.append(quote(entry.getKey()));
             ModelNode value = entry.getValue();
-            writer.append(" => ");
-            value.format(writer, multiLine ? indent + 1 : indent, multiLineRequested);
+            builder.append(" => ");
+            value.format(builder, multiLine ? indent + 1 : indent, multiLineRequested);
             if (iterator.hasNext()) {
                 if (multiLine) {
-                    indent(writer.append(",\n"), indent + 1);
+                    indent(builder.append(",\n"), indent + 1);
                 } else {
-                    writer.append(',');
+                    builder.append(',');
                 }
             }
         }
         if (multiLine) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         }
-        writer.append('}');
+        builder.append('}');
     }
 
     @Override
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLineRequested) {
-        writer.append('{');
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLineRequested) {
+        builder.append('{');
         boolean multiLine = multiLineRequested && map.size() > 1;
         if (multiLine) {
-            indent(writer.append('\n'), indent + 1);
+            indent(builder.append('\n'), indent + 1);
         }
         Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, ModelNode> entry = iterator.next();
-            writer.append(quote(entry.getKey()));
-            writer.append(" : ");
+            builder.append(quote(entry.getKey()));
+            builder.append(" : ");
             ModelNode value = entry.getValue();
-            value.formatAsJSON(writer, multiLine ? indent + 1 : indent, multiLineRequested);
+            value.formatAsJSON(builder, multiLine ? indent + 1 : indent, multiLineRequested);
             if (iterator.hasNext()) {
                 if (multiLine) {
-                    indent(writer.append(",\n"), indent + 1);
+                    indent(builder.append(",\n"), indent + 1);
                 } else {
-                    writer.append(", ");
+                    builder.append(", ");
                 }
             }
         }
         if (multiLine) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         }
-        writer.append('}');
+        builder.append('}');
     }
 
     /**
@@ -288,7 +284,7 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         writer.writeObjectStart();
         Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
         Map.Entry<String, ModelNode> entry;

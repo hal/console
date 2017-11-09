@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -203,62 +200,61 @@ final class ListModelValue extends ModelValue {
 
     @Override
     String asString() {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter, true);
-        format(writer, 0, false);
-        return stringWriter.toString();
+        StringBuilder builder = new StringBuilder();
+        format(builder, 0, false);
+        return builder.toString();
     }
 
     @Override
-    void format(PrintWriter writer, int indent, boolean multiLineRequested) {
+    void format(StringBuilder builder, int indent, boolean multiLineRequested) {
         boolean multiLine = multiLineRequested && list.size() > 1;
         List<ModelNode> list = asList();
         Iterator<ModelNode> iterator = list.iterator();
-        writer.append('[');
+        builder.append('[');
         if (multiLine) {
-            indent(writer.append('\n'), indent + 1);
+            indent(builder.append('\n'), indent + 1);
         }
         while (iterator.hasNext()) {
             ModelNode entry = iterator.next();
-            entry.format(writer, multiLine ? indent + 1 : indent, multiLineRequested);
+            entry.format(builder, multiLine ? indent + 1 : indent, multiLineRequested);
             if (iterator.hasNext()) {
                 if (multiLine) {
-                    indent(writer.append(",\n"), indent + 1);
+                    indent(builder.append(",\n"), indent + 1);
                 } else {
-                    writer.append(',');
+                    builder.append(',');
                 }
             }
         }
         if (multiLine) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         }
-        writer.append(']');
+        builder.append(']');
     }
 
     @Override
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLineRequested) {
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLineRequested) {
         boolean multiLine = multiLineRequested && list.size() > 1;
         List<ModelNode> list = asList();
         Iterator<ModelNode> iterator = list.iterator();
-        writer.append('[');
+        builder.append('[');
         if (multiLine) {
-            indent(writer.append('\n'), indent + 1);
+            indent(builder.append('\n'), indent + 1);
         }
         while (iterator.hasNext()) {
             ModelNode entry = iterator.next();
-            entry.formatAsJSON(writer, multiLine ? indent + 1 : indent, multiLineRequested);
+            entry.formatAsJSON(builder, multiLine ? indent + 1 : indent, multiLineRequested);
             if (iterator.hasNext()) {
                 if (multiLine) {
-                    indent(writer.append(",\n"), indent + 1);
+                    indent(builder.append(",\n"), indent + 1);
                 } else {
-                    writer.append(',');
+                    builder.append(',');
                 }
             }
         }
         if (multiLine) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         }
-        writer.append(']');
+        builder.append(']');
     }
 
     /**
@@ -298,13 +294,13 @@ final class ListModelValue extends ModelValue {
     ModelNode requireChild(int index) throws NoSuchElementException {
         try {
             return list.get(index);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException ignored) {
             return super.requireChild(index);
         }
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         Iterator<ModelNode> iterator = list.iterator();
         writer.writeListStart();
         ModelNode value;
@@ -314,5 +310,4 @@ final class ListModelValue extends ModelValue {
         }
         writer.writeListEnd();
     }
-
 }

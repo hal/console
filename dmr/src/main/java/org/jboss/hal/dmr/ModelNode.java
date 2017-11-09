@@ -16,7 +16,6 @@
 package org.jboss.hal.dmr;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -1732,27 +1731,19 @@ public class ModelNode {
 
     /**
      * Output the DMR string representation of this model node, formatted nicely, if requested to the supplied
-     * PrintWriter instance.
+     * StringBuilder instance.
      *
-     * @param writer  A PrintWriter instance used to output the DMR string.
+     * @param writer  A StringBuilder instance used to output the DMR string.
      * @param compact Flag that indicates whether or not the string should be all on one line (i.e. {@code true}) or
      *                should be printed on multiple lines ({@code false}).
      */
     @JsIgnore
-    public void writeString(PrintWriter writer, boolean compact) {
+    public void writeString(StringBuilder builder, boolean compact) {
         if (compact) {
-            ModelWriter modelWriter = ModelStreamFactory.getInstance(false).newModelWriter(writer);
-            try {
-                value.write(modelWriter);
-                modelWriter.flush();
-                modelWriter.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e); // should never happen because PrintWriter swallows IOExceptions
-            } catch (ModelException e) {
-                throw new RuntimeException(e); // should never happen because this model serialization is always correct
-            }
+            ModelWriter modelWriter = ModelStreamFactory.getInstance(false).newModelWriter(builder);
+            value.write(modelWriter);
         } else {
-            value.writeString(writer, compact);
+            value.writeString(builder, compact);
         }
     }
 
@@ -1771,33 +1762,24 @@ public class ModelNode {
 
     /**
      * Output the JSON string representation of this model node, formatted nicely, if requested to the supplied
-     * PrintWriter
-     * instance.
+     * StringBuilder instance.
      *
-     * @param writer  A PrintWriter instance used to output the JSON string.
+     * @param writer  A StringBuilder instance used to output the JSON string.
      * @param compact Flag that indicates whether or not the string should be all on one line (i.e. {@code true}) or
      *                should be
      *                printed on multiple lines ({@code false}).
      */
     @JsIgnore
-    public void writeJSONString(PrintWriter writer, boolean compact) {
+    public void writeJSONString(StringBuilder builder, boolean compact) {
         if (compact) {
-            ModelWriter modelWriter = ModelStreamFactory.getInstance(true).newModelWriter(writer);
-            try {
-                value.write(modelWriter);
-                modelWriter.flush();
-                modelWriter.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e); // should never happen because PrintWriter swallows IOExceptions
-            } catch (ModelException e) {
-                throw new RuntimeException(e); // should never happen because this model serialization is always correct
-            }
+            ModelWriter modelWriter = ModelStreamFactory.getInstance(true).newModelWriter(builder);
+            value.write(modelWriter);
         } else {
-            value.writeJSONString(writer, compact);
+            value.writeJSONString(builder, compact);
         }
     }
 
-    final void write(ModelWriter writer) throws IOException, ModelException {
+    final void write(ModelWriter writer) throws ModelException {
         value.write(writer);
     }
 
@@ -1868,12 +1850,12 @@ public class ModelNode {
         return clone;
     }
 
-    void format(PrintWriter writer, int indent, boolean multiLine) {
-        value.format(writer, indent, multiLine);
+    void format(StringBuilder builder, int indent, boolean multiLine) {
+        value.format(builder, indent, multiLine);
     }
 
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
-        value.formatAsJSON(writer, indent, multiLine);
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
+        value.formatAsJSON(builder, indent, multiLine);
     }
 
     /**

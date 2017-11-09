@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -121,7 +120,7 @@ final class BooleanModelValue extends ModelValue {
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         writer.writeBoolean(value);
     }
 

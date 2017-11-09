@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -256,8 +253,8 @@ abstract class ModelValue implements Cloneable {
         }
 
         @Override
-        void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
-            writer.append("null");
+        void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
+            builder.append("null");
         }
 
         @Override
@@ -266,7 +263,7 @@ abstract class ModelValue implements Cloneable {
         }
 
         @Override
-        void write(ModelWriter out) throws IOException, ModelException {
+        void write(ModelWriter out) throws ModelException {
             out.writeUndefined();
         }
 
@@ -283,56 +280,53 @@ abstract class ModelValue implements Cloneable {
     public abstract int hashCode();
 
     /**
-     * Adds the number of indentations (4 spaces each) specified to the writer's output.
+     * Adds the number of indentations (4 spaces each) specified to the builder's output.
      *
-     * @param writer The PrintWriter instance containing the current output.
-     * @param count  The number of indentations to be written.
+     * @param builder The StringBuilder instance containing the current output.
+     * @param count   The number of indentations to be written.
      */
-    protected static void indent(PrintWriter writer, int count) {
+    protected static void indent(StringBuilder builder, int count) {
         for (int i = 0; i < count; i++) {
-            writer.append("    ");
+            builder.append("    ");
         }
     }
 
     /**
      * Formats the current value object as part of a DMR string.
      *
-     * @param writer    A PrintWriter instance containing the generated DMR string representation.
-     * @param indent    The number of tabs to indent the current generated string.
-     * @param multiLine Flag indicating whether or not the string should begin on a new line.
+     * @param writer A StringBuilder instance containing the generated DMR string representation.
      */
-    void format(PrintWriter writer, int indent, boolean multiLine) {
-        writer.append(asString());
+    void format(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append(asString());
     }
 
     /**
      * Formats the current value object as part of a JSON string.
      *
-     * @param writer    A PrintWriter instance containing the JSON string.
+     * @param builder   A StringBuilder instance containing the JSON string.
      * @param indent    The number of tabs to indent the current generated string.
      * @param multiLine Flag that indicates whether or not the string should
      *                  begin on a new line.
      */
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
-        writer.append(asString());
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append(asString());
     }
 
     @Override
     public String toString() {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter, true);
-        writeString(writer, false);
-        return stringWriter.toString();
+        StringBuilder builder = new StringBuilder();
+        writeString(builder, false);
+        return builder.toString();
     }
 
     /**
-     * Outputs the DMR representation of this value to the supplied PrintWriter instance.
+     * Outputs the DMR representation of this value to the supplied StringBuilder instance.
      *
-     * @param writer  A PrintWriter instance use to output the DMR string.
+     * @param writer  A StringBuilder instance use to output the DMR string.
      * @param compact Flag indicating whether or not to include new lines in the generated string representation.
      */
-    public void writeString(PrintWriter writer, boolean compact) {
-        format(writer, 0, !compact);
+    public void writeString(StringBuilder builder, boolean compact) {
+        format(builder, 0, !compact);
     }
 
     /**
@@ -343,23 +337,22 @@ abstract class ModelValue implements Cloneable {
      * @return The JSON formatted string representation of this value.
      */
     String toJSONString(boolean compact) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter, true);
-        writeJSONString(writer, compact);
-        return stringWriter.toString();
+        StringBuilder builder = new StringBuilder();
+        writeJSONString(builder, compact);
+        return builder.toString();
     }
 
     /**
-     * Outputs this value as a JSON string representation to the supplied PrintWriter instance.
+     * Outputs this value as a JSON string representation to the supplied StringBuilder instance.
      *
-     * @param writer  A PrintWriter instance use to output the JSON string.
+     * @param writer  A StringBuilder instance use to output the JSON string.
      * @param compact Flag indicating whether or not to include new lines in the generated string representation.
      */
-    void writeJSONString(PrintWriter writer, boolean compact) {
-        formatAsJSON(writer, 0, !compact);
+    void writeJSONString(StringBuilder builder, boolean compact) {
+        formatAsJSON(builder, 0, !compact);
     }
 
-    abstract void write(ModelWriter writer) throws IOException, ModelException;
+    abstract void write(ModelWriter writer) throws ModelException;
 
     abstract void writeExternal(DataOutput out);
 

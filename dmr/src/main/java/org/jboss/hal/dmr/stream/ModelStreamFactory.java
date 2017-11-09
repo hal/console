@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.stream;
 
-import java.io.Writer;
-
 /**
  * DMR streams factory. Defines an abstract implementation of a factory for getting DMR readers and
  * writers. All readers and writers returned by this factory are not thread safe.
@@ -55,9 +53,9 @@ public final class ModelStreamFactory {
      *
      * @return DMR writer instance
      */
-    public ModelWriter newModelWriter(Writer writer) {
-        assertNotNullParameter(writer);
-        return jsonCompatible ? new JsonWriterImpl(writer) : new ModelWriterImpl(writer);
+    public ModelWriter newModelWriter(StringBuilder builder) {
+        assertNotNullParameter(builder);
+        return jsonCompatible ? new JsonWriterImpl(builder) : new ModelWriterImpl(builder);
     }
 
     private static void assertNotNullParameter(Object o) {

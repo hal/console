@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -30,10 +27,8 @@ import org.jboss.hal.dmr.stream.ModelWriter;
  */
 final class BytesModelValue extends ModelValue {
 
-    /**
-     * JSON Key used to identify BytesModelValue.
-     */
-    public static final String TYPE_KEY = "BYTES_VALUE";
+    /** JSON Key used to identify BytesModelValue. */
+    private static final String TYPE_KEY = "BYTES_VALUE";
 
     private final byte[] bytes;
 
@@ -119,66 +114,65 @@ final class BytesModelValue extends ModelValue {
 
     @Override
     String asString() {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter, true);
-        format(writer, 0, false);
-        return stringWriter.toString();
+        StringBuilder builder = new StringBuilder();
+        format(builder, 0, false);
+        return builder.toString();
     }
 
     @Override
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLine) {
-        writer.append('{');
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append('{');
         if (multiLine) {
-            indent(writer.append('\n'), indent + 1);
+            indent(builder.append('\n'), indent + 1);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
-        writer.append(jsonEscape(TYPE_KEY));
-        writer.append(" : ");
-        writer.append(jsonEscape(Base64.encodeBytes(bytes)));
+        builder.append(jsonEscape(TYPE_KEY));
+        builder.append(" : ");
+        builder.append(jsonEscape(Base64.encodeBytes(bytes)));
         if (multiLine) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
-        writer.append('}');
+        builder.append('}');
     }
 
     @Override
-    void format(PrintWriter writer, int indent, boolean multiLine) {
-        writer.append("bytes {");
+    void format(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append("bytes {");
         if (multiLine) {
-            writer.append('\n');
-            indent(writer, indent + 1);
+            builder.append('\n');
+            indent(builder, indent + 1);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
         for (int i = 0, length = bytes.length; i < length; i++) {
             byte b = bytes[i];
             if (b >= 0 && b < 0x10) {
-                writer.append("0x0").append(Integer.toHexString(b & 0xff));
+                builder.append("0x0").append(Integer.toHexString(b & 0xff));
             } else {
-                writer.append("0x").append(Integer.toHexString(b & 0xff));
+                builder.append("0x").append(Integer.toHexString(b & 0xff));
             }
             if (i != length - 1) {
                 if (multiLine && (i & 7) == 7) {
-                    indent(writer.append(",\n"), indent + 1);
+                    indent(builder.append(",\n"), indent + 1);
                 } else {
-                    writer.append(", ");
+                    builder.append(", ");
                 }
             }
         }
         if (multiLine) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
-        writer.append('}');
+        builder.append('}');
     }
 
-    void formatMultiLine(PrintWriter writer, int indent) {
+    void formatMultiLine(StringBuilder builder, int indent) {
         int length = bytes.length;
-        format(writer, indent, length > 8);
+        format(builder, indent, length > 8);
     }
 
     /**
@@ -210,7 +204,7 @@ final class BytesModelValue extends ModelValue {
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         writer.writeBytes(bytes);
     }
 }

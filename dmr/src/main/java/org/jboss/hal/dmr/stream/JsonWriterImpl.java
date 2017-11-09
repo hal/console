@@ -15,62 +15,31 @@
  */
 package org.jboss.hal.dmr.stream;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.jboss.hal.dmr.Base64;
 import org.jboss.hal.dmr.ModelType;
 
-import static java.lang.Math.min;
 import static java.lang.String.valueOf;
 import static org.jboss.hal.dmr.stream.ModelConstants.*;
-import static org.jboss.hal.dmr.stream.Utils.*;
+import static org.jboss.hal.dmr.stream.Utils.isControl;
 
 /**
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  */
 final class JsonWriterImpl implements ModelWriter {
 
+    private final StringBuilder builder;
     private final JsonGrammarAnalyzer analyzer;
-    private final Writer out;
-    private final char[] buffer = new char[1024];
-    private int limit;
-    private boolean closed;
 
-    JsonWriterImpl(Writer out) {
-        this.out = out;
-        analyzer = new JsonGrammarAnalyzer();
+    JsonWriterImpl(StringBuilder builder) {
+        this.builder = builder;
+        this.analyzer = new JsonGrammarAnalyzer();
     }
 
     @Override
-    public void close() throws IOException, ModelException {
-        if (closed) {
-            return; // idempotent
-        }
-        closed = true;
-        if (limit > 0) {
-            out.write(buffer, 0, limit);
-            limit = 0;
-        }
-        if (!analyzer.finished) {
-            throw analyzer.newModelException("Uncomplete DMR stream have been written");
-        }
-    }
-
-    @Override
-    public void flush() throws IOException {
-        ensureOpen();
-        if (limit > 0) {
-            out.write(buffer, 0, limit);
-            limit = 0;
-        }
-        out.flush();
-    }
-
-    @Override
-    public ModelWriter writeObjectStart() throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeObjectStart() throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putObjectStart();
         write(OBJECT_START);
@@ -78,16 +47,14 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeObjectEnd() throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeObjectEnd() throws ModelException {
         analyzer.putObjectEnd();
         write(OBJECT_END);
         return this;
     }
 
     @Override
-    public ModelWriter writeListStart() throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeListStart() throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putListStart();
         write(LIST_START);
@@ -95,16 +62,14 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeListEnd() throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeListEnd() throws ModelException {
         analyzer.putListEnd();
         write(LIST_END);
         return this;
     }
 
     @Override
-    public ModelWriter writePropertyStart() throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writePropertyStart() throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putPropertyStart();
         write(OBJECT_START);
@@ -112,17 +77,15 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writePropertyEnd() throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writePropertyEnd() throws ModelException {
         analyzer.putPropertyEnd();
         write(OBJECT_END);
         return this;
     }
 
     @Override
-    public ModelWriter writeExpression(String data) throws IOException, ModelException {
+    public ModelWriter writeExpression(String data) throws ModelException {
         assertNotNullParameter(data);
-        ensureOpen();
         writeOptionalColonOrComma();
         analyzer.putExpression();
         write(OBJECT_START);
@@ -134,9 +97,8 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeBytes(byte[] data) throws IOException, ModelException {
+    public ModelWriter writeBytes(byte[] data) throws ModelException {
         assertNotNullParameter(data);
-        ensureOpen();
         writeOptionalColonOrComma();
         analyzer.putBytes();
         write(OBJECT_START);
@@ -148,9 +110,8 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeType(ModelType data) throws IOException, ModelException {
+    public ModelWriter writeType(ModelType data) throws ModelException {
         assertNotNullParameter(data);
-        ensureOpen();
         writeOptionalColonOrComma();
         analyzer.putType();
         write(OBJECT_START);
@@ -166,9 +127,8 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeString(String data) throws IOException, ModelException {
+    public ModelWriter writeString(String data) throws ModelException {
         assertNotNullParameter(data);
-        ensureOpen();
         writeOptionalColonOrComma();
         analyzer.putString();
         encode(data);
@@ -176,8 +136,7 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeUndefined() throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeUndefined() throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putUndefined();
         write(NULL, 0, NULL.length());
@@ -185,8 +144,7 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeBoolean(boolean data) throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeBoolean(boolean data) throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putBoolean();
         if (data) {
@@ -198,8 +156,7 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeInt(int data) throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeInt(int data) throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putNumber(ModelEvent.INT);
         encode(data);
@@ -207,8 +164,7 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeLong(long data) throws IOException, ModelException {
-        ensureOpen();
+    public ModelWriter writeLong(long data) throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putNumber(ModelEvent.LONG);
         encode(data);
@@ -216,31 +172,30 @@ final class JsonWriterImpl implements ModelWriter {
     }
 
     @Override
-    public ModelWriter writeDouble(double data) throws IOException, ModelException {
+    public ModelWriter writeDouble(double data) throws ModelException {
         return writeNumber(valueOf(data), ModelEvent.DOUBLE);
     }
 
     @Override
-    public ModelWriter writeBigInteger(BigInteger data) throws IOException, ModelException {
+    public ModelWriter writeBigInteger(BigInteger data) throws ModelException {
         assertNotNullParameter(data);
         return writeNumber(valueOf(data), ModelEvent.BIG_INTEGER);
     }
 
     @Override
-    public ModelWriter writeBigDecimal(BigDecimal data) throws IOException, ModelException {
+    public ModelWriter writeBigDecimal(BigDecimal data) throws ModelException {
         assertNotNullParameter(data);
         return writeNumber(valueOf(data), ModelEvent.BIG_DECIMAL);
     }
 
-    private ModelWriter writeNumber(String data, ModelEvent numberEvent) throws IOException, ModelException {
-        ensureOpen();
+    private ModelWriter writeNumber(String data, ModelEvent numberEvent) throws ModelException {
         writeOptionalColonOrComma();
         analyzer.putNumber(numberEvent);
         write(data, 0, data.length());
         return this;
     }
 
-    private void writeOptionalColonOrComma() throws IOException, ModelException {
+    private void writeOptionalColonOrComma() throws ModelException {
         if (analyzer.isColonExpected()) {
             analyzer.putColon();
             write(COLON);
@@ -250,34 +205,19 @@ final class JsonWriterImpl implements ModelWriter {
         }
     }
 
-    private void write(String data) throws IOException {
+    private void write(String data) {
         write(data, 0, data.length());
     }
 
-    private void write(char c) throws IOException {
-        if (limit == buffer.length) {
-            out.write(buffer, 0, limit);
-            limit = 0;
-        }
-
-        buffer[limit++] = c;
+    private void write(char c) {
+        builder.append(c);
     }
 
-    private void write(String data, int dataBegin, int dataEnd) throws IOException {
-        int count;
-        while (dataBegin < dataEnd) {
-            count = min(dataEnd - dataBegin, buffer.length - limit);
-            data.getChars(dataBegin, dataBegin + count, buffer, limit);
-            dataBegin += count;
-            limit += count;
-            if (limit == buffer.length) {
-                out.write(buffer, 0, buffer.length);
-                limit = 0;
-            }
-        }
+    private void write(String data, int dataBegin, int dataEnd) {
+        builder.append(data.substring(dataBegin, dataEnd));
     }
 
-    private void encode(String s) throws IOException {
+    private void encode(String s) {
         char c;
         write(QUOTE);
         int dataBegin = 0;
@@ -325,148 +265,20 @@ final class JsonWriterImpl implements ModelWriter {
         write(QUOTE);
     }
 
-    private void base64Encode(byte[] data) throws IOException {
+    private void base64Encode(byte[] data) {
         write(QUOTE);
-        int b;
-        for (int i = 0; i < data.length; i += 3) {
-            // ensure buffer capacity
-            if (buffer.length - limit < 4) {
-                out.write(buffer, 0, limit);
-                limit = 0;
-            }
-            if (i > 0 && i % 57 == 0) {
-                // write padding
-                System.arraycopy(BASE64_NEWLINE, 0, buffer, limit, 4);
-                limit += 4;
-            } else {
-                // base64 encode
-                b = (data[i] & 0xFC) >> 2;
-                buffer[limit++] = BASE64_ENC_TABLE[b];
-                b = (data[i] & 0x03) << 4;
-                if (i + 1 < data.length) {
-                    b |= (data[i + 1] & 0xF0) >> 4;
-                    buffer[limit++] = BASE64_ENC_TABLE[b];
-                    b = (data[i + 1] & 0x0F) << 2;
-                    if (i + 2 < data.length) {
-                        b |= (data[i + 2] & 0xC0) >> 6;
-                        buffer[limit++] = BASE64_ENC_TABLE[b];
-                        b = data[i + 2] & 0x3F;
-                        buffer[limit++] = BASE64_ENC_TABLE[b];
-                    } else {
-                        buffer[limit++] = BASE64_ENC_TABLE[b];
-                        buffer[limit++] = EQUAL;
-                    }
-                } else {
-                    buffer[limit++] = BASE64_ENC_TABLE[b];
-                    buffer[limit++] = EQUAL;
-                    buffer[limit++] = EQUAL;
-                }
-            }
-        }
+        write(Base64.encodeBytes(data));
         write(QUOTE);
     }
 
-    private void encode(long l) throws IOException {
-        // cannot write all possible long values if less than 20 chars is remaining
-        if (buffer.length - limit < 20) {
-            out.write(buffer, 0, limit);
-            limit = 0;
-        }
-
-        // compute bounds
-        long longQuotient;
-        int remainder;
-        int writeIndex = limit + stringSizeOf(l);
-        limit = writeIndex;
-
-        // always convert to negative number
-        boolean negative = l < 0;
-        if (!negative) {
-            l = -l;
-        }
-
-        // processing upper 32 bits (long operations are slower on CPU)
-        while (l < Integer.MIN_VALUE) {
-            longQuotient = l / 100;
-            remainder = (int) ((longQuotient * 100) - l);
-            l = longQuotient;
-            buffer[--writeIndex] = ONES[remainder];
-            buffer[--writeIndex] = TENS[remainder];
-        }
-
-        // processing lower 32 bits (int operations are faster on CPU)
-        int intQuotient;
-        int i = (int) l;
-        while (i <= -100) {
-            intQuotient = i / 100;
-            remainder = (intQuotient * 100) - i;
-            i = intQuotient;
-            buffer[--writeIndex] = ONES[remainder];
-            buffer[--writeIndex] = TENS[remainder];
-        }
-
-        // processing remaining digits
-        intQuotient = i / 10;
-        remainder = (intQuotient * 10) - i;
-        buffer[--writeIndex] = (char) ('0' + remainder);
-
-        if (intQuotient < 0) {
-            buffer[--writeIndex] = (char) ('0' - intQuotient);
-        }
-
-        // processing sign
-        if (negative) {
-            buffer[--writeIndex] = '-';
-        }
+    private void encode(long l) {
+        write(String.valueOf(l));
+        write('L');
     }
 
-    private void encode(int i) throws IOException {
-        // cannot write all possible int values if less than 11 chars is remaining
-        if (buffer.length - limit < 11) {
-            out.write(buffer, 0, limit);
-            limit = 0;
-        }
-
-        // compute bounds
-        int quotient;
-        int remainder;
-        int writeIndex = limit + stringSizeOf(i);
-        limit = writeIndex;
-
-        // always convert to negative number
-        boolean negative = i < 0;
-        if (!negative) {
-            i = -i;
-        }
-
-        // processing lower 32 bits (int operations are faster on CPU)
-        while (i <= -100) {
-            quotient = i / 100;
-            remainder = (quotient * 100) - i;
-            i = quotient;
-            buffer[--writeIndex] = ONES[remainder];
-            buffer[--writeIndex] = TENS[remainder];
-        }
-
-        // processing remaining digits
-        quotient = i / 10;
-        remainder = (quotient * 10) - i;
-        buffer[--writeIndex] = (char) ('0' + remainder);
-
-        if (quotient < 0) {
-            buffer[--writeIndex] = (char) ('0' - quotient);
-        }
-
-        // processing sign
-        if (negative) {
-            buffer[--writeIndex] = '-';
-        }
-    }
-
-    private void ensureOpen() {
-        if (closed) {
-            throw new IllegalStateException("DMR writer have been closed");
-        }
+    private void encode(int i) {
+        write(String.valueOf(i));
+        write('L');
     }
 
     private static void assertNotNullParameter(Object o) {

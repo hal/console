@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -142,26 +140,26 @@ final class PropertyModelValue extends ModelValue {
     }
 
     @Override
-    void formatAsJSON(PrintWriter writer, int indent, boolean multiLineRequested) {
-        writer.append('{');
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLineRequested) {
+        builder.append('{');
         if (multiLineRequested) {
-            indent(writer.append('\n'), indent + 1);
+            indent(builder.append('\n'), indent + 1);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
-        writer.append(jsonEscape(property.getName()));
-        writer.append(" : ");
-        property.getValue().formatAsJSON(writer, indent + 1, multiLineRequested);
+        builder.append(jsonEscape(property.getName()));
+        builder.append(" : ");
+        property.getValue().formatAsJSON(builder, indent + 1, multiLineRequested);
         if (multiLineRequested) {
-            indent(writer.append('\n'), indent);
+            indent(builder.append('\n'), indent);
         } else {
-            writer.append(' ');
+            builder.append(' ');
         }
-        writer.append('}');
+        builder.append('}');
     }
 
     @Override
-    void write(ModelWriter writer) throws IOException, ModelException {
+    void write(ModelWriter writer) throws ModelException {
         writer.writePropertyStart();
         writer.writeString(property.getName());
         property.getValue().write(writer);
