@@ -117,7 +117,9 @@ final class Utils {
         }
         long temp = -10;
         for (int j = 1; j < 19; j++) {
-            if (l > temp) { return j + signSize; }
+            if (l > temp) {
+                return j + signSize;
+            }
             temp = 10 * temp;
         }
         return 19 + signSize;
@@ -131,7 +133,9 @@ final class Utils {
         }
         int temp = -10;
         for (int j = 1; j < 10; j++) {
-            if (i > temp) { return j + signSize; }
+            if (i > temp) {
+                return j + signSize;
+            }
             temp = 10 * temp;
         }
         return 10 + signSize;

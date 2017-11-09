@@ -15,11 +15,8 @@
  */
 package org.jboss.hal.dmr.dmr2.stream;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
@@ -28,7 +25,6 @@ import java.nio.charset.Charset;
  * writers. All readers and writers returned by this factory are not thread safe.
  *
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
- * @see ModelReader
  * @see ModelWriter
  */
 public final class ModelStreamFactory {
@@ -57,18 +53,6 @@ public final class ModelStreamFactory {
     }
 
     /**
-     * Creates new DMR reader.
-     *
-     * @param reader input
-     *
-     * @return DMR reader instance
-     */
-    public ModelReader newModelReader(Reader reader) {
-        assertNotNullParameter(reader);
-        return jsonCompatible ? new JsonReaderImpl(reader) : new ModelReaderImpl(reader);
-    }
-
-    /**
      * Creates new DMR writer.
      *
      * @param writer output
@@ -81,17 +65,6 @@ public final class ModelStreamFactory {
     }
 
     /**
-     * Creates new DMR reader with <code>UTF-8</code> character set.
-     *
-     * @param stream input
-     *
-     * @return DMR reader instance
-     */
-    public ModelReader newModelReader(InputStream stream) {
-        return newModelReader(stream, DEFAULT_CHARSET);
-    }
-
-    /**
      * Creates new DMR writer with <code>UTF-8</code> character set.
      *
      * @param stream output
@@ -100,20 +73,6 @@ public final class ModelStreamFactory {
      */
     public ModelWriter newModelWriter(OutputStream stream) {
         return newModelWriter(stream, DEFAULT_CHARSET);
-    }
-
-    /**
-     * Creates new DMR reader with specified character set.
-     *
-     * @param stream  input
-     * @param charset character set
-     *
-     * @return DMR reader instance
-     */
-    public ModelReader newModelReader(InputStream stream, Charset charset) {
-        assertNotNullParameter(stream);
-        assertNotNullParameter(charset);
-        return newModelReader(new InputStreamReader(stream, charset));
     }
 
     /**
