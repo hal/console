@@ -25,7 +25,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.stream.ModelException;
 import org.jboss.hal.dmr.stream.ModelStreamFactory;
 import org.jboss.hal.dmr.stream.ModelWriter;
@@ -49,6 +52,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUCCESS;
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  */
+@JsType
 public class ModelNode {
 
     private static final String VALUE_IS_NULL = "value is null";
@@ -70,6 +74,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if {@code value} is {@code null}
      */
+    @JsIgnore
     public ModelNode(BigDecimal value) {
         if (value == null) {
             throw new IllegalArgumentException(VALUE_IS_NULL);
@@ -84,6 +89,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if {@code value} is {@code null}
      */
+    @JsIgnore
     public ModelNode(BigInteger value) {
         if (value == null) {
             throw new IllegalArgumentException(VALUE_IS_NULL);
@@ -96,6 +102,7 @@ public class ModelNode {
      *
      * @param value the value.
      */
+    @JsIgnore
     public ModelNode(boolean value) {
         this(value ? BooleanModelValue.TRUE : BooleanModelValue.FALSE);
     }
@@ -107,6 +114,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if {@code value} is {@code null}
      */
+    @JsIgnore
     public ModelNode(byte[] value) {
         if (value == null) {
             throw new IllegalArgumentException(VALUE_IS_NULL);
@@ -119,6 +127,7 @@ public class ModelNode {
      *
      * @param value the value.
      */
+    @JsIgnore
     public ModelNode(double value) {
         this.value = new DoubleModelValue(value);
     }
@@ -128,6 +137,7 @@ public class ModelNode {
      *
      * @param value the value.
      */
+    @JsIgnore
     public ModelNode(int value) {
         this.value = new IntModelValue(value);
     }
@@ -137,6 +147,7 @@ public class ModelNode {
      *
      * @param value the value.
      */
+    @JsIgnore
     public ModelNode(long value) {
         this.value = new LongModelValue(value);
     }
@@ -148,6 +159,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if {@code value} is {@code null}
      */
+    @JsIgnore
     public ModelNode(String value) {
         if (value == null) {
             throw new IllegalArgumentException(VALUE_IS_NULL);
@@ -162,6 +174,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if {@code value} is {@code null}
      */
+    @JsIgnore
     public ModelNode(ModelType value) {
         if (value == null) {
             throw new IllegalArgumentException(VALUE_IS_NULL);
@@ -177,6 +190,7 @@ public class ModelNode {
      * Prevent further modifications to this node and its sub-nodes.  Note that copies
      * of this node made after this method call will not be protected.
      */
+    @JsIgnore
     public void protect() {
         if (!protect) {
             protect = true;
@@ -192,6 +206,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
+    @JsIgnore
     public long asLong() throws IllegalArgumentException {
         return value.asLong();
     }
@@ -209,6 +224,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node's {@link #getType() type} is one where no numeric conversion is
      *                                  possible
      */
+    @JsIgnore
     public long asLong(long defVal) {
         return value.asLong(defVal);
     }
@@ -330,6 +346,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
+    @JsIgnore
     public ModelType asType() throws IllegalArgumentException {
         return value.asType();
     }
@@ -342,6 +359,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
+    @JsIgnore
     public BigDecimal asBigDecimal() throws IllegalArgumentException {
         return value.asBigDecimal();
     }
@@ -354,6 +372,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
      */
+    @JsIgnore
     public BigInteger asBigInteger() throws IllegalArgumentException {
         return value.asBigInteger();
     }
@@ -417,6 +436,67 @@ public class ModelNode {
     }
 
     /**
+     * Get the value of this node as {@code type}. This method simply delegates to the various {@code asXXX()}
+     * methods depending on the specified type.
+     *
+     * @return the value as {@code type} or null if the type is {@link ModelType#UNDEFINED}
+     *
+     * @throws IllegalArgumentException if no conversion is possible
+     */
+    @JsIgnore
+    public Object as(ModelType type) {
+        Object result;
+        switch (type) {
+            case BIG_DECIMAL:
+                result = asBigDecimal();
+                break;
+            case BIG_INTEGER:
+                result = asBigInteger();
+                break;
+            case BOOLEAN:
+                result = asBoolean();
+                break;
+            case BYTES:
+                result = asBytes();
+                break;
+            case DOUBLE:
+                result = asDouble();
+                break;
+            case EXPRESSION:
+                result = asString();
+                break;
+            case INT:
+                result = asInt();
+                break;
+            case LIST:
+                result = asList();
+                break;
+            case LONG:
+                result = asLong();
+                break;
+            case OBJECT:
+                result = asObject();
+                break;
+            case PROPERTY:
+                result = asProperty();
+                break;
+            case STRING:
+                result = asString();
+                break;
+            case TYPE:
+                result = asType();
+                break;
+            case UNDEFINED:
+                result = null;
+                break;
+            default:
+                result = null;
+                break;
+        }
+        return result;
+    }
+
+    /**
      * Determine whether this node is defined.  Equivalent to the expression: {@code getType() != ModelType.UNDEFINED}.
      *
      * @return {@code true} if this node's value is defined
@@ -432,6 +512,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsMethod(name = "setInt")
     public ModelNode set(int newValue) {
         checkProtect();
         value = new IntModelValue(newValue);
@@ -445,6 +526,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(long newValue) {
         checkProtect();
         value = new LongModelValue(newValue);
@@ -458,6 +540,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsMethod(name = "setDouble")
     public ModelNode set(double newValue) {
         checkProtect();
         value = new DoubleModelValue(newValue);
@@ -471,6 +554,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsMethod(name = "setBoolean")
     public ModelNode set(boolean newValue) {
         checkProtect();
         value = BooleanModelValue.valueOf(newValue);
@@ -503,6 +587,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(ValueExpression newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -519,6 +604,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsMethod(name = "setString")
     public ModelNode set(String newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -535,6 +621,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(BigDecimal newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -551,6 +638,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(BigInteger newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -567,6 +655,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsMethod(name = "setNode")
     public ModelNode set(ModelNode newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -583,6 +672,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(byte[] newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -599,6 +689,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(ModelType newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -615,6 +706,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsMethod(name = "setProperty")
     public ModelNode set(Property newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -631,6 +723,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, ModelNode propertyValue) {
         checkProtect();
         value = new PropertyModelValue(propertyName, propertyValue, true);
@@ -645,6 +738,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, int propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -661,6 +755,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, long propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -677,6 +772,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, double propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -693,6 +789,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, boolean propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -709,6 +806,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, String propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -727,6 +825,7 @@ public class ModelNode {
      *
      * @deprecated Use {@link #set(String, ValueExpression)} instead.
      */
+    @JsIgnore
     @Deprecated
     public ModelNode setExpression(String propertyName, String propertyValue) {
         checkProtect();
@@ -744,6 +843,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, ValueExpression propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -760,6 +860,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, BigDecimal propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -776,6 +877,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, BigInteger propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -792,6 +894,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, byte[] propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -808,6 +911,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(String propertyName, ModelType propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -823,6 +927,7 @@ public class ModelNode {
      *
      * @return this node
      */
+    @JsIgnore
     public ModelNode set(Collection<ModelNode> newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -906,6 +1011,7 @@ public class ModelNode {
      *
      * @throws NoSuchElementException if the element does not exist
      */
+    @JsIgnore
     public ModelNode require(String name) throws NoSuchElementException {
         return value.requireChild(name);
     }
@@ -920,6 +1026,7 @@ public class ModelNode {
      *
      * @return the child, or {@code null} if no child with the given {@code name} exists
      */
+    @JsIgnore
     public ModelNode remove(String name) throws NoSuchElementException {
         return value.removeChild(name);
     }
@@ -936,6 +1043,7 @@ public class ModelNode {
      *
      * @throws NoSuchElementException if the element does not exist
      */
+    @JsIgnore
     public ModelNode remove(int index) throws NoSuchElementException {
         return value.removeChild(index);
     }
@@ -953,6 +1061,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if this node does not support getting a child with the given index
      */
+    @JsIgnore
     public ModelNode get(int index) {
         ModelValue value = this.value;
         if (value == ModelValue.UNDEFINED) {
@@ -975,6 +1084,7 @@ public class ModelNode {
      *
      * @throws NoSuchElementException if the element does not exist
      */
+    @JsIgnore
     public ModelNode require(int index) {
         return value.requireChild(index);
     }
@@ -990,6 +1100,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(int newValue) {
         add().set(newValue);
         return this;
@@ -1006,6 +1117,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(long newValue) {
         add().set(newValue);
         return this;
@@ -1022,6 +1134,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(double newValue) {
         add().set(newValue);
         return this;
@@ -1038,6 +1151,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(boolean newValue) {
         add().set(newValue);
         return this;
@@ -1056,6 +1170,7 @@ public class ModelNode {
      *                                  not {@link ModelType#LIST}
      * @deprecated Use {@link #add(ValueExpression)} instead.
      */
+    @JsIgnore
     @Deprecated
     public ModelNode addExpression(String newValue) {
         add().set(new ValueExpression(newValue));
@@ -1073,6 +1188,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(ValueExpression newValue) {
         add().set(newValue);
         return this;
@@ -1089,6 +1205,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String newValue) {
         add().set(newValue);
         return this;
@@ -1105,6 +1222,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(BigDecimal newValue) {
         add().set(newValue);
         return this;
@@ -1121,6 +1239,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(BigInteger newValue) {
         add().set(newValue);
         return this;
@@ -1138,6 +1257,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(ModelNode newValue) {
         add().set(newValue);
         return this;
@@ -1159,6 +1279,7 @@ public class ModelNode {
      * @throws IllegalArgumentException  if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                   not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode insert(ModelNode newValue, int index) {
         insert(index).set(newValue);
         return this;
@@ -1175,6 +1296,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(byte[] newValue) {
         add().set(newValue);
         return this;
@@ -1191,6 +1313,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(Property property) {
         add().set(property);
         return this;
@@ -1208,6 +1331,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, int propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1225,6 +1349,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, long propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1242,6 +1367,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, double propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1259,6 +1385,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, boolean propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1276,6 +1403,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, ValueExpression propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1293,6 +1421,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1310,6 +1439,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, BigDecimal propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1327,6 +1457,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, BigInteger propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1344,6 +1475,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, ModelNode propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1361,6 +1493,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add(String propertyName, byte[] propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1375,6 +1508,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                  not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode add() {
         checkProtect();
         ModelValue value = this.value;
@@ -1399,6 +1533,7 @@ public class ModelNode {
      * @throws IllegalArgumentException  if this node is {@link #isDefined() defined} and its {@link #getType() type} is
      *                                   not {@link ModelType#LIST}
      */
+    @JsIgnore
     public ModelNode insert(int index) {
         checkProtect();
         ModelValue value = this.value;
@@ -1446,6 +1581,7 @@ public class ModelNode {
      *
      * @return {@code true} if there is a (possibly undefined) node at the given index
      */
+    @JsIgnore
     public boolean has(int index) {
         return value.has(index);
     }
@@ -1471,6 +1607,7 @@ public class ModelNode {
      * @return {@code true} if a call to {@link #get(String...)} with the given {@code names} would succeed without
      * needing to create any new nodes; {@code false} otherwise
      */
+    @JsIgnore
     public boolean has(String... names) {
         ModelNode current = this;
         for (String part : names) {
@@ -1493,6 +1630,7 @@ public class ModelNode {
      * @return {@code true} if there is a node at the given index and its {@link #getType() type} is not {@link
      * ModelType#UNDEFINED}
      */
+    @JsIgnore
     public boolean hasDefined(int index) {
         return value.has(index) && get(index).isDefined();
     }
@@ -1521,6 +1659,7 @@ public class ModelNode {
      * @return {@code true} if a call to {@link #get(String...)} with the given {@code names} would succeed without
      * needing to create any new nodes and without traversing any undefined nodes; {@code false} otherwise
      */
+    @JsIgnore
     public boolean hasDefined(String... names) {
         ModelNode current = this;
         for (String part : names) {
@@ -1542,6 +1681,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node's {@link #getType() type} is not {@link ModelType#OBJECT} or {@link
      *                                  ModelType#PROPERTY}
      */
+    @JsIgnore
     public Set<String> keys() {
         return value.getKeys();
     }
@@ -1557,6 +1697,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if this node is not {@link #isDefined() defined}
      */
+    @JsIgnore
     public List<ModelNode> asList() {
         return value.asList();
     }
@@ -1571,6 +1712,7 @@ public class ModelNode {
      *
      * @throws IllegalArgumentException if a node does not support getting a child with the given name path
      */
+    @JsIgnore
     public ModelNode get(String... names) {
         ModelNode current = this;
         for (String part : names) {
@@ -1597,6 +1739,7 @@ public class ModelNode {
      * @param compact Flag that indicates whether or not the string should be all on one line (i.e. {@code true}) or
      *                should be printed on multiple lines ({@code false}).
      */
+    @JsIgnore
     public void writeString(PrintWriter writer, boolean compact) {
         if (compact) {
             ModelWriter modelWriter = ModelStreamFactory.getInstance(false).newModelWriter(writer);
@@ -1622,6 +1765,7 @@ public class ModelNode {
      *
      * @return The JSON string.
      */
+    @JsIgnore
     public String toJSONString(boolean compact) {
         return value.toJSONString(compact);
     }
@@ -1636,6 +1780,7 @@ public class ModelNode {
      *                should be
      *                printed on multiple lines ({@code false}).
      */
+    @JsIgnore
     public void writeJSONString(PrintWriter writer, boolean compact) {
         if (compact) {
             ModelWriter modelWriter = ModelStreamFactory.getInstance(true).newModelWriter(writer);
@@ -1682,6 +1827,7 @@ public class ModelNode {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
+    @JsIgnore
     public boolean equals(Object other) {
         return other instanceof ModelNode && equals((ModelNode) other);
     }
@@ -1693,6 +1839,7 @@ public class ModelNode {
      *
      * @return {@code true} if they are equal, {@code false} otherwise
      */
+    @JsIgnore
     public boolean equals(ModelNode other) {
         return this == other || other != null && other.value.equals(value);
     }
@@ -1704,6 +1851,7 @@ public class ModelNode {
      * @return the hash code
      */
     @Override
+    @JsIgnore
     public int hashCode() {
         return value.hashCode();
     }
@@ -1714,6 +1862,7 @@ public class ModelNode {
      * @return the clone
      */
     @Override
+    @JsIgnore
     public ModelNode clone() {
         ModelNode clone = new ModelNode();
         clone.value = value.copy();
@@ -1733,6 +1882,7 @@ public class ModelNode {
      *
      * @return the node type
      */
+    @JsIgnore
     public ModelType getType() {
         return value.getType();
     }
@@ -1744,6 +1894,7 @@ public class ModelNode {
      *
      * @throws IOException if an I/O error occurs
      */
+    @JsIgnore
     public void writeExternal(DataOutput out) {
         value.writeExternal(out);
     }
@@ -1812,6 +1963,7 @@ public class ModelNode {
         return Base64.encode(out.toString());
     }
 
+    @JsIgnore
     private void checkProtect() {
         if (protect) {
             throw new UnsupportedOperationException();
