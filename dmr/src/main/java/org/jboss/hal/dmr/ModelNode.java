@@ -1404,15 +1404,11 @@ public class ModelNode implements Cloneable {
 
     public String toBase64String() {
         DataOutput out = new DataOutput();
-        try {
-            writeExternal(out);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        writeExternal(out);
         try {
             return btoa(new String(out.getBytes(), "ISO-8859-1"));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Failed to encode string:" + e.getMessage());
+            throw new RuntimeException("Failed to encode string: " + e.getMessage());
         }
     }
 
@@ -1509,11 +1505,15 @@ public class ModelNode implements Cloneable {
      *
      * @throws IOException if an I/O error occurs
      */
-    void writeExternal(final DataOutput out) throws IOException {
+    public void writeExternal(final DataOutput out) {
         final ModelValue value = this.value;
         final ModelType type = value.getType();
-        out.writeByte(type.getTypeChar());
-        value.writeExternal(out);
+        try {
+            out.writeByte(type.getTypeChar());
+            value.writeExternal(out);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write to external data output: " + e.getMessage());
+        }
     }
 
     /**

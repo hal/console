@@ -17,6 +17,7 @@ package org.jboss.hal.meta.processing;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Stopwatch;
 import elemental2.dom.Worker;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.db.Document;
@@ -29,7 +30,9 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.meta.Database.PAYLOAD;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class WorkerChannel {
@@ -51,10 +54,15 @@ public class WorkerChannel {
 
     public void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
         if (worker != null) {
+            Stopwatch watch = Stopwatch.createStarted();
+            Document document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
             UpdateMessage message = new UpdateMessage();
             message.database = resourceDescriptionDatabase.name();
-            message.document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
+            message.document = document;
             worker.postMessage(message);
+            watch.stop();
+            logger.debug("Posted resource description: {} bytes in {} ms", document.getAny(PAYLOAD).asString().length(),
+                    watch.elapsed(MILLISECONDS));
         }
     }
 

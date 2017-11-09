@@ -143,7 +143,7 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            Task[] tasks = new Task[]{
+            Task<LookupContext>[] tasks = new Task[]{
                     lookupRegistries,
                     new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase),
                     new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH),
