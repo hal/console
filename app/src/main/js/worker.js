@@ -15,12 +15,16 @@
  */
 self.importScripts("pouchdb.min.js");
 self.addEventListener("message", function (e) {
-    var db = new PouchDB(e.database);
-    db.put(e.document)
+    var db = new PouchDB(e.data.database);
+    db.put(e.data.document)
         .then(function (response) {
-            console.log("Successfully put " + response.id + " into " + e.database);
+            console.log("Successfully put " + e.data.database + ":/" + response.id);
         })
-        .catch(function (failure) {
-            console.log("Unable to put " + e.document._id + " into " + e.database + ": " + failure);
+        .catch(function (error) {
+            if (error.name === 'conflict') {
+                console.log("Ignore conflict for " + e.data.database + ":/" + e.data.document._id);
+            } else {
+                console.log("Unable to put " + e.data.database + ":/" + e.data.document._id + ": " + failure);
+            }
         });
 }, false);

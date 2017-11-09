@@ -35,7 +35,8 @@ class UpdateDatabase {
 
     private static final int RD_BUCKET_SIZE = 5;
     private static final int SC_BUCKET_SIZE = 15;
-    private static final long INTERVAL = 500; // ms
+    private static final long RD_INTERVAL = 500; // ms
+    private static final long SC_INTERVAL = 500; // ms
     @NonNls private static final Logger logger = LoggerFactory.getLogger(UpdateDatabase.class);
 
     private final WorkerChannel workerChannel;
@@ -45,42 +46,42 @@ class UpdateDatabase {
     }
 
     public void post(LookupContext context) {
-        List<Map<ResourceAddress, ResourceDescription>> rdBuckets = partition(context.toResourceDescriptionRegistry,
-                RD_BUCKET_SIZE);
-        List<Map<ResourceAddress, SecurityContext>> scBuckets = partition(context.toSecurityContextDatabase,
-                SC_BUCKET_SIZE);
+        if (context.updateDatabase()) {
+            List<Map<ResourceAddress, ResourceDescription>> rdBuckets = partition(context.toResourceDescriptionDatabase,
+                    RD_BUCKET_SIZE);
+            List<Map<ResourceAddress, SecurityContext>> scBuckets = partition(context.toSecurityContextDatabase,
+                    SC_BUCKET_SIZE);
 
-        Observable rdObservable = null, scObservable = null;
-        if (!rdBuckets.isEmpty()) {
-            rdObservable = Observable.interval(INTERVAL, INTERVAL, MILLISECONDS)
+            Observable rdObservable = Observable.interval(RD_INTERVAL, RD_INTERVAL, MILLISECONDS)
                     .take(rdBuckets.size())
                     .doOnNext(index -> {
-                        Map<ResourceAddress, ResourceDescription> metadata = rdBuckets.get(index.intValue());
-                        for (Map.Entry<ResourceAddress, ResourceDescription> entry : metadata.entrySet()) {
-                            workerChannel.postResourceDescription(entry.getKey(), entry.getValue());
+                        if (index < rdBuckets.size()) {
+                            Map<ResourceAddress, ResourceDescription> metadata = rdBuckets.get(index.intValue());
+                            for (Map.Entry<ResourceAddress, ResourceDescription> entry : metadata.entrySet()) {
+                                workerChannel.postResourceDescription(entry.getKey(), entry.getValue());
+                            }
                         }
+                    })
+                    .onErrorResumeNext(error -> {
+                        logger.error("Unable to post resource description: {}", error.getMessage());
+                        return Observable.empty();
                     });
-        }
-        if (!scBuckets.isEmpty()) {
-            scObservable = Observable.interval(INTERVAL, INTERVAL, MILLISECONDS)
+            Observable scObservable = Observable.interval(SC_INTERVAL, SC_INTERVAL, MILLISECONDS)
                     .take(scBuckets.size())
                     .doOnNext(index -> {
-                        Map<ResourceAddress, SecurityContext> metadata = scBuckets.get(index.intValue());
-                        for (Map.Entry<ResourceAddress, SecurityContext> entry : metadata.entrySet()) {
-                            workerChannel.postSecurityContext(entry.getKey(), entry.getValue());
+                        if (index < scBuckets.size()) {
+                            Map<ResourceAddress, SecurityContext> metadata = scBuckets.get(index.intValue());
+                            for (Map.Entry<ResourceAddress, SecurityContext> entry : metadata.entrySet()) {
+                                workerChannel.postSecurityContext(entry.getKey(), entry.getValue());
+                            }
                         }
+                    })
+                    .onErrorResumeNext(error -> {
+                        logger.error("Unable to post security context: {}", error.getMessage());
+                        return Observable.empty();
                     });
+            Observable.concat(rdObservable, scObservable).subscribe();
         }
-
-        Observable observable = null;
-        if (rdObservable != null && scObservable == null) {
-            observable = rdObservable;
-        } else if (rdObservable == null && scObservable != null) {
-            observable = scObservable;
-        } else {
-            observable = Observable.concat(rdObservable, scObservable);
-        }
-        observable.doOnError(error -> logger.error("Unable to post metadata: {}", error)).subscribe();
     }
 
     private <T> List<Map<ResourceAddress, T>> partition(Map<ResourceAddress, T> metadata, int size) {
