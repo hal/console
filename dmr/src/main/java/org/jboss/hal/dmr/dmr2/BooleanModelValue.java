@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataOutput;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -42,7 +41,7 @@ final class BooleanModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.BOOLEAN.typeChar);
         out.writeBoolean(value);
     }
@@ -105,11 +104,6 @@ final class BooleanModelValue extends ModelValue {
     @Override
     String asString() {
         return Boolean.toString(value);
-    }
-
-    @Override
-    ValueExpression asExpression() {
-        return new ValueExpression(asString());
     }
 
     static BooleanModelValue valueOf(boolean value) {

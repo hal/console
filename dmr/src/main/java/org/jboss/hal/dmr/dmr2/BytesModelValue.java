@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -44,7 +42,7 @@ final class BytesModelValue extends ModelValue {
         this.bytes = bytes;
     }
 
-    BytesModelValue(DataInput in) throws IOException {
+    BytesModelValue(DataInput in) {
         super(ModelType.BYTES);
         byte[] b = new byte[in.readInt()];
         in.readFully(b);
@@ -52,7 +50,7 @@ final class BytesModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.BYTES.typeChar);
         out.writeInt(bytes.length);
         out.write(bytes);
@@ -215,5 +213,4 @@ final class BytesModelValue extends ModelValue {
     void write(ModelWriter writer) throws IOException, ModelException {
         writer.writeBytes(bytes);
     }
-
 }

@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -94,10 +93,6 @@ abstract class ModelValue implements Cloneable {
     }
 
     List<Property> asPropertyList() {
-        throw new IllegalArgumentException();
-    }
-
-    ValueExpression asExpression() {
         throw new IllegalArgumentException();
     }
 
@@ -266,7 +261,7 @@ abstract class ModelValue implements Cloneable {
         }
 
         @Override
-        void writeExternal(DataOutput out) throws IOException {
+        void writeExternal(DataOutput out) {
             out.write(ModelType.UNDEFINED.typeChar);
         }
 
@@ -366,11 +361,7 @@ abstract class ModelValue implements Cloneable {
 
     abstract void write(ModelWriter writer) throws IOException, ModelException;
 
-    ModelValue resolve() {
-        return copy();
-    }
-
-    abstract void writeExternal(DataOutput out) throws IOException;
+    abstract void writeExternal(DataOutput out);
 
     boolean has(int index) {
         return false;

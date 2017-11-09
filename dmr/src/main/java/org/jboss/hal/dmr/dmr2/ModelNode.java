@@ -15,17 +15,7 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.Externalizable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InvalidObjectException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -36,6 +26,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import elemental2.core.Uint8Array;
 import org.jboss.hal.dmr.dmr2.stream.ModelException;
 import org.jboss.hal.dmr.dmr2.stream.ModelStreamFactory;
 import org.jboss.hal.dmr.dmr2.stream.ModelWriter;
@@ -55,7 +46,7 @@ import org.jboss.hal.dmr.dmr2.stream.ModelWriter;
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  */
-public class ModelNode implements Externalizable, Cloneable {
+public class ModelNode {
 
     private static final long serialVersionUID = 2030456323088551487L;
     private static final String VALUE_IS_NULL = "value is null";
@@ -160,20 +151,6 @@ public class ModelNode implements Externalizable, Cloneable {
             throw new IllegalArgumentException(VALUE_IS_NULL);
         }
         this.value = new StringModelValue(value);
-    }
-
-    /**
-     * Creates a new {@code ModelNode} with the given {@code value}.
-     *
-     * @param value the value. Cannot be {@code null}
-     *
-     * @throws IllegalArgumentException if {@code value} is {@code null}
-     */
-    public ModelNode(ValueExpression value) {
-        if (value == null) {
-            throw new IllegalArgumentException(VALUE_IS_NULL);
-        }
-        this.value = new ExpressionValue(value);
     }
 
     /**
@@ -498,17 +475,6 @@ public class ModelNode implements Externalizable, Cloneable {
      */
     public byte[] asBytesOrNull() throws IllegalArgumentException {
         return isDefined() ? value.asBytes() : null;
-    }
-
-    /**
-     * Get the value of this node as an expression.
-     *
-     * @return the expression
-     *
-     * @throws IllegalArgumentException if this node is not {@link #isDefined() defined} or if no conversion is possible
-     */
-    public ValueExpression asExpression() throws IllegalArgumentException {
-        return value.asExpression();
     }
 
     /**
@@ -1814,23 +1780,6 @@ public class ModelNode implements Externalizable, Cloneable {
     }
 
     /**
-     * Reads base64 data from the passed stream,
-     * and deserializes the decoded result.
-     *
-     * @return the decoded model node
-     *
-     * @throws IOException if the passed stream has an issue
-     * @see #writeBase64(OutputStream)
-     */
-    public static ModelNode fromBase64(InputStream stream) throws IOException {
-        Base64.InputStream bstream = new Base64.InputStream(stream);
-        ModelNode node = new ModelNode();
-        node.readExternal(bstream);
-        bstream.close();
-        return node;
-    }
-
-    /**
      * Reads base64 data from the passed string,
      * and deserializes the decoded result.
      *
@@ -1840,33 +1789,16 @@ public class ModelNode implements Externalizable, Cloneable {
      * @see #writeBase64(OutputStream)
      */
     public static ModelNode fromBase64String(String encoded) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(Base64.decode(encoded));
+        String decoded = Base64.decode(encoded);
+        int length = decoded.length();
+        Uint8Array array = new Uint8Array(length);
+        for (int i = 0; i < length; i++) {
+            array.setAt(i, (double) decoded.codePointAt(i));
+        }
+        DataInput dataInput = new DataInput(array);
         ModelNode node = new ModelNode();
-        node.readExternal(bais);
-        bais.close();
+        node.readExternal(dataInput);
         return node;
-    }
-
-    /**
-     * Return a copy of this model node, with all values of type {@link ModelType#EXPRESSION} locally resolved.
-     * The caller must have permission to access all of the system properties named in the node tree. If an expression
-     * begins with {@code ${env.} then a system property named {@code env.@lt;remainder of expression@gt;} will be
-     * checked, and if not present a {@link System#getenv(String) system environment variable named @lt;remainder of
-     * expression@gt;}
-     * will be checked. In that case the caller must have permission to access the environment variable.
-     *
-     * @return the resolved copy
-     *
-     * @throws IllegalStateException if there is a value of type {@link ModelType#EXPRESSION} in the node tree and
-     *                               there is no system property or environment variable that matches the expression
-     * @throws SecurityException     if a security manager exists and its
-     *                               {@link SecurityManager#checkPermission checkPermission}
-     *                               method doesn't allow access to the relevant system property or environment variable
-     */
-    public ModelNode resolve() {
-        ModelNode newNode = new ModelNode();
-        newNode.value = value.resolve();
-        return newNode;
     }
 
     /**
@@ -1939,41 +1871,7 @@ public class ModelNode implements Externalizable, Cloneable {
      *
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        writeExternal((DataOutput) out);
-    }
-
-    /**
-     * Write this node's content in binary format to the given target.
-     *
-     * @param out the target to which the content should be written
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void writeExternal(OutputStream out) throws IOException {
-        writeExternal((DataOutput) new DataOutputStream(out));
-    }
-
-    /**
-     * Write this node's content in binary format to the given target.
-     *
-     * @param out the target to which the content should be written
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void writeExternal(DataOutputStream out) throws IOException {
-        writeExternal((DataOutput) out);
-    }
-
-    /**
-     * Write this node's content in binary format to the given target.
-     *
-     * @param out the target to which the content should be written
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void writeExternal(DataOutput out) throws IOException {
+    public void writeExternal(DataOutput out) {
         value.writeExternal(out);
     }
 
@@ -1981,101 +1879,58 @@ public class ModelNode implements Externalizable, Cloneable {
      * Read this node's content in binary format from the given source.
      *
      * @param in the source from which the content should be read
-     *
-     * @throws IOException if an I/O error occurs
      */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException {
-        readExternal((DataInput) in);
-    }
-
-    /**
-     * Read this node's content in binary format from the given source.
-     *
-     * @param in the source from which the content should be read
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void readExternal(DataInputStream in) throws IOException {
-        readExternal((DataInput) in);
-    }
-
-    /**
-     * Read this node's content in binary format from the given source.
-     *
-     * @param in the source from which the content should be read
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void readExternal(InputStream in) throws IOException {
-        readExternal((DataInput) new DataInputStream(in));
-    }
-
-    /**
-     * Read this node's content in binary format from the given source.
-     *
-     * @param in the source from which the content should be read
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void readExternal(DataInput in) throws IOException {
+    void readExternal(DataInput in) {
         checkProtect();
-        try {
-            char c = (char) (in.readByte() & 0xff);
-            ModelType type = ModelType.forChar(c);
-            switch (type) {
-                case UNDEFINED:
-                    value = ModelValue.UNDEFINED;
-                    return;
-                case BIG_DECIMAL:
-                    value = new BigDecimalModelValue(in);
-                    return;
-                case BIG_INTEGER:
-                    value = new BigIntegerModelValue(in);
-                    return;
-                case BOOLEAN:
-                    value = BooleanModelValue.valueOf(in.readBoolean());
-                    return;
-                case BYTES:
-                    value = new BytesModelValue(in);
-                    return;
-                case DOUBLE:
-                    value = new DoubleModelValue(in.readDouble());
-                    return;
-                case EXPRESSION:
-                    value = new ExpressionValue(in.readUTF());
-                    return;
-                case INT:
-                    value = new IntModelValue(in.readInt());
-                    return;
-                case LIST:
-                    value = new ListModelValue(in);
-                    return;
-                case LONG:
-                    value = new LongModelValue(in.readLong());
-                    return;
-                case OBJECT:
-                    value = new ObjectModelValue(in);
-                    return;
-                case PROPERTY:
-                    value = new PropertyModelValue(in);
-                    return;
-                case STRING:
-                    value = new StringModelValue(c, in);
-                    return;
-                case TYPE:
-                    value = TypeModelValue.of(ModelType.forChar((char) (in.readByte() & 0xff)));
-                    return;
-                default:
-                    throw new InvalidObjectException("Invalid type read: " + type);
-            }
-        } catch (IllegalArgumentException e) {
-            InvalidObjectException ne = new InvalidObjectException(e.getMessage());
-            ne.initCause(e.getCause());
-            throw ne;
+        char c = (char) (in.readByte() & 0xff);
+        ModelType type = ModelType.forChar(c);
+        switch (type) {
+            case UNDEFINED:
+                value = ModelValue.UNDEFINED;
+                return;
+            case BIG_DECIMAL:
+                value = new BigDecimalModelValue(in);
+                return;
+            case BIG_INTEGER:
+                value = new BigIntegerModelValue(in);
+                return;
+            case BOOLEAN:
+                value = BooleanModelValue.valueOf(in.readBoolean());
+                return;
+            case BYTES:
+                value = new BytesModelValue(in);
+                return;
+            case DOUBLE:
+                value = new DoubleModelValue(in.readDouble());
+                return;
+            case EXPRESSION:
+                value = new ExpressionValue(in.readUTF());
+                return;
+            case INT:
+                value = new IntModelValue(in.readInt());
+                return;
+            case LIST:
+                value = new ListModelValue(in);
+                return;
+            case LONG:
+                value = new LongModelValue(in.readLong());
+                return;
+            case OBJECT:
+                value = new ObjectModelValue(in);
+                return;
+            case PROPERTY:
+                value = new PropertyModelValue(in);
+                return;
+            case STRING:
+                value = new StringModelValue(c, in);
+                return;
+            case TYPE:
+                value = TypeModelValue.of(ModelType.forChar((char) (in.readByte() & 0xff)));
+                return;
+            default:
+                throw new RuntimeException("Invalid type read: " + type);
         }
     }
-
 
     /**
      * Encodes the serialized representation in base64 form
@@ -2087,7 +1942,7 @@ public class ModelNode implements Externalizable, Cloneable {
      */
     public void writeBase64(OutputStream stream) throws IOException {
         Base64.OutputStream bstream = new Base64.OutputStream(stream);
-        writeExternal(bstream);
+        // writeExternal(bstream);
         bstream.flushBase64(); // Required to ensure last block is written to stream.
     }
 

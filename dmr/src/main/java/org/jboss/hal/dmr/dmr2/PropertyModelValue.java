@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -51,7 +49,7 @@ final class PropertyModelValue extends ModelValue {
         this.property = property;
     }
 
-    PropertyModelValue(DataInput in) throws IOException {
+    PropertyModelValue(org.jboss.hal.dmr.dmr2.DataInput in) {
         super(ModelType.PROPERTY);
         ModelNode node = new ModelNode();
         String name = in.readUTF();
@@ -64,7 +62,7 @@ final class PropertyModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.PROPERTY.typeChar);
         out.writeUTF(property.getName());
         property.getValue().writeExternal(out);
@@ -121,11 +119,6 @@ final class PropertyModelValue extends ModelValue {
     @Override
     ModelValue copy() {
         return new PropertyModelValue(property.getName(), property.getValue());
-    }
-
-    @Override
-    ModelValue resolve() {
-        return new PropertyModelValue(property.getName(), property.getValue().resolve());
     }
 
     @Override

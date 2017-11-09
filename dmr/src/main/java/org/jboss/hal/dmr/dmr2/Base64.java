@@ -17,6 +17,8 @@ package org.jboss.hal.dmr.dmr2;
 
 import java.io.IOException;
 
+import jsinterop.annotations.JsMethod;
+
 /**
  * Encodes and decodes to and from Base64 notation.
  *
@@ -168,6 +170,15 @@ class Base64 {
     /** Defeats instantiation. */
     private Base64() {
     }
+
+    // ------------------------------------------------------ GWT
+
+    @JsMethod(namespace = "Window", name = "btoa")
+    public static native String encode(String decoded);
+
+    @JsMethod(namespace = "Window", name = "atob")
+    public static native String decode(String encoded);
+
 
     /* ******** E N C O D I N G M E T H O D S ******** */
 
@@ -594,7 +605,7 @@ class Base64 {
      *
      * @since 1.3
      */
-    public static byte[] decode(byte[] source, int off, int len) {
+    public static byte[] decodeToBytes(byte[] source, int off, int len) {
         int len34 = len * 3 / 4;
         byte[] outBuff = new byte[len34]; // Upper limit on size of output
         int outBuffPosn = 0;
@@ -640,7 +651,7 @@ class Base64 {
      *
      * @since 1.4
      */
-    public static byte[] decode(String s) {
+    public static byte[] decodeToBytes(String s) {
         byte[] bytes;
         try {
             bytes = s.getBytes(PREFERRED_ENCODING);
@@ -649,7 +660,7 @@ class Base64 {
         }
 
         // Decode
-        bytes = decode(bytes, 0, bytes.length);
+        bytes = decodeToBytes(bytes, 0, bytes.length);
 
         // Check to see if it's gzip-compressed
         // GZIP Magic Two-Byte Number: 0x8b1f (35615)
@@ -705,7 +716,7 @@ class Base64 {
      */
     public static Object decodeToObject(String encodedObject) {
         // Decode and gunzip if necessary
-        byte[] objBytes = decode(encodedObject);
+        byte[] objBytes = decodeToBytes(encodedObject);
 
         java.io.ByteArrayInputStream bais = null;
         java.io.ObjectInputStream ois = null;

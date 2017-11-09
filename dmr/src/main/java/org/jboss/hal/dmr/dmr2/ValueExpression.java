@@ -19,11 +19,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 /**
  * A value expression.
@@ -33,22 +28,7 @@ import java.security.PrivilegedAction;
 public final class ValueExpression implements Externalizable {
 
     private static final long serialVersionUID = -277358532170444708L;
-    private static final Field expressionStringField;
-
-    private final String expressionString;
-
-    static {
-        expressionStringField = AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
-            Field field;
-            try {
-                field = ValueExpression.class.getDeclaredField("expressionString");
-            } catch (NoSuchFieldException e) {
-                throw new NoSuchFieldError(e.getMessage());
-            }
-            field.setAccessible(true);
-            return field;
-        });
-    }
+    private String expressionString;
 
     /**
      * Quote a string so that it can be used in an expression as a literal string, instead of being expanded.
@@ -93,11 +73,7 @@ public final class ValueExpression implements Externalizable {
      */
     public void readExternal(ObjectInput in) throws IOException {
         String str = in.readUTF();
-        try {
-            expressionStringField.set(this, str);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
+        expressionString = str;
     }
 
     /**
@@ -138,140 +114,6 @@ public final class ValueExpression implements Externalizable {
      */
     public boolean equals(ValueExpression other) {
         return this == other || other != null && expressionString.equals(other.expressionString);
-    }
-
-    /**
-     * Resolve this expression to a string value.
-     *
-     * @return the resolved value
-     */
-    public String resolveString() {
-        return resolveString(ValueExpressionResolver.DEFAULT_RESOLVER);
-    }
-
-    /**
-     * Resolve this expression to a string value.
-     *
-     * @param resolver the resolver to use
-     *
-     * @return the resolved value
-     */
-    public String resolveString(ValueExpressionResolver resolver) {
-        return resolver.resolve(this);
-    }
-
-    /**
-     * Resolve this expression to a {@code boolean} value.
-     *
-     * @return the resolved value
-     */
-    public boolean resolveBoolean() {
-        String value = resolveString();
-        if (value.equalsIgnoreCase("true")) {
-            return true;
-        } else if (value.equalsIgnoreCase("false")) {
-            return false;
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    /**
-     * Resolve this expression to a {@code boolean} value.
-     *
-     * @param resolver the resolver to use
-     *
-     * @return the resolved value
-     */
-    public boolean resolveBoolean(ValueExpressionResolver resolver) {
-        String value = resolveString(resolver);
-        if (value.equalsIgnoreCase("true")) {
-            return true;
-        } else if (value.equalsIgnoreCase("false")) {
-            return false;
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    /**
-     * Resolve this expression to an {@code int} value.
-     *
-     * @return the resolved value
-     */
-    public int resolveInt() {
-        return Integer.parseInt(resolveString());
-    }
-
-    /**
-     * Resolve this expression to an {@code int} value.
-     *
-     * @param resolver the resolver to use
-     *
-     * @return the resolved value
-     */
-    public int resolveInt(ValueExpressionResolver resolver) {
-        return Integer.parseInt(resolveString(resolver));
-    }
-
-    /**
-     * Resolve this expression to a {@code long} value.
-     *
-     * @return the resolved value
-     */
-    public long resolveLong() {
-        return Long.parseLong(resolveString());
-    }
-
-    /**
-     * Resolve this expression to a {@code long} value.
-     *
-     * @param resolver the resolver to use
-     *
-     * @return the resolved value
-     */
-    public long resolveLong(ValueExpressionResolver resolver) {
-        return Long.parseLong(resolveString(resolver));
-    }
-
-    /**
-     * Resolve this expression to a large integer value.
-     *
-     * @return the resolved value
-     */
-    public BigInteger resolveBigInteger() {
-        return new BigInteger(resolveString());
-    }
-
-    /**
-     * Resolve this expression to a large integer value.
-     *
-     * @param resolver the resolver to use
-     *
-     * @return the resolved value
-     */
-    public BigInteger resolveBigInteger(ValueExpressionResolver resolver) {
-        return new BigInteger(resolveString(resolver));
-    }
-
-    /**
-     * Resolve this expression to a decimal value.
-     *
-     * @return the resolved value
-     */
-    public BigDecimal resolveBigDecimal() {
-        return new BigDecimal(resolveString());
-    }
-
-    /**
-     * Resolve this expression to a decimal value.
-     *
-     * @param resolver the resolver to use
-     *
-     * @return the resolved value
-     */
-    public BigDecimal resolveBigDecimal(ValueExpressionResolver resolver) {
-        return new BigDecimal(resolveString(resolver));
     }
 
     /**

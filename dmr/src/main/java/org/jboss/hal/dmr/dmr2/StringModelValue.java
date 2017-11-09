@@ -15,11 +15,8 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UTFDataFormatException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -41,7 +38,7 @@ final class StringModelValue extends ModelValue {
         this.value = value;
     }
 
-    StringModelValue(char typeChar, DataInput in) throws IOException {
+    StringModelValue(char typeChar, DataInput in) {
         super(ModelType.STRING);
         if (typeChar == 's') {
             value = in.readUTF();
@@ -56,25 +53,25 @@ final class StringModelValue extends ModelValue {
                 if (a < 0x80) {
                     chars[i] = (char) a;
                 } else if (a < 0xc0) {
-                    throw new UTFDataFormatException();
+                    throw new RuntimeException();
                 } else if (a < 0xe0) {
                     b = in.readUnsignedByte();
                     if ((b & 0xc0) != 0x80) {
-                        throw new UTFDataFormatException();
+                        throw new RuntimeException();
                     }
                     chars[i] = (char) ((a & 0x1f) << 6 | b & 0x3f);
                 } else if (a < 0xf0) {
                     b = in.readUnsignedByte();
                     if ((b & 0xc0) != 0x80) {
-                        throw new UTFDataFormatException();
+                        throw new RuntimeException();
                     }
                     c = in.readUnsignedByte();
                     if ((c & 0xc0) != 0x80) {
-                        throw new UTFDataFormatException();
+                        throw new RuntimeException();
                     }
                     chars[i] = (char) ((a & 0x0f) << 12 | (b & 0x3f) << 6 | c & 0x3f);
                 } else {
-                    throw new UTFDataFormatException();
+                    throw new RuntimeException();
                 }
             }
             value = new String(chars);
@@ -82,7 +79,7 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         int length = value.length();
         if (length > THRESHOLD) {
             int l = 0;
@@ -188,11 +185,6 @@ final class StringModelValue extends ModelValue {
     @Override
     String asString() {
         return value;
-    }
-
-    @Override
-    ValueExpression asExpression() {
-        return new ValueExpression(ValueExpression.quote(value));
     }
 
     @Override

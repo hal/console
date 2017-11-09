@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataOutput;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,7 +35,7 @@ final class IntModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.INT.typeChar);
         out.writeInt(value);
     }
@@ -104,11 +103,6 @@ final class IntModelValue extends ModelValue {
     @Override
     String asString() {
         return Integer.toString(value);
-    }
-
-    @Override
-    ValueExpression asExpression() {
-        return new ValueExpression(asString());
     }
 
     /**

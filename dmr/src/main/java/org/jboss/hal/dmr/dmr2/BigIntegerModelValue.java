@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -37,7 +35,7 @@ final class BigIntegerModelValue extends ModelValue {
         this.value = value;
     }
 
-    BigIntegerModelValue(DataInput in) throws IOException {
+    BigIntegerModelValue(DataInput in) {
         super(ModelType.BIG_INTEGER);
         byte[] b = new byte[in.readInt()];
         in.readFully(b);
@@ -45,7 +43,7 @@ final class BigIntegerModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.BIG_INTEGER.typeChar);
         byte[] b = value.toByteArray();
         out.writeInt(b.length);
@@ -105,11 +103,6 @@ final class BigIntegerModelValue extends ModelValue {
     @Override
     String asString() {
         return value.toString();
-    }
-
-    @Override
-    ValueExpression asExpression() {
-        return new ValueExpression(asString());
     }
 
     @Override

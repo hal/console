@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -44,7 +43,7 @@ final class ExpressionValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.EXPRESSION.typeChar);
         out.writeUTF(valueExpression.getExpressionString());
     }
@@ -52,11 +51,6 @@ final class ExpressionValue extends ModelValue {
     @Override
     String asString() {
         return valueExpression.getExpressionString();
-    }
-
-    @Override
-    ValueExpression asExpression() {
-        return valueExpression;
     }
 
     @Override
@@ -99,13 +93,7 @@ final class ExpressionValue extends ModelValue {
     }
 
     @Override
-    ModelValue resolve() {
-        return new StringModelValue(valueExpression.resolveString());
-    }
-
-    @Override
     void write(ModelWriter writer) throws IOException, ModelException {
         writer.writeExpression(valueExpression.getExpressionString());
     }
-
 }

@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -49,7 +47,7 @@ final class ObjectModelValue extends ModelValue {
         this.map = map;
     }
 
-    ObjectModelValue(DataInput in) throws IOException {
+    ObjectModelValue(DataInput in) {
         super(ModelType.OBJECT);
         int count = in.readInt();
         LinkedHashMap<String, ModelNode> map = new LinkedHashMap<>();
@@ -63,7 +61,7 @@ final class ObjectModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.OBJECT.typeChar);
         Map<String, ModelNode> map = this.map;
         int size = map.size();
@@ -160,18 +158,9 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     ModelValue copy() {
-        return copy(false);
-    }
-
-    @Override
-    ModelValue resolve() {
-        return copy(true);
-    }
-
-    ModelValue copy(boolean resolve) {
         LinkedHashMap<String, ModelNode> newMap = new LinkedHashMap<>();
         for (Map.Entry<String, ModelNode> entry : map.entrySet()) {
-            newMap.put(entry.getKey(), resolve ? entry.getValue().resolve() : entry.getValue().clone());
+            newMap.put(entry.getKey(), entry.getValue().clone());
         }
         return new ObjectModelValue(newMap);
     }

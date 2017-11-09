@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -40,7 +39,7 @@ final class TypeModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.TYPE.typeChar);
         out.writeByte(value.getTypeChar());
     }
@@ -106,11 +105,6 @@ final class TypeModelValue extends ModelValue {
     @Override
     String asString() {
         return value.toString();
-    }
-
-    @Override
-    ValueExpression asExpression() {
-        return new ValueExpression(asString());
     }
 
     @Override

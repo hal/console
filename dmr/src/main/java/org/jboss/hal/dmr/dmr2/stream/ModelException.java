@@ -20,7 +20,7 @@ package org.jboss.hal.dmr.dmr2.stream;
  *
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  */
-public final class ModelException extends Exception {
+public final class ModelException extends RuntimeException {
 
     /**
      * Serialization version UID.
@@ -60,5 +60,4 @@ public final class ModelException extends Exception {
     public ModelException(Throwable t) {
         super(t);
     }
-
 }

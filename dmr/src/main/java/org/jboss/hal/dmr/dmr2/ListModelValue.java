@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.dmr2;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -52,7 +50,7 @@ final class ListModelValue extends ModelValue {
         this.list = list;
     }
 
-    ListModelValue(DataInput in) throws IOException {
+    ListModelValue(org.jboss.hal.dmr.dmr2.DataInput in) {
         super(ModelType.LIST);
         int count = in.readInt();
         ArrayList<ModelNode> list = new ArrayList<>();
@@ -65,7 +63,7 @@ final class ListModelValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.write(ModelType.LIST.typeChar);
         List<ModelNode> list = this.list;
         int size = list.size();
@@ -201,15 +199,6 @@ final class ListModelValue extends ModelValue {
             clonedValues.add(node.clone());
         }
         return new ListModelValue(clonedValues);
-    }
-
-    @Override
-    ModelValue resolve() {
-        ArrayList<ModelNode> copy = new ArrayList<>(list.size());
-        for (ModelNode node : list) {
-            copy.add(node.resolve());
-        }
-        return new ListModelValue(copy);
     }
 
     @Override
