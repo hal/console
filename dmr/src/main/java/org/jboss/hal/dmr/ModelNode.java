@@ -63,6 +63,7 @@ public class ModelNode {
     /**
      * Creates a new {@code ModelNode} with an undefined value.
      */
+    @JsIgnore
     public ModelNode() {
     }
 
@@ -253,6 +254,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node's {@link #getType() type} is one where no numeric conversion is
      *                                  possible
      */
+    @JsIgnore
     public int asInt(int defVal) {
         return value.asInt(defVal);
     }
@@ -281,6 +283,7 @@ public class ModelNode {
      *                                  possible or if the type is {@link ModelType#STRING} and the string value is not
      *                                  equal, ignoring case, to the literal {@code true} or {@code false}
      */
+    @JsIgnore
     public boolean asBoolean(boolean defVal) {
         return value.asBoolean(defVal);
     }
@@ -304,6 +307,7 @@ public class ModelNode {
      *
      * @return the string value.
      */
+    @JsIgnore
     public String asString(String defVal) {
         return isDefined() ? value.asString() : defVal;
     }
@@ -333,6 +337,7 @@ public class ModelNode {
      * @throws IllegalArgumentException if this node's {@link #getType() type} is one where no numeric conversion is
      *                                  possible
      */
+    @JsIgnore
     public double asDouble(double defVal) {
         return value.asDouble(defVal);
     }
@@ -566,8 +571,6 @@ public class ModelNode {
      * @param newValue the new value
      *
      * @return this node
-     *
-     * @deprecated Use {@link #set(ValueExpression)} instead.
      */
     public ModelNode setExpression(String newValue) {
         if (newValue == null) {
@@ -676,7 +679,7 @@ public class ModelNode {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
         }
         checkProtect();
-        value = new BytesModelValue(newValue.length == 0 ? newValue : newValue.clone());
+        value = new BytesModelValue(newValue);
         return this;
     }
 
@@ -1842,7 +1845,6 @@ public class ModelNode {
      *
      * @return the clone
      */
-    @Override
     @JsIgnore
     public ModelNode clone() {
         ModelNode clone = new ModelNode();

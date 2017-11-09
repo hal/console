@@ -87,7 +87,7 @@ final class BooleanModelValue extends ModelValue {
 
     @Override
     byte[] asBytes() {
-        return value ? TRUE_BYTES.clone() : FALSE_BYTES.clone();
+        return value ? TRUE_BYTES : FALSE_BYTES;
     }
 
     @Override

@@ -69,7 +69,7 @@ final class PropertyModelValue extends ModelValue {
 
     @Override
     String asString() {
-        return String.format("(%s => %s)", quote(property.getName()), property.getValue());
+        return "(" + quote(property.getName()) + " => " + property.getValue() + ")";
     }
 
     @Override

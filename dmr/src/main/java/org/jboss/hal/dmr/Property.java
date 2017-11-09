@@ -15,14 +15,21 @@
  */
 package org.jboss.hal.dmr;
 
+import jsinterop.annotations.JsConstructor;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
+
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
+@JsType
 public final class Property implements Cloneable {
 
     private final String name;
     private final ModelNode value;
 
+    @JsConstructor
     public Property(String name, ModelNode value) {
         this(name, value, true);
     }
@@ -38,15 +45,17 @@ public final class Property implements Cloneable {
         this.value = copy ? value.clone() : value;
     }
 
+    @JsProperty
     public String getName() {
         return name;
     }
 
+    @JsProperty
     public ModelNode getValue() {
         return value;
     }
 
-    @Override
+    @JsIgnore
     public Property clone() {
         return new Property(name, value.clone());
     }

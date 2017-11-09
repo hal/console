@@ -109,7 +109,7 @@ final class BytesModelValue extends ModelValue {
 
     @Override
     byte[] asBytes() {
-        return bytes.clone();
+        return bytes;
     }
 
     @Override

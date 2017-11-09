@@ -15,19 +15,13 @@
  */
 package org.jboss.hal.dmr;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
 /**
  * A value expression.
  *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-public final class ValueExpression implements Externalizable {
+public final class ValueExpression {
 
-    private static final long serialVersionUID = -277358532170444708L;
     private String expressionString;
 
     /**
@@ -51,29 +45,6 @@ public final class ValueExpression implements Externalizable {
             throw new IllegalArgumentException("expressionString is null");
         }
         this.expressionString = expressionString;
-    }
-
-    /**
-     * Serialize this instance.
-     *
-     * @param out the target stream
-     *
-     * @throws IOException if a serialization error occurs
-     */
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(expressionString);
-    }
-
-    /**
-     * Deserialize this instance.
-     *
-     * @param in the source stream
-     *
-     * @throws IOException if a serialization error occurs
-     */
-    public void readExternal(ObjectInput in) throws IOException {
-        String str = in.readUTF();
-        expressionString = str;
     }
 
     /**
