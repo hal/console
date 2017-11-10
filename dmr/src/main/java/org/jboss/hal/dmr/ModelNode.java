@@ -31,6 +31,9 @@ import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.stream.ModelException;
 import org.jboss.hal.dmr.stream.ModelStreamFactory;
 import org.jboss.hal.dmr.stream.ModelWriter;
+import org.jboss.hal.js.Json;
+import org.jboss.hal.js.JsonObject;
+import org.jboss.hal.spi.EsReturn;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
@@ -1975,5 +1978,53 @@ public class ModelNode {
         } else {
             return "No failure-description provided";
         }
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    /**
+     * Creates a new undefined model node
+     *
+     * @return the new model node
+     */
+    @JsMethod(name = "create")
+    public static ModelNode jsCreate() {
+        return new ModelNode();
+    }
+
+    /**
+     * @return the model node as JSON
+     */
+    @JsMethod(name = "getJSON")
+    @EsReturn("json")
+    public JsonObject jsGetJSONString() {
+        return Json.parse(toJSONString(true));
+    }
+
+    /**
+     * @return this model node as an {@link Property} array
+     */
+    @JsMethod(name = "asProperties")
+    @EsReturn("Property[]")
+    public Property[] jsAsProperties() {
+        List<Property> properties = value.asPropertyList();
+        if (properties != null) {
+            return properties.toArray(new Property[properties.size()]);
+        }
+        return new Property[0];
+    }
+
+    /**
+     * @return this model node as an array.
+     */
+    @JsMethod(name = "asList")
+    @EsReturn("ModelNode[]")
+    public ModelNode[] jsAsList() {
+        List<ModelNode> modelNodes = value.asList();
+        if (modelNodes != null) {
+            return modelNodes.toArray(new ModelNode[modelNodes.size()]);
+        }
+        return new ModelNode[0];
     }
 }
