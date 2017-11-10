@@ -18,13 +18,10 @@ package org.jboss.hal.dmr;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class IntModelValue extends ModelValue {
+class IntModelValue extends ModelValue {
 
     private final int value;
 
@@ -35,7 +32,6 @@ final class IntModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.INT.typeChar);
         out.writeInt(value);
     }
 
@@ -131,10 +127,4 @@ final class IntModelValue extends ModelValue {
     public int hashCode() {
         return value;
     }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeInt(value);
-    }
-
 }

@@ -24,13 +24,10 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class ObjectModelValue extends ModelValue {
+class ObjectModelValue extends ModelValue {
 
     private final Map<String, ModelNode> map;
 
@@ -59,7 +56,6 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.OBJECT.typeChar);
         Map<String, ModelNode> map = this.map;
         int size = map.size();
         out.writeInt(size);
@@ -155,9 +151,18 @@ final class ObjectModelValue extends ModelValue {
 
     @Override
     ModelValue copy() {
+        return copy(false);
+    }
+
+    @Override
+    ModelValue resolve() {
+        return copy(true);
+    }
+
+    ModelValue copy(boolean resolve) {
         LinkedHashMap<String, ModelNode> newMap = new LinkedHashMap<>();
         for (Map.Entry<String, ModelNode> entry : map.entrySet()) {
-            newMap.put(entry.getKey(), entry.getValue().clone());
+            newMap.put(entry.getKey(), resolve ? entry.getValue().resolve() : entry.getValue().clone());
         }
         return new ObjectModelValue(newMap);
     }
@@ -282,18 +287,4 @@ final class ObjectModelValue extends ModelValue {
         }
         return super.requireChild(name);
     }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeObjectStart();
-        Iterator<Map.Entry<String, ModelNode>> iterator = map.entrySet().iterator();
-        Map.Entry<String, ModelNode> entry;
-        while (iterator.hasNext()) {
-            entry = iterator.next();
-            writer.writeString(entry.getKey());
-            entry.getValue().write(writer);
-        }
-        writer.writeObjectEnd();
-    }
-
 }

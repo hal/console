@@ -20,14 +20,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class PropertyModelValue extends ModelValue {
+class PropertyModelValue extends ModelValue {
 
+    /** JSON Key used to identify PropertyModelValue. */
+    private static final String TYPE_KEY = "PROPERTY_VALUE";
     private final Property property;
 
     PropertyModelValue(String name, ModelNode value) {
@@ -52,7 +51,6 @@ final class PropertyModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.PROPERTY.typeChar);
         out.writeUTF(property.getName());
         property.getValue().writeExternal(out);
     }
@@ -111,13 +109,18 @@ final class PropertyModelValue extends ModelValue {
     }
 
     @Override
+    ModelValue resolve() {
+        return new PropertyModelValue(property.getName(), property.getValue().resolve());
+    }
+
+    @Override
     public boolean equals(Object other) {
         return other instanceof PropertyModelValue && equals((PropertyModelValue) other);
     }
 
     public boolean equals(PropertyModelValue other) {
-        return this == other || other != null && other.property.getName().equals(property.getName())
-                && other.property.getValue().equals(property.getValue());
+        return this == other || other != null && other.property.getName().equals(property.getName()) && other.property
+                .getValue().equals(property.getValue());
     }
 
     @Override
@@ -135,7 +138,6 @@ final class PropertyModelValue extends ModelValue {
         return property.getName().equals(name) ? property.getValue() : super.requireChild(name);
     }
 
-    @Override
     void formatAsJSON(StringBuilder builder, int indent, boolean multiLineRequested) {
         builder.append('{');
         if (multiLineRequested) {
@@ -143,9 +145,9 @@ final class PropertyModelValue extends ModelValue {
         } else {
             builder.append(' ');
         }
-        builder.append(jsonEscape(property.getName()));
+        builder.append(jsonEscape(TYPE_KEY));
         builder.append(" : ");
-        property.getValue().formatAsJSON(builder, indent + 1, multiLineRequested);
+        formatPropertyAsJSON(builder, indent + 1, multiLineRequested);
         if (multiLineRequested) {
             indent(builder.append('\n'), indent);
         } else {
@@ -154,12 +156,21 @@ final class PropertyModelValue extends ModelValue {
         builder.append('}');
     }
 
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writePropertyStart();
-        writer.writeString(property.getName());
-        property.getValue().write(writer);
-        writer.writePropertyEnd();
+    private void formatPropertyAsJSON(StringBuilder writer, int indent, boolean multiLineRequested) {
+        writer.append('{');
+        if (multiLineRequested) {
+            indent(writer.append('\n'), indent + 1);
+        } else {
+            writer.append(' ');
+        }
+        writer.append(jsonEscape(property.getName()));
+        writer.append(" : ");
+        property.getValue().formatAsJSON(writer, indent + 1, multiLineRequested);
+        if (multiLineRequested) {
+            indent(writer.append('\n'), indent);
+        } else {
+            writer.append(' ');
+        }
+        writer.append('}');
     }
-
 }

@@ -217,7 +217,7 @@ public class Dispatcher implements RecordingHandler {
             if (get) {
                 xhr.send();
             } else {
-                xhr.send(dmrOperation.toBase64());
+                xhr.send(dmrOperation.toBase64String());
             }
             recordOperation(operation);
         });
@@ -248,7 +248,7 @@ public class Dispatcher implements RecordingHandler {
     @JsIgnore
     public Single<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
-        FormData formData = createFormData(file, uploadOperation.toBase64());
+        FormData formData = createFormData(file, uploadOperation.toBase64String());
         return uploadFormData(formData, uploadOperation).map(payload -> payload.get(RESULT));
     }
 

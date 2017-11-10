@@ -18,21 +18,19 @@ package org.jboss.hal.dmr;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class BooleanModelValue extends ModelValue {
+class BooleanModelValue extends ModelValue {
+
+    private static BooleanModelValue TRUE = new BooleanModelValue(true);
+    private static BooleanModelValue FALSE = new BooleanModelValue(false);
+
+    static BooleanModelValue valueOf(boolean value) {
+        return value ? TRUE : FALSE;
+    }
 
     private final boolean value;
-
-    static final BooleanModelValue TRUE = new BooleanModelValue(true);
-    static final BooleanModelValue FALSE = new BooleanModelValue(false);
-
-    private static final byte[] TRUE_BYTES = new byte[]{1};
-    private static final byte[] FALSE_BYTES = new byte[]{0};
 
     private BooleanModelValue(boolean value) {
         super(ModelType.BOOLEAN);
@@ -41,7 +39,6 @@ final class BooleanModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.BOOLEAN.typeChar);
         out.writeBoolean(value);
     }
 
@@ -87,7 +84,7 @@ final class BooleanModelValue extends ModelValue {
 
     @Override
     byte[] asBytes() {
-        return value ? TRUE_BYTES : FALSE_BYTES;
+        return value ? new byte[]{1} : new byte[]{0};
     }
 
     @Override
@@ -105,10 +102,6 @@ final class BooleanModelValue extends ModelValue {
         return Boolean.toString(value);
     }
 
-    static BooleanModelValue valueOf(boolean value) {
-        return value ? TRUE : FALSE;
-    }
-
     @Override
     public boolean equals(Object other) {
         return other == this;
@@ -117,10 +110,5 @@ final class BooleanModelValue extends ModelValue {
     @Override
     public int hashCode() {
         return Boolean.valueOf(value).hashCode();
-    }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeBoolean(value);
     }
 }

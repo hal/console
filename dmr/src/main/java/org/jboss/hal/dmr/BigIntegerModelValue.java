@@ -18,34 +18,21 @@ package org.jboss.hal.dmr;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class BigIntegerModelValue extends ModelValue {
+class BigIntegerModelValue extends ModelValue {
 
-    private final BigInteger value;
+    private BigInteger value;
 
     BigIntegerModelValue(BigInteger value) {
         super(ModelType.BIG_INTEGER);
         this.value = value;
     }
 
-    BigIntegerModelValue(DataInput in) {
-        super(ModelType.BIG_INTEGER);
-        byte[] b = new byte[in.readInt()];
-        in.readFully(b);
-        this.value = new BigInteger(b);
-    }
-
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.BIG_INTEGER.typeChar);
-        byte[] b = value.toByteArray();
-        out.writeInt(b.length);
-        out.write(b);
+        out.write(value.toByteArray());
     }
 
     @Override
@@ -104,9 +91,8 @@ final class BigIntegerModelValue extends ModelValue {
     }
 
     @Override
-    void format(StringBuilder builder, int indent, boolean ignored) {
-        builder.append("big integer ");
-        builder.append(asString());
+    void format(StringBuilder target, int indent, boolean ignored) {
+        target.append("big integer ").append(value); //NON-NLS
     }
 
     /**
@@ -136,10 +122,4 @@ final class BigIntegerModelValue extends ModelValue {
     public int hashCode() {
         return value.hashCode();
     }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeBigInteger(value);
-    }
-
 }

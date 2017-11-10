@@ -17,20 +17,19 @@ package org.jboss.hal.dmr;
 
 class DataInput {
 
-    private static final int EOF = -1;
     private final byte[] bytes;
-    private int pos;
+    private int pos = 0;
 
     DataInput(byte[] bytes) {
         this.bytes = bytes;
-        this.pos = 0;
     }
+
 
     // ------------------------------------------------------ read a-z
 
     private int read() {
         if (pos >= bytes.length) {
-            return EOF;
+            return -1;
         }
         return bytes[pos++] & 0xFF;
     }
@@ -41,17 +40,24 @@ class DataInput {
 
     byte readByte() {
         int i = read();
-        if (i == EOF) {
+        if (i == -1) {
             throw new RuntimeException("EOF");
         }
         return (byte) i;
     }
 
+    char readChar() {
+        int a = readUnsignedByte();
+        int b = readUnsignedByte();
+        return (char) ((a << 8) | b);
+    }
+
     double readDouble() {
         // See  https://issues.jboss.org/browse/AS7-4126
-        // return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
+        //return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
         byte[] doubleBytes = new byte[8];
         readFully(doubleBytes);
+
         return IEEE754.toDouble(
                 doubleBytes[0],
                 doubleBytes[1],
@@ -80,6 +86,7 @@ class DataInput {
     long readLong() {
         byte[] longBytes = new byte[8];
         readFully(longBytes);
+
         return (((long) longBytes[0] << 56) +
                 ((long) (longBytes[1] & 255) << 48) +
                 ((long) (longBytes[2] & 255) << 40) +
@@ -88,11 +95,18 @@ class DataInput {
                 ((longBytes[5] & 255) << 16) +
                 ((longBytes[6] & 255) << 8) +
                 ((longBytes[7] & 255) << 0));
+
     }
 
-    int readUnsignedByte() {
+    short readShort() {
+        int a = readUnsignedByte();
+        int b = readUnsignedByte();
+        return (short) ((a << 8) | b);
+    }
+
+    private int readUnsignedByte() {
         int i = read();
-        if (i == EOF) {
+        if (i == -1) {
             throw new RuntimeException("EOF");
         }
         return i;
@@ -111,6 +125,7 @@ class DataInput {
         while (bytes > 0) {
             bytes -= readUTFChar(sb);
         }
+
         return sb.toString();
     }
 

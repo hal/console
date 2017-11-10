@@ -58,7 +58,7 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     @Override
     public Document asDocument(ResourceAddress address, ResourceDescription resourceDescription) {
         Document document = Document.of(address.toString());
-        document.set(PAYLOAD, resourceDescription.toBase64());
+        document.set(PAYLOAD, resourceDescription.toBase64String());
         return document;
     }
 

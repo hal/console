@@ -94,7 +94,7 @@ public class Macros {
         for (Operation operation : macro.getOperations()) {
             modelNode.get(OPERATIONS).add(operation);
         }
-        return modelNode.toBase64();
+        return modelNode.toBase64String();
     }
 
     public void remove(Macro macro) {

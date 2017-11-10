@@ -19,15 +19,10 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class StringModelValue extends ModelValue {
-
-    private static final int THRESHOLD = 65535 / 3;
+class StringModelValue extends ModelValue {
 
     private final String value;
 
@@ -36,82 +31,8 @@ final class StringModelValue extends ModelValue {
         this.value = value;
     }
 
-    StringModelValue(char typeChar, DataInput in) {
-        super(ModelType.STRING);
-        if (typeChar == 's') {
-            value = in.readUTF();
-        } else {
-            // long string
-            assert typeChar == 'S';
-            int length = in.readInt();
-            char[] chars = new char[length];
-            int a, b, c;
-            for (int i = 0; i < length; i++) {
-                a = in.readUnsignedByte();
-                if (a < 0x80) {
-                    chars[i] = (char) a;
-                } else if (a < 0xc0) {
-                    throw new RuntimeException();
-                } else if (a < 0xe0) {
-                    b = in.readUnsignedByte();
-                    if ((b & 0xc0) != 0x80) {
-                        throw new RuntimeException();
-                    }
-                    chars[i] = (char) ((a & 0x1f) << 6 | b & 0x3f);
-                } else if (a < 0xf0) {
-                    b = in.readUnsignedByte();
-                    if ((b & 0xc0) != 0x80) {
-                        throw new RuntimeException();
-                    }
-                    c = in.readUnsignedByte();
-                    if ((c & 0xc0) != 0x80) {
-                        throw new RuntimeException();
-                    }
-                    chars[i] = (char) ((a & 0x0f) << 12 | (b & 0x3f) << 6 | c & 0x3f);
-                } else {
-                    throw new RuntimeException();
-                }
-            }
-            value = new String(chars);
-        }
-    }
-
     @Override
     void writeExternal(DataOutput out) {
-        int length = value.length();
-        if (length > THRESHOLD) {
-            int l = 0;
-            for (int i = 0; i < length; i++) {
-                char c = value.charAt(i);
-                if (c > 0 && c <= 0x7f) {
-                    l++;
-                } else if (c <= 0x07ff) {
-                    l += 2;
-                } else {
-                    l += 3;
-                }
-            }
-            if (l > 65535) {
-                out.writeChar('S');
-                out.writeInt(length);
-                // Modified, modified UTF-8 (keep 0 as 0)
-                for (int i = 0; i < length; i++) {
-                    char c = value.charAt(i);
-                    if (c > 0 && c <= 0x7f) {
-                        out.writeByte(c);
-                    } else if (c <= 0x07ff) {
-                        out.writeByte(0xc0 | 0x1f & c >> 6);
-                        out.writeByte(0x80 | 0x3f & c);
-                    } else {
-                        out.writeByte(0xe0 | 0x0f & c >> 12);
-                        out.writeByte(0x80 | 0x3f & c >> 6);
-                        out.writeByte(0x80 | 0x3f & c);
-                    }
-                }
-                return;
-            }
-        }
-        out.writeByte(ModelType.STRING.typeChar);
         out.writeUTF(value);
     }
 
@@ -137,18 +58,12 @@ final class StringModelValue extends ModelValue {
 
     @Override
     boolean asBoolean() {
-        if (value.equalsIgnoreCase("true")) {
-            return true;
-        } else if (value.equalsIgnoreCase("false")) {
-            return false;
-        } else {
-            throw new IllegalArgumentException();
-        }
+        return Boolean.parseBoolean(value);
     }
 
     @Override
     boolean asBoolean(boolean defVal) {
-        return asBoolean();
+        return Boolean.parseBoolean(value);
     }
 
     @Override
@@ -165,7 +80,7 @@ final class StringModelValue extends ModelValue {
     byte[] asBytes() {
         try {
             return value.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ignored) {
+        } catch (UnsupportedEncodingException e) {
             return value.getBytes();
         }
     }
@@ -226,10 +141,5 @@ final class StringModelValue extends ModelValue {
     @Override
     public int hashCode() {
         return value.hashCode();
-    }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeString(value);
     }
 }

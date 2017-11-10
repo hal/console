@@ -18,13 +18,10 @@ package org.jboss.hal.dmr;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class DoubleModelValue extends ModelValue {
+class DoubleModelValue extends ModelValue {
 
     private final double value;
 
@@ -35,7 +32,6 @@ final class DoubleModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.DOUBLE.typeChar);
         out.writeDouble(value);
     }
 
@@ -81,23 +77,12 @@ final class DoubleModelValue extends ModelValue {
 
     @Override
     byte[] asBytes() {
-        long value = Double.doubleToLongBits(this.value);
-        byte[] bytes = new byte[8];
-        bytes[0] = (byte) (value >>> 56);
-        bytes[1] = (byte) (value >>> 48);
-        bytes[2] = (byte) (value >>> 40);
-        bytes[3] = (byte) (value >>> 32);
-        bytes[4] = (byte) (value >>> 24);
-        bytes[5] = (byte) (value >>> 16);
-        bytes[6] = (byte) (value >>> 8);
-        bytes[7] = (byte) (value);
-        return bytes;
+        throw new IllegalArgumentException();
     }
 
     @Override
     BigDecimal asBigDecimal() {
-        // Use the "pretty" over the "exact"
-        return BigDecimal.valueOf(value);
+        return new BigDecimal(value);
     }
 
     @Override
@@ -137,10 +122,4 @@ final class DoubleModelValue extends ModelValue {
     public int hashCode() {
         return Double.valueOf(value).hashCode();
     }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeDouble(value);
-    }
-
 }

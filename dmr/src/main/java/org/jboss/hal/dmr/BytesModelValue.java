@@ -19,13 +19,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class BytesModelValue extends ModelValue {
+class BytesModelValue extends ModelValue {
 
     /** JSON Key used to identify BytesModelValue. */
     private static final String TYPE_KEY = "BYTES_VALUE";
@@ -37,17 +34,8 @@ final class BytesModelValue extends ModelValue {
         this.bytes = bytes;
     }
 
-    BytesModelValue(DataInput in) {
-        super(ModelType.BYTES);
-        byte[] b = new byte[in.readInt()];
-        in.readFully(b);
-        this.bytes = b;
-    }
-
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.BYTES.typeChar);
-        out.writeInt(bytes.length);
         out.write(bytes);
     }
 
@@ -89,12 +77,14 @@ final class BytesModelValue extends ModelValue {
 
     @Override
     double asDouble() {
-        return Double.longBitsToDouble(asLong());
+        throw new IllegalArgumentException();
+        //return Double.longBitsToDouble(asLong());
     }
 
     @Override
     double asDouble(double defVal) {
-        return Double.longBitsToDouble(asLong());
+        throw new IllegalArgumentException();
+        //return Double.longBitsToDouble(asLong());
     }
 
     @Override
@@ -109,13 +99,24 @@ final class BytesModelValue extends ModelValue {
 
     @Override
     byte[] asBytes() {
-        return bytes;
+        byte[] clone = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            clone[i] = bytes[i];
+        }
+        return clone;
     }
 
     @Override
     String asString() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(bytes.length * 4 + 4);
         format(builder, 0, false);
+        return builder.toString();
+    }
+
+    @Override
+    public String toJSONString(boolean compact) {
+        StringBuilder builder = new StringBuilder(bytes.length * 4 + 4);
+        formatAsJSON(builder, 0, !compact);
         return builder.toString();
     }
 
@@ -129,7 +130,7 @@ final class BytesModelValue extends ModelValue {
         }
         builder.append(jsonEscape(TYPE_KEY));
         builder.append(" : ");
-        builder.append(jsonEscape(Base64.encodeBytes(bytes)));
+        //builder.append(jsonEscape(Base64.encodeBytes(bytes)));
         if (multiLine) {
             indent(builder.append('\n'), indent);
         } else {
@@ -139,6 +140,7 @@ final class BytesModelValue extends ModelValue {
     }
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     void format(StringBuilder builder, int indent, boolean multiLine) {
         builder.append("bytes {");
         if (multiLine) {
@@ -170,9 +172,9 @@ final class BytesModelValue extends ModelValue {
         builder.append('}');
     }
 
-    void formatMultiLine(StringBuilder builder, int indent) {
+    void formatMultiLine(StringBuilder target, int indent) {
         int length = bytes.length;
-        format(builder, indent, length > 8);
+        format(target, indent, length > 8);
     }
 
     /**
@@ -201,10 +203,5 @@ final class BytesModelValue extends ModelValue {
     @Override
     public int hashCode() {
         return Arrays.hashCode(bytes) + 71;
-    }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeBytes(bytes);
     }
 }

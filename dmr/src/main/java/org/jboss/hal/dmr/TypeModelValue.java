@@ -15,18 +15,51 @@
  */
 package org.jboss.hal.dmr;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class TypeModelValue extends ModelValue {
+class TypeModelValue extends ModelValue {
 
-    /**
-     * JSON Key used to identify TypeModelValue.
-     */
+    /** JSON Key used to identify TypeModelValue. */
     private static final String TYPE_KEY = "TYPE_MODEL_VALUE";
+    private static final TypeModelValue BOOLEAN = new TypeModelValue(ModelType.BOOLEAN);
+    private static final TypeModelValue BYTES = new TypeModelValue(ModelType.BYTES);
+    private static final TypeModelValue DECIMAL = new TypeModelValue(ModelType.BIG_DECIMAL);
+    private static final TypeModelValue DOUBLE = new TypeModelValue(ModelType.DOUBLE);
+    private static final TypeModelValue INT = new TypeModelValue(ModelType.INT);
+    private static final TypeModelValue LONG = new TypeModelValue(ModelType.LONG);
+    private static final TypeModelValue LIST = new TypeModelValue(ModelType.LIST);
+    private static final TypeModelValue OBJECT = new TypeModelValue(ModelType.OBJECT);
+    private static final TypeModelValue STRING = new TypeModelValue(ModelType.STRING);
+    private static final TypeModelValue TYPE = new TypeModelValue(ModelType.TYPE);
+    private static final TypeModelValue UNDEFINED = new TypeModelValue(ModelType.UNDEFINED);
+
+    static TypeModelValue of(ModelType type) {
+        switch (type) {
+            case LONG:
+                return LONG;
+            case INT:
+                return INT;
+            case BOOLEAN:
+                return BOOLEAN;
+            case STRING:
+                return STRING;
+            case DOUBLE:
+                return DOUBLE;
+            case BIG_DECIMAL:
+                return DECIMAL;
+            case BYTES:
+                return BYTES;
+            case LIST:
+                return LIST;
+            case TYPE:
+                return TYPE;
+            case OBJECT:
+                return OBJECT;
+            default:
+                return UNDEFINED;
+        }
+    }
 
     private final ModelType value;
 
@@ -37,56 +70,7 @@ final class TypeModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.TYPE.typeChar);
         out.writeByte(value.getTypeChar());
-    }
-
-    private static final TypeModelValue BIG_DECIMAL = new TypeModelValue(ModelType.BIG_DECIMAL);
-    private static final TypeModelValue BIG_INTEGER = new TypeModelValue(ModelType.BIG_INTEGER);
-    private static final TypeModelValue BOOLEAN = new TypeModelValue(ModelType.BOOLEAN);
-    private static final TypeModelValue BYTES = new TypeModelValue(ModelType.BYTES);
-    private static final TypeModelValue DOUBLE = new TypeModelValue(ModelType.DOUBLE);
-    private static final TypeModelValue EXPRESSION = new TypeModelValue(ModelType.EXPRESSION);
-    private static final TypeModelValue INT = new TypeModelValue(ModelType.INT);
-    private static final TypeModelValue LONG = new TypeModelValue(ModelType.LONG);
-    private static final TypeModelValue LIST = new TypeModelValue(ModelType.LIST);
-    private static final TypeModelValue OBJECT = new TypeModelValue(ModelType.OBJECT);
-    private static final TypeModelValue PROPERTY = new TypeModelValue(ModelType.PROPERTY);
-    private static final TypeModelValue STRING = new TypeModelValue(ModelType.STRING);
-    private static final TypeModelValue TYPE = new TypeModelValue(ModelType.TYPE);
-    private static final TypeModelValue UNDEFINED = new TypeModelValue(ModelType.UNDEFINED);
-
-    static TypeModelValue of(ModelType type) {
-        switch (type) {
-            case BIG_DECIMAL:
-                return BIG_DECIMAL;
-            case BIG_INTEGER:
-                return BIG_INTEGER;
-            case BOOLEAN:
-                return BOOLEAN;
-            case BYTES:
-                return BYTES;
-            case DOUBLE:
-                return DOUBLE;
-            case EXPRESSION:
-                return EXPRESSION;
-            case INT:
-                return INT;
-            case LIST:
-                return LIST;
-            case LONG:
-                return LONG;
-            case OBJECT:
-                return OBJECT;
-            case PROPERTY:
-                return PROPERTY;
-            case STRING:
-                return STRING;
-            case TYPE:
-                return TYPE;
-            default:
-                return UNDEFINED;
-        }
     }
 
     @Override
@@ -154,10 +138,5 @@ final class TypeModelValue extends ModelValue {
     @Override
     public int hashCode() {
         return value.hashCode();
-    }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        writer.writeType(value);
     }
 }

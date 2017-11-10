@@ -21,13 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jboss.hal.dmr.stream.ModelException;
-import org.jboss.hal.dmr.stream.ModelWriter;
-
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class ListModelValue extends ModelValue {
+class ListModelValue extends ModelValue {
 
     public static final ModelNode[] NO_NODES = new ModelNode[0];
     private final List<ModelNode> list;
@@ -61,7 +58,6 @@ final class ListModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeByte(ModelType.LIST.typeChar);
         List<ModelNode> list = this.list;
         int size = list.size();
         out.writeInt(size);
@@ -124,7 +120,7 @@ final class ListModelValue extends ModelValue {
         Iterator<ModelNode> i = list.iterator();
         while (i.hasNext()) {
             ModelNode node = i.next();
-            if (node.getType() == ModelType.PROPERTY || node.getType() == ModelType.OBJECT) {
+            if (node.getType() == ModelType.PROPERTY) {
                 propertyList.add(node.asProperty());
             } else if (i.hasNext()) {
                 ModelNode value = i.next();
@@ -171,31 +167,22 @@ final class ListModelValue extends ModelValue {
     }
 
     @Override
-    ModelNode insertChild(int index) {
-        ModelNode node = new ModelNode();
-        list.add(index, node);
-        return node;
-    }
-
-    @Override
-    ModelNode removeChild(int index) {
-        requireChild(index);
-        return list.remove(index);
-    }
-
-    @Override
     List<ModelNode> asList() {
         return Collections.unmodifiableList(list);
     }
 
     @Override
     ModelValue copy() {
-        List<ModelNode> list = this.list;
-        List<ModelNode> clonedValues = new ArrayList<>(list.size());
+        return new ListModelValue(this);
+    }
+
+    @Override
+    ModelValue resolve() {
+        ArrayList<ModelNode> copy = new ArrayList<>(list.size());
         for (ModelNode node : list) {
-            clonedValues.add(node.clone());
+            copy.add(node.resolve());
         }
-        return new ListModelValue(clonedValues);
+        return new ListModelValue(copy);
     }
 
     @Override
@@ -297,17 +284,5 @@ final class ListModelValue extends ModelValue {
         } catch (IndexOutOfBoundsException ignored) {
             return super.requireChild(index);
         }
-    }
-
-    @Override
-    void write(ModelWriter writer) throws ModelException {
-        Iterator<ModelNode> iterator = list.iterator();
-        writer.writeListStart();
-        ModelNode value;
-        while (iterator.hasNext()) {
-            value = iterator.next();
-            value.write(writer);
-        }
-        writer.writeListEnd();
     }
 }

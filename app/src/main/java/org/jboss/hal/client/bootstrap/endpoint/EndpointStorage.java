@@ -71,7 +71,7 @@ public class EndpointStorage {
         for (Endpoint endpoint : endpoints) {
             nodes.add(endpoint);
         }
-        return nodes.toBase64();
+        return nodes.toBase64String();
     }
 
     public void add(Endpoint endpoint) {

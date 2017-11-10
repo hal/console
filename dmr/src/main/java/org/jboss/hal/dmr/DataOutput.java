@@ -22,7 +22,7 @@ class DataOutput {
 
     private final Array<Byte> bytes;
 
-    public DataOutput() {
+    DataOutput() {
         bytes = new Array<>();
     }
 

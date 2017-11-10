@@ -30,19 +30,9 @@ public enum ModelType {
     LONG('J'),
     OBJECT('o'),
     PROPERTY('p'),
-    STRING('s'), // also S for long string
+    STRING('s'),
     TYPE('t'),
     UNDEFINED('u');
-
-    final char typeChar;
-
-    ModelType(char typeChar) {
-        this.typeChar = typeChar;
-    }
-
-    char getTypeChar() {
-        return typeChar;
-    }
 
     static ModelType forChar(char c) {
         switch (c) {
@@ -53,8 +43,6 @@ public enum ModelType {
             case 'Z':
                 return BOOLEAN;
             case 's':
-                return STRING;
-            case 'S':
                 return STRING;
             case 'D':
                 return DOUBLE;
@@ -79,5 +67,15 @@ public enum ModelType {
             default:
                 throw new IllegalArgumentException("Invalid type character '" + c + "'");
         }
+    }
+
+    final char typeChar;
+
+    ModelType(char typeChar) {
+        this.typeChar = typeChar;
+    }
+
+    char getTypeChar() {
+        return typeChar;
     }
 }
