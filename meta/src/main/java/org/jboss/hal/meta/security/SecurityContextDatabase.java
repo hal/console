@@ -54,7 +54,7 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
     @Override
     public Document asDocument(ResourceAddress address, SecurityContext securityContext) {
         Document document = Document.of(address.toString());
-        document.set(PAYLOAD, securityContext.toBase64String());
+        document.set(PAYLOAD, securityContext.toBase64());
         return document;
 
     }

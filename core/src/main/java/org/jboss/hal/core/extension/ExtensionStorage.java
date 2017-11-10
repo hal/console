@@ -73,7 +73,7 @@ public class ExtensionStorage {
         for (NamedNode extension : extensions.values()) {
             nodes.add(extension.getName(), extension.asModelNode());
         }
-        return nodes.toBase64String();
+        return nodes.toBase64();
     }
 
 

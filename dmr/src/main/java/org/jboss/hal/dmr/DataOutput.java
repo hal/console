@@ -13,123 +13,90 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
+import com.google.common.base.Charsets;
+import elemental2.core.Array;
 
-import com.google.gwt.core.client.JsArrayInteger;
+class DataOutput {
 
-public class DataOutput {
-
-    private byte[] bytes;
-    private int pos;
+    private final Array<Byte> bytes;
 
     public DataOutput() {
-        bytes = new byte[50];
+        bytes = new Array<>();
     }
 
-    public byte[] getBytes() {
-        byte[] array = new byte[pos];
-        for (int i = 0; i < pos; i++) {
-            array[i] = bytes[i];
+    @Override
+    public String toString() {
+        int length = bytes.getLength();
+        byte[] array = new byte[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = bytes.getAt(i);
         }
-        return array;
+        return new String(array, Charsets.ISO_8859_1);
     }
 
-    private void growToFit(int size) {
-        if (pos + size >= bytes.length) {
-            byte[] array = new byte[bytes.length + size];
-            for (int i = 0; i < bytes.length; i++) {
-                array[i] = bytes[i];
-            }
 
-            bytes = array;
-        }
-    }
+    // ------------------------------------------------------ write a-z
 
-    public void writeBoolean(boolean v) throws IOException {
-        growToFit(1);
-        bytes[pos++] = v ? (byte) 1 : (byte) 0;
-    }
-
-    public void writeByte(int v) throws IOException {
-        growToFit(1);
-        bytes[pos++] = (byte) v;
-
-    }
-
-    public void writeShort(int v) throws IOException {
-        growToFit(2);
-        bytes[pos++] = (byte) (v >>> 8);
-        bytes[pos++] = (byte) (v & 0xFF);
-
-    }
-
-    public void writeChar(int v) throws IOException {
-        growToFit(2);
-        bytes[pos++] = (byte) (v >>> 8);
-        bytes[pos++] = (byte) (v & 0xFF);
-    }
-
-    public void writeInt(int v) throws IOException {
-        growToFit(4);
-        bytes[pos++] = (byte) (v >>> 24);
-        bytes[pos++] = (byte) ((v >>> 16) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 8) & 0xFF);
-        bytes[pos++] = (byte) (v & 0xFF);
-    }
-
-    public void writeLong(long v) throws IOException {
-        growToFit(8);
-        bytes[pos++] = (byte) (v >>> 56);
-        bytes[pos++] = (byte) ((v >>> 48) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 40) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 32) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 24) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 16) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 8) & 0xFF);
-        bytes[pos++] = (byte) (v & 0xFF);
-    }
-
-    public void writeFloat(float v) throws IOException {
-        growToFit(4);
-        JsArrayInteger bytes = IEEE754.fromFloat(v);
-        for (int i = 0; i < 4; i++) {
-            this.bytes[pos++] = (byte) bytes.get(i);
+    void write(byte[] bits) {
+        for (int i = 0; i < bits.length; i++) {
+            bytes.push(bits[i]);
         }
     }
 
-    public void writeDouble(double v) throws IOException {
-        growToFit(8);
-        JsArrayInteger bytes = IEEE754.fromDoubleClosure(v);
+    private void write(byte[] b, int off, int len) {
+        for (int i = 0; i < len; i++) {
+            bytes.push(b[off + i]);
+        }
+    }
+
+    void writeBoolean(boolean v) {
+        bytes.push(v ? (byte) 1 : (byte) 0);
+    }
+
+    void writeByte(int v) {
+        bytes.push((byte) v);
+    }
+
+    void writeChar(int v) {
+        bytes.push((byte) (v >>> 8));
+        bytes.push((byte) (v & 0xFF));
+    }
+
+    void writeDouble(double v) {
+        Array<Integer> array = IEEE754.fromDoubleClosure(v);
         for (int i = 0; i < 8; i++) {
-            this.bytes[pos++] = (byte) bytes.get(i);
+            bytes.push(array.getAt(i).byteValue());
         }
     }
 
-    public void writeUTF(String s) throws IOException {
-        final int length = s.length();
-        final byte[] bytes = new byte[length * 3];
+    void writeInt(int v) {
+        bytes.push((byte) (v >>> 24));
+        bytes.push((byte) ((v >>> 16) & 0xFF));
+        bytes.push((byte) ((v >>> 8) & 0xFF));
+        bytes.push((byte) (v & 0xFF));
+    }
+
+    void writeLong(long v) {
+        bytes.push((byte) (v >>> 56));
+        bytes.push((byte) ((v >>> 48) & 0xFF));
+        bytes.push((byte) ((v >>> 40) & 0xFF));
+        bytes.push((byte) ((v >>> 32) & 0xFF));
+        bytes.push((byte) ((v >>> 24) & 0xFF));
+        bytes.push((byte) ((v >>> 16) & 0xFF));
+        bytes.push((byte) ((v >>> 8) & 0xFF));
+        bytes.push((byte) (v & 0xFF));
+    }
+
+    private void writeShort(int v) {
+        bytes.push((byte) (v >>> 8));
+        bytes.push((byte) (v & 0xFF));
+    }
+
+    void writeUTF(String s) {
+        int length = s.length();
+        byte[] bytes = new byte[length * 3];
         int bl = 0;
         char c;
         for (int i = 0; i < length; i++) {
@@ -147,19 +114,5 @@ public class DataOutput {
         }
         writeShort(bl);
         write(bytes, 0, bl);
-    }
-
-    public void write(byte[] bits) {
-        growToFit(bits.length);
-        for (int i = 0; i < bits.length; i++) {
-            bytes[pos++] = bits[i];
-        }
-    }
-
-    public void write(byte[] b, int off, int len) {
-        growToFit(len);
-        for (int i = 0; i < len; i++) {
-            bytes[pos++] = b[off + i];
-        }
     }
 }

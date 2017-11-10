@@ -49,7 +49,7 @@ public class WorkerChannel {
         this.worker = new Worker(WORKER_JS);
     }
 
-    public void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
+    void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
         if (worker != null) {
             // Stopwatch watch = Stopwatch.createStarted();
             Document document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
@@ -58,12 +58,13 @@ public class WorkerChannel {
             message.document = document;
             worker.postMessage(message);
             // watch.stop();
-            // logger.debug("Posted resource description: {} bytes in {} ms", document.getAny(PAYLOAD).asString().length(),
+            // logger.debug("Posted rd({}): {} bytes in {} ms", document.getId(),
+            //         document.getAny(PAYLOAD).asString().length(),
             //         watch.elapsed(MILLISECONDS));
         }
     }
 
-    public void postSecurityContext(ResourceAddress address, SecurityContext securityContext) {
+    void postSecurityContext(ResourceAddress address, SecurityContext securityContext) {
         if (worker != null) {
             UpdateMessage message = new UpdateMessage();
             message.database = securityContextDatabase.name();

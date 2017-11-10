@@ -120,18 +120,19 @@ public class MetadataProcessor {
         logger.debug("Lookup metadata for {}", template);
         processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
             @Override
-            public void onFailure(final Throwable throwable) {
+            public void onFailure(Throwable throwable) {
                 callback.onError(throwable);
             }
 
             @Override
-            public void onSuccess(final Void aVoid) {
+            public void onSuccess(Void aVoid) {
                 // if we're here all metadata must be in the registry
                 callback.onMetadata(metadataRegistry.lookup(template));
             }
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress,
             AsyncCallback<Void> callback) {
         LookupRegistryTask lookupRegistries = new LookupRegistryTask(resourceDescriptionRegistry,
@@ -143,7 +144,7 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            Task<LookupContext>[] tasks = new Task[]{
+            Task[] tasks = new Task[]{
                     lookupRegistries,
                     new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase),
                     new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH),
@@ -151,7 +152,7 @@ public class MetadataProcessor {
             };
 
             Stopwatch stopwatch = Stopwatch.createStarted();
-            series(new LookupContext(templates, recursive), tasks)
+            series(new LookupContext(progress, templates, recursive), tasks)
                     .subscribe(new Outcome<LookupContext>() {
                         @Override
                         public void onError(LookupContext context, Throwable error) {
@@ -187,12 +188,12 @@ public class MetadataProcessor {
             @EsParam("function(metadata: Metadata)") JsMetadataCallback callback) {
         MetadataCallback mc = new MetadataCallback() {
             @Override
-            public void onMetadata(final Metadata metadata) {
+            public void onMetadata(Metadata metadata) {
                 callback.onMetadata(metadata);
             }
 
             @Override
-            public void onError(final Throwable error) {
+            public void onError(Throwable error) {
                 logger.error("Unable to lookup metadata for {}: {}", template, error.getMessage());
             }
         };

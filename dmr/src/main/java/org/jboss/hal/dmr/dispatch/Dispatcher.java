@@ -71,7 +71,6 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 
 /** Executes operations against the management endpoint. */
-@SuppressWarnings("DuplicateStringLiteralInspection")
 @JsType(namespace = "hal.dmr")
 public class Dispatcher implements RecordingHandler {
 
@@ -85,7 +84,7 @@ public class Dispatcher implements RecordingHandler {
     private static boolean pendingLifecycleAction = false;
 
     @JsIgnore
-    public static void setPendingLifecycleAction(final boolean value) {
+    public static void setPendingLifecycleAction(boolean value) {
         pendingLifecycleAction = value;
         logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
     }
@@ -218,7 +217,7 @@ public class Dispatcher implements RecordingHandler {
             if (get) {
                 xhr.send();
             } else {
-                xhr.send(dmrOperation.toBase64String());
+                xhr.send(dmrOperation.toBase64());
             }
             recordOperation(operation);
         });
@@ -249,7 +248,7 @@ public class Dispatcher implements RecordingHandler {
     @JsIgnore
     public Single<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
-        FormData formData = createFormData(file, uploadOperation.toBase64String());
+        FormData formData = createFormData(file, uploadOperation.toBase64());
         return uploadFormData(formData, uploadOperation).map(payload -> payload.get(RESULT));
     }
 
@@ -493,7 +492,6 @@ public class Dispatcher implements RecordingHandler {
         }
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     private boolean readOnlyOperation(Operation operation) {
         if (operation instanceof Composite) {
             Composite composite = (Composite) operation;

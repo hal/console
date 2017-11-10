@@ -13,197 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
+import org.jboss.hal.dmr.stream.ModelException;
+import org.jboss.hal.dmr.stream.ModelWriter;
 
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-@SuppressWarnings("HardCodedStringLiteral")
 final class ExpressionValue extends ModelValue {
 
-    /**
-     * JSON Key used to identify ExpressionValue.
-     */
-    public static final String TYPE_KEY = "EXPRESSION_VALUE";
-    private static final int INITIAL = 0;
-    private static final int GOT_DOLLAR = 1;
-    private static final int GOT_OPEN_BRACE = 2;
-    private static final int RESOLVED = 3;
-    private static final int DEFAULT = 4;
+    /** JSON Key used to identify ExpressionValue. */
+    private static final String TYPE_KEY = "EXPRESSION_VALUE";
 
-    /**
-     * Replace properties of the form:
-     * <code>${<i>&lt;name&gt;[</i>,<i>&lt;name2&gt;[</i>,<i>&lt;name3&gt;...]][</i>:<i>&lt;default&gt;]</i>}</code>
-     *
-     * @param value
-     *
-     * @return
-     */
-    private static String replaceProperties(final String value) {
-        final StringBuilder builder = new StringBuilder();
-        final int len = value.length();
-        int state = 0;
-        int start = -1;
-        int nameStart = -1;
-        for (int i = 0; i < len; i = value.offsetByCodePoints(i, 1)) {
-            final char ch = value.charAt(i);
-            switch (state) {
-                case INITIAL: {
-                    switch (ch) {
-                        case '$': {
-                            state = GOT_DOLLAR;
-                            continue;
-                        }
-                        default: {
-                            builder.append(ch);
-                            continue;
-                        }
-                    }
-                    // not reachable
-                }
-                case GOT_DOLLAR: {
-                    switch (ch) {
-                        case '$': {
-                            builder.append(ch);
-                            state = INITIAL;
-                            continue;
-                        }
-                        case '{': {
-                            start = i + 1;
-                            nameStart = start;
-                            state = GOT_OPEN_BRACE;
-                            continue;
-                        }
-                        default: {
-                            // invalid; emit and resume
-                            builder.append('$').append(ch);
-                            state = INITIAL;
-                            continue;
-                        }
-                    }
-                    // not reachable
-                }
-                case GOT_OPEN_BRACE: {
-                    switch (ch) {
-                        case ':':
-                        case '}':
-                        case ',': {
-                            final String name = value.substring(nameStart, i).trim();
-                            if ("/".equals(name)) {
-                                builder.append('/');
-                                state = ch == '}' ? INITIAL : RESOLVED;
-                                continue;
-                            } else if (":".equals(name)) {
-                                builder.append('/');
-                                state = ch == '}' ? INITIAL : RESOLVED;
-                                continue;
-                            }
-                            final String val = null;//System.getProperty(name);
-                            if (val != null) {
-                                builder.append(val);
-                                state = ch == '}' ? INITIAL : RESOLVED;
-                                continue;
-                            } else if (ch == ',') {
-                                nameStart = i + 1;
-                                continue;
-                            } else if (ch == ':') {
-                                start = i + 1;
-                                state = DEFAULT;
-                                continue;
-                            } else {
-                                builder.append(value.substring(start - 2, i + 1));
-                                state = INITIAL;
-                                continue;
-                            }
-                        }
-                        default: {
-                            continue;
-                        }
-                    }
-                    // not reachable
-                }
-                case RESOLVED: {
-                    if (ch == '}') {
-                        state = INITIAL;
-                    }
-                    continue;
-                }
-                case DEFAULT: {
-                    if (ch == '}') {
-                        state = INITIAL;
-                        builder.append(value.substring(start, i));
-                    }
-                    continue;
-                }
-                default:
-                    throw new IllegalStateException();
-            }
-        }
-        switch (state) {
-            case GOT_DOLLAR: {
-                builder.append('$');
-                break;
-            }
-            case DEFAULT:
-            case GOT_OPEN_BRACE: {
-                builder.append(value.substring(start - 2));
-                break;
-            }
-            default:
-                break;
-        }
-        return builder.toString();
+    private final ValueExpression valueExpression;
+
+    ExpressionValue(String expressionString) {
+        this(new ValueExpression(expressionString));
     }
 
-    private final String expressionString;
-
-    ExpressionValue(final String expressionString) {
+    ExpressionValue(ValueExpression valueExpression) {
         super(ModelType.EXPRESSION);
-        if (expressionString == null) {
-            throw new IllegalArgumentException("expressionString is null");
-        }
-        this.expressionString = expressionString;
+        this.valueExpression = valueExpression;
     }
 
     @Override
-    void writeExternal(final DataOutput out) throws IOException {
-        out.writeUTF(expressionString);
+    void writeExternal(DataOutput out) {
+        out.writeByte(ModelType.EXPRESSION.typeChar);
+        out.writeUTF(valueExpression.getExpressionString());
     }
 
     @Override
     String asString() {
-        return expressionString;
+        return valueExpression.getExpressionString();
     }
 
     @Override
-    void format(final StringBuilder builder, final int indent, final boolean multiLine) {
-        builder.append("expression ").append(quote(expressionString));
+    void format(StringBuilder builder, int indent, boolean multiLine) {
+        builder.append("expression ");
+        builder.append(quote(valueExpression.getExpressionString()));
     }
 
     @Override
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
         builder.append('{');
         if (multiLine) {
             indent(builder.append('\n'), indent + 1);
@@ -222,21 +74,21 @@ final class ExpressionValue extends ModelValue {
     }
 
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         return other instanceof ExpressionValue && equals((ExpressionValue) other);
     }
 
-    public boolean equals(final ExpressionValue other) {
-        return this == other || other != null && expressionString.equals(other.expressionString);
+    public boolean equals(ExpressionValue other) {
+        return this == other || other != null && valueExpression.equals(other.valueExpression);
     }
 
     @Override
     public int hashCode() {
-        return expressionString.hashCode();
+        return valueExpression.hashCode();
     }
 
     @Override
-    ModelValue resolve() {
-        return new StringModelValue(replaceProperties(expressionString));
+    void write(ModelWriter writer) throws ModelException {
+        writer.writeExpression(valueExpression.getExpressionString());
     }
 }

@@ -64,7 +64,7 @@ public class OperationFactory {
      * @param nameFn function which is applied to the {@code NAME} parameter of the operations created by this
      *               class.
      */
-    public OperationFactory(final Function<String, String> nameFn) {
+    public OperationFactory(Function<String, String> nameFn) {
         this.nameFn = nameFn;
     }
 
@@ -82,8 +82,8 @@ public class OperationFactory {
      * @param changeSet the changed values
      * @param metadata  the metadata which should contain the attribute definitions of the change-set
      */
-    public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet,
-            final Metadata metadata) {
+    public Composite fromChangeSet(ResourceAddress address, Map<String, Object> changeSet,
+            Metadata metadata) {
 
         // TODO Is it safe to always use ATTRIBUTES as path when calling ResourceDescription methods?
         Map<String, Operation> operations = new HashMap<>();
@@ -189,8 +189,8 @@ public class OperationFactory {
      *
      * @return a composite to reset the attributes or an empty composite if no attributes could be reset.
      */
-    Composite resetResource(final ResourceAddress address, final Set<String> attributes,
-            final Metadata metadata) {
+    Composite resetResource(ResourceAddress address, Set<String> attributes,
+            Metadata metadata) {
         List<Operation> operations = new ArrayList<>();
         ResourceDescription description = metadata.getDescription();
 
@@ -282,7 +282,6 @@ public class OperationFactory {
         return name;
     }
 
-    @SuppressWarnings("DuplicateStringLiteralInspection")
     private ModelNode asValueNode(String name, Object value, ResourceDescription resourceDescription) {
         ModelNode valueNode = new ModelNode();
 
@@ -379,7 +378,7 @@ public class OperationFactory {
                         default:
                             break;
                     }
-                } catch (ClassCastException e) {
+                } catch (ClassCastException ignored) {
                     logger.error("Unable to cast attribute {} as {}", name, type);
                 }
             }
@@ -424,7 +423,7 @@ public class OperationFactory {
                     valueNode = null;
                     logger.error("Unsupported class {} for attribute {}", clazz, name);
                 }
-            } catch (ClassCastException e) {
+            } catch (ClassCastException ignored) {
                 logger.error("Unable to cast attribute {} as {}", name, clazz);
             }
         }

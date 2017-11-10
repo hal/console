@@ -134,7 +134,7 @@ public class ModelNodeHelper {
         if (modelNode != null && modelNode.hasDefined(attribute)) {
             try {
                 result = supplier.get();
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
                 result = defaultValue;
             }
         }
