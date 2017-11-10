@@ -31,6 +31,7 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
 
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
 
+    // TODO Evaluate using a Guava cache to save memory
     private final Map<ResourceAddress, ResourceDescription> registry;
     private final ResourceDescriptionTemplateProcessor templateProcessor;
 

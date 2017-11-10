@@ -29,6 +29,7 @@ public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
     private static final String SECURITY_CONTEXT_TYPE = "security context";
 
+    // TODO Evaluate using a Guava cache to save memory
     private final Map<ResourceAddress, SecurityContext> registry;
 
     @Inject
