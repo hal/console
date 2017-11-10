@@ -382,13 +382,14 @@
                         <devmodeArg>-generateJsInteropExports</devmodeArg>
                     </devmodeArgs>
                     <jvmArgs>
-                        <jvmArg>-Xms768m</jvmArg>
+                        <jvmArg>-Xms1024m</jvmArg>
                         <jvmArg>-Xmx2048m</jvmArg>
                         <jvmArg>-Xss1024k</jvmArg>
                     </jvmArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
                     <localWorkers>1C</localWorkers>
+                    <logLevel>DEBUG</logLevel>
                     <moduleName>org.jboss.hal.Console</moduleName>
                     <moduleShortName>hal</moduleShortName>
                     <optimize>${gwt.optimize}</optimize>
