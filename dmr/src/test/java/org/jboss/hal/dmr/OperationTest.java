@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.Collections;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.junit.Test;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
