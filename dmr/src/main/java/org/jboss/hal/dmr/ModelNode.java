@@ -1951,9 +1951,7 @@ public class ModelNode {
     public String toBase64() {
         DataOutput out = new DataOutput();
         writeExternal(out);
-        String asString = out.toString();
-        String encoded = Base64.encode(asString);
-        return encoded;
+        return Base64.encode(out.toString());
     }
 
     @JsIgnore

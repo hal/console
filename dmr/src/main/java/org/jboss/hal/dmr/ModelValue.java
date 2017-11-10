@@ -137,14 +137,6 @@ abstract class ModelValue implements Cloneable {
         return this;
     }
 
-    // protected final ModelValue clone() {
-    //     try {
-    //         return (ModelValue) super.clone();
-    //     } catch (CloneNotSupportedException e) {
-    //         throw new RuntimeException(e);
-    //     }
-    // }
-
     protected static String quote(String orig) {
         int length = orig.length();
         StringBuilder builder = new StringBuilder(length + 32);

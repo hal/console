@@ -20,98 +20,78 @@ import elemental2.core.Array;
 
 class DataOutput {
 
-    private byte[] bytes;
-    private int pos;
+    private final Array<Byte> bytes;
 
     public DataOutput() {
-        bytes = new byte[50];
+        bytes = new Array<>();
     }
 
     @Override
     public String toString() {
-        byte[] array = new byte[pos];
-        for (int i = 0; i < pos; i++) {
-            array[i] = bytes[i];
+        int length = bytes.getLength();
+        byte[] array = new byte[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = bytes.getAt(i);
         }
         return new String(array, Charsets.ISO_8859_1);
-    }
-
-    private void growToFit(int size) {
-        if (pos + size >= bytes.length) {
-            byte[] array = new byte[bytes.length + size];
-            for (int i = 0; i < bytes.length; i++) {
-                array[i] = bytes[i];
-            }
-            bytes = array;
-        }
     }
 
 
     // ------------------------------------------------------ write a-z
 
     void write(byte[] bits) {
-        growToFit(bits.length);
         for (int i = 0; i < bits.length; i++) {
-            bytes[pos++] = bits[i];
+            bytes.push(bits[i]);
         }
     }
 
     private void write(byte[] b, int off, int len) {
-        growToFit(len);
         for (int i = 0; i < len; i++) {
-            bytes[pos++] = b[off + i];
+            bytes.push(b[off + i]);
         }
     }
 
     void writeBoolean(boolean v) {
-        growToFit(1);
-        bytes[pos++] = v ? (byte) 1 : (byte) 0;
+        bytes.push(v ? (byte) 1 : (byte) 0);
     }
 
     void writeByte(int v) {
-        growToFit(1);
-        bytes[pos++] = (byte) v;
-
+        bytes.push((byte) v);
     }
 
     void writeChar(int v) {
-        growToFit(2);
-        bytes[pos++] = (byte) (v >>> 8);
-        bytes[pos++] = (byte) (v & 0xFF);
+        bytes.push((byte) (v >>> 8));
+        bytes.push((byte) (v & 0xFF));
     }
 
     void writeDouble(double v) {
-        growToFit(8);
-        Array<Integer> bytes = IEEE754.fromDoubleClosure(v);
+        Array<Integer> array = IEEE754.fromDoubleClosure(v);
         for (int i = 0; i < 8; i++) {
-            this.bytes[pos++] = bytes.getAt(i).byteValue();
+            bytes.push(array.getAt(i).byteValue());
         }
     }
 
     void writeInt(int v) {
-        growToFit(4);
-        bytes[pos++] = (byte) (v >>> 24);
-        bytes[pos++] = (byte) ((v >>> 16) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 8) & 0xFF);
-        bytes[pos++] = (byte) (v & 0xFF);
+        bytes.push((byte) (v >>> 24));
+        bytes.push((byte) ((v >>> 16) & 0xFF));
+        bytes.push((byte) ((v >>> 8) & 0xFF));
+        bytes.push((byte) (v & 0xFF));
     }
 
     void writeLong(long v) {
-        growToFit(8);
-        bytes[pos++] = (byte) (v >>> 56);
-        bytes[pos++] = (byte) ((v >>> 48) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 40) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 32) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 24) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 16) & 0xFF);
-        bytes[pos++] = (byte) ((v >>> 8) & 0xFF);
-        bytes[pos++] = (byte) (v & 0xFF);
+        bytes.push((byte) (v >>> 56));
+        bytes.push((byte) ((v >>> 48) & 0xFF));
+        bytes.push((byte) ((v >>> 40) & 0xFF));
+        bytes.push((byte) ((v >>> 32) & 0xFF));
+        bytes.push((byte) ((v >>> 24) & 0xFF));
+        bytes.push((byte) ((v >>> 16) & 0xFF));
+        bytes.push((byte) ((v >>> 8) & 0xFF));
+        bytes.push((byte) (v & 0xFF));
     }
 
     private void writeShort(int v) {
-        growToFit(2);
-        bytes[pos++] = (byte) (v >>> 8);
-        bytes[pos++] = (byte) (v & 0xFF);
+        bytes.push((byte) (v >>> 8));
+        bytes.push((byte) (v & 0xFF));
     }
 
     void writeUTF(String s) {

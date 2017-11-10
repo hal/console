@@ -35,7 +35,7 @@ final class LongModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeChar(ModelType.LONG.typeChar);
+        out.writeByte(ModelType.LONG.typeChar);
         out.writeLong(value);
     }
 

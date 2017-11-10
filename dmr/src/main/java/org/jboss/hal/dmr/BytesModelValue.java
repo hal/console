@@ -46,7 +46,7 @@ final class BytesModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeChar(ModelType.BYTES.typeChar);
+        out.writeByte(ModelType.BYTES.typeChar);
         out.writeInt(bytes.length);
         out.write(bytes);
     }

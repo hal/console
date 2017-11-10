@@ -42,7 +42,7 @@ final class BigIntegerModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeChar(ModelType.BIG_INTEGER.typeChar);
+        out.writeByte(ModelType.BIG_INTEGER.typeChar);
         byte[] b = value.toByteArray();
         out.writeInt(b.length);
         out.write(b);

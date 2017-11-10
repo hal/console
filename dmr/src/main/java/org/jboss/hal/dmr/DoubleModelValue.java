@@ -35,7 +35,7 @@ final class DoubleModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeChar(ModelType.DOUBLE.typeChar);
+        out.writeByte(ModelType.DOUBLE.typeChar);
         out.writeDouble(value);
     }
 

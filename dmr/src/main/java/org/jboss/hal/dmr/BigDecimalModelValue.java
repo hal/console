@@ -40,7 +40,7 @@ final class BigDecimalModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.writeChar(ModelType.BIG_DECIMAL.typeChar);
+        out.writeByte(ModelType.BIG_DECIMAL.typeChar);
         BigDecimal value = this.value;
         out.writeUTF(value.toString());
     }

@@ -111,7 +111,7 @@ final class StringModelValue extends ModelValue {
                 return;
             }
         }
-        out.writeChar(ModelType.STRING.typeChar);
+        out.writeByte(ModelType.STRING.typeChar);
         out.writeUTF(value);
     }
 
