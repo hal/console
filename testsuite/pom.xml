@@ -76,7 +76,7 @@
                         <goals>
                             <goal>unpack</goal>
                         </goals>
-                        <phase>generate-sources</phase>
+                        <phase>package</phase>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
