@@ -39,7 +39,7 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     }
 
     @Override
-    public boolean contains(AddressTemplate template) {
+    public boolean contains(AddressTemplate template, boolean recursive) {
         ResourceAddress address = resolveTemplate(template);
         return lookupAddress(address) != null;
     }

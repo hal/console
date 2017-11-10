@@ -33,7 +33,12 @@ interface Registry<T> {
 
     T lookup(AddressTemplate template) throws MissingMetadataException;
 
-    boolean contains(AddressTemplate template);
+    /** Shortcut for {@code contains(template, false)} */
+    default boolean contains(AddressTemplate template) {
+        return contains(template, false);
+    }
+
+    boolean contains(AddressTemplate template, boolean recursive);
 
     void add(ResourceAddress address, T metadata);
 }

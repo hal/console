@@ -135,10 +135,9 @@ public class MetadataProcessor {
     @SuppressWarnings("unchecked")
     private void processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress,
             AsyncCallback<Void> callback) {
+        // we can skip the tasks if the metadata is already in the regisries
         LookupRegistryTask lookupRegistries = new LookupRegistryTask(resourceDescriptionRegistry,
                 securityContextRegistry);
-
-        // we can skip the RX tasks if all metadata is already in the regisries
         if (lookupRegistries.allPresent(templates, recursive)) {
             logger.debug("All metadata have been already processed -> callback.onSuccess(null)");
             callback.onSuccess(null);
@@ -151,8 +150,10 @@ public class MetadataProcessor {
                     new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry)
             };
 
+            LookupContext context = new LookupContext(progress, templates, recursive);
+            context.journal.log(templates, recursive);
             Stopwatch stopwatch = Stopwatch.createStarted();
-            series(new LookupContext(progress, templates, recursive), tasks)
+            series(context, tasks)
                     .subscribe(new Outcome<LookupContext>() {
                         @Override
                         public void onError(LookupContext context, Throwable error) {

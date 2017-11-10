@@ -36,12 +36,12 @@ class SingleRrdParser {
     private final RrdResult rrdResult;
     private final ResourceDescriptionAddressProcessor addressProcessor;
 
-    SingleRrdParser(final RrdResult rrdResult) {
+    SingleRrdParser(RrdResult rrdResult) {
         this.rrdResult = rrdResult;
         this.addressProcessor = new ResourceDescriptionAddressProcessor();
     }
 
-    public void parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
+    void parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
         if (modelNode.getType() == ModelType.LIST) {
             for (ModelNode nestedNode : modelNode.asList()) {
                 ResourceAddress nestedAddress = new ResourceAddress(nestedNode.get(ADDRESS));

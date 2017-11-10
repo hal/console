@@ -43,7 +43,9 @@ class CreateRrdOperations {
         resourceDescriptionStatementContext = new ResourceDescriptionStatementContext(statementContext, environment);
     }
 
-    public List<Operation> create(LookupResult lookupResult, boolean optional) {
+    public List<Operation> create(LookupContext context, boolean recursive, boolean optional) {
+        LookupJournal journal = context.journal;
+        LookupResult lookupResult = context.lookupResult;
         List<Operation> operations = new ArrayList<>();
         lookupResult.templates().stream()
                 .filter(template -> optional == template.isOptional())
@@ -51,7 +53,7 @@ class CreateRrdOperations {
                     int missingMetadata = lookupResult.missingMetadata(template);
                     if (missingMetadata != ALL_PRESENT) {
 
-                        ResourceAddress address;
+                        ResourceAddress address = null;
                         Operation.Builder builder = null;
 
                         if (missingMetadata == NOTHING_PRESENT) {
@@ -72,11 +74,12 @@ class CreateRrdOperations {
                                     .param(OPERATIONS, true);
                         }
 
-                        if (builder != null) {
-                            if (lookupResult.recursive()) {
+                        if (builder != null && address != null) {
+                            if (recursive) {
                                 builder.param(RECURSIVE_DEPTH, depth);
                             }
                             operations.add(builder.build());
+                            journal.log(address, template);
                         }
                     }
                 });

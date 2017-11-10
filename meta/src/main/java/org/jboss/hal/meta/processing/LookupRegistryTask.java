@@ -45,23 +45,23 @@ class LookupRegistryTask implements Task<LookupContext> {
 
     @Override
     public Completable call(LookupContext context) {
-        check(context.lookupResult);
-        logger.debug("Registry lookup: {}", context.lookupResult.toString());
+        check(context.lookupResult, context.recursive);
+        logger.debug("Registry lookup: {}", context.lookupResult);
         return Completable.complete();
     }
 
     boolean allPresent(Set<AddressTemplate> templates, boolean recursive) {
         LookupResult lookupResult = new LookupResult(templates, recursive);
-        check(lookupResult);
+        check(lookupResult, recursive);
         return lookupResult.allPresent();
     }
 
-    private void check(LookupResult lookupResult) {
+    private void check(LookupResult lookupResult, boolean recursive) {
         for (AddressTemplate template : lookupResult.templates()) {
-            if (resourceDescriptionRegistry.contains(template)) {
+            if (resourceDescriptionRegistry.contains(template, recursive)) {
                 lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
             }
-            if (securityContextRegistry.contains(template)) {
+            if (securityContextRegistry.contains(template, recursive)) {
                 lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
             }
         }

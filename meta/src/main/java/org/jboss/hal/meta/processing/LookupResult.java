@@ -35,22 +35,16 @@ class LookupResult {
     static final int ALL_PRESENT = 0b11;
 
     private final Map<AddressTemplate, Integer> templates;
-    private final boolean recursive;
 
     LookupResult(Set<AddressTemplate> templates, boolean recursive) {
         this.templates = new HashMap<>();
         for (AddressTemplate template : templates) {
             this.templates.put(template, NOTHING_PRESENT);
         }
-        this.recursive = recursive;
     }
 
     Set<AddressTemplate> templates() {
         return templates.keySet();
-    }
-
-    boolean recursive() {
-        return recursive;
     }
 
     void markMetadataPresent(AddressTemplate template, int flag) {

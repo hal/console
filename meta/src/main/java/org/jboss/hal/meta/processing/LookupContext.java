@@ -28,19 +28,35 @@ import org.jboss.hal.meta.security.SecurityContext;
 
 class LookupContext extends FlowContext {
 
+    final boolean recursive;
+    final LookupJournal journal;
     final LookupResult lookupResult;
     final Map<ResourceAddress, ResourceDescription> toResourceDescriptionRegistry;
     final Map<ResourceAddress, ResourceDescription> toResourceDescriptionDatabase;
     final Map<ResourceAddress, SecurityContext> toSecurityContextRegistry;
     final Map<ResourceAddress, SecurityContext> toSecurityContextDatabase;
 
+    // for unit testing only!
+    LookupContext(LookupResult lookupResult) {
+        super(Progress.NOOP);
+        this.recursive = false;
+        this.journal = new LookupJournal();
+        this.lookupResult = lookupResult;
+        this.toResourceDescriptionRegistry = new HashMap<>();
+        this.toResourceDescriptionDatabase = new HashMap<>();
+        this.toSecurityContextRegistry = new HashMap<>();
+        this.toSecurityContextDatabase = new HashMap<>();
+    }
+
     LookupContext(Progress progress, Set<AddressTemplate> template, boolean recursive) {
         super(progress);
-        lookupResult = new LookupResult(template, recursive);
-        toResourceDescriptionRegistry = new HashMap<>();
-        toResourceDescriptionDatabase = new HashMap<>();
-        toSecurityContextRegistry = new HashMap<>();
-        toSecurityContextDatabase = new HashMap<>();
+        this.recursive = recursive;
+        this.journal = new LookupJournal();
+        this.lookupResult = new LookupResult(template, recursive);
+        this.toResourceDescriptionRegistry = new HashMap<>();
+        this.toResourceDescriptionDatabase = new HashMap<>();
+        this.toSecurityContextRegistry = new HashMap<>();
+        this.toSecurityContextDatabase = new HashMap<>();
     }
 
     boolean updateDatabase() {

@@ -36,7 +36,8 @@ public class CreateRrdOperationsTest {
 
     @Test
     public void noTemplates() {
-        List<Operation> operations = rrdOps.create(new LookupResult(Collections.emptySet(), false), false);
+        LookupResult lookupResult = new LookupResult(Collections.emptySet(), false);
+        List<Operation> operations = rrdOps.create(new LookupContext(lookupResult), false, false);
         assertTrue(operations.isEmpty());
     }
 
@@ -49,13 +50,12 @@ public class CreateRrdOperationsTest {
 
         LookupResult lookupResult = new LookupResult(
                 Sets.newHashSet(nothingPresent, descriptionPresent, securityContextPresent, allPresent), false);
-
         lookupResult.markMetadataPresent(descriptionPresent, RESOURCE_DESCRIPTION_PRESENT);
         lookupResult.markMetadataPresent(securityContextPresent, SECURITY_CONTEXT_PRESENT);
         lookupResult.markMetadataPresent(allPresent, RESOURCE_DESCRIPTION_PRESENT);
         lookupResult.markMetadataPresent(allPresent, SECURITY_CONTEXT_PRESENT);
 
-        List<Operation> inputs = rrdOps.create(lookupResult, false);
+        List<Operation> inputs = rrdOps.create(new LookupContext(lookupResult), false, false);
         assertEquals(3, inputs.size());
 
         Operation operation = findOperation(inputs, nothingPresent);
@@ -88,8 +88,9 @@ public class CreateRrdOperationsTest {
 
     @Test
     public void recursive() {
-        List<Operation> operations = rrdOps.create(
-                new LookupResult(Sets.<AddressTemplate>newHashSet(AddressTemplate.of("foo=bar")), true), false);
+        LookupResult lookupResult = new LookupResult(Sets.<AddressTemplate>newHashSet(AddressTemplate.of("foo=bar")),
+                true);
+        List<Operation> operations = rrdOps.create(new LookupContext(lookupResult), true, false);
         Operation operation = operations.get(0);
         assertEquals(RRD_DEPTH, operation.get(RECURSIVE_DEPTH).asInt());
     }

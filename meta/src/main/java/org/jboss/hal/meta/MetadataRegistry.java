@@ -55,8 +55,9 @@ public class MetadataRegistry implements Registry<Metadata> {
 
     @Override
     @JsIgnore
-    public boolean contains(AddressTemplate template) {
-        return securityContextRegistry.contains(template) && resourceDescriptionRegistry.contains(template);
+    public boolean contains(AddressTemplate template, boolean recursive) {
+        return securityContextRegistry.contains(template, recursive) &&
+                resourceDescriptionRegistry.contains(template, recursive);
     }
 
     @Override

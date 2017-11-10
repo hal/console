@@ -55,11 +55,12 @@ class RrdTask implements Task<LookupContext> {
 
     @Override
     public Completable call(LookupContext context) {
+        boolean recursive = context.recursive;
         LookupResult lookupResult = context.lookupResult;
         List<Completable> completables = new ArrayList<>();
 
         // create and partition non-optional operations
-        List<Operation> operations = rrdOps.create(lookupResult, false);
+        List<Operation> operations = rrdOps.create(context, recursive, false);
         List<List<Operation>> piles = Lists.partition(operations, batchSize);
         List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
         for (Composite composite : composites) {
@@ -69,7 +70,7 @@ class RrdTask implements Task<LookupContext> {
         }
 
         // create optional operations w/o partitioning!
-        List<Operation> optionalOperations = rrdOps.create(lookupResult, true);
+        List<Operation> optionalOperations = rrdOps.create(context, recursive, true);
         // Do not refactor to
         // List<Composite> optionalComposites = optionalOperations.stream().map(Composite::new).collect(toList());
         // the GWT compiler will crash with an ArrayIndexOutOfBoundsException!
