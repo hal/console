@@ -58,7 +58,7 @@
         <validation.version>1.0.0.GA</validation.version>
         <wildfly.version>11.0.0.Final</wildfly.version>
         <wildfly-core.version>3.0.3.Final</wildfly-core.version>
-        <wildfly-swarm.version>2017.9.5</wildfly-swarm.version>
+        <wildfly-swarm.version>2017.11.0</wildfly-swarm.version>
         <yarn.version>v1.1.0</yarn.version>
     </properties>
 
