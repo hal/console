@@ -25,8 +25,8 @@ module.exports = function (grunt) {
         config: {
             version: '0.9.2-SNAPSHOT',
             bower: 'bower_components',
-            js: 'src/main/js',
-            less: 'src/main/less',
+            js: 'src/js',
+            less: 'src/less',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
             esdoc: {
