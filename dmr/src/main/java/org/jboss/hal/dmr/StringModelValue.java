@@ -92,7 +92,7 @@ final class StringModelValue extends ModelValue {
                 }
             }
             if (l > 65535) {
-                out.write('S');
+                out.writeChar('S');
                 out.writeInt(length);
                 // Modified, modified UTF-8 (keep 0 as 0)
                 for (int i = 0; i < length; i++) {
@@ -111,7 +111,7 @@ final class StringModelValue extends ModelValue {
                 return;
             }
         }
-        out.write(ModelType.STRING.typeChar);
+        out.writeChar(ModelType.STRING.typeChar);
         out.writeUTF(value);
     }
 

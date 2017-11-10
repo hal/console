@@ -18,6 +18,8 @@ package org.jboss.hal.dmr;
 import com.google.common.base.Charsets;
 import jsinterop.annotations.JsMethod;
 
+import static jsinterop.annotations.JsPackage.GLOBAL;
+
 /**
  * Encodes and decodes to and from Base64 notation.
  *
@@ -40,7 +42,7 @@ public class Base64 {
 
     // ------------------------------------------------------ encode
 
-    @JsMethod(namespace = "Window", name = "btoa")
+    @JsMethod(namespace = GLOBAL, name = "btoa")
     public static native String encode(String decoded);
 
     public static String encodeBytes(byte[] source) {
@@ -135,7 +137,7 @@ public class Base64 {
 
     // ------------------------------------------------------ decode
 
-    @JsMethod(namespace = "Window", name = "atob")
+    @JsMethod(namespace = GLOBAL, name = "atob")
     public static native String decode(String encoded);
 
     /** Defeats instantiation. */

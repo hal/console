@@ -258,7 +258,7 @@ abstract class ModelValue implements Cloneable {
 
         @Override
         void writeExternal(DataOutput out) {
-            out.write(ModelType.UNDEFINED.typeChar);
+            out.writeChar(ModelType.UNDEFINED.typeChar);
         }
 
         @Override

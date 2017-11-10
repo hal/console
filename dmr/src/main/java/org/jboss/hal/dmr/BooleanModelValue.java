@@ -41,7 +41,7 @@ final class BooleanModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.write(ModelType.BOOLEAN.typeChar);
+        out.writeChar(ModelType.BOOLEAN.typeChar);
         out.writeBoolean(value);
     }
 
@@ -123,5 +123,4 @@ final class BooleanModelValue extends ModelValue {
     void write(ModelWriter writer) throws ModelException {
         writer.writeBoolean(value);
     }
-
 }

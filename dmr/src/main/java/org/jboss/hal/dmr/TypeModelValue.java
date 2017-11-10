@@ -37,7 +37,7 @@ final class TypeModelValue extends ModelValue {
 
     @Override
     void writeExternal(DataOutput out) {
-        out.write(ModelType.TYPE.typeChar);
+        out.writeChar(ModelType.TYPE.typeChar);
         out.writeByte(value.getTypeChar());
     }
 

@@ -1797,11 +1797,19 @@ public class ModelNode {
      */
     public static ModelNode fromBase64(String encoded) {
         String decoded = Base64.decode(encoded);
-        DataInput dataInput = new DataInput(decoded.getBytes());
+        DataInput dataInput = new DataInput(getBytes(decoded));
         ModelNode node = new ModelNode();
         node.readExternal(dataInput);
         return node;
     }
+
+    private static native byte[] getBytes(String str) /*-{
+        var bytes = [];
+        for (var i = 0; i < str.length; ++i) {
+            bytes.push(str.charCodeAt(i));
+        }
+        return bytes;
+    }-*/;
 
     /**
      * Determine whether this object is equal to another.
@@ -1943,7 +1951,9 @@ public class ModelNode {
     public String toBase64() {
         DataOutput out = new DataOutput();
         writeExternal(out);
-        return Base64.encode(out.toString());
+        String asString = out.toString();
+        String encoded = Base64.encode(asString);
+        return encoded;
     }
 
     @JsIgnore
