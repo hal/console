@@ -389,7 +389,6 @@
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
                     <localWorkers>1C</localWorkers>
-                    <logLevel>DEBUG</logLevel>
                     <moduleName>org.jboss.hal.Console</moduleName>
                     <moduleShortName>hal</moduleShortName>
                     <optimize>${gwt.optimize}</optimize>
