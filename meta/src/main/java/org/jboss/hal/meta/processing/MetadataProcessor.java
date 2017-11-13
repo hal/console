@@ -163,7 +163,7 @@ public class MetadataProcessor {
                         @Override
                         public void onSuccess(LookupContext context) {
                             stopwatch.stop();
-                            logger.debug("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
+                            logger.info("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
                             callback.onSuccess(null);
 
                             // database update is *not* part of the flow!
