@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.config.Environment;
@@ -28,9 +29,11 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
@@ -40,8 +43,8 @@ import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -95,6 +98,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     @PostConstruct
     @SuppressWarnings("ConstantConditions")
     void init() {
+        StatementContext statementContext = mbuiContext.statementContext();
         if (ManagementModel.supportsEjbApplicationSecurityDomain(environment().getManagementVersion())) {
             AddressTemplate template = AddressTemplate.of(
                     "/{selected.profile}/subsystem=ejb3/application-security-domain=*");
@@ -115,12 +119,12 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     .onSave((form, changedValues) -> {
                         String name = form.getModel().getName();
                         saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                template.resolve(mbuiContext.statementContext(), name), changedValues, metadata);
+                                template.resolve(statementContext, name), changedValues, metadata);
                     })
                     .prepareReset(form -> {
                         String name = form.getModel().getName();
                         resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                template.resolve(mbuiContext.statementContext(), name), form, metadata);
+                                template.resolve(statementContext, name), form, metadata);
                     })
                     .build();
 
@@ -133,6 +137,19 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
             navigation.insertPrimary(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ITEM, null, Names.SECURITY_DOMAIN,
                     fontAwesome("link"), section);
         }
+        Dispatcher dispatcher = mbuiContext.dispatcher();
+        configurationForm.getFormItem(DEFAULT_SFSB_CACHE)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, CACHE_TEMPLATE));
+        configurationForm.getFormItem(DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, CACHE_TEMPLATE));
+        configurationForm.getFormItem(DEFAULT_SLSB_INSTANCE_POOL)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, BEAN_POOL_TEMPLATE));
+        configurationForm.getFormItem(DEFAULT_SECURITY_DOMAIN)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        SECURITY_DOMAIN_TEMPLATE));
+        cacheForm.getFormItem(PASSIVATION_STORE)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        PASSIVATION_TEMPLATE));
     }
 
     @Override

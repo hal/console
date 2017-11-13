@@ -195,6 +195,10 @@ public interface ModelDescriptionConstants {
     String DEFAULT_INTERFACE = "default-interface";
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
     String DEFAULT_REALM = "default-realm";
+    String DEFAULT_SECURITY_DOMAIN = "default-security-domain";
+    String DEFAULT_SFSB_CACHE = "default-sfsb-cache";
+    String DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE = "default-sfsb-passivation-disabled-cache";
+    String DEFAULT_SLSB_INSTANCE_POOL = "default-slsb-instance-pool";
     String DEFAULT_THREAD_POOL = "default-thread-pool";
     String DEFAULT_WEB_MODULE = "default-web-module";
     String DELIVERING_COUNT = "delivering-count";
@@ -491,6 +495,7 @@ public interface ModelDescriptionConstants {
     String PARTICIPANTS = "partitcipants";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
+    String PASSIVATION_STORE = "passivation-store";
     String PASSWORD = "password";
     String PATH = "path";
     String PATHS = "paths";
