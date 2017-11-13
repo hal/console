@@ -120,7 +120,7 @@ class LookupDatabaseTask implements Task<LookupContext> {
     }
 
     private Completable bulkLookup(LookupContext context) {
-        // collect all templates and do a bulk lookup
+        // collect all templates and do a bulk lookup (context.recursive == false)
         LookupResult lookupResult = context.lookupResult;
         Set<AddressTemplate> rdTemplates = new HashSet<>();
         Set<AddressTemplate> scTemplates = new HashSet<>();
@@ -159,7 +159,7 @@ class LookupDatabaseTask implements Task<LookupContext> {
                         ResourceAddress address = entry.getKey();
                         SecurityContext securityContext = entry.getValue();
                         if (securityContext != null) {
-                            AddressTemplate template = rdLookup.get(address);
+                            AddressTemplate template = scLookup.get(address);
                             if (template != null) {
                                 lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
                                 context.toSecurityContextRegistry.put(address, securityContext);

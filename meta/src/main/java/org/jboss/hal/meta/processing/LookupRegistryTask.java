@@ -66,7 +66,7 @@ class LookupRegistryTask implements Task<LookupContext> {
                     lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
                 } else {
                     ResourceDescription resourceDescription = resourceDescriptionRegistry.lookup(template);
-                    if (resourceDescription.get(HAL_RECURSIVE).asBoolean(false) == recursive) {
+                    if (resourceDescription.get(HAL_RECURSIVE).asBoolean(false)) {
                         lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
                     }
                 }
@@ -77,7 +77,7 @@ class LookupRegistryTask implements Task<LookupContext> {
                     lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
                 } else {
                     SecurityContext securityContext = securityContextRegistry.lookup(template);
-                    if (securityContext.get(HAL_RECURSIVE).asBoolean(false) == recursive) {
+                    if (securityContext.get(HAL_RECURSIVE).asBoolean(false)) {
                         lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
                     }
                 }
