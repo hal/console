@@ -146,7 +146,8 @@ public class MetadataProcessor {
                     lookupRegistries,
                     new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase),
                     new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH),
-                    new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry)
+                    new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry),
+                    new UpdateDatabaseTask(workerChannel)
             };
 
             LookupContext context = new LookupContext(progress, templates, recursive);
@@ -164,9 +165,6 @@ public class MetadataProcessor {
                             stopwatch.stop();
                             logger.info("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
                             callback.onSuccess(null);
-
-                            // database update is *not* part of the flow!
-                            new UpdateDatabase(workerChannel).post(context);
                         }
                     });
         }
