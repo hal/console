@@ -33,8 +33,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 class UpdateDatabase {
 
-    private static final int RD_BUCKET_SIZE = 5;
-    private static final int SC_BUCKET_SIZE = 15;
+    private static final int RD_BUCKET_SIZE = 10;
+    private static final int SC_BUCKET_SIZE = 20;
     private static final long RD_INTERVAL = 500; // ms
     private static final long SC_INTERVAL = 500; // ms
     @NonNls private static final Logger logger = LoggerFactory.getLogger(UpdateDatabase.class);
@@ -48,7 +48,6 @@ class UpdateDatabase {
     @SuppressWarnings("unchecked")
     public void post(LookupContext context) {
         if (context.updateDatabase()) {
-            LookupJournal journal = context.journal;
             List<Map<ResourceAddress, ResourceDescription>> rdBuckets = partition(context.toResourceDescriptionDatabase,
                     RD_BUCKET_SIZE);
             List<Map<ResourceAddress, SecurityContext>> scBuckets = partition(context.toSecurityContextDatabase,
@@ -63,7 +62,7 @@ class UpdateDatabase {
                                 ResourceAddress address = entry.getKey();
                                 ResourceDescription resourceDescription = entry.getValue();
                                 workerChannel.postResourceDescription(address, resourceDescription,
-                                        journal.isRecursive(address));
+                                        context.recursive);
                             }
                         }
                     })
@@ -79,8 +78,7 @@ class UpdateDatabase {
                             for (Map.Entry<ResourceAddress, SecurityContext> entry : metadata.entrySet()) {
                                 ResourceAddress address = entry.getKey();
                                 SecurityContext securityContext = entry.getValue();
-                                workerChannel.postSecurityContext(address, securityContext,
-                                        journal.isRecursive(address));
+                                workerChannel.postSecurityContext(address, securityContext, context.recursive);
                             }
                         }
                     })

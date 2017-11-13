@@ -103,8 +103,7 @@ public class MetadataProcessor {
     public void process(String id, Progress progress, AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
         boolean recursive = requiredResources.isRecursive(id);
-        logger.debug("Process required resources {} for id '{}' ({})", resources, id,
-                recursive ? "recursive" : "non-recursive");
+        logger.debug("Process required resources {} for id '{}' (recursive={})", resources, id, recursive);
         if (resources.isEmpty()) {
             logger.debug("No required resources found -> callback.onSuccess(null)");
             callback.onSuccess(null);

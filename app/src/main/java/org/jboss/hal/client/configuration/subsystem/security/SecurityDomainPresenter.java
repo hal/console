@@ -73,7 +73,7 @@ public class SecurityDomainPresenter
         extends MbuiPresenter<SecurityDomainPresenter.MyView, SecurityDomainPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    public static final String EQ_WILDCARD = "=*";
+    private static final String EQ_WILDCARD = "=*";
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
     private final Provider<Progress> progress;
@@ -112,7 +112,7 @@ public class SecurityDomainPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         securityDomain = request.getParameter(NAME, null);
     }
@@ -144,7 +144,7 @@ public class SecurityDomainPresenter
         crud.reset(Names.SECURITY_DOMAIN, securityDomain, SELECTED_SECURITY_DOMAIN_TEMPLATE, form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         reload();
                     }
                 });
@@ -233,7 +233,7 @@ public class SecurityDomainPresenter
                         .resolve(statementContext, name),
                 form, metadata, new FinishReset<NamedNode>(form) {
                     @Override
-                    public void afterReset(final Form<NamedNode> form) {
+                    public void afterReset(Form<NamedNode> form) {
                         reload();
                     }
                 });

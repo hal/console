@@ -17,6 +17,9 @@ package org.jboss.hal.dmr;
 
 import com.google.common.base.Charsets;
 import elemental2.core.Array;
+import elemental2.core.ArrayBuffer;
+import elemental2.core.DataView;
+import elemental2.core.Int8Array;
 
 class DataOutput {
 
@@ -65,8 +68,11 @@ class DataOutput {
     }
 
     void writeDouble(double v) {
-        Array<Integer> array = IEEE754.fromDoubleClosure(v);
-        for (int i = 0; i < 8; i++) {
+        ArrayBuffer buffer = new ArrayBuffer(8);
+        Int8Array array = new Int8Array(buffer);
+        DataView view = new DataView(buffer);
+        view.setFloat64(0, v);
+        for (int i = 0; i < array.getLength(); i++) {
             bytes.push(array.getAt(i).byteValue());
         }
     }

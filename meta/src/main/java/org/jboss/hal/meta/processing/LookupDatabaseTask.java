@@ -86,14 +86,9 @@ class LookupDatabaseTask implements Task<LookupContext> {
         return resourceDescriptionDatabase.getRecursive(template)
                 .doOnSuccess(resourceDescriptions -> {
                     if (!resourceDescriptions.isEmpty()) {
-                        if (!context.recursive) {
+                        if (allRecursive(resourceDescriptions.values())) {
                             context.toResourceDescriptionRegistry.putAll(resourceDescriptions);
                             context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
-                        } else {
-                            if (allRecursive(resourceDescriptions.values())) {
-                                context.toResourceDescriptionRegistry.putAll(resourceDescriptions);
-                                context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
-                            }
                         }
                     }
                 })
@@ -105,14 +100,9 @@ class LookupDatabaseTask implements Task<LookupContext> {
         return securityContextDatabase.getRecursive(template)
                 .doOnSuccess(securityContexts -> {
                     if (!securityContexts.isEmpty()) {
-                        if (!context.recursive) {
+                        if (allRecursive(securityContexts.values())) {
                             context.toSecurityContextRegistry.putAll(securityContexts);
                             context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
-                        } else {
-                            if (allRecursive(securityContexts.values())) {
-                                context.toSecurityContextRegistry.putAll(securityContexts);
-                                context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
-                            }
                         }
                     }
                 })

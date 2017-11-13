@@ -90,10 +90,14 @@ class RrdTask implements Task<LookupContext> {
                     .toCompletable());
         }
 
-        // execute the composite operation one after another
-        logger.debug("About to execute {} ({}+{}) composite operations (regular+optional)",
-                composites.size() + optionalComposites.size(), composites.size(), optionalComposites.size());
-        return Completable.concat(completables);
+        if (!completables.isEmpty()) {
+            logger.debug("About to execute {} ({}+{}) composite operations (regular+optional)",
+                    composites.size() + optionalComposites.size(), composites.size(), optionalComposites.size());
+            return Completable.concat(completables);
+        } else {
+            logger.debug("No DMR operations necessary");
+            return Completable.complete();
+        }
     }
 
     private Action1<CompositeResult> parseRrdAction(LookupContext context, Composite composite) {

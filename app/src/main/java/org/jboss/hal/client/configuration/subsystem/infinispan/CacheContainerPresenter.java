@@ -59,7 +59,9 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -601,8 +603,7 @@ public class CacheContainerPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires({CACHE_CONTAINER_ADDRESS, DISTRIBUTED_CACHE_ADDRESS, INVALIDATION_CACHE_ADDRESS, LOCAL_CACHE_ADDRESS,
-            REPLICATED_CACHE_ADDRESS, THREAD_POOL_ADDRESS, TRANSPORT_JGROUPS_ADDRESS})
+    @Requires(CACHE_CONTAINER_ADDRESS)
     @NameToken(NameTokens.CACHE_CONTAINER)
     public interface MyProxy extends ProxyPlace<CacheContainerPresenter> {
     }

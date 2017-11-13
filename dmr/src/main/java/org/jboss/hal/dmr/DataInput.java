@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.dmr;
 
+import elemental2.core.ArrayBuffer;
+import elemental2.core.DataView;
+import elemental2.core.Int8Array;
+
 class DataInput {
 
     private final byte[] bytes;
@@ -53,20 +57,16 @@ class DataInput {
     }
 
     double readDouble() {
-        // See  https://issues.jboss.org/browse/AS7-4126
-        //return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
         byte[] doubleBytes = new byte[8];
         readFully(doubleBytes);
 
-        return IEEE754.toDouble(
-                doubleBytes[0],
-                doubleBytes[1],
-                doubleBytes[2],
-                doubleBytes[3],
-                doubleBytes[4],
-                doubleBytes[5],
-                doubleBytes[6],
-                doubleBytes[7]);
+        ArrayBuffer buffer = new ArrayBuffer(8);
+        Int8Array array = new Int8Array(buffer);
+        DataView view = new DataView(buffer);
+        for (int i = 0; i < doubleBytes.length; i++) {
+            array.setAt(i, (double) doubleBytes[i]);
+        }
+        return view.getFloat64(0);
     }
 
     void readFully(byte[] b) {
