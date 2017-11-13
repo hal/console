@@ -76,59 +76,23 @@
                         <goals>
                             <goal>unpack</goal>
                         </goals>
-                        <phase>package</phase>
+                        <phase>process-sources</phase>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>hal-console</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>resources</classifier>
-                                    <outputDirectory>
-                                        ${project.build.directory}/generated-sources/unpack
-                                    </outputDirectory>
-                                    <overWrite>true</overWrite>
-                                    <includes>**/*.mbui.xml</includes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hal-core</artifactId>
-                                    <version>${project.version}</version>
-                                    <outputDirectory>
-                                        ${project.build.directory}/generated-sources/unpack
-                                    </outputDirectory>
-                                    <overWrite>true</overWrite>
-                                    <includes>org/jboss/hal/core/Strings.java</includes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hal-dmr</artifactId>
-                                    <version>${project.version}</version>
-                                    <outputDirectory>
-                                        ${project.build.directory}/generated-sources/unpack
-                                    </outputDirectory>
-                                    <overWrite>true</overWrite>
-                                    <includes>org/jboss/hal/dmr/ModelDescriptionConstants.java</includes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hal-meta</artifactId>
-                                    <version>${project.version}</version>
-                                    <outputDirectory>
-                                        ${project.build.directory}/generated-sources/unpack
-                                    </outputDirectory>
-                                    <overWrite>true</overWrite>
-                                    <includes>org/jboss/hal/meta/token/NameTokens.java</includes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hal-resources</artifactId>
-                                    <version>${project.version}</version>
+                                    <classifier>sources</classifier>
                                     <outputDirectory>
                                         ${project.build.directory}/generated-sources/unpack
                                     </outputDirectory>
                                     <overWrite>true</overWrite>
                                     <includes>
+                                        **/*.mbui.xml,
+                                        org/jboss/hal/core/Strings.java,
+                                        org/jboss/hal/dmr/ModelDescriptionConstants.java,
+                                        org/jboss/hal/meta/token/NameTokens.java,
                                         org/jboss/hal/resources/CSS.java,
                                         org/jboss/hal/resources/Counter.java,
                                         org/jboss/hal/resources/FontAwesomeSize.java,
