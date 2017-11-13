@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class WorkerChannel {
@@ -49,13 +50,13 @@ public class WorkerChannel {
         this.worker = new Worker(WORKER_JS);
     }
 
-    void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
+    void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription, boolean recursive) {
         if (worker != null) {
             // Stopwatch watch = Stopwatch.createStarted();
-            Document document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
+            resourceDescription.get(HAL_RECURSIVE).set(recursive);
             UpdateMessage message = new UpdateMessage();
             message.database = resourceDescriptionDatabase.name();
-            message.document = document;
+            message.document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
             worker.postMessage(message);
             // watch.stop();
             // logger.debug("Posted rd({}): {} bytes in {} ms", document.getId(),
@@ -64,8 +65,9 @@ public class WorkerChannel {
         }
     }
 
-    void postSecurityContext(ResourceAddress address, SecurityContext securityContext) {
+    void postSecurityContext(ResourceAddress address, SecurityContext securityContext, boolean recursive) {
         if (worker != null) {
+            securityContext.get(HAL_RECURSIVE).set(recursive);
             UpdateMessage message = new UpdateMessage();
             message.database = securityContextDatabase.name();
             message.document = securityContextDatabase.asDocument(address, securityContext);

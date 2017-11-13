@@ -291,9 +291,11 @@ public interface ModelDescriptionConstants {
     String GROUPS_ATTRIBUTE = "groups-attribute";
     String GROUPING_HANDLER = "grouping-handler";
     String HA_POLICY = "ha-policy";
+    // HAL_* attributes are used internally only!
     String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
     String HAL_LENGTH = "hal-length";
+    String HAL_RECURSIVE = "hal-recursive";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";

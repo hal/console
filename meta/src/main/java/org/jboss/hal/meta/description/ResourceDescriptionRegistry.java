@@ -26,6 +26,8 @@ import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
+
 /** A registry for resource descriptions. */
 public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescription> {
 
@@ -42,14 +44,14 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
         this.templateProcessor = new ResourceDescriptionTemplateProcessor();
     }
 
-    @Override
-    protected ResourceDescription lookupAddress(ResourceAddress address) {
-        return registry.get(address);
+    public void add(ResourceAddress address, ResourceDescription resourceDescription, boolean recursive) {
+        resourceDescription.get(HAL_RECURSIVE).set(recursive);
+        registry.put(address, resourceDescription);
     }
 
     @Override
-    public void add(ResourceAddress address, ResourceDescription description) {
-        registry.put(address, description);
+    protected ResourceDescription lookupAddress(ResourceAddress address) {
+        return registry.get(address);
     }
 
     @Override

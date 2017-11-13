@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
@@ -55,15 +54,9 @@ public class MetadataRegistry implements Registry<Metadata> {
 
     @Override
     @JsIgnore
-    public boolean contains(AddressTemplate template, boolean recursive) {
-        return securityContextRegistry.contains(template, recursive) &&
-                resourceDescriptionRegistry.contains(template, recursive);
-    }
-
-    @Override
-    @JsIgnore
-    public void add(ResourceAddress address, Metadata metadata) {
-        // noop
+    public boolean contains(AddressTemplate template) {
+        return securityContextRegistry.contains(template) &&
+                resourceDescriptionRegistry.contains(template);
     }
 
 

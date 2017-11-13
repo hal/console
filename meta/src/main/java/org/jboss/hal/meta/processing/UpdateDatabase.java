@@ -48,6 +48,7 @@ class UpdateDatabase {
     @SuppressWarnings("unchecked")
     public void post(LookupContext context) {
         if (context.updateDatabase()) {
+            LookupJournal journal = context.journal;
             List<Map<ResourceAddress, ResourceDescription>> rdBuckets = partition(context.toResourceDescriptionDatabase,
                     RD_BUCKET_SIZE);
             List<Map<ResourceAddress, SecurityContext>> scBuckets = partition(context.toSecurityContextDatabase,
@@ -59,7 +60,10 @@ class UpdateDatabase {
                         if (index < rdBuckets.size()) {
                             Map<ResourceAddress, ResourceDescription> metadata = rdBuckets.get(index.intValue());
                             for (Map.Entry<ResourceAddress, ResourceDescription> entry : metadata.entrySet()) {
-                                workerChannel.postResourceDescription(entry.getKey(), entry.getValue());
+                                ResourceAddress address = entry.getKey();
+                                ResourceDescription resourceDescription = entry.getValue();
+                                workerChannel.postResourceDescription(address, resourceDescription,
+                                        journal.isRecursive(address));
                             }
                         }
                     })
@@ -73,7 +77,10 @@ class UpdateDatabase {
                         if (index < scBuckets.size()) {
                             Map<ResourceAddress, SecurityContext> metadata = scBuckets.get(index.intValue());
                             for (Map.Entry<ResourceAddress, SecurityContext> entry : metadata.entrySet()) {
-                                workerChannel.postSecurityContext(entry.getKey(), entry.getValue());
+                                ResourceAddress address = entry.getKey();
+                                SecurityContext securityContext = entry.getValue();
+                                workerChannel.postSecurityContext(address, securityContext,
+                                        journal.isRecursive(address));
                             }
                         }
                     })
@@ -81,7 +88,11 @@ class UpdateDatabase {
                         logger.error("Unable to post security context: {}", error.getMessage());
                         return Observable.empty();
                     });
-            Observable.concat(rdObservable, scObservable).subscribe();
+            Observable.concat(rdObservable, scObservable)
+                    .doOnCompleted(() -> logger.debug(
+                            "Posted {} resource descriptions and {} security contexts to the databases",
+                            context.toResourceDescriptionDatabase.size(), context.toSecurityContextDatabase.size()))
+                    .subscribe();
         }
     }
 

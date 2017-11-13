@@ -29,6 +29,12 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     }
 
     @Override
+    public boolean contains(AddressTemplate template) {
+        ResourceAddress address = resolveTemplate(template);
+        return lookupAddress(address) != null;
+    }
+
+    @Override
     public T lookup(AddressTemplate template) throws MissingMetadataException {
         ResourceAddress address = resolveTemplate(template);
         T metadata = lookupAddress(address);
@@ -36,12 +42,6 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
             throw new MissingMetadataException(type, template);
         }
         return metadata;
-    }
-
-    @Override
-    public boolean contains(AddressTemplate template, boolean recursive) {
-        ResourceAddress address = resolveTemplate(template);
-        return lookupAddress(address) != null;
     }
 
     protected ResourceAddress resolveTemplate(AddressTemplate template) {

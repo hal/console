@@ -25,6 +25,8 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
+
 public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
     private static final String SECURITY_CONTEXT_TYPE = "security context";
@@ -38,13 +40,13 @@ public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
         this.registry = new HashMap<>();
     }
 
-    @Override
-    protected SecurityContext lookupAddress(ResourceAddress address) {
-        return registry.get(address);
+    public void add(ResourceAddress address, SecurityContext securityContext, boolean recursive) {
+        securityContext.get(HAL_RECURSIVE).set(recursive);
+        registry.put(address, securityContext);
     }
 
     @Override
-    public void add(ResourceAddress address, SecurityContext securityContext) {
-        registry.put(address, securityContext);
+    protected SecurityContext lookupAddress(ResourceAddress address) {
+        return registry.get(address);
     }
 }

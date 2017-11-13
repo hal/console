@@ -42,4 +42,12 @@ class LookupJournal {
     void log(ResourceAddress address, AddressTemplate template) {
         this.address.put(address, template);
     }
+
+    boolean isRecursive(ResourceAddress address) {
+        if (this.address.containsKey(address)) {
+            AddressTemplate template = this.address.get(address);
+            return recursive.getOrDefault(template, false);
+        }
+        return false;
+    }
 }

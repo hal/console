@@ -19,13 +19,16 @@ import java.util.Set;
 
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
+import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 
@@ -58,11 +61,26 @@ class LookupRegistryTask implements Task<LookupContext> {
 
     private void check(LookupResult lookupResult, boolean recursive) {
         for (AddressTemplate template : lookupResult.templates()) {
-            if (resourceDescriptionRegistry.contains(template, recursive)) {
-                lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+            if (resourceDescriptionRegistry.contains(template)) {
+                if (!recursive) {
+                    lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                } else {
+                    ResourceDescription resourceDescription = resourceDescriptionRegistry.lookup(template);
+                    if (resourceDescription.get(HAL_RECURSIVE).asBoolean(false) == recursive) {
+                        lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                    }
+                }
             }
-            if (securityContextRegistry.contains(template, recursive)) {
-                lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+
+            if (securityContextRegistry.contains(template)) {
+                if (!recursive) {
+                    lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                } else {
+                    SecurityContext securityContext = securityContextRegistry.lookup(template);
+                    if (securityContext.get(HAL_RECURSIVE).asBoolean(false) == recursive) {
+                        lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                    }
+                }
             }
         }
     }

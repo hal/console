@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
 import static org.jboss.hal.meta.processing.LookupResult.NOTHING_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
@@ -84,11 +86,14 @@ class LookupDatabaseTask implements Task<LookupContext> {
         return resourceDescriptionDatabase.getRecursive(template)
                 .doOnSuccess(resourceDescriptions -> {
                     if (!resourceDescriptions.isEmpty()) {
-                        context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
-                        for (Map.Entry<ResourceAddress, ResourceDescription> entry : resourceDescriptions.entrySet()) {
-                            ResourceAddress address = entry.getKey();
-                            ResourceDescription resourceDescription = entry.getValue();
-                            context.toResourceDescriptionRegistry.put(address, resourceDescription);
+                        if (!context.recursive) {
+                            context.toResourceDescriptionRegistry.putAll(resourceDescriptions);
+                            context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                        } else {
+                            if (allRecursive(resourceDescriptions.values())) {
+                                context.toResourceDescriptionRegistry.putAll(resourceDescriptions);
+                                context.lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                            }
                         }
                     }
                 })
@@ -100,16 +105,28 @@ class LookupDatabaseTask implements Task<LookupContext> {
         return securityContextDatabase.getRecursive(template)
                 .doOnSuccess(securityContexts -> {
                     if (!securityContexts.isEmpty()) {
-                        context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
-                        for (Map.Entry<ResourceAddress, SecurityContext> entry : securityContexts.entrySet()) {
-                            ResourceAddress address = entry.getKey();
-                            SecurityContext securityContext = entry.getValue();
-                            context.toSecurityContextRegistry.put(address, securityContext);
+                        if (!context.recursive) {
+                            context.toSecurityContextRegistry.putAll(securityContexts);
+                            context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                        } else {
+                            if (allRecursive(securityContexts.values())) {
+                                context.toSecurityContextRegistry.putAll(securityContexts);
+                                context.lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                            }
                         }
                     }
                 })
                 .toCompletable()
                 .onErrorComplete(); // leave the bits in LookupResult unchanged!
+    }
+
+    private <T extends ModelNode> boolean allRecursive(Iterable<T> metadata) {
+        for (T m : metadata) {
+            if (!m.get(HAL_RECURSIVE).asBoolean(false)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Completable bulkLookup(LookupContext context) {
