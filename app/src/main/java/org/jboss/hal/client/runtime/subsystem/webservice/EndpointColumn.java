@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.webservice;
 
 import java.util.Comparator;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -58,7 +59,8 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
                     deploymentResources.readChildren(WEBSERVICES, ENDPOINT,
                             (address, modelNode) -> {
                                 String name = address.lastValue().replaceAll("%3A", ":");
-                                DeploymentResource deploymentResource = new DeploymentResource(name, address, modelNode);
+                                DeploymentResource deploymentResource = new DeploymentResource(name, address,
+                                        modelNode);
                                 return deploymentResource;
 
                             }, endpoints -> {

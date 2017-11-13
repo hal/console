@@ -23,6 +23,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
@@ -40,8 +41,9 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
 
+    private static final String DOT = ".";
+
     private final Resources resources;
-    private final HTMLElement headerContainer;
     private final HTMLElement header;
     private final HTMLElement panelBody;
     private final HTMLElement actions;
@@ -53,15 +55,15 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     NotificationDrawer(Resources resources) {
         this.resources = resources;
         this.root = div().css(drawerPf, drawerPfNotificationsNonClickable, drawerPfHal, hide)
-                .add(headerContainer = div().css(drawerPfTitle)
+                .add(div().css(drawerPfTitle)
                         .add(a().css(drawerPfToggleExpand, fontAwesome("angle-double-left"), hiddenXs)
                                 .on(click, event -> toggleWidth()))
                         .add(a().css(drawerPfClose, pfIcon("close"))
+                                .id(Ids.NOTIFICATION_DRAWER_CLOSE)
                                 .on(click, event -> close()))
                         .add(header = h(3, resources.messages().notifications(0))
                                 .css(textCenter)
-                                .asElement())
-                        .asElement())
+                                .asElement()))
                 .add(div().css(panelGroup)
                         .add(div().css(panel, panelDefault)
                                 .add(div().css(panelHeading, hidden))
@@ -79,10 +81,12 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
                                                 .add(markAllRead = div().css(drawerPfActionLink)
                                                         .add(button(resources.constants().markAllRead())
                                                                 .css(btn, btnLink)
+                                                                .id(Ids.NOTIFICATION_DRAWER_MARK_ALL_READ)
                                                                 .on(click, event -> markAllRead()))
                                                         .asElement())
                                                 .add(div().css(drawerPfActionLink)
                                                         .add(button().css(btn, btnLink)
+                                                                .id(Ids.NOTIFICATION_DRAWER_CLEAR_ALL)
                                                                 .on(click, event -> clear())
                                                                 .add(span().css(pfIcon("close")))
                                                                 .add(resources.constants().clearAll())))
@@ -117,13 +121,13 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
         root.classList.toggle(hide);
     }
 
-    int getMessageCount() {
-        return (int) panelBody.childElementCount;
+    int getUnreadCount() {
+        NodeList<Element> nodes = root.querySelectorAll(DOT + drawerPfNotification + DOT + unread);
+        return nodes != null ? (int) nodes.length : 0;
     }
 
-    private int getUnreadCount() {
-        NodeList<Element> nodes = root.querySelectorAll("." + drawerPfNotification + "." + unread);
-        return nodes != null ? (int) nodes.length : 0;
+    private int getMessageCount() {
+        return (int) panelBody.childElementCount;
     }
 
 
@@ -138,9 +142,10 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     private void markAllRead() {
-        Elements.stream(root.querySelectorAll("." + drawerPfNotification + "." + unread))
+        Elements.stream(root.querySelectorAll(DOT + drawerPfNotification + DOT + unread))
                 .forEach(element -> element.classList.remove(unread));
         updateElements();
+        presenter.onMarkAllAsRead();
     }
 
     void remove(String id) {

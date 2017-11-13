@@ -18,6 +18,7 @@ package org.jboss.hal.client.accesscontrol;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -108,7 +109,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
         // we assume that the add operations for INCLUDE_TEMPLATE and EXCLUDE_TEMPLATE have the same rights
         addColumnAction(columnActionFactory.add(Ids.ROLE_ADD, title, INCLUDE_TEMPLATE, column -> {
             Metadata metadata = Metadata.staticDescription(accessControlResources.principal());
-            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(id, Ids.FORM_SUFFIX), metadata)
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(id, Ids.FORM), metadata)
                     .addOnly()
                     .include(NAME, REALM, INCLUDE, EXCLUDE)
                     .unsorted()

@@ -17,6 +17,7 @@ package org.jboss.hal.meta.security;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
@@ -24,25 +25,28 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
+
 public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
     private static final String SECURITY_CONTEXT_TYPE = "security context";
 
+    // TODO Evaluate using a Guava cache to save memory
     private final Map<ResourceAddress, SecurityContext> registry;
 
     @Inject
-    public SecurityContextRegistry(final StatementContext statementContext, final Environment environment) {
+    public SecurityContextRegistry(StatementContext statementContext, Environment environment) {
         super(new SecurityContextStatementContext(statementContext, environment), SECURITY_CONTEXT_TYPE);
         this.registry = new HashMap<>();
     }
 
-    @Override
-    protected SecurityContext lookupAddress(final ResourceAddress address) {
-        return registry.get(address);
+    public void add(ResourceAddress address, SecurityContext securityContext, boolean recursive) {
+        securityContext.get(HAL_RECURSIVE).set(recursive);
+        registry.put(address, securityContext);
     }
 
     @Override
-    public void add(final ResourceAddress address, final SecurityContext securityContext) {
-        registry.put(address, securityContext);
+    protected SecurityContext lookupAddress(ResourceAddress address) {
+        return registry.get(address);
     }
 }

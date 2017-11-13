@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
@@ -53,11 +54,14 @@ public class ApplicationSecurityDomainColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_APP_SECURITY_DOMAIN, Names.APPLICATION_SECURITY_DOMAIN)
 
-                .columnAction(columnActionFactory.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, APPLICATION_SECURITY_DOMAIN_TEMPLATE,
-                        Ids::undertowApplicationSecurityDomain))
+                .columnAction(
+                        columnActionFactory.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN,
+                                APPLICATION_SECURITY_DOMAIN_TEMPLATE,
+                                Ids::undertowApplicationSecurityDomain))
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_APP_SECURITY_DOMAIN_REFRESH))
 
-                .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, APPLICATION_SECURITY_DOMAIN,
+                .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE,
+                        APPLICATION_SECURITY_DOMAIN,
                         children -> callback.onSuccess(asNamedNodes(children))))
 
                 .onPreview(ApplicationSecurityDomainPreview::new)
@@ -81,8 +85,11 @@ public class ApplicationSecurityDomainColumn extends FinderColumn<NamedNode> {
             public List<ItemAction<NamedNode>> actions() {
                 List<ItemAction<NamedNode>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(
-                        places.selectedProfile(NameTokens.UNDERTOW_APPLICATION_SECURITY_DOMAIN).with(NAME, item.getName()).build()));
-                actions.add(itemActionFactory.remove(Names.APPLICATION_SECURITY_DOMAIN, item.getName(), APPLICATION_SECURITY_DOMAIN_TEMPLATE,
+                        places.selectedProfile(NameTokens.UNDERTOW_APPLICATION_SECURITY_DOMAIN)
+                                .with(NAME, item.getName())
+                                .build()));
+                actions.add(itemActionFactory.remove(Names.APPLICATION_SECURITY_DOMAIN, item.getName(),
+                        APPLICATION_SECURITY_DOMAIN_TEMPLATE,
                         ApplicationSecurityDomainColumn.this));
                 return actions;
             }

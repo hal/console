@@ -13,40 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
-
-import java.io.IOException;
 
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-@SuppressWarnings("HardCodedStringLiteral")
-final class ExpressionValue extends ModelValue {
+class ExpressionValue extends ModelValue {
 
-    /**
-     * JSON Key used to identify ExpressionValue.
-     */
-    public static final String TYPE_KEY = "EXPRESSION_VALUE";
+    /** JSON Key used to identify ExpressionValue. */
+    private static final String TYPE_KEY = "EXPRESSION_VALUE";
     private static final int INITIAL = 0;
     private static final int GOT_DOLLAR = 1;
     private static final int GOT_OPEN_BRACE = 2;
@@ -61,14 +36,14 @@ final class ExpressionValue extends ModelValue {
      *
      * @return
      */
-    private static String replaceProperties(final String value) {
-        final StringBuilder builder = new StringBuilder();
-        final int len = value.length();
+    private static String replaceProperties(String value) {
+        StringBuilder builder = new StringBuilder();
+        int len = value.length();
         int state = 0;
         int start = -1;
         int nameStart = -1;
         for (int i = 0; i < len; i = value.offsetByCodePoints(i, 1)) {
-            final char ch = value.charAt(i);
+            char ch = value.charAt(i);
             switch (state) {
                 case INITIAL: {
                     switch (ch) {
@@ -110,7 +85,7 @@ final class ExpressionValue extends ModelValue {
                         case ':':
                         case '}':
                         case ',': {
-                            final String name = value.substring(nameStart, i).trim();
+                            String name = value.substring(nameStart, i).trim();
                             if ("/".equals(name)) {
                                 builder.append('/');
                                 state = ch == '}' ? INITIAL : RESOLVED;
@@ -120,7 +95,7 @@ final class ExpressionValue extends ModelValue {
                                 state = ch == '}' ? INITIAL : RESOLVED;
                                 continue;
                             }
-                            final String val = null;//System.getProperty(name);
+                            String val = null;//System.getProperty(name);
                             if (val != null) {
                                 builder.append(val);
                                 state = ch == '}' ? INITIAL : RESOLVED;
@@ -171,12 +146,15 @@ final class ExpressionValue extends ModelValue {
                 builder.append(value.substring(start - 2));
                 break;
             }
+            default:
+                break;
         }
         return builder.toString();
     }
+
     private final String expressionString;
 
-    ExpressionValue(final String expressionString) {
+    ExpressionValue(String expressionString) {
         super(ModelType.EXPRESSION);
         if (expressionString == null) {
             throw new IllegalArgumentException("expressionString is null");
@@ -185,7 +163,7 @@ final class ExpressionValue extends ModelValue {
     }
 
     @Override
-    void writeExternal(final DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.writeUTF(expressionString);
     }
 
@@ -195,12 +173,12 @@ final class ExpressionValue extends ModelValue {
     }
 
     @Override
-    void format(final StringBuilder builder, final int indent, final boolean multiLine) {
+    void format(StringBuilder builder, int indent, boolean multiLine) {
         builder.append("expression ").append(quote(expressionString));
     }
 
     @Override
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
         builder.append('{');
         if (multiLine) {
             indent(builder.append('\n'), indent + 1);
@@ -219,11 +197,11 @@ final class ExpressionValue extends ModelValue {
     }
 
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         return other instanceof ExpressionValue && equals((ExpressionValue) other);
     }
 
-    public boolean equals(final ExpressionValue other) {
+    public boolean equals(ExpressionValue other) {
         return this == other || other != null && expressionString.equals(other.expressionString);
     }
 

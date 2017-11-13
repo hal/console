@@ -49,14 +49,23 @@ class Principal {
     @Override
     @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Principal)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Principal)) {
+            return false;
+        }
 
         Principal principal = (Principal) o;
-
-        if (type != principal.type) { return false; }
-        if (!resourceName.equals(principal.resourceName)) { return false; }
-        if (!name.equals(principal.name)) { return false; }
+        if (type != principal.type) {
+            return false;
+        }
+        if (!resourceName.equals(principal.resourceName)) {
+            return false;
+        }
+        if (!name.equals(principal.name)) {
+            return false;
+        }
         return !(realm != null ? !realm.equals(principal.realm) : principal.realm != null);
 
     }

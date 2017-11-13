@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.undertow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -57,8 +58,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_LISTENER)
 public class ListenerColumn extends FinderColumn<NamedNode> {
 
-    final static String HAL_LISTENER_TYPE = "hal-listener-type";
-    final static String HAL_WEB_SERVER = "hal-web-server";
+    static final String HAL_LISTENER_TYPE = "hal-listener-type";
+    static final String HAL_WEB_SERVER = "hal-web-server";
 
     private Dispatcher dispatcher;
     private Resources resources;

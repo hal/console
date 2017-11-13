@@ -31,13 +31,14 @@ import jsinterop.base.JsPropertyMap;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.window;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.ballroom.JQuery.$;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 /**
  * Grouped bar chart to visualize quantitative data. Can be rendered horizontal or vertical. Values can be stacked.
@@ -45,67 +46,6 @@ import static org.jboss.hal.ballroom.JQuery.$;
  * @see <a href="http://www.patternfly.org/pattern-library/data-visualization/bar-chart/">http://www.patternfly.org/pattern-library/data-visualization/bar-chart/</a>
  */
 public class GroupedBar implements IsElement<HTMLElement>, Attachable {
-
-    private enum Orientation {HORIZONTAL, VERTICAL,}
-
-
-    public static class Builder {
-
-        private final List<String> categories;
-        private final Set<String> order;
-        private final Map<String, String> colors;
-        private final Map<String, String> names;
-        private Orientation orientation;
-        private boolean stacked;
-        private boolean responsive;
-
-        /** Creates a new builder with the specified categories (rows or columns) */
-        public Builder(String category, String... moreCategories) {
-            this.categories = new ArrayList<>();
-            this.categories.add(category);
-            if (moreCategories != null) {
-                this.categories.addAll(asList(moreCategories));
-            }
-            this.order = new LinkedHashSet<>();
-            this.colors = new HashMap<>();
-            this.names = new HashMap<>();
-            this.orientation = Orientation.HORIZONTAL;
-            this.responsive = false;
-            this.stacked = false;
-        }
-
-        public Builder add(String id, String text, String color) {
-            order.add(id);
-            colors.put(id, color);
-            names.put(id, text);
-            return this;
-        }
-
-        public Builder horizontal() {
-            this.orientation = Orientation.HORIZONTAL;
-            return this;
-        }
-
-        public Builder vertical() {
-            this.orientation = Orientation.VERTICAL;
-            return this;
-        }
-
-        public Builder responsive(boolean responsive) {
-            this.responsive = responsive;
-            return this;
-        }
-
-        public Builder stacked(boolean stacked) {
-            this.stacked = stacked;
-            return this;
-        }
-
-        public GroupedBar build() {
-            return new GroupedBar(this);
-        }
-    }
-
 
     private static final int HORIZONTAL_ROW = 33;
     private static final int HORIZONTAL_STACKED_HEIGHT = 100;
@@ -116,6 +56,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
     private final Options options;
     private Api api;
 
+    @SuppressWarnings("unchecked")
     private GroupedBar(Builder builder) {
         this.builder = builder;
 
@@ -129,7 +70,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
             options.axis.x.categories.push(category);
         }
         options.axis.x.type = "category";
-        options.bindto = "#" + root.id;
+        options.bindto = HASH + root.id;
         options.data = new Options.Data();
         options.data.columns = new Array<>();
         if (builder.stacked) {
@@ -138,7 +79,6 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
                 names.push(builder.names.get(id));
             }
             options.data.groups = new Array<>();
-            //noinspection unchecked
             options.data.groups.push(names);
         }
         options.data.names = JsHelper.asJsMap(builder.names);
@@ -236,5 +176,68 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
     private void resizeInParent() {
         HTMLElement parent = (HTMLElement) root.parentNode;
         resize((int) $(parent).width());
+    }
+
+
+    private enum Orientation {
+        HORIZONTAL, VERTICAL
+    }
+
+
+    public static class Builder {
+
+        private final List<String> categories;
+        private final Set<String> order;
+        private final Map<String, String> colors;
+        private final Map<String, String> names;
+        private Orientation orientation;
+        private boolean stacked;
+        private boolean responsive;
+
+        /** Creates a new builder with the specified categories (rows or columns) */
+        public Builder(String category, String... moreCategories) {
+            this.categories = new ArrayList<>();
+            this.categories.add(category);
+            if (moreCategories != null) {
+                this.categories.addAll(asList(moreCategories));
+            }
+            this.order = new LinkedHashSet<>();
+            this.colors = new HashMap<>();
+            this.names = new HashMap<>();
+            this.orientation = Orientation.HORIZONTAL;
+            this.responsive = false;
+            this.stacked = false;
+        }
+
+        public Builder add(String id, String text, String color) {
+            order.add(id);
+            colors.put(id, color);
+            names.put(id, text);
+            return this;
+        }
+
+        public Builder horizontal() {
+            this.orientation = Orientation.HORIZONTAL;
+            return this;
+        }
+
+        public Builder vertical() {
+            this.orientation = Orientation.VERTICAL;
+            return this;
+        }
+
+        public Builder responsive(boolean responsive) {
+            this.responsive = responsive;
+            return this;
+        }
+
+        public Builder stacked(boolean stacked) {
+            this.stacked = stacked;
+            return this;
+        }
+
+        public GroupedBar build() {
+            return new GroupedBar(this);
+        }
     }
 }

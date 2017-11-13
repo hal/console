@@ -23,12 +23,12 @@ public class BootstrapTasks {
     private final BootstrapTask[] functions;
 
     @Inject
-    public BootstrapTasks( ReadEnvironment readEnvironment,
-             ReadAuthentication readAuthentication,
-             FindDomainController findDomainController,
-             RegisterStaticCapabilities registerStaticCapabilities,
-             LoadSettings loadSettings,
-             ReadExtensions readExtensions) {
+    public BootstrapTasks(ReadEnvironment readEnvironment,
+            ReadAuthentication readAuthentication,
+            FindDomainController findDomainController,
+            RegisterStaticCapabilities registerStaticCapabilities,
+            LoadSettings loadSettings,
+            ReadExtensions readExtensions) {
         this.functions = new BootstrapTask[]{
                 readEnvironment,
                 readAuthentication,

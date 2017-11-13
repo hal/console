@@ -20,7 +20,7 @@
 <p>Applications may use many different JMS destinations which are configured on the server side and usually accessed via JNDI.</p>
 
 <h2>Security Settings</h2>
-<p>Security settings are used to configure security around specific destinations. This is done by adding a security constraint using the security-setting configuration element. JBoss EAP messaging comes with a
+<p>Security settings are used to configure security around specific destinations. This is done by adding a security constraint using the security-setting configuration element. ${build.shortName} messaging comes with a
     <code>security-setting</code> configured by default.</p>
 
 <p>The security-setting option makes use of wildcards to handle which destinations to apply the security constraint. The value of a single
@@ -30,7 +30,7 @@
 
 <h2>Address Settings</h2>
 <p>The messaging-activemq subsystem has several configurable options which control aspects of how and when a message is delivered, how many attempts should be made, and when the message expires. These configuration options all exist within the
-    <code>&lt;address-setting&gt;</code> configuration element. You can have JBoss EAP apply a single
+    <code>&lt;address-setting&gt;</code> configuration element. You can have ${build.shortName} apply a single
     <code>&lt;address-setting&gt;</code> to multiple destinations by using a wildcard syntax.</p>
 
 <p>For more information on using wildcards in address settings, see
@@ -38,7 +38,7 @@
 </p>
 
 <h2>Diverts</h2>
-<p>Diverts are objects configured in JBoss EAP messaging that help in diverting messages from one address to another. Diverts can be classified into the following types:
+<p>Diverts are objects configured in ${build.shortName} messaging that help in diverting messages from one address to another. Diverts can be classified into the following types:
 
 <dl>
     <dt>Exclusive</dt>

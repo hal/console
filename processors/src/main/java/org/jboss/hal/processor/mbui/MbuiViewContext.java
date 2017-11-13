@@ -171,15 +171,4 @@ public class MbuiViewContext {
     void addPostConstruct(PostConstructInfo postConstructInfo) {
         postConstructs.add(postConstructInfo);
     }
-    
-    public String findFormById(String id) {
-        String found = null;
-        for (FormInfo form: forms) {
-            if (form.getSelector().equals(id)) {
-                found = form.getName();
-                break;
-            }
-        }
-        return found;
-    }
 }

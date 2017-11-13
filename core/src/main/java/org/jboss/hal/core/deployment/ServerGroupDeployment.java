@@ -36,13 +36,21 @@ public class ServerGroupDeployment extends Content {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof ServerGroupDeployment)) { return false; }
-        if (!super.equals(o)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ServerGroupDeployment)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         ServerGroupDeployment that = (ServerGroupDeployment) o;
         //noinspection SimplifiableIfStatement
-        if (!serverGroup.equals(that.serverGroup)) { return false; }
+        if (!serverGroup.equals(that.serverGroup)) {
+            return false;
+        }
         return getName().equals(that.getName());
     }
 
@@ -62,7 +70,8 @@ public class ServerGroupDeployment extends Content {
         return serverGroup;
     }
 
-    public @Nullable Deployment getDeployment() {
+    public @Nullable
+    Deployment getDeployment() {
         return deployment;
     }
 

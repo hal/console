@@ -41,10 +41,9 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.TAB;
+import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
 class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
 
@@ -56,20 +55,20 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
 
     LdapKeyStoreElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
             final Resources resources) {
-        table = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(id(ADD_SUFFIX), Names.LDAP_KEY_STORE, metadata.getTemplate(),
+        table = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
+                .button(tableButtonFactory.add(id(Ids.ADD), Names.LDAP_KEY_STORE, metadata.getTemplate(),
                         asList(DIR_CONTEXT, SEARCH_PATH), (n, a) -> presenter.reloadLdapKeyStores()))
                 .button(tableButtonFactory.remove(Names.LDAP_KEY_STORE, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapKeyStores()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        attributes = new ModelNodeForm.Builder<NamedNode>(id(FORM_SUFFIX), metadata)
+        attributes = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
                 .onSave(((form, changedValues) -> presenter.saveLdapKeyStore(form.getModel().getName(), changedValues)))
                 .build();
 
         Metadata nitMetadata = metadata.forComplexAttribute(NEW_ITEM_TEMPLATE);
-        newItemTemplate = new ModelNodeForm.Builder<>(id(NEW_ITEM_TEMPLATE, FORM_SUFFIX), nitMetadata)
+        newItemTemplate = new ModelNodeForm.Builder<>(id(NEW_ITEM_TEMPLATE, FORM), nitMetadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
                 .customFormItem(NEW_ITEM_ATTRIBUTES,
                         (attributeDescription) -> new MultiValueListItem(NEW_ITEM_ATTRIBUTES))
@@ -87,9 +86,9 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .prepareRemove(form -> presenter.removeNewItemTemplate(table.selectedRow().getName(), form))
                 .build();
 
-        Tabs tabs = new Tabs();
-        tabs.add(id(TAB_SUFFIX), resources.constants().attributes(), attributes.asElement());
-        tabs.add(id(NEW_ITEM_TEMPLATE, TAB_SUFFIX), Names.NEW_ITEM_TEMPLATE, newItemTemplate.asElement());
+        Tabs tabs = new Tabs(id(TAB_CONTAINER));
+        tabs.add(id(TAB), resources.constants().attributes(), attributes.asElement());
+        tabs.add(id(NEW_ITEM_TEMPLATE, TAB), Names.NEW_ITEM_TEMPLATE, newItemTemplate.asElement());
 
         root = section()
                 .add(h(1).textContent(Names.LDAP_KEY_STORE))

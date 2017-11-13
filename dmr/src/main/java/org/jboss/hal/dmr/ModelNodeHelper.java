@@ -134,7 +134,7 @@ public class ModelNodeHelper {
         if (modelNode != null && modelNode.hasDefined(attribute)) {
             try {
                 result = supplier.get();
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
                 result = defaultValue;
             }
         }
@@ -178,7 +178,8 @@ public class ModelNodeHelper {
         String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.asString());
         try {
             value = valueOf.apply(converted);
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
         return value;
     }
 
@@ -233,7 +234,8 @@ public class ModelNodeHelper {
         }
     }
 
-    private ModelNodeHelper() {}
+    private ModelNodeHelper() {
+    }
 
 
     // ------------------------------------------------------ JS methods

@@ -75,27 +75,27 @@ public abstract class ServerStatusSwitch implements Consumer<Server> {
         }
     }
 
-    protected abstract void onPending(final Server server);
+    protected abstract void onPending(Server server);
 
-    protected abstract void onBootErrors(final Server server);
+    protected abstract void onBootErrors(Server server);
 
-    protected abstract void onFailed(final Server server);
+    protected abstract void onFailed(Server server);
 
-    protected abstract void onAdminMode(final Server server);
+    protected abstract void onAdminMode(Server server);
 
-    protected abstract void onStarting(final Server server);
+    protected abstract void onStarting(Server server);
 
-    protected abstract void onSuspended(final Server server);
+    protected abstract void onSuspended(Server server);
 
-    protected abstract void onNeedsReload(final Server server);
+    protected abstract void onNeedsReload(Server server);
 
-    protected abstract void onNeedsRestart(final Server server);
+    protected abstract void onNeedsRestart(Server server);
 
-    protected abstract void onRunning(final Server server);
+    protected abstract void onRunning(Server server);
 
-    protected abstract void onStopped(final Server server);
+    protected abstract void onStopped(Server server);
 
-    protected abstract void onUnknown(final Server server);
+    protected abstract void onUnknown(Server server);
 }
 
 

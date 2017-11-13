@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.LinkedListMultimap;
@@ -124,7 +125,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         this.childTables = new HashMap<>();
 
         // main attributes
-        Tabs mainAttributesTabs = new Tabs();
+        Tabs mainAttributesTabs = new Tabs(Ids.JPA_RUNTIME_TAB_CONTAINER);
         String baseId = Ids.build(Ids.JPA_RUNTIME);
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JPA_DEPLOYMENT_TEMPLATE);
 
@@ -132,7 +133,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
             String sectionId = Ids.asId(section);
             List<String> sectionAttributes = mainAttributes.get(section);
             Form<JpaStatistic> form = new ModelNodeForm.Builder<JpaStatistic>(
-                    Ids.build(baseId, Ids.FORM_SUFFIX, sectionId), metadata)
+                    Ids.build(baseId, Ids.FORM, sectionId), metadata)
                     .readOnly()
                     .includeRuntime()
                     .include(sectionAttributes)
@@ -140,7 +141,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                     .build();
             registerAttachable(form);
             mainForms.add(form);
-            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB_SUFFIX, sectionId), section, form.asElement());
+            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.asElement());
         }
 
         HTMLElement section = section()
@@ -157,18 +158,18 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
-        navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
+        navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ITEM, resources.constants().mainAttributes(),
                 fontAwesome("list-ul"), section);
 
         // child resources
         buildChildPanel(baseId, AddressTemplates.ENTITY_DEPLOYMENT_TEMPLATE, "entity");
-        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_ENTRY, Names.ENTITY, fontAwesome("cubes"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_ITEM, Names.ENTITY, fontAwesome("cubes"),
                 buildChildPanel(baseId, AddressTemplates.ENTITY_DEPLOYMENT_TEMPLATE, Names.ENTITY));
-        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_CACHE_ENTRY, Names.ENTITY_CACHE, fontAwesome("database"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_ENTITY_CACHE_ITEM, Names.ENTITY_CACHE, fontAwesome("database"),
                 buildChildPanel(baseId, AddressTemplates.ENTITY_CACHE_DEPLOYMENT_TEMPLATE, Names.ENTITY_CACHE));
-        navigation.addPrimary(Ids.JPA_RUNTIME_QUERY_CACHE_ENTRY, Names.QUERY_CACHE, pfIcon("storage-domain"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_QUERY_CACHE_ITEM, Names.QUERY_CACHE, pfIcon("storage-domain"),
                 buildChildPanel(baseId, AddressTemplates.QUERY_CACHE_DEPLOYMENT_TEMPLATE, Names.QUERY_CACHE));
-        navigation.addPrimary(Ids.JPA_RUNTIME_COLLECTION_ENTRY, Names.COLLECTION, fontAwesome("tasks"),
+        navigation.addPrimary(Ids.JPA_RUNTIME_COLLECTION_ITEM, Names.COLLECTION, fontAwesome("tasks"),
                 buildChildPanel(baseId, AddressTemplates.COLLECTION_DEPLOYMENT_TEMPLATE, Names.COLLECTION));
 
         initElement(row()
@@ -181,11 +182,11 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         Metadata metadata = metadataRegistry.lookup(template);
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(
-                Ids.build(baseId, resource, Ids.TABLE_SUFFIX), metadata)
+                Ids.build(baseId, resource, Ids.TABLE), metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
 
-        Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM_SUFFIX),
+        Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM),
                 metadata)
                 .readOnly()
                 .includeRuntime()
@@ -199,10 +200,10 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         return section()
                 .add(h(1).textContent(title))
                 .add(p().css(clearfix)
-                    .add(span().textContent(metadata.getDescription().getDescription()))
-                    .add(a().css(clickable, pullRight).on(click, event -> refresh())
-                        .add(span().css(fontAwesome("refresh"), marginRight5))
-                        .add(span().textContent(resources.constants().refresh()))))
+                        .add(span().textContent(metadata.getDescription().getDescription()))
+                        .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                .add(span().css(fontAwesome("refresh"), marginRight5))
+                                .add(span().textContent(resources.constants().refresh()))))
                 .add(table.asElement())
                 .add(form.asElement())
                 .asElement();

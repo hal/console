@@ -33,6 +33,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -84,7 +85,8 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         dispatcher.execute(operation, result -> {
 
             profile = result.get(PROFILE_NAME).asString();
-            noProcessingTime = new EmptyState.Builder(resources.constants().undertowListenerProcessingDisabledHeader())
+            noProcessingTime = new EmptyState.Builder(Ids.UNDERTOW_LISTENER_PROCESSING_DISABLED,
+                    resources.constants().undertowListenerProcessingDisabledHeader())
                     .icon(fontAwesome("line-chart"))
                     .primaryAction(resources.constants().enable(), () -> recordProcessingTime(server))
                     .build();
@@ -164,7 +166,8 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         String listenerType = listener.asModelNode().get(HAL_LISTENER_TYPE).asString();
         String webserver = listener.asModelNode().get(HAL_WEB_SERVER).asString();
 
-        ResourceAddress address = WEB_SERVER_CONFIGURATION_TEMPLATE.append("/" + listenerType + "=" + listener.getName())
+        ResourceAddress address = WEB_SERVER_CONFIGURATION_TEMPLATE.append(
+                "/" + listenerType + "=" + listener.getName())
                 .resolve(statementContext, profile, webserver);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, RECORD_REQUEST_START_TIME)

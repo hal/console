@@ -16,6 +16,7 @@
 package org.jboss.hal.core.mbui.dialog;
 
 import java.util.Collections;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterables;
@@ -33,21 +34,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 public class AddResourceDialog {
 
-    @FunctionalInterface
-    public interface Callback {
-
-        /**
-         * Called after the dialog was closed using the primary button.
-         *
-         * @param name  The name of the resource to add. {@code null} if the dialog's form does not contain a
-         *              name item (i.e. when adding a singleton resource)
-         * @param model The model of the related form. {@code null} if the related resource description and thus
-         *              the form does not contain attributes / form items.
-         */
-        void onAdd(@Nullable final String name, @Nullable final ModelNode model);
-    }
-
-
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private FormItem<String> nameItem;
@@ -58,13 +44,12 @@ public class AddResourceDialog {
      * Creates an add resource dialog with a form which contains an unbound name item plus all request properties from
      * the add operation. Clicking on the add button will call the specified callback.
      */
-    public AddResourceDialog(final String id, final String title, final Metadata metadata, final Callback callback) {
+    public AddResourceDialog(String id, String title, Metadata metadata, Callback callback) {
         this(id, title, metadata, Collections.emptyList(), callback);
     }
 
-    public AddResourceDialog(final String id, final String title, final Metadata metadata,
-            final Iterable<String> attributes, final Callback callback) {
-
+    public AddResourceDialog(String id, String title, Metadata metadata, Iterable<String> attributes,
+            Callback callback) {
         nameItem = new NameItem();
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(id, metadata)
                 .unboundFormItem(nameItem, 0)
@@ -83,13 +68,13 @@ public class AddResourceDialog {
      * Uses an existing form for the dialog. If the form has a save callback it's overridden with {@link
      * Callback#onAdd(String, ModelNode)}.
      */
-    public AddResourceDialog(final String title, final Form<ModelNode> form, final Callback callback) {
+    public AddResourceDialog(String title, Form<ModelNode> form, Callback callback) {
         nameItem = form.getFormItem(NAME);
         form.setSaveCallback((f, changedValues) -> saveForm(callback, form.getModel()));
         init(title, form);
     }
 
-    private void init(final String title, final Form<ModelNode> form) {
+    private void init(String title, Form<ModelNode> form) {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
@@ -100,7 +85,7 @@ public class AddResourceDialog {
         this.dialog.registerAttachable(form);
     }
 
-    private void saveForm(final Callback callback, final ModelNode model) {
+    private void saveForm(Callback callback, ModelNode model) {
         String name = nameItem != null ? nameItem.getValue() : null;
         callback.onAdd(name, model);
     }
@@ -113,5 +98,20 @@ public class AddResourceDialog {
         // First call dialog.show() (which attaches everything), then call form.add()
         dialog.show();
         form.edit(new ModelNode());
+    }
+
+
+    @FunctionalInterface
+    public interface Callback {
+
+        /**
+         * Called after the dialog was closed using the primary button.
+         *
+         * @param name  The name of the resource to add. {@code null} if the dialog's form does not contain a
+         *              name item (i.e. when adding a singleton resource)
+         * @param model The model of the related form. {@code null} if the related resource description and thus
+         *              the form does not contain attributes / form items.
+         */
+        void onAdd(@Nullable String name, @Nullable ModelNode model);
     }
 }

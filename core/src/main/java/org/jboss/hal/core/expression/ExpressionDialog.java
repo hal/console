@@ -79,7 +79,8 @@ public class ExpressionDialog {
         form = builder.build();
 
         FormItem<String> expressionItem = form.getFormItem(EXPRESSION);
-        HTMLInputElement inputElement = (HTMLInputElement) expressionItem.asElement(EDITING).querySelector("." + formControl);
+        HTMLInputElement inputElement = (HTMLInputElement) expressionItem.asElement(EDITING)
+                .querySelector("." + formControl);
         if (inputElement != null) {
             bind(inputElement, keydown, event -> {
                 if (Key.fromEvent(event) == Key.Enter) {

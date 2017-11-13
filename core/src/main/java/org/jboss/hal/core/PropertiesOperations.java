@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -72,90 +73,6 @@ import static org.jboss.hal.flow.Flow.series;
  * </ol>
  */
 public class PropertiesOperations {
-
-    private static class ReadProperties implements Task<FlowContext> {
-
-        private final Dispatcher dispatcher;
-        private final ResourceAddress address;
-        private final String psr;
-
-        private ReadProperties(Dispatcher dispatcher, ResourceAddress address, String psr) {
-            this.dispatcher = dispatcher;
-            this.address = address;
-            this.psr = psr;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
-                    .param(CHILD_TYPE, psr)
-                    .build();
-            return dispatcher.execute(operation)
-                    .doOnSuccess(result -> context.push(result.asList().stream()
-                            .map(ModelNode::asString)
-                            .collect(Collectors.toSet())))
-                    .doOnError(failure -> context.push(Collections.emptySet()))
-                    .toCompletable();
-        }
-    }
-
-
-    private static class MergeProperties implements Task<FlowContext> {
-
-        private final Dispatcher dispatcher;
-        private final ResourceAddress address;
-        private final String propertiesResource;
-        private final Map<String, String> properties;
-
-        public MergeProperties(Dispatcher dispatcher, ResourceAddress address, String propertiesResource,
-                Map<String, String> properties) {
-            this.dispatcher = dispatcher;
-            this.address = address;
-            this.propertiesResource = propertiesResource;
-            this.properties = properties;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            Set<String> existingProperties = context.pop();
-            Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
-            Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();
-            Set<String> remove = Sets.difference(existingProperties, properties.keySet()).immutableCopy();
-
-            List<Operation> operations = new ArrayList<>();
-            add.stream()
-                    .map(property -> {
-                        ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
-                        Operation.Builder builder = new Operation.Builder(address, ADD);
-                        if (properties.get(property) != null) {
-                            builder.param(VALUE, properties.get(property));
-                        }
-                        return builder.build();
-                    })
-                    .forEach(operations::add);
-            modify.stream()
-                    .filter(property -> properties.get(property) != null)
-                    .map(property -> {
-                        ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
-                        return new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
-                                .param(NAME, VALUE)
-                                .param(VALUE, properties.get(property))
-                                .build();
-                    })
-                    .forEach(operations::add);
-            remove.stream()
-                    .map(property -> new Operation.Builder(
-                            new ResourceAddress(address).add(propertiesResource, property), REMOVE)
-                            .build())
-                    .forEach(operations::add);
-
-            Composite composite = new Composite(operations);
-            return composite.isEmpty()
-                    ? Completable.complete()
-                    : dispatcher.execute(new Composite(operations)).toCompletable();
-        }
-    }
-
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -349,5 +266,89 @@ public class PropertiesOperations {
                         callback.execute();
                     }
                 });
+    }
+
+
+    private static class ReadProperties implements Task<FlowContext> {
+
+        private final Dispatcher dispatcher;
+        private final ResourceAddress address;
+        private final String psr;
+
+        private ReadProperties(Dispatcher dispatcher, ResourceAddress address, String psr) {
+            this.dispatcher = dispatcher;
+            this.address = address;
+            this.psr = psr;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
+                    .param(CHILD_TYPE, psr)
+                    .build();
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> context.push(result.asList().stream()
+                            .map(ModelNode::asString)
+                            .collect(Collectors.toSet())))
+                    .doOnError(failure -> context.push(Collections.emptySet()))
+                    .toCompletable();
+        }
+    }
+
+
+    private static class MergeProperties implements Task<FlowContext> {
+
+        private final Dispatcher dispatcher;
+        private final ResourceAddress address;
+        private final String propertiesResource;
+        private final Map<String, String> properties;
+
+        public MergeProperties(Dispatcher dispatcher, ResourceAddress address, String propertiesResource,
+                Map<String, String> properties) {
+            this.dispatcher = dispatcher;
+            this.address = address;
+            this.propertiesResource = propertiesResource;
+            this.properties = properties;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            Set<String> existingProperties = context.pop();
+            Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
+            Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();
+            Set<String> remove = Sets.difference(existingProperties, properties.keySet()).immutableCopy();
+
+            List<Operation> operations = new ArrayList<>();
+            add.stream()
+                    .map(property -> {
+                        ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
+                        Operation.Builder builder = new Operation.Builder(address, ADD);
+                        if (properties.get(property) != null) {
+                            builder.param(VALUE, properties.get(property));
+                        }
+                        return builder.build();
+                    })
+                    .forEach(operations::add);
+            modify.stream()
+                    .filter(property -> properties.get(property) != null)
+                    .map(property -> {
+                        ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
+                        return new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
+                                .param(NAME, VALUE)
+                                .param(VALUE, properties.get(property))
+                                .build();
+                    })
+                    .forEach(operations::add);
+            remove.stream()
+                    .map(property -> new Operation.Builder(
+                            new ResourceAddress(address).add(propertiesResource, property), REMOVE)
+                            .build())
+                    .forEach(operations::add);
+
+            Composite composite = new Composite(operations);
+            return composite.isEmpty()
+                    ? Completable.complete()
+                    : dispatcher.execute(new Composite(operations)).toCompletable();
+        }
     }
 }

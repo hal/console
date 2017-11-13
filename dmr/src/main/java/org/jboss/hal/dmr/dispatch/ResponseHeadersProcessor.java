@@ -75,6 +75,13 @@ import org.jboss.hal.resources.Names;
 @FunctionalInterface
 public interface ResponseHeadersProcessor {
 
+    /**
+     * Method to process the response headers. It's guaranteed that the array contains at least one element. In domain
+     * mode the array contains an element for each server group-host-server triple.
+     */
+    void process(Header[] headers);
+
+
     class Header {
 
         @Nullable private final String serverGroup;
@@ -112,10 +119,4 @@ public interface ResponseHeadersProcessor {
             return header;
         }
     }
-
-    /**
-     * Method to process the response headers. It's guaranteed that the array contains at least one element. In domain
-     * mode the array contains an element for each server group-host-server triple.
-     */
-    void process(Header[] headers);
 }

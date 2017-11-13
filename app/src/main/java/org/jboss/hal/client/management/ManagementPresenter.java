@@ -34,22 +34,12 @@ import org.jboss.hal.resources.Resources;
 
 public class ManagementPresenter extends FinderPresenter<ManagementPresenter.MyView, ManagementPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.MANAGEMENT)
-    @UseGatekeeper(SensitiveGatekeeper.class)
-    public interface MyProxy extends ProxyPlace<ManagementPresenter> {}
-
-    public interface MyView extends FinderView {}
-    // @formatter:on
-
-
     @Inject
-    public ManagementPresenter(final EventBus eventBus,
-            final ManagementPresenter.MyView view,
-            final ManagementPresenter.MyProxy proxy,
-            final Finder finder,
-            final Resources resources) {
+    public ManagementPresenter(EventBus eventBus,
+            ManagementPresenter.MyView view,
+            ManagementPresenter.MyProxy proxy,
+            Finder finder,
+            Resources resources) {
         super(eventBus, view, proxy, finder, resources);
     }
 
@@ -62,4 +52,16 @@ public class ManagementPresenter extends FinderPresenter<ManagementPresenter.MyV
     protected PreviewContent initialPreview() {
         return new PreviewContent(Names.MANAGEMENT, resources.previews().managementOverview());
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.MANAGEMENT)
+    @UseGatekeeper(SensitiveGatekeeper.class)
+    public interface MyProxy extends ProxyPlace<ManagementPresenter> {
+    }
+
+    public interface MyView extends FinderView {
+    }
+    // @formatter:on
 }

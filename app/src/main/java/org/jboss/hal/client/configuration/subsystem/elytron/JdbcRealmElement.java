@@ -47,10 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
-import static org.jboss.hal.resources.Ids.PAGE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
+import static org.jboss.hal.resources.Ids.*;
 
 class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresenter<RealmsPresenter> {
 
@@ -70,7 +67,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
     JdbcRealmElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
 
         // JDBC realm
-        jdbcRealmTable = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
+        jdbcRealmTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addJdbcRealm()))
                 .button(tableButtonFactory.remove(Names.JDBC_REALM, AddressTemplates.JDBC_REALM_TEMPLATE,
                         () -> presenter.reloadJdbcRealms()))
@@ -85,7 +82,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
 
         // principal query and key mappers
         Metadata pqMetadata = metadata.forComplexAttribute(PRINCIPAL_QUERY);
-        pqTable = new ModelNodeTable.Builder<>(id(PRINCIPAL_QUERY, TABLE_SUFFIX), pqMetadata)
+        pqTable = new ModelNodeTable.Builder<>(id(PRINCIPAL_QUERY, Ids.TABLE), pqMetadata)
                 .button(tableButtonFactory.add(pqMetadata.getTemplate(),
                         table -> presenter.addPrincipalQuery(selectedJdbcRealm)))
                 .button(tableButtonFactory.remove(pqMetadata.getTemplate(),
@@ -94,19 +91,19 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .column(Names.ATTRIBUTE_MAPPING, this::showAttributeMappings, "12em") //NON-NLS
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(id(PRINCIPAL_QUERY, TAB_CONTAINER));
 
-        pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, TAB_SUFFIX), pqMetadata)
+        pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, TAB), pqMetadata)
                 .include(SQL, DATA_SOURCE)
                 .onSave((f, changedValues) -> presenter.savePrincipalQuery(selectedJdbcRealm, pqIndex, changedValues))
                 .build();
-        tabs.add(id(PRINCIPAL_QUERY, TAB_SUFFIX), resources.constants().attributes(), pqForm.asElement());
+        tabs.add(id(PRINCIPAL_QUERY, TAB), resources.constants().attributes(), pqForm.asElement());
 
         keyMappers = new LinkedHashMap<>();
         for (String keyMapper : RealmsPresenter.KEY_MAPPERS) {
             Form<ModelNode> form = keyMapperForm(pqMetadata, keyMapper);
             keyMappers.put(keyMapper, form);
-            tabs.add(id(PRINCIPAL_QUERY, keyMapper, TAB_SUFFIX), new LabelBuilder().label(keyMapper), form.asElement());
+            tabs.add(id(PRINCIPAL_QUERY, keyMapper, TAB), new LabelBuilder().label(keyMapper), form.asElement());
         }
 
         HTMLElement pqSection = section()
@@ -117,14 +114,14 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
 
         // attribute mapping
         Metadata amMetadata = pqMetadata.forComplexAttribute(ATTRIBUTE_MAPPING);
-        amTable = new ModelNodeTable.Builder<>(id(ATTRIBUTE_MAPPING, TABLE_SUFFIX), amMetadata)
+        amTable = new ModelNodeTable.Builder<>(id(ATTRIBUTE_MAPPING, Ids.TABLE), amMetadata)
                 .button(tableButtonFactory.add(amMetadata.getTemplate(),
                         table -> presenter.addAttributeMapping(selectedJdbcRealm, pqIndex)))
                 .button(tableButtonFactory.remove(amMetadata.getTemplate(),
                         table -> presenter.removeAttributeMapping(selectedJdbcRealm, pqIndex, amIndex)))
                 .columns(TO, INDEX)
                 .build();
-        amForm = new ModelNodeForm.Builder<>(id(ATTRIBUTE_MAPPING, FORM_SUFFIX), amMetadata)
+        amForm = new ModelNodeForm.Builder<>(id(ATTRIBUTE_MAPPING, FORM), amMetadata)
                 .include(TO, INDEX)
                 .onSave((form, changedValues) -> presenter.saveAttributeMapping(selectedJdbcRealm, pqIndex, amIndex,
                         changedValues))
@@ -135,12 +132,12 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .addAll(amTable, amForm)
                 .asElement();
 
-        pages = new Pages(id(PAGE_SUFFIX), jdbcRealmSection);
-        pages.addPage(id(PAGE_SUFFIX), id(PRINCIPAL_QUERY, PAGE_SUFFIX),
+        pages = new Pages(id(PAGES), id(PAGE), jdbcRealmSection);
+        pages.addPage(id(PAGE), id(PRINCIPAL_QUERY, PAGE),
                 () -> Names.JDBC_REALM + ": " + selectedJdbcRealm,
                 () -> Names.PRINCIPAL_QUERY,
                 pqSection);
-        pages.addPage(id(PRINCIPAL_QUERY, PAGE_SUFFIX), id(ATTRIBUTE_MAPPING, PAGE_SUFFIX),
+        pages.addPage(id(PRINCIPAL_QUERY, PAGE), id(ATTRIBUTE_MAPPING, PAGE),
                 () -> Names.PRINCIPAL_QUERY + ": " + abbreviateMiddle(selectedPrincipalQuery, 25),
                 () -> Names.ATTRIBUTE_MAPPING,
                 amSection);
@@ -152,7 +149,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
 
     private Form<ModelNode> keyMapperForm(final Metadata metadata, @NonNls String keyMapper) {
         Metadata keyMapperMetadata = metadata.forComplexAttribute(keyMapper);
-        return new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, keyMapper, FORM_SUFFIX), keyMapperMetadata)
+        return new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, keyMapper, FORM), keyMapperMetadata)
                 .singleton(
                         () -> presenter.pingKeyMapper(selectedJdbcRealm, pqTable.selectedRow(), keyMapper),
                         () -> presenter.addKeyMapper(selectedJdbcRealm, pqTable.selectedRow(), pqIndex, keyMapper))
@@ -214,12 +211,12 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
     void update(List<NamedNode> nodes) {
         jdbcRealmTable.update(nodes);
 
-        if (id(PRINCIPAL_QUERY, PAGE_SUFFIX).equals(pages.getCurrentId())) {
+        if (id(PRINCIPAL_QUERY, PAGE).equals(pages.getCurrentId())) {
             nodes.stream()
                     .filter(jdbcRealm -> selectedJdbcRealm.equals(jdbcRealm.getName()))
                     .findFirst()
                     .ifPresent(this::showPrincipalQuery);
-        } else if (id(ATTRIBUTE_MAPPING, PAGE_SUFFIX).equals(pages.getCurrentId())) {
+        } else if (id(ATTRIBUTE_MAPPING, PAGE).equals(pages.getCurrentId())) {
             nodes.stream()
                     .filter(jdbcRealm -> selectedJdbcRealm.equals(jdbcRealm.getName()))
                     .findFirst()
@@ -248,7 +245,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
             form.clear();
         }
         pqTable.update(pqNodes, node -> Ids.build(node.get(SQL).asString(), node.get(DATA_SOURCE).asString()));
-        pages.showPage(id(PRINCIPAL_QUERY, PAGE_SUFFIX));
+        pages.showPage(id(PRINCIPAL_QUERY, PAGE));
     }
 
     private void showAttributeMappings(final ModelNode principalQuery) {
@@ -258,6 +255,6 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         storeIndex(amNodes);
         amForm.clear();
         amTable.update(amNodes, node -> Ids.build(node.get(TO).asString(), String.valueOf(node.get(INDEX).asInt())));
-        pages.showPage(id(ATTRIBUTE_MAPPING, PAGE_SUFFIX));
+        pages.showPage(id(ATTRIBUTE_MAPPING, PAGE));
     }
 }

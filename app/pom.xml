@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-gwt</artifactId>
-        <version>0.9.1</version>
+        <version>0.9.2</version>
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-json</artifactId>
+            <artifactId>hal-js</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -163,10 +163,6 @@
                         </fileset>
                         <fileset>
                             <directory>src/main/resources/org/jboss/hal/public/js</directory>
-                            <excludes>
-                                <exclude>mode-logfile.js</exclude>
-                                <exclude>theme-logfile.js</exclude>
-                            </excludes>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -253,8 +249,10 @@
                                 <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../js/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
@@ -282,8 +280,10 @@
                                 <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../json/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../js/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
@@ -314,8 +314,10 @@
                                 <source>../ballroom/src/main/java</source>
                                 <source>../config/src/main/java</source>
                                 <source>../core/src/main/java</source>
+                                <source>../db/src/main/java</source>
                                 <source>../dmr/src/main/java</source>
-                                <source>../json/src/main/java</source>
+                                <source>../flow/src/main/java</source>
+                                <source>../js/src/main/java</source>
                                 <source>../meta/src/main/java</source>
                                 <source>../resources/src/main/java</source>
                                 <source>../spi/src/main/java</source>
@@ -348,19 +350,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>mbui</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>mbui</classifier>
-                            <includes>
-                                <include>**/*.mbui.xml</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>resource-jar</id>
                         <phase>package</phase>
                         <goals>
@@ -378,15 +367,27 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
+                    <compilerArgs>
+                        <compilerArg>-gen</compilerArg>
+                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
+                        <compilerArg>-generateJsInteropExports</compilerArg>
+                        <compilerArg>-Xnamespace</compilerArg>
+                        <compilerArg>NONE</compilerArg>
+                        <compilerArg>-setProperty</compilerArg>
+                        <compilerArg>gwt.logging.logLevel=${gwt.logLevel}</compilerArg>
+                    </compilerArgs>
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
                         <devmodeArg>-generateJsInteropExports</devmodeArg>
                     </devmodeArgs>
+                    <jvmArgs>
+                        <jvmArg>-Xms2048m</jvmArg>
+                        <jvmArg>-Xmx4096m</jvmArg>
+                        <jvmArg>-Xss1024k</jvmArg>
+                    </jvmArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
-                    <localWorkers>1C</localWorkers>
-                    <logLevel>${gwt.logLevel}</logLevel>
                     <moduleName>org.jboss.hal.Console</moduleName>
                     <moduleShortName>hal</moduleShortName>
                     <optimize>${gwt.optimize}</optimize>

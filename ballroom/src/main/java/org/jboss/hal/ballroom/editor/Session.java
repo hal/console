@@ -21,13 +21,6 @@ import jsinterop.annotations.JsType;
 @JsType(isNative = true)
 public class Session {
 
-    @JsFunction
-    @FunctionalInterface
-    public interface OnChange {
-
-        void onChange(Object delta);
-    }
-
     public native void setValue(String value);
 
     public native void setMode(String mode);
@@ -37,4 +30,12 @@ public class Session {
     public native int getLength();
 
     public native void on(String event, OnChange onChange);
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface OnChange {
+
+        void onChange(Object delta);
+    }
 }

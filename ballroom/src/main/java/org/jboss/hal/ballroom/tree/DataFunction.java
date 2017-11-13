@@ -21,12 +21,13 @@ import jsinterop.annotations.JsFunction;
 @FunctionalInterface
 public interface DataFunction<T> {
 
+    void load(Node<T> node, ResultCallback<T> callback);
+
+
     @JsFunction
     @FunctionalInterface
     interface ResultCallback<T> {
 
         void result(Node<T>[] nodes);
     }
-
-    void load(Node<T> node, ResultCallback<T> callback);
 }

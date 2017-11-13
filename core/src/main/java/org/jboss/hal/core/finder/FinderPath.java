@@ -40,9 +40,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  */
 public class FinderPath implements Iterable<FinderSegment> {
 
-    /**
-     * Separator is used in URL tokens. Please choose a string which is safe to use in URLs
-     */
+    /** Separator is used in URL tokens. Please choose a string which is safe to use in URLs */
     static final String SEPARATOR = "!";
 
 
@@ -73,7 +71,7 @@ public class FinderPath implements Iterable<FinderSegment> {
         this(Collections.emptyList());
     }
 
-    public FinderPath(final List<FinderSegment> segments) {
+    public FinderPath(List<FinderSegment> segments) {
         this.segments = new ArrayList<>();
         this.segments.addAll(segments);
     }
@@ -98,11 +96,17 @@ public class FinderPath implements Iterable<FinderSegment> {
         return segments.iterator();
     }
 
-    public boolean isEmpty() {return segments.isEmpty();}
+    public boolean isEmpty() {
+        return segments.isEmpty();
+    }
 
-    public int size() {return segments.size();}
+    public int size() {
+        return segments.size();
+    }
 
-    public void clear() {segments.clear();}
+    public void clear() {
+        segments.clear();
+    }
 
     public FinderPath copy() {
         List<FinderSegment> copy = new ArrayList<>();

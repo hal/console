@@ -16,6 +16,7 @@
 package org.jboss.hal.processor.mbui;
 
 import java.util.List;
+
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;

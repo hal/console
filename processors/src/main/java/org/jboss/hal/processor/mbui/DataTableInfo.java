@@ -24,34 +24,66 @@ import static java.util.stream.Collectors.toList;
 
 public class DataTableInfo extends MbuiElementInfo {
 
-    @SuppressWarnings("HardCodedStringLiteral")
-    public enum HandlerRef {
-        ADD_RESOURCE("add-resource", "add()"), REMOVE_RESOURCE("remove-resource", "remove()");
+    private final TypeParameter typeParameter;
+    private final MetadataInfo metadata;
+    private final String title;
+    private FormInfo formRef;
+    private final List<Column> columns;
+    private final List<Action> actions;
 
-        static HandlerRef referenceFor(String value) {
-            for (HandlerRef ref : HandlerRef.values()) {
-                if (ref.getRef().equals(value)) {
-                    return ref;
-                }
+    DataTableInfo(final String name, final String selector, final TypeParameter typeParameter,
+            final MetadataInfo metadata, final String title) {
+        super(name, selector);
+        this.typeParameter = typeParameter;
+        this.metadata = metadata;
+        this.title = ExpressionParser.templateSafeValue(title); // title can be a simple value or an expression
+        this.columns = new ArrayList<>();
+        this.actions = new ArrayList<>();
+    }
+
+    public TypeParameter getTypeParameter() {
+        return typeParameter;
+    }
+
+    public MetadataInfo getMetadata() {
+        return metadata;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public FormInfo getFormRef() {
+        return formRef;
+    }
+
+    void setFormRef(final FormInfo formRef) {
+        this.formRef = formRef;
+    }
+
+    public List<Column> getColumns() {
+        return columns;
+    }
+
+    public boolean isOnlySimpleColumns() {
+        for (Column column : columns) {
+            if (column.getValue() != null) {
+                return false;
             }
-            return null;
         }
+        return true;
+    }
 
-        private final String ref;
-        private final String i18n;
+    void addColumn(Column column) {
+        columns.add(column);
+    }
 
-        HandlerRef(final String ref, final String i18n) {
-            this.ref = ref;
-            this.i18n = i18n;
-        }
+    public List<Action> getActions() {
+        return actions;
+    }
 
-        public String getRef() {
-            return ref;
-        }
-
-        public String getI18n() {
-            return i18n;
-        }
+    void addAction(Action action) {
+        actions.add(action);
     }
 
 
@@ -173,65 +205,33 @@ public class DataTableInfo extends MbuiElementInfo {
     }
 
 
-    private final TypeParameter typeParameter;
-    private final MetadataInfo metadata;
-    private final String title;
-    private FormInfo formRef;
-    private final List<Column> columns;
-    private final List<Action> actions;
+    @SuppressWarnings("HardCodedStringLiteral")
+    public enum HandlerRef {
+        ADD_RESOURCE("add-resource", "add()"), REMOVE_RESOURCE("remove-resource", "remove()");
 
-    DataTableInfo(final String name, final String selector, final TypeParameter typeParameter,
-            final MetadataInfo metadata, final String title) {
-        super(name, selector);
-        this.typeParameter = typeParameter;
-        this.metadata = metadata;
-        this.title = ExpressionParser.templateSafeValue(title); // title can be a simple value or an expression
-        this.columns = new ArrayList<>();
-        this.actions = new ArrayList<>();
-    }
-
-    public TypeParameter getTypeParameter() {
-        return typeParameter;
-    }
-
-    public MetadataInfo getMetadata() {
-        return metadata;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public FormInfo getFormRef() {
-        return formRef;
-    }
-
-    void setFormRef(final FormInfo formRef) {
-        this.formRef = formRef;
-    }
-
-    public List<Column> getColumns() {
-        return columns;
-    }
-
-    public boolean isOnlySimpleColumns() {
-        for (Column column : columns) {
-            if (column.getValue() != null) {
-                return false;
+        static HandlerRef referenceFor(String value) {
+            for (HandlerRef ref : HandlerRef.values()) {
+                if (ref.getRef().equals(value)) {
+                    return ref;
+                }
             }
+            return null;
         }
-        return true;
-    }
 
-    void addColumn(Column column) {
-        columns.add(column);
-    }
+        private final String ref;
+        private final String i18n;
 
-    public List<Action> getActions() {
-        return actions;
-    }
+        HandlerRef(final String ref, final String i18n) {
+            this.ref = ref;
+            this.i18n = i18n;
+        }
 
-    void addAction(Action action) {
-        actions.add(action);
+        public String getRef() {
+            return ref;
+        }
+
+        public String getI18n() {
+            return i18n;
+        }
     }
 }

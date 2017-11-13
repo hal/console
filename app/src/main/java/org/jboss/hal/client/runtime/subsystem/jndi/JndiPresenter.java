@@ -46,32 +46,20 @@ public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyVi
     private static final String ROOT_ADDRESS = "/{selected.host}/{selected.server}/subsystem=naming";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(JNDI)
-    @Requires(ROOT_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JndiPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<JndiPresenter> {
-        void update(ModelNode jndi);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
-    public JndiPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public JndiPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
@@ -97,4 +85,17 @@ public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyVi
         Operation operation = new Operation.Builder(address, "jndi-view").build(); //NON-NLS
         dispatcher.execute(operation, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(JNDI)
+    @Requires(ROOT_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JndiPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<JndiPresenter> {
+        void update(ModelNode jndi);
+    }
+    // @formatter:on
 }

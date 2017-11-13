@@ -206,22 +206,13 @@ public class Metadata {
         return new Metadata(template, () -> operationContext, new ResourceDescription(payload), capabilities);
     }
 
-    @JsIgnore
-    public Metadata customResourceDescription(ResourceDescription resourceDescription) {
-        return new Metadata(template, securityContext, resourceDescription, capabilities);
-    }
-
-    /**
-     * @return the address template
-     */
+    /** @return the address template */
     @JsProperty
     public AddressTemplate getTemplate() {
         return template;
     }
 
-    /**
-     * @return the security context
-     */
+    /** @return the security context */
     @JsProperty
     public SecurityContext getSecurityContext() {
         if (securityContext != null && securityContext.get() != null) {
@@ -232,9 +223,7 @@ public class Metadata {
         }
     }
 
-    /**
-     * @return the resource description
-     */
+    /** @return the resource description */
     @JsProperty
     public ResourceDescription getDescription() {
         return description;

@@ -33,17 +33,17 @@
                                    value="org.jboss.hal.client.gin.CompositeModule"/>
 
     <define-configuration-property name="hal.version" is-multi-valued="false"/>
-    <set-configuration-property name="hal.version" value="0.9.1"/>
+    <set-configuration-property name="hal.version" value="0.9.2"/>
 
     <set-configuration-property name="CssResource.enableGss" value="true"/>
 
-    <set-property name="gwt.logging.enabled" value="TRUE"/>
-    <set-property name="gwt.logging.logLevel" value="ALL"/>
-
-    <set-property name="user.agent" value="ie10,gecko1_8,safari"/>
     <extend-property name="locale" values="en"/>
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en"/>
+
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.logLevel" value="FINE"/>
+    <set-property name="user.agent" value="ie10,gecko1_8,safari"/>
 
     <collapse-all-properties/>
 </module>

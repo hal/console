@@ -62,10 +62,10 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
         this.labelBuilder = new LabelBuilder();
     }
 
-    /**
-     * Adds the (e)nabled, (m)anaged and (e)xploded and flags to the specified preview attributes.
-     */
+    /** Adds the (e)nabled, (m)anaged and (e)xploded flags to the specified preview attributes. */
     void eme(PreviewAttributes<T> attributes) {
+        // TODO Fix in domain mode
+        // TODO There's no EXPLODED attribute
         attributes.append(model -> {
             String label = String.join(", ",
                     labelBuilder.label(ENABLED), labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
@@ -144,6 +144,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             String host = deployment.getReferenceServer().getHost();
             String serverGroup = deployment.getReferenceServer().getServerGroup();
             String server = deployment.getReferenceServer().getName();
+            //noinspection Duplicates
             serverActions.readUrl(environment.isStandalone(), host, serverGroup, server,
                     new AsyncCallback<ServerUrl>() {
                         @Override

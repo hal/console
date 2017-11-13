@@ -23,11 +23,12 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true)
 class ModeList {
 
+    native Mode getModeForPath(String path);
+
+
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Mode {
 
         String mode;
     }
-
-    native Mode getModeForPath(String path);
 }

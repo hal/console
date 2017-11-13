@@ -17,6 +17,7 @@ package org.jboss.hal.core.finder;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -32,14 +33,6 @@ import org.slf4j.LoggerFactory;
 
 /** Registry for finder columns. Manages both sync and async columns behind a split point. */
 public class ColumnRegistry {
-
-    interface LookupCallback {
-
-        void found(FinderColumn column);
-
-        void error(String failure);
-    }
-
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);
 
@@ -139,5 +132,13 @@ public class ColumnRegistry {
         columns.remove(id);
         asyncColumns.remove(id);
         resolvedColumns.put(id, column);
+    }
+
+
+    interface LookupCallback {
+
+        void found(FinderColumn column);
+
+        void error(String failure);
     }
 }

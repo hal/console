@@ -50,14 +50,14 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
 
         AddressTemplate template = SERVER_TEMPLATE.append(listenerType.resource + "=*");
         Metadata metadata = metadataRegistry.lookup(template);
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.TABLE_SUFFIX), metadata)
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(listenerType)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(listenerType, table.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM_SUFFIX), metadata)
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveListener(listenerType, form.getModel().getName(),
                         changedValues))
                 .prepareReset(form -> presenter.resetListener(listenerType, form.getModel().getName(), form))

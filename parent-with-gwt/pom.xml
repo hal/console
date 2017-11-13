@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.9.1</version>
+        <version>0.9.2</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -45,13 +45,7 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
-                    <compilerArgs>
-                        <compilerArg>-gen</compilerArg>
-                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
-                        <compilerArg>-generateJsInteropExports</compilerArg>
-                        <compilerArg>-Xnamespace</compilerArg>
-                        <compilerArg>${gwt.namespace}</compilerArg>
-                    </compilerArgs>
+                    <logLevel>INFO</logLevel>
                     <moduleName/> <!-- need to be overridden in sub modules -->
                     <sourceLevel>1.8</sourceLevel>
                 </configuration>

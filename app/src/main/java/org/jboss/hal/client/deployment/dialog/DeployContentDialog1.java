@@ -46,30 +46,6 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 /** Dialog used to deploy and undeploy content to one or more server groups. */
 public class DeployContentDialog1 {
 
-    @FunctionalInterface
-    public interface DeployCallback {
-
-        void deploy(Content content, List<String> serverGroups, boolean enable);
-    }
-
-
-    @FunctionalInterface
-    public interface UndeployCallback {
-
-        void undeploy(Content content, List<String> serverGroups);
-    }
-
-
-    private static class ServerGroup {
-
-        final String serverGroup;
-
-        ServerGroup(final String serverGroup) {
-            this.serverGroup = serverGroup;
-        }
-    }
-
-
     private final Content content;
     private final List<ServerGroup> serverGroups;
     private final DeployCallback deployCallback;
@@ -80,18 +56,18 @@ public class DeployContentDialog1 {
     private final HTMLInputElement enable;
     private final Dialog dialog;
 
-    public DeployContentDialog1(final Content content, final Set<String> serverGroupsWithoutContent,
-            final Resources resources, final DeployCallback callback) {
+    public DeployContentDialog1(Content content, Set<String> serverGroupsWithoutContent, Resources resources,
+            DeployCallback callback) {
         this(content, serverGroupsWithoutContent, resources, callback, null);
     }
 
-    public DeployContentDialog1(final Content content, final Set<String> serverGroupsWithContent,
-            final Resources resources, final UndeployCallback callback) {
+    public DeployContentDialog1(Content content, Set<String> serverGroupsWithContent, Resources resources,
+            UndeployCallback callback) {
         this(content, serverGroupsWithContent, resources, null, callback);
     }
 
-    private DeployContentDialog1(final Content content, final Set<String> serverGroups, final Resources resources,
-            final DeployCallback deployCallback, final UndeployCallback undeployCallback) {
+    private DeployContentDialog1(Content content, Set<String> serverGroups, Resources resources,
+            DeployCallback deployCallback, UndeployCallback undeployCallback) {
         this.content = content;
         //noinspection Convert2MethodRef - do not replace w/ method reference. GWT compiler will blow up
         this.serverGroups = serverGroups.stream()
@@ -161,5 +137,29 @@ public class DeployContentDialog1 {
         Elements.setVisible(enableContainer, deployCallback != null);
         table.update(serverGroups);
         SwitchBridge.Api.element(enable).setValue(false);
+    }
+
+
+    @FunctionalInterface
+    public interface DeployCallback {
+
+        void deploy(Content content, List<String> serverGroups, boolean enable);
+    }
+
+
+    @FunctionalInterface
+    public interface UndeployCallback {
+
+        void undeploy(Content content, List<String> serverGroups);
+    }
+
+
+    private static class ServerGroup {
+
+        final String serverGroup;
+
+        ServerGroup(final String serverGroup) {
+            this.serverGroup = serverGroup;
+        }
     }
 }

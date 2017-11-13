@@ -25,13 +25,13 @@ public abstract class SuccessfulMetadataCallback implements MetadataProcessor.Me
     private final EventBus eventBus;
     private final Resources resources;
 
-    protected SuccessfulMetadataCallback(final EventBus eventBus, final Resources resources) {
+    protected SuccessfulMetadataCallback(EventBus eventBus, Resources resources) {
         this.eventBus = eventBus;
         this.resources = resources;
     }
 
     @Override
-    public void onError(final Throwable error) {
+    public void onError(Throwable error) {
         MessageEvent.fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
     }
 }

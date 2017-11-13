@@ -20,7 +20,8 @@ import org.jboss.hal.dmr.ModelNode;
 
 public final class StaticResourceDescription {
 
-    private StaticResourceDescription() {}
+    private StaticResourceDescription() {
+    }
 
     public static ResourceDescription from(TextResource resource) {
         try {

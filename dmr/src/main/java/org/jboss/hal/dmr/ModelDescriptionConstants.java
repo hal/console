@@ -13,26 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
 /**
@@ -46,6 +26,7 @@ public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCEPTOR = "acceptor";
+    String ACCESS = "access";
     String ACCESS_CONSTRAINTS = "access-constraints";
     String ACCESS_CONTROL = "access-control";
     String ACCESS_LOG = "access-log";
@@ -55,6 +36,7 @@ public interface ModelDescriptionConstants {
     String ACTION = "action";
     String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
+    String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_SESSIONS = "active-sessions";
     String ADD = "add";
     String ADD_CONTENT = "add-content";
@@ -83,6 +65,7 @@ public interface ModelDescriptionConstants {
     String APPLICATION_SECURITY_DOMAIN = "application-security-domain";
     String APPLIED_AT = "applied-at";
     String ARCHIVE = "archive";
+    String ASYNC_HANDLER = "async-handler";
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTE_GROUP = "attribute-group";
     String ATTRIBUTE_MAPPING = "attribute-mapping";
@@ -91,6 +74,7 @@ public interface ModelDescriptionConstants {
     String AUTHENTICATION_CONFIGURATION = "authentication-configuration";
     String AUTHENTICATION_CONTEXT = "authentication-context";
     String AUTHOR = "author";
+    String AUTHORIZATION = "authorization";
     String AUTO_START = "auto-start";
     String AVERAGE_COMMIT_TIME = "average-commit-time";
     String AVERAGE_PROCESSING_TIME = "average-processing-time";
@@ -124,6 +108,10 @@ public interface ModelDescriptionConstants {
     String CACHE_SIZE = "cache-size";
     String CACHE_TYPE = "cache-type";
     String CACHING_REALM = "caching-realm";
+    String CALLER_THREAD = "caller-thread";
+    String CANCEL_OPERATION = "cancel";
+    String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
+    String CANCELLED = "cancelled";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
@@ -161,6 +149,7 @@ public interface ModelDescriptionConstants {
     String CONNECTOR_NAME = "connector-name";
     String CONNECTOR_SERVICE = "connector-service";
     String CONNECTORS = "connectors";
+    String CONSOLE_HANDLER = "console-handler";
     String CONSTANT_PERMISSION_MAPPER = "constant-permission-mapper";
     String CONSTANT_PRINCIPAL_DECODER = "constant-principal-decoder";
     String CONSTANT_PRINCIPAL_TRANSFORMER = "constant-principal-transformer";
@@ -177,12 +166,15 @@ public interface ModelDescriptionConstants {
     String CORE_SERVICE_PATCHING = "core-service-patching";
     String COUNT_MESSAGES = "count-messages";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
+    String CREATE = "create";
     String CREATE_TIME = "create-time";
     String CREDENTIAL_REFERENCE = "credential-reference";
     String CREDENTIAL_STORE = "credential-store";
     String CURRENT_THREAD_COUNT = "current-thread-count";
     String CUSTOM = "custom";
     String CUSTOM_CREDENTIAL_SECURITY_FACTORY = "custom-credential-security-factory";
+    String CUSTOM_FORMATTER = "custom-formatter";
+    String CUSTOM_HANDLER = "custom-handler";
     String CUSTOM_MODIFIABLE_REALM = "custom-modifiable-realm";
     String CUSTOM_PERMISSION_MAPPER = "custom-permission-mapper";
     String CUSTOM_POLICY = "custom-policy";
@@ -202,6 +194,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT_HOST = "default-host";
     String DEFAULT_INTERFACE = "default-interface";
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
+    String DEFAULT_REALM = "default-realm";
     String DEFAULT_THREAD_POOL = "default-thread-pool";
     String DEFAULT_WEB_MODULE = "default-web-module";
     String DELIVERING_COUNT = "delivering-count";
@@ -223,6 +216,7 @@ public interface ModelDescriptionConstants {
     String DISCOVERY_GROUP = "discovery-group";
     String DIVERT = "divert";
     String DOMAIN_UUID = "domain-uuid";
+    String DOMAIN_ROLLOUT = "domain-rollout";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
     String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
@@ -252,8 +246,10 @@ public interface ModelDescriptionConstants {
     String EXCEPTION_SORTER_CLASS_NAME = "exception-sorter-class-name";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
+    String EXCLUSIVE_RUNNING_TIME = "exclusive-running-time";
     String EXECUTE = "execute";
     String EXECUTION = "execution";
+    String EXECUTION_STATUS = "execution-status";
     String EXECUTION_TIME = "execution-time";
     String EXIT_STATUS = "exit-status";
     String EXPIRATION = "expiration";
@@ -274,17 +270,20 @@ public interface ModelDescriptionConstants {
     String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILE_AUDIT_LOG = "file-audit-log";
+    String FILE_HANDLER = "file-handler";
     String FILESYSTEM_REALM = "filesystem-realm";
     String FILTER = "filter";
     String FILTER_REF = "filter-ref";
     String FILTERING_KEY_STORE = "filtering-key-store";
     String FILTERS = "filters";
+    String FIND_NON_PROGRESSING_OPERATION = "find-non-progressing-operation";
     String FIXED_PORT = "fixed-port";
     String FLUSH_ALL_CONNECTION_IN_POOL = "flush-all-connection-in-pool";
     String FLUSH_GRACEFULLY_CONNECTION_IN_POOL = "flush-gracefully-connection-in-pool";
     String FLUSH_IDLE_CONNECTION_IN_POOL = "flush-idle-connection-in-pool";
     String FLUSH_INVALID_CONNECTION_IN_POOL = "flush-invalid-connection-in-pool";
     String FORK = "fork";
+    String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
     String GLOBAL_MODULES = "global-modules";
@@ -292,9 +291,11 @@ public interface ModelDescriptionConstants {
     String GROUPS_ATTRIBUTE = "groups-attribute";
     String GROUPING_HANDLER = "grouping-handler";
     String HA_POLICY = "ha-policy";
+    // HAL_* attributes are used internally only!
     String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
     String HAL_LENGTH = "hal-length";
+    String HAL_RECURSIVE = "hal-recursive";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
@@ -395,6 +396,7 @@ public interface ModelDescriptionConstants {
     String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
     String LOCATION = "location";
     String LOCKING = "locking";
+    String LOGGER = "logger";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
     String LOGICAL_PERMISSION_MAPPER = "logical-permission-mapper";
@@ -468,7 +470,7 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_APPLICATION_ROLLBACKS = "number-of-application-rollbacks";
     String NUMBER_OF_COMMITTED_TRANSACTIONS = "number-of-committed-transactions";
     String NUMBER_OF_HEURISTICS_TRANSACTIONS = "number-of-heuristics";
-    String NUMBER_OF_INFLIGHT_TRANSACTIONS =  "number-of-inflight-transactions";
+    String NUMBER_OF_INFLIGHT_TRANSACTIONS = "number-of-inflight-transactions";
     String NUMBER_OF_NESTED_TRANSACTIONS = "number-of-nested-transactions";
     String NUMBER_OF_RESOURCE_ROLLBACKS = "number-of-resource-rollbacks";
     String NUMBER_OF_SYSTEM_ROLLBACKS = "number-of-system-rollbacks";
@@ -497,9 +499,12 @@ public interface ModelDescriptionConstants {
     String PATCHING = "patching";
     String PATTERN = "pattern";
     String PATTERN_FILTER = "pattern-filter";
+    String PATTERN_FORMATTER = "pattern-formatter";
     String PAUSE = "pause";
     String PAUSED = "paused";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
+    String PERIODIC_ROTATING_FILE_HANDLER = "periodic-rotating-file-handler";
+    String PERIODIC_SIZE_ROTATING_FILE_HANDLER = "periodic-size-rotating-file-handler";
     String PERMISSION_MAPPINGS = "permission-mappings";
     String PERMISSIONS = "permissions";
     String PERSISTENCE = "persistence";
@@ -564,6 +569,7 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
+    String REALMS = "realms";
     String REALM_NAME = "realm-name";
     String REASON = "reason";
     String RECORD_REQUEST_START_TIME = "record-request-start-time";
@@ -600,7 +606,7 @@ public interface ModelDescriptionConstants {
     String REPLICATION_SLAVE = "replication-slave";
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
-    String REQUEST_COUNT= "request-count";
+    String REQUEST_COUNT = "request-count";
     String REQUEST_PROPERTIES = "request-properties";
     String REQUIRED = "required";
     String REQUIRES = "requires";
@@ -633,6 +639,7 @@ public interface ModelDescriptionConstants {
     String ROLLBACK_TO = "rollback-to";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
+    String RUNNING_TIME = "running-time";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
     String SAME_RM_OVERRIDE = "same-rm-override";
@@ -688,6 +695,7 @@ public interface ModelDescriptionConstants {
     String SINGLE_SIGN_ON = "single-sign-on";
     String SINGLETON = "singleton";
     String SIZE_ROTATING_FILE_AUDIT_LOG = "size-rotating-file-audit-log";
+    String SIZE_ROTATING_FILE_HANDLER = "size-rotating-file-handler";
     String SLAVE = "slave";
     String SMTP = "smtp";
     String SOCKET_BINDING = "socket-binding";
@@ -739,6 +747,7 @@ public interface ModelDescriptionConstants {
     String SUSPEND_SERVERS = "suspend-servers";
     String SUSPEND_STATE = "suspend-state";
     String SYSLOG_AUDIT_LOG = "syslog-audit-log";
+    String SYSLOG_HANDLER = "syslog-handler";
     String SYSTEM_PROPERTY = "system-property";
     String SYSTEM_PROPERTIES = "system-properties";
     String TABLE = "table";

@@ -67,7 +67,8 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
      *
      * @param context the current context
      */
-    protected void onShow(C context) {}
+    protected void onShow(C context) {
+    }
 
     /**
      * Called when this step is canceled.
@@ -76,7 +77,9 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
      *
      * @return {@code true} if we can cancel this step, {@code false} otherwise.
      */
-    protected boolean onCancel(C context) { return true; }
+    protected boolean onCancel(C context) {
+        return true;
+    }
 
     /**
      * Called before the previous step is shown. The method is called no matter if there's a previous step!
@@ -85,7 +88,9 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
      *
      * @return {@code true} if we can navigate to the previous step, {@code false} otherwise.
      */
-    protected boolean onBack(C context) { return true; }
+    protected boolean onBack(C context) {
+        return true;
+    }
 
     /**
      * Called before the next step is shown. The method is called no matter if there's a next step!
@@ -94,7 +99,9 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
      *
      * @return {@code true} if we can navigate to the next step, {@code false} otherwise.
      */
-    protected boolean onNext(C context) { return true; }
+    protected boolean onNext(C context) {
+        return true;
+    }
 
     protected void registerAttachable(Attachable first, Attachable... rest) {
         attachables.add(first);

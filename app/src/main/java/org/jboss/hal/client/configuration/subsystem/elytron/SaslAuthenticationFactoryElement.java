@@ -40,7 +40,10 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
-import static org.jboss.hal.resources.Ids.*;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.PAGES;
+import static org.jboss.hal.resources.Ids.TAB;
 
 class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
         HasPresenter<FactoriesPresenter> {
@@ -60,15 +63,15 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
     SaslAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
         // SASL authentication factory
-        factoryTable = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(id(ADD_SUFFIX), Names.SASL_AUTHENTICATION_FACTORY,
+        factoryTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
+                .button(tableButtonFactory.add(id(Ids.ADD), Names.SASL_AUTHENTICATION_FACTORY,
                         metadata.getTemplate(), (n, a) -> presenter.reloadSaslAuthenticationFactories()))
                 .button(tableButtonFactory.remove(Names.SASL_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadSaslAuthenticationFactories()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration, "15em") //NON-NLS
                 .build();
-        factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM_SUFFIX), metadata)
+        factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveSaslAuthenticationFactory(form, changedValues))
                 .build();
         HTMLElement factorySection = section()
@@ -79,7 +82,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
         // mechanism configurations
         Metadata mcMetadata = metadata.forComplexAttribute(MECHANISM_CONFIGURATIONS);
-        mcTable = new ModelNodeTable.Builder<>(id(MECHANISM_CONFIGURATIONS, TAB_SUFFIX), mcMetadata)
+        mcTable = new ModelNodeTable.Builder<>(id(MECHANISM_CONFIGURATIONS, TAB), mcMetadata)
                 .button(tableButtonFactory.add(mcMetadata.getTemplate(),
                         table -> presenter.addSaslMechanismConfiguration(selectedFactory)))
                 .button(tableButtonFactory.remove(mcMetadata.getTemplate(),
@@ -88,7 +91,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .column(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration,
                         "20em") //NON-NLS
                 .build();
-        mcForm = new ModelNodeForm.Builder<>(id(MECHANISM_CONFIGURATIONS, FORM_SUFFIX), mcMetadata)
+        mcForm = new ModelNodeForm.Builder<>(id(MECHANISM_CONFIGURATIONS, FORM), mcMetadata)
                 .onSave(((form, changedValues) -> presenter.saveSaslMechanismConfiguration(selectedFactory,
                         form.getModel().get(HAL_INDEX).asInt(), changedValues)))
                 .build();
@@ -100,15 +103,16 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
         // mechanism realm configurations
         Metadata mrcMetadata = mcMetadata.forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
-        mrcTable = new ModelNodeTable.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, TABLE_SUFFIX), mrcMetadata)
+        mrcTable = new ModelNodeTable.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, Ids.TABLE), mrcMetadata)
                 .button(tableButtonFactory.add(mrcMetadata.getTemplate(),
                         table -> presenter.addSaslMechanismRealmConfiguration(selectedFactory, mcIndex)))
                 .button(tableButtonFactory.remove(mrcMetadata.getTemplate(),
                         table -> presenter.removeSaslMechanismRealmConfiguration(selectedFactory, mcIndex, mrcIndex)))
                 .column(REALM_NAME)
                 .build();
-        mrcForm = new ModelNodeForm.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, FORM_SUFFIX), mrcMetadata)
-                .onSave(((form, changedValues) -> presenter.saveSaslMechanismRealmConfiguration(selectedFactory, mcIndex,
+        mrcForm = new ModelNodeForm.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, FORM), mrcMetadata)
+                .onSave(((form, changedValues) -> presenter.saveSaslMechanismRealmConfiguration(selectedFactory,
+                        mcIndex,
                         mrcIndex, changedValues)))
                 .build();
         HTMLElement mrcSection = section()
@@ -117,12 +121,12 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .addAll(mrcTable, mrcForm)
                 .asElement();
 
-        pages = new Pages(id(PAGE_SUFFIX), factorySection);
-        pages.addPage(id(PAGE_SUFFIX), id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX),
+        pages = new Pages(id(PAGES), id(PAGE), factorySection);
+        pages.addPage(id(PAGE), id(MECHANISM_CONFIGURATIONS, PAGE),
                 () -> Names.SASL_AUTHENTICATION_FACTORY + ": " + selectedFactory,
                 () -> Names.MECHANISM_CONFIGURATIONS,
                 mcSection);
-        pages.addPage(id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX), id(MECHANISM_REALM_CONFIGURATIONS, PAGE_SUFFIX),
+        pages.addPage(id(MECHANISM_CONFIGURATIONS, PAGE), id(MECHANISM_REALM_CONFIGURATIONS, PAGE),
                 () -> Names.MECHANISM_CONFIGURATIONS + ": " + selectedMc,
                 () -> Names.MECHANISM_REALM_CONFIGURATIONS,
                 mrcSection);
@@ -166,12 +170,12 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         factoryForm.clear();
         factoryTable.update(nodes);
 
-        if (id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX).equals(pages.getCurrentId())) {
+        if (id(MECHANISM_CONFIGURATIONS, PAGE).equals(pages.getCurrentId())) {
             nodes.stream()
                     .filter(factory -> selectedFactory.equals(factory.getName()))
                     .findFirst()
                     .ifPresent(this::showMechanismConfiguration);
-        } else if (id(MECHANISM_REALM_CONFIGURATIONS, PAGE_SUFFIX).equals(pages.getCurrentId())) {
+        } else if (id(MECHANISM_REALM_CONFIGURATIONS, PAGE).equals(pages.getCurrentId())) {
             nodes.stream()
                     .filter(factory -> selectedFactory.equals(factory.getName()))
                     .findFirst()
@@ -194,7 +198,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         storeIndex(mcNodes);
         mcForm.clear();
         mcTable.update(mcNodes, modelNode -> modelNode.get(MECHANISM_NAME).asString());
-        pages.showPage(id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX));
+        pages.showPage(id(MECHANISM_CONFIGURATIONS, PAGE));
     }
 
     private void showMechanismRealmConfiguration(final ModelNode mechanismConfiguration) {
@@ -204,6 +208,6 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         storeIndex(mrcNodes);
         mrcForm.clear();
         mrcTable.update(mrcNodes, modelNode -> modelNode.get(REALM_NAME).asString());
-        pages.showPage(id(MECHANISM_REALM_CONFIGURATIONS, PAGE_SUFFIX));
+        pages.showPage(id(MECHANISM_REALM_CONFIGURATIONS, PAGE));
     }
 }

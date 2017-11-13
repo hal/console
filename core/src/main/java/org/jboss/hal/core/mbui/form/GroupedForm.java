@@ -54,221 +54,19 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
  */
 public class GroupedForm<T extends ModelNode> implements Form<T> {
 
-    private static class Group {
-
-        final String id;
-        final String title;
-        final LinkedHashSet<String> includes;
-        final Set<String> excludes;
-        final Map<String, FormItemProvider> providers;
-        final List<UnboundFormItem> unboundFormItems;
-        final List<HTMLElement> elements;
-
-        private Group(final String id, final String title) {
-            this.id = id;
-            this.title = title;
-            this.includes = new LinkedHashSet<>();
-            this.excludes = new HashSet<>();
-            this.providers = new HashMap<>();
-            this.unboundFormItems = new ArrayList<>();
-            this.elements = new ArrayList<>();
-        }
-    }
-
-
-    private enum Mode {ADD_ONLY, FROM_REQUEST_PROPERTIES, VIEW_ONLY}
-
-
-    // ------------------------------------------------------ grouped form builder
-
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static class Builder<T extends ModelNode> {
-
-        private final String id;
-        private final Metadata metadata;
-        private final List<Group> groups;
-        private Group currentGroup;
-        private Mode mode;
-        private SaveCallback<T> saveCallback;
-        private CancelCallback<T> cancelCallback;
-        private PrepareReset<T> prepareReset;
-
-        public Builder(final String id, final Metadata metadata) {
-            this.id = id;
-            this.metadata = metadata;
-            this.groups = new ArrayList<>();
-            this.mode = null;
-        }
-
-        /**
-         * Starts a custom group with custom attributes. Use one of the {@code include()} and {@code exclude()} methods
-         * to include and exclude attributes.
-         */
-        public Builder<T> customGroup(final String id, final String title) {
-            assertNoCurrentGroup();
-            currentGroup = new Group(id, title);
-            return this;
-        }
-
-        /**
-         * Starts an attribute group backed by a group definition from the resource description. All attributes defined
-         * in the specified group are included in alphabetic order. The id and title of the group is derived from the
-         * attribute group name.
-         */
-        public Builder<T> attributeGroup(final String name) {
-            return attributeGroup(Ids.build(id, "group", name), name, new LabelBuilder().label(name));
-        }
-
-        public Builder<T> attributeGroup(final String name, final String title) {
-            return attributeGroup(Ids.build(id, "group", name), name, title);
-        }
-
-        public Builder<T> attributeGroup(final String id, final String name, final String title) {
-            assertNoCurrentGroup();
-            currentGroup = new Group(id, title);
-            List<Property> attributes = metadata.getDescription().getAttributes(ATTRIBUTES, name);
-            include(attributes.stream().map(Property::getName).sorted().collect(toList()));
-            return this;
-        }
-
-        public Builder<T> end() {
-            assertCurrentGroup();
-            groups.add(currentGroup);
-            currentGroup = null;
-            return this;
-        }
-
-        public Builder<T> include(final String[] attributes) {
-            assertCurrentGroup();
-            currentGroup.includes.addAll(Arrays.asList(attributes));
-            return this;
-        }
-
-        public Builder<T> include(final Iterable<String> attributes) {
-            assertCurrentGroup();
-            Iterables.addAll(currentGroup.includes, attributes);
-            return this;
-        }
-
-        public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
-            assertCurrentGroup();
-            currentGroup.includes.addAll(asList(first, rest));
-            return this;
-        }
-
-        public Builder<T> exclude(final Iterable<String> attributes) {
-            assertCurrentGroup();
-            Iterables.addAll(currentGroup.excludes, attributes);
-            return this;
-        }
-
-        public Builder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
-            assertCurrentGroup();
-            currentGroup.excludes.addAll(asList(first, rest));
-            return this;
-        }
-
-        public Builder<T> addOnly() {
-            assertNoCurrentGroup();
-            this.mode = Mode.ADD_ONLY;
-            return this;
-        }
-
-        public Builder<T> customFormItem(@NonNls final String attribute, final FormItemProvider provider) {
-            assertCurrentGroup();
-            currentGroup.includes.add(attribute);
-            currentGroup.providers.put(attribute, provider);
-            return this;
-        }
-
-        public Builder<T> unboundFormItem(final FormItem formItem) {
-            return unboundFormItem(formItem, -1, null);
-        }
-
-        public Builder<T> unboundFormItem(final FormItem formItem, final int position) {
-            return unboundFormItem(formItem, position, null);
-        }
-
-        public Builder<T> unboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
-            assertCurrentGroup();
-            currentGroup.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
-            return this;
-        }
-
-        public Builder<T> add(IsElement element) {
-            return add(element.asElement());
-        }
-
-        /**
-         * Adds a custom element to the current group. All attributes, includes, excludes, custom or unbound form items
-         * added so far are ignored.
-         */
-        public Builder<T> add(HTMLElement element) {
-            assertCurrentGroup();
-            currentGroup.elements.add(element);
-            return this;
-        }
-
-        public Builder<T> onSave(final SaveCallback<T> saveCallback) {
-            assertNoCurrentGroup();
-            this.saveCallback = saveCallback;
-            return this;
-        }
-
-        public Builder<T> onCancel(final CancelCallback<T> cancelCallback) {
-            assertNoCurrentGroup();
-            this.cancelCallback = cancelCallback;
-            return this;
-        }
-
-        public Builder<T> prepareReset(final PrepareReset<T> prepareReset) {
-            assertNoCurrentGroup();
-            this.prepareReset = prepareReset;
-            return this;
-        }
-
-        public GroupedForm<T> build() {
-            assertNoCurrentGroup();
-            if (groups.isEmpty()) {
-                throw new IllegalStateException("No groups in " + formId());
-            }
-            return new GroupedForm<>(this);
-        }
-
-        private void assertCurrentGroup() {
-            if (currentGroup == null) {
-                throw new IllegalStateException("No current group in " + formId());
-            }
-        }
-
-        private void assertNoCurrentGroup() {
-            if (currentGroup != null) {
-                throw new IllegalStateException("Open group in " + formId());
-            }
-        }
-
-        private String formId() {
-            return "grouped form(" + id + ")"; //NON-NLS
-        }
-    }
-
-
-    // ------------------------------------------------------ grouped from setup
-
     private final String id;
     private final Tabs tabs;
     private final List<Form<T>> forms;
     private Form<T> currentForm;
 
-    private GroupedForm(final Builder<T> builder) {
+    private GroupedForm(Builder<T> builder) {
         this.id = builder.id;
-        this.tabs = new Tabs();
+        this.tabs = new Tabs(Ids.build(id, Ids.TAB_CONTAINER));
         this.forms = new ArrayList<>();
 
         builder.groups.forEach(group -> {
             if (group.elements.isEmpty()) {
-                ModelNodeForm.Builder<T> fb = new ModelNodeForm.Builder<>(Ids.build(group.id, Ids.FORM_SUFFIX),
+                ModelNodeForm.Builder<T> fb = new ModelNodeForm.Builder<>(Ids.build(group.id, Ids.FORM),
                         builder.metadata);
                 if (!group.excludes.isEmpty()) {
                     fb.exclude(group.excludes);
@@ -291,6 +89,8 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
                         case VIEW_ONLY:
                             fb.readOnly();
                             break;
+                        default:
+                            break;
                     }
                 }
 
@@ -307,12 +107,12 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
                 Form<T> form = fb.build();
                 forms.add(form);
 
-                String tabId = Ids.build(group.id, Ids.TAB_SUFFIX);
+                String tabId = Ids.build(group.id, Ids.TAB);
                 tabs.add(tabId, group.title, form.asElement());
                 tabs.onShow(tabId, () -> currentForm = form);
 
             } else {
-                String tabId = Ids.build(group.id, Ids.TAB_SUFFIX);
+                String tabId = Ids.build(group.id, Ids.TAB);
                 tabs.add(tabId, group.title, group.elements);
             }
         });
@@ -355,7 +155,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
 
     /** Calls {@link Form#view(Object)} on all forms. */
     @Override
-    public void view(final T model) {
+    public void view(T model) {
         forms.forEach(form -> form.view(model));
     }
 
@@ -367,7 +167,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
 
     /** Calls {@link Form#edit(Object)} on the currently active form. */
     @Override
-    public void edit(final T model) {
+    public void edit(T model) {
         currentForm.edit(model);
     }
 
@@ -378,7 +178,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     }
 
     @Override
-    public void setSaveCallback(final SaveCallback<T> saveCallback) {
+    public void setSaveCallback(SaveCallback<T> saveCallback) {
         forms.forEach(form -> form.setSaveCallback(saveCallback));
     }
 
@@ -389,12 +189,12 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     }
 
     @Override
-    public void setCancelCallback(final CancelCallback<T> cancelCallback) {
+    public void setCancelCallback(CancelCallback<T> cancelCallback) {
         forms.forEach(form -> form.setCancelCallback(cancelCallback));
 
     }
 
-    public void setPrepareReset(final PrepareReset<T> prepareReset) {
+    public void setPrepareReset(PrepareReset<T> prepareReset) {
         forms.forEach(form -> form.setPrepareReset(prepareReset));
     }
 
@@ -405,7 +205,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     }
 
     @Override
-    public void setPrepareRemove(final PrepareRemove<T> prepareRemove) {
+    public void setPrepareRemove(PrepareRemove<T> prepareRemove) {
         forms.forEach(form -> form.setPrepareRemove(prepareRemove));
     }
 
@@ -432,7 +232,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     }
 
     @Override
-    public <F> FormItem<F> getFormItem(final String name) {
+    public <F> FormItem<F> getFormItem(String name) {
         for (Form<T> form : forms) {
             FormItem<F> formItem = form.getFormItem(name);
             if (formItem != null) {
@@ -459,9 +259,211 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
 
     /** Calls {@link Form#addFormValidation(FormValidation)} on all forms. */
     @Override
-    public void addFormValidation(final FormValidation<T> formValidation) {
+    public void addFormValidation(FormValidation<T> formValidation) {
         for (Form<T> form : forms) {
             form.addFormValidation(formValidation);
+        }
+    }
+
+
+    // ------------------------------------------------------ inner classes
+
+
+    private static class Group {
+
+        final String id;
+        final String title;
+        final LinkedHashSet<String> includes;
+        final Set<String> excludes;
+        final Map<String, FormItemProvider> providers;
+        final List<UnboundFormItem> unboundFormItems;
+        final List<HTMLElement> elements;
+
+        private Group(final String id, final String title) {
+            this.id = id;
+            this.title = title;
+            this.includes = new LinkedHashSet<>();
+            this.excludes = new HashSet<>();
+            this.providers = new HashMap<>();
+            this.unboundFormItems = new ArrayList<>();
+            this.elements = new ArrayList<>();
+        }
+    }
+
+
+    private enum Mode {
+        ADD_ONLY, FROM_REQUEST_PROPERTIES, VIEW_ONLY
+    }
+
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static class Builder<T extends ModelNode> {
+
+        private final String id;
+        private final Metadata metadata;
+        private final List<Group> groups;
+        private Group currentGroup;
+        private Mode mode;
+        private SaveCallback<T> saveCallback;
+        private CancelCallback<T> cancelCallback;
+        private PrepareReset<T> prepareReset;
+
+        public Builder(String id, Metadata metadata) {
+            this.id = id;
+            this.metadata = metadata;
+            this.groups = new ArrayList<>();
+            this.mode = null;
+        }
+
+        /**
+         * Starts a custom group with custom attributes. Use one of the {@code include()} and {@code exclude()} methods
+         * to include and exclude attributes.
+         */
+        public Builder<T> customGroup(String id, String title) {
+            assertNoCurrentGroup();
+            currentGroup = new Group(id, title);
+            return this;
+        }
+
+        /**
+         * Starts an attribute group backed by a group definition from the resource description. All attributes defined
+         * in the specified group are included in alphabetic order. The id and title of the group is derived from the
+         * attribute group name.
+         */
+        public Builder<T> attributeGroup(String name) {
+            return attributeGroup(Ids.build(id, "group", name), name, new LabelBuilder().label(name));
+        }
+
+        public Builder<T> attributeGroup(String name, String title) {
+            return attributeGroup(Ids.build(id, "group", name), name, title);
+        }
+
+        public Builder<T> attributeGroup(String id, String name, String title) {
+            assertNoCurrentGroup();
+            currentGroup = new Group(id, title);
+            List<Property> attributes = metadata.getDescription().getAttributes(ATTRIBUTES, name);
+            include(attributes.stream().map(Property::getName).sorted().collect(toList()));
+            return this;
+        }
+
+        public Builder<T> end() {
+            assertCurrentGroup();
+            groups.add(currentGroup);
+            currentGroup = null;
+            return this;
+        }
+
+        public Builder<T> include(String[] attributes) {
+            assertCurrentGroup();
+            currentGroup.includes.addAll(Arrays.asList(attributes));
+            return this;
+        }
+
+        public Builder<T> include(Iterable<String> attributes) {
+            assertCurrentGroup();
+            Iterables.addAll(currentGroup.includes, attributes);
+            return this;
+        }
+
+        public Builder<T> include(@NonNls String first, @NonNls String... rest) {
+            assertCurrentGroup();
+            currentGroup.includes.addAll(asList(first, rest));
+            return this;
+        }
+
+        public Builder<T> exclude(Iterable<String> attributes) {
+            assertCurrentGroup();
+            Iterables.addAll(currentGroup.excludes, attributes);
+            return this;
+        }
+
+        public Builder<T> exclude(@NonNls String first, @NonNls String... rest) {
+            assertCurrentGroup();
+            currentGroup.excludes.addAll(asList(first, rest));
+            return this;
+        }
+
+        public Builder<T> addOnly() {
+            assertNoCurrentGroup();
+            this.mode = Mode.ADD_ONLY;
+            return this;
+        }
+
+        public Builder<T> customFormItem(@NonNls String attribute, FormItemProvider provider) {
+            assertCurrentGroup();
+            currentGroup.includes.add(attribute);
+            currentGroup.providers.put(attribute, provider);
+            return this;
+        }
+
+        public Builder<T> unboundFormItem(FormItem formItem) {
+            return unboundFormItem(formItem, -1, null);
+        }
+
+        public Builder<T> unboundFormItem(FormItem formItem, int position) {
+            return unboundFormItem(formItem, position, null);
+        }
+
+        public Builder<T> unboundFormItem(FormItem formItem, int position, SafeHtml helpText) {
+            assertCurrentGroup();
+            currentGroup.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
+            return this;
+        }
+
+        public Builder<T> add(IsElement element) {
+            return add(element.asElement());
+        }
+
+        /**
+         * Adds a custom element to the current group. All attributes, includes, excludes, custom or unbound form items
+         * added so far are ignored.
+         */
+        public Builder<T> add(HTMLElement element) {
+            assertCurrentGroup();
+            currentGroup.elements.add(element);
+            return this;
+        }
+
+        public Builder<T> onSave(SaveCallback<T> saveCallback) {
+            assertNoCurrentGroup();
+            this.saveCallback = saveCallback;
+            return this;
+        }
+
+        public Builder<T> onCancel(CancelCallback<T> cancelCallback) {
+            assertNoCurrentGroup();
+            this.cancelCallback = cancelCallback;
+            return this;
+        }
+
+        public Builder<T> prepareReset(PrepareReset<T> prepareReset) {
+            assertNoCurrentGroup();
+            this.prepareReset = prepareReset;
+            return this;
+        }
+
+        public GroupedForm<T> build() {
+            assertNoCurrentGroup();
+            if (groups.isEmpty()) {
+                throw new IllegalStateException("No groups in " + formId());
+            }
+            return new GroupedForm<>(this);
+        }
+
+        private void assertCurrentGroup() {
+            if (currentGroup == null) {
+                throw new IllegalStateException("No current group in " + formId());
+            }
+        }
+
+        private void assertNoCurrentGroup() {
+            if (currentGroup != null) {
+                throw new IllegalStateException("Open group in " + formId());
+            }
+        }
+
+        private String formId() {
+            return "grouped form(" + id + ")"; //NON-NLS
         }
     }
 }

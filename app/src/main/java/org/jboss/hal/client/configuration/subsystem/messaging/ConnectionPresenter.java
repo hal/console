@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -56,52 +57,21 @@ public class ConnectionPresenter
         extends ServerSettingsPresenter<ConnectionPresenter.MyView, ConnectionPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires({ACCEPTOR_ADDRESS,
-            CONNECTION_FACTORY_ADDRESS,
-            CONNECTOR_ADDRESS,
-            CONNECTOR_SERVICE_ADDRESS,
-            HTTP_ACCEPTOR_ADDRESS,
-            HTTP_CONNECTOR_ADDRESS,
-            IN_VM_ACCEPTOR_ADDRESS,
-            IN_VM_CONNECTOR_ADDRESS,
-            POOLED_CONNECTION_FACTORY_ADDRESS,
-            REMOTE_ACCEPTOR_ADDRESS,
-            REMOTE_CONNECTOR_ADDRESS})
-    @NameToken(NameTokens.MESSAGING_SERVER_CONNECTION)
-    public interface MyProxy extends ProxyPlace<ConnectionPresenter> {}
-
-    public interface MyView extends MbuiView<ConnectionPresenter> {
-        void updateAcceptor(List<NamedNode> acceptors);
-        void updateInVmAcceptor(List<NamedNode> inVmAcceptors);
-        void updateHttpAcceptor(List<NamedNode> httpAcceptors);
-        void updateRemoteAcceptor(List<NamedNode> remoteAcceptors);
-        void updateConnector(List<NamedNode> connectors);
-        void updateInVmConnector(List<NamedNode> inVmConnectors);
-        void updateHttpConnector(List<NamedNode> httpConnectors);
-        void updateRemoteConnector(List<NamedNode> remoteConnectors);
-        void updateConnectorService(List<NamedNode> connectorServices);
-        void updateConnectionFactory(List<NamedNode> connectionFactories);
-        void updatePooledConnectionFactory(List<NamedNode> pooledConnectionFactories);
-    }
-    // @formatter:on
-
-
+    private static final String EQ_WILDCARD = "=*";
     private final Dispatcher dispatcher;
 
     @Inject
     public ConnectionPresenter(
-            final EventBus eventBus,
-            final ConnectionPresenter.MyView view,
-            final ConnectionPresenter.MyProxy myProxy,
-            final Finder finder,
-            final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            ConnectionPresenter.MyView view,
+            ConnectionPresenter.MyProxy myProxy,
+            Finder finder,
+            MetadataRegistry metadataRegistry,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext, resources);
         this.dispatcher = dispatcher;
     }
@@ -146,7 +116,7 @@ public class ConnectionPresenter
 
     void addHttp(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .fromRequestProperties()
                 .requiredOnly()
@@ -164,7 +134,7 @@ public class ConnectionPresenter
 
     void addRemote(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .fromRequestProperties()
                 .requiredOnly()
@@ -180,10 +150,10 @@ public class ConnectionPresenter
         }).show();
     }
 
-    void addPooledConnectionFactory(final ServerSubResource ssr) {
+    void addPooledConnectionFactory(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .include("entries", DISCOVERY_GROUP, CONNECTORS)
@@ -191,13 +161,13 @@ public class ConnectionPresenter
                 .build();
 
         List<AddressTemplate> templates = asList(
-                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
         form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
         form.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
 
@@ -209,8 +179,41 @@ public class ConnectionPresenter
         }).show();
     }
 
-    ResourceAddress pooledConnectionFactoryAddress(final String resource) {
+    ResourceAddress pooledConnectionFactoryAddress(String resource) {
         return resource != null ? SELECTED_POOLED_CONNECTION_FACTORY_TEMPLATE
                 .resolve(statementContext, resource) : null;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires({ACCEPTOR_ADDRESS,
+            CONNECTION_FACTORY_ADDRESS,
+            CONNECTOR_ADDRESS,
+            CONNECTOR_SERVICE_ADDRESS,
+            HTTP_ACCEPTOR_ADDRESS,
+            HTTP_CONNECTOR_ADDRESS,
+            IN_VM_ACCEPTOR_ADDRESS,
+            IN_VM_CONNECTOR_ADDRESS,
+            POOLED_CONNECTION_FACTORY_ADDRESS,
+            REMOTE_ACCEPTOR_ADDRESS,
+            REMOTE_CONNECTOR_ADDRESS})
+    @NameToken(NameTokens.MESSAGING_SERVER_CONNECTION)
+    public interface MyProxy extends ProxyPlace<ConnectionPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ConnectionPresenter> {
+        void updateAcceptor(List<NamedNode> acceptors);
+        void updateInVmAcceptor(List<NamedNode> inVmAcceptors);
+        void updateHttpAcceptor(List<NamedNode> httpAcceptors);
+        void updateRemoteAcceptor(List<NamedNode> remoteAcceptors);
+        void updateConnector(List<NamedNode> connectors);
+        void updateInVmConnector(List<NamedNode> inVmConnectors);
+        void updateHttpConnector(List<NamedNode> httpConnectors);
+        void updateRemoteConnector(List<NamedNode> remoteConnectors);
+        void updateConnectorService(List<NamedNode> connectorServices);
+        void updateConnectionFactory(List<NamedNode> connectionFactories);
+        void updatePooledConnectionFactory(List<NamedNode> pooledConnectionFactories);
+    }
+    // @formatter:on
 }

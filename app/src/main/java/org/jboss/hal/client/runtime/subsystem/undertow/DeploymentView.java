@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -43,9 +44,7 @@ import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.W
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_WEBSOCKETS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
-import static org.jboss.hal.resources.Ids.ENTRY_SUFFIX;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.UNDERTOW_RUNTIME;
 
 public class DeploymentView extends HalViewImpl implements DeploymentPresenter.MyView {
@@ -65,13 +64,15 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
 
         Metadata servletMetadata = metadataRegistry.lookup(WEB_DEPLOYMENT_SERVLET_TEMPLATE);
 
-        servletsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, SERVLET, TABLE_SUFFIX), servletMetadata)
+        servletsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, SERVLET,
+                Ids.TABLE), servletMetadata)
                 .button(resources.constants().reload(), table -> presenter.reload(),
                         Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
                 .column(Names.SERVLET, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        servletsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, SERVLET, FORM_SUFFIX)), servletMetadata)
+        servletsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, SERVLET,
+                FORM)), servletMetadata)
                 .includeRuntime()
                 .readOnly()
                 .build();
@@ -87,13 +88,15 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
 
         Metadata websocketMetadata = metadataRegistry.lookup(WEB_DEPLOYMENT_WEBSOCKETS_TEMPLATE);
 
-        websocketsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET, TABLE_SUFFIX), websocketMetadata)
+        websocketsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET,
+                Ids.TABLE), websocketMetadata)
                 .button(resources.constants().reload(), table -> presenter.reload(),
                         Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
                 .column(Names.WEBSOCKET, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        websocketsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET, FORM_SUFFIX), websocketMetadata)
+        websocketsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET, FORM),
+                websocketMetadata)
                 .includeRuntime()
                 .readOnly()
                 .build();
@@ -106,8 +109,11 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .asElement();
 
         navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, SERVLET, ENTRY_SUFFIX), Names.SERVLET, pfIcon("enterprise"), servletSection);
-        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, ENTRY_SUFFIX), Names.WEBSOCKETS, pfIcon("replicator"), websocketSection);
+        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, SERVLET, Ids.ITEM), Names.SERVLET, pfIcon("enterprise"),
+                servletSection);
+        navigation.addPrimary(Ids.build(UNDERTOW, DEPLOYMENT, WEBSOCKET, Ids.ITEM), Names.WEBSOCKETS,
+                pfIcon("replicator"),
+                websocketSection);
 
         registerAttachable(navigation, servletsTable, servletsForm, websocketsTable, websocketsForm);
 

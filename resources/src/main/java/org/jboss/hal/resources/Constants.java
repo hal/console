@@ -13,25 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
 package org.jboss.hal.resources;
 
 public interface Constants extends com.google.gwt.i18n.client.Constants {
@@ -45,6 +26,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String active();
     String activeFilters();
     String activeLower();
+    String activeSessions();
     String add();
     String addContent();
     String address();
@@ -66,7 +48,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String browse();
     String browseBy();
 
+    String callerThread();
     String cancel();
+    String cancelActiveOperation();
+    String cancelNonProgressingOperation();
     String category();
     String changePriority();
     String chooseFile();
@@ -153,8 +138,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludeRole();
     String excludeUserGroup();
     String excludes();
+    String exclusiveRunningTime();
+    String executionStatus();
     String expertMode();
     String expire();
+    String expiredSessions();
     String explode();
     String exploded();
     String expression();
@@ -166,6 +154,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String failed();
     String failedExecutions();
     String filter();
+    String findNonProgressingOperation();
     String finish();
     String finished();
     String firstPage();
@@ -303,9 +292,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String macroEditor();
     String mainAttributes();
     String managed();
+    String managementOperations();
     String managementVersion();
     String manyMessages();
     String markAllRead();
+    String maxActiveSessions();
     String maxProcessingTime();
     String maxUsed();
     String maximum();
@@ -341,6 +332,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noMacros();
     String noMatchingItems();
     String noNotifications();
+    String noPolicy();
     String noPrincipalsExcluded();
     String noPrincipalsIncluded();
     String noReferenceServer();
@@ -369,6 +361,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operationSuccessful();
     String operation();
     String operations();
+    String optionalFields();
     String or();
     String orDragItHere();
     String outcome();
@@ -406,6 +399,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String rejected();
     String references();
     String refresh();
+    String rejectedSessions();
     String releaseName();
     String releaseVersion();
     String reload();
@@ -446,6 +440,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String runAs();
     String runAsRoleTitle();
     String running();
+    String runningTime();
 
     String sameOrigin();
     String save();
@@ -459,7 +454,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String serverName();
     String serverUrlCustom();
     String serverUrlManagementModel();
+    String sessionTime();
     String sessions();
+    String sessionsCreated();
+    String sessionsAvgAliveTime();
+    String sessionsMaxAliveTime();
     String settings();
     String showAll();
     String showSensitive();
@@ -521,6 +520,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unmanaged();
     String unpin();
     String unsupportedFileType();
+    String upload();
     String uploadContent();
     String uploadPatch();
     String uploadDeployment();

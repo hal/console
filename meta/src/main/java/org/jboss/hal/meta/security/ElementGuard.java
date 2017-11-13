@@ -36,51 +36,6 @@ import static org.jboss.hal.resources.UIConstants.data;
 public class ElementGuard {
 
     /**
-     * Predicate which returns only visible elements (elements which don't have the CSS class {@link
-     * org.jboss.hal.resources.CSS#hidden}).
-     * <p>
-     * Use this filter to find elements which can be processed by other security related functions such as
-     * {@link Toggle}.
-     *
-     * @author Harald Pehl
-     */
-    public static class Visible implements Predicate<Element> {
-
-        @Override
-        public boolean test(final Element element) {
-            return element != null && !element.classList.contains(hidden);
-        }
-    }
-
-
-    /**
-     * Toggle the CSS class {@link org.jboss.hal.resources.CSS#rbacHidden} based on the element's constraints.
-     *
-     * @author Harald Pehl
-     */
-    public static class Toggle implements Consumer<Element> {
-
-        private final AuthorisationDecision authorisationDecision;
-
-        public Toggle(final AuthorisationDecision authorisationDecision) {
-            this.authorisationDecision = authorisationDecision;
-        }
-
-        @Override
-        public void accept(final Element element) {
-            if (element instanceof HTMLElement) {
-                HTMLElement htmlElement = (HTMLElement) element;
-                String data = String.valueOf(htmlElement.dataset.get(UIConstants.CONSTRAINT));
-                if (data != null) {
-                    Constraints constraints = Constraints.parse(data);
-                    Elements.toggle(htmlElement, rbacHidden, !authorisationDecision.isAllowed(constraints));
-                }
-            }
-        }
-    }
-
-
-    /**
      * Adds the {@link org.jboss.hal.resources.CSS#rbacHidden} CSS class if {@code condition == true}, removes it
      * otherwise.
      */
@@ -102,5 +57,47 @@ public class ElementGuard {
         Elements.stream(elements)
                 .filter(new Visible()) // prevent that hidden elements become visible by Toggle()
                 .forEach(new Toggle(authorisationDecision));
+    }
+
+    private ElementGuard() {
+    }
+
+
+    /**
+     * Predicate which returns only visible elements (elements which don't have the CSS class {@link
+     * org.jboss.hal.resources.CSS#hidden}).
+     * <p>
+     * Use this filter to find elements which can be processed by other security related functions such as
+     * {@link Toggle}.
+     */
+    public static class Visible implements Predicate<Element> {
+
+        @Override
+        public boolean test(final Element element) {
+            return element != null && !element.classList.contains(hidden);
+        }
+    }
+
+
+    /** Toggle the CSS class {@link org.jboss.hal.resources.CSS#rbacHidden} based on the element's constraints. */
+    public static class Toggle implements Consumer<Element> {
+
+        private final AuthorisationDecision authorisationDecision;
+
+        public Toggle(final AuthorisationDecision authorisationDecision) {
+            this.authorisationDecision = authorisationDecision;
+        }
+
+        @Override
+        public void accept(final Element element) {
+            if (element instanceof HTMLElement) {
+                HTMLElement htmlElement = (HTMLElement) element;
+                String data = String.valueOf(htmlElement.dataset.get(UIConstants.CONSTRAINT));
+                if (data != null) {
+                    Constraints constraints = Constraints.parse(data);
+                    Elements.toggle(htmlElement, rbacHidden, !authorisationDecision.isAllowed(constraints));
+                }
+            }
+        }
     }
 }

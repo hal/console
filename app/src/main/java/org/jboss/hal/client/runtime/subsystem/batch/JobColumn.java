@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -185,7 +186,7 @@ public class JobColumn extends FinderColumn<JobNode> {
                 actions.add(itemActionFactory.view(placeRequest));
                 actions.add(new ItemAction.Builder<JobNode>()
                         .title(resources.constants().start())
-                        .constraint(Constraint.executable(BATCH_DEPLOYMENT_JOB_TEMPLATE, START_SERVERS))
+                        .constraint(Constraint.executable(BATCH_DEPLOYMENT_JOB_TEMPLATE, START_JOB))
                         .handler(itm -> startJob(itm))
                         .build());
                 return actions;

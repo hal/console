@@ -26,10 +26,10 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 public class Tooltip {
 
     @JsMethod(namespace = GLOBAL, name = "$")
-    public native static Tooltip element(HTMLElement element);
+    public static native Tooltip element(HTMLElement element);
 
     @JsMethod(namespace = GLOBAL, name = "$")
-    public native static Tooltip select(String selector);
+    public static native Tooltip select(String selector);
 
     @JsMethod(name = "tooltip")
     public native void init();

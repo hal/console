@@ -84,7 +84,7 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
 
     void setId(String id);
 
-    void setName(final String name);
+    void setName(String name);
 
     void setLabel(String label);
 

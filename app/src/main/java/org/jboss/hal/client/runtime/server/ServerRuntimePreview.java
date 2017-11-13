@@ -18,7 +18,6 @@ package org.jboss.hal.client.runtime.server;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.chart.Utilization;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.dmr.Composite;
@@ -55,17 +54,15 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
     private final Utilization committedHeap;
     private final Utilization threads;
 
-    public ServerRuntimePreview(final Environment environment, final Dispatcher dispatcher,
-            final StatementContext statementContext, final Resources resources) {
+    public ServerRuntimePreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
         super(resources.constants().status());
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.resources = resources;
 
-        this.usedHeap = new Utilization(resources.constants().used(), Names.MB, environment.isStandalone(), true);
-        this.committedHeap = new Utilization(resources.constants().committed(), Names.MB, environment.isStandalone(),
-                true);
-        this.threads = new Utilization("Daemon", Names.THREADS, environment.isStandalone(), false); //NON-NLS
+        this.usedHeap = new Utilization(resources.constants().used(), Names.MB, false, true);
+        this.committedHeap = new Utilization(resources.constants().committed(), Names.MB, false, true);
+        this.threads = new Utilization("Daemon", Names.THREADS, false, false); //NON-NLS
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()

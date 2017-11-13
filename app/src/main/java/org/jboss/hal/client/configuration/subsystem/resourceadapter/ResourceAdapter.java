@@ -16,8 +16,8 @@
 package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARCHIVE;
@@ -25,18 +25,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTION_SUPPORT;
 
 class ResourceAdapter extends NamedNode {
-
-    enum AdapterType {
-        ARCHIVE(Names.ARCHIVE.toLowerCase()), MODULE(Names.MODULE.toLowerCase()), UNKNOWN(Names.NOT_AVAILABLE);
-
-        private final String text;
-
-        AdapterType(final String text) {this.text = text;}
-
-        public String text() {
-            return text;
-        }
-    }
 
     ResourceAdapter(final Property property) {
         super(property);
@@ -65,6 +53,21 @@ class ResourceAdapter extends NamedNode {
 
     String getModule() {
         return hasDefined(MODULE) ? get(MODULE).asString() : null;
+    }
+
+
+    enum AdapterType {
+        ARCHIVE(Names.ARCHIVE.toLowerCase()), MODULE(Names.MODULE.toLowerCase()), UNKNOWN(Names.NOT_AVAILABLE);
+
+        private final String text;
+
+        AdapterType(final String text) {
+            this.text = text;
+        }
+
+        public String text() {
+            return text;
+        }
     }
 }
 

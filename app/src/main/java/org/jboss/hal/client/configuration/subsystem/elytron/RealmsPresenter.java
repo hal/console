@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -65,43 +66,14 @@ import static org.jboss.hal.dmr.ModelNodeHelper.move;
 public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    @ProxyCodeSplit
-    @Requires(value = {
-            AGGREGATE_REALM_ADDRESS,
-            CACHING_REALM_ADDRESS,
-            CONSTANT_REALM_MAPPER_ADDRESS,
-            CUSTOM_MODIFIABLE_REALM_ADDRESS,
-            CUSTOM_REALM_ADDRESS,
-            CUSTOM_REALM_MAPPER_ADDRESS,
-            FILESYSTEM_REALM_ADDRESS,
-            IDENTITY_REALM_ADDRESS,
-            JDBC_REALM_ADDRESS,
-            KEY_STORE_REALM_ADDRESS,
-            LDAP_REALM_ADDRESS,
-            MAPPED_REGEX_REALM_MAPPER_ADDRESS,
-            PROPERTIES_REALM_ADDRESS,
-            SIMPLE_REGEX_REALM_MAPPER_ADDRESS,
-            TOKEN_REALM_ADDRESS})
-    @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
-    public interface MyProxy extends ProxyPlace<RealmsPresenter> {}
-
-
-    // @formatter:off
-    public interface MyView extends MbuiView<RealmsPresenter> {
-        void updateResourceElement(String resource, List<NamedNode> nodes);
-        void updateJdbcRealm(List<NamedNode> nodes);
-        void updateLdapRealm(List<NamedNode> nodes);
-    }
-    // @formatter:on
-
-
-    final static String[] KEY_MAPPERS = new String[]{
+    static final String[] KEY_MAPPERS = new String[]{
             "clear-password-mapper",
             "bcrypt-mapper",
             "salted-simple-digest-mapper",
             "simple-digest-mapper",
             "scram-mapper"
     };
+    private static final String DOT = ".";
 
 
     private final CrudOperations crud;
@@ -112,16 +84,16 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     private MetadataRegistry metadataRegistry;
 
     @Inject
-    public RealmsPresenter(final EventBus eventBus,
-            final RealmsPresenter.MyView view,
-            final RealmsPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public RealmsPresenter(EventBus eventBus,
+            RealmsPresenter.MyView view,
+            RealmsPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            ComplexAttributeOperations ca,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.ca = ca;
@@ -219,7 +191,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.ELYTRON_JDBC_REALM, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.ELYTRON_JDBC_REALM, Ids.ADD), metadata)
                 .addOnly()
                 .requiredOnly()
                 .unboundFormItem(nameItem, 0)
@@ -235,7 +207,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void addPrincipalQuery(String jdbcRealm) {
-        ca.listAdd(Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, Ids.ADD_SUFFIX), jdbcRealm, PRINCIPAL_QUERY,
+        ca.listAdd(Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, Ids.ADD), jdbcRealm, PRINCIPAL_QUERY,
                 Names.PRINCIPAL_QUERY, JDBC_REALM_TEMPLATE, this::reloadJdbcRealms);
     }
 
@@ -250,7 +222,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void addKeyMapper(String jdbcRealm, ModelNode principalQuery, int pqIndex,
-            final String keyMapper) {
+            String keyMapper) {
         // WFLYELY00034: A principal query can only have a single key mapper
         boolean moreThanOne = false;
         for (String km : KEY_MAPPERS) {
@@ -269,7 +241,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             Metadata metadata = metadataRegistry.lookup(JDBC_REALM_TEMPLATE)
                     .forComplexAttribute(PRINCIPAL_QUERY)
                     .forComplexAttribute(keyMapper);
-            String id = Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, keyMapper, Ids.ADD_SUFFIX);
+            String id = Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, keyMapper, Ids.ADD);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                     .addOnly()
                     .requiredOnly()
@@ -306,7 +278,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         ca.reset(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, JDBC_REALM_TEMPLATE,
                 metadata, form, new Form.FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         reloadJdbcRealms();
                     }
                 });
@@ -317,7 +289,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         ca.remove(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, JDBC_REALM_TEMPLATE,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
-                    public void afterRemove(final Form<ModelNode> form) {
+                    public void afterRemove(Form<ModelNode> form) {
                         reloadJdbcRealms();
                     }
                 });
@@ -328,7 +300,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .forComplexAttribute(PRINCIPAL_QUERY)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                Ids.build(Ids.ELYTRON_JDBC_REALM, ATTRIBUTE_MAPPING, Ids.ADD_SUFFIX), metadata)
+                Ids.build(Ids.ELYTRON_JDBC_REALM, ATTRIBUTE_MAPPING, Ids.ADD), metadata)
                 .addOnly()
                 .include(TO, INDEX)
                 .build();
@@ -339,7 +311,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void saveAttributeMapping(String jdbcRealm, int pqIndex, int amIndex,
-            final Map<String, Object> changedValues) {
+            Map<String, Object> changedValues) {
         ca.save(jdbcRealm, attributeMappingAttribute(pqIndex), Names.ATTRIBUTE_MAPPING, amIndex,
                 JDBC_REALM_TEMPLATE, changedValues, this::reloadJdbcRealms);
     }
@@ -372,7 +344,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 metadata);
 
         NameItem nameItem = new NameItem();
-        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
@@ -399,13 +371,13 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 }).show();
     }
 
-    void saveLdapRealm(final Form<NamedNode> form, final Map<String, Object> changedValues) {
+    void saveLdapRealm(Form<NamedNode> form, Map<String, Object> changedValues) {
         crud.save(Names.LDAP_REALM, form.getModel().getName(), AddressTemplates.LDAP_REALM_TEMPLATE, changedValues,
                 this::reloadLdapRealms);
     }
 
     void addIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type) {
-        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, complexAttribute, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, complexAttribute, Ids.ADD);
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
@@ -416,7 +388,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             builder.requiredOnly();
         }
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type), builder.build(),
-                (name, model) -> ca.add(ldapRealm, IDENTITY_MAPPING + "." + complexAttribute, type,
+                (name, model) -> ca.add(ldapRealm, IDENTITY_MAPPING + DOT + complexAttribute, type,
                         LDAP_REALM_TEMPLATE, model, this::reloadLdapRealms));
         dialog.show();
     }
@@ -425,7 +397,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         if (ldapRealm != null) {
             ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
             return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                    .param(NAME, IDENTITY_MAPPING + "." + complexAttribute)
+                    .param(NAME, IDENTITY_MAPPING + DOT + complexAttribute)
                     .build();
         }
         return null;
@@ -437,7 +409,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
-        ca.save(IDENTITY_MAPPING + "." + complexAttribute, type, address, changedValues, metadata,
+        ca.save(IDENTITY_MAPPING + DOT + complexAttribute, type, address, changedValues, metadata,
                 this::reloadLdapRealms);
     }
 
@@ -447,12 +419,12 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
-        ca.reset(IDENTITY_MAPPING + "." + complexAttribute, type, address, metadata, form, this::reloadLdapRealms);
+        ca.reset(IDENTITY_MAPPING + DOT + complexAttribute, type, address, metadata, form, this::reloadLdapRealms);
     }
 
     void removeIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type,
             Form<ModelNode> form) {
-        ca.remove(ldapRealm, IDENTITY_MAPPING + "." + complexAttribute, type, LDAP_REALM_TEMPLATE,
+        ca.remove(ldapRealm, IDENTITY_MAPPING + DOT + complexAttribute, type, LDAP_REALM_TEMPLATE,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(Form<ModelNode> form) {
@@ -465,33 +437,32 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     // If 'search-rekursive' which requires 'filter' and which defaults to true is not touched
     // and 'filter' is set, the RequiredByValidation does not detect an validation error, because
     // 'search-rekursive' isEmptyOrDefault()
-    void addIdentityAttributeMapping(final String selectedLdapRealm) {
+    void addIdentityAttributeMapping(String selectedLdapRealm) {
         Metadata iamMetadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
-        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, ATTRIBUTE_MAPPING, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, ATTRIBUTE_MAPPING, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, iamMetadata)
                 .addOnly()
                 .include(FROM, TO)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
                 form, (name, model) ->
-                ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+                ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
                         Names.IDENTITY_ATTRIBUTE_MAPPING, LDAP_REALM_TEMPLATE, model, this::reloadLdapRealms));
         dialog.show();
     }
 
-    void saveIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex,
-            final Map<String, Object> changedValues) {
+    void saveIdentityAttributeMapping(String selectedLdapRealm, int iamIndex, Map<String, Object> changedValues) {
         // passed before attribute 'identity-mapping.attribute-mapping[n].search-recursive' can be correctly set"
 
-        ca.save(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+        ca.save(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
                 Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
                 changedValues, this::reloadLdapRealms);
     }
 
-    void removeIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex) {
-        ca.remove(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+    void removeIdentityAttributeMapping(String selectedLdapRealm, int iamIndex) {
+        ca.remove(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
                 Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
                 this::reloadLdapRealms);
     }
@@ -504,7 +475,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata upMetadata = metadata.forComplexAttribute(USERS_PROPERTIES, true);
         upMetadata.copyComplexAttributeAttributes(asList(PATH, RELATIVE_TO), metadata);
 
-        String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD);
         NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
@@ -524,4 +495,35 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                             getView().updateResourceElement(PROPERTIES_REALM, nodes)));
         }).show();
     }
+
+
+    @ProxyCodeSplit
+    @Requires(value = {
+            AGGREGATE_REALM_ADDRESS,
+            CACHING_REALM_ADDRESS,
+            CONSTANT_REALM_MAPPER_ADDRESS,
+            CUSTOM_MODIFIABLE_REALM_ADDRESS,
+            CUSTOM_REALM_ADDRESS,
+            CUSTOM_REALM_MAPPER_ADDRESS,
+            FILESYSTEM_REALM_ADDRESS,
+            IDENTITY_REALM_ADDRESS,
+            JDBC_REALM_ADDRESS,
+            KEY_STORE_REALM_ADDRESS,
+            LDAP_REALM_ADDRESS,
+            MAPPED_REGEX_REALM_MAPPER_ADDRESS,
+            PROPERTIES_REALM_ADDRESS,
+            SIMPLE_REGEX_REALM_MAPPER_ADDRESS,
+            TOKEN_REALM_ADDRESS})
+    @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
+    public interface MyProxy extends ProxyPlace<RealmsPresenter> {
+    }
+
+
+    // @formatter:off
+    public interface MyView extends MbuiView<RealmsPresenter> {
+        void updateResourceElement(String resource, List<NamedNode> nodes);
+        void updateJdbcRealm(List<NamedNode> nodes);
+        void updateLdapRealm(List<NamedNode> nodes);
+    }
+    // @formatter:on
 }

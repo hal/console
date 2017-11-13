@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.deployment;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -33,25 +34,30 @@ import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Search;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.form.FileItem;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -61,8 +67,8 @@ import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import rx.Completable;
+import rx.Single;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
@@ -82,6 +88,7 @@ import static org.jboss.hal.resources.CSS.*;
 
 /** UI element to browse and modify the content of an item from the content repository. */
 // TODO Use metadata to show/hide buttons according to the security context
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 class BrowseContentElement implements IsElement, Attachable {
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -137,6 +144,7 @@ class BrowseContentElement implements IsElement, Attachable {
             "webp");
 
     private static final int MIN_HEIGHT = 70;
+    private static final AddressTemplate CONTENT_TEMPLATE = AddressTemplate.of("/deployment=*");
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
@@ -152,14 +160,14 @@ class BrowseContentElement implements IsElement, Attachable {
     private final AceEditor editor;
 
     private final HTMLButtonElement collapseButton;
-    private final HTMLButtonElement addContentButton;
-    private final HTMLButtonElement uploadContentButton;
+    private final Optional<HTMLButtonElement> addContentButton;
+    private final Optional<HTMLButtonElement> uploadContentButton;
     private final HTMLElement downloadContentLink;
-    private final HTMLButtonElement removeContentButton;
+    private final Optional<HTMLButtonElement> removeContentButton;
     private final HTMLElement treeContainer;
     private final HTMLElement editorControls;
     private final HTMLElement editorStatus;
-    private final HTMLButtonElement saveContentButton;
+    private final Optional<HTMLButtonElement> saveContentButton;
     private final HTMLElement previewContainer;
     private final HTMLElement previewHeader;
     private final HTMLElement previewImageContainer;
@@ -172,7 +180,8 @@ class BrowseContentElement implements IsElement, Attachable {
     // ------------------------------------------------------ ui setup
 
     @SuppressWarnings("ConstantConditions")
-    BrowseContentElement(Dispatcher dispatcher, EventBus eventBus, Resources resources) {
+    BrowseContentElement(Dispatcher dispatcher, Environment environment, EventBus eventBus, Metadata metadata,
+            Resources resources) {
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.resources = resources;
@@ -196,22 +205,23 @@ class BrowseContentElement implements IsElement, Attachable {
                 .build();
         contentSearch.asElement().classList.add(marginRightSmall);
 
-        pleaseSelect = new EmptyState.Builder(resources.constants().nothingSelected())
+        pleaseSelect = new EmptyState.Builder(Ids.BROWSE_CONTENT_SELECT_EMPTY, resources.constants().nothingSelected())
                 .icon(Icons.INFO)
                 .description(resources.messages().noContentSelectedInDeployment())
                 .build();
 
-        deploymentPreview = new EmptyState.Builder(Names.DEPLOYMENT)
+        deploymentPreview = new EmptyState.Builder(Ids.BROWSE_CONTENT_DEPLOYMENT_EMPTY, Names.DEPLOYMENT)
                 .icon(fontAwesome("archive"))
                 .description(resources.messages().deploymentPreview())
                 .build();
 
-        explodedPreview = new EmptyState.Builder(Names.DEPLOYMENT)
+        explodedPreview = new EmptyState.Builder(Ids.BROWSE_CONTENT_EXPLODED_EMPTY, Names.DEPLOYMENT)
                 .icon(fontAwesome("folder-open"))
                 .description(resources.messages().explodedPreview())
                 .build();
 
-        unsupportedFileType = new EmptyState.Builder(resources.constants().unsupportedFileType())
+        unsupportedFileType = new EmptyState.Builder(Ids.BROWSE_CONTENT_UNSUPPORTED_EMPTY,
+                resources.constants().unsupportedFileType())
                 .icon(Icons.UNKNOWN)
                 .description(resources.messages().unsupportedFileTypeDescription())
                 .primaryAction(resources.constants().download(),
@@ -220,6 +230,7 @@ class BrowseContentElement implements IsElement, Attachable {
                         () -> viewInEditor(tree.getSelected().data))
                 .build();
 
+        HTMLElement crudContainer;
         root = row()
                 .add(column(4)
                         .add(div().css(flexRow, marginTopLarge)
@@ -239,29 +250,14 @@ class BrowseContentElement implements IsElement, Attachable {
                                                         .title(resources.constants().collapse())
                                                         .add(i().css(fontAwesome("minus")))
                                                         .asElement()))
-                                        .add(div().css(btnGroup)
-                                                .add(addContentButton = button().css(btn, btnDefault)
-                                                        .on(click, event -> addContent())
-                                                        .title(resources.constants().newContent())
-                                                        .add(i().css(fontAwesome("file-o")))
-                                                        .asElement())
-                                                .add(uploadContentButton = button().css(btn, btnDefault)
-                                                        .on(click, event -> uploadContent())
-                                                        .title(resources.constants().uploadContent())
-                                                        .title(resources.constants().addContent())
-                                                        .add(i().css(fontAwesome("upload")))
-                                                        .asElement())
+                                        .add(crudContainer = div().css(btnGroup)
                                                 .add(downloadContentLink = a().css(btn, btnDefault)
                                                         .title(resources.constants().download())
                                                         .attr(UIConstants.TARGET, "_blank") //NON-NLS
                                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                                                         .add(span().css(fontAwesome("download")))
                                                         .asElement())
-                                                .add(removeContentButton = button().css(btn, btnDefault)
-                                                        .on(click, event -> removeContent())
-                                                        .title(resources.constants().removeContent())
-                                                        .add(i().css(pfIcon("remove")))
-                                                        .asElement())))
+                                                .asElement()))
                                 .add(treeSearch))
                         .add(treeContainer = div().css(CSS.treeContainer).asElement()))
                 .add(column(8)
@@ -276,16 +272,10 @@ class BrowseContentElement implements IsElement, Attachable {
                                                 .asElement())
                                         .asElement())
                                 .add(editorControls = div().css(CSS.editorControls, marginBottomSmall)
-                                        .add(saveContentButton = button().css(btn, btnDefault, marginRightSmall)
-                                                .on(click, event -> saveContent())
-                                                .title(resources.constants().save())
-                                                .add(span().css(fontAwesome("floppy-o")))
-                                                .asElement())
                                         .add(contentSearch)
-                                        .add(div()
-                                                .add(editorStatus = span()
-                                                        .textContent(resources.constants().nothingSelected())
-                                                        .asElement()))
+                                        .add(div().add(editorStatus = span()
+                                                .textContent(resources.constants().nothingSelected())
+                                                .asElement()))
                                         .asElement())
                                 .add(editor)
                                 .add(pleaseSelect)
@@ -294,7 +284,45 @@ class BrowseContentElement implements IsElement, Attachable {
                                 .add(unsupportedFileType)))
                 .asElement();
 
-        saveContentButton.disabled = true;
+        AuthorisationDecision ad = AuthorisationDecision.from(environment, metadata.getSecurityContext());
+        if (ad.isAllowed(Constraint.executable(CONTENT_TEMPLATE, ADD_CONTENT))) {
+            addContentButton = Optional.of(button().css(btn, btnDefault)
+                    .on(click, event -> addContent())
+                    .title(resources.constants().newContent())
+                    .add(i().css(fontAwesome("file-o")))
+                    .asElement());
+            uploadContentButton = Optional.of(button().css(btn, btnDefault)
+                    .on(click, event -> uploadContent())
+                    .title(resources.constants().uploadContent())
+                    .title(resources.constants().addContent())
+                    .add(i().css(fontAwesome("upload")))
+                    .asElement());
+            saveContentButton = Optional.of(button().css(btn, btnDefault, marginRightSmall)
+                    .on(click, event -> saveContent())
+                    .title(resources.constants().save())
+                    .add(span().css(fontAwesome("floppy-o")))
+                    .asElement());
+            crudContainer.insertBefore(addContentButton.get(), downloadContentLink);
+            crudContainer.insertBefore(uploadContentButton.get(), downloadContentLink);
+            editorControls.insertBefore(saveContentButton.get(), contentSearch.asElement());
+
+        } else {
+            addContentButton = Optional.empty();
+            uploadContentButton = Optional.empty();
+            saveContentButton = Optional.empty();
+        }
+        if (ad.isAllowed(Constraint.executable(CONTENT_TEMPLATE, REMOVE_CONTENT))) {
+            removeContentButton = Optional.of(button().css(btn, btnDefault)
+                    .on(click, event -> removeContent())
+                    .title(resources.constants().removeContent())
+                    .add(i().css(pfIcon("remove")))
+                    .asElement());
+            crudContainer.appendChild(removeContentButton.get());
+        } else {
+            removeContentButton = Optional.empty();
+        }
+
+        saveContentButton.ifPresent(button -> button.disabled = true);
         Elements.setVisible(pleaseSelect.asElement(), true);
         Elements.setVisible(editorControls, false);
         Elements.setVisible(editor.asElement(), false);
@@ -380,27 +408,27 @@ class BrowseContentElement implements IsElement, Attachable {
 
     // ------------------------------------------------------ CRUD content methods
 
+    @SuppressWarnings("ConstantConditions")
     void setContent(Content content) {
         this.content = content;
-        Elements.setVisible(addContentButton, content.isExploded());
-        Elements.setVisible(uploadContentButton, content.isExploded());
-        Elements.setVisible(removeContentButton, content.isExploded());
-        Elements.setVisible(saveContentButton, content.isExploded());
+        Elements.setVisible(addContentButton.orElse(null), content.isExploded());
+        Elements.setVisible(uploadContentButton.orElse(null), content.isExploded());
+        Elements.setVisible(removeContentButton.orElse(null), content.isExploded());
+        Elements.setVisible(saveContentButton.orElse(null), content.isExploded());
         editor.getEditor().setReadOnly(!content.isExploded());
 
         browseContent().subscribe(this::noSelection);
     }
 
     private void addContent() {
-        NameItem nameItem = new NameItem();
-        TextBoxItem pathItem = new TextBoxItem(TARGET_PATH);
+        TextBoxItem targetPathItem = new TextBoxItem(TARGET_PATH);
+        targetPathItem.setRequired(true);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
-                .unboundFormItem(nameItem)
-                .unboundFormItem(pathItem)
+                .unboundFormItem(targetPathItem)
                 .addOnly()
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.constants().newContent(), form, (name, model) -> {
-            String path = fullPath(pathItem.getValue(), nameItem.getValue());
+            String path = targetPathItem.getValue();
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
             ModelNode contentNode = new ModelNode();
             contentNode.get(INPUT_STREAM_INDEX).set(0);
@@ -408,7 +436,7 @@ class BrowseContentElement implements IsElement, Attachable {
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
-            dispatcher.upload(file(nameItem.getValue(), ""), operation)
+            dispatcher.upload(file(filename(path), ""), operation)
                     .toCompletable()
                     .andThen(browseContent())
                     .andThen(awaitTreeReady())
@@ -418,30 +446,53 @@ class BrowseContentElement implements IsElement, Attachable {
                         tree.selectNode(NODE_ID.apply(path));
                     });
         });
-        pathItem.setValue(selectedPath());
+        targetPathItem.setValue(selectedPath());
         dialog.show();
     }
 
     private void uploadContent() {
-        FileItem fileItem = new FileItem(FILE, new LabelBuilder().label(FILE));
-        fileItem.setRequired(true);
-        TextBoxItem pathItem = new TextBoxItem(TARGET_PATH);
+        LabelBuilder labelBuilder = new LabelBuilder();
+        TextBoxItem targetPathItem = new TextBoxItem(TARGET_PATH);
+        targetPathItem.setRequired(true);
+
+        FileItem fileItem = new FileItem(FILE, labelBuilder.label(FILE));
+        fileItem.addValueChangeHandler(event ->
+                targetPathItem.setValue(appendFilename(targetPathItem.getValue(), event.getValue().name)));
+
+        TextBoxItem urlItem = new TextBoxItem(URL, labelBuilder.label(URL));
+        urlItem.addValueChangeHandler(event ->
+                targetPathItem.setValue(appendFilename(targetPathItem.getValue(), filename(event.getValue()))));
+
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
                 .unboundFormItem(fileItem)
-                .unboundFormItem(pathItem)
+                .unboundFormItem(urlItem)
+                .unboundFormItem(targetPathItem)
                 .addOnly()
                 .build();
-        AddResourceDialog dialog = new AddResourceDialog(resources.constants().uploadContent(), form, (name, model) -> {
-            String path = fullPath(pathItem.getValue(), fileItem.getValue().name);
+        form.addFormValidation(f -> {
+            if (fileItem.isEmpty() && urlItem.isEmpty()) {
+                return ValidationResult.invalid(resources.messages().uploadContentInvalid());
+            }
+            return ValidationResult.OK;
+        });
+        form.setSaveCallback((f, model) -> {
+            String path = targetPathItem.getValue();
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+
             ModelNode contentNode = new ModelNode();
-            contentNode.get(INPUT_STREAM_INDEX).set(0);
+            if (fileItem.isEmpty()) {
+                contentNode.get(URL).set(urlItem.getValue());
+            } else {
+                contentNode.get(INPUT_STREAM_INDEX).set(0);
+            }
             contentNode.get(TARGET_PATH).set(path);
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
-            dispatcher.upload(fileItem.getValue(), operation)
-                    .toCompletable()
+            Single<ModelNode> single = fileItem.isEmpty()
+                    ? dispatcher.execute(operation)
+                    : dispatcher.upload(fileItem.getValue(), operation);
+            single.toCompletable()
                     .andThen(browseContent())
                     .andThen(awaitTreeReady())
                     .subscribe(() -> {
@@ -450,8 +501,18 @@ class BrowseContentElement implements IsElement, Attachable {
                         tree.selectNode(NODE_ID.apply(path));
                     });
         });
-        pathItem.setValue(selectedPath());
+
+        Dialog dialog = new Dialog.Builder(resources.constants().uploadContent())
+                .add(p().innerHtml(resources.messages().uploadContentDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().upload(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        targetPathItem.setValue(selectedPath());
         dialog.show();
+        form.edit(new ModelNode());
     }
 
     private Completable browseContent() {
@@ -510,7 +571,7 @@ class BrowseContentElement implements IsElement, Attachable {
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
             dispatcher.upload(file(filename, editorContent), operation)
-                    .doOnSuccess(result -> saveContentButton.disabled = true)
+                    .doOnSuccess(result -> saveContentButton.ifPresent(button -> button.disabled = true))
                     .toCompletable()
                     .andThen(browseContent())
                     .andThen(awaitTreeReady())
@@ -526,8 +587,9 @@ class BrowseContentElement implements IsElement, Attachable {
         Node<ContentEntry> selection = tree.getSelected();
         if (selection != null) {
             String path = selection.data.path;
-            DialogFactory.showConfirmation(resources.constants().removeContent(),
-                    resources.messages().removeContentQuestion(content.getName(), path), () -> {
+            DialogFactory.buildConfirmation(resources.constants().removeContent(),
+                    resources.messages().removeContentQuestion(content.getName(), path), null, Dialog.Size.MEDIUM,
+                    () -> {
                         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
                         Operation operation = new Operation.Builder(address, REMOVE_CONTENT)
                                 .param(PATHS, new ModelNode().add(path))
@@ -541,7 +603,7 @@ class BrowseContentElement implements IsElement, Attachable {
                                             resources.messages().removeContentSuccess(content.getName(), path)));
                                     noSelection();
                                 });
-                    });
+                    }).show();
         }
     }
 
@@ -584,7 +646,7 @@ class BrowseContentElement implements IsElement, Attachable {
     private void noSelection() {
         collapseButton.disabled = true;
         downloadContentLink.classList.add(disabled);
-        removeContentButton.disabled = true;
+        removeContentButton.ifPresent(button -> button.disabled = true);
 
         Elements.setVisible(pleaseSelect.asElement(), true);
         Elements.setVisible(editorControls, false);
@@ -605,7 +667,7 @@ class BrowseContentElement implements IsElement, Attachable {
             downloadContentLink.setAttribute(UIConstants.DOWNLOAD, content.getName());
             downloadContentLink.classList.remove(disabled);
         }
-        removeContentButton.disabled = true;
+        removeContentButton.ifPresent(button -> button.disabled = true);
 
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, false);
@@ -624,7 +686,7 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.removeAttribute(UIConstants.HREF);
         downloadContentLink.removeAttribute(UIConstants.DOWNLOAD);
         downloadContentLink.classList.add(disabled);
-        removeContentButton.disabled = true;
+        removeContentButton.ifPresent(button -> button.disabled = true);
 
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, false);
@@ -639,7 +701,7 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(contentEntry));
         downloadContentLink.setAttribute(UIConstants.DOWNLOAD, contentEntry.name);
         downloadContentLink.classList.remove(disabled);
-        removeContentButton.disabled = false;
+        removeContentButton.ifPresent(button -> button.disabled = false);
 
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, true);
@@ -654,8 +716,9 @@ class BrowseContentElement implements IsElement, Attachable {
         loadContent(contentEntry, result -> {
             editor.setModeFromPath(contentEntry.name);
             editor.getEditor().getSession().setValue(result);
-            editor.getEditor().getSession().on("change", delta -> saveContentButton.disabled = false); //NON-NLS
-            saveContentButton.disabled = true;
+            editor.getEditor().getSession().on("change", //NON-NLS
+                    delta -> saveContentButton.ifPresent(button -> button.disabled = false));
+            saveContentButton.ifPresent(button -> button.disabled = true);
         });
     }
 
@@ -663,7 +726,7 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(contentEntry));
         downloadContentLink.setAttribute(UIConstants.DOWNLOAD, contentEntry.name);
         downloadContentLink.classList.remove(disabled);
-        removeContentButton.disabled = false;
+        removeContentButton.ifPresent(button -> button.disabled = false);
         previewImage.src = downloadUrl(contentEntry);
 
         Elements.setVisible(pleaseSelect.asElement(), false);
@@ -679,7 +742,7 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.setAttribute(UIConstants.HREF, downloadUrl(contentEntry));
         downloadContentLink.setAttribute(UIConstants.DOWNLOAD, contentEntry.name);
         downloadContentLink.classList.remove(disabled);
-        removeContentButton.disabled = false;
+        removeContentButton.ifPresent(button -> button.disabled = false);
 
         Elements.setVisible(pleaseSelect.asElement(), false);
         Elements.setVisible(editorControls, false);
@@ -711,16 +774,31 @@ class BrowseContentElement implements IsElement, Attachable {
             if (!selection.data.directory) {
                 path = Strings.getParent(path);
             }
+            if (path != null) {
+                path += "/";
+            }
         }
         return nullToEmpty(path);
     }
 
-    private String fullPath(String path, String name) {
-        String localPath = Strings.strip(path, "/");
-        String localName = Strings.strip(name, "/");
-        return isNullOrEmpty(localPath)
-                ? nullToEmpty(localName)
-                : nullToEmpty(localPath) + "/" + nullToEmpty(localName);
+    private String appendFilename(String path, String file) {
+        if (!com.google.common.base.Strings.isNullOrEmpty(path)) {
+            if (path.endsWith("/")) {
+                return path + file;
+            } else {
+                return Strings.getParent(path) + "/" + file;
+            }
+        }
+        return file;
+    }
+
+    private String filename(String path) {
+        if (path != null) {
+            return path.contains("/")
+                    ? Strings.substringAfterLast(path, "/")
+                    : path;
+        }
+        return null;
     }
 
     private File file(String name, String content) {

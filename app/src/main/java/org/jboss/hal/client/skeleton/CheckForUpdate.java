@@ -30,12 +30,6 @@ import org.slf4j.LoggerFactory;
 
 class CheckForUpdate {
 
-    @FunctionalInterface
-    interface VersionCallback {
-
-        void onVersion(Version version);
-    }
-
     private static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";
     @NonNls private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
@@ -73,5 +67,12 @@ class CheckForUpdate {
                 logger.warn("Cannot contact update server at {}: {}", UPDATE_URL, e.getMessage());
             }
         }
+    }
+
+
+    @FunctionalInterface
+    interface VersionCallback {
+
+        void onVersion(Version version);
     }
 }

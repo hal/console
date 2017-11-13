@@ -48,5 +48,6 @@ public final class LayoutBuilder {
                 .column(columns, columnLg, columnMd, columnSm);
     }
 
-    private LayoutBuilder() {}
+    private LayoutBuilder() {
+    }
 }

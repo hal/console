@@ -24,10 +24,11 @@ import org.jboss.hal.ballroom.JsCallback;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 public class Tree<T> implements IsElement, Attachable {
 
-    private static final String ROOT_NODE = "#";
+    private static final String ROOT_NODE = HASH;
 
     private final String id;
     private final HTMLElement div;
@@ -97,7 +98,7 @@ public class Tree<T> implements IsElement, Attachable {
     public void attach() {
         if (bridge == null || api == null) {
             // TODO check security context and adjust options if necessary
-            bridge = Bridge.select("#" + id);
+            bridge = Bridge.select(HASH + id);
             bridge.jstree(options);
             api = bridge.jstree(true);
         }

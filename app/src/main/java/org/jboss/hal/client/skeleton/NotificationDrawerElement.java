@@ -29,6 +29,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.time;
 
+/** One item in {@link NotificationDrawer} */
 class NotificationDrawerElement implements IsElement {
 
     private final NotificationDrawer notificationDrawer;
@@ -79,6 +80,8 @@ class NotificationDrawerElement implements IsElement {
                 break;
             case SUCCESS:
                 css = Icons.OK;
+                break;
+            default:
                 break;
         }
         iconContainer.className = css + " " + pullLeft;

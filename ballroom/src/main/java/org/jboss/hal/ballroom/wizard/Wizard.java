@@ -44,10 +44,7 @@ import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.HIDDEN;
-import static org.jboss.hal.resources.UIConstants.ROLE;
-import static org.jboss.hal.resources.UIConstants.TABINDEX;
-import static org.jboss.hal.resources.UIConstants.TRUE;
+import static org.jboss.hal.resources.UIConstants.*;
 
 /**
  * General purpose wizard relying on a context for the common data and an enum representing the states of the different
@@ -58,132 +55,8 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  */
 public class Wizard<C, S extends Enum<S>> {
 
-    @FunctionalInterface
-    public interface BackFunction<C, S extends Enum<S>> {
-
-        S back(C context, S currentState);
-    }
-
-
-    @FunctionalInterface
-    public interface NextFunction<C, S extends Enum<S>> {
-
-        S next(C context, S currentState);
-    }
-
-
-    /**
-     * An action executed when the user clicks on the success button of the success page.
-     */
-    @FunctionalInterface
-    public interface SuccessAction<C> {
-
-        void execute(C context);
-    }
-
-
-    /**
-     * A callback executed when the user finishes last step.
-     *
-     * @param <C>
-     */
-    @FunctionalInterface
-    public interface FinishCallback<C, S extends Enum<S>> {
-
-        void onFinish(Wizard<C, S> wizard, C context);
-    }
-
-
-    /**
-     * A callback executed whenever the user cancels the wizard.
-     *
-     * @param <C>
-     */
-    @FunctionalInterface
-    public interface CancelCallback<C> {
-
-        void onCancel(C context);
-    }
-
-
-    // ------------------------------------------------------ wizard builder
-
-
-    public static class Builder<C, S extends Enum<S>> {
-
-        private final String title;
-        private final C context;
-        private final LinkedHashMap<S, WizardStep<C, S>> steps;
-        private S initialState;
-        private BackFunction<C, S> back;
-        private NextFunction<C, S> next;
-        private EnumSet<S> lastStates;
-        private FinishCallback<C, S> finishCallback;
-        private CancelCallback<C> cancelCallback;
-        private boolean stayOpenAfterFinish;
-
-        public Builder(final String title, final C context) {
-            this.title = title;
-            this.context = context;
-            this.steps = new LinkedHashMap<>();
-            this.initialState = null;
-            this.back = null;
-            this.next = null;
-            this.lastStates = null;
-            this.finishCallback = null;
-            this.cancelCallback = null;
-            this.stayOpenAfterFinish = false;
-        }
-
-        public Builder<C, S> addStep(S state, WizardStep<C, S> step) {
-            steps.put(state, step);
-            return this;
-        }
-
-        public Builder<C, S> onBack(BackFunction<C, S> back) {
-            this.back = back;
-            return this;
-        }
-
-        public Builder<C, S> onNext(NextFunction<C, S> next) {
-            this.next = next;
-            return this;
-        }
-
-        public Builder<C, S> onFinish(FinishCallback<C, S> finishCallback) {
-            this.finishCallback = finishCallback;
-            return this;
-        }
-
-        public Builder<C, S> onCancel(CancelCallback<C> cancelCallback) {
-            this.cancelCallback = cancelCallback;
-            return this;
-        }
-
-        public Builder<C, S> stayOpenAfterFinish() {
-            this.stayOpenAfterFinish = true;
-            return this;
-        }
-
-        public Wizard<C, S> build() {
-            if (steps.isEmpty()) {
-                throw new IllegalStateException("No steps found for wizard '" + title + "'");
-            }
-            if (back == null) {
-                throw new IllegalStateException("No back function defined for wizard '" + title + "'");
-            }
-            if (next == null) {
-                throw new IllegalStateException("No next function defined for wizard '" + title + "'");
-            }
-            return new Wizard<>(this);
-        }
-    }
-
-
-    // ------------------------------------------------------ wizard singleton
-
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String SELECTOR_ID = "#" + Ids.HAL_WIZARD;
+    private static final String SELECTOR_ID = HASH + Ids.HAL_WIZARD;
 
     private static final HTMLElement root;
     private static final HTMLElement titleElement;
@@ -419,7 +292,7 @@ public class Wizard<C, S extends Enum<S>> {
         blankSlate.appendChild(p);
         if (error != null) {
             String id = Ids.uniqueId();
-            p.appendChild(a("#" + id).css(marginLeft5)
+            p.appendChild(a(HASH + id).css(marginLeft5)
                     .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
                     .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                     .aria(UIConstants.CONTROLS, id)
@@ -588,5 +461,130 @@ public class Wizard<C, S extends Enum<S>> {
         handlerRegistration.removeHandler();
         steps.values().forEach(step -> step.attachables.forEach(Attachable::detach));
         $(SELECTOR_ID).modal("hide");
+    }
+
+
+    // ------------------------------------------------------ inner classes
+
+
+    @FunctionalInterface
+    public interface BackFunction<C, S extends Enum<S>> {
+
+        S back(C context, S currentState);
+    }
+
+
+    @FunctionalInterface
+    public interface NextFunction<C, S extends Enum<S>> {
+
+        S next(C context, S currentState);
+    }
+
+
+    /**
+     * An action executed when the user clicks on the success button of the success page.
+     */
+    @FunctionalInterface
+    public interface SuccessAction<C> {
+
+        void execute(C context);
+    }
+
+
+    /**
+     * A callback executed when the user finishes last step.
+     *
+     * @param <C>
+     */
+    @FunctionalInterface
+    public interface FinishCallback<C, S extends Enum<S>> {
+
+        void onFinish(Wizard<C, S> wizard, C context);
+    }
+
+
+    /**
+     * A callback executed whenever the user cancels the wizard.
+     *
+     * @param <C>
+     */
+    @FunctionalInterface
+    public interface CancelCallback<C> {
+
+        void onCancel(C context);
+    }
+
+
+    // ------------------------------------------------------ wizard builder
+
+
+    public static class Builder<C, S extends Enum<S>> {
+
+        private final String title;
+        private final C context;
+        private final LinkedHashMap<S, WizardStep<C, S>> steps;
+        private S initialState;
+        private BackFunction<C, S> back;
+        private NextFunction<C, S> next;
+        private EnumSet<S> lastStates;
+        private FinishCallback<C, S> finishCallback;
+        private CancelCallback<C> cancelCallback;
+        private boolean stayOpenAfterFinish;
+
+        public Builder(final String title, final C context) {
+            this.title = title;
+            this.context = context;
+            this.steps = new LinkedHashMap<>();
+            this.initialState = null;
+            this.back = null;
+            this.next = null;
+            this.lastStates = null;
+            this.finishCallback = null;
+            this.cancelCallback = null;
+            this.stayOpenAfterFinish = false;
+        }
+
+        public Builder<C, S> addStep(S state, WizardStep<C, S> step) {
+            steps.put(state, step);
+            return this;
+        }
+
+        public Builder<C, S> onBack(BackFunction<C, S> back) {
+            this.back = back;
+            return this;
+        }
+
+        public Builder<C, S> onNext(NextFunction<C, S> next) {
+            this.next = next;
+            return this;
+        }
+
+        public Builder<C, S> onFinish(FinishCallback<C, S> finishCallback) {
+            this.finishCallback = finishCallback;
+            return this;
+        }
+
+        public Builder<C, S> onCancel(CancelCallback<C> cancelCallback) {
+            this.cancelCallback = cancelCallback;
+            return this;
+        }
+
+        public Builder<C, S> stayOpenAfterFinish() {
+            this.stayOpenAfterFinish = true;
+            return this;
+        }
+
+        public Wizard<C, S> build() {
+            if (steps.isEmpty()) {
+                throw new IllegalStateException("No steps found for wizard '" + title + "'");
+            }
+            if (back == null) {
+                throw new IllegalStateException("No back function defined for wizard '" + title + "'");
+            }
+            if (next == null) {
+                throw new IllegalStateException("No next function defined for wizard '" + title + "'");
+            }
+            return new Wizard<>(this);
+        }
     }
 }

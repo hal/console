@@ -17,4 +17,5 @@ package org.jboss.hal.client.patching;
 
 import org.jboss.hal.core.mvp.FinderViewImpl;
 
-public class PatchingFinderView extends FinderViewImpl implements PatchingFinderPresenter.MyView {}
+public class PatchingFinderView extends FinderViewImpl implements PatchingFinderPresenter.MyView {
+}

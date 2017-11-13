@@ -68,7 +68,7 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
             final TableButtonFactory tableButtonFactory) {
 
         Metadata metadata = metadataRegistry.lookup(configType.template);
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(configType.baseId, Ids.TABLE_SUFFIX), metadata)
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(configType.baseId, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(configType.template, table -> presenter.addConfig()))
                 .button(tableButtonFactory.remove(configType.template,
                         table -> presenter.removeConfig(table.selectedRow().getName())))
@@ -91,7 +91,7 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
 
         ModelNode propertyDescription = failSafeGet(metadata.getDescription(), "children/property/description");
         propertiesItem = new PropertiesItem(PROPERTY);
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(configType.baseId, Ids.FORM_SUFFIX), metadata)
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(configType.baseId, Ids.FORM), metadata)
                 .unboundFormItem(propertiesItem, 0, SafeHtmlUtils.fromString(propertyDescription.asString()))
                 .onSave((form, changedValues) -> presenter.saveConfig(form, changedValues, PROPERTY))
                 .prepareReset(form -> presenter.resetConfig(form))
@@ -107,8 +107,9 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         handlerChain = new HandlerChainElement(configType, metadataRegistry, tableButtonFactory);
         handler = new HandlerElement(configType, metadataRegistry, tableButtonFactory);
 
-        String mainId = Ids.build(configType.baseId, Ids.PAGE_SUFFIX);
-        pages = new Pages(mainId, section);
+        String id = Ids.build(configType.baseId, Ids.PAGES);
+        String mainId = Ids.build(configType.baseId, Ids.PAGE);
+        pages = new Pages(id, mainId, section);
         pages.addPage(mainId, handlerChainPageId(configType),
                 () -> presenter.configSegment(),
                 () -> presenter.handlerChainTypeSegment(),
@@ -120,11 +121,11 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     private String handlerPageId(Config configType) {
-        return Ids.build(configType.baseId, "handler", Ids.PAGE_SUFFIX);
+        return Ids.build(configType.baseId, "handler", Ids.PAGE);
     }
 
     private String handlerChainPageId(Config configType) {
-        return Ids.build(configType.baseId, "handler-chain", Ids.PAGE_SUFFIX);
+        return Ids.build(configType.baseId, "handler-chain", Ids.PAGE);
     }
 
     @Override

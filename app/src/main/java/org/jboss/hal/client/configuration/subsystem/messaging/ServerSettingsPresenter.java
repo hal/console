@@ -38,7 +38,8 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
-abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>> extends MbuiPresenter<V, Proxy_>
+abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
+        extends MbuiPresenter<V, Proxy_>
         implements SupportsExpertMode {
 
     final CrudOperations crud;

@@ -106,7 +106,8 @@ public class Constraints implements Iterable<Constraint> {
             for (String value : values) {
                 try {
                     constraints.add(Constraint.parse(value));
-                } catch (IllegalArgumentException ignored) {}
+                } catch (IllegalArgumentException ignored) {
+                }
             }
             return new Constraints(constraints, operator);
 
@@ -133,11 +134,17 @@ public class Constraints implements Iterable<Constraint> {
         return constraints.iterator();
     }
 
-    public int size() {return constraints.size();}
+    public int size() {
+        return constraints.size();
+    }
 
-    public boolean isEmpty() {return constraints.isEmpty();}
+    public boolean isEmpty() {
+        return constraints.isEmpty();
+    }
 
-    public boolean contains(final Object o) {return constraints.contains(o);}
+    public boolean contains(final Object o) {
+        return constraints.contains(o);
+    }
 
     public Set<Constraint> getConstraints() {
         return constraints;

@@ -23,8 +23,13 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options<T> {
 
+    public String[] plugins;
+    public Core<T> core;
+
+
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Themes {
+
         public String name;
         public boolean url;
         public boolean dots;
@@ -42,8 +47,4 @@ public class Options<T> {
         public Themes themes;
         public Object data; // can be a DataFunction<T> or Array<Node<T>>
     }
-
-
-    public String[] plugins;
-    public Core<T> core;
 }

@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.server;
 
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Splitter;
@@ -133,12 +134,12 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
-        navigation.addPrimary(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
+        navigation.addPrimary(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_ITEM, resources.constants().mainAttributes(),
                 fontAwesome("list-ul"), mainAttributes);
         navigation
-                .addPrimary(Ids.SERVER_STATUS_BOOTSTRAP_ENTRY, Names.BOOTSTRAP, fontAwesome("play"), bootstrapSection);
+                .addPrimary(Ids.SERVER_STATUS_BOOTSTRAP_ITEM, Names.BOOTSTRAP, fontAwesome("play"), bootstrapSection);
         navigation
-                .addPrimary(Ids.SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY, Names.SYSTEM_PROPERTIES, pfIcon("resource-pool"),
+                .addPrimary(Ids.SERVER_STATUS_SYSTEM_PROPERTIES_ITEM, Names.SYSTEM_PROPERTIES, pfIcon("resource-pool"),
                         systemPropertiesSection);
 
         initElement(row()

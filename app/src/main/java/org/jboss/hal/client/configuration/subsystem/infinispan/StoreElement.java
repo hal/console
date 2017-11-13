@@ -56,37 +56,6 @@ import static org.jboss.hal.resources.CSS.width;
  */
 class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
-    private static final class StoreTable {
-
-        final Store store;
-        final Table table;
-
-        private StoreTable(final Store store, final Table table) {
-            this.store = store;
-            this.table = table;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) { return true; }
-            if (!(o instanceof StoreTable)) { return false; }
-
-            StoreTable that = (StoreTable) o;
-
-            //noinspection SimplifiableIfStatement
-            if (store != that.store) { return false; }
-            return table == that.table;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = store.hashCode();
-            result = 31 * result + table.hashCode();
-            return result;
-        }
-    }
-
-
     private final EmptyState emptyState;
     private final HTMLElement headerForm;
     private final String selectStoreId;
@@ -98,14 +67,14 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
-    StoreElement(final Cache cache, final MetadataRegistry metadataRegistry, final Resources resources) {
+    StoreElement(Cache cache, MetadataRegistry metadataRegistry, Resources resources) {
         this.tabs = new HashMap<>();
         this.storeForms = new HashMap<>();
         this.writeElements = new HashMap<>();
         this.tableForms = new HashMap<>();
 
         HTMLSelectElement emptyStoreSelect = storeSelect();
-        emptyState = new EmptyState.Builder(resources.constants().noStore())
+        emptyState = new EmptyState.Builder(Ids.build(cache.baseId, STORE, Ids.EMPTY), resources.constants().noStore())
                 .description(resources.messages().noStore())
                 .add(emptyStoreSelect)
                 .primaryAction(resources.constants().add(), () -> {
@@ -119,28 +88,28 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         selectStore.id = selectStoreId;
 
         for (Store store : Store.values()) {
-            Tabs storeTabs = new Tabs();
+            Tabs storeTabs = new Tabs(Ids.build(cache.baseId, store.baseId, Ids.TAB_CONTAINER));
             tabs.put(store, storeTabs);
 
             Metadata metadata = metadataRegistry.lookup(cache.template.append(STORE + "=" + store.resource));
-            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cache.baseId, store.baseId, Ids.FORM_SUFFIX),
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cache.baseId, store.baseId, Ids.FORM),
                     metadata)
                     .onSave((f, changedValues) -> presenter.saveCacheStore(store, changedValues))
                     .prepareReset(f -> presenter.resetCacheStore(store, f))
                     .build();
             storeForms.put(store, form);
-            storeTabs.add(Ids.build(cache.baseId, store.baseId, ATTRIBUTES, Ids.TAB_SUFFIX),
+            storeTabs.add(Ids.build(cache.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
                     resources.constants().attributes(), form.asElement());
 
             WriteElement writeElement = new WriteElement(cache, store, metadataRegistry, resources);
-            storeTabs.add(Ids.build(cache.baseId, store.baseId, WRITE, Ids.TAB_SUFFIX), Names.WRITE_BEHAVIOUR,
+            storeTabs.add(Ids.build(cache.baseId, store.baseId, WRITE, Ids.TAB), Names.WRITE_BEHAVIOUR,
                     writeElement.asElement());
             writeElements.put(store, writeElement);
 
             if (store.tables != null) {
                 for (Table table : store.tables) {
                     Form<ModelNode> tableForm = tableForm(cache, store, table, metadataRegistry);
-                    storeTabs.add(Ids.build(cache.baseId, store.baseId, table.baseId, Ids.TAB_SUFFIX), table.type,
+                    storeTabs.add(Ids.build(cache.baseId, store.baseId, table.baseId, Ids.TAB), table.type,
                             tableForm.asElement());
                     tableForms.put(new StoreTable(store, table), tableForm);
                 }
@@ -191,7 +160,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .append(TABLE + "=" + table.resource);
         Metadata metadata = metadataRegistry.lookup(template);
 
-        String id = Ids.build(cache.baseId, store.baseId, table.baseId, Ids.FORM_SUFFIX);
+        String id = Ids.build(cache.baseId, store.baseId, table.baseId, Ids.FORM);
         return new ModelNodeForm.Builder<>(id, metadata)
                 .include(PREFIX)
                 .customFormItem(ID_COLUMN, ad -> new ColumnFormItem(ID_COLUMN))
@@ -212,7 +181,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     @Override
     public void attach() {
         SelectBoxBridge.Options options = SelectBoxBridge.Defaults.get();
-        $("#" + selectStoreId).selectpicker(options);
+        $(HASH + selectStoreId).selectpicker(options);
         SelectBoxBridge.Single.element(selectStore).onChange((event, index) -> {
             String value = SelectBoxBridge.Single.element(selectStore).getValue();
             Store store = Store.fromResource(value);
@@ -240,12 +209,12 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(final CacheContainerPresenter presenter) {
+    public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
         writeElements.values().forEach(we -> we.setPresenter(presenter));
     }
 
-    void update(final List<Property> stores) {
+    void update(List<Property> stores) {
         if (stores.isEmpty() || NONE.equals(stores.get(0).getName())) {
             emptyStateMode();
 
@@ -285,5 +254,41 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         Elements.setVisible(emptyState.asElement(), false);
         Elements.setVisible(headerForm, true);
         tabs.forEach((s, t) -> Elements.setVisible(t.asElement(), s == store));
+    }
+
+
+    private static final class StoreTable {
+
+        final Store store;
+        final Table table;
+
+        private StoreTable(final Store store, final Table table) {
+            this.store = store;
+            this.table = table;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof StoreTable)) {
+                return false;
+            }
+
+            StoreTable that = (StoreTable) o;
+            //noinspection SimplifiableIfStatement
+            if (store != that.store) {
+                return false;
+            }
+            return table == that.table;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = store.hashCode();
+            result = 31 * result + table.hashCode();
+            return result;
+        }
     }
 }

@@ -13,29 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -45,8 +24,9 @@ import java.util.Set;
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-@SuppressWarnings("HardCodedStringLiteral")
 abstract class ModelValue implements Cloneable {
+
+    private static final String TAB_SIZE = "  ";
 
     static final ModelValue UNDEFINED = new ModelValue(ModelType.UNDEFINED) {
 
@@ -56,32 +36,32 @@ abstract class ModelValue implements Cloneable {
         }
 
         @Override
-        long asLong(final long defVal) {
+        long asLong(long defVal) {
             return defVal;
         }
 
         @Override
-        int asInt(final int defVal) {
+        int asInt(int defVal) {
             return defVal;
         }
 
         @Override
-        boolean asBoolean(final boolean defVal) {
+        boolean asBoolean(boolean defVal) {
             return defVal;
         }
 
         @Override
-        double asDouble(final double defVal) {
+        double asDouble(double defVal) {
             return defVal;
         }
 
         @Override
-        public boolean equals(final Object other) {
+        public boolean equals(Object other) {
             return other == this;
         }
 
         @Override
-        void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
+        void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
             builder.append("null");
         }
 
@@ -91,12 +71,12 @@ abstract class ModelValue implements Cloneable {
         }
     };
 
-    protected static String quote(final String orig) {
-        final int length = orig.length();
-        final StringBuilder builder = new StringBuilder(length + 32);
+    protected static String quote(String orig) {
+        int length = orig.length();
+        StringBuilder builder = new StringBuilder(length + 32);
         builder.append('"');
         for (int i = 0; i < length; i = orig.offsetByCodePoints(i, 1)) {
-            final char cp = orig.charAt(i);
+            char cp = orig.charAt(i);
             if (cp == '"' || cp == '\\') {
                 builder.append('\\').append(cp);
             } else {
@@ -114,12 +94,12 @@ abstract class ModelValue implements Cloneable {
      *
      * @return The string appropriately escaped to produce valid JSON.
      */
-    protected static String jsonEscape(final String orig) {
-        final int length = orig.length();
-        final StringBuilder builder = new StringBuilder(length + 32);
+    static String jsonEscape(String orig) {
+        int length = orig.length();
+        StringBuilder builder = new StringBuilder(length + 32);
         builder.append('"');
         for (int i = 0; i < length; i = orig.offsetByCodePoints(i, 1)) {
-            final char cp = orig.charAt(i);
+            char cp = orig.charAt(i);
             switch (cp) {
                 case '"':
                     builder.append("\\\"");
@@ -147,7 +127,7 @@ abstract class ModelValue implements Cloneable {
                     break;
                 default:
                     if ((cp >= '\u0000' && cp <= '\u001F') || (cp >= '\u007F' && cp <= '\u009F') || (cp >= '\u2000' && cp <= '\u20FF')) {
-                        final String hexString = Integer.toHexString(cp);
+                        String hexString = Integer.toHexString(cp);
                         builder.append("\\u");
                         for (int k = 0; k < 4 - hexString.length(); k++) {
                             builder.append('0');
@@ -163,14 +143,15 @@ abstract class ModelValue implements Cloneable {
         return builder.toString();
     }
 
-    protected static void indent(final StringBuilder target, final int count) {
+    protected static void indent(StringBuilder target, int count) {
         for (int i = 0; i < count; i++) {
-            target.append("    ");
+            target.append(TAB_SIZE);
         }
     }
-    private final ModelType type;
 
-    protected ModelValue(final ModelType type) {
+    private ModelType type;
+
+    protected ModelValue(ModelType type) {
         this.type = type;
     }
 
@@ -182,7 +163,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    long asLong(final long defVal) {
+    long asLong(long defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -190,7 +171,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    int asInt(final int defVal) {
+    int asInt(int defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -198,7 +179,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    boolean asBoolean(final boolean defVal) {
+    boolean asBoolean(boolean defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -206,7 +187,7 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    double asDouble(final double defVal) {
+    double asDouble(double defVal) {
         throw new IllegalArgumentException();
     }
 
@@ -236,15 +217,15 @@ abstract class ModelValue implements Cloneable {
         throw new IllegalArgumentException();
     }
 
-    ModelNode getChild(final String name) {
+    ModelNode getChild(String name) {
         throw new IllegalArgumentException();
     }
 
-    ModelNode removeChild(final String name) {
+    ModelNode removeChild(String name) {
         throw new IllegalArgumentException();
     }
 
-    ModelNode getChild(final int index) {
+    ModelNode getChild(int index) {
         throw new IllegalArgumentException();
     }
 
@@ -253,10 +234,10 @@ abstract class ModelValue implements Cloneable {
     }
 
     //    @Override
-    //    protected final ModelValue clone() {
+    //    protected  ModelValue clone() {
     //        try {
     //            return (ModelValue) super.clone();
-    //        } catch (final CloneNotSupportedException e) {
+    //        } catch ( CloneNotSupportedException e) {
     //            throw new RuntimeException(e);
     //        }
     //    }
@@ -287,7 +268,7 @@ abstract class ModelValue implements Cloneable {
     @Override
     public abstract int hashCode();
 
-    void format(final StringBuilder builder, final int indent, final boolean multiLine) {
+    void format(StringBuilder builder, int indent, boolean multiLine) {
         builder.append(asString());
     }
 
@@ -299,13 +280,13 @@ abstract class ModelValue implements Cloneable {
      * @param multiLine Flag that indicates whether or not the string should
      *                  begin on a new line.
      */
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
         builder.append(asString());
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         format(builder, 0, true);
         return builder.toString();
     }
@@ -318,8 +299,8 @@ abstract class ModelValue implements Cloneable {
      *
      * @return The JSON formatted string.
      */
-    public String toJSONString(final boolean compact) {
-        final StringBuilder builder = new StringBuilder();
+    public String toJSONString(boolean compact) {
+        StringBuilder builder = new StringBuilder();
         formatAsJSON(builder, 0, !compact);
         return builder.toString();
     }
@@ -328,23 +309,23 @@ abstract class ModelValue implements Cloneable {
         return copy();
     }
 
-    void writeExternal(final DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         // nothing by default
     }
 
-    boolean has(final int index) {
+    boolean has(int index) {
         return false;
     }
 
-    boolean has(final String key) {
+    boolean has(String key) {
         return false;
     }
 
-    ModelNode requireChild(final String name) throws NoSuchElementException {
+    ModelNode requireChild(String name) throws NoSuchElementException {
         throw new NoSuchElementException("No child '" + name + "' exists");
     }
 
-    ModelNode requireChild(final int index) throws NoSuchElementException {
+    ModelNode requireChild(int index) throws NoSuchElementException {
         throw new NoSuchElementException("No child exists at index [" + index + "]");
     }
 }

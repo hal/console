@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -61,40 +62,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView, FactoriesPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    @ProxyCodeSplit
-    @Requires(value = {
-            AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
-            AGGREGATE_SASL_SERVER_FACTORY_ADDRESS,
-            AGGREGATE_TRANSFORMER_ADDRESS,
-            CHAINED_PRINCIPAL_TRANSFORMER_ADDRESS,
-            CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
-            CONFIGURABLE_SASL_SERVER_FACTORY_ADDRESS,
-            CONSTANT_TRANSFORMER_ADDRESS,
-            CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS,
-            CUSTOM_TRANSFORMER_ADDRESS,
-            HTTP_AUTHENTICATION_FACTORY_ADDRESS,
-            KERBEROS_SECURITY_FACTORY_ADDRESS,
-            MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS,
-            PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
-            PROVIDER_SASL_SERVER_FACTORY_ADDRESS,
-            REGEX_PRINCIPAL_TRANSFORMER_ADDRESS,
-            REGEX_VALIDATING_PRINCIPAL_TRANSFORMER_ADDRESS,
-            SASL_AUTHENTICATION_FACTORY_ADDRESS,
-            SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
-            SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS})
-    @NameToken(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS)
-    public interface MyProxy extends ProxyPlace<FactoriesPresenter> {}
-
-
-    // @formatter:off
-    public interface MyView extends MbuiView<FactoriesPresenter> {
-        void updateResourceElement(String resource, List<NamedNode> nodes);
-        void updateHttpAuthentication(List<NamedNode> nodes);
-        void updateSaslAuthentication(List<NamedNode> nodes);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
@@ -103,16 +70,16 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     private final Resources resources;
 
     @Inject
-    public FactoriesPresenter(final EventBus eventBus,
-            final FactoriesPresenter.MyView view,
-            final FactoriesPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public FactoriesPresenter(EventBus eventBus,
+            FactoriesPresenter.MyView view,
+            FactoriesPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            ComplexAttributeOperations ca,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.ca = ca;
@@ -224,7 +191,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     }
 
     void addHttpMechanismConfiguration(String httpAuthenticationFactory) {
-        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD);
         ca.listAdd(id, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION,
                 AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, singletonList(MECHANISM_NAME),
                 this::reloadHttpAuthenticationFactories);
@@ -246,7 +213,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE)
                 .forComplexAttribute(MECHANISM_CONFIGURATIONS)
                 .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
-        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .requiredOnly()
@@ -259,7 +226,8 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         dialog.show();
     }
 
-    void saveHttpMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex, int mechanismRealmIndex,
+    void saveHttpMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex,
+            int mechanismRealmIndex,
             Map<String, Object> changedValues) {
         ca.save(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
                 mechanismRealmIndex, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, changedValues,
@@ -292,7 +260,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     }
 
     void addSaslMechanismConfiguration(String saslAuthenticationFactory) {
-        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD);
         ca.listAdd(id, saslAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION,
                 AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, singletonList(MECHANISM_NAME),
                 this::reloadSaslAuthenticationFactories);
@@ -314,7 +282,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE)
                 .forComplexAttribute(MECHANISM_CONFIGURATIONS)
                 .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
-        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .requiredOnly()
@@ -327,7 +295,8 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         dialog.show();
     }
 
-    void saveSaslMechanismRealmConfiguration(String saslAuthenticationFactory, int mechanismIndex, int mechanismRealmIndex,
+    void saveSaslMechanismRealmConfiguration(String saslAuthenticationFactory, int mechanismIndex,
+            int mechanismRealmIndex,
             Map<String, Object> changedValues) {
         ca.save(saslAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
                 mechanismRealmIndex, AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, changedValues,
@@ -340,4 +309,39 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
                 mechanismRealmIndex, AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE,
                 this::reloadSaslAuthenticationFactories);
     }
+
+
+    @ProxyCodeSplit
+    @Requires(value = {
+            AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
+            AGGREGATE_SASL_SERVER_FACTORY_ADDRESS,
+            AGGREGATE_TRANSFORMER_ADDRESS,
+            CHAINED_PRINCIPAL_TRANSFORMER_ADDRESS,
+            CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
+            CONFIGURABLE_SASL_SERVER_FACTORY_ADDRESS,
+            CONSTANT_TRANSFORMER_ADDRESS,
+            CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS,
+            CUSTOM_TRANSFORMER_ADDRESS,
+            HTTP_AUTHENTICATION_FACTORY_ADDRESS,
+            KERBEROS_SECURITY_FACTORY_ADDRESS,
+            MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS,
+            PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
+            PROVIDER_SASL_SERVER_FACTORY_ADDRESS,
+            REGEX_PRINCIPAL_TRANSFORMER_ADDRESS,
+            REGEX_VALIDATING_PRINCIPAL_TRANSFORMER_ADDRESS,
+            SASL_AUTHENTICATION_FACTORY_ADDRESS,
+            SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
+            SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS})
+    @NameToken(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS)
+    public interface MyProxy extends ProxyPlace<FactoriesPresenter> {
+    }
+
+
+    // @formatter:off
+    public interface MyView extends MbuiView<FactoriesPresenter> {
+        void updateResourceElement(String resource, List<NamedNode> nodes);
+        void updateHttpAuthentication(List<NamedNode> nodes);
+        void updateSaslAuthentication(List<NamedNode> nodes);
+    }
+    // @formatter:on
 }

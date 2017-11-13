@@ -40,24 +40,12 @@ import static org.jboss.hal.client.accesscontrol.AddressTemplates.SERVER_GROUP_S
 public class AccessControlPresenter extends
         FinderPresenter<AccessControlPresenter.MyView, AccessControlPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.ACCESS_CONTROL)
-    @UseGatekeeper(SensitiveGatekeeper.class)
-    @Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
-    public interface MyProxy extends ProxyPlace<AccessControlPresenter> {}
-
-    public interface MyView extends FinderView {}
-    // @formatter:on
-
     private final Environment environment;
     private final AccessControl accessControl;
 
     @Inject
-    public AccessControlPresenter(final EventBus eventBus,
-            final MyView view, final MyProxy myProxy, final Finder finder,
-            final Environment environment, final AccessControl accessControl,
-            final Resources resources) {
+    public AccessControlPresenter(EventBus eventBus, MyView view, MyProxy myProxy, Finder finder,
+            Environment environment, AccessControl accessControl, Resources resources) {
         super(eventBus, view, myProxy, finder, resources);
         this.environment = environment;
         this.accessControl = accessControl;
@@ -77,4 +65,17 @@ public class AccessControlPresenter extends
     protected PreviewContent initialPreview() {
         return new AccessControlPreview(accessControl, environment, resources);
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.ACCESS_CONTROL)
+    @UseGatekeeper(SensitiveGatekeeper.class)
+    @Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
+    public interface MyProxy extends ProxyPlace<AccessControlPresenter> {
+    }
+
+    public interface MyView extends FinderView {
+    }
+    // @formatter:on
 }

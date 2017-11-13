@@ -49,9 +49,9 @@ class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresent
     private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
-    TransportElement(final MetadataRegistry metadataRegistry, final Resources resources) {
+    TransportElement(MetadataRegistry metadataRegistry, Resources resources) {
 
-        emptyState = new EmptyState.Builder(resources.constants().noTransport())
+        emptyState = new EmptyState.Builder(Ids.CACHE_CONTAINER_TRANSPORT_EMPTY, resources.constants().noTransport())
                 .description(resources.messages().noTransport())
                 .primaryAction(resources.constants().add(), () -> presenter.addJgroups())
                 .build();
@@ -90,11 +90,11 @@ class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresent
     }
 
     @Override
-    public void setPresenter(final CacheContainerPresenter presenter) {
+    public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
     }
 
-    void update(final List<Property> transports) {
+    void update(List<Property> transports) {
         if (transports.isEmpty() || NONE.equals(transports.get(0).getName())) {
             emptyStateMode();
         } else {

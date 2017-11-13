@@ -16,6 +16,7 @@
 package org.jboss.hal.client.accesscontrol;
 
 import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import com.google.gwt.resources.client.ExternalTextResource;

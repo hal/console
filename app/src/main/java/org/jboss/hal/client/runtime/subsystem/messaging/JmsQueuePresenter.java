@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.messaging;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -74,19 +75,6 @@ import static org.jboss.hal.flow.Flow.series;
 
 public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresenter.MyView, JmsQueuePresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.JMS_QUEUE)
-    @Requires(MESSAGING_QUEUE_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JmsQueuePresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<JmsQueuePresenter> {
-        void showMany(long count);
-        void showAll(List<JmsMessage> messages);
-    }
-    // @formatter:on
-
-
     private static final long MESSAGES_THRESHOLD = 500L;
     private static final String MESSAGES_COUNT = "messagesCount";
     private static final String MESSAGES = "messages";
@@ -132,7 +120,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         deployment = request.getParameter(DEPLOYMENT, null);
         subdeployment = request.getParameter(SUBDEPLOYMENT, null);
@@ -429,4 +417,18 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
         }
         return address;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.JMS_QUEUE)
+    @Requires(MESSAGING_QUEUE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JmsQueuePresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<JmsQueuePresenter> {
+        void showMany(long count);
+        void showAll(List<JmsMessage> messages);
+    }
+    // @formatter:on
 }

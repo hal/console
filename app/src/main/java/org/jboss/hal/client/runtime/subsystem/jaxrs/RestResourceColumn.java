@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.jaxrs;
 
 import java.util.Comparator;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.Sets;

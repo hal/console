@@ -33,6 +33,12 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class SelectBoxBridge {
 
+    private static final String VAL = "val";
+    private static final String DESELECT_ALL = "deselectAll";
+    private static final String REFRESH = "refresh";
+    private static final String CHANGE_EVENT = "changed.bs.select";
+
+
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
@@ -64,7 +70,7 @@ public class SelectBoxBridge {
     public static class Single {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Single element(HTMLSelectElement element);
+        public static native Single element(HTMLSelectElement element);
 
         public native String val();
 
@@ -100,7 +106,7 @@ public class SelectBoxBridge {
     public static class Multi {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Multi element(HTMLElement element);
+        public static native Multi element(HTMLElement element);
 
         public native String[] val();
 
@@ -135,10 +141,4 @@ public class SelectBoxBridge {
             on(CHANGE_EVENT, listener);
         }
     }
-
-
-    private final static String VAL = "val";
-    private final static String DESELECT_ALL = "deselectAll";
-    private final static String REFRESH = "refresh";
-    private final static String CHANGE_EVENT = "changed.bs.select";
 }

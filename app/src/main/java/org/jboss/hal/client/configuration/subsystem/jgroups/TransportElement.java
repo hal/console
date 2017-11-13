@@ -44,9 +44,9 @@ class TransportElement extends GenericElement {
     private Form<ModelNode> threadPoolOobForm;
 
     @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions", "DuplicateStringLiteralInspection"})
-    TransportElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Metadata formMetadata, final Resources resources, final AddressTemplate template,
-            final String name, final String resourceId) {
+    TransportElement(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Metadata formMetadata, Resources resources, AddressTemplate template,
+            String name, String resourceId) {
         super(formMetadata, tableButtonFactory, resources, template, name, resourceId);
 
         Metadata threadPoolMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_TEMPLATE);
@@ -114,8 +114,8 @@ class TransportElement extends GenericElement {
         // remove the element, then adds to the tab element
         parentElement.removeChild(form1);
 
-        Tabs threadPoolTabs = new Tabs();
-        threadPoolTabs.add(Ids.build("jgroups-transport", Ids.FORM_SUFFIX), resources.constants().attributes(),
+        Tabs threadPoolTabs = new Tabs(Ids.JGROUPS_TRANSPORT_THREADPOOL_TAB_CONTAINER);
+        threadPoolTabs.add(Ids.build("jgroups-transport", Ids.FORM), resources.constants().attributes(),
                 form1);
         threadPoolTabs.add(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_TAB, "Thread Pool Default",
                 threadPoolDefaultForm.asElement());
@@ -131,7 +131,7 @@ class TransportElement extends GenericElement {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    void update(final List<NamedNode> models) {
+    void update(List<NamedNode> models) {
         super.update(models);
         boolean resourcesIsEmpty = models.isEmpty();
         // disable the ADD button if there is already a transport in the list

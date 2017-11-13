@@ -115,6 +115,9 @@ public class SingletonStateMachine extends AbstractStateMachine implements State
                 assertState(READONLY);
                 transitionTo(EMPTY);
                 break;
+
+            default:
+                break;
         }
     }
 

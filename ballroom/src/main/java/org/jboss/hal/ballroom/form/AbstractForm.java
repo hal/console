@@ -32,7 +32,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLFieldSetElement;
 import elemental2.dom.HTMLHRElement;
+import elemental2.dom.HTMLLegendElement;
 import elemental2.dom.HTMLUListElement;
 import elemental2.dom.KeyboardEvent;
 import org.jboss.gwt.elemento.core.Elements;
@@ -87,6 +89,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private final Set<String> unboundItems;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
     private final List<FormValidation> formValidations;
+    private boolean separateOptionalFields;
 
     private T model;
     private final EmptyState emptyState;
@@ -129,6 +132,10 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 ((AbstractFormItem) item).setForm(this);
             }
         }
+    }
+
+    protected void separateOptionalFields(boolean separateOptionalFields) {
+        this.separateOptionalFields = separateOptionalFields;
     }
 
     protected void markAsUnbound(String name) {
@@ -233,15 +240,50 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 .asElement();
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;
+        boolean hasOptionalField = false;
         for (FormItem formItem : getFormItems()) {
-            editPanel.appendChild(formItem.asElement(EDITING));
+            if (formItem.isRequired() || !separateOptionalFields) {
+                editPanel.appendChild(formItem.asElement(EDITING));
+            }
             hasRequiredField = hasRequiredField || formItem.isRequired();
+            hasOptionalField = hasOptionalField || !formItem.isRequired();
         }
         if (hasRequiredField) {
             editPanel.appendChild(div().css(formGroup)
                     .add(div().css(halFormOffset)
                             .add(span().css(helpBlock).innerHtml(MESSAGES.requiredHelp())))
                     .asElement());
+        }
+        // if separateOptionalFields=true and there are non-required attributes, they are placed in a collapsible
+        // panel
+        if (separateOptionalFields && hasOptionalField) {
+            List<HTMLElement> optionalFields = new ArrayList<>();
+            HTMLFieldSetElement fieldsetElement = fieldset().css(fieldsSectionPf).asElement();
+            HTMLElement expanderElement = span().css(fontAwesome("angle-right"), fontAwesome("angle-down"),
+                    fieldSectionTogglePf).asElement();
+            // as we add fa-angle-right and fa-angle-down, remove the later so the angle-right becomes visible
+            expanderElement.classList.remove(faAngleDown);
+            HTMLLegendElement legend = legend().css(fieldsSectionHeaderPf)
+                    .add(expanderElement)
+                    .add(a().css(fieldSectionTogglePf, clickable)
+                            .textContent(CONSTANTS.optionalFields())
+                            .on(click, event -> {
+                                // toggle the fa-angle-down to show either angle-right or angle-down
+                                expanderElement.classList.toggle(faAngleDown);
+                                optionalFields.forEach(field -> Elements.setVisible(field,
+                                        expanderElement.classList.contains(faAngleDown)));
+                            }))
+                    .asElement();
+            fieldsetElement.appendChild(legend);
+            for (FormItem formItem : getFormItems()) {
+                if (!formItem.isRequired()) {
+                    HTMLElement field = formItem.asElement(EDITING);
+                    optionalFields.add(field);
+                    fieldsetElement.appendChild(field);
+                    Elements.setVisible(field, false);
+                }
+            }
+            editPanel.appendChild(fieldsetElement);
         }
         HTMLElement buttons = div().css(formGroup, formButtons)
                 .add(div().css(halFormOffset)
@@ -468,6 +510,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 formLinks.setVisible(false, false, false, true);
                 prepareEditState();
                 break;
+            default:
+                break;
         }
     }
 
@@ -476,20 +520,23 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
-    protected void prepareEmptyState() {}
+    protected void prepareEmptyState() {
+    }
 
     /**
      * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
-    protected void prepareViewState() {}
+    protected void prepareViewState() {
+    }
 
     /**
      * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
-    protected void prepareEditState() {}
+    protected void prepareEditState() {
+    }
 
     protected void flip(State state) {
         // exit with ESC handler
@@ -509,6 +556,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                     // Exit *this* edit state by pressing ESC
                     escRegistration = bind(panels.get(EDITING), keyup, escCallback);
                 }
+                break;
+            default:
                 break;
         }
 

@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -58,51 +59,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter.MyView, MapperDecoderPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    @ProxyCodeSplit
-    @Requires(value = {
-            ADD_PREFIX_ROLE_MAPPER_ADDRESS,
-            ADD_SUFFIX_ROLE_MAPPER_ADDRESS,
-            AGGREGATE_PRINCIPAL_DECODER_ADDRESS,
-            AGGREGATE_ROLE_MAPPER_ADDRESS,
-            CONCATENATING_PRINCIPAL_DECODER_ADDRESS,
-            CONSTANT_PERMISSION_MAPPER_ADDRESS,
-            CONSTANT_PRINCIPAL_DECODER_ADDRESS,
-            CONSTANT_ROLE_MAPPER_ADDRESS,
-            CUSTOM_PERMISSION_MAPPER_ADDRESS,
-            CUSTOM_PRINCIPAL_DECODER_ADDRESS,
-            CUSTOM_ROLE_DECODER_ADDRESS,
-            CUSTOM_ROLE_MAPPER_ADDRESS,
-            LOGICAL_PERMISSION_MAPPER_ADDRESS,
-            LOGICAL_ROLE_MAPPER_ADDRESS,
-            SIMPLE_PERMISSION_MAPPER_ADDRESS,
-            SIMPLE_ROLE_DECODER_ADDRESS,
-            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS})
-    @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
-    public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {}
-
-    // @formatter:off
-    public interface MyView extends MbuiView<MapperDecoderPresenter> {
-        void updateAddPrefixRoleMapper(List<NamedNode> model);
-        void updateAddSuffixRoleMapper(List<NamedNode> model);
-        void updateAggregatePrincipalDecoder(List<NamedNode> model);
-        void updateAggregateRoleMapper(List<NamedNode> model);
-        void updateConcatenatingPrincipalDecoder(List<NamedNode> model);
-        void updateConstantPermissionMapper(List<NamedNode> model);
-        void updateConstantPrincipalDecoder(List<NamedNode> model);
-        void updateConstantRoleMapper(List<NamedNode> model);
-        void updateCustomPermissionMapper(List<NamedNode> model);
-        void updateCustomPrincipalDecoder(List<NamedNode> model);
-        void updateCustomRoleDecoder(List<NamedNode> model);
-        void updateCustomRoleMapper(List<NamedNode> model);
-        void updateLogicalPermissionMapper(List<NamedNode> model);
-        void updateLogicalRoleMapper(List<NamedNode> model);
-        void updateSimplePermissionMapper(List<NamedNode> model);
-        void updateSimpleRoleDecoder(List<NamedNode> model);
-        void updateX500AttributePrincipalDecoder(List<NamedNode> model);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -111,16 +67,16 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     private MetadataRegistry metadataRegistry;
 
     @Inject
-    public MapperDecoderPresenter(final EventBus eventBus,
-            final MapperDecoderPresenter.MyView view,
-            final MapperDecoderPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public MapperDecoderPresenter(EventBus eventBus,
+            MapperDecoderPresenter.MyView view,
+            MapperDecoderPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            ComplexAttributeOperations ca,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.ca = ca;
@@ -206,22 +162,22 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 children -> getView().updateSimplePermissionMapper(asNamedNodes(children)));
     }
 
-    void saveSimplePermissionMapping(final String name, final Map<String, Object> changedValues) {
+    void saveSimplePermissionMapping(String name, Map<String, Object> changedValues) {
         crud.save(Names.SIMPLE_PERMISSION_MAPPER, name, AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE,
                 changedValues, this::reloadSimplePermissionMapper);
     }
 
-    void addPermissionMappings(final String resource) {
+    void addPermissionMappings(String resource) {
         ca.listAdd(Ids.ELYTRON_PERMISSION_MAPPINGS_ADD, resource, PERMISSION_MAPPINGS, Names.PERMISSION_MAPPINGS,
                 SIMPLE_PERMISSION_MAPPER_TEMPLATE, this::reloadSimplePermissionMapper);
     }
 
-    void removePermissionMappings(final String resource, final int index) {
+    void removePermissionMappings(String resource, int index) {
         ca.remove(resource, PERMISSION_MAPPINGS, Names.PERMISSION_MAPPINGS, index, SIMPLE_PERMISSION_MAPPER_TEMPLATE,
                 this::reloadSimplePermissionMapper);
     }
 
-    void savePermissionMappings(final String resource, final int i, final Map<String, Object> changedValues) {
+    void savePermissionMappings(String resource, int i, Map<String, Object> changedValues) {
         ResourceAddress address = SIMPLE_PERMISSION_MAPPER_TEMPLATE.resolve(statementContext, resource);
         Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
                 .forComplexAttribute(PERMISSION_MAPPINGS);
@@ -229,7 +185,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 this::reloadSimplePermissionMapper);
     }
 
-    void addPermissions(final String resource, final int pmIndex) {
+    void addPermissions(String resource, int pmIndex) {
         Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
                 .forComplexAttribute(PERMISSION_MAPPINGS)
                 .forComplexAttribute(PERMISSIONS);
@@ -243,14 +199,13 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         dialog.show();
     }
 
-    void removePermissions(final String resource, final int pmIndex, final int permissionsIndex) {
+    void removePermissions(String resource, int pmIndex, int permissionsIndex) {
         ca.remove(resource, permissionsAttribute(pmIndex), Names.PERMISSIONS, permissionsIndex,
                 SIMPLE_PERMISSION_MAPPER_TEMPLATE,
                 this::reloadSimplePermissionMapper);
     }
 
-    void savePermissions(final String resource, final int pmIndex, final int permissionsIndex,
-            final Map<String, Object> changedValues) {
+    void savePermissions(String resource, int pmIndex, int permissionsIndex, Map<String, Object> changedValues) {
 
         ResourceAddress address = SIMPLE_PERMISSION_MAPPER_TEMPLATE.resolve(statementContext, resource);
         Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
@@ -264,4 +219,50 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         return PERMISSION_MAPPINGS + "[" + pmIndex + "]." + PERMISSIONS;
     }
 
+
+    @ProxyCodeSplit
+    @Requires(value = {
+            ADD_PREFIX_ROLE_MAPPER_ADDRESS,
+            ADD_SUFFIX_ROLE_MAPPER_ADDRESS,
+            AGGREGATE_PRINCIPAL_DECODER_ADDRESS,
+            AGGREGATE_ROLE_MAPPER_ADDRESS,
+            CONCATENATING_PRINCIPAL_DECODER_ADDRESS,
+            CONSTANT_PERMISSION_MAPPER_ADDRESS,
+            CONSTANT_PRINCIPAL_DECODER_ADDRESS,
+            CONSTANT_ROLE_MAPPER_ADDRESS,
+            CUSTOM_PERMISSION_MAPPER_ADDRESS,
+            CUSTOM_PRINCIPAL_DECODER_ADDRESS,
+            CUSTOM_ROLE_DECODER_ADDRESS,
+            CUSTOM_ROLE_MAPPER_ADDRESS,
+            LOGICAL_PERMISSION_MAPPER_ADDRESS,
+            LOGICAL_ROLE_MAPPER_ADDRESS,
+            SIMPLE_PERMISSION_MAPPER_ADDRESS,
+            SIMPLE_ROLE_DECODER_ADDRESS,
+            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS})
+    @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
+    public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {
+    }
+
+
+    // @formatter:off
+    public interface MyView extends MbuiView<MapperDecoderPresenter> {
+        void updateAddPrefixRoleMapper(List<NamedNode> model);
+        void updateAddSuffixRoleMapper(List<NamedNode> model);
+        void updateAggregatePrincipalDecoder(List<NamedNode> model);
+        void updateAggregateRoleMapper(List<NamedNode> model);
+        void updateConcatenatingPrincipalDecoder(List<NamedNode> model);
+        void updateConstantPermissionMapper(List<NamedNode> model);
+        void updateConstantPrincipalDecoder(List<NamedNode> model);
+        void updateConstantRoleMapper(List<NamedNode> model);
+        void updateCustomPermissionMapper(List<NamedNode> model);
+        void updateCustomPrincipalDecoder(List<NamedNode> model);
+        void updateCustomRoleDecoder(List<NamedNode> model);
+        void updateCustomRoleMapper(List<NamedNode> model);
+        void updateLogicalPermissionMapper(List<NamedNode> model);
+        void updateLogicalRoleMapper(List<NamedNode> model);
+        void updateSimplePermissionMapper(List<NamedNode> model);
+        void updateSimpleRoleDecoder(List<NamedNode> model);
+        void updateX500AttributePrincipalDecoder(List<NamedNode> model);
+    }
+    // @formatter:on
 }

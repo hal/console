@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime;
 
 import java.util.Arrays;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 

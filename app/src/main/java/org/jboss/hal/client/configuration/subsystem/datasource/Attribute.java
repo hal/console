@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 
 class Attribute {
 
-    enum Scope {BOTH, NON_XA, XA}
-
-
     final String name;
     final Scope scope;
 
@@ -30,5 +27,10 @@ class Attribute {
     Attribute(final String name, final Scope scope) {
         this.name = name;
         this.scope = scope;
+    }
+
+
+    enum Scope {
+        BOTH, NON_XA, XA
     }
 }

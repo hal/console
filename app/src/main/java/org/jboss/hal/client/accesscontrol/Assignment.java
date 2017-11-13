@@ -35,13 +35,20 @@ class Assignment {
     @Override
     @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Assignment)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Assignment)) {
+            return false;
+        }
 
         Assignment that = (Assignment) o;
-
-        if (include != that.include) { return false; }
-        if (!principal.equals(that.principal)) { return false; }
+        if (include != that.include) {
+            return false;
+        }
+        if (!principal.equals(that.principal)) {
+            return false;
+        }
         return role.equals(that.role);
 
     }

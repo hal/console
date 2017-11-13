@@ -67,6 +67,7 @@ import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.EsParam;
@@ -78,358 +79,14 @@ import org.slf4j.LoggerFactory;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.ballroom.JsHelper.asJsMap;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
+import static org.jboss.hal.js.JsHelper.asJsMap;
 
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
-
-    /**
-     * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes
-     * with <code>"storage" =&gt; "configuration"</code>.
-     */
-    @JsType(namespace = "hal.ui", name = "FormBuilder")
-    public static class Builder<T extends ModelNode> {
-
-        private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
-
-        final String id;
-        private final Metadata metadata;
-        final LinkedHashSet<String> includes;
-        final Set<String> excludes;
-        FormItemProvider defaultFormItemProvider;
-        final Map<String, FormItemProvider> providers;
-        final List<UnboundFormItem> unboundFormItems;
-        boolean readOnly;
-        boolean addOnly;
-        boolean unsorted;
-        boolean requiredOnly;
-        boolean includeRuntime;
-        boolean hideDeprecated;
-        boolean singleton;
-        Supplier<org.jboss.hal.dmr.Operation> ping;
-        EmptyState emptyState;
-        String attributePath;
-        SaveCallback<T> saveCallback;
-        CancelCallback<T> cancelCallback;
-        PrepareReset<T> prepareReset;
-        PrepareRemove<T> prepareRemove;
-        DataMapping<T> dataMapping;
-
-
-        // ------------------------------------------------------ configure required and optional settings
-
-        @JsIgnore
-        public Builder(@NonNls String id, Metadata metadata) {
-            this.id = id;
-            this.metadata = metadata;
-            this.includes = new LinkedHashSet<>();
-            this.excludes = new HashSet<>();
-            this.defaultFormItemProvider = new DefaultFormItemProvider(metadata);
-            this.providers = new HashMap<>();
-            this.unboundFormItems = new ArrayList<>();
-            this.readOnly = false;
-            this.addOnly = false;
-            this.unsorted = false;
-            this.requiredOnly = false;
-            this.includeRuntime = false;
-            this.hideDeprecated = true;
-            this.attributePath = ATTRIBUTES;
-        }
-
-        @JsIgnore
-        public Builder<T> include(final String[] attributes) {
-            includes.addAll(asList(attributes));
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> include(final Iterable<String> attributes) {
-            Iterables.addAll(includes, attributes);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
-            includes.addAll(Lists.asList(first, rest));
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> exclude(final String[] attributes) {
-            excludes.addAll(asList(attributes));
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> exclude(final Iterable<String> attributes) {
-            Iterables.addAll(excludes, attributes);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
-            excludes.addAll(Lists.asList(first, rest));
-            return this;
-        }
-
-        /**
-         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the
-         * ATTRIBUTES child node.
-         */
-        @EsReturn("FormBuilder")
-        public Builder<T> addOnly() {
-            this.addOnly = true;
-            this.attributePath = ATTRIBUTES;
-            return this;
-        }
-
-        /**
-         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the
-         * REQUEST_PROPERTIES node of the ADD operation.
-         */
-        @EsReturn("FormBuilder")
-        public Builder<T> fromRequestProperties() {
-            this.addOnly = true;
-            this.attributePath = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
-            return this;
-        }
-
-        /** Makes the form read-only. */
-        @EsReturn("FormBuilder")
-        public Builder<T> readOnly() {
-            this.readOnly = true;
-            return this;
-        }
-
-        /** Doesn't sort the attributes alphabetically. */
-        @EsReturn("FormBuilder")
-        public Builder<T> unsorted() {
-            this.unsorted = true;
-            return this;
-        }
-
-        /** Includes only required attributes */
-        @EsReturn("FormBuilder")
-        public Builder<T> requiredOnly() {
-            this.requiredOnly = true;
-            return this;
-        }
-
-        /** Includes also attributes with <code>"storage" =&gt; "runtime"</code> */
-        @EsReturn("FormBuilder")
-        public Builder<T> includeRuntime() {
-            this.includeRuntime = true;
-            return this;
-        }
-
-        /** Includes also deprecated attributes */
-        @EsReturn("FormBuilder")
-        public Builder<T> showDeprecated() {
-            this.hideDeprecated = false;
-            return this;
-        }
-
-        /**
-         * Use this method if you want to manage a singleton resource. This will create a form with an
-         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
-         * <p>
-         * The specified operation is used to check whether the resource exists.
-         * <p>
-         * If the resource does not exist, a default empty state is displayed. The empty state will contain a button
-         * which will trigger the specified add action.
-         */
-        @JsIgnore
-        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping, final Callback addAction) {
-            EmptyState emptyState = new EmptyState.Builder(CONSTANTS.noResource())
-                    .description(MESSAGES.noResource())
-                    .primaryAction(CONSTANTS.add(), addAction, Constraint.executable(metadata.getTemplate(), ADD))
-                    .build();
-            return singleton(ping, emptyState);
-        }
-
-        /**
-         * Use this method if you want to manage a singleton resource. This will create a form with an
-         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
-         * <p>
-         * The specified operation is used to check whether the resource exists.
-         * <p>
-         * If the resource does not exist, the specified empty state is displayed. The empty state must have a
-         * button which triggers the creation of the singleton resource.
-         * <p>
-         * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached
-         * to it.
-         */
-        @JsIgnore
-        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping,
-                final EmptyState emptyState) {
-            this.singleton = true;
-            this.ping = ping;
-            this.emptyState = emptyState;
-            return this;
-        }
-
-        Builder<T> defaultFormItemProvider(FormItemProvider formItemProvider) {
-            this.defaultFormItemProvider = formItemProvider;
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> customFormItem(@NonNls final String attribute, final FormItemProvider provider) {
-            includes.add(attribute);
-            providers.put(attribute, provider);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> unboundFormItem(final FormItem formItem) {
-            return unboundFormItem(formItem, -1, null);
-        }
-
-        @JsIgnore
-        public Builder<T> unboundFormItem(final FormItem formItem, final int position) {
-            return unboundFormItem(formItem, position, null);
-        }
-
-        @JsIgnore
-        public Builder<T> unboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
-            this.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
-            return this;
-        }
-
-        Builder<T> unboundFormItem(final UnboundFormItem unboundFormItem) {
-            this.unboundFormItems.add(unboundFormItem);
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> onSave(final SaveCallback<T> saveCallback) {
-            this.saveCallback = saveCallback;
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> onCancel(final CancelCallback<T> cancelCallback) {
-            this.cancelCallback = cancelCallback;
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> prepareReset(final PrepareReset<T> prepareReset) {
-            this.prepareReset = prepareReset;
-            return this;
-        }
-
-        @JsIgnore
-        public Builder<T> prepareRemove(final PrepareRemove<T> removeCallback) {
-            this.prepareRemove = removeCallback;
-            return this;
-        }
-
-
-        // ------------------------------------------------------ build
-
-        /**
-         * Creates and returns the form.
-         */
-        @EsReturn("Form")
-        public ModelNodeForm<T> build() {
-            validate();
-            return new ModelNodeForm<>(this);
-        }
-
-        void validate() {
-            if (singleton) {
-                if (readOnly || addOnly) {
-                    throw new IllegalStateException(
-                            ILLEGAL_COMBINATION + formId() + ": singleton && (readOnly || addOnly)");
-                }
-                if (ping == null) {
-                    throw new IllegalStateException("No ping operation specified for singleton " + formId());
-                }
-                if (emptyState == null) {
-                    throw new IllegalStateException("No empty state specified for singleton " + formId());
-                }
-            }
-
-            if (readOnly && addOnly) {
-                throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": readOnly && addOnly");
-            }
-
-            if (!excludes.isEmpty() && !readOnly) {
-                List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
-                for (Property attribute : requiredAttributes) {
-                    if (excludes.contains(attribute.getName())) {
-                        throw new IllegalStateException(
-                                "Required attribute " + attribute.getName() + " must not be excluded from " + formId());
-                    }
-                }
-            }
-
-            if (!addOnly && !readOnly && saveCallback == null) {
-                logger.warn("No save callback specified in {}", formId());
-            }
-        }
-
-        StateMachine stateMachine() {
-            if (addOnly) {
-                return new AddOnlyStateMachine();
-            } else if (readOnly) {
-                return new ReadOnlyStateMachine();
-            } else if (singleton) {
-                EnumSet<Operation> operations = EnumSet.allOf(Operation.class);
-                if (prepareReset == null) {
-                    operations.remove(Operation.RESET);
-                }
-                if (prepareRemove == null) {
-                    operations.remove(Operation.REMOVE);
-                }
-                return new SingletonStateMachine(operations);
-            } else {
-                return new ExistingStateMachine(prepareReset != null);
-            }
-        }
-
-        private String formId() {
-            return "form(" + id + ")"; //NON-NLS
-        }
-
-
-        // ------------------------------------------------------ JS methods
-
-
-        @JsFunction
-        interface JsSaveCallback<T> {
-
-            void onSave(final Form<T> form, final JsPropertyMapOfAny changedValues);
-        }
-
-        /** Includes the specified attributes */
-        @JsMethod(name = "include")
-        @EsReturn("FormBuilder")
-        public Builder<T> jsInclude(@EsParam("string[]") String[] attributes) {
-            return include(asList(attributes));
-        }
-
-        /** Excludes the specified attributes */
-        @JsMethod(name = "exclude")
-        @EsReturn("FormBuilder")
-        public Builder<T> jsExclude(@EsParam("string[]") String[] attributes) {
-            return exclude(asList(attributes));
-        }
-
-        /** Calls the specified callback when the save button was clicked and no validation errors occurred. */
-        @JsMethod(name = "onSave")
-        @EsReturn("FormBuilder")
-        public Builder<T> jsOnSave(final JsSaveCallback<T> callback) {
-            this.saveCallback = (form, changedValues) -> callback.onSave(form, asJsMap(changedValues));
-            return this;
-        }
-    }
-
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
@@ -444,7 +101,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private Metadata metadata;
 
     @SuppressWarnings("unchecked")
-    protected ModelNodeForm(final Builder<T> builder) {
+    protected ModelNodeForm(Builder<T> builder) {
         super(builder.id, builder.stateMachine(),
                 builder.dataMapping != null
                         ? builder.dataMapping
@@ -581,6 +238,12 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                     // validate that exactly one of the required alternatives is defined
                     addFormValidation(new ExactlyOneAlternativeValidation<>(requiredAlternatives, CONSTANTS, MESSAGES));
                 }
+
+                if (builder.requiredOnly && requiredAlternatives.size() == 1) {
+                    // if the form displays only one required alternative then display it as required
+                    getFormItem(name).setRequired(true);
+                }
+
                 // validate that not more than one of the alternatives is defined
                 addFormValidation(new NotMoreThanOneAlternativeValidation<>(uniqueAlternatives, this, CONSTANTS,
                         MESSAGES));
@@ -623,7 +286,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
-    protected void prepare(final State state) {
+    protected void prepare(State state) {
         super.prepare(state);
 
         SecurityContext securityContext = metadata.getSecurityContext();
@@ -643,6 +306,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                         formItem.setEnabled(securityContext.isWritable(formItem.getName()));
                     }
                 }
+                break;
+            default:
                 break;
         }
 
@@ -705,5 +370,364 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @JsProperty(name = "element")
     public HTMLElement jsElement() {
         return asElement();
+    }
+
+
+    // ------------------------------------------------------ inner classes
+
+
+    /**
+     * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes
+     * with <code>"storage" =&gt; "configuration"</code>.
+     */
+    @JsType(namespace = "hal.ui", name = "FormBuilder")
+    public static class Builder<T extends ModelNode> {
+
+        private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
+
+        final String id;
+        private final Metadata metadata;
+        final LinkedHashSet<String> includes;
+        final Set<String> excludes;
+        FormItemProvider defaultFormItemProvider;
+        final Map<String, FormItemProvider> providers;
+        final List<UnboundFormItem> unboundFormItems;
+        boolean readOnly;
+        boolean addOnly;
+        boolean unsorted;
+        boolean requiredOnly;
+        boolean includeRuntime;
+        boolean hideDeprecated;
+        boolean singleton;
+        Supplier<org.jboss.hal.dmr.Operation> ping;
+        EmptyState emptyState;
+        String attributePath;
+        SaveCallback<T> saveCallback;
+        CancelCallback<T> cancelCallback;
+        PrepareReset<T> prepareReset;
+        PrepareRemove<T> prepareRemove;
+        DataMapping<T> dataMapping;
+        boolean panelForOptionalAttributes;
+
+
+        // ------------------------------------------------------ configure required and optional settings
+
+        @JsIgnore
+        public Builder(@NonNls String id, Metadata metadata) {
+            this.id = id;
+            this.metadata = metadata;
+            this.includes = new LinkedHashSet<>();
+            this.excludes = new HashSet<>();
+            this.defaultFormItemProvider = new DefaultFormItemProvider(metadata);
+            this.providers = new HashMap<>();
+            this.unboundFormItems = new ArrayList<>();
+            this.readOnly = false;
+            this.addOnly = false;
+            this.unsorted = false;
+            this.requiredOnly = false;
+            this.includeRuntime = false;
+            this.hideDeprecated = true;
+            this.attributePath = ATTRIBUTES;
+        }
+
+        @JsIgnore
+        public Builder<T> include(final String[] attributes) {
+            includes.addAll(asList(attributes));
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> include(final Iterable<String> attributes) {
+            Iterables.addAll(includes, attributes);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
+            includes.addAll(Lists.asList(first, rest));
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> exclude(final String[] attributes) {
+            excludes.addAll(asList(attributes));
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> exclude(final Iterable<String> attributes) {
+            Iterables.addAll(excludes, attributes);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
+            excludes.addAll(Lists.asList(first, rest));
+            return this;
+        }
+
+        /**
+         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the
+         * ATTRIBUTES child node.
+         */
+        @EsReturn("FormBuilder")
+        public Builder<T> addOnly() {
+            this.addOnly = true;
+            this.attributePath = ATTRIBUTES;
+            return this;
+        }
+
+        /**
+         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the
+         * REQUEST_PROPERTIES node of the ADD operation.
+         */
+        @EsReturn("FormBuilder")
+        public Builder<T> fromRequestProperties() {
+            this.addOnly = true;
+            this.attributePath = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
+            return this;
+        }
+
+        /** Makes the form read-only. */
+        @EsReturn("FormBuilder")
+        public Builder<T> readOnly() {
+            this.readOnly = true;
+            return this;
+        }
+
+        /** Doesn't sort the attributes alphabetically. */
+        @EsReturn("FormBuilder")
+        public Builder<T> unsorted() {
+            this.unsorted = true;
+            return this;
+        }
+
+        /** Includes only required attributes */
+        @EsReturn("FormBuilder")
+        public Builder<T> requiredOnly() {
+            this.requiredOnly = true;
+            return this;
+        }
+
+        /** Includes also attributes with <code>"storage" =&gt; "runtime"</code> */
+        @EsReturn("FormBuilder")
+        public Builder<T> includeRuntime() {
+            this.includeRuntime = true;
+            return this;
+        }
+
+        /** Includes also deprecated attributes */
+        @EsReturn("FormBuilder")
+        public Builder<T> showDeprecated() {
+            this.hideDeprecated = false;
+            return this;
+        }
+
+        /**
+         * Use this method if you want to manage a singleton resource. This will create a form with an
+         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * <p>
+         * The specified operation is used to check whether the resource exists.
+         * <p>
+         * If the resource does not exist, a default empty state is displayed. The empty state will contain a button
+         * which will trigger the specified add action.
+         */
+        @JsIgnore
+        public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping, Callback addAction) {
+            EmptyState emptyState = new EmptyState.Builder(Ids.build(id, Ids.EMPTY), CONSTANTS.noResource())
+                    .description(MESSAGES.noResource())
+                    .primaryAction(CONSTANTS.add(), addAction, Constraint.executable(metadata.getTemplate(), ADD))
+                    .build();
+            return singleton(ping, emptyState);
+        }
+
+        /**
+         * Use this method if you want to manage a singleton resource. This will create a form with an
+         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * <p>
+         * The specified operation is used to check whether the resource exists.
+         * <p>
+         * If the resource does not exist, the specified empty state is displayed. The empty state must have a
+         * button which triggers the creation of the singleton resource.
+         * <p>
+         * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached
+         * to it.
+         */
+        @JsIgnore
+        public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping,
+                EmptyState emptyState) {
+            this.singleton = true;
+            this.ping = ping;
+            this.emptyState = emptyState;
+            return this;
+        }
+
+        Builder<T> defaultFormItemProvider(FormItemProvider formItemProvider) {
+            this.defaultFormItemProvider = formItemProvider;
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> customFormItem(@NonNls String attribute, FormItemProvider provider) {
+            includes.add(attribute);
+            providers.put(attribute, provider);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> unboundFormItem(FormItem formItem) {
+            return unboundFormItem(formItem, -1, null);
+        }
+
+        @JsIgnore
+        public Builder<T> unboundFormItem(FormItem formItem, int position) {
+            return unboundFormItem(formItem, position, null);
+        }
+
+        @JsIgnore
+        public Builder<T> unboundFormItem(FormItem formItem, int position, SafeHtml helpText) {
+            this.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
+            return this;
+        }
+
+        Builder<T> unboundFormItem(UnboundFormItem unboundFormItem) {
+            this.unboundFormItems.add(unboundFormItem);
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> onSave(SaveCallback<T> saveCallback) {
+            this.saveCallback = saveCallback;
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> onCancel(CancelCallback<T> cancelCallback) {
+            this.cancelCallback = cancelCallback;
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> prepareReset(PrepareReset<T> prepareReset) {
+            this.prepareReset = prepareReset;
+            return this;
+        }
+
+        @JsIgnore
+        public Builder<T> prepareRemove(PrepareRemove<T> removeCallback) {
+            this.prepareRemove = removeCallback;
+            return this;
+        }
+
+        /**
+         * By default the non-requried attributes are displayed together with the required attributes.
+         * Call this method to put the non-required attributes on a collapsible panel beneath the required attributes.
+         */
+        @JsIgnore
+        public Builder<T> panelForOptionalAttributes() {
+            this.panelForOptionalAttributes = true;
+            return this;
+        }
+
+
+        // ------------------------------------------------------ build
+
+        /**
+         * Creates and returns the form.
+         */
+        @EsReturn("Form")
+        public ModelNodeForm<T> build() {
+            validate();
+            ModelNodeForm<T> form = new ModelNodeForm<>(this);
+            form.separateOptionalFields(panelForOptionalAttributes);
+            return form;
+        }
+
+        void validate() {
+            if (singleton) {
+                if (readOnly || addOnly) {
+                    throw new IllegalStateException(
+                            ILLEGAL_COMBINATION + formId() + ": singleton && (readOnly || addOnly)");
+                }
+                if (ping == null) {
+                    throw new IllegalStateException("No ping operation specified for singleton " + formId());
+                }
+                if (emptyState == null) {
+                    throw new IllegalStateException("No empty state specified for singleton " + formId());
+                }
+            }
+
+            if (readOnly && addOnly) {
+                throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": readOnly && addOnly");
+            }
+
+            if (!excludes.isEmpty() && !readOnly) {
+                List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
+                for (Property attribute : requiredAttributes) {
+                    if (excludes.contains(attribute.getName())) {
+                        throw new IllegalStateException(
+                                "Required attribute " + attribute.getName() + " must not be excluded from " + formId());
+                    }
+                }
+            }
+
+            if (!addOnly && !readOnly && saveCallback == null) {
+                logger.warn("No save callback specified in {}", formId());
+            }
+        }
+
+        StateMachine stateMachine() {
+            if (addOnly) {
+                return new AddOnlyStateMachine();
+            } else if (readOnly) {
+                return new ReadOnlyStateMachine();
+            } else if (singleton) {
+                EnumSet<Operation> operations = EnumSet.allOf(Operation.class);
+                if (prepareReset == null) {
+                    operations.remove(Operation.RESET);
+                }
+                if (prepareRemove == null) {
+                    operations.remove(Operation.REMOVE);
+                }
+                return new SingletonStateMachine(operations);
+            } else {
+                return new ExistingStateMachine(prepareReset != null);
+            }
+        }
+
+        private String formId() {
+            return "form(" + id + ")"; //NON-NLS
+        }
+
+
+        // ------------------------------------------------------ JS methods
+
+        /** Includes the specified attributes */
+        @JsMethod(name = "include")
+        @EsReturn("FormBuilder")
+        public Builder<T> jsInclude(@EsParam("string[]") String[] attributes) {
+            return include(asList(attributes));
+        }
+
+        /** Excludes the specified attributes */
+        @JsMethod(name = "exclude")
+        @EsReturn("FormBuilder")
+        public Builder<T> jsExclude(@EsParam("string[]") String[] attributes) {
+            return exclude(asList(attributes));
+        }
+
+        /** Calls the specified callback when the save button was clicked and no validation errors occurred. */
+        @JsMethod(name = "onSave")
+        @EsReturn("FormBuilder")
+        public Builder<T> jsOnSave(JsSaveCallback<T> callback) {
+            this.saveCallback = (form, changedValues) -> callback.onSave(form, asJsMap(changedValues));
+            return this;
+        }
+
+        @JsFunction
+        interface JsSaveCallback<T> {
+
+            void onSave(Form<T> form, JsPropertyMapOfAny changedValues);
+        }
     }
 }

@@ -20,8 +20,8 @@ import java.util.Date;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_TIME_LONG;
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_SHORT;
+import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_TIME_LONG;
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.TIME_MEDIUM;
 import static java.lang.System.currentTimeMillis;
 
@@ -124,7 +124,8 @@ public class Message {
         return warning(currentTimeMillis(), message, actionTitle, callback, false);
     }
 
-    public static Message warning(final long id, final SafeHtml message, final String actionTitle, final Callback callback) {
+    public static Message warning(final long id, final SafeHtml message, final String actionTitle,
+            final Callback callback) {
         return warning(id, message, actionTitle, callback, false);
     }
 
@@ -133,7 +134,8 @@ public class Message {
         return new Message(currentTimeMillis(), Level.WARNING, message, null, actionTitle, callback, sticky);
     }
 
-    public static Message warning(final long id, final SafeHtml message, final String actionTitle, final Callback callback,
+    public static Message warning(final long id, final SafeHtml message, final String actionTitle,
+            final Callback callback,
             boolean sticky) {
         return new Message(id, Level.WARNING, message, null, actionTitle, callback, sticky);
     }
@@ -177,7 +179,8 @@ public class Message {
         return info(currentTimeMillis(), message, actionTitle, callback, false);
     }
 
-    public static Message info(final long id, final SafeHtml message, final String actionTitle, final Callback callback) {
+    public static Message info(final long id, final SafeHtml message, final String actionTitle,
+            final Callback callback) {
         return info(id, message, actionTitle, callback, false);
     }
 
@@ -230,7 +233,8 @@ public class Message {
         return success(currentTimeMillis(), message, actionTitle, callback, false);
     }
 
-    public static Message success(final long id, final SafeHtml message, final String actionTitle, final Callback callback) {
+    public static Message success(final long id, final SafeHtml message, final String actionTitle,
+            final Callback callback) {
         return success(id, message, actionTitle, callback, false);
     }
 
@@ -239,7 +243,8 @@ public class Message {
         return new Message(currentTimeMillis(), Level.SUCCESS, message, null, actionTitle, callback, sticky);
     }
 
-    public static Message success(final long id, final SafeHtml message, final String actionTitle, final Callback callback,
+    public static Message success(final long id, final SafeHtml message, final String actionTitle,
+            final Callback callback,
             final boolean sticky) {
         return new Message(id, Level.SUCCESS, message, null, actionTitle, callback, sticky);
     }
@@ -320,8 +325,12 @@ public class Message {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Message)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Message)) {
+            return false;
+        }
 
         Message message = (Message) o;
 

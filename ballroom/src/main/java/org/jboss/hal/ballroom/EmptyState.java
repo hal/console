@@ -33,6 +33,7 @@ import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -48,83 +49,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class EmptyState implements IsElement<HTMLElement> {
 
-    private static class Action {
-
-        public final String title;
-        public final Callback callback;
-        private final Constraint constraint;
-
-        Action(final String title, final Callback callback, final Constraint constraint) {
-            this.title = title;
-            this.callback = callback;
-            this.constraint = constraint;
-        }
-    }
-
-
-    public static class Builder {
-
-        private final String title;
-        private final List<HTMLElement> elements;
-        private final List<Action> secondaryActions;
-        private String icon;
-        private Action primaryAction;
-
-        public Builder(final String title) {
-            this.title = title;
-            this.elements = new ArrayList<>();
-            this.secondaryActions = new ArrayList<>();
-        }
-
-        public Builder icon(String icon) {
-            this.icon = icon;
-            return this;
-        }
-
-        public Builder description(String description) {
-            elements.add(p().textContent(description).asElement());
-            return this;
-        }
-
-        public Builder description(SafeHtml description) {
-            elements.add(p().innerHtml(description).asElement());
-            return this;
-        }
-
-        public Builder add(HTMLElement element) {
-            elements.add(element);
-            return this;
-        }
-
-        public Builder addAll(Iterable<HTMLElement> elements) {
-            Iterables.addAll(this.elements, elements);
-            return this;
-        }
-
-        public Builder primaryAction(String title, Callback callback) {
-            return primaryAction(title, callback, null);
-        }
-
-        public Builder primaryAction(String title, Callback callback, Constraint constraint) {
-            this.primaryAction = new Action(title, callback, constraint);
-            return this;
-        }
-
-        public Builder secondaryAction(String title, Callback callback) {
-            return secondaryAction(title, callback, null);
-        }
-
-        public Builder secondaryAction(String title, Callback callback, Constraint constraint) {
-            this.secondaryActions.add(new Action(title, callback, constraint));
-            return this;
-        }
-
-        public EmptyState build() {
-            return new EmptyState(this);
-        }
-    }
-
-
     private final HTMLElement root;
     private final HTMLElement icon;
     private final HTMLElement header;
@@ -132,7 +56,7 @@ public class EmptyState implements IsElement<HTMLElement> {
     private final HTMLElement primaryActionDiv;
 
     private EmptyState(Builder builder) {
-        HtmlContentBuilder<HTMLDivElement> rb = div().css(blankSlatePf);
+        HtmlContentBuilder<HTMLDivElement> rb = div().id(builder.id).css(blankSlatePf);
         if (builder.icon != null) {
             rb.add(div().css(blankSlatePfIcon).add(icon = i().css(builder.icon).asElement()).asElement());
         } else {
@@ -207,5 +131,84 @@ public class EmptyState implements IsElement<HTMLElement> {
     @Override
     public HTMLElement asElement() {
         return root;
+    }
+
+
+    private static class Action {
+
+        public final String title;
+        public final Callback callback;
+        private final Constraint constraint;
+
+        Action(final String title, final Callback callback, final Constraint constraint) {
+            this.title = title;
+            this.callback = callback;
+            this.constraint = constraint;
+        }
+    }
+
+
+    public static class Builder {
+
+        private final String id;
+        private final String title;
+        private final List<HTMLElement> elements;
+        private final List<Action> secondaryActions;
+        private String icon;
+        private Action primaryAction;
+
+        public Builder(String id, String title) {
+            this.id = id;
+            this.title = title;
+            this.elements = new ArrayList<>();
+            this.secondaryActions = new ArrayList<>();
+        }
+
+        public Builder icon(String icon) {
+            this.icon = icon;
+            return this;
+        }
+
+        public Builder description(String description) {
+            elements.add(p().textContent(description).asElement());
+            return this;
+        }
+
+        public Builder description(SafeHtml description) {
+            elements.add(p().innerHtml(description).asElement());
+            return this;
+        }
+
+        public Builder add(HTMLElement element) {
+            elements.add(element);
+            return this;
+        }
+
+        public Builder addAll(Iterable<HTMLElement> elements) {
+            Iterables.addAll(this.elements, elements);
+            return this;
+        }
+
+        public Builder primaryAction(String title, Callback callback) {
+            return primaryAction(title, callback, null);
+        }
+
+        public Builder primaryAction(String title, Callback callback, Constraint constraint) {
+            this.primaryAction = new Action(title, callback, constraint);
+            return this;
+        }
+
+        public Builder secondaryAction(String title, Callback callback) {
+            return secondaryAction(title, callback, null);
+        }
+
+        public Builder secondaryAction(String title, Callback callback, Constraint constraint) {
+            this.secondaryActions.add(new Action(title, callback, constraint));
+            return this;
+        }
+
+        public EmptyState build() {
+            return new EmptyState(this);
+        }
     }
 }

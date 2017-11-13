@@ -26,19 +26,6 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 public class StaticItem extends AbstractFormItem<String> {
 
-    private static class StaticAppearance extends ReadOnlyAppearance<String> {
-
-        StaticAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, REQUIRED, RESTRICTED));
-        }
-
-        @Override
-        protected String name() {
-            return "StaticAppearance";
-        }
-    }
-
-
     public StaticItem(final String name, final String label) {
         super(name, label, null);
         addAppearance(Form.State.READONLY, new StaticAppearance());
@@ -53,5 +40,18 @@ public class StaticItem extends AbstractFormItem<String> {
     @Override
     public boolean supportsExpressions() {
         return false;
+    }
+
+
+    private static class StaticAppearance extends ReadOnlyAppearance<String> {
+
+        StaticAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, REQUIRED, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "StaticAppearance";
+        }
     }
 }

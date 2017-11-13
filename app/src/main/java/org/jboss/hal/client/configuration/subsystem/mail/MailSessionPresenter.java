@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
@@ -34,7 +35,6 @@ import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -72,42 +72,29 @@ public class MailSessionPresenter
         extends ApplicationFinderPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.MAIL_SESSION)
-    @Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
-    public interface MyProxy extends ProxyPlace<MailSessionPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<MailSessionPresenter> {
-        void update(MailSession mailSession);
-        void select(NamedNode mailServer);
-    }
-    // @formatter:on
+    private static final String EQUALS = "=";
 
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final CrudOperations crud;
-    private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private String mailSessionName;
 
     @Inject
-    public MailSessionPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final FinderPathFactory finderPathFactory,
-            final Resources resources,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry) {
+    public MailSessionPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            Resources resources,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
-        this.ca = ca;
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
@@ -122,7 +109,7 @@ public class MailSessionPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         mailSessionName = request.getParameter(NAME, null);
     }
@@ -144,18 +131,18 @@ public class MailSessionPresenter
         crud.readRecursive(address, result -> getView().update(new MailSession(mailSessionName, result)));
     }
 
-    void saveMailSession(final Map<String, Object> changedValues) {
+    void saveMailSession(Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
         crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, metadata, this::reload);
     }
 
-    void resetMailSession(final Form<MailSession> form) {
+    void resetMailSession(Form<MailSession> form) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
         crud.reset(Names.MAIL_SESSION, mailSessionName, address, form, metadata, new FinishReset<MailSession>(form) {
             @Override
-            public void afterReset(final Form<MailSession> form) {
+            public void afterReset(Form<MailSession> form) {
                 reload();
             }
         });
@@ -205,7 +192,7 @@ public class MailSessionPresenter
                         (name, modelNode) -> {
                             String serverType = serverTypeItem.getValue().toLowerCase();
                             ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                                    .append(SERVER + "=" + serverType)
+                                    .append(SERVER + EQUALS + serverType)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, ModelDescriptionConstants.ADD)
                                     .payload(modelNode)
@@ -226,9 +213,9 @@ public class MailSessionPresenter
         });
     }
 
-    void saveServer(final String mailServer, final Map<String, Object> changedValues) {
+    void saveServer(String mailServer, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                .append(SERVER + "=" + mailServer)
+                .append(SERVER + EQUALS + mailServer)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.save(Names.SERVER, mailServer, address, changedValues, metadata, this::reload);
@@ -236,28 +223,42 @@ public class MailSessionPresenter
 
     ResourceAddress credentialReferenceTemplate(@Nullable String mailServer) {
         return mailServer != null
-                ? SELECTED_MAIL_SESSION_TEMPLATE.append(SERVER + "=" + mailServer).resolve(statementContext)
+                ? SELECTED_MAIL_SESSION_TEMPLATE.append(SERVER + EQUALS + mailServer).resolve(statementContext)
                 : null;
     }
 
-    void resetServer(final String mailServer, final Form<NamedNode> form) {
+    void resetServer(String mailServer, Form<NamedNode> form) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                .append(SERVER + "=" + mailServer)
+                .append(SERVER + EQUALS + mailServer)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.reset(Names.SERVER, mailSessionName, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
-            public void afterReset(final Form<NamedNode> form) {
+            public void afterReset(Form<NamedNode> form) {
                 reload();
             }
         });
     }
 
-    void removeServer(final NamedNode mailServer) {
+    void removeServer(NamedNode mailServer) {
         String name = mailServer.getName();
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                .append(SERVER + "=" + name)
+                .append(SERVER + EQUALS + name)
                 .resolve(statementContext);
         crud.remove(Names.SERVER, name, address, this::reload);
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.MAIL_SESSION)
+    @Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
+    public interface MyProxy extends ProxyPlace<MailSessionPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<MailSessionPresenter> {
+        void update(MailSession mailSession);
+        void select(NamedNode mailServer);
+    }
+    // @formatter:on
 }

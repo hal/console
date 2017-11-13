@@ -44,31 +44,20 @@ public class MessagingSubsystemPresenter
         extends MbuiPresenter<MessagingSubsystemPresenter.MyView, MessagingSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.MESSAGING)
-    @Requires(value = MESSAGING_SUBSYSTEM_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<MessagingSubsystemPresenter> {}
-
-    public interface MyView extends MbuiView<MessagingSubsystemPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
-    public MessagingSubsystemPresenter(final EventBus eventBus,
-            final MessagingSubsystemPresenter.MyView view,
-            final MessagingSubsystemPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public MessagingSubsystemPresenter(EventBus eventBus,
+            MessagingSubsystemPresenter.MyView view,
+            MessagingSubsystemPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -98,4 +87,17 @@ public class MessagingSubsystemPresenter
     protected void reload() {
         crud.read(MESSAGING_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.MESSAGING)
+    @Requires(value = MESSAGING_SUBSYSTEM_ADDRESS, recursive = false)
+    public interface MyProxy extends ProxyPlace<MessagingSubsystemPresenter> {
+    }
+
+    public interface MyView extends MbuiView<MessagingSubsystemPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

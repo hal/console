@@ -22,13 +22,19 @@ public class ColumnActions<T> {
 
     private final Map<String, ColumnAction<T>> columnActions;
 
-    ColumnActions() {columnActions = new HashMap<>();}
+    ColumnActions() {
+        columnActions = new HashMap<>();
+    }
 
     public void add(String id, ColumnAction<T> columnAction) {
         columnActions.put(id, columnAction);
     }
 
-    public boolean isEmpty() {return columnActions.isEmpty();}
+    public boolean isEmpty() {
+        return columnActions.isEmpty();
+    }
 
-    public ColumnAction<T> get(String key) {return columnActions.get(key);}
+    public ColumnAction<T> get(String key) {
+        return columnActions.get(key);
+    }
 }

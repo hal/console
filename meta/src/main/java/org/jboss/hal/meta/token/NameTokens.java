@@ -69,6 +69,7 @@ public interface NameTokens {
     String MAIL_SESSION = ModelDescriptionConstants.MAIL_SESSION;
     String MANAGEMENT = "management";
     String MANAGEMENT_INTERFACE = "management-interface";
+    String MANAGEMENT_OPERATIONS = "management-operations";
     String MESSAGING = "messaging";
     String MESSAGING_SERVER = "messaging-server";
     String MESSAGING_SERVER_CONNECTION = "messaging-server-connection";

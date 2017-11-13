@@ -17,6 +17,7 @@ package org.jboss.hal.client.patching;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -61,7 +62,6 @@ import org.jboss.hal.spi.MessageEvent;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
 import static org.jboss.hal.resources.Ids.PATCHES_AGEOUT;
 
 @Column(Ids.PATCHING)
@@ -147,7 +147,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                 .handler(column -> applyPatch())
                 .build();
         ColumnAction<ModelNode> ageoutAction = new ColumnAction.Builder<ModelNode>(
-                Ids.build(HOSTS, PATCHES_AGEOUT, ADD_SUFFIX))
+                Ids.build(HOSTS, PATCHES_AGEOUT, Ids.ADD))
                 .element(columnActionFactory.addButton(resources.messages().cleanPatchHistory(), "fa fa-eraser"))
                 .handler(column -> ageoutHistory())
                 .build();
@@ -166,7 +166,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                             @Override
                             public void onMetadata(final Metadata metadata) {
                                 Metadata metadataRollback = metadata.forOperation(ROLLBACK_OPERATION);
-                                new RollbackWizard(resources, environment, patchId, metadataRollback, statementContext,
+                                new RollbackWizard(patchId, resources, environment, metadataRollback, statementContext,
                                         dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
                                         .show();
                             }

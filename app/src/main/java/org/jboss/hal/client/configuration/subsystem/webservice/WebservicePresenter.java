@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -61,20 +62,6 @@ public class WebservicePresenter
         extends ApplicationFinderPresenter<WebservicePresenter.MyView, WebservicePresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.WEBSERVICES)
-    @Requires(AddressTemplates.WEBSERVICES_ADDRESS)
-    public interface MyProxy extends ProxyPlace<WebservicePresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<WebservicePresenter> {
-        void update(ModelNode payload);
-        void updateHandlerChains(Config configType, HandlerChain handlerChainType, List<NamedNode> handlerChains);
-        void updateHandlers(Config configType, HandlerChain handlerChainType, List<NamedNode> handlers);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
@@ -88,23 +75,23 @@ public class WebservicePresenter
     private NamedNode handlerChain;
 
     @Inject
-    public WebservicePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final CrudOperations crud,
-            final PropertiesOperations po,
-            final Resources resources) {
+    public WebservicePresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            CrudOperations crud,
+            PropertiesOperations po,
+            Resources resources) {
 
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = new FilteringStatementContext(statementContext, new Filter() {
             @Override
-            public String filter(final String resource) {
+            public String filter(String resource) {
                 switch (resource) {
                     case CONFIG_TYPE:
                         return configType.resource;
@@ -114,12 +101,14 @@ public class WebservicePresenter
                         return handlerChainType.resource;
                     case HANDLER_CHAIN_NAME:
                         return handlerChain != null ? handlerChain.getName() : null;
+                    default:
+                        break;
                 }
                 return null;
             }
 
             @Override
-            public String[] filterTuple(final String placeholder) {
+            public String[] filterTuple(String placeholder) {
                 return null;
             }
         });
@@ -156,15 +145,15 @@ public class WebservicePresenter
         crud.readRecursive(WEBSERVICES_TEMPLATE, payload::accept);
     }
 
-    void saveWebservicesConfiguration(final Map<String, Object> changedValues) {
+    void saveWebservicesConfiguration(Map<String, Object> changedValues) {
         crud.saveSingleton(Names.WEBSERVICES_CONFIGURATION, WEBSERVICES_TEMPLATE, changedValues, this::reload);
     }
 
-    void resetWebservicesConfiguration(final Form<ModelNode> form, final Metadata metadata) {
+    void resetWebservicesConfiguration(Form<ModelNode> form, Metadata metadata) {
         crud.resetSingleton(Names.WEBSERVICES_CONFIGURATION, WEBSERVICES_TEMPLATE, form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         reload();
                     }
                 });
@@ -173,7 +162,7 @@ public class WebservicePresenter
 
     // ------------------------------------------------------ client and endpoint config
 
-    void selectConfig(final Config configType) {
+    void selectConfig(Config configType) {
         this.configType = configType;
     }
 
@@ -185,7 +174,7 @@ public class WebservicePresenter
 
     void addConfig() {
         Metadata metadata = metadataRegistry.lookup(configType.template);
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(configType.baseId, Ids.ADD_SUFFIX),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(configType.baseId, Ids.ADD),
                 resources.messages().addResourceTitle(configType.type), metadata,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);
@@ -208,7 +197,7 @@ public class WebservicePresenter
         Metadata metadata = metadataRegistry.lookup(configType.template);
         crud.reset(configType.type, name, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
-            public void afterReset(final Form<NamedNode> form) {
+            public void afterReset(Form<NamedNode> form) {
                 reload();
             }
         });
@@ -268,7 +257,7 @@ public class WebservicePresenter
         Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
         crud.reset(handlerChainType.type, name, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
-            public void afterReset(final Form<NamedNode> form) {
+            public void afterReset(Form<NamedNode> form) {
                 reloadHandlerChains();
             }
         });
@@ -325,7 +314,7 @@ public class WebservicePresenter
         Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
         crud.reset(Names.HANDLER, name, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
-            public void afterReset(final Form<NamedNode> form) {
+            public void afterReset(Form<NamedNode> form) {
                 reloadHandlers();
             }
         });
@@ -353,4 +342,19 @@ public class WebservicePresenter
         List<NamedNode> handlers = asNamedNodes(failSafePropertyList(handlerChain, HANDLER));
         getView().updateHandlers(configType, handlerChainType, handlers);
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.WEBSERVICES)
+    @Requires(AddressTemplates.WEBSERVICES_ADDRESS)
+    public interface MyProxy extends ProxyPlace<WebservicePresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<WebservicePresenter> {
+        void update(ModelNode payload);
+        void updateHandlerChains(Config configType, HandlerChain handlerChainType, List<NamedNode> handlerChains);
+        void updateHandlers(Config configType, HandlerChain handlerChainType, List<NamedNode> handlers);
+    }
+    // @formatter:on
 }

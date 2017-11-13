@@ -29,10 +29,10 @@ class Charts {
     static TooltipContentsFn tooltipContents;
 
     @JsMethod(name = "pfSetDonutChartTitle")
-    native static void setDonutChartTitle(String selector, String count, String unit);
+    static native void setDonutChartTitle(String selector, String count, String unit);
 
     @JsMethod(name = "c3ChartDefaults")
-    native static Charts get();
+    static native Charts get();
 
     @JsMethod(name = "getDefaultDonutConfig")
     native Options defaultDonutOptions();

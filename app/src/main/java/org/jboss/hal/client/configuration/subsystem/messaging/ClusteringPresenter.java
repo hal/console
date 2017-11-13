@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -56,40 +57,21 @@ public class ClusteringPresenter
         extends ServerSettingsPresenter<ClusteringPresenter.MyView, ClusteringPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires({BRIDGE_ADDRESS,
-            BROADCAST_GROUP_ADDRESS,
-            CLUSTER_CONNECTION_ADDRESS,
-            DISCOVERY_GROUP_ADDRESS,
-            GROUPING_HANDLER_ADDRESS})
-    @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
-    public interface MyProxy extends ProxyPlace<ClusteringPresenter> {}
-
-    public interface MyView extends MbuiView<ClusteringPresenter> {
-        void updateBroadcastGroup(List<NamedNode> broadcastGroups);
-        void updateDiscoveryGroup(List<NamedNode> discoveryGroups);
-        void updateClusterConnection(List<NamedNode> clusterConnections);
-        void updateGroupingHandler(List<NamedNode> groupingHandlers);
-        void updateBridge(List<NamedNode> bridges);
-    }
-    // @formatter:on
-
-
+    private static final String EQ_WILDCARD = "=*";
     private final Dispatcher dispatcher;
 
     @Inject
     public ClusteringPresenter(
-            final EventBus eventBus,
-            final ClusteringPresenter.MyView view,
-            final ClusteringPresenter.MyProxy myProxy,
-            final Finder finder,
-            final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            ClusteringPresenter.MyView view,
+            ClusteringPresenter.MyProxy myProxy,
+            Finder finder,
+            MetadataRegistry metadataRegistry,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext, resources);
         this.dispatcher = dispatcher;
     }
@@ -127,17 +109,17 @@ public class ClusteringPresenter
 
     void addClusterConnection(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .fromRequestProperties()
                 .requiredOnly()
                 .build();
 
         List<AddressTemplate> templates = asList(
-                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
         form.getFormItem(CONNECTOR_NAME).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
 
@@ -151,7 +133,7 @@ public class ClusteringPresenter
     void addBridge(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
                 .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .include(QUEUE_NAME, DISCOVERY_GROUP, STATIC_CONNECTORS)
@@ -159,13 +141,13 @@ public class ClusteringPresenter
                 .build();
 
         List<AddressTemplate> templates = asList(
-                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
-                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
         form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
         form.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
 
@@ -177,7 +159,28 @@ public class ClusteringPresenter
         }).show();
     }
 
-    ResourceAddress bridgeAddress(final String bridgeName) {
+    ResourceAddress bridgeAddress(String bridgeName) {
         return bridgeName != null ? SELECTED_BRIDGE_TEMPLATE.resolve(statementContext, bridgeName) : null;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires({BRIDGE_ADDRESS,
+            BROADCAST_GROUP_ADDRESS,
+            CLUSTER_CONNECTION_ADDRESS,
+            DISCOVERY_GROUP_ADDRESS,
+            GROUPING_HANDLER_ADDRESS})
+    @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
+    public interface MyProxy extends ProxyPlace<ClusteringPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ClusteringPresenter> {
+        void updateBroadcastGroup(List<NamedNode> broadcastGroups);
+        void updateDiscoveryGroup(List<NamedNode> discoveryGroups);
+        void updateClusterConnection(List<NamedNode> clusterConnections);
+        void updateGroupingHandler(List<NamedNode> groupingHandlers);
+        void updateBridge(List<NamedNode> bridges);
+    }
+    // @formatter:on
 }

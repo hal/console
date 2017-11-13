@@ -36,6 +36,13 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  */
 public class TagsManager {
 
+    private static final String EMPTY = "empty";
+    private static final String PUSH_TAG = "pushTag";
+    private static final String REFRESH_EVENT = "tm:refresh";
+    private static final String TAGS = "tags";
+    private static final String TAGS_MANAGER = "tagsManager";
+
+
     @JsFunction
     @FunctionalInterface
     public interface Validator {
@@ -83,7 +90,7 @@ public class TagsManager {
     public static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Api element(HTMLInputElement element);
+        public static native Api element(HTMLInputElement element);
 
         public native void on(String event, RefreshListener refreshListener);
 
@@ -125,11 +132,4 @@ public class TagsManager {
             tagsManagerRemoveTags(EMPTY);
         }
     }
-
-
-    private static final String EMPTY = "empty";
-    private static final String PUSH_TAG = "pushTag";
-    private static final String REFRESH_EVENT = "tm:refresh";
-    private static final String TAGS = "tags";
-    private static final String TAGS_MANAGER = "tagsManager";
 }

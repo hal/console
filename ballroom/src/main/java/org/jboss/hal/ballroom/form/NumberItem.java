@@ -36,79 +36,6 @@ import static org.jboss.hal.resources.CSS.formControl;
 
 public class NumberItem extends AbstractFormItem<Long> {
 
-    private static class NumberReadOnlyAppearance extends ReadOnlyAppearance<Long> {
-
-        NumberReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED));
-        }
-
-        @Override
-        protected String name() {
-            return "NumberSelectReadOnlyAppearance";
-        }
-    }
-
-
-    private static class NumberEditingAppearance extends EditingAppearance<Long> {
-
-        NumberEditingAppearance(HTMLInputElement inputElement) {
-            super(EnumSet.allOf(Decoration.class), inputElement);
-        }
-
-        @Override
-        protected String name() {
-            return "NumberSelectEditingAppearance";
-        }
-
-        @Override
-        public void showValue(final Long value) {
-            inputElement.value = String.valueOf(value);
-        }
-
-        @Override
-        public void showExpression(final String expression) {
-            inputElement.value = expression;
-        }
-
-        @Override
-        public void clearValue() {
-            inputElement.value = "";
-        }
-    }
-
-
-    class NumberValidation implements FormItemValidation<Long> {
-
-        @Override
-        public ValidationResult validate(final Long value) {
-            if (!isExpressionValue() && !isEmpty()) {
-                try {
-                    //noinspection ResultOfMethodCallIgnored
-                    Long.parseLong(inputElement.value);
-                    return ValidationResult.OK;
-                } catch (NumberFormatException e) {
-                    return ValidationResult.invalid(CONSTANTS.notANumber());
-                }
-            }
-            return ValidationResult.OK;
-        }
-    }
-
-
-    class RangeValidation implements FormItemValidation<Long> {
-
-        @Override
-        public ValidationResult validate(final Long value) {
-            if (!isExpressionValue() && !isEmpty()) {
-                if (value < min || value > max) {
-                    return ValidationResult.invalid(MESSAGES.invalidRange(value, min, max));
-                }
-            }
-            return ValidationResult.OK;
-        }
-    }
-
-
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
      */
@@ -119,8 +46,8 @@ public class NumberItem extends AbstractFormItem<Long> {
      */
     public static final long MAX_SAFE_LONG = 9007199254740991L;
 
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
-    private final static Messages MESSAGES = GWT.create(Messages.class);
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
 
     private final HTMLInputElement inputElement;
     private long min;
@@ -191,6 +118,79 @@ public class NumberItem extends AbstractFormItem<Long> {
             inputElement.type = number.name();
         } else {
             inputElement.type = text.name();
+        }
+    }
+
+
+    private static class NumberReadOnlyAppearance extends ReadOnlyAppearance<Long> {
+
+        NumberReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "NumberSelectReadOnlyAppearance";
+        }
+    }
+
+
+    private static class NumberEditingAppearance extends EditingAppearance<Long> {
+
+        NumberEditingAppearance(HTMLInputElement inputElement) {
+            super(EnumSet.allOf(Decoration.class), inputElement);
+        }
+
+        @Override
+        protected String name() {
+            return "NumberSelectEditingAppearance";
+        }
+
+        @Override
+        public void showValue(final Long value) {
+            inputElement.value = String.valueOf(value);
+        }
+
+        @Override
+        public void showExpression(final String expression) {
+            inputElement.value = expression;
+        }
+
+        @Override
+        public void clearValue() {
+            inputElement.value = "";
+        }
+    }
+
+
+    class NumberValidation implements FormItemValidation<Long> {
+
+        @Override
+        public ValidationResult validate(final Long value) {
+            if (!isExpressionValue() && !isEmpty()) {
+                try {
+                    //noinspection ResultOfMethodCallIgnored
+                    Long.parseLong(inputElement.value);
+                    return ValidationResult.OK;
+                } catch (NumberFormatException e) {
+                    return ValidationResult.invalid(CONSTANTS.notANumber());
+                }
+            }
+            return ValidationResult.OK;
+        }
+    }
+
+
+    class RangeValidation implements FormItemValidation<Long> {
+
+        @Override
+        public ValidationResult validate(final Long value) {
+            if (!isExpressionValue() && !isEmpty()) {
+                if (value < min || value > max) {
+                    return ValidationResult.invalid(MESSAGES.invalidRange(value, min, max));
+                }
+            }
+            return ValidationResult.OK;
         }
     }
 }

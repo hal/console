@@ -28,8 +28,6 @@ import static org.jboss.hal.resources.CSS.spinnerLg;
 
 public final class DialogFactory {
 
-    private DialogFactory() {}
-
     /**
      * Creates and shows a confirmation dialog using the provided question. When confirmed the specified callback is
      * executed.
@@ -107,5 +105,8 @@ public final class DialogFactory {
         return new BlockingDialog(new Dialog.Builder(title)
                 .size(SMALL)
                 .add(element));
+    }
+
+    private DialogFactory() {
     }
 }

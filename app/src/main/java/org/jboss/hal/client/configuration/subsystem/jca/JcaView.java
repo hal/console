@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -126,7 +127,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .prepareReset(f -> presenter.resetSingleton(bvType, BEAN_VALIDATION_TEMPLATE, f, bvMetadata))
                 .build();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.JCA_TAB_CONTAINER);
         tabs.add(Ids.JCA_CCM_TAB, ccmType, ccmForm.asElement());
         tabs.add(Ids.JCA_ARCHIVE_VALIDATION_TAB, avType, avForm.asElement());
         tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.asElement());
@@ -137,7 +138,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(tabs)
                 .asElement();
 
-        navigation.addPrimary(Ids.JCA_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"), configLayout);
+        navigation.addPrimary(Ids.JCA_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
 
 
@@ -162,7 +163,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(tracerForm)
                 .asElement();
 
-        navigation.addPrimary(Ids.JCA_TRACER_ENTRY, tracerType, fontAwesome("bug"), tracerLayout);
+        navigation.addPrimary(Ids.JCA_TRACER_ITEM, tracerType, fontAwesome("bug"), tracerLayout);
         registerAttachable(tracerForm);
 
 
@@ -210,7 +211,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(bcForm)
                 .asElement();
 
-        navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ENTRY, bcType, fontAwesome("play"), bcLayout);
+        navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ITEM, bcType, fontAwesome("play"), bcLayout);
         registerAttachable(bcTable, bcForm);
 
         // ------------------------------------------------------ workmanager
@@ -242,13 +243,13 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, tableButtonFactory, resources);
         registerAttachable(wmTpEditor);
 
-        Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGE, wmLayout);
+        Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGES, Ids.JCA_WORKMANAGER_PAGE, wmLayout);
         wmPages.addPage(Ids.JCA_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(wmType) + ": " + selectedWorkmanager, () -> Names.THREAD_POOLS,
                 wmTpEditor.asElement());
         pages.put(WORKMANAGER_TEMPLATE, wmPages);
 
-        navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cog"), wmPages);
+        navigation.addPrimary(Ids.JCA_WORKMANAGER_ITEM, wmType, fontAwesome("cog"), wmPages);
         registerAttachable(wmTable);
 
         // ------------------------------------------------------ distributed workmanager
@@ -296,13 +297,14 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 resources);
         registerAttachable(dwmTpEditor);
 
-        Pages dwmPages = new Pages(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, dwmLayout);
+        Pages dwmPages = new Pages(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGES, Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE,
+                dwmLayout);
         dwmPages.addPage(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(dwmType) + ": " + selectedWorkmanager, () -> Names.THREAD_POOLS,
                 dwmTpEditor.asElement());
         pages.put(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmPages);
 
-        navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ENTRY, dwmType, fontAwesome("cogs"), dwmPages);
+        navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ITEM, dwmType, fontAwesome("cogs"), dwmPages);
         registerAttachable(dwmTable, dwmForm);
 
         // ------------------------------------------------------ main layout

@@ -55,7 +55,7 @@ public final class Mbui_AddWithAttributesView extends AddWithAttributesView {
         this.expressionElements = new HashMap<>();
 
         table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
-                .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Foo",
+                .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD), "Foo",
                         metadata0Template, asList("foo"), (name, address) -> presenter.reload()))
                 .columns("name")
                 .build();

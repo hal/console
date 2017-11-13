@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.host;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -73,17 +74,21 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
+import static org.jboss.hal.client.runtime.host.HostColumn.HOST_MANAGEMENT_OPERATIONS_ADDRESS;
+import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
+@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS,
+        HOST_MANAGEMENT_OPERATIONS_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
     static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "/host=*/subsystem=core-management/service=configuration-changes";
+    static final String HOST_MANAGEMENT_OPERATIONS_ADDRESS = "/host=*/core-service=management/service=management-operations";
     private static final AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
 
     static AddressTemplate hostTemplate(Host host) {
@@ -270,6 +275,11 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
                                     ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
                         }
+                        PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
+                                .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();
+                        actions.add(itemActionFactory.placeRequest(resources.constants().managementOperations(),
+                                moPlaceRequest, Constraint.executable(MANAGEMENT_OPERATIONS_TEMPLATE,
+                                        READ_RESOURCE_OPERATION)));
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                     }
                     return actions;

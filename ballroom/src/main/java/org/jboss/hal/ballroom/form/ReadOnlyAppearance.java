@@ -135,7 +135,9 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         } else {
             valueElement.classList.remove(empty);
         }
-
+        if (!Strings.isNullOrEmpty(backupValue)) {
+            backupValue = stringValue;
+        }
         if (isApplied(SENSITIVE)) {
             if (masked) {
                 mask();
@@ -250,6 +252,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
             case REQUIRED:
             case SUGGESTIONS:
                 break;
+            default:
+                break;
         }
     }
 
@@ -291,6 +295,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
             case INVALID:
             case REQUIRED:
             case SUGGESTIONS:
+                break;
+            default:
                 break;
         }
     }

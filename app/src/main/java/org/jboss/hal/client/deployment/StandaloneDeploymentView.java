@@ -27,6 +27,8 @@ import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -45,13 +47,14 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
 
     @Inject
     public StandaloneDeploymentView(Dispatcher dispatcher, ModelBrowser modelBrowser,
-            Environment environment, EventBus eventBus, Resources resources) {
+            Environment environment, EventBus eventBus, MetadataRegistry metadataRegistry, Resources resources) {
+        Metadata metadata = metadataRegistry.lookup(StandaloneDeploymentColumn.DEPLOYMENT_TEMPLATE);
         supportsReadContent = ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion());
-        browseContent = new BrowseContentElement(dispatcher, eventBus, resources);
+        browseContent = new BrowseContentElement(dispatcher, environment, eventBus, metadata, resources);
         deploymentModel = new DeploymentModelElement(modelBrowser, resources);
 
         if (supportsReadContent) {
-            tabs = new Tabs()
+            tabs = new Tabs(Ids.DEPLOYMENT_TAB_CONTAINER)
                     .add(Ids.CONTENT_TAB, resources.constants().content(), browseContent.asElement())
                     .add(Ids.DEPLOYMENT_TAB, Names.MANAGEMENT_MODEL, deploymentModel.asElements());
             ((HTMLElement) tabs.asElement().querySelector("." + navTabsHal)).style.marginTop =

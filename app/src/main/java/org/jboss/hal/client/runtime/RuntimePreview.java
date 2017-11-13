@@ -25,6 +25,8 @@ import static org.jboss.hal.resources.CSS.*;
 
 public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
+    private static final String SPACE = " ";
+
     protected final Resources resources;
     protected HTMLElement alertContainer;
     protected HTMLElement alertIcon;
@@ -36,25 +38,25 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
     }
 
     protected void adminOnly(SafeHtml message) {
-        alertContainer.className = alert + " " + alertInfo;
+        alertContainer.className = alert + SPACE + alertInfo;
         alertIcon.className = Icons.LOCK;
         alertText.innerHTML = message.asString();
     }
 
     protected void starting(SafeHtml message) {
-        alertContainer.className = alert + " " + alertInfo;
+        alertContainer.className = alert + SPACE + alertInfo;
         alertIcon.className = Icons.PENDING;
         alertText.innerHTML = message.asString();
     }
 
     protected void pending(SafeHtml message) {
-        alertContainer.className = alert + " " + alertInfo;
+        alertContainer.className = alert + SPACE + alertInfo;
         alertIcon.className = Icons.PENDING;
         alertText.innerHTML = message.asString();
     }
 
     protected void suspended(SafeHtml message) {
-        alertContainer.className = alert + " " + alertSuspended;
+        alertContainer.className = alert + SPACE + alertSuspended;
         alertIcon.className = Icons.PAUSED;
         alertText.innerHTML = message.asString();
     }
@@ -70,30 +72,30 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
     }
 
     protected void running(SafeHtml message) {
-        alertContainer.className = alert + " " + alertSuccess;
+        alertContainer.className = alert + SPACE + alertSuccess;
         alertIcon.className = Icons.OK;
         alertText.innerHTML = message.asString();
     }
 
     protected void unknown(SafeHtml message) {
-        alertContainer.className = alert + " " + alertWarning;
+        alertContainer.className = alert + SPACE + alertWarning;
         alertIcon.className = Icons.UNKNOWN;
         alertText.innerHTML = message.asString();
     }
 
     protected void disconnected(SafeHtml message) {
-        alertContainer.className = alert + " " + alertInfo;
+        alertContainer.className = alert + SPACE + alertInfo;
         alertIcon.className = Icons.DISCONNECTED;
         alertText.innerHTML = message.asString();
     }
 
     private void warning() {
-        alertContainer.className = alert + " " + alertWarning;
+        alertContainer.className = alert + SPACE + alertWarning;
         alertIcon.className = Icons.WARNING;
     }
 
     private void error() {
-        alertContainer.className = alert + " " + alertDanger;
+        alertContainer.className = alert + SPACE + alertDanger;
         alertIcon.className = Icons.ERROR;
     }
 

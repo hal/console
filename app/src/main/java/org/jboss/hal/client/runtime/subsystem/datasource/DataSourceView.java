@@ -95,7 +95,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private boolean setup;
 
     @Inject
-    public DataSourceView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public DataSourceView(MetadataRegistry metadataRegistry, Resources resources) {
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
         this.setup = false;
@@ -123,8 +123,8 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
             jdbcMeta = metadataRegistry.lookup(DATA_SOURCE_JDBC_TEMPLATE.replaceWildcards(presenter.getDataSource()));
         }
 
-        nonXaTabs = new Tabs();
-        xaTabs = new Tabs();
+        nonXaTabs = new Tabs(Ids.DATA_SOURCE_RUNTIME_TAB_CONTAINER);
+        xaTabs = new Tabs(Ids.XA_DATA_SOURCE_RUNTIME_TAB_CONTAINER);
 
         poolForm = new ModelNodeForm.Builder<>(Ids.DATA_SOURCE_RUNTIME_POOL_FORM, poolMeta)
                 .readOnly()
@@ -172,12 +172,12 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     @Override
-    public void setPresenter(final DataSourcePresenter presenter) {
+    public void setPresenter(DataSourcePresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void update(final DataSource dataSource) {
+    public void update(DataSource dataSource) {
         showHide(dataSource.isXa());
         header.textContent = dataSource.getName();
         if (dataSource.isXa()) {

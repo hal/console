@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.inject.Provider;
 
 import com.google.common.collect.Lists;
@@ -67,6 +68,59 @@ class DeploymentTasks {
     static final String SERVER_GROUP_DEPLOYMENTS = "deploymentFunctions.serverGroupDeployments";
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
+
+    /**
+     * Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode.
+     */
+    static <T> void upload(FinderColumn<T> column, Environment environment, Dispatcher dispatcher,
+            EventBus eventBus, Provider<Progress> progress, FileList files,
+            Resources resources) {
+        if (files.getLength() > 0) {
+
+            StringBuilder builder = new StringBuilder();
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+
+            for (int i = 0; i < files.getLength(); i++) {
+                String filename = files.item(i).name;
+                builder.append(filename).append(" ");
+                tasks.add(new CheckDeployment(dispatcher, filename));
+                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
+            }
+
+            logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
+        }
+    }
+
+    /**
+     * Uploads a content and deploys it to a server group.
+     */
+    static <T> void uploadAndDeploy(FinderColumn<T> column, Environment environment,
+            Dispatcher dispatcher, EventBus eventBus, Provider<Progress> progress,
+            FileList files, String serverGroup, Resources resources) {
+        if (files.getLength() > 0) {
+
+            StringBuilder builder = new StringBuilder();
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+
+            for (int i = 0; i < files.getLength(); i++) {
+                String filename = files.item(i).name;
+                builder.append(filename).append(" ");
+                tasks.add(new CheckDeployment(dispatcher, filename));
+                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
+                tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
+            }
+
+            logger.debug("About to upload and deploy {} file(s): {} to server group {}",
+                    files.getLength(), builder.toString(), serverGroup);
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
+        }
+    }
+
+    private DeploymentTasks() {
+    }
 
 
     /** Loads the contents form the content repository and pushes a {@code List<Content>} onto the context stack. */
@@ -262,7 +316,6 @@ class DeploymentTasks {
                             READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
                             .build();
                     completable = dispatcher.execute(operation).doOnSuccess(result -> {
                         Map<String, Deployment> deploymentsByName = result.asPropertyList().stream()
@@ -441,57 +494,6 @@ class DeploymentTasks {
                 logger.error("Unable to find upload statistics in the context using key '{}'", UPLOAD_STATISTICS);
             }
             column.refresh(RESTORE_SELECTION);
-        }
-    }
-
-
-    /**
-     * Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode.
-     */
-    static <T> void upload(FinderColumn<T> column, Environment environment, Dispatcher dispatcher,
-            EventBus eventBus, Provider<Progress> progress, FileList files,
-            Resources resources) {
-        if (files.getLength() > 0) {
-
-            StringBuilder builder = new StringBuilder();
-            List<Task<FlowContext>> tasks = new ArrayList<>();
-
-            for (int i = 0; i < files.getLength(); i++) {
-                String filename = files.item(i).name;
-                builder.append(filename).append(" ");
-                tasks.add(new CheckDeployment(dispatcher, filename));
-                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
-            }
-
-            logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
-        }
-    }
-
-    /**
-     * Uploads a content and deploys it to a server group.
-     */
-    static <T> void uploadAndDeploy(FinderColumn<T> column, Environment environment,
-            Dispatcher dispatcher, EventBus eventBus, Provider<Progress> progress,
-            FileList files, String serverGroup, Resources resources) {
-        if (files.getLength() > 0) {
-
-            StringBuilder builder = new StringBuilder();
-            List<Task<FlowContext>> tasks = new ArrayList<>();
-
-            for (int i = 0; i < files.getLength(); i++) {
-                String filename = files.item(i).name;
-                builder.append(filename).append(" ");
-                tasks.add(new CheckDeployment(dispatcher, filename));
-                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
-                tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
-            }
-
-            logger.debug("About to upload and deploy {} file(s): {} to server group {}",
-                    files.getLength(), builder.toString(), serverGroup);
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
     }
 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -84,7 +85,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
         customPreviews = new HashMap<>();
         customPreviews.put(Ids.SERVER_RUNTIME_STATUS,
-                new ServerRuntimePreview(environment, dispatcher, statementContext, resources));
+                new ServerRuntimePreview(dispatcher, statementContext, resources));
         customPreviews.put(BATCH_JBERET, new BatchPreview(dispatcher, statementContext, resources));
         customPreviews.put(EJB3, new ThreadPoolPreview(dispatcher, statementContext, resources));
         customPreviews.put(TRANSACTIONS, new TransactionsPreview(dispatcher, statementContext, resources));
@@ -139,7 +140,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         List<SubsystemMetadata> subsystemsWithTokens = result.stream()
                                 .filter(metadata -> metadata.getToken() != null)
                                 .collect(toList());
-                        callback.onSuccess(subsystemsWithTokens);                    }
+                        callback.onSuccess(subsystemsWithTokens);
+                    }
                 }));
 
         setItemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {

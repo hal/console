@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.logging;
 
 import java.util.Date;
+
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
@@ -26,6 +27,7 @@ import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Search;
+import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
@@ -33,7 +35,6 @@ import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -49,6 +50,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.logFileLoading;
 import static org.jboss.hal.resources.CSS.px;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 @Templated("LogFileView.html#root")
 public abstract class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
@@ -209,7 +211,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     public int visibleLines() {
         int lineHeight = 15;
         HTMLElement lineElement = (HTMLElement) document.querySelector(
-                "#" + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
+                HASH + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
         if (lineElement != null) {
             lineHeight = (int) lineElement.offsetHeight;
         }

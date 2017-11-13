@@ -36,7 +36,9 @@ public class ProcessState implements Iterable<ServerState> {
         return serverStates.iterator();
     }
 
-    public boolean isEmpty() {return serverStates.isEmpty();}
+    public boolean isEmpty() {
+        return serverStates.isEmpty();
+    }
 
     public ServerState first() {
         if (!serverStates.isEmpty()) {
@@ -45,5 +47,7 @@ public class ProcessState implements Iterable<ServerState> {
         return null;
     }
 
-    public int size() {return serverStates.size();}
+    public int size() {
+        return serverStates.size();
+    }
 }

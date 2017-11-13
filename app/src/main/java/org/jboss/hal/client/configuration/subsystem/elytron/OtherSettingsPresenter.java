@@ -18,14 +18,22 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
+import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -36,12 +44,14 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -55,41 +65,10 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.move;
 
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
         implements SupportsExpertMode {
-
-    @ProxyCodeSplit
-    @Requires(value = {AGGREGATE_PROVIDERS_ADDRESS,
-            AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS,
-            AUTHENTICATION_CONFIGURATION_ADDRESS,
-            AUTHENTICATION_CONTEXT_ADDRESS,
-            CLIENT_SSL_CONTEXT_ADDRESS,
-            CREDENTIAL_STORE_ADDRESS,
-            DIR_CONTEXT_ADDRESS,
-            FILE_AUDIT_LOG_ADDRESS,
-            FILTERING_KEY_STORE_ADDRESS,
-            KEY_MANAGER_ADDRESS,
-            KEY_STORE_ADDRESS,
-            LDAP_KEY_STORE_ADDRESS,
-            PERIODIC_FILE_AUDIT_LOG_ADDRESS,
-            POLICY_ADDRESS,
-            PROVIDER_LOADER_ADDRESS,
-            SECURITY_DOMAIN_ADDRESS,
-            SERVER_SSL_CONTEXT_ADDRESS,
-            SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
-            SYSLOG_AUDIT_LOG_ADDRESS,
-            TRUST_MANAGER_ADDRESS})
-    @NameToken(NameTokens.ELYTRON_OTHER)
-    public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
-
-    // @formatter:off
-    public interface MyView extends MbuiView<OtherSettingsPresenter> {
-        void updateResourceElement(String resource, List<NamedNode> nodes);
-        void updateLdapKeyStore(List<NamedNode> model);
-        void updatePolicy(List<NamedNode> model);
-    }
-    // @formatter:on
 
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
@@ -97,19 +76,22 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
+    private Dispatcher dispatcher;
 
     @Inject
-    public OtherSettingsPresenter(final EventBus eventBus,
-            final OtherSettingsPresenter.MyView view,
-            final OtherSettingsPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final ComplexAttributeOperations ca,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public OtherSettingsPresenter(EventBus eventBus,
+            OtherSettingsPresenter.MyView view,
+            OtherSettingsPresenter.MyProxy proxy,
+            Finder finder,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            ComplexAttributeOperations ca,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
+        this.dispatcher = dispatcher;
         this.crud = crud;
         this.ca = ca;
         this.finderPathFactory = finderPathFactory;
@@ -159,9 +141,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG.resource,
                 ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
                 ElytronResource.SYSLOG_AUDIT_LOG.resource,
-                ElytronResource.POLICY.resource,
-                ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource
-                ),
+                ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                ElytronResource.POLICY.resource), // policy must be the last item in the list!
                 result -> {
                     int i = 0;
                     getView().updateResourceElement(ElytronResource.KEY_STORE.resource,
@@ -199,15 +180,168 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.SYSLOG_AUDIT_LOG.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updatePolicy(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    // policy must be the last item in the list!
+                    List<NamedNode> policies = asNamedNodes(result.step(i).get(RESULT).asPropertyList());
+                    getView().updatePolicy(policies.isEmpty() ? null : policies.get(0));
                 });
     }
 
     void reload(String resource, Consumer<List<NamedNode>> callback) {
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, resource,
                 children -> callback.accept(asNamedNodes(children)));
+    }
+
+    // -------------------------------------------- Credential Store
+
+    void addCredentialStore() {
+        Metadata metadata = metadataRegistry.lookup(CREDENTIAL_STORE_TEMPLATE);
+        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
+        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
+
+        String id = Ids.build(Ids.ELYTRON_CREDENTIAL_STORE, Ids.ADD);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(CREATE, RELATIVE_TO, STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .unsorted()
+                .build();
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_STORE), form, (name, model) -> {
+            if (model != null) {
+                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
+                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
+                move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
+                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
+            }
+            ResourceAddress address = CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.CREDENTIAL_STORE, name, address, model, (n, a) ->
+                    reload(CREDENTIAL_STORE, nodes ->
+                            getView().updateResourceElement(CREDENTIAL_STORE, nodes)));
+        }).show();
+    }
+
+    // -------------------------------------------- Security Domain
+
+    void addSecurityDomain() {
+        Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
+        // emulate capability-reference on default-realm
+        String capabilityReference = metadata.getDescription()
+                .findAttribute(ATTRIBUTES + "/" + REALMS + "/" + VALUE_TYPE, REALM)
+                .getValue()
+                .get(CAPABILITY_REFERENCE)
+                .asString();
+
+        String id = Ids.build(Ids.ELYTRON_SECURITY_DOMAIN, Ids.ADD);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(DEFAULT_REALM)
+                .unsorted()
+                .build();
+        form.getFormItem(DEFAULT_REALM)
+                .registerSuggestHandler(
+                        new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, capabilityReference,
+                                metadata.getTemplate()));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.SECURITY_DOMAIN), form, (name, model) -> {
+            if (model != null) {
+                // add the default-realm in the list of realms
+                ModelNode realm = new ModelNode();
+                realm.get(REALM).set(model.get(DEFAULT_REALM).asString());
+                model.get(REALMS).add(realm);
+            }
+            ResourceAddress address = SECURITY_DOMAIN_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.SECURITY_DOMAIN, name, address, model, (n, a) ->
+                    reload(SECURITY_DOMAIN, nodes ->
+                            getView().updateResourceElement(SECURITY_DOMAIN, nodes)));
+        }).show();
+    }
+
+    // ------------------------------------------------------ key store
+
+    void addKeyStore() {
+        Metadata metadata = metadataRegistry.lookup(KEY_STORE_TEMPLATE);
+        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
+        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, CLEAR_TEXT), metadata);
+
+        String id = Ids.build(Ids.ELYTRON_KEY_STORE, Ids.ADD);
+        NameItem nameItem = new NameItem();
+
+        // there is a special handling for "type" attribute, as this attribute name exists in key-store and
+        // credential-reference complex attribute. We must create an unbound form item for credential-reference-type
+        String crType = "credential-reference-type";
+        String crTypeLabel = new LabelBuilder().label(crType);
+        TextBoxItem crTypeItem = new TextBoxItem(crType, crTypeLabel);
+        SafeHtml crTypeItemHelp = SafeHtmlUtils.fromString(metadata.getDescription()
+                .get(ATTRIBUTES)
+                .get(CREDENTIAL_REFERENCE)
+                .get(VALUE_TYPE)
+                .get(TYPE)
+                .get(DESCRIPTION)
+                .asString());
+
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(TYPE, PATH, RELATIVE_TO, STORE, ALIAS, CLEAR_TEXT)
+                .unboundFormItem(crTypeItem, 7, crTypeItemHelp)
+                .unsorted()
+                .build();
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_STORE), form, (name, model) -> {
+            if (model != null) {
+                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
+                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
+                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
+                if (!crTypeItem.isEmpty()) {
+                    model.get(CREDENTIAL_REFERENCE).get(TYPE).set(crTypeItem.getValue());
+                }
+            }
+            ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.KEY_STORE, name, address, model, (n, a) ->
+                    reload(KEY_STORE, nodes ->
+                            getView().updateResourceElement(KEY_STORE, nodes)));
+        }).show();
+    }
+
+
+    // ------------------------------------------------------ key manager
+
+    void addKeyManager() {
+        Metadata metadata = metadataRegistry.lookup(KEY_MANAGER_TEMPLATE);
+        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
+        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
+
+        String id = Ids.build(Ids.ELYTRON_KEY_MANAGER, Ids.ADD);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .unsorted()
+                .build();
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_MANAGER), form, (name, model) -> {
+            if (model != null) {
+                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
+                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
+                move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
+                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
+            }
+            ResourceAddress address = KEY_MANAGER_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.KEY_MANAGER, name, address, model, (n, a) ->
+                    reload(KEY_MANAGER, nodes ->
+                            getView().updateResourceElement(KEY_MANAGER, nodes)));
+        }).show();
     }
 
     // ------------------------------------------------------ LDAP key store
@@ -217,15 +351,15 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 children -> getView().updateLdapKeyStore(asNamedNodes(children)));
     }
 
-    void saveLdapKeyStore(final String name, final Map<String, Object> changedValues) {
+    void saveLdapKeyStore(String name, Map<String, Object> changedValues) {
         crud.save(Names.LDAP_KEY_STORE, name, AddressTemplates.LDAP_KEY_STORE_TEMPLATE, changedValues,
                 this::reloadLdapKeyStores);
     }
 
-    void addNewItemTemplate(final String ldapKeyStore) {
+    void addNewItemTemplate(String ldapKeyStore) {
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_TEMPLATE)
                 .forComplexAttribute(NEW_ITEM_TEMPLATE);
-        String id = Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, NEW_ITEM_TEMPLATE, Ids.ADD_SUFFIX);
+        String id = Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, NEW_ITEM_TEMPLATE, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
                 .customFormItem(NEW_ITEM_ATTRIBUTES,
@@ -239,24 +373,24 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                         AddressTemplates.LDAP_KEY_STORE_TEMPLATE, model, this::reloadLdapKeyStores)).show();
     }
 
-    Operation pingNewItemTemplate(final String ldapKeyStore) {
+    Operation pingNewItemTemplate(String ldapKeyStore) {
         ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_TEMPLATE.resolve(statementContext, ldapKeyStore);
         return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                 .param(NAME, NEW_ITEM_TEMPLATE)
                 .build();
     }
 
-    void saveNewItemTemplate(final String ldapKeyStore, final Map<String, Object> changedValues) {
+    void saveNewItemTemplate(String ldapKeyStore, Map<String, Object> changedValues) {
         ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
                 changedValues, this::reloadLdapKeyStores);
     }
 
 
-    void removeNewItemTemplate(final String ldapKeyStore, final Form<ModelNode> form) {
+    void removeNewItemTemplate(String ldapKeyStore, Form<ModelNode> form) {
         ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
-                new Form.FinishRemove<ModelNode>(form) {
+                new FinishRemove<ModelNode>(form) {
                     @Override
-                    public void afterRemove(final Form<ModelNode> form) {
+                    public void afterRemove(Form<ModelNode> form) {
                         reloadLdapKeyStores();
                     }
                 });
@@ -264,68 +398,88 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     // -------------------------------------------- Policy
 
-    void addPolicy() {
-        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE);
-        String id = Ids.build(Ids.ELYTRON_POLICY, Ids.ADD_SUFFIX);
-        NameItem nameItem = new NameItem();
+    void addPolicy(String complexAttribute, String type) {
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(complexAttribute);
+        String id = Ids.build(Ids.ELYTRON_POLICY, complexAttribute, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .unboundFormItem(new NameItem(), 0)
                 .addOnly()
-                .requiredOnly()
-                .unboundFormItem(nameItem, 0)
                 .build();
-
-        new AddResourceDialog(Names.POLICY, form, (name, model) -> {
-            // sets the "default-policy" to the same name as the policy name as the default value is "policy"
-            // repackage the model because it is not possible to add a policy with no parameter see WFLY-9056
-            model.get("default-policy").set(nameItem.getValue());
-            ModelNode jaccPolicy = new ModelNode();
-            jaccPolicy.get(NAME).set(nameItem.getValue());
-            model.get(JACC_POLICY).add(jaccPolicy);
-            ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, nameItem.getValue());
-            crud.add(Names.POLICY, name, address, model, (n, a) -> reloadPolicy());
+        new AddResourceDialog(type, form, (name, model) -> {
+            ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, name);
+            ModelNode payload = new ModelNode();
+            payload.get(complexAttribute)
+                    .set(model != null && model.isDefined() ? model : new ModelNode().setEmptyObject());
+            crud.add(type, address, payload, resources.messages().addSingleResourceSuccess(type),
+                    (n, a) -> reloadPolicy());
         }).show();
-
     }
 
-    void savePolicy(final String name, final Map<String, Object> changedValues) {
-        crud.save(Names.POLICY, name, AddressTemplates.POLICY_TEMPLATE, changedValues, this::reloadPolicy);
+    void savePolicy(String policyName, String complexAttribute, String type, Map<String, Object> changedValues) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, policyName);
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(complexAttribute);
+        ca.save(complexAttribute, type, address, changedValues, metadata, this::reloadPolicy);
     }
 
-    void reloadPolicy() {
+    void resetPolicy(String policyName, String complexAttribute, String type, Form<ModelNode> form) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, policyName);
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(complexAttribute);
+        ca.reset(complexAttribute, type, address, metadata, form, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(Form<ModelNode> form) {
+                reloadPolicy();
+            }
+        });
+    }
+
+    void removePolicy(String policyName, String type) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, policyName);
+        crud.removeSingleton(type, address, this::reloadPolicy);
+    }
+
+    private void reloadPolicy() {
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, ModelDescriptionConstants.POLICY,
-                children -> getView().updatePolicy(asNamedNodes(children)));
+                children -> {
+                    if (children.isEmpty()) {
+                        getView().updatePolicy(null);
+                    } else {
+                        getView().updatePolicy(asNamedNodes(children).get(0));
+                    }
+                });
     }
 
-    void addCustomPolicy(final String selectedPolicyRealm) {
-        ca.listAdd(Ids.ELYTRON_CUSTOM_POLICY_ADD, selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY,
-                POLICY_TEMPLATE, asList(NAME, CLASS_NAME, MODULE), this::reloadPolicy);
+
+    @ProxyCodeSplit
+    @Requires(value = {AGGREGATE_PROVIDERS_ADDRESS,
+            AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS,
+            AUTHENTICATION_CONFIGURATION_ADDRESS,
+            AUTHENTICATION_CONTEXT_ADDRESS,
+            CLIENT_SSL_CONTEXT_ADDRESS,
+            CREDENTIAL_STORE_ADDRESS,
+            DIR_CONTEXT_ADDRESS,
+            FILE_AUDIT_LOG_ADDRESS,
+            FILTERING_KEY_STORE_ADDRESS,
+            KEY_MANAGER_ADDRESS,
+            KEY_STORE_ADDRESS,
+            LDAP_KEY_STORE_ADDRESS,
+            PERIODIC_FILE_AUDIT_LOG_ADDRESS,
+            POLICY_ADDRESS,
+            PROVIDER_LOADER_ADDRESS,
+            SECURITY_DOMAIN_ADDRESS,
+            SERVER_SSL_CONTEXT_ADDRESS,
+            SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
+            SYSLOG_AUDIT_LOG_ADDRESS,
+            TRUST_MANAGER_ADDRESS})
+    @NameToken(NameTokens.ELYTRON_OTHER)
+    public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {
     }
 
-    void removeCustomPolicy(final String selectedPolicyRealm, final int customPolicyIndex) {
-        ca.remove(selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY, customPolicyIndex, POLICY_TEMPLATE,
-                this::reloadPolicy);
-    }
 
-    void saveCustomPolicy(final String selectedPolicyRealm, final int i,
-            final Map<String, Object> changedValues) {
-        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
-        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(CUSTOM_POLICY);
-        ca.save(CUSTOM_POLICY, Names.CUSTOM_POLICY, i, address, changedValues, metadata, this::reloadPolicy);
+    // @formatter:off
+    public interface MyView extends MbuiView<OtherSettingsPresenter> {
+        void updateResourceElement(String resource, List<NamedNode> nodes);
+        void updateLdapKeyStore(List<NamedNode> model);
+        void updatePolicy(NamedNode policy);
     }
-
-    void addJaccPolicy(final String selectedPolicyRealm) {
-        ca.listAdd(Ids.ELYTRON_JACC_POLICY_ADD, selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY,
-                POLICY_TEMPLATE, asList(NAME, POLICY, "configuration-factory", MODULE), this::reloadPolicy);
-    }
-
-    void removeJaccmPolicy(final String selectedPolicyRealm, final int jaccPolicyIndex) {
-        ca.remove(selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY, jaccPolicyIndex, POLICY_TEMPLATE,
-                this::reloadPolicy);
-    }
-
-    void saveJaccPolicy(final String selectedPolicyRealm, final int i, final Map<String, Object> changedValues) {
-        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
-        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(JACC_POLICY);
-        ca.save(JACC_POLICY, Names.JACC_POLICY, i, address, changedValues, metadata, this::reloadPolicy);
-    }
+    // @formatter:on
 }

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.tools;
 
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -50,22 +51,7 @@ public class MacroEditorPresenter
         extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
         implements HasTitle {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.MACRO_EDITOR)
-    public interface MyProxy extends ProxyPlace<MacroEditorPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<MacroEditorPresenter> {
-        void empty();
-        void setMacros(Iterable<Macro> macros);
-        void selectMacro(final Macro macro);
-        void enableMacro(Macro macro);
-        void disableMacro(Macro macro);
-    }
-    // @formatter:on
-
-
-    public final static String MACRO_PARAM = "macro";
+    public static final String MACRO_PARAM = "macro";
 
     private final Dispatcher dispatcher;
     private final Macros macros;
@@ -74,13 +60,8 @@ public class MacroEditorPresenter
     private Macro macro;
 
     @Inject
-    public MacroEditorPresenter(EventBus eventBus,
-            MyView view,
-            MyProxy proxy,
-            Dispatcher dispatcher,
-            Macros macros,
-            @Footer Provider<Progress> progress,
-            Resources resources) {
+    public MacroEditorPresenter(EventBus eventBus, MyView view, MyProxy proxy, Dispatcher dispatcher,
+            Macros macros, @Footer Provider<Progress> progress, Resources resources) {
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.macros = macros;
@@ -158,4 +139,20 @@ public class MacroEditorPresenter
         macros.remove(macro);
         load();
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.MACRO_EDITOR)
+    public interface MyProxy extends ProxyPlace<MacroEditorPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<MacroEditorPresenter> {
+        void empty();
+        void setMacros(Iterable<Macro> macros);
+        void selectMacro(Macro macro);
+        void enableMacro(Macro macro);
+        void disableMacro(Macro macro);
+    }
+    // @formatter:on
 }

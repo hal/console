@@ -24,74 +24,6 @@ import static java.util.stream.Collectors.toList;
 
 public class FormInfo extends MbuiElementInfo {
 
-    public static class Group {
-
-        private final String id;
-        private final String name;
-        private final String title;
-        private final List<Attribute> attributes;
-        private final Set<String> excludes;
-
-        Group(final String id, final String name, final String title) {
-            this.id = id;
-            this.name = name;
-            this.title = ExpressionParser.templateSafeValue(title);
-            this.attributes = new ArrayList<>();
-            this.excludes = new HashSet<>();
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        void addAttribute(Attribute attribute) {
-            attributes.add(attribute);
-        }
-
-        void exclude(final String name) {
-            excludes.add(name);
-        }
-
-        void exclude(final Group group) {
-            excludes.addAll(group.getAttributes().stream().map(Attribute::getName).collect(toList()));
-        }
-
-        public List<Attribute> getAttributes() {
-            return attributes;
-        }
-
-        public Set<String> getExcludes() {
-            return excludes;
-        }
-
-        public boolean isHasAttributesWithProvider() {
-            for (Attribute attribute : attributes) {
-                if (attribute.getProvider() != null) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public boolean isHasUnboundAttributes() {
-            for (Attribute attribute : attributes) {
-                if (attribute.getFormItem() != null) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-
     private final TypeParameter typeParameter;
     private final MetadataInfo metadata;
     private final String title;
@@ -226,5 +158,73 @@ public class FormInfo extends MbuiElementInfo {
 
     void addGroup(Group group) {
         groups.add(group);
+    }
+
+
+    public static class Group {
+
+        private final String id;
+        private final String name;
+        private final String title;
+        private final List<Attribute> attributes;
+        private final Set<String> excludes;
+
+        Group(final String id, final String name, final String title) {
+            this.id = id;
+            this.name = name;
+            this.title = ExpressionParser.templateSafeValue(title);
+            this.attributes = new ArrayList<>();
+            this.excludes = new HashSet<>();
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        void addAttribute(Attribute attribute) {
+            attributes.add(attribute);
+        }
+
+        void exclude(final String name) {
+            excludes.add(name);
+        }
+
+        void exclude(final Group group) {
+            excludes.addAll(group.getAttributes().stream().map(Attribute::getName).collect(toList()));
+        }
+
+        public List<Attribute> getAttributes() {
+            return attributes;
+        }
+
+        public Set<String> getExcludes() {
+            return excludes;
+        }
+
+        public boolean isHasAttributesWithProvider() {
+            for (Attribute attribute : attributes) {
+                if (attribute.getProvider() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean isHasUnboundAttributes() {
+            for (Attribute attribute : attributes) {
+                if (attribute.getFormItem() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

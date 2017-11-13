@@ -45,31 +45,19 @@ public class ResourceAdapterPresenter
         extends MbuiPresenter<ResourceAdapterPresenter.MyView, ResourceAdapterPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.RESOURCE_ADAPTER)
-    @Requires(AddressTemplates.RESOURCE_ADAPTER_ADDRESS)
-    public interface MyProxy extends ProxyPlace<ResourceAdapterPresenter> {}
-
-    public interface MyView extends MbuiView<ResourceAdapterPresenter> {
-        void update(ResourceAdapter resourceAdapter);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private String resourceAdapter;
 
     @Inject
-    public ResourceAdapterPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public ResourceAdapterPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -83,7 +71,7 @@ public class ResourceAdapterPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         resourceAdapter = request.getParameter(NAME, null);
     }
@@ -109,4 +97,17 @@ public class ResourceAdapterPresenter
         ResourceAddress address = SELECTED_RESOURCE_ADAPTER_TEMPLATE.resolve(statementContext);
         crud.readRecursive(address, result -> getView().update(new ResourceAdapter(resourceAdapter, result)));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.RESOURCE_ADAPTER)
+    @Requires(AddressTemplates.RESOURCE_ADAPTER_ADDRESS)
+    public interface MyProxy extends ProxyPlace<ResourceAdapterPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ResourceAdapterPresenter> {
+        void update(ResourceAdapter resourceAdapter);
+    }
+    // @formatter:on
 }

@@ -23,7 +23,9 @@ public class Versions {
         Version version = null;
         try {
             int defaultIndex = ordinalIndexOf(versionString, ".", 3, false);
-            if (INDEX_NOT_FOUND == defaultIndex) { defaultIndex = versionString.length(); }
+            if (INDEX_NOT_FOUND == defaultIndex) {
+                defaultIndex = versionString.length();
+            }
 
             version = Version.valueOf(versionString.substring(0, defaultIndex));
         } catch (Exception e) {
@@ -63,5 +65,8 @@ public class Versions {
 
     private static int indexOf(final CharSequence cs, final CharSequence searchChar, final int start) {
         return cs.toString().indexOf(searchChar.toString(), start);
+    }
+
+    private Versions() {
     }
 }

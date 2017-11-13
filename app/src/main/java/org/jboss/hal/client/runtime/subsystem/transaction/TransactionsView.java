@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.transaction;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -42,9 +43,10 @@ import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplate
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PARTICIPANTS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTIONS;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
-import static org.jboss.hal.resources.Ids.PAGE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.PAGE;
+import static org.jboss.hal.resources.Ids.PAGES;
+import static org.jboss.hal.resources.Ids.TABLE;
 
 public class TransactionsView extends HalViewImpl implements TransactionsPresenter.MyView {
 
@@ -65,14 +67,14 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
 
         Metadata metadataTx = metadataRegistry.lookup(TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE);
 
-        transactionsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(TRANSACTIONS, TABLE_SUFFIX), metadataTx)
+        transactionsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(TRANSACTIONS, TABLE), metadataTx)
                 .button(resources.constants().probe(), table -> presenter.probe())
                 .button(resources.constants().reload(), table -> presenter.reload())
                 .column(Names.TRANSACTION, (cell, type, row, meta) -> row.getName())
                 .column(Names.PARTICIPANTS, this::showParticipants, "20em") //NON-NLS
                 .build();
 
-        transactionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(TRANSACTIONS, FORM_SUFFIX), metadataTx)
+        transactionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(TRANSACTIONS, FORM), metadataTx)
                 .includeRuntime()
                 .readOnly()
                 .build();
@@ -88,11 +90,11 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
 
         Metadata metadataPart = metadataRegistry.lookup(PARTICIPANTS_LOGSTORE_RUNTIME_TEMPLATE);
 
-        participantsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(PARTICIPANTS, TABLE_SUFFIX), metadataPart)
+        participantsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(PARTICIPANTS, TABLE), metadataPart)
                 .column(Names.PARTICIPANT, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        participantsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(PARTICIPANTS, FORM_SUFFIX), metadataPart)
+        participantsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(PARTICIPANTS, FORM), metadataPart)
                 .includeRuntime()
                 .readOnly()
                 .build();
@@ -104,8 +106,9 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
                 .add(participantsForm)
                 .asElement();
 
-        String txPageId = Ids.build(TRANSACTIONS, PAGE_SUFFIX);
-        pages = new Pages(txPageId, section);
+        String id = Ids.build(TRANSACTIONS, PAGES);
+        String txPageId = Ids.build(TRANSACTIONS, PAGE);
+        pages = new Pages(id, txPageId, section);
         pages.addPage(txPageId, Ids.TRANSACTION_PARTICIPANTS_PAGE,
                 () -> Names.TRANSACTION + ": " + selectedTx, () -> Names.PARTICIPANTS, sectionParticipants);
 

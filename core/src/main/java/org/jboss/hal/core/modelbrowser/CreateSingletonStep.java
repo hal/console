@@ -77,7 +77,7 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
             @Override
             public void onMetadata(final Metadata metadata) {
-                String id = Ids.build(Ids.MODEL_BROWSER_CREATE_SINGLETON_FORM, Ids.FORM_SUFFIX);
+                String id = Ids.build(Ids.MODEL_BROWSER_CREATE_SINGLETON_FORM, Ids.FORM);
                 form = new ModelNodeForm.Builder<>(id, metadata)
                         .fromRequestProperties()
                         .onSave((f, changedValues) -> wizard().getContext().modelNode = f.getModel())

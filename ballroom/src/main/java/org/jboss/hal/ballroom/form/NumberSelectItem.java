@@ -39,6 +39,31 @@ import static org.jboss.hal.resources.CSS.*;
 /** A form item to select from a small set of distinct numbers using a button group. */
 public class NumberSelectItem extends AbstractFormItem<Long> {
 
+    public NumberSelectItem(final String name, final long[] numbers) {
+        this(name, new LabelBuilder().label(name), numbers);
+    }
+
+    private NumberSelectItem(final String name, final String label, final long[] numbers) {
+        super(name, label, null);
+
+        // read-only appearance
+        addAppearance(READONLY, new NumberSelectReadOnlyAppearance());
+
+        // editing appearance
+        addAppearance(EDITING, new NumberSelectEditingAppearance(numbers));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return false;
+    }
+
+
     private static class NumberSelectReadOnlyAppearance extends ReadOnlyAppearance<Long> {
 
         NumberSelectReadOnlyAppearance() {
@@ -66,7 +91,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         NumberSelectEditingAppearance(long[] numbers) {
             super(EnumSet.of(DEPRECATED, ENABLED, INVALID, REQUIRED));
             this.buttons = new HashMap<>();
-            
+
             root = div().css(formGroup)
                     .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
                     .add(inputContainer = div().css(halFormInput)
@@ -166,6 +191,8 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
                 case SENSITIVE:
                 case SUGGESTIONS:
                     break;
+                default:
+                    break;
             }
         }
 
@@ -197,6 +224,8 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
                 case SENSITIVE:
                 case SUGGESTIONS:
                     break;
+                default:
+                    break;
             }
         }
 
@@ -223,30 +252,5 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         public void setTabIndex(final int index) {
             buttonGroup.tabIndex = index;
         }
-    }
-
-
-    public NumberSelectItem(final String name, final long[] numbers) {
-        this(name, new LabelBuilder().label(name), numbers);
-    }
-
-    public NumberSelectItem(final String name, final String label, final long[] numbers) {
-        super(name, label, null);
-
-        // read-only appearance
-        addAppearance(READONLY, new NumberSelectReadOnlyAppearance());
-
-        // editing appearance
-        addAppearance(EDITING, new NumberSelectEditingAppearance(numbers));
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return false;
     }
 }

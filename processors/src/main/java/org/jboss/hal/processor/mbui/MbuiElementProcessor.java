@@ -20,6 +20,5 @@ import javax.lang.model.element.VariableElement;
 /** Processor for java attributes that are annotated with @MbuiElement */
 interface MbuiElementProcessor {
 
-    void process(final VariableElement field, final org.jdom2.Element element,
-            final String selector, final MbuiViewContext context);
+    void process(VariableElement field, org.jdom2.Element element, String selector, MbuiViewContext context);
 }

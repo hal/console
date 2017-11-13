@@ -29,7 +29,8 @@ import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
-public abstract class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter> implements ServerGroupPresenter.MyView {
+public abstract class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter>
+        implements ServerGroupPresenter.MyView {
 
     public static ServerGroupView create(final MbuiContext mbuiContext) {
         return new Mbui_ServerGroupView(mbuiContext);

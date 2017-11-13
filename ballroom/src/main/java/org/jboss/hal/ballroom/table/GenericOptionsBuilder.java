@@ -220,7 +220,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
             options.buttons.dom = new Api.Buttons.Dom();
             options.buttons.dom.container = new Api.Buttons.Dom.Factory();
             options.buttons.dom.container.tag = "div";
-            options.buttons.dom.container.className = pullRight + " " + btnGroup;
+            options.buttons.dom.container.className = pullRight + " " + btnGroup + " " + halTableButtons;
             options.buttons.dom.button = new Api.Buttons.Dom.Factory();
             options.buttons.dom.button.tag = "button";
             options.buttons.dom.button.className = btn + " " + btnDefault;

@@ -67,6 +67,169 @@ import static org.jboss.hal.resources.UIConstants.*;
 @JsType(namespace = "hal.ui")
 public class Dialog implements IsElement {
 
+    @JsIgnore public static final int PRIMARY_POSITION = 200;
+    static final int SECONDARY_POSITION = 100;
+    private static final String SELECTOR_ID = HASH + Ids.HAL_MODAL;
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+
+    private static final HTMLElement root;
+    private static final HTMLElement dialog;
+    private static final HTMLButtonElement closeIcon;
+    private static final HTMLElement title;
+    private static final HTMLElement body;
+    private static final HTMLElement footer;
+
+    private static boolean open;
+
+    static {
+        root = div()
+                .id(Ids.HAL_MODAL).css(modal)
+                .attr(ROLE, DIALOG)
+                .attr(TABINDEX, "-1")
+                .aria(LABELLED_BY, Ids.HAL_MODAL_TITLE)
+                .add(dialog = div().css(modalDialog).attr(ROLE, "document") //NON-NLS
+                        .add(div().css(modalContent)
+                                .add(div().css(modalHeader)
+                                        .add(closeIcon = button().css(close).aria(LABEL, CONSTANTS.close()).asElement())
+                                        .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).asElement()))
+                                .add(body = div().css(modalBody).asElement())
+                                .add(footer = div().css(modalFooter).asElement()))
+                        .asElement())
+                .asElement();
+
+        document.body.appendChild(root);
+        initEventHandler();
+    }
+
+    @JsIgnore
+    public static boolean isOpen() {
+        return open;
+    }
+
+    private static void initEventHandler() {
+        $(SELECTOR_ID).on(UIConstants.SHOWN_MODAL, () -> Dialog.open = true);
+        $(SELECTOR_ID).on(UIConstants.HIDDEN_MODAL, () -> Dialog.open = false);
+    }
+
+    private static void reset() {
+        root.classList.remove(fade);
+        for (Size size : Size.values()) {
+            dialog.classList.remove(size.css);
+        }
+        Elements.removeChildrenFrom(body);
+        Elements.removeChildrenFrom(footer);
+    }
+
+
+    // ------------------------------------------------------ dialog instance
+
+    private final boolean closeOnEsc;
+    private final Callback closed;
+    private final Map<Integer, HTMLButtonElement> buttons;
+    private final List<Attachable> attachables;
+
+    Dialog(final Builder builder) {
+        reset();
+        this.closeOnEsc = builder.closeOnEsc;
+        this.closed = builder.closed;
+        this.buttons = new HashMap<>();
+        this.attachables = new ArrayList<>();
+
+        if (builder.fadeIn) {
+            Dialog.root.classList.add(fade);
+        }
+        Dialog.dialog.classList.add(builder.size.css);
+        Elements.setVisible(Dialog.closeIcon, builder.closeIcon);
+        bind(closeIcon, click, event -> close());
+        setTitle(builder.title);
+        for (HTMLElement element : builder.elements) {
+            Dialog.body.appendChild(element);
+        }
+
+        if (!builder.buttons.isEmpty()) {
+            for (Map.Entry<Integer, Button> entry : builder.buttons.entrySet()) {
+                int position = entry.getKey();
+                Button button = entry.getValue();
+                String css = btn + " " + btnHal + " " + (button.primary ? btnPrimary : btnDefault);
+                if (position < 0) {
+                    css = css + " " + pullLeft;
+                }
+
+                HTMLButtonElement buttonElement = button(button.label)
+                        .css(css)
+                        .on(click, event -> {
+                            if (button.resultCallback != null) {
+                                if (button.resultCallback.eval()) {
+                                    close();
+                                }
+                            } else if (button.simpleCallback != null) {
+                                button.simpleCallback.execute();
+                                close();
+                            } else {
+                                close();
+                            }
+                        })
+                        .asElement();
+                Dialog.footer.appendChild(buttonElement);
+                buttons.put(position, buttonElement);
+            }
+        }
+        Elements.setVisible(Dialog.footer, !buttons.isEmpty());
+    }
+
+    @Override
+    @JsIgnore
+    public HTMLElement asElement() {
+        return root;
+    }
+
+    @JsIgnore
+    public void registerAttachable(Attachable first, Attachable... rest) {
+        attachables.add(first);
+        if (rest != null) {
+            Collections.addAll(attachables, rest);
+        }
+    }
+
+    public void show() {
+        if (Dialog.open) {
+            throw new IllegalStateException(
+                    "Another dialog is still open. Only one dialog can be open at a time. Please close the other dialog!");
+        }
+        $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
+        $(SELECTOR_ID).modal("show");
+        PatternFly.initComponents(SELECTOR_ID);
+        attachables.forEach(Attachable::attach);
+    }
+
+    /**
+     * Please call this method only if the dialog neither have a close icon, esc handler nor a close button.
+     */
+    void close() {
+        attachables.forEach(Attachable::detach);
+        $(SELECTOR_ID).modal("hide");
+        if (closed != null) {
+            closed.execute();
+        }
+    }
+
+
+    // ------------------------------------------------------ properties
+
+    @JsIgnore
+    public void setTitle(String title) {
+        Dialog.title.textContent = title;
+    }
+
+    @JsIgnore
+    public HTMLButtonElement getButton(int position) {
+        return buttons.get(position);
+    }
+
+
+    // ------------------------------------------------------ inner classes
+
+
     public enum Size {
         SMALL(modelSm), MEDIUM(modalMd), LARGE(modalLg), MAX(modalMx);
 
@@ -295,167 +458,5 @@ public class Dialog implements IsElement {
             return size(Size.valueOf(size));
         }
 
-    }
-
-
-    // ------------------------------------------------------ dialog singleton
-
-    @JsIgnore public static final int PRIMARY_POSITION = 200;
-    static final int SECONDARY_POSITION = 100;
-    private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
-
-    private static final HTMLElement root;
-    private static final HTMLElement dialog;
-    private static final HTMLButtonElement closeIcon;
-    private static final HTMLElement title;
-    private static final HTMLElement body;
-    private static final HTMLElement footer;
-
-    private static boolean open;
-
-    static {
-        root = div()
-                .id(Ids.HAL_MODAL).css(modal)
-                .attr(ROLE, DIALOG)
-                .attr(TABINDEX, "-1")
-                .aria(LABELLED_BY, Ids.HAL_MODAL_TITLE)
-                .add(dialog = div().css(modalDialog).attr(ROLE, "document") //NON-NLS
-                        .add(div().css(modalContent)
-                                .add(div().css(modalHeader)
-                                        .add(closeIcon = button().css(close).aria(LABEL, CONSTANTS.close()).asElement())
-                                        .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).asElement()))
-                                .add(body = div().css(modalBody).asElement())
-                                .add(footer = div().css(modalFooter).asElement()))
-                        .asElement())
-                .asElement();
-
-        document.body.appendChild(root);
-        initEventHandler();
-    }
-
-    @JsIgnore
-    public static boolean isOpen() {
-        return open;
-    }
-
-    private static void initEventHandler() {
-        $(SELECTOR_ID).on(UIConstants.SHOWN_MODAL, () -> Dialog.open = true);
-        $(SELECTOR_ID).on(UIConstants.HIDDEN_MODAL, () -> Dialog.open = false);
-    }
-
-    private static void reset() {
-        root.classList.remove(fade);
-        for (Size size : Size.values()) {
-            dialog.classList.remove(size.css);
-        }
-        Elements.removeChildrenFrom(body);
-        Elements.removeChildrenFrom(footer);
-    }
-
-
-    // ------------------------------------------------------ dialog instance
-
-    private final boolean closeOnEsc;
-    private final Callback closed;
-    private final Map<Integer, HTMLButtonElement> buttons;
-    private final List<Attachable> attachables;
-
-    Dialog(final Builder builder) {
-        reset();
-        this.closeOnEsc = builder.closeOnEsc;
-        this.closed = builder.closed;
-        this.buttons = new HashMap<>();
-        this.attachables = new ArrayList<>();
-
-        if (builder.fadeIn) {
-            Dialog.root.classList.add(fade);
-        }
-        Dialog.dialog.classList.add(builder.size.css);
-        Elements.setVisible(Dialog.closeIcon, builder.closeIcon);
-        bind(closeIcon, click, event -> close());
-        setTitle(builder.title);
-        for (HTMLElement element : builder.elements) {
-            Dialog.body.appendChild(element);
-        }
-
-        if (!builder.buttons.isEmpty()) {
-            for (Map.Entry<Integer, Button> entry : builder.buttons.entrySet()) {
-                int position = entry.getKey();
-                Button button = entry.getValue();
-                String css = btn + " " + btnHal + " " + (button.primary ? btnPrimary : btnDefault);
-                if (position < 0) {
-                    css = css + " " + pullLeft;
-                }
-
-                HTMLButtonElement buttonElement = button(button.label)
-                        .css(css)
-                        .on(click, event -> {
-                            if (button.resultCallback != null) {
-                                if (button.resultCallback.eval()) {
-                                    close();
-                                }
-                            } else if (button.simpleCallback != null) {
-                                button.simpleCallback.execute();
-                                close();
-                            } else {
-                                close();
-                            }
-                        })
-                        .asElement();
-                Dialog.footer.appendChild(buttonElement);
-                buttons.put(position, buttonElement);
-            }
-        }
-        Elements.setVisible(Dialog.footer, !buttons.isEmpty());
-    }
-
-    @Override
-    @JsIgnore
-    public HTMLElement asElement() {
-        return root;
-    }
-
-    @JsIgnore
-    public void registerAttachable(Attachable first, Attachable... rest) {
-        attachables.add(first);
-        if (rest != null) {
-            Collections.addAll(attachables, rest);
-        }
-    }
-
-    public void show() {
-        if (Dialog.open) {
-            throw new IllegalStateException(
-                    "Another dialog is still open. Only one dialog can be open at a time. Please close the other dialog!");
-        }
-        $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
-        $(SELECTOR_ID).modal("show");
-        PatternFly.initComponents(SELECTOR_ID);
-        attachables.forEach(Attachable::attach);
-    }
-
-    /**
-     * Please call this method only if the dialog neither have a close icon, esc handler nor a close button.
-     */
-    void close() {
-        attachables.forEach(Attachable::detach);
-        $(SELECTOR_ID).modal("hide");
-        if (closed != null) {
-            closed.execute();
-        }
-    }
-
-
-    // ------------------------------------------------------ properties
-
-    @JsIgnore
-    public void setTitle(String title) {
-        Dialog.title.textContent = title;
-    }
-
-    @JsIgnore
-    public HTMLButtonElement getButton(int position) {
-        return buttons.get(position);
     }
 }

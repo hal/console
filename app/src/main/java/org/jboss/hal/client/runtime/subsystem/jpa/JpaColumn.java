@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.jpa;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -116,7 +117,8 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                 .withFilter()
                 .filterDescription(resources.messages().jpaColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler()
-                .onPreview(item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, placeManager, places,
+                .onPreview(
+                        item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, placeManager, places,
                                 resources))
         );
 

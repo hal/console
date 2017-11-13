@@ -23,13 +23,19 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     private final StatementContext statementContext;
     private final String type;
 
-    protected AbstractRegistry(final StatementContext statementContext, final String type) {
+    protected AbstractRegistry(StatementContext statementContext, String type) {
         this.statementContext = statementContext;
         this.type = type;
     }
 
     @Override
-    public T lookup(final AddressTemplate template) throws MissingMetadataException {
+    public boolean contains(AddressTemplate template) {
+        ResourceAddress address = resolveTemplate(template);
+        return lookupAddress(address) != null;
+    }
+
+    @Override
+    public T lookup(AddressTemplate template) throws MissingMetadataException {
         ResourceAddress address = resolveTemplate(template);
         T metadata = lookupAddress(address);
         if (metadata == null) {
@@ -38,15 +44,9 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
         return metadata;
     }
 
-    @Override
-    public boolean contains(final AddressTemplate template) {
-        ResourceAddress address = resolveTemplate(template);
-        return lookupAddress(address) != null;
-    }
-
-    protected ResourceAddress resolveTemplate(final AddressTemplate template) {
+    protected ResourceAddress resolveTemplate(AddressTemplate template) {
         return template.resolve(statementContext);
     }
 
-    protected abstract T lookupAddress(final ResourceAddress address);
+    protected abstract T lookupAddress(ResourceAddress address);
 }

@@ -42,6 +42,8 @@ import static org.jboss.hal.resources.Ids.CONFIGURATION_CHANGES;
 
 class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
 
+    private static final String COLON = ": ";
+
     private final ConfigurationChange item;
     private final ConfigurationChangesPresenter presenter;
     private final Resources resources;
@@ -72,7 +74,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
 
     @Override
     public String getTitle() {
-        return resources.constants().operationDate() + ": " + Format.mediumDateTime(item.getOperationDate());
+        return resources.constants().operationDate() + COLON + Format.mediumDateTime(item.getOperationDate());
     }
 
     @Override
@@ -80,7 +82,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
     public SafeHtml getDescriptionHtml() {
         SafeHtmlBuilder html = new SafeHtmlBuilder();
         if (hideDescriptionWhenLarge()) {
-            html.append(SafeHtmlUtils.fromTrustedString("<pre class=\""+ formControlStatic + " " + wrap+ "\">"));
+            html.append(SafeHtmlUtils.fromTrustedString("<pre class=\"" + formControlStatic + " " + wrap + "\">"));
         }
         item.changes().forEach(m -> {
             String op = m.get(OPERATION).asString();
@@ -95,7 +97,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
                         .equals(ADDRESS) || prop.getName().equals(OPERATION_HEADERS));
                 if (allowedProperties) {
                     html.append(SafeHtmlUtils.fromTrustedString(
-                            "&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + ": " + prop.getValue() + "<br/>"));
+                            "&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + COLON + prop.getValue() + "<br/>"));
                 }
             });
         });
@@ -111,15 +113,15 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
         ElementsBuilder elements = elements();
         elements.add(div().css(halConfChangesAdditionalInfo)
                 .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
-                        .appendEscaped(resources.constants().accessMechanism() + ": ")
+                        .appendEscaped(resources.constants().accessMechanism() + COLON)
                         .appendEscaped(item.getAccessMechanism())
                         .appendHtmlConstant("<br/>")
 
-                        .appendEscaped(resources.constants().remoteAddress() + ": ")
+                        .appendEscaped(resources.constants().remoteAddress() + COLON)
                         .appendEscaped(item.getRemoteAddress())
                         .appendHtmlConstant("<br/>")
 
-                        .appendEscaped(resources.constants().composite() + ": ")
+                        .appendEscaped(resources.constants().composite() + COLON)
                         .appendEscaped(String.valueOf(item.isComposite()))
                         .toSafeHtml())));
         return elements;

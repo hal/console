@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
@@ -60,12 +61,14 @@ public class ConfigurationColumn extends StaticItemColumn {
             items.addAll(asList(
                     new StaticItem.Builder(Names.INTERFACES)
                             .nextColumn(Ids.INTERFACE)
-                            .onPreview(new PreviewContent(Names.INTERFACES, resources.previews().configurationInterfaces()))
+                            .onPreview(new PreviewContent(Names.INTERFACES,
+                                    resources.previews().configurationInterfaces()))
                             .build(),
 
                     new StaticItem.Builder(Names.SOCKET_BINDINGS)
                             .nextColumn(Ids.SOCKET_BINDING_GROUP)
-                            .onPreview(new PreviewContent(Names.SOCKET_BINDINGS, resources.previews().configurationSocketBindings()))
+                            .onPreview(new PreviewContent(Names.SOCKET_BINDINGS,
+                                    resources.previews().configurationSocketBindings()))
                             .build(),
 
                     new StaticItem.Builder(Names.PATHS)

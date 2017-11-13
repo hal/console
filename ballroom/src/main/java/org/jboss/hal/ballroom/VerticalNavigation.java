@@ -50,7 +50,7 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * <p>The vertical navigation consists of two parts:</p>
  * <ol>
- * <li>Entries: The actual menu / navigation entries which are child elements of the vertical navigation</li>
+ * <li>Items: The actual menu / navigation items which are child elements of the vertical navigation</li>
  * <li>Panes: The panes which are <strong>not</strong> children of the vertical navigation. The panes are typically
  * children
  * of the root container. Their visibility is controlled by the vertical navigation.</li>
@@ -67,21 +67,408 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
  */
-// TODO Simplify: Replace linked collections. The order of entries and panes should not matter, only the order
+// TODO Simplify: Replace linked collections. The order of items and panes should not matter, only the order
 // TODO of elements in the DOM matters! This should simplify the insert*() methods.
 public class VerticalNavigation implements Attachable {
+
+    private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
+    private static final int SECONDARY_VISIBLE_TEXT_LENGTH = 23;
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
+
+    private static HTMLElement rootContainer;
+    private static final HTMLElement root;
+    private static final HTMLElement ul;
+
+    static {
+        root = div().css(navPfVertical, navPfVerticalHal)
+                .add(ul = ul().css(listGroup).asElement())
+                .asElement();
+        Elements.setVisible(root, false);
+    }
+
+    private static void init() {
+        rootContainer = (HTMLElement) document.getElementById(Ids.ROOT_CONTAINER);
+        document.body.insertBefore(root, rootContainer);
+    }
+
+    private LinkedHashMap<String, Item> items;
+    private LinkedHashMap<String, Pane> panes;
+    private Map<String, Callback> callbacks;
+
+    public VerticalNavigation() {
+        this.items = new LinkedHashMap<>();
+        this.panes = new LinkedHashMap<>();
+        this.callbacks = new HashMap<>();
+    }
+
+    @Override
+    public void attach() {
+        if (rootContainer == null) {
+            init();
+        }
+        rootContainer.classList.add(containerPfNavPfVertical);
+        if (hasSecondary()) {
+            rootContainer.classList.add(containerPfNavPfVerticalWithSubMenus);
+            rootContainer.classList.add(navPfPersistentSecondary);
+            root.classList.add(navPfVerticalWithSubMenus);
+            root.classList.add(navPfPersistentSecondary);
+        }
+        items.values().stream()
+                .filter(item -> item.parentId == null)
+                .forEach(item -> ul.appendChild(item.asElement()));
+        Elements.setVisible(root, true);
+
+        Api.select().setupVerticalNavigation(true);
+        showInitial();
+    }
+
+    @Override
+    public void detach() {
+        Elements.removeChildrenFrom(ul);
+        root.classList.remove(navPfPersistentSecondary);
+        root.classList.remove(navPfVerticalWithSubMenus);
+        root.classList.remove(secondaryVisiblePf);
+        rootContainer.classList.remove(secondaryVisiblePf);
+        rootContainer.classList.remove(navPfPersistentSecondary);
+        rootContainer.classList.remove(containerPfNavPfVerticalWithSubMenus);
+        rootContainer.classList.remove(containerPfNavPfVertical);
+
+        Elements.setVisible(root, false);
+    }
+
+
+    // ------------------------------------------------------ add primary items
+
+    /**
+     * Adds a primary navigation item which acts a container for secondary navigation items.
+     */
+    public VerticalNavigation addPrimary(String id, String text) {
+        return addPrimary(items, panes, id, text, null, null);
+    }
+
+    public VerticalNavigation addPrimary(String id, String text, String iconClass) {
+        return addPrimary(items, panes, id, text, iconClass, null);
+    }
+
+    /**
+     * Adds a primary navigation item to the navigation which controls the visibility of the specified element.
+     * <p>
+     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
+     * navigation. The element should be rather a child of the root container.
+     *
+     * <p><strong>Please note</strong><br/>
+     * This method does <strong>not</strong> add the item to the DOM. This has to be done manually using something
+     * like</p>
+     * <pre>
+     * HTMLElement root = row()
+     *     .add(column()
+     *         .addAll(navigation.panes()))
+     *     .asElement();
+     * </pre>
+     */
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
+        return addPrimary(items, panes, id, text, iconClass, new Pane(id, element));
+    }
+
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, HTMLElement element) {
+        return addPrimary(items, panes, id, text, iconClass, new Pane(id, element));
+    }
+
+    /**
+     * Inserts a primary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null}, the
+     * item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and
+     * no item is inserted.
+     * <p>
+     * You must call this method <em>after</em> at least one item was added and <em>before</em> the navigation is
+     * {@linkplain #attach() attached}.
+     *
+     * <p><strong>Please note</strong><br/>
+     * Unlike {@link #addPrimary(String, String, String, IsElement)}, this method <strong>does</strong> add the item
+     * to the DOM.</p>
+     */
+    public void insertPrimary(String id, String beforeId, String text, String iconClass, IsElement element) {
+        insertPrimary(id, beforeId, text, iconClass, element.asElement());
+    }
+
+    public void insertPrimary(String id, String beforeId, String text, String iconClass, HTMLElement element) {
+        if (items.isEmpty()) {
+            logger.error("Cannot insert {}: There has to be at least one other item.", id);
+            return;
+        }
+
+        if (beforeId == null) {
+            // as last item
+            Pane lastPane = panes.values().iterator().next();
+            Pane pane = new Pane(id, element);
+            addPrimary(items, panes, id, text, iconClass, pane);
+            lastPane.asElement().parentNode.appendChild(pane.asElement());
+
+        } else {
+            if (items.containsKey(beforeId)) {
+                // TODO Could be simplified: The order of panes does not matter, only the order of items matters
+                LinkedHashMap<String, Item> reshuffledItems = new LinkedHashMap<>();
+                LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
+                Iterator<String> itemIterator = items.keySet().iterator();
+                Iterator<String> paneIterator = panes.keySet().iterator();
+
+                while (itemIterator.hasNext() && paneIterator.hasNext()) {
+                    String currentId = itemIterator.next();
+                    paneIterator.next();
+
+                    if (currentId.equals(beforeId)) {
+                        Pane pane = new Pane(id, element);
+                        addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, pane);
+                        Pane refPane = panes.get(currentId);
+                        refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
+                        reshuffledItems.put(currentId, items.get(currentId));
+                        reshuffledPanes.put(currentId, panes.get(currentId));
+
+                    } else {
+                        reshuffledItems.put(currentId, items.get(currentId));
+                        reshuffledPanes.put(currentId, panes.get(currentId));
+                    }
+                }
+                items = reshuffledItems;
+                panes = reshuffledPanes;
+
+            } else {
+                logger.error("Cannot insert {} before {}: No item with id {} found!", id, beforeId, beforeId);
+            }
+        }
+    }
+
+    private VerticalNavigation addPrimary(LinkedHashMap<String, Item> items, LinkedHashMap<String, Pane> panes,
+            String id, String text, String iconClass, Pane pane) {
+
+        HTMLAnchorElement a;
+        HTMLElement span;
+        HTMLElement primary = li().css(listGroupItem)
+                .id(id)
+                .add(a = a().css(clickable).asElement())
+                .asElement();
+
+        if (pane != null) {
+            bind(a, click, event -> show(id));
+        }
+        if (iconClass != null) {
+            a.appendChild(span().css(iconClass).asElement());
+        }
+        a.appendChild(span = span().css(listGroupItemValue).textContent(text).asElement());
+        if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH) {
+            span.title = text;
+        }
+
+        Item item = new Item(id, null, text, primary);
+        items.put(id, item);
+        if (pane != null) {
+            panes.put(id, pane);
+        }
+
+        return this;
+    }
+
+
+    // ------------------------------------------------------ add secondary items
+
+    /**
+     * Adds a secondary navigation item to the navigation which controls the visibility of the specified element.
+     * <p>
+     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
+     * navigation. The element should be rather a child of the root container.
+     *
+     * <p><strong>Please note</strong><br/>
+     * This method does <strong>not</strong> add the item to the DOM. This has to be done manually using something
+     * like</p>
+     * <pre>
+     * HTMLElement root = row()
+     *     .add(column()
+     *         .addAll(navigation.panes()))
+     *     .asElement();
+     * </pre>
+     */
+    public VerticalNavigation addSecondary(String primaryId, String id, String text, HTMLElement element) {
+        return addSecondary(items, panes, primaryId, id, text, new Pane(id, element));
+    }
+
+    /**
+     * Inserts a secondary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null},
+     * the item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged
+     * and no item is inserted.
+     * <p>
+     * You must call this method <em>after</em> at least one item was added and <em>before</em> the navigation is
+     * {@linkplain #attach() attached}.
+     *
+     * <p><strong>Please note</strong><br/>
+     * Unlike {@link #addSecondary(String, String, String, HTMLElement)}, this method <strong>does</strong> add the
+     * item to the DOM.</p>
+     */
+    public void insertSecondary(String primaryId, String id, String beforeId, String text, HTMLElement element) {
+        Item primaryItem = items.get(primaryId);
+        if (primaryItem != null) {
+
+            // The order of panes does not matter.
+            Pane pane = new Pane(id, element);
+            Pane lastPane = panes.values().iterator().next();
+            lastPane.asElement().parentNode.appendChild(pane.asElement());
+
+            // The order of items does matter
+            if (beforeId == null) {
+                // as last item
+                addSecondary(items, panes, primaryId, id, text, pane);
+
+            } else {
+                // TODO insert instead of add!
+                addSecondary(items, panes, primaryId, id, text, pane);
+            }
+
+        } else {
+            logger.error("Unable to find primary navigation item for id '{}'", primaryId);
+        }
+    }
+
+    private VerticalNavigation addSecondary(LinkedHashMap<String, Item> items, LinkedHashMap<String, Pane> panes,
+            String primaryId, String id, String text, Pane pane) {
+        Item primaryItem = items.get(primaryId);
+
+        if (primaryItem != null) {
+            HTMLElement secondaryUl = (HTMLElement) primaryItem.asElement()
+                    .querySelector("." + navPfSecondaryNav + " > ul." + listGroup); //NON-NLS
+
+            if (secondaryUl == null) {
+                // seems to be the first secondary item -> setup the secondary containers
+                String secondaryContainerId = Ids.build(primaryId, "secondary");
+                primaryItem.asElement().classList.add(secondaryNavItemPf);
+                primaryItem.asElement().dataset.set(UIConstants.TARGET, "#" + secondaryContainerId);
+
+                HTMLElement span;
+                HTMLElement div = div().css(navPfSecondaryNav, navPfSecondaryNavHal)
+                        .id(secondaryContainerId)
+                        .add(div().css(navItemPfHeader)
+                                .add(a().css(secondaryCollapseTogglePf)
+                                        .data(UIConstants.TOGGLE, "collapse-secondary-nav")) //NON-NLS
+                                .add(span = span().textContent(primaryItem.text).asElement()))
+                        .add(secondaryUl = ul().css(listGroup).asElement())
+                        .asElement();
+
+                if (text.length() > SECONDARY_VISIBLE_TEXT_LENGTH) {
+                    span.title = text;
+                }
+                primaryItem.asElement().appendChild(div);
+            }
+
+            HTMLElement li = li().css(listGroupItem)
+                    .add(a().css(clickable).on(click, event -> show(id))
+                            .add(span().css(listGroupItemValue).textContent(text)))
+                    .asElement();
+
+            primaryItem.addChild(id);
+            Item secondaryItem = new Item(id, primaryId, text, li);
+            secondaryUl.appendChild(secondaryItem.asElement());
+            items.put(id, secondaryItem);
+            panes.put(id, pane);
+
+        } else {
+            logger.error("Unable to find primary navigation item for id '{}'", primaryId);
+        }
+        return this;
+    }
+
+
+    // ------------------------------------------------------ misc
+
+    private void showInitial() {
+        if (!items.isEmpty()) {
+            String id;
+            Map.Entry<String, Item> entry = items.entrySet().iterator().next();
+            if (entry.getValue().hasChildren()) {
+                id = entry.getValue().firstChild();
+            } else {
+                id = entry.getValue().id;
+            }
+            show(id);
+        }
+    }
+
+    public void show(String id) {
+        Item show = items.get(id);
+        if (show != null) {
+            if (show.parentId != null) {
+                show(show.parentId);
+            }
+            for (Pane pane : panes.values()) {
+                Elements.setVisible(pane.asElement(), pane.id.equals(id));
+            }
+            show.asElement().click();
+            if (callbacks.containsKey(id)) {
+                callbacks.get(id).execute();
+            }
+
+        } else {
+            logger.error("Unable to show item for id '{}': No such item!", id);
+        }
+    }
+
+    /**
+     * Controls the visibility of the specified item.
+     */
+    public void setVisible(String id, boolean visible) {
+        Item item = items.get(id);
+        Pane pane = panes.get(id);
+        if (item != null && pane != null) {
+            Elements.setVisible(item.asElement(), visible);
+            if (!visible && Elements.isVisible(pane.asElement())) {
+                Elements.setVisible(pane.asElement(), false);
+            }
+        } else {
+            logger.error("Unable to hide item for id '{}': No such item!", id);
+        }
+    }
+
+    public void onShow(String id, Callback callback) {
+        callbacks.put(id, callback);
+    }
+
+    public void updateBadge(String id, int count) {
+        Item item = items.get(id);
+        if (item != null) {
+            Element a = item.asElement().firstElementChild;
+            HTMLElement badgeContainer = (HTMLElement) a.querySelector("." + badgeContainerPf);
+            if (badgeContainer != null) {
+                a.removeChild(badgeContainer);
+            }
+            badgeContainer = div().css(badgeContainerPf)
+                    .add(span().css(badge).textContent(String.valueOf(count)))
+                    .asElement();
+            a.appendChild(badgeContainer);
+        } else {
+            logger.error("Unable to find navigation item for id '{}'", id);
+        }
+    }
+
+    /**
+     * Returns the elements which were registered using the {@code add()} methods. Use this method to add those
+     * elements to another container.
+     */
+    public HasElements panes() {
+        return () -> panes.values().stream().map(Pane::asElement).collect(toList());
+    }
+
+    private boolean hasSecondary() {
+        return items.values().stream().anyMatch(item -> !item.children.isEmpty());
+    }
+
 
     @JsType(isNative = true)
     static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Api select();
+        public static native Api select();
 
         public native void setupVerticalNavigation(boolean handleItemSelections);
     }
 
 
-    private static class Entry implements IsElement {
+    private static class Item implements IsElement {
 
         private final String id;
         private final String parentId;
@@ -89,7 +476,7 @@ public class VerticalNavigation implements Attachable {
         private final HTMLElement element;
         private final LinkedHashSet<String> children;
 
-        private Entry(final String id, String parentId, final String text, final HTMLElement element) {
+        private Item(final String id, String parentId, final String text, final HTMLElement element) {
             this.id = id;
             this.parentId = parentId;
             this.text = text;
@@ -135,392 +522,5 @@ public class VerticalNavigation implements Attachable {
         public HTMLElement asElement() {
             return element;
         }
-    }
-
-
-    private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
-    private static final int SECONDARY_VISIBLE_TEXT_LENGTH = 23;
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
-
-    private static HTMLElement rootContainer;
-    private static final HTMLElement root;
-    private static final HTMLElement ul;
-
-    static {
-        root = div().css(navPfVertical, navPfVerticalHal)
-                .add(ul = ul().css(listGroup).asElement())
-                .asElement();
-        Elements.setVisible(root, false);
-    }
-
-    private static void init() {
-        rootContainer = (HTMLElement) document.getElementById(Ids.ROOT_CONTAINER);
-        document.body.insertBefore(root, rootContainer);
-    }
-
-    private LinkedHashMap<String, Entry> entries;
-    private LinkedHashMap<String, Pane> panes;
-    private Map<String, Callback> callbacks;
-
-    public VerticalNavigation() {
-        this.entries = new LinkedHashMap<>();
-        this.panes = new LinkedHashMap<>();
-        this.callbacks = new HashMap<>();
-    }
-
-    @Override
-    public void attach() {
-        if (rootContainer == null) {
-            init();
-        }
-        rootContainer.classList.add(containerPfNavPfVertical);
-        if (hasSecondary()) {
-            rootContainer.classList.add(containerPfNavPfVerticalWithSubMenus);
-            rootContainer.classList.add(navPfPersistentSecondary);
-            root.classList.add(navPfVerticalWithSubMenus);
-            root.classList.add(navPfPersistentSecondary);
-        }
-        entries.values().stream()
-                .filter(entry -> entry.parentId == null)
-                .forEach(entry -> ul.appendChild(entry.asElement()));
-        Elements.setVisible(root, true);
-
-        Api.select().setupVerticalNavigation(true);
-        showInitial();
-    }
-
-    @Override
-    public void detach() {
-        Elements.removeChildrenFrom(ul);
-        root.classList.remove(navPfPersistentSecondary);
-        root.classList.remove(navPfVerticalWithSubMenus);
-        root.classList.remove(secondaryVisiblePf);
-        rootContainer.classList.remove(secondaryVisiblePf);
-        rootContainer.classList.remove(navPfPersistentSecondary);
-        rootContainer.classList.remove(containerPfNavPfVerticalWithSubMenus);
-        rootContainer.classList.remove(containerPfNavPfVertical);
-
-        Elements.setVisible(root, false);
-    }
-
-
-    // ------------------------------------------------------ add primary items
-
-    /**
-     * Adds a primary navigation entry which acts a container for secondary navigation entries.
-     */
-    public VerticalNavigation addPrimary(String id, String text) {
-        return addPrimary(entries, panes, id, text, null, null);
-    }
-
-    public VerticalNavigation addPrimary(String id, String text, String iconClass) {
-        return addPrimary(entries, panes, id, text, iconClass, null);
-    }
-
-    /**
-     * Adds a primary navigation entry to the navigation which controls the visibility of the specified element.
-     * <p>
-     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
-     * navigation. The element should be rather a child of the root container.
-     *
-     * <p><strong>Please note</strong><br/>
-     * This method does <strong>not</strong> add the entry to the DOM. This has to be done manually using something
-     * like</p>
-     * <pre>
-     * HTMLElement root = row()
-     *     .add(column()
-     *         .addAll(navigation.panes()))
-     *     .asElement();
-     * </pre>
-     */
-    public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
-        return addPrimary(entries, panes, id, text, iconClass, new Pane(id, element));
-    }
-
-    public VerticalNavigation addPrimary(String id, String text, String iconClass, HTMLElement element) {
-        return addPrimary(entries, panes, id, text, iconClass, new Pane(id, element));
-    }
-
-    /**
-     * Inserts a primary navigation entry <em>before</em> the specified entry. If {@code beforeId} is {@code null}, the
-     * entry is inserted as last entry. If there's not entry with id {@code beforeId}, an error message is logged and
-     * no entry is inserted.
-     * <p>
-     * You must call this method <em>after</em> at least one entry was added and <em>before</em> the navigation is
-     * {@linkplain #attach() attached}.
-     *
-     * <p><strong>Please note</strong><br/>
-     * Unlike {@link #addPrimary(String, String, String, IsElement)}, this method <strong>does</strong> add the entry
-     * to the DOM.</p>
-     */
-    public void insertPrimary(String id, String beforeId, String text, String iconClass, IsElement element) {
-        insertPrimary(id, beforeId, text, iconClass, element.asElement());
-    }
-
-    public void insertPrimary(String id, String beforeId, String text, String iconClass, HTMLElement element) {
-        if (entries.isEmpty()) {
-            logger.error("Cannot insert {}: There has to be at least one other entry.", id);
-            return;
-        }
-
-        if (beforeId == null) {
-            // as last entry
-            Pane lastPane = panes.values().iterator().next();
-            Pane pane = new Pane(id, element);
-            addPrimary(entries, panes, id, text, iconClass, pane);
-            lastPane.asElement().parentNode.appendChild(pane.asElement());
-
-        } else {
-            if (entries.containsKey(beforeId)) {
-                // TODO Could be simplified: The order of panes does not matter, only the order of entries matters
-                LinkedHashMap<String, Entry> reshuffledEntries = new LinkedHashMap<>();
-                LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
-                Iterator<String> entryIterator = entries.keySet().iterator();
-                Iterator<String> paneIterator = panes.keySet().iterator();
-
-                while (entryIterator.hasNext() && paneIterator.hasNext()) {
-                    String currentId = entryIterator.next();
-                    paneIterator.next();
-
-                    if (currentId.equals(beforeId)) {
-                        Pane pane = new Pane(id, element);
-                        addPrimary(reshuffledEntries, reshuffledPanes, id, text, iconClass, pane);
-                        Pane refPane = panes.get(currentId);
-                        refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
-                        reshuffledEntries.put(currentId, entries.get(currentId));
-                        reshuffledPanes.put(currentId, panes.get(currentId));
-
-                    } else {
-                        reshuffledEntries.put(currentId, entries.get(currentId));
-                        reshuffledPanes.put(currentId, panes.get(currentId));
-                    }
-                }
-                entries = reshuffledEntries;
-                panes = reshuffledPanes;
-
-            } else {
-                logger.error("Cannot insert {} before {}: No entry with id {} found!", id, beforeId, beforeId);
-            }
-        }
-    }
-
-    private VerticalNavigation addPrimary(LinkedHashMap<String, Entry> entries, LinkedHashMap<String, Pane> panes,
-            String id, String text, String iconClass, Pane pane) {
-
-        HTMLAnchorElement a;
-        HTMLElement span;
-        HTMLElement primary = li().css(listGroupItem)
-                .id(id)
-                .add(a = a().css(clickable).asElement())
-                .asElement();
-
-        if (pane != null) {
-            bind(a, click, event -> show(id));
-        }
-        if (iconClass != null) {
-            a.appendChild(span().css(iconClass).asElement());
-        }
-        a.appendChild(span = span().css(listGroupItemValue).textContent(text).asElement());
-        if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH) {
-            span.title = text;
-        }
-
-        Entry entry = new Entry(id, null, text, primary);
-        entries.put(id, entry);
-        if (pane != null) {
-            panes.put(id, pane);
-        }
-
-        return this;
-    }
-
-
-    // ------------------------------------------------------ add secondary items
-
-    /**
-     * Adds a secondary navigation entry to the navigation which controls the visibility of the specified element.
-     * <p>
-     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
-     * navigation. The element should be rather a child of the root container.
-     *
-     * <p><strong>Please note</strong><br/>
-     * This method does <strong>not</strong> add the entry to the DOM. This has to be done manually using something
-     * like</p>
-     * <pre>
-     * HTMLElement root = row()
-     *     .add(column()
-     *         .addAll(navigation.panes()))
-     *     .asElement();
-     * </pre>
-     */
-    public VerticalNavigation addSecondary(String primaryId, String id, String text, HTMLElement element) {
-        return addSecondary(entries, panes, primaryId, id, text, new Pane(id, element));
-    }
-
-    /**
-     * Inserts a secondary navigation entry <em>before</em> the specified entry. If {@code beforeId} is {@code null},
-     * the entry is inserted as last entry. If there's not entry with id {@code beforeId}, an error message is logged
-     * and no entry is inserted.
-     * <p>
-     * You must call this method <em>after</em> at least one entry was added and <em>before</em> the navigation is
-     * {@linkplain #attach() attached}.
-     *
-     * <p><strong>Please note</strong><br/>
-     * Unlike {@link #addSecondary(String, String, String, HTMLElement)}, this method <strong>does</strong> add the
-     * entry to the DOM.</p>
-     */
-    public void insertSecondary(String primaryId, String id, String beforeId, String text, HTMLElement element) {
-        Entry primaryEntry = entries.get(primaryId);
-        if (primaryEntry != null) {
-
-            // The order of panes does not matter.
-            Pane pane = new Pane(id, element);
-            Pane lastPane = panes.values().iterator().next();
-            lastPane.asElement().parentNode.appendChild(pane.asElement());
-
-            // The order of entries does matter
-            if (beforeId == null) {
-                // as last entry
-                addSecondary(entries, panes, primaryId, id, text, pane);
-
-            } else {
-                // TODO insert instead of add!
-                addSecondary(entries, panes, primaryId, id, text, pane);
-            }
-
-        } else {
-            logger.error("Unable to find primary navigation entry for id '{}'", primaryId);
-        }
-    }
-
-    private VerticalNavigation addSecondary(LinkedHashMap<String, Entry> entries, LinkedHashMap<String, Pane> panes,
-            String primaryId, String id, String text, Pane pane) {
-        Entry primaryEntry = entries.get(primaryId);
-
-        if (primaryEntry != null) {
-            HTMLElement secondaryUl = (HTMLElement) primaryEntry.asElement()
-                    .querySelector("." + navPfSecondaryNav + " > ul." + listGroup); //NON-NLS
-
-            if (secondaryUl == null) {
-                // seems to be the first secondary entry -> setup the secondary containers
-                String secondaryContainerId = Ids.build(primaryId, "secondary");
-                primaryEntry.asElement().classList.add(secondaryNavItemPf);
-                primaryEntry.asElement().dataset.set(UIConstants.TARGET, "#" + secondaryContainerId);
-
-                HTMLElement span;
-                HTMLElement div = div().css(navPfSecondaryNav, navPfSecondaryNavHal)
-                        .id(secondaryContainerId)
-                        .add(div().css(navItemPfHeader)
-                                .add(a().css(secondaryCollapseTogglePf)
-                                        .data(UIConstants.TOGGLE, "collapse-secondary-nav")) //NON-NLS
-                                .add(span = span().textContent(primaryEntry.text).asElement()))
-                        .add(secondaryUl = ul().css(listGroup).asElement())
-                        .asElement();
-
-                if (text.length() > SECONDARY_VISIBLE_TEXT_LENGTH) {
-                    span.title = text;
-                }
-                primaryEntry.asElement().appendChild(div);
-            }
-
-            HTMLElement li = li().css(listGroupItem)
-                    .add(a().css(clickable).on(click, event -> show(id))
-                            .add(span().css(listGroupItemValue).textContent(text)))
-                    .asElement();
-
-            primaryEntry.addChild(id);
-            Entry secondaryEntry = new Entry(id, primaryId, text, li);
-            secondaryUl.appendChild(secondaryEntry.asElement());
-            entries.put(id, secondaryEntry);
-            panes.put(id, pane);
-
-        } else {
-            logger.error("Unable to find primary navigation entry for id '{}'", primaryId);
-        }
-        return this;
-    }
-
-
-    // ------------------------------------------------------ misc
-
-    private void showInitial() {
-        if (!entries.isEmpty()) {
-            String id;
-            Map.Entry<String, Entry> entry = entries.entrySet().iterator().next();
-            if (entry.getValue().hasChildren()) {
-                id = entry.getValue().firstChild();
-            } else {
-                id = entry.getValue().id;
-            }
-            show(id);
-        }
-    }
-
-    public void show(String id) {
-        Entry show = entries.get(id);
-        if (show != null) {
-            if (show.parentId != null) {
-                show(show.parentId);
-            }
-            for (Pane pane : panes.values()) {
-                Elements.setVisible(pane.asElement(), pane.id.equals(id));
-            }
-            show.asElement().click();
-            if (callbacks.containsKey(id)) {
-                callbacks.get(id).execute();
-            }
-
-        } else {
-            logger.error("Unable to show entry for id '{}': No such entry!", id);
-        }
-    }
-
-    /**
-     * Controls the visibility of the specified entry.
-     */
-    public void setVisible(String id, boolean visible) {
-        Entry entry = entries.get(id);
-        Pane pane = panes.get(id);
-        if (entry != null && pane != null) {
-            Elements.setVisible(entry.asElement(), visible);
-            if (!visible && Elements.isVisible(pane.asElement())) {
-                Elements.setVisible(pane.asElement(), false);
-            }
-        } else {
-            logger.error("Unable to hide entry for id '{}': No such entry!", id);
-        }
-    }
-
-    public void onShow(String id, Callback callback) {
-        callbacks.put(id, callback);
-    }
-
-    public void updateBadge(String id, int count) {
-        Entry entry = entries.get(id);
-        if (entry != null) {
-            Element a = entry.asElement().firstElementChild;
-            HTMLElement badgeContainer = (HTMLElement) a.querySelector("." + badgeContainerPf);
-            if (badgeContainer != null) {
-                a.removeChild(badgeContainer);
-            }
-            badgeContainer = div().css(badgeContainerPf)
-                    .add(span().css(badge).textContent(String.valueOf(count)))
-                    .asElement();
-            a.appendChild(badgeContainer);
-        } else {
-            logger.error("Unable to find navigation entry for id '{}'", id);
-        }
-    }
-
-    /**
-     * Returns the elements which were registered using the {@code add()} methods. Use this method to add those
-     * elements to another container.
-     */
-    public HasElements panes() {
-        return () -> panes.values().stream().map(Pane::asElement).collect(toList());
-    }
-
-    private boolean hasSecondary() {
-        return entries.values().stream().anyMatch(entry -> !entry.children.isEmpty());
     }
 }

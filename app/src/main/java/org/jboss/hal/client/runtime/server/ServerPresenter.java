@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.server;
 
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -68,28 +69,6 @@ public class ServerPresenter
     private static final String SERVER_KEY = "server";
     private static final String SERVER_CONFIG_KEY = "server-config";
     private static final String SERVER_RUNTIME_KEY = "server-runtime";
-
-
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.SERVER_CONFIGURATION)
-    @Requires(value = {SERVER_CONFIG_ADDRESS,
-            INTERFACE_ADDRESS,
-            JVM_ADDRESS,
-            PATH_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS},
-            recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerPresenter> {}
-
-    public interface MyView extends MbuiView<ServerPresenter> {
-        void updateServer(Server server);
-        void updateInterfaces(List<NamedNode> interfaces);
-        void updateJvms(List<NamedNode> interfaces);
-        void updatePaths(List<NamedNode> interfaces);
-        void updateSystemProperties(List<NamedNode> interfaces);
-        void updateRuntime(ModelNode modelNode);
-    }
-    // @formatter:on
 
 
     private final FinderPathFactory finderPathFactory;
@@ -204,4 +183,27 @@ public class ServerPresenter
                     }
                 });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.SERVER_CONFIGURATION)
+    @Requires(value = {SERVER_CONFIG_ADDRESS,
+            INTERFACE_ADDRESS,
+            JVM_ADDRESS,
+            PATH_ADDRESS,
+            SYSTEM_PROPERTY_ADDRESS},
+            recursive = false)
+    public interface MyProxy extends ProxyPlace<ServerPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ServerPresenter> {
+        void updateServer(Server server);
+        void updateInterfaces(List<NamedNode> interfaces);
+        void updateJvms(List<NamedNode> interfaces);
+        void updatePaths(List<NamedNode> interfaces);
+        void updateSystemProperties(List<NamedNode> interfaces);
+        void updateRuntime(ModelNode modelNode);
+    }
+    // @formatter:on
 }

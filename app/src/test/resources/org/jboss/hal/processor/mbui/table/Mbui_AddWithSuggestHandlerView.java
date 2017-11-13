@@ -57,7 +57,7 @@ public final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerV
         table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .button(mbuiContext.tableButtonFactory().add(metadata0Template, table -> {
                     AddResourceDialog dialog = new AddResourceDialog(
-                            Ids.build("table", Ids.ADD_SUFFIX),
+                            Ids.build("table", Ids.ADD),
                             mbuiContext.resources().messages().addResourceTitle("Foo"),
                             metadata0,
                             asList("foo"),

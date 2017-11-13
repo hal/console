@@ -17,6 +17,7 @@ package org.jboss.hal.core;
 
 import java.util.EnumMap;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;

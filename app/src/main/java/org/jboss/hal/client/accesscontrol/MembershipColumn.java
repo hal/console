@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.StreamSupport;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -246,24 +247,24 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                 series(new FlowContext(progress.get()), new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new AddAssignment(dispatcher, role, principal, include))
-                .subscribe(new org.jboss.hal.core.SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        String type = principal.getType() == Principal.Type.USER
-                                ? resources.constants().user()
-                                : resources.constants().group();
-                        SafeHtml message = include
-                                ? resources.messages().assignmentIncludeSuccess(type, principal.getName())
-                                : resources.messages().assignmentExcludeSuccess(type, principal.getName());
-                        MessageEvent.fire(eventBus, Message.success(message));
-                        accessControl.reload(() -> {
-                            refresh(RefreshMode.RESTORE_SELECTION);
-                            if (isCurrentUser(principal)) {
-                                eventBus.fireEvent(new UserChangedEvent());
+                        .subscribe(new org.jboss.hal.core.SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                String type = principal.getType() == Principal.Type.USER
+                                        ? resources.constants().user()
+                                        : resources.constants().group();
+                                SafeHtml message = include
+                                        ? resources.messages().assignmentIncludeSuccess(type, principal.getName())
+                                        : resources.messages().assignmentExcludeSuccess(type, principal.getName());
+                                MessageEvent.fire(eventBus, Message.success(message));
+                                accessControl.reload(() -> {
+                                    refresh(RefreshMode.RESTORE_SELECTION);
+                                    if (isCurrentUser(principal)) {
+                                        eventBus.fireEvent(new UserChangedEvent());
+                                    }
+                                });
                             }
                         });
-                    }
-                });
             }
         };
     }

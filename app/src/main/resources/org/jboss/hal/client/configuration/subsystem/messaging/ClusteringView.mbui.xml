@@ -17,7 +17,7 @@
   -->
 <view>
     <vertical-navigation id="messaging-clustering-vertical-navigation">
-        <item id="messaging-broadcast-group-entry" title="Broadcast Group" icon="fa fa-video-camera">
+        <item id="messaging-broadcast-group-item" title="Broadcast Group" icon="fa fa-video-camera">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/broadcast-group=*">
                 <h1>Broadcast Group</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -54,7 +54,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-discovery-group-entry" title="Discovery Group" icon="fa fa-map-o">
+        <item id="messaging-discovery-group-item" title="Discovery Group" icon="fa fa-map-o">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/discovery-group=*">
                 <h1>Discovery Group</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -91,7 +91,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-cluster-connection-entry" title="Cluster Connection" icon="pficon pficon-network">
+        <item id="messaging-cluster-connection-item" title="Cluster Connection" icon="pficon pficon-network">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/cluster-connection=*">
                 <h1>Cluster Connection</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -115,7 +115,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-grouping-handler-entry" title="Grouping Handler" icon="fa fa-object-group">
+        <item id="messaging-grouping-handler-item" title="Grouping Handler" icon="fa fa-object-group">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/grouping-handler=*">
                 <h1>Grouping Handler</h1>
                 <p>${metadata.getDescription().getDescription()}</p>

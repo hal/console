@@ -22,13 +22,13 @@ import java.util.Map;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -51,13 +51,13 @@ public enum HaPolicy {
             AddressTemplates.LIVE_ONLY_TEMPLATE),
 
     REPLICATION_COLOCATED_MASTER(Ids.MESSAGING_HA_REPLICATION_COLOCATED_MASTER,
-            Names.REPLICATION_COLOCATED + " / " + Names.MASTER,
-            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + "=" + MASTER,
+            Names.REPLICATION_COLOCATED + Constants.SLASH + Names.MASTER,
+            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + MASTER,
             AddressTemplates.REPLICATION_COLOCATED_MASTER_TEMPLATE),
 
     REPLICATION_COLOCATED_SLAVE(Ids.MESSAGING_HA_REPLICATION_COLOCATED_SLAVE,
-            Names.REPLICATION_COLOCATED + " / " + Names.SLAVE,
-            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + "=" + SLAVE,
+            Names.REPLICATION_COLOCATED + Constants.SLASH + Names.SLAVE,
+            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + SLAVE,
             AddressTemplates.REPLICATION_COLOCATED_SLAVE_TEMPLATE),
 
     REPLICATION_COLOCATED(Ids.MESSAGING_HA_REPLICATION_COLOCATED,
@@ -77,13 +77,13 @@ public enum HaPolicy {
             AddressTemplates.REPLICATION_SLAVE_TEMPLATE),
 
     SHARED_STORE_COLOCATED_MASTER(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_MASTER,
-            Names.SHARED_STORE_COLOCATED + " / " + Names.MASTER,
-            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + "=" + MASTER,
+            Names.SHARED_STORE_COLOCATED + Constants.SLASH + Names.MASTER,
+            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + MASTER,
             AddressTemplates.SHARED_STORE_COLOCATED_MASTER_TEMPLATE),
 
     SHARED_STORE_COLOCATED_SLAVE(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_SLAVE,
-            Names.SHARED_STORE_COLOCATED + " / " + Names.SLAVE,
-            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + "=" + SLAVE,
+            Names.SHARED_STORE_COLOCATED + Constants.SLASH + Names.SLAVE,
+            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + SLAVE,
             AddressTemplates.SHARED_STORE_COLOCATED_SLAVE_TEMPLATE),
 
     SHARED_STORE_COLOCATED(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED,
@@ -101,7 +101,6 @@ public enum HaPolicy {
             Names.SHARED_STORE_SLAVE,
             ModelDescriptionConstants.SHARED_STORE_SLAVE,
             AddressTemplates.SHARED_STORE_SLAVE_TEMPLATE);
-
 
     public static HaPolicy fromResourceName(String resourceName) {
         HaPolicy result = null;
@@ -126,6 +125,8 @@ public enum HaPolicy {
                 break;
             case ModelDescriptionConstants.SHARED_STORE_SLAVE:
                 result = SHARED_STORE_SLAVE;
+                break;
+            default:
                 break;
         }
         return result;
@@ -153,7 +154,7 @@ public enum HaPolicy {
     }
 
     AddressTemplate singleton() {
-        return SELECTED_SERVER_TEMPLATE.append(HA_POLICY + "=" + singleton);
+        return SELECTED_SERVER_TEMPLATE.append(HA_POLICY + Constants.EQUALS + singleton);
     }
 
     List<HaPolicy> children() {
@@ -214,5 +215,12 @@ public enum HaPolicy {
                     ).build());
                     dispatcher.execute(new Composite(operations), (CompositeResult result) -> callback.execute());
                 });
+    }
+
+
+    private static class Constants {
+
+        private static final String SLASH = " / ";
+        private static final String EQUALS = "=";
     }
 }

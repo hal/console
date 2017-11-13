@@ -31,9 +31,9 @@ interface AddressTemplates {
     String WORKMANAGER_SRT_ADDRESS = WORKMANAGER_ADDRESS + "/short-running-threads=*";
 
     AddressTemplate JCA_TEMPLATE = AddressTemplate.of(JCA_ADDRESS);
-    AddressTemplate ARCHIVE_VALIDATION_TEMPLATE =  AddressTemplate.of(ARCHIVE_VALIDATION_ADDRESS);
+    AddressTemplate ARCHIVE_VALIDATION_TEMPLATE = AddressTemplate.of(ARCHIVE_VALIDATION_ADDRESS);
     AddressTemplate BEAN_VALIDATION_TEMPLATE = AddressTemplate.of(BEAN_VALIDATION_ADDRESS);
-    AddressTemplate BOOTSTRAP_CONTEXT_TEMPLATE =  AddressTemplate.of(BOOTSTRAP_CONTEXT_ADDRESS);
+    AddressTemplate BOOTSTRAP_CONTEXT_TEMPLATE = AddressTemplate.of(BOOTSTRAP_CONTEXT_ADDRESS);
     AddressTemplate CCM_TEMPLATE = AddressTemplate.of(CCM_ADDRESS);
     AddressTemplate DISTRIBUTED_WORKMANAGER_TEMPLATE = AddressTemplate.of(DISTRIBUTED_WORKMANAGER_ADDRESS);
     AddressTemplate TRACER_TEMPLATE = AddressTemplate.of(TRACER_ADDRESS);

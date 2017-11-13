@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
@@ -63,6 +64,7 @@ public class EsDocProcessor extends AbstractProcessor {
 
     private static final String AUTO = "<auto>";
     private static final String PACKAGE = "esdoc";
+    private static final String PADDING = "    ";
     private static final String PARAM_TAG = "@param";
     private static final String RETURN_TAG = "@return";
     private static final String TEMPLATE = "EsDoc.ftl";
@@ -105,7 +107,7 @@ public class EsDocProcessor extends AbstractProcessor {
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsConstructor.class) != null))
                     .findFirst()
                     .ifPresent(e -> type.setConstructor(
-                            new Constructor(parameters(e), comment(e, "    "))));
+                            new Constructor(parameters(e), comment(e, PADDING))));
 
             // Properties - Fields
             ElementFilter.fieldsIn(elements)
@@ -114,7 +116,7 @@ public class EsDocProcessor extends AbstractProcessor {
                     .forEach(e -> {
                         boolean setter = !e.getModifiers().contains(Modifier.FINAL);
                         type.addProperty(
-                                new Property(propertyName(e), comment(e, "    "), true, setter, _static(e)));
+                                new Property(propertyName(e), comment(e, PADDING), true, setter, _static(e)));
                     });
 
             // Properties - Methods (only getters are supported)
@@ -122,14 +124,14 @@ public class EsDocProcessor extends AbstractProcessor {
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsProperty.class) != null))
                     .forEach(e -> type.addProperty(
-                            new Property(propertyName(e), comment(e, "    "), true, false, _static(e))));
+                            new Property(propertyName(e), comment(e, PADDING), true, false, _static(e))));
 
             // Methods
             ElementFilter.methodsIn(elements)
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsProperty.class) == null))
                     .forEach(e -> type.addMethod(
-                            new Method(methodName(e), parameters(e), comment(e, "    "), _static(e))));
+                            new Method(methodName(e), parameters(e), comment(e, PADDING), _static(e))));
         }
 
         if (!types.isEmpty()) {
@@ -254,6 +256,8 @@ public class EsDocProcessor extends AbstractProcessor {
 
             case "String":
                 simple = "string";
+                break;
+            default:
                 break;
         }
         return simple;

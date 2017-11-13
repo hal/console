@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>0.9.1</version>
+        <version>0.9.2</version>
     </parent>
 
     <artifactId>hal-bom</artifactId>
@@ -80,6 +80,11 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-db</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-dmr</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -101,7 +106,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-json</artifactId>
+                <artifactId>hal-js</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -121,12 +126,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-resources</artifactId>
-                <version>${project.version}</version>
-                <classifier>testsuite</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -143,6 +142,11 @@
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-theme-wildfly</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-testsuite-resources</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

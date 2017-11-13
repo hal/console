@@ -48,6 +48,8 @@ public class SecurityContextStatementContext extends FilteringStatementContext {
                             case SELECTED_PROFILE:
                             case SELECTED_SERVER_CONFIG:
                                 return new String[]{t.resource(), "*"};
+                            default:
+                                break;
                         }
                     }
                 }

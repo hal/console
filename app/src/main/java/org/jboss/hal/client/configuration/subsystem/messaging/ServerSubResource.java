@@ -119,7 +119,7 @@ enum ServerSubResource {
     void add(MetadataRegistry metadataRegistry, StatementContext statementContext,
             CrudOperations crud, Resources resources, CrudOperations.AddCallback callback) {
         Metadata metadata = metadataRegistry.lookup(template);
-        new AddResourceDialog(Ids.build(baseId, Ids.ADD_SUFFIX), resources.messages().addResourceTitle(type), metadata,
+        new AddResourceDialog(Ids.build(baseId, Ids.ADD), resources.messages().addResourceTitle(type), metadata,
                 (name, model) -> {
                     ResourceAddress address = namedTemplate(name).resolve(statementContext);
                     crud.add(type, name, address, model, callback);

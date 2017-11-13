@@ -38,7 +38,8 @@ class ToastNotificationElement implements IsElement {
 
     private final HTMLElement root;
 
-    ToastNotificationElement(final ToastNotifications toastNotifications, final Message message, final Resources resources) {
+    ToastNotificationElement(final ToastNotifications toastNotifications, final Message message,
+            final Resources resources) {
         String[] cssIcon = cssIcon(message.getLevel());
         if (message.isSticky()) {
             cssIcon[0] = cssIcon[0] + " " + alertDismissable;
@@ -103,6 +104,8 @@ class ToastNotificationElement implements IsElement {
             case SUCCESS:
                 css = alertSuccess;
                 icon = ok;
+                break;
+            default:
                 break;
         }
         return new String[]{css, icon};

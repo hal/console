@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.Iterators;
@@ -33,7 +34,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
@@ -46,6 +47,10 @@ import static org.jboss.hal.resources.CSS.preview;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public class RhcpColumns {
+
+    private static final String TITLE = "title";
+    private static final String YEAR = "year";
+
 
     @AsyncColumn("rhcp-color")
     public static class Color extends StaticItemColumn {
@@ -119,14 +124,14 @@ public class RhcpColumns {
         static final Map<String, Predicate<JsonObject>> DECADES = new LinkedHashMap<>();
 
         static {
-            DECADES.put("1980 - 1989", input -> input != null && (int) input.getNumber("year") >= 1980 && (int) input
-                    .getNumber("year") < 1990);
-            DECADES.put("1990 - 1999", input -> input != null && (int) input.getNumber("year") >= 1990 && (int) input
-                    .getNumber("year") < 2000);
-            DECADES.put("2000 - 2010", input -> input != null && (int) input.getNumber("year") >= 2000 && (int) input
-                    .getNumber("year") < 2010);
-            DECADES.put("2010 - 2020", input -> input != null && (int) input.getNumber("year") >= 2010 && (int) input
-                    .getNumber("year") < 2020);
+            DECADES.put("1980 - 1989", input -> input != null && (int) input.getNumber(YEAR) >= 1980 && (int) input
+                    .getNumber(YEAR) < 1990);
+            DECADES.put("1990 - 1999", input -> input != null && (int) input.getNumber(YEAR) >= 1990 && (int) input
+                    .getNumber(YEAR) < 2000);
+            DECADES.put("2000 - 2010", input -> input != null && (int) input.getNumber(YEAR) >= 2000 && (int) input
+                    .getNumber(YEAR) < 2010);
+            DECADES.put("2010 - 2020", input -> input != null && (int) input.getNumber(YEAR) >= 2010 && (int) input
+                    .getNumber(YEAR) < 2020);
         }
 
         @Inject
@@ -159,12 +164,12 @@ public class RhcpColumns {
                         @Override
                         public HTMLElement asElement() {
                             return ItemDisplay
-                                    .withSubtitle(item.getString("title"), String.valueOf(item.getNumber("year")));
+                                    .withSubtitle(item.getString(TITLE), String.valueOf(item.getNumber(YEAR)));
                         }
 
                         @Override
                         public String getTitle() {
-                            return item.getString("title");
+                            return item.getString(TITLE);
                         }
 
                         @Override
@@ -172,7 +177,7 @@ public class RhcpColumns {
                             return "rhcp-track";
                         }
                     })
-                    .onPreview(item -> new PreviewContent<>(item.getString("title"),
+                    .onPreview(item -> new PreviewContent<>(item.getString(TITLE),
                             "Released " + item.getString("released"),
                             elements()
                                     .add(img(item.getString("cover")).css(preview))
@@ -208,18 +213,18 @@ public class RhcpColumns {
                         @Override
                         public HTMLElement asElement() {
                             return ItemDisplay.withSubtitle(
-                                    String.valueOf(item.getNumber("track")) + ". " + item.getString("title"),
+                                    String.valueOf(item.getNumber("track")) + ". " + item.getString(TITLE),
                                     item.getString("length"));
                         }
 
                         @Override
                         public String getTitle() {
-                            return item.getString("title");
+                            return item.getString(TITLE);
                         }
 
                         @Override
                         public List<ItemAction<JsonObject>> actions() {
-                            if ("Under the Bridge".equals(item.getString("title"))) {
+                            if ("Under the Bridge".equals(item.getString(TITLE))) {
                                 return singletonList(itemActionFactory.view("utb"));
                             }
                             return ItemDisplay.super.actions();
@@ -241,7 +246,7 @@ public class RhcpColumns {
                                     .textContent("Writer: " + String.join(", ", writers))
                                     .asElement());
                         }
-                        return new PreviewContent<>(item.getString("title"), ul);
+                        return new PreviewContent<>(item.getString(TITLE), ul);
                     }));
         }
     }

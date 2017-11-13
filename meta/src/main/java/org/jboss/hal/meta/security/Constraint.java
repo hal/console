@@ -65,14 +65,23 @@ public class Constraint {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Constraint)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Constraint)) {
+            return false;
+        }
 
         Constraint that = (Constraint) o;
-
-        if (!template.equals(that.template)) { return false; }
-        if (target != that.target) { return false; }
-        if (!name.equals(that.name)) { return false; }
+        if (!template.equals(that.template)) {
+            return false;
+        }
+        if (target != that.target) {
+            return false;
+        }
+        if (!name.equals(that.name)) {
+            return false;
+        }
         return permission == that.permission;
     }
 

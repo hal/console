@@ -18,6 +18,7 @@ package org.jboss.hal.client.rhcp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.Maps;
@@ -107,23 +108,21 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
     private UnderTheBridgePresenter presenter;
 
     @Inject
-    public UnderTheBridgeView(final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Environment environment) {
+    public UnderTheBridgeView(Dispatcher dispatcher, StatementContext statementContext, Environment environment) {
         this.forms = new ArrayList<>();
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs("utb-tab-container");
         ResourceDescription description = StaticResourceDescription.from(RhcpResources.INSTANCE.underTheBridge());
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveModel(form.getModel());
 
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
-            ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM_SUFFIX),
+            ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM),
                     Metadata.staticDescription(description))
                     .include(entry.getValue())
                     .onSave(saveCallback)
                     .build();
             forms.add(form);
-            tabs.add(Ids.build(entry.getKey(), Ids.TAB_SUFFIX), new LabelBuilder().label(entry.getKey()),
+            tabs.add(Ids.build(entry.getKey(), Ids.TAB), new LabelBuilder().label(entry.getKey()),
                     form.asElement());
         }
 
@@ -156,12 +155,12 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
     }
 
     @Override
-    public void setPresenter(final UnderTheBridgePresenter presenter) {
+    public void setPresenter(UnderTheBridgePresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void show(final ModelNode model) {
+    public void show(ModelNode model) {
         for (ModelNodeForm<ModelNode> form : forms) {
             form.view(model);
         }

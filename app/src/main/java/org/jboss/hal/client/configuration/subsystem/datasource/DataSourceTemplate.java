@@ -64,12 +64,17 @@ public class DataSourceTemplate {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof DataSourceTemplate)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DataSourceTemplate)) {
+            return false;
+        }
 
         DataSourceTemplate that = (DataSourceTemplate) o;
-
-        if (!id.equals(that.id)) { return false; }
+        if (!id.equals(that.id)) {
+            return false;
+        }
         return vendor == that.vendor;
 
     }

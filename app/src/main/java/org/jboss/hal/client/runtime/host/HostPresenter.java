@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.host;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -62,24 +63,6 @@ public class HostPresenter
     static final String SYSTEM_PROPERTY_ADDRESS = HOST_ADDRESS + "/system-property=*";
 
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.HOST_CONFIGURATION)
-    @Requires(value = {HOST_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS}, recursive = false)
-    public interface MyProxy extends ProxyPlace<HostPresenter> {}
-
-    public interface MyView extends MbuiView<HostPresenter> {
-        void updateHost(Host host);
-        void updateInterfaces(List<NamedNode> interfaces);
-        void updateJvms(List<NamedNode> interfaces);
-        void updatePaths(List<NamedNode> paths);
-        void updateSocketBindingGroups(List<NamedNode> groups);
-        void updateSystemProperties(List<NamedNode> properties);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -87,15 +70,15 @@ public class HostPresenter
     private final Resources resources;
 
     @Inject
-    public HostPresenter(final EventBus eventBus,
-            final HostPresenter.MyView view,
-            final HostPresenter.MyProxy proxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final Resources resources) {
+    public HostPresenter(EventBus eventBus,
+            HostPresenter.MyView view,
+            HostPresenter.MyProxy proxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
@@ -170,4 +153,23 @@ public class HostPresenter
             }
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.HOST_CONFIGURATION)
+    @Requires(value = {HOST_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
+            SYSTEM_PROPERTY_ADDRESS}, recursive = false)
+    public interface MyProxy extends ProxyPlace<HostPresenter> {
+    }
+
+    public interface MyView extends MbuiView<HostPresenter> {
+        void updateHost(Host host);
+        void updateInterfaces(List<NamedNode> interfaces);
+        void updateJvms(List<NamedNode> interfaces);
+        void updatePaths(List<NamedNode> paths);
+        void updateSocketBindingGroups(List<NamedNode> groups);
+        void updateSystemProperties(List<NamedNode> properties);
+    }
+    // @formatter:on
 }

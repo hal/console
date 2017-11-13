@@ -25,7 +25,9 @@ public class SensitiveGatekeeper implements Gatekeeper {
     private final AccessControl accessControl;
 
     @Inject
-    public SensitiveGatekeeper(final AccessControl accessControl) {this.accessControl = accessControl;}
+    public SensitiveGatekeeper(final AccessControl accessControl) {
+        this.accessControl = accessControl;
+    }
 
     @Override
     public boolean canReveal() {

@@ -26,51 +26,7 @@ import org.slf4j.LoggerFactory;
 /** A segment inside a {@link FinderPath}. */
 public class FinderSegment<T> {
 
-    public static class DropdownItem<T> {
-
-        public final T item;
-        public final ItemDisplay<T> display;
-        public final BreadcrumbItemHandler<T> handler;
-
-        DropdownItem(final T item, final ItemDisplay<T> display, final BreadcrumbItemHandler<T> handler) {
-            this.item = item;
-            this.display = display;
-            this.handler = handler;
-        }
-
-        public void onSelect(FinderContext context) {
-            handler.execute(item, context);
-        }
-
-        public String getTitle() {
-            return display.getTitle();
-        }
-    }
-
-
-    @FunctionalInterface
-    public interface DropdownCallback<T> {
-
-        void onItems(List<DropdownItem<T>> items);
-    }
-
-
-    private static class ItemActionBreadcrumbHandler<T> implements BreadcrumbItemHandler<T> {
-
-        private final ItemAction<T> itemAction;
-
-        private ItemActionBreadcrumbHandler(final ItemAction<T> itemAction) {this.itemAction = itemAction;}
-
-        @Override
-        public void execute(final T item, final FinderContext context) {
-            itemAction.handler.execute(item);
-        }
-    }
-
-
-    /**
-     * Separator is used in URL tokens. Please choose a string which is safe to use in URLs
-     */
+    /** Separator is used in URL tokens. Please choose a string which is safe to use in URLs */
     static final String SEPARATOR = "~";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
@@ -81,19 +37,19 @@ public class FinderSegment<T> {
 
     private FinderColumn<T> column;
 
-    FinderSegment(final String columnId, final String itemId) {
+    FinderSegment(String columnId, String itemId) {
         this(columnId, itemId, columnId, itemId);
     }
 
-    FinderSegment(final String columnId, final String itemId,
-            final String columnTitle, final String itemTitle) {
+    FinderSegment(String columnId, String itemId,
+            String columnTitle, String itemTitle) {
         this.columnId = columnId;
         this.itemId = itemId;
         this.columnTitle = columnTitle;
         this.itemTitle = itemTitle;
     }
 
-    FinderSegment(final FinderColumn<T> column) {
+    FinderSegment(FinderColumn<T> column) {
         this.columnId = column.getId();
         this.columnTitle = column.getTitle();
         this.column = column;
@@ -109,13 +65,18 @@ public class FinderSegment<T> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof FinderSegment)) { return false; }
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FinderSegment)) {
+            return false;
+        }
 
         FinderSegment<?> that = (FinderSegment<?>) o;
-
-        if (!columnId.equals(that.columnId)) { return false; }
+        if (!columnId.equals(that.columnId)) {
+            return false;
+        }
         return itemId.equals(that.itemId);
 
     }
@@ -175,17 +136,17 @@ public class FinderSegment<T> {
         return false;
     }
 
-    public void dropdown(final FinderContext context, DropdownCallback<T> callback) {
+    public void dropdown(FinderContext context, DropdownCallback<T> callback) {
         List<DropdownItem<T>> elements = new ArrayList<>();
         AsyncCallback<List<T>> asyncCallback = new AsyncCallback<List<T>>() {
             @Override
-            public void onFailure(final Throwable caught) {
+            public void onFailure(Throwable caught) {
                 logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this,
                         caught.getMessage());
             }
 
             @Override
-            public void onSuccess(final List<T> result) {
+            public void onSuccess(List<T> result) {
                 collectDropdownElements(elements, result);
                 callback.onItems(elements);
             }
@@ -234,5 +195,49 @@ public class FinderSegment<T> {
                         "No handler found for column '{}'", this, column.getId());
             }
         }
+    }
+
+
+    private static class ItemActionBreadcrumbHandler<T> implements BreadcrumbItemHandler<T> {
+
+        private final ItemAction<T> itemAction;
+
+        private ItemActionBreadcrumbHandler(final ItemAction<T> itemAction) {
+            this.itemAction = itemAction;
+        }
+
+        @Override
+        public void execute(final T item, final FinderContext context) {
+            itemAction.handler.execute(item);
+        }
+    }
+
+
+    public static class DropdownItem<T> {
+
+        public final T item;
+        public final ItemDisplay<T> display;
+        public final BreadcrumbItemHandler<T> handler;
+
+        DropdownItem(final T item, final ItemDisplay<T> display, final BreadcrumbItemHandler<T> handler) {
+            this.item = item;
+            this.display = display;
+            this.handler = handler;
+        }
+
+        public void onSelect(FinderContext context) {
+            handler.execute(item, context);
+        }
+
+        public String getTitle() {
+            return display.getTitle();
+        }
+    }
+
+
+    @FunctionalInterface
+    public interface DropdownCallback<T> {
+
+        void onItems(List<DropdownItem<T>> items);
     }
 }

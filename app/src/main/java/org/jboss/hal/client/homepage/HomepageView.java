@@ -17,6 +17,7 @@ package org.jboss.hal.client.homepage;
 
 import java.util.Arrays;
 import java.util.Collections;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -125,7 +126,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                             resources.constants().homepageDeploymentsStepEnable()), true));
             deployments = HomepageModule.create(places,
                     org.jboss.hal.meta.token.NameTokens.DEPLOYMENTS,
-                    Names.DEPLOYMENTS, //NON-NLS
+                    Names.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSubHeader(),
                     resources.images().deployments(),
                     sections).asElement();
@@ -220,9 +221,9 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
 
         HTMLElement root = div()
                 .add(div().css(eapHomeRow)
-                    .add(header)
-                    .add(deployments)
-                    .add(configuration))
+                        .add(header)
+                        .add(deployments)
+                        .add(configuration))
                 .asElement();
         if (su) {
             root.appendChild(div().css(eapHomeRow)

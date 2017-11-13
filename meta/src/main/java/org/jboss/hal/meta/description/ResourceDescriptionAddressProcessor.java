@@ -46,7 +46,7 @@ import static java.util.stream.Collectors.toList;
 public class ResourceDescriptionAddressProcessor implements Function<ResourceAddress, ResourceAddress> {
 
     @Override
-    public ResourceAddress apply(final ResourceAddress address) {
+    public ResourceAddress apply(ResourceAddress address) {
         ResourceAddress modified = new ResourceAddress();
 
         if (address != null && !address.isEmpty()) {

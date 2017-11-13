@@ -38,24 +38,14 @@ import static org.jboss.gwt.elemento.core.Elements.htmlElements;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
 import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 /**
  * Java wrapper for <a href="https://github.com/Pixabay/JavaScript-autoComplete">javascript-auto-complete</a>
+ *
  * @see <a href="https://github.com/Pixabay/JavaScript-autoComplete">https://github.com/Pixabay/JavaScript-autoComplete</a>
  */
 public class AutoComplete implements SuggestHandler, Attachable {
-
-    @JsType(isNative = true, namespace = GLOBAL, name = "autoComplete")
-    static class Api {
-
-        @JsConstructor
-        @SuppressWarnings("UnusedParameters")
-        Api(Options options) {}
-
-        @JsMethod
-        private native void destroy();
-    }
-
 
     @NonNls static final Logger logger = LoggerFactory.getLogger(AutoComplete.class);
 
@@ -134,6 +124,19 @@ public class AutoComplete implements SuggestHandler, Attachable {
     }
 
     private String formItemSelector() {
-        return "#" + formItem().getId(EDITING);
+        return HASH + formItem().getId(EDITING);
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = "autoComplete")
+    static class Api {
+
+        @JsConstructor
+        @SuppressWarnings("UnusedParameters")
+        Api(Options options) {
+        }
+
+        @JsMethod
+        private native void destroy();
     }
 }

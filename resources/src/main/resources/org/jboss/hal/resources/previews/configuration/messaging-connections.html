@@ -6,9 +6,9 @@
 </ul>
 
 <h2>Acceptors & Connectors</h2>
-<p>An acceptor defines which types of connection are accepted by the JBoss EAP embedded messaging server. You can define any number of acceptors per server.</p>
+<p>An acceptor defines which types of connection are accepted by the ${build.shortName} embedded messaging server. You can define any number of acceptors per server.</p>
 
-<p>A connector defines how to connect to an embedded JBoss EAP messaging server, and is used by a client to make connections.</p>
+<p>A connector defines how to connect to an embedded ${build.shortName} messaging server, and is used by a client to make connections.</p>
 
 <p>For more information about acceptors and connectors, see the
     <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-8-configuring-the-messaging-transports">Acceptors and Connectors section</a>.
@@ -18,7 +18,7 @@
 <p>A connector service allows to integrate external components with Apache ActiveMQ Artemis to send and receive messages.</p>
 
 <h2>Connection Factories</h2>
-<p>By default, the JBoss EAP messaging subsystem provides the <code>InVmConnectionFactory</code> and
+<p>By default, the ${build.shortName} messaging subsystem provides the <code>InVmConnectionFactory</code> and
     <code>RemoteConnectionFactory</code> connection factories, as well as the
     <code>activemq-ra</code> pooled connection factory.</p>
 
@@ -29,5 +29,5 @@
 </p>
 
 <p>Pooled connection factories allow you to configure the inbound and outbound connectors of the integrated ActiveMQ Artemis resource adapter. For more information on configuring a pooled-connection-factory to connect to a remote ActiveMQ Artemis server, see
-    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-30-resource-adapters#use_provided_amq_adapter">Using the Integrated Resource Adapter for Remote Connections</a>.
+    <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">Using the Integrated Resource Adapter for Remote Connections</a>.
 </p>

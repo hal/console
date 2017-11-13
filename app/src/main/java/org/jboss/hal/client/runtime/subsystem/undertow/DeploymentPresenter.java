@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -53,18 +54,6 @@ public class DeploymentPresenter
         extends ApplicationFinderPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires({WEB_DEPLOYMENT_ADDRESS, WEB_SUBDEPLOYMENT_ADDRESS})
-    @NameToken(NameTokens.UNDERTOW_RUNTIME_DEPLOYMENT_VIEW)
-    public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<DeploymentPresenter> {
-        void updateServlets(List<NamedNode> model);
-        void updateWebsockets(List<NamedNode> model);
-    }
-    // @formatter:on
-
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -74,14 +63,14 @@ public class DeploymentPresenter
 
     @Inject
     public DeploymentPresenter(
-            final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final Dispatcher dispatcher,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+            EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
@@ -96,7 +85,7 @@ public class DeploymentPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         deploymentName = request.getParameter(DEPLOYMENT, null);
         subdeploymentName = request.getParameter(SUBDEPLOYMENT, null);
@@ -137,4 +126,18 @@ public class DeploymentPresenter
     StatementContext getStatementContext() {
         return statementContext;
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires({WEB_DEPLOYMENT_ADDRESS, WEB_SUBDEPLOYMENT_ADDRESS})
+    @NameToken(NameTokens.UNDERTOW_RUNTIME_DEPLOYMENT_VIEW)
+    public interface MyProxy extends ProxyPlace<DeploymentPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<DeploymentPresenter> {
+        void updateServlets(List<NamedNode> model);
+        void updateWebsockets(List<NamedNode> model);
+    }
+    // @formatter:on
 }

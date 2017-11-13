@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;

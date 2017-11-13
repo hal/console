@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.ee;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -37,16 +38,14 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -62,32 +61,9 @@ public class EEPresenter
         extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.EE)
-    @Requires(AddressTemplates.EE_ADDRESS)
-    public interface MyProxy extends ProxyPlace<EEPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<EEPresenter> {
-        void update(ModelNode eeData);
-    }
-    // @formatter:on
-
-
     static Metadata globalModulesMetadata(MetadataRegistry metadataRegistry) {
         Metadata metadata = metadataRegistry.lookup(EE_SUBSYSTEM_TEMPLATE);
-
-        ResourceDescription globalModulesDescription;
-        Property globalModules = metadata.getDescription().findAttribute(ATTRIBUTES, GLOBAL_MODULES);
-        if (globalModules != null && globalModules.getValue().hasDefined(VALUE_TYPE)) {
-            ModelNode repackaged = new ModelNode();
-            repackaged.get(DESCRIPTION).set(globalModules.getValue().get(DESCRIPTION).asString());
-            repackaged.get(ATTRIBUTES).set(globalModules.getValue().get(VALUE_TYPE));
-            globalModulesDescription = new ResourceDescription(repackaged);
-        } else {
-            globalModulesDescription = new ResourceDescription(new ModelNode());
-        }
-        return metadata.customResourceDescription(globalModulesDescription);
+        return metadata.forComplexAttribute(GLOBAL_MODULES);
     }
 
     private final CrudOperations crud;
@@ -99,16 +75,16 @@ public class EEPresenter
     private final Metadata globalModulesMetadata;
 
     @Inject
-    public EEPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final Resources resources,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry) {
+    public EEPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            Resources resources,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -146,20 +122,20 @@ public class EEPresenter
     }
 
     void reset(String type, String name, AddressTemplate template, Form<NamedNode> form,
-            final Metadata metadata, SafeHtml successMessage) {
+            Metadata metadata, SafeHtml successMessage) {
         crud.reset(type, name, template.resolve(statementContext), form, metadata, successMessage,
                 new FinishReset<NamedNode>(form) {
                     @Override
-                    public void afterReset(final Form<NamedNode> form) {
+                    public void afterReset(Form<NamedNode> form) {
                         reload();
                     }
                 });
     }
 
-    void resetSingleton(String type, AddressTemplate template, Form<ModelNode> form, final Metadata metadata) {
+    void resetSingleton(String type, AddressTemplate template, Form<ModelNode> form, Metadata metadata) {
         crud.resetSingleton(type, template.resolve(statementContext), form, metadata, new FinishReset<ModelNode>(form) {
             @Override
-            public void afterReset(final Form<ModelNode> form) {
+            public void afterReset(Form<ModelNode> form) {
                 reload();
             }
         });
@@ -207,4 +183,17 @@ public class EEPresenter
                     });
                 });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.EE)
+    @Requires(AddressTemplates.EE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<EEPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<EEPresenter> {
+        void update(ModelNode eeData);
+    }
+    // @formatter:on
 }

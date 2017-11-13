@@ -35,11 +35,17 @@ class Assignments implements Iterable<Assignment> {
 
     private final Set<Assignment> assignments;
 
-    Assignments() {assignments = new HashSet<>();}
+    Assignments() {
+        assignments = new HashSet<>();
+    }
 
-    boolean add(final Assignment assignment) {return assignments.add(assignment);}
+    boolean add(final Assignment assignment) {
+        return assignments.add(assignment);
+    }
 
-    void clear() {assignments.clear();}
+    void clear() {
+        assignments.clear();
+    }
 
     Stream<Assignment> byPrincipal(Principal principal) {
         return assignments.stream().filter(assignment -> assignment.getPrincipal().equals(principal));

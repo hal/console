@@ -16,8 +16,8 @@
 package org.jboss.hal.client.configuration.subsystem.security;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 
 class SecurityDomain extends NamedNode {
 

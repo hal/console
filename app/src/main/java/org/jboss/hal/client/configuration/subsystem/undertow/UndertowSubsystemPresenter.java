@@ -44,31 +44,20 @@ public class UndertowSubsystemPresenter
         extends MbuiPresenter<UndertowSubsystemPresenter.MyView, UndertowSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.UNDERTOW)
-    @Requires(value = UNDERTOW_SUBSYSTEM_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<UndertowSubsystemPresenter> {}
-
-    public interface MyView extends MbuiView<UndertowSubsystemPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
-    public UndertowSubsystemPresenter(final EventBus eventBus,
-            final UndertowSubsystemPresenter.MyView view,
-            final UndertowSubsystemPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public UndertowSubsystemPresenter(EventBus eventBus,
+            UndertowSubsystemPresenter.MyView view,
+            UndertowSubsystemPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -98,4 +87,17 @@ public class UndertowSubsystemPresenter
     protected void reload() {
         crud.read(UNDERTOW_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.UNDERTOW)
+    @Requires(value = UNDERTOW_SUBSYSTEM_ADDRESS, recursive = false)
+    public interface MyProxy extends ProxyPlace<UndertowSubsystemPresenter> {
+    }
+
+    public interface MyView extends MbuiView<UndertowSubsystemPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

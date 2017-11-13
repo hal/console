@@ -23,4 +23,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 class C3 {
 
     static native Api generate(Options options);
+
+    private C3() {
+    }
 }

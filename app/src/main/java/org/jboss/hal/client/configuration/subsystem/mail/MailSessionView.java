@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.mail;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -25,12 +26,12 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Table;
+import org.jboss.hal.core.elytron.CredentialReference;
+import org.jboss.hal.core.elytron.CredentialReference.AlternativeValidation;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.elytron.CredentialReference;
-import org.jboss.hal.core.elytron.CredentialReference.AlternativeValidation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -94,7 +95,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .add(p().textContent(mailSessionMetadata.getDescription().getDescription()))
                 .add(mailSessionForm.asElement())
                 .asElement();
-        navigation.addPrimary(Ids.MAIL_SESSION_ENTRY, resources.constants().attributes(),
+        navigation.addPrimary(Ids.MAIL_SESSION_ITEM, resources.constants().attributes(),
                 fontAwesome("envelope"), mailSessionElement);
 
         // ============================================
@@ -132,17 +133,17 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 () -> presenter.reload());
         registerAttachable(crForm);
 
-        Tabs serverTabs = new Tabs();
-        serverTabs.add(Ids.build(Ids.MAIL_SERVER, SERVER, Ids.TAB_SUFFIX), resources.constants().attributes(),
+        Tabs serverTabs = new Tabs(Ids.MAIL_SERVER_TAB_CONTAINER);
+        serverTabs.add(Ids.build(Ids.MAIL_SERVER, SERVER, Ids.TAB), resources.constants().attributes(),
                 serverForm.asElement());
-        serverTabs.add(Ids.build(Ids.MAIL_SERVER, CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX), Names.CREDENTIAL_REFERENCE,
+        serverTabs.add(Ids.build(Ids.MAIL_SERVER, CREDENTIAL_REFERENCE, Ids.TAB), Names.CREDENTIAL_REFERENCE,
                 crForm.asElement());
 
         mailSessionElement = section()
                 .add(p().textContent(serverMetadata.getDescription().getDescription()))
                 .addAll(serverTable, serverTabs)
                 .asElement();
-        navigation.addPrimary(Ids.MAIL_SERVER_ENTRY, Names.SERVER, pfIcon("server"), mailSessionElement);
+        navigation.addPrimary(Ids.MAIL_SERVER_ITEM, Names.SERVER, pfIcon("server"), mailSessionElement);
 
         // ============================================
         // main layout

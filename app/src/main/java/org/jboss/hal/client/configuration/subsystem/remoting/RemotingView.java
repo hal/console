@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.remoting;
 
 import java.util.Map;
+
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 
@@ -80,7 +81,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     private Form<ModelNode> httpConnectorSecurityForm;
     private Form<ModelNode> httpConnectorSecurityPolicyForm;
 
-    RemotingView(final MbuiContext mbuiContext) {
+    RemotingView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -131,7 +132,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         registerAttachable(connectorSecurityPolicyForm);
 
         // remote connector tabs
-        Tabs connectorTabs = new Tabs();
+        Tabs connectorTabs = new Tabs(Ids.REMOTING_CONNECTOR_TAB_CONTAINER);
         connectorTabs.add(Ids.REMOTING_CONNECTOR_TAB, mbuiContext.resources().constants().attributes(),
                 connectorForm.asElement());
         connectorTabs.add(Ids.REMOTING_CONNECTOR_SECURITY_TAB, mbuiContext.resources().constants().security(),
@@ -186,7 +187,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         registerAttachable(httpConnectorSecurityPolicyForm);
 
         // http connector tabs
-        Tabs httpConnectorTabs = new Tabs();
+        Tabs httpConnectorTabs = new Tabs(Ids.REMOTING_HTTP_CONNECTOR_TAB_CONTAINER);
         httpConnectorTabs.add(Ids.REMOTING_HTTP_CONNECTOR_TAB, mbuiContext.resources().constants().attributes(),
                 httpConnectorForm.asElement());
         httpConnectorTabs.add(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_TAB, mbuiContext.resources().constants().security(),
@@ -215,7 +216,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     }
 
     @Override
-    public void update(final ModelNode payload) {
+    public void update(ModelNode payload) {
         endpointConfigurationForm.view(failSafeGet(payload, "configuration/endpoint")); //NON-NLS
 
         connectorForm.clear();
@@ -246,12 +247,12 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     }
 
     @Override
-    public void updateConnector(final NamedNode connector) {
+    public void updateConnector(NamedNode connector) {
         updateGenericConnector(connector, connectorForm, connectorSecurityForm, connectorSecurityPolicyForm);
     }
 
     @Override
-    public void updateHttpConnector(final NamedNode httpConnector) {
+    public void updateHttpConnector(NamedNode httpConnector) {
         updateGenericConnector(httpConnector, httpConnectorForm, httpConnectorSecurityForm,
                 httpConnectorSecurityPolicyForm);
     }
@@ -287,17 +288,17 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     }
 
     @Override
-    public void updateLocalOutbound(@Nullable final NamedNode localOutbound) {
+    public void updateLocalOutbound(@Nullable NamedNode localOutbound) {
         updateGenericOutbound(localOutbound, localOutboundForm);
     }
 
     @Override
-    public void updateOutbound(@Nullable final NamedNode outbound) {
+    public void updateOutbound(@Nullable NamedNode outbound) {
         updateGenericOutbound(outbound, outboundForm);
     }
 
     @Override
-    public void updateRemoteOutbound(@Nullable final NamedNode remoteOutbound) {
+    public void updateRemoteOutbound(@Nullable NamedNode remoteOutbound) {
         updateGenericOutbound(remoteOutbound, remoteOutboundForm);
     }
 

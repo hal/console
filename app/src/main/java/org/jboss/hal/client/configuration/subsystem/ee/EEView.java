@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.ee;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -46,6 +47,7 @@ import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -103,11 +105,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(p().textContent(eeMetadata.getDescription().getDescription()))
                 .add(eeAttributesForm)
                 .asElement();
-        navigation.addPrimary(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), navigationElement);
+        navigation.addPrimary(EE_ATTRIBUTES_ITEM, Names.DEPLOYMENTS, fontAwesome("archive"), navigationElement);
 
         // ============================================
         // global modules
-        Metadata globalModulesMetadata = EEPresenter.globalModulesMetadata(metadataRegistry);
+        Metadata globalModulesMetadata = eeMetadata.forComplexAttribute(GLOBAL_MODULES);
 
         globalModulesTable = new ModelNodeTable.Builder<>(Ids.EE_GLOBAL_MODULES_TABLE, globalModulesMetadata)
                 .columns(NAME, "slot", "annotations", "services", "meta-inf")
@@ -123,7 +125,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(p().textContent(globalModulesMetadata.getDescription().getDescription()))
                 .add(globalModulesTable)
                 .asElement();
-        navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cubes"), navigationElement);
+        navigation.addPrimary(EE_GLOBAL_MODULES_ITEM, Names.GLOBAL_MODULES, fontAwesome("cubes"), navigationElement);
 
         // ============================================
         // service=default-bindings
@@ -145,21 +147,21 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(p().textContent(defaultBindingsMetadata.getDescription().getDescription()))
                 .add(defaultBindingsForm)
                 .asElement();
-        navigation.addPrimary(EE_DEFAULT_BINDINGS_ENTRY, DEFAULT_BINDINGS_NAME, fontAwesome("link"),
+        navigation.addPrimary(EE_DEFAULT_BINDINGS_ITEM, DEFAULT_BINDINGS_NAME, fontAwesome("link"),
                 navigationElement);
 
         // ============================================
         // services
-        navigation.addPrimary(EE_SERVICES_ENTRY, SERVICES_NAME, pfIcon("service"));
+        navigation.addPrimary(EE_SERVICES_ITEM, SERVICES_NAME, pfIcon("service"));
 
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_CONTEXT_SERVICE, CONTEXT_SERVICE_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_CONTEXT_SERVICE, CONTEXT_SERVICE_NAME,
                 buildServicePanel(EE_CONTEXT_SERVICE, CONTEXT_SERVICE_TEMPLATE, CONTEXT_SERVICE_NAME));
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_NAME,
                 buildServicePanel(EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_TEMPLATE, MANAGED_EXECUTOR_NAME));
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_NAME,
                 buildServicePanel(EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_TEMPLATE,
                         MANAGED_EXECUTOR_SCHEDULED_NAME));
-        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_NAME,
+        navigation.addSecondary(EE_SERVICES_ITEM, EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_NAME,
                 buildServicePanel(EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_TEMPLATE,
                         MANAGED_THREAD_FACTORY_NAME));
 
@@ -237,11 +239,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Metadata metadata = metadataRegistry.lookup(template);
 
-        Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE_SUFFIX),
+        Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE),
                 metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
-                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type, template,
+                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
                         (name, address) -> presenter.reload()))
                 .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
                         () -> presenter.reload()))
@@ -250,7 +252,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         registerAttachable(table);
         tables.put(template.lastName(), table);
 
-        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM_SUFFIX),
+        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM),
                 metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.selectedRow().getName());

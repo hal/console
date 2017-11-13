@@ -18,6 +18,7 @@ package org.jboss.hal.core.runtime.host;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -63,44 +64,6 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class HostActions {
 
-    private class HostFailedCallback implements Dispatcher.OnFail {
-
-        private final Host host;
-        private final List<Server> servers;
-        private final SafeHtml errorMessage;
-
-        HostFailedCallback(final Host host, final List<Server> servers, final SafeHtml errorMessage) {
-            this.host = host;
-            this.servers = servers;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onFailed(final Operation operation, final String failure) {
-            finish(host, servers, Result.ERROR, Message.error(errorMessage, failure));
-        }
-    }
-
-
-    private class HostExceptionCallback implements Dispatcher.OnError {
-
-        private final Host host;
-        private final List<Server> servers;
-        private final SafeHtml errorMessage;
-
-        HostExceptionCallback(final Host host, final List<Server> servers, final SafeHtml errorMessage) {
-            this.host = host;
-            this.servers = servers;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onException(final Operation operation, final Throwable exception) {
-            finish(host, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
-        }
-    }
-
-
     private static final int RELOAD_TIMEOUT = 10; // seconds w/o servers
     private static final int RESTART_TIMEOUT = 15; // seconds w/o servers
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
@@ -142,7 +105,7 @@ public class HostActions {
             @Override
             public void onMetadata(final Metadata metadata) {
                 Form<ModelNode> form = new OperationFormBuilder<>(
-                        Ids.build(RELOAD_HOST, host.getName(), Ids.FORM_SUFFIX), metadata, RELOAD)
+                        Ids.build(RELOAD_HOST, host.getName(), Ids.FORM), metadata, RELOAD)
                         .include(RESTART_SERVERS)
                         .build();
 
@@ -251,7 +214,8 @@ public class HostActions {
         dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
                         .subscribe(new CompletableSubscriber() {
                             @Override
-                            public void onSubscribe(Subscription d) {}
+                            public void onSubscribe(Subscription d) {
+                            }
 
                             @Override
                             public void onCompleted() {
@@ -278,7 +242,8 @@ public class HostActions {
         dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
                         .subscribe(new CompletableSubscriber() {
                             @Override
-                            public void onSubscribe(Subscription d) {}
+                            public void onSubscribe(Subscription d) {
+                            }
 
                             @Override
                             public void onCompleted() {
@@ -350,5 +315,43 @@ public class HostActions {
             operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         }
         return operation;
+    }
+
+
+    private class HostFailedCallback implements Dispatcher.OnFail {
+
+        private final Host host;
+        private final List<Server> servers;
+        private final SafeHtml errorMessage;
+
+        HostFailedCallback(final Host host, final List<Server> servers, final SafeHtml errorMessage) {
+            this.host = host;
+            this.servers = servers;
+            this.errorMessage = errorMessage;
+        }
+
+        @Override
+        public void onFailed(final Operation operation, final String failure) {
+            finish(host, servers, Result.ERROR, Message.error(errorMessage, failure));
+        }
+    }
+
+
+    private class HostExceptionCallback implements Dispatcher.OnError {
+
+        private final Host host;
+        private final List<Server> servers;
+        private final SafeHtml errorMessage;
+
+        HostExceptionCallback(final Host host, final List<Server> servers, final SafeHtml errorMessage) {
+            this.host = host;
+            this.servers = servers;
+            this.errorMessage = errorMessage;
+        }
+
+        @Override
+        public void onException(final Operation operation, final Throwable exception) {
+            finish(host, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
+        }
     }
 }

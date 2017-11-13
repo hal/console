@@ -18,6 +18,7 @@ package org.jboss.hal.client.accesscontrol;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -27,13 +28,13 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
 import org.jboss.hal.config.User;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
@@ -55,7 +56,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class AccessControl {
 
-    private final static String LOCAL_USERNAME = "$local";
+    private static final String LOCAL_USERNAME = "$local";
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(AccessControl.class);
 

@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
@@ -101,7 +102,7 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
                 .asElement();
 
         //noinspection HardCodedStringLiteral
-        navigation.insertPrimary(Ids.MESSAGING_SECURITY_SETTING_ROLE_ENTRY, "messaging-address-setting-entry",
+        navigation.insertPrimary(Ids.MESSAGING_SECURITY_SETTING_ROLE_ITEM, "messaging-address-setting-item",
                 Names.SECURITY_SETTING, fontAwesome("lock"), roleSection);
     }
 

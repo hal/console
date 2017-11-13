@@ -27,12 +27,12 @@ public final class StringRenderer<T> implements ItemRenderer<T> {
 
     private final Function<T, String> toString;
 
-    public StringRenderer(final Function<T, String> toString) {
+    public StringRenderer(Function<T, String> toString) {
         this.toString = toString;
     }
 
     @Override
-    public final String render(final T item, final String query) {
+    public String render(T item, String query) {
         String itm = toString.apply(item);
         @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant(

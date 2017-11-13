@@ -37,7 +37,7 @@ import static org.jboss.hal.resources.UIConstants.*;
 
 class AboutDialog {
 
-    private static final String SELECTOR_ID = "#" + Ids.ABOUT_MODAL;
+    private static final String SELECTOR_ID = HASH + Ids.ABOUT_MODAL;
 
     AboutDialog(final Environment environment, final Endpoints endpoints, final Resources resources) {
         if (document.getElementById(Ids.ABOUT_MODAL) == null) {

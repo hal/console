@@ -32,13 +32,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 public @interface Requires {
 
-    /**
-     * Set of required resource to operate on (addressable privilege)
-     */
+    /** Set of required resource to operate on (addressable privilege) */
     String[] value();
 
-    /**
-     * Recursively parse child resources
-     */
+    /** Recursively parse child resources */
     boolean recursive() default true;
 }

@@ -54,6 +54,7 @@ public interface UIConstants {
     String FOR = "for";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
+    String HASH = "#";
     String HEIGHT = "height";
     String HIDDEN = "hidden";
     String HIDDEN_MODAL = "hidden.bs.modal";

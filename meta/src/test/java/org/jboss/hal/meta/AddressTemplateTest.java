@@ -30,7 +30,7 @@ public class AddressTemplateTest {
 
     @Test(expected = AssertionError.class)
     public void nil() {
-        AddressTemplate.of((String)null);
+        AddressTemplate.of((String) null);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class AddressTemplateTest {
         assertEquals("a=b", at.getTemplate());
 
         at = AddressTemplate.of("a=b");
-        at = at.replaceWildcards(null, (String[])null);
+        at = at.replaceWildcards(null, (String[]) null);
         assertEquals("a=b", at.getTemplate());
 
         at = AddressTemplate.of("a=b");
@@ -200,7 +200,7 @@ public class AddressTemplateTest {
         assertEquals("a=b/c=*", at.getTemplate());
 
         at = AddressTemplate.of("a=*/c=*");
-        at = at.replaceWildcards("b", (String[])null);
+        at = at.replaceWildcards("b", (String[]) null);
         assertEquals("a=b/c=*", at.getTemplate());
 
         at = AddressTemplate.of("a=*/c=*");
@@ -229,7 +229,7 @@ public class AddressTemplateTest {
         ResourceAddress resolved = at.resolve(StatementContext.NOOP);
         assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
 
-        resolved = at.resolve(StatementContext.NOOP, (String[])null);
+        resolved = at.resolve(StatementContext.NOOP, (String[]) null);
         assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
 
         resolved = at.resolve(StatementContext.NOOP, "b");

@@ -57,6 +57,9 @@ public class AddOnlyStateMachine extends AbstractStateMachine implements StateMa
             case CANCEL:
                 assertState(EDITING);
                 break;
+
+            default:
+                break;
         }
     }
 

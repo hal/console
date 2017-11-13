@@ -17,6 +17,7 @@ package org.jboss.hal.client.accesscontrol;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -232,6 +233,8 @@ public class RoleColumn extends FinderColumn<Role> {
                                     editScopedRole(itm, resources.constants().serverGroupScopedRole(),
                                             SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
                                             Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS);
+                                    break;
+                                default:
                                     break;
                             }
                         })

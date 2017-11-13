@@ -18,6 +18,7 @@ package org.jboss.hal.core.mvp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 

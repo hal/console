@@ -16,12 +16,13 @@
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Toolbar;
 import org.jboss.hal.ballroom.Toolbar.Attribute;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.meta.Metadata;
@@ -52,7 +53,7 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
 
         dataProvider = new DataProvider<>(JmsMessage::getName, true);
         Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
-        tooManyMessages = new EmptyState.Builder(resources.constants().manyMessages())
+        tooManyMessages = new EmptyState.Builder(Ids.JMS_MESSAGE_LIST_TOO_MANY, resources.constants().manyMessages())
                 .icon(Icons.WARNING)
                 .primaryAction(resources.constants().allMessagesAlways(), () -> presenter.readAllMessages(true))
                 .secondaryAction(resources.constants().allMessagesOnce(), () -> presenter.readAllMessages(false))

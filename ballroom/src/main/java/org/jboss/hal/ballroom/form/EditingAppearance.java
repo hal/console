@@ -29,6 +29,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.*;
@@ -168,6 +170,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                 break;
             case SUGGESTIONS:
                 applySuggestions((SuggestHandler) context);
+                break;
+            default:
                 break;
         }
     }
@@ -330,6 +334,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                 break;
             case SUGGESTIONS:
                 unapplySuggestions();
+                break;
+            default:
                 break;
         }
     }

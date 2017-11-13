@@ -28,6 +28,16 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 class Options {
 
+    Axis axis;
+    Color color;
+    String bindto;
+    Data data;
+    Donut donut;
+    Legend legend;
+    Size size;
+    Tooltip tooltip;
+
+
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Axis {
 
@@ -41,6 +51,7 @@ class Options {
 
         public Array<String> pattern;
     }
+
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Data {
@@ -98,14 +109,4 @@ class Options {
         public Array<String> categories;
         public String type;
     }
-
-
-    Axis axis;
-    Color color;
-    String bindto;
-    Data data;
-    Donut donut;
-    Legend legend;
-    Size size;
-    Tooltip tooltip;
 }

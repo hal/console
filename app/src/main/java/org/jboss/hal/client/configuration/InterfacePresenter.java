@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -49,18 +50,6 @@ public class InterfacePresenter
         extends MbuiPresenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.INTERFACE)
-    public interface MyProxy extends ProxyPlace<InterfacePresenter> {}
-
-    public interface MyView extends MbuiView<InterfacePresenter> {
-        void update(ModelNode interfce);
-    }
-    // @formatter:on
-
-
     static final String ROOT_ADDRESS = "/interface=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
@@ -70,13 +59,13 @@ public class InterfacePresenter
     private String interfce;
 
     @Inject
-    public InterfacePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext) {
+    public InterfacePresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.metadataRegistry = metadataRegistry;
@@ -119,11 +108,24 @@ public class InterfacePresenter
 
     void resetInterface(final Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE);
-        crud.reset(Names.INTERFACE, interfce, ROOT_TEMPLATE, form, metadata, new FinishReset<ModelNode>(form){
+        crud.reset(Names.INTERFACE, interfce, ROOT_TEMPLATE, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
             public void afterReset(final Form<ModelNode> form) {
                 reload();
             }
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.INTERFACE)
+    public interface MyProxy extends ProxyPlace<InterfacePresenter> {
+    }
+
+    public interface MyView extends MbuiView<InterfacePresenter> {
+        void update(ModelNode interfce);
+    }
+    // @formatter:on
 }

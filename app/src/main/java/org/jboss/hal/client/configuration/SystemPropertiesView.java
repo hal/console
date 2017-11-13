@@ -17,40 +17,96 @@ package org.jboss.hal.client.configuration;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
-import org.jboss.hal.core.mbui.MbuiContext;
-import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.spi.MbuiElement;
-import org.jboss.hal.spi.MbuiView;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
-@MbuiView
-@SuppressWarnings("DuplicateStringLiteralInspection")
-public abstract class SystemPropertiesView extends MbuiViewImpl<SystemPropertiesPresenter>
-        implements SystemPropertiesPresenter.MyView {
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.client.configuration.SystemPropertiesPresenter.ROOT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BOOT_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
-    public static SystemPropertiesView create(final MbuiContext mbuiContext) {
-        return new Mbui_SystemPropertiesView(mbuiContext);
+public class SystemPropertiesView extends HalViewImpl implements SystemPropertiesPresenter.MyView {
+
+    private final Table<NamedNode> table;
+    private final Form<NamedNode> form;
+    private SystemPropertiesPresenter presenter;
+
+    @Inject
+    public SystemPropertiesView(Environment environment, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory, Resources resources) {
+        Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE);
+
+        ModelNodeForm.Builder<NamedNode> fb = new ModelNodeForm.Builder<>(Ids.SYSTEM_PROPERTY_FORM, metadata);
+        fb.include(VALUE);
+        if (!environment.isStandalone()) {
+            fb.include(BOOT_TIME);
+        }
+        fb.unsorted()
+                .onSave((form, changedValues) -> presenter.save(form, changedValues))
+                .prepareReset(form -> presenter.reset(form, metadata))
+                .build();
+        form = fb.build();
+
+        ModelNodeTable.Builder<NamedNode> tb = new ModelNodeTable.Builder<NamedNode>(Ids.SYSTEM_PROPERTY_TABLE,
+                metadata)
+                .button(resources.constants().add(), table -> presenter.add(),
+                        Constraint.parse("executable(system-property=*:add)"))
+                .button(tableButtonFactory.remove(Names.SYSTEM_PROPERTY, ROOT_TEMPLATE,
+                        table -> table.selectedRow().getName(),
+                        () -> presenter.reload()))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(VALUE);
+        if (!environment.isStandalone()) {
+            tb.column("boot-time");
+        }
+        table = tb.build();
+
+        HTMLElement root = row()
+                .add(column()
+                        .add(h(1).textContent(Names.SYSTEM_PROPERTIES))
+                        .add(p().textContent(metadata.getDescription().getDescription()))
+                        .add(table)
+                        .add(form))
+                .asElement();
+
+        registerAttachable(table);
+        registerAttachable(form);
+        initElement(root);
     }
 
-    @MbuiElement("system-property-table") Table<NamedNode> systemPropertyTable;
-    @MbuiElement("system-property-form") Form<NamedNode> systemPropertyForm;
-
-    SystemPropertiesView(final MbuiContext mbuiContext) {
-        super(mbuiContext);
+    @Override
+    public void attach() {
+        super.attach();
+        table.bindForm(form);
     }
 
-    @PostConstruct
-    void init() {
-        // TODO Show column 'boot-time' only in domain mode
+    @Override
+    public void setPresenter(SystemPropertiesPresenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override
     public void update(final List<NamedNode> systemProperties) {
-        systemPropertyForm.clear();
-        systemPropertyTable.update(systemProperties);
+        form.clear();
+        table.update(systemProperties);
     }
 }

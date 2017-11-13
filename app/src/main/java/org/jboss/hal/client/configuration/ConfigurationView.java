@@ -17,4 +17,5 @@ package org.jboss.hal.client.configuration;
 
 import org.jboss.hal.core.mvp.FinderViewImpl;
 
-public class ConfigurationView extends FinderViewImpl implements ConfigurationPresenter.MyView {}
+public class ConfigurationView extends FinderViewImpl implements ConfigurationPresenter.MyView {
+}

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.configurationchanges;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.EmptyState;
@@ -55,13 +56,16 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
                 .forOperation(LIST_CHANGES_OPERATION);
 
         Messages messages = resources.messages();
-        EmptyState notEnabledState = new EmptyState.Builder(resources.constants().configurationChangesNotEnabled())
+        EmptyState notEnabledState = new EmptyState.Builder(Ids.CONFIGURATION_CHANGES_NOT_ENABLED,
+                resources.constants().configurationChangesNotEnabled())
                 .icon(Icons.INFO)
+                .description(resources.messages().configurationChangesDescription())
                 .primaryAction(resources.constants().enableConfigurationChanges(), () -> presenter.launchAdd())
                 .build();
 
-        EmptyState emptyState = new EmptyState.Builder(resources.constants().noItems())
-                .description(resources.messages().noItems())
+        EmptyState emptyState = new EmptyState.Builder(Ids.CONFIGURATION_CHANGES_EMPTY, resources.constants().noItems())
+                .description(resources.messages().noItems().asString() + " " + resources.messages()
+                        .configurationChangesDescription())
                 .icon(Icons.INFO)
                 .primaryAction(resources.constants().reload(), () -> presenter.reload())
                 .secondaryAction(resources.constants().disableConfigurationChanges(), () -> presenter.disable())
@@ -90,7 +94,7 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
                         (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
                         comparing(ConfigurationChange::getAccessMechanism)))
                 .toolbarAction(disableAction)
-                .toolbarAction(new Toolbar.Action(Ids.build(CONFIGURATION_CHANGES, Ids.REFRESH_SUFFIX),
+                .toolbarAction(new Toolbar.Action(Ids.build(CONFIGURATION_CHANGES, Ids.REFRESH),
                         constants.reload(), () -> presenter.reload()))
                 .noItems(constants.noItems(), messages.noItems())
                 .emptyState(empty, emptyState)

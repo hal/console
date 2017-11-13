@@ -17,4 +17,5 @@ package org.jboss.hal.client.runtime;
 
 import org.jboss.hal.core.mvp.FinderViewImpl;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {
+}

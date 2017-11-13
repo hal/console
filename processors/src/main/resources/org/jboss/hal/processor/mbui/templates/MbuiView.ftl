@@ -187,7 +187,7 @@ public final class ${context.subclass} extends ${context.base} {
                             <#if action.attributes?has_content>
                                 <#if action.hasAttributesWithProvider || action.hasUnboundAttributes>
             .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, table -> {
-                ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
+                ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD),
                     ${table.metadata.name})
                     .fromRequestProperties()
                     .unboundFormItem(new org.jboss.hal.core.mbui.dialog.NameItem(), 0)
@@ -230,7 +230,7 @@ public final class ${context.subclass} extends ${context.base} {
                                 <#elseif action.hasAttributesWithValidationsHandler || action.hasAttributesWithSuggestionHandler>
             .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, table -> {
                 AddResourceDialog dialog = new AddResourceDialog(
-                    Ids.build("${table.selector}", Ids.ADD_SUFFIX),
+                    Ids.build("${table.selector}", Ids.ADD),
                     mbuiContext.resources().messages().addResourceTitle(${table.title}),
                     ${table.metadata.name},
                     asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>),
@@ -257,11 +257,11 @@ public final class ${context.subclass} extends ${context.base} {
                 dialog.show();
             }))
                                 <#else>
-            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
+            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD), ${table.title},
                 ${table.metadata.name}Template, <#if action.attributes?has_content>asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>), </#if>(name, address) -> presenter.reload()))
                                 </#if>
                             <#else>
-            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
+            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD), ${table.title},
                 ${table.metadata.name}Template,
                 (name, address) -> presenter.reload()))
                             </#if>

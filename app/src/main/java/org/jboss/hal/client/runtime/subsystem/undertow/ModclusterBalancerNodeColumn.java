@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.Iterator;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -61,7 +62,6 @@ public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
                             balancer = substringAfterLast(finderSegment.getItemId(), "undertow-modcluster-balancer-");
                         }
                     }
-                    ;
                     ResourceAddress address = MODCLUSTER_BALANCER_TEMPLATE.resolve(statementContext, modcluster,
                             balancer);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)

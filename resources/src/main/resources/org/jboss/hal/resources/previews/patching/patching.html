@@ -1,18 +1,18 @@
-<p>The method of applying a patch to JBoss EAP depends on your installation method. If you installed JBoss EAP using the ZIP or installer methods, you must use the ZIP-based patch management system. If you used RPMs to install JBoss EAP on Red Hat Enterprise Linux, you must use RPM patches.
+<p>The method of applying a patch to ${build.shortName} depends on your installation method. If you installed ${build.shortName} using the ZIP or installer methods, you must use the ZIP-based patch management system. If you used RPMs to install ${build.shortName} on Red Hat Enterprise Linux, you must use RPM patches.
 Important.</p>
 
-<p>Before applying or rolling back a patch, you should back up your JBoss EAP server, including all deployments and configuration files.</p>
+<p>Before applying or rolling back a patch, you should back up your ${build.shortName} server, including all deployments and configuration files.</p>
 
-<p>Cumulative patches for a ZIP or Installer installation of JBoss EAP are available to download from the Red Hat Customer Portal.</p>
+<p>Cumulative patches for a ZIP or Installer installation of ${build.shortName} are available to download from the Red Hat Customer Portal.</p>
 
-<p>For multiple JBoss EAP hosts in a managed domain environment, individual hosts can be patched from your JBoss EAP domain controller.</p>
+<p>For multiple ${build.shortName} hosts in a managed domain environment, individual hosts can be patched from your ${build.shortName} domain controller.</p>
 
 <p>In addition to applying a patch, you can also roll back the application of a patch.</p>
 
 <h3>Important Notes on ZIP/Installer Installation Patching</h3>
 
 <ul>
-    <li>If you apply a patch that updates a module, the new patched JARs that are used at runtime are stored in <code>EAP_HOME/modules/system/layers/base/.overlays/PATCH_ID/MODULE</code>. The original unpatched files are left in <code>EAP_HOME/modules/system/layers/base/MODULE</code>, but these JARs are not used at runtime.</li>
-    <li>In order to significantly decrease the size of cumulative patch releases for JBoss EAP 7, you now cannot perform a partial roll back of a cumulative patch. For a patch that has been applied, you will only be able to roll back the whole patch.</li>
-    <li>For example, if you apply CP03 to JBoss EAP 7.0.0, you will not be able to roll back to CP01 or CP02. If you would like the ability to roll back to each cumulative patch release, each cumulative patch must be applied separately in the order they were released.</li>
+    <li>If you apply a patch that updates a module, the new patched JARs that are used at runtime are stored in <code>${build.installDir}/modules/system/layers/base/.overlays/PATCH_ID/MODULE</code>. The original unpatched files are left in <code>${build.installDir}/modules/system/layers/base/MODULE</code>, but these JARs are not used at runtime.</li>
+    <li>In order to significantly decrease the size of cumulative patch releases for ${build.shortName}, you now cannot perform a partial roll back of a cumulative patch. For a patch that has been applied, you will only be able to roll back the whole patch.</li>
+    <li>For example, if you apply CP03 to ${build.shortName}, you will not be able to roll back to CP01 or CP02. If you would like the ability to roll back to each cumulative patch release, each cumulative patch must be applied separately in the order they were released.</li>
 </ul>

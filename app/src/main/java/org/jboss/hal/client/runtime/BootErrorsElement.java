@@ -102,7 +102,7 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
                 .unsorted()
                 .build();
 
-        noBootErrors = new EmptyState.Builder(resources.constants().noBootErrors())
+        noBootErrors = new EmptyState.Builder(Ids.BOOT_ERRORS_EMPTY, resources.constants().noBootErrors())
                 .icon(pfIcon("ok"))
                 .description(resources.messages().noBootErrors())
                 .build();

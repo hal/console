@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -75,10 +76,10 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
 
         VerticalNavigation navigation = new VerticalNavigation();
         // main settings
-        navigation.addPrimary(Ids.JGROUPS_ENTRY, Names.CONFIGURATION, pfIcon("settings"), jgroupsSection);
+        navigation.addPrimary(Ids.JGROUPS_ITEM, Names.CONFIGURATION, pfIcon("settings"), jgroupsSection);
 
-        navigation.addPrimary(Ids.JGROUPS_STACK_ENTRY, Names.STACK, fontAwesome("laptop"), stackConfig);
-        navigation.addPrimary(Ids.JGROUPS_CHANNEL_ENTRY, Names.CHANNEL, fontAwesome("pficon pficon-service"),
+        navigation.addPrimary(Ids.JGROUPS_STACK_ITEM, Names.STACK, fontAwesome("laptop"), stackConfig);
+        navigation.addPrimary(Ids.JGROUPS_CHANNEL_ITEM, Names.CHANNEL, fontAwesome("pficon pficon-service"),
                 channelConfig);
 
         registerAttachables(asList(navigation, jgroupsForm, stackConfig, channelConfig));

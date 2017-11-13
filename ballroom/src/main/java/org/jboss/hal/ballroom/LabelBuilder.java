@@ -33,9 +33,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
 public class LabelBuilder {
 
     private static final String QUOTE = "'";
+    private static final String SPACE = " ";
+
     @SuppressWarnings("HardCodedStringLiteral")
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
             .put("ajp", "AJP")
+            .put("ccm", "CCM")
             .put("dn", "DN")
             .put("ear", "EAR")
             .put("ee", "EE")
@@ -61,6 +64,8 @@ public class LabelBuilder {
             .put("jsr", "JSR")
             .put("jts", "JTS")
             .put("jwt", "JWT")
+            .put("mcp", "MCP")
+            .put("mdb", "MDB")
             .put("mbean", "MBean")
             .put("oauth2", "OAuth 2")
             .put("otp", "OTP")
@@ -77,16 +82,17 @@ public class LabelBuilder {
             .put("uri", "URI")
             .put("url", "URL")
             .put("uuid", "UUID")
+            .put("xa", "XA")
             .put("wsdl", "WSDL")
             .build();
 
-    public String label(final Property property) {
+    public String label(Property property) {
         return property.getValue().hasDefined(HAL_LABEL)
                 ? label(property.getValue().get(HAL_LABEL).asString())
                 : label(property.getName());
     }
 
-    public String label(final String name) {
+    public String label(String name) {
         String label = name;
         label = label.replace('-', ' ');
         label = replaceSpecial(label);
@@ -100,7 +106,7 @@ public class LabelBuilder {
      *
      * @return The list of names as human readable string or an empty string if the names are null or empty.
      */
-    public String enumeration(final Iterable<String> names, final String conjunction) {
+    public String enumeration(Iterable<String> names, String conjunction) {
         String enumeration = "";
         if (names != null && !Iterables.isEmpty(names)) {
             int size = Iterables.size(names);
@@ -108,7 +114,7 @@ public class LabelBuilder {
                 return QUOTE + label(names.iterator().next()) + QUOTE;
             } else if (size == 2) {
                 return QUOTE + label(Iterables.getFirst(names, "")) + QUOTE +
-                        " " + conjunction + " " +
+                        SPACE + conjunction + SPACE +
                         QUOTE + label(Iterables.getLast(names)) + QUOTE;
             } else {
                 String last = Iterables.getLast(names);
@@ -118,13 +124,13 @@ public class LabelBuilder {
                 enumeration = allButLast.stream()
                         .map(name -> QUOTE + label(name) + QUOTE)
                         .collect(Collectors.joining(", "));
-                enumeration = enumeration + " " + conjunction + " " + QUOTE + label(last) + QUOTE;
+                enumeration = enumeration + SPACE + conjunction + SPACE + QUOTE + label(last) + QUOTE;
             }
         }
         return enumeration;
     }
 
-    private String replaceSpecial(final String label) {
+    private String replaceSpecial(String label) {
         List<String> replacedParts = new ArrayList<>();
         for (String part : Splitter.on(' ').split(label)) {
             String replaced = part;
@@ -135,10 +141,10 @@ public class LabelBuilder {
             }
             replacedParts.add(replaced);
         }
-        return Joiner.on(" ").join(replacedParts);
+        return Joiner.on(SPACE).join(replacedParts);
     }
 
-    private String capitalize(final String str) {
+    private String capitalize(String str) {
         final char[] buffer = str.toCharArray();
         boolean capitalizeNext = true;
         for (int i = 0; i < buffer.length; i++) {

@@ -23,10 +23,10 @@ import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
 public class ResourceDescriptionStatementContext extends FilteringStatementContext {
 
-    public ResourceDescriptionStatementContext(final StatementContext delegate, final Environment environment) {
+    public ResourceDescriptionStatementContext(StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
-            public String filter(final String placeholder) {
+            public String filter(String placeholder) {
                 if (SELECTION_KEY.equals(placeholder)) {
                     return "*";
                 }
@@ -34,7 +34,7 @@ public class ResourceDescriptionStatementContext extends FilteringStatementConte
             }
 
             @Override
-            public String[] filterTuple(final String placeholder) {
+            public String[] filterTuple(String placeholder) {
                 if (!environment.isStandalone()) {
                     Tuple t = Tuple.from(placeholder);
                     if (t != null) {

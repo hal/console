@@ -26,6 +26,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
@@ -40,13 +41,13 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
 
     private EmptyState noStatistics;
-    private HTMLElement descriptionPreview;
     private Dispatcher dispatcher;
     private StatementContext statementContext;
     private String profile;
 
 
-    public UndertowPreview(final Dispatcher dispatcher, final StatementContext statementContext, final Resources resources) {
+    public UndertowPreview(final Dispatcher dispatcher, final StatementContext statementContext,
+            final Resources resources) {
         super(Names.WEB, Names.UNDERTOW);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -59,7 +60,8 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
         dispatcher.execute(operation, result -> {
 
             profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
+            noStatistics = new EmptyState.Builder(Ids.UNDERTOW_STATISTICS_DISABLED,
+                    resources.constants().statisticsDisabledHeader())
                     .description(resources.messages().statisticsDisabled(Names.UNDERTOW, profile))
                     .icon(fontAwesome("line-chart"))
                     .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
@@ -75,12 +77,11 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
 
         });
 
-        descriptionPreview = section().asElement();
+        HTMLElement descriptionPreview = section().asElement();
         Previews.innerHtml(descriptionPreview, resources.previews().runtimeWeb());
 
         previewBuilder()
                 .add(descriptionPreview);
-        Elements.setVisible(descriptionPreview, false);
     }
 
     @Override
@@ -92,7 +93,6 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
         dispatcher.execute(opWeb, result -> {
             boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
             Elements.setVisible(noStatistics.asElement(), !statsEnabled);
-            Elements.setVisible(descriptionPreview, statsEnabled);
         });
     }
 
@@ -106,7 +106,6 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
                 .build();
         dispatcher.execute(operation, result -> {
             Elements.setVisible(noStatistics.asElement(), false);
-            Elements.setVisible(descriptionPreview, true);
         });
     }
 }

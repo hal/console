@@ -35,7 +35,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
 import static org.jboss.hal.resources.CSS.formHorizontal;
 import static org.jboss.hal.resources.CSS.radio;
 
-public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState>  {
+public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState> {
 
     private final HTMLElement root;
     private Boolean restartServers;

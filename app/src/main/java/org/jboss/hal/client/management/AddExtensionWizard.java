@@ -33,7 +33,7 @@ import org.jboss.hal.core.extension.InstalledExtensionResources;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -43,11 +43,41 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
-import static org.jboss.hal.client.management.AddExtensionWizard.State.REVIEW;
-import static org.jboss.hal.client.management.AddExtensionWizard.State.URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class AddExtensionWizard {
+
+    private final Wizard<Context, State> wizard;
+
+    AddExtensionWizard(ExtensionColumn column,
+            EventBus eventBus,
+            ExtensionRegistry extensionRegistry,
+            ExtensionStorage extensionStorage,
+            Resources resources) {
+
+        String title = resources.messages().addResourceTitle(Names.EXTENSION);
+        wizard = new Wizard.Builder<Context, State>(title, new Context())
+
+                .addStep(State.URL, new UrlStep(extensionRegistry, resources))
+                .addStep(State.REVIEW, new ReviewStep(resources))
+
+                .onBack((context, currentState) -> currentState == State.REVIEW ? State.URL : null)
+                .onNext((context, currentState) -> currentState == State.URL ? State.REVIEW : null)
+
+                .onFinish((wzd, context) -> {
+                    extensionStorage.add(context.extension);
+                    extensionRegistry.inject(context.extension.getFqScript(), context.extension.getFqStylesheets());
+                    column.refresh(context.extension.getName());
+                    MessageEvent.fire(eventBus, Message.success(
+                            resources.messages().addResourceSuccess(Names.EXTENSION, context.extension.getName())));
+                })
+                .build();
+    }
+
+    public void show() {
+        wizard.show();
+    }
+
 
     // ------------------------------------------------------ context and state
 
@@ -74,7 +104,7 @@ class AddExtensionWizard {
         private final TextBoxItem urlItem;
         private final Form<ModelNode> form;
 
-        UrlStep(ExtensionRegistry extensionRegistry, final Resources resources) {
+        UrlStep(ExtensionRegistry extensionRegistry, Resources resources) {
             super(Names.URL);
             this.extensionRegistry = extensionRegistry;
             this.resources = resources;
@@ -95,18 +125,18 @@ class AddExtensionWizard {
         }
 
         @Override
-        public void reset(final Context context) {
+        public void reset(Context context) {
             form.edit(new ModelNode());
             urlItem.clearValue();
         }
 
         @Override
-        protected void onShow(final Context context) {
+        protected void onShow(Context context) {
             urlItem.setValue(context.url);
         }
 
         @Override
-        public void onNext(final Context context, final WorkflowCallback callback) {
+        public void onNext(Context context, WorkflowCallback callback) {
             if (form.save()) {
                 wizard().showProgress(resources.constants().extensionProcessing(),
                         resources.messages().extensionProcessing());
@@ -170,7 +200,7 @@ class AddExtensionWizard {
         private static final InstalledExtensionResources RESOURCES = GWT.create(InstalledExtensionResources.class);
         private final Form<InstalledExtension> form;
 
-        ReviewStep(final Resources resources) {
+        ReviewStep(Resources resources) {
             super(resources.constants().review());
             Metadata metadata = Metadata.staticDescription(RESOURCES.installedExtension());
             form = new ModelNodeForm.Builder<InstalledExtension>(Ids.EXTENSION_REVIEW_FORM, metadata)
@@ -188,45 +218,13 @@ class AddExtensionWizard {
         }
 
         @Override
-        public void reset(final Context context) {
+        public void reset(Context context) {
             form.clear();
         }
 
         @Override
-        protected void onShow(final Context context) {
+        protected void onShow(Context context) {
             form.view(context.extension);
         }
     }
-
-
-    // ------------------------------------------------------ wizard delegate
-
-    private final Wizard<Context, State> wizard;
-
-    AddExtensionWizard(final ExtensionColumn column,
-            final EventBus eventBus,
-            final ExtensionRegistry extensionRegistry,
-            final ExtensionStorage extensionStorage,
-            final Resources resources) {
-
-        String title = resources.messages().addResourceTitle(Names.EXTENSION);
-        wizard = new Wizard.Builder<Context, State>(title, new Context())
-
-                .addStep(URL, new UrlStep(extensionRegistry, resources))
-                .addStep(REVIEW, new ReviewStep(resources))
-
-                .onBack((context, currentState) -> currentState == REVIEW ? URL : null)
-                .onNext((context, currentState) -> currentState == URL ? REVIEW : null)
-
-                .onFinish((wzd, context) -> {
-                    extensionStorage.add(context.extension);
-                    extensionRegistry.inject(context.extension.getFqScript(), context.extension.getFqStylesheets());
-                    column.refresh(context.extension.getName());
-                    MessageEvent.fire(eventBus, Message.success(
-                            resources.messages().addResourceSuccess(Names.EXTENSION, context.extension.getName())));
-                })
-                .build();
-    }
-
-    public void show() {wizard.show();}
 }

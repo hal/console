@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -132,10 +133,10 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
             hostSettingForms.put(setting, hostSetting(setting));
         }
 
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB);
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
         for (HostSetting setting : HostSetting.values()) {
-            tabs.add(Ids.build(setting.baseId, Ids.TAB_SUFFIX), setting.type,
+            tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
                     hostSettingForms.get(setting).asElement());
         }
 
@@ -221,7 +222,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         // ------------------------------------------------------ pages, listener and navigation
 
-        hostPages = new Pages(Ids.UNDERTOW_HOST_MAIN_PAGE, hostSection);
+        hostPages = new Pages(Ids.UNDERTOW_HOST_PAGES, Ids.UNDERTOW_HOST_MAIN_PAGE, hostSection);
         hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_FILTER_REF_PAGE,
                 () -> presenter.hostSegment(), () -> Names.FILTERS, filterRefSection);
         hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_LOCATION_PAGE,
@@ -235,15 +236,15 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         listener.put(HTTPS, new ListenerElement(HTTPS, metadataRegistry, tableButtonFactory));
 
         navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.UNDERTOW_SERVER_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"),
+        navigation.addPrimary(Ids.UNDERTOW_SERVER_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"),
                 configurationSection);
-        navigation.addPrimary(Ids.UNDERTOW_HOST_ENTRY, Names.HOSTS, pfIcon("enterprise"), hostPages);
-        navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Names.LISTENER, fontAwesome("headphones"));
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(AJP.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addPrimary(Ids.UNDERTOW_HOST_ITEM, Names.HOSTS, pfIcon("enterprise"), hostPages);
+        navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Names.LISTENER, fontAwesome("headphones"));
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(AJP.baseId, Ids.ITEM),
                 AJP.type, listener.get(AJP).asElement());
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTP.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTP.baseId, Ids.ITEM),
                 HTTP.type, listener.get(HTTP).asElement());
-        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTPS.baseId, Ids.ENTRY_SUFFIX),
+        navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTPS.baseId, Ids.ITEM),
                 HTTPS.type, listener.get(HTTPS).asElement());
 
         registerAttachable(navigation,
@@ -262,7 +263,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     private Form<ModelNode> hostSetting(final HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
-        return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
+        return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM), metadata)
                 .singleton(() -> presenter.hostSettingOperation(hostSetting),
                         () -> presenter.addHostSetting(hostSetting))
                 .onSave((f, changedValues) -> presenter.saveHostSetting(hostSetting, changedValues))
@@ -318,7 +319,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         listener.forEach((l, e) -> {
             List<NamedNode> items = asNamedNodes(failSafePropertyList(payload, l.resource));
             e.update(items);
-            navigation.updateBadge(Ids.build(l.baseId, Ids.ENTRY_SUFFIX), items.size());
+            navigation.updateBadge(Ids.build(l.baseId, Ids.ITEM), items.size());
         });
     }
 

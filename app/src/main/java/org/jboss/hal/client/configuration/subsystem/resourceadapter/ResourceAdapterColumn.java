@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;
@@ -46,6 +47,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_ADDRESS;
@@ -103,7 +105,8 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                         if (Strings.isNullOrEmpty(archive) && Strings.isNullOrEmpty(module)) {
                             LabelBuilder labelBuilder = new LabelBuilder();
                             return ValidationResult.invalid(resources.messages()
-                                    .atLeastOneIsRequired(labelBuilder.label(ARCHIVE), labelBuilder.label(MODULE)));
+                                    .atLeastOneIsRequired(labelBuilder.enumeration(asList(ARCHIVE, MODULE),
+                                            resources.constants().or())));
                         }
                         return ValidationResult.OK;
                     });

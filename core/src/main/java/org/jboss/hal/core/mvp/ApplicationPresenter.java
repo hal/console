@@ -19,9 +19,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.core.header.HeaderModeEvent;
 import org.jboss.hal.core.header.PresenterType;
-import org.jboss.hal.ballroom.Skeleton;
 
 /**
  * Base presenter for all kind of application presenters. The presenter returns a {@link HeaderModeEvent} with various

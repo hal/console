@@ -40,11 +40,14 @@ public class Macro {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Macro)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Macro)) {
+            return false;
+        }
 
         Macro macro = (Macro) o;
-
         return name.equals(macro.name);
 
     }

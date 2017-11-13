@@ -21,12 +21,6 @@ import com.google.gwt.event.shared.GwtEvent;
 // No @GenEvent here due to naming conflicts
 public class ProcessStateEvent extends GwtEvent<ProcessStateEvent.ProcessStateHandler> {
 
-    public interface ProcessStateHandler extends EventHandler {
-
-        void onProcessState(ProcessStateEvent event);
-    }
-
-
     private static final Type<ProcessStateHandler> TYPE = new Type<>();
 
     public static Type<ProcessStateHandler> getType() {
@@ -35,7 +29,9 @@ public class ProcessStateEvent extends GwtEvent<ProcessStateEvent.ProcessStateHa
 
     private final ProcessState processState;
 
-    public ProcessStateEvent(final ProcessState processState) {this.processState = processState;}
+    ProcessStateEvent(final ProcessState processState) {
+        this.processState = processState;
+    }
 
     public ProcessState getProcessState() {
         return processState;
@@ -49,5 +45,11 @@ public class ProcessStateEvent extends GwtEvent<ProcessStateEvent.ProcessStateHa
     @Override
     public Type<ProcessStateHandler> getAssociatedType() {
         return TYPE;
+    }
+
+
+    public interface ProcessStateHandler extends EventHandler {
+
+        void onProcessState(ProcessStateEvent event);
     }
 }

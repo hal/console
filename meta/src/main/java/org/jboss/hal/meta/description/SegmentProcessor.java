@@ -18,11 +18,7 @@ package org.jboss.hal.meta.description;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 final class SegmentProcessor {
 
@@ -48,13 +44,16 @@ final class SegmentProcessor {
                                 value = "*";
                             }
                             break;
+                        default:
+                            break;
                     }
                 }
-                consumer.accept(new String[] {key, value});
+                consumer.accept(new String[]{key, value});
                 index++;
             }
         }
     }
 
-    private SegmentProcessor() {}
+    private SegmentProcessor() {
+    }
 }

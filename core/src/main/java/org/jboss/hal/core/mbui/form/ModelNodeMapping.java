@@ -162,6 +162,8 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                             name,
                             descriptionType);
                     break;
+                default:
+                    break;
             }
         } catch (IllegalArgumentException e) {
             logger.error(
@@ -246,7 +248,9 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                                 break;
 
                             case OBJECT:
-                                boolean stringValueType = attributeDescription.get(VALUE_TYPE).getType().equals(ModelType.TYPE)
+                                boolean stringValueType = attributeDescription.get(VALUE_TYPE)
+                                        .getType()
+                                        .equals(ModelType.TYPE)
                                         && attributeDescription.get(VALUE_TYPE).asType().equals(ModelType.STRING);
                                 if (stringValueType) {
                                     Map<String, String> map = (Map<String, String>) value;
@@ -282,6 +286,8 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                             case UNDEFINED:
                                 logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id,
                                         name, type);
+                                break;
+                            default:
                                 break;
                         }
                     }

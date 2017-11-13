@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
@@ -45,11 +46,11 @@ class DeploymentModelElement implements HasElements {
     private final EmptyState notEnabled;
     private final List<HTMLElement> elements;
 
-    DeploymentModelElement(final ModelBrowser modelBrowser, final Resources resources) {
+    DeploymentModelElement(ModelBrowser modelBrowser, Resources resources) {
         this.modelBrowser = modelBrowser;
         this.resources = resources;
 
-        notEnabled = new EmptyState.Builder(resources.constants().notEnabled())
+        notEnabled = new EmptyState.Builder(Ids.DEPLOYMENT_NOT_ENABLED_EMPTY, resources.constants().notEnabled())
                 .icon(fontAwesome(stopCircleO))
                 .build();
         notEnabled.asElement().classList.add(marginTopLarge);
@@ -63,7 +64,7 @@ class DeploymentModelElement implements HasElements {
         return elements;
     }
 
-    void setSurroundingHeight(final int surroundingHeight) {
+    void setSurroundingHeight(int surroundingHeight) {
         modelBrowser.setSurroundingHeight(surroundingHeight);
     }
 

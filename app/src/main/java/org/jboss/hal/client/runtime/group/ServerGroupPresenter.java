@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.group;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -29,12 +30,12 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.group.ServerGroup;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -52,33 +53,18 @@ public class ServerGroupPresenter
     static final String SYSTEM_PROPERTY_ADDRESS = SERVER_GROUP_ADDRESS + "/system-property=*";
 
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.SERVER_GROUP_CONFIGURATION)
-    @Requires(value = {SERVER_GROUP_ADDRESS, JVM_ADDRESS, SYSTEM_PROPERTY_ADDRESS},
-            recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerGroupPresenter> {}
-
-    public interface MyView extends MbuiView<ServerGroupPresenter> {
-        void updateServerGroup(ServerGroup serverGroup);
-        void updateJvms(List<NamedNode> interfaces);
-        void updateSystemProperties(List<NamedNode> interfaces);
-    }
-    // @formatter:on
-
-
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
 
     @Inject
-    public ServerGroupPresenter(final EventBus eventBus,
-            final ServerGroupPresenter.MyView view,
-            final ServerGroupPresenter.MyProxy proxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher) {
+    public ServerGroupPresenter(EventBus eventBus,
+            ServerGroupPresenter.MyView view,
+            ServerGroupPresenter.MyProxy proxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
@@ -125,5 +111,21 @@ public class ServerGroupPresenter
                     getView().updateSystemProperties(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
                 });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.SERVER_GROUP_CONFIGURATION)
+    @Requires(value = {SERVER_GROUP_ADDRESS, JVM_ADDRESS, SYSTEM_PROPERTY_ADDRESS},
+            recursive = false)
+    public interface MyProxy extends ProxyPlace<ServerGroupPresenter> {
+    }
+
+    public interface MyView extends MbuiView<ServerGroupPresenter> {
+        void updateServerGroup(ServerGroup serverGroup);
+        void updateJvms(List<NamedNode> interfaces);
+        void updateSystemProperties(List<NamedNode> interfaces);
+    }
+    // @formatter:on
 }
 

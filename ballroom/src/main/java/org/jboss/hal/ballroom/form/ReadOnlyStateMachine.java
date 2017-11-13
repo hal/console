@@ -50,6 +50,9 @@ public class ReadOnlyStateMachine extends AbstractStateMachine implements StateM
                 assertState(READONLY);
                 transitionTo(READONLY);
                 break;
+
+            default:
+                break;
         }
     }
 

@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -65,90 +66,6 @@ import static org.jboss.hal.resources.Ids.FINDER;
  * the different places
  */
 public class Finder implements IsElement, Attachable {
-
-    private class SelectTask implements Task<FlowContext> {
-
-        private final FinderSegment segment;
-
-        private SelectTask(FinderSegment segment) {
-            this.segment = segment;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> appendColumn(segment.getColumnId(),
-                    new AsyncCallback<FinderColumn>() {
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            emitter.onError(
-                                    new RuntimeException("Error in Finder.SelectTask: Unable to append column '" +
-                                            segment.getColumnId() + "'"));
-                        }
-
-                        @Override
-                        public void onSuccess(FinderColumn column) {
-                            if (column.contains(segment.getItemId())) {
-                                column.markSelected(segment.getItemId());
-                                column.row(segment.getItemId()).asElement().scrollIntoView(false);
-                                updateContext();
-                                context.push(column);
-                                emitter.onCompleted();
-                            } else {
-                                emitter.onError(
-                                        new RuntimeException("Error in Finder.SelectTask: Unable to select item '" +
-                                                segment.getItemId() + "' in column '" + segment.getColumnId() + "'"));
-                            }
-                        }
-                    }));
-        }
-    }
-
-
-    private class RefreshTask implements Task<FlowContext> {
-
-        private final FinderSegment segment;
-
-        private RefreshTask(FinderSegment segment) {
-            this.segment = segment;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> {
-                FinderColumn column = getColumn(segment.getColumnId());
-                if (column != null) {
-                    // refresh the existing column
-                    column.refresh(() -> selectItem(column, context, emitter));
-                } else {
-                    // append the column
-                    appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            emitter.onError(throwable);
-                        }
-
-                        @Override
-                        public void onSuccess(FinderColumn finderColumn) {
-                            selectItem(finderColumn, context, emitter);
-                        }
-                    });
-                }
-            });
-        }
-
-        private void selectItem(FinderColumn column, FlowContext context, CompletableEmitter emitter) {
-            if (column.contains(segment.getItemId())) {
-                column.markSelected(segment.getItemId());
-                context.push(column);
-                emitter.onCompleted();
-            } else {
-                //noinspection HardCodedStringLiteral
-                emitter.onError(new RuntimeException("Error in Finder.RefreshTask: Unable to select item '" +
-                        segment.getItemId() + "' in column '" + segment.getColumnId() + "'"));
-            }
-        }
-    }
-
 
     static final String DATA_BREADCRUMB = "breadcrumb";
     static final String DATA_FILTER = "filter";
@@ -492,7 +409,8 @@ public class Finder implements IsElement, Attachable {
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
-                        public void onError(FlowContext context, Throwable error) {}
+                        public void onError(FlowContext context, Throwable error) {
+                        }
 
                         @Override
                         public void onSuccess(FlowContext context) {
@@ -591,5 +509,89 @@ public class Finder implements IsElement, Attachable {
 
     public FinderContext getContext() {
         return context;
+    }
+
+
+    private class SelectTask implements Task<FlowContext> {
+
+        private final FinderSegment segment;
+
+        private SelectTask(FinderSegment segment) {
+            this.segment = segment;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            return Completable.fromEmitter(emitter -> appendColumn(segment.getColumnId(),
+                    new AsyncCallback<FinderColumn>() {
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            emitter.onError(
+                                    new RuntimeException("Error in Finder.SelectTask: Unable to append column '" +
+                                            segment.getColumnId() + "'"));
+                        }
+
+                        @Override
+                        public void onSuccess(FinderColumn column) {
+                            if (column.contains(segment.getItemId())) {
+                                column.markSelected(segment.getItemId());
+                                column.row(segment.getItemId()).asElement().scrollIntoView(false);
+                                updateContext();
+                                context.push(column);
+                                emitter.onCompleted();
+                            } else {
+                                emitter.onError(
+                                        new RuntimeException("Error in Finder.SelectTask: Unable to select item '" +
+                                                segment.getItemId() + "' in column '" + segment.getColumnId() + "'"));
+                            }
+                        }
+                    }));
+        }
+    }
+
+
+    private class RefreshTask implements Task<FlowContext> {
+
+        private final FinderSegment segment;
+
+        private RefreshTask(FinderSegment segment) {
+            this.segment = segment;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            return Completable.fromEmitter(emitter -> {
+                FinderColumn column = getColumn(segment.getColumnId());
+                if (column != null) {
+                    // refresh the existing column
+                    column.refresh(() -> selectItem(column, context, emitter));
+                } else {
+                    // append the column
+                    appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            emitter.onError(throwable);
+                        }
+
+                        @Override
+                        public void onSuccess(FinderColumn finderColumn) {
+                            selectItem(finderColumn, context, emitter);
+                        }
+                    });
+                }
+            });
+        }
+
+        private void selectItem(FinderColumn column, FlowContext context, CompletableEmitter emitter) {
+            if (column.contains(segment.getItemId())) {
+                column.markSelected(segment.getItemId());
+                context.push(column);
+                emitter.onCompleted();
+            } else {
+                //noinspection HardCodedStringLiteral
+                emitter.onError(new RuntimeException("Error in Finder.RefreshTask: Unable to select item '" +
+                        segment.getItemId() + "' in column '" + segment.getColumnId() + "'"));
+            }
+        }
     }
 }

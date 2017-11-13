@@ -28,10 +28,10 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 public class JQuery {
 
     @JsMethod(namespace = GLOBAL)
-    public native static JQuery $(@NonNls String selector);
+    public static native JQuery $(@NonNls String selector);
 
     @JsMethod(namespace = GLOBAL)
-    public native static JQuery $(HTMLElement element);
+    public static native JQuery $(HTMLElement element);
 
     public native JQuery attr(String key, String value);
 

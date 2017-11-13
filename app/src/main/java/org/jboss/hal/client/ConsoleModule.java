@@ -31,10 +31,10 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.Mbui_InterfaceView;
 import org.jboss.hal.client.configuration.Mbui_PathsView;
 import org.jboss.hal.client.configuration.Mbui_SocketBindingGroupView;
-import org.jboss.hal.client.configuration.Mbui_SystemPropertiesView;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.SocketBindingGroupPresenter;
 import org.jboss.hal.client.configuration.SystemPropertiesPresenter;
+import org.jboss.hal.client.configuration.SystemPropertiesView;
 import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView;
@@ -132,12 +132,14 @@ import org.jboss.hal.client.rhcp.UnderTheBridgeView;
 import org.jboss.hal.client.runtime.ProcessStateHandler;
 import org.jboss.hal.client.runtime.RuntimePresenter;
 import org.jboss.hal.client.runtime.RuntimeView;
-import org.jboss.hal.client.runtime.group.Mbui_ServerGroupView;
-import org.jboss.hal.client.runtime.group.ServerGroupPresenter;
 import org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter;
 import org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesView;
+import org.jboss.hal.client.runtime.group.Mbui_ServerGroupView;
+import org.jboss.hal.client.runtime.group.ServerGroupPresenter;
 import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView;
+import org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter;
+import org.jboss.hal.client.runtime.managementoperations.ManagementOperationsView;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
 import org.jboss.hal.client.runtime.server.ServerRuntimePresenter;
@@ -433,6 +435,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 ManagementView.class,
                 ManagementPresenter.MyProxy.class);
 
+        bindPresenter(ManagementOperationsPresenter.class,
+                ManagementOperationsPresenter.MyView.class,
+                ManagementOperationsView.class,
+                ManagementOperationsPresenter.MyProxy.class);
+
         bindPresenter(MapperDecoderPresenter.class,
                 MapperDecoderPresenter.MyView.class,
                 Mbui_MapperDecoderView.class,
@@ -565,7 +572,7 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         bindPresenter(SystemPropertiesPresenter.class,
                 SystemPropertiesPresenter.MyView.class,
-                Mbui_SystemPropertiesView.class,
+                SystemPropertiesView.class,
                 SystemPropertiesPresenter.MyProxy.class);
 
         bindPresenter(TransactionPresenter.class,

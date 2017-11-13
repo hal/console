@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.jmx;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -56,18 +57,6 @@ import static org.jboss.hal.flow.Flow.series;
 
 public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView, JmxPresenter.MyProxy>
         implements SupportsExpertMode {
-
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(JMX_ADDRESS)
-    @NameToken(NameTokens.JMX)
-    public interface MyProxy extends ProxyPlace<JmxPresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<JmxPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
 
     private final CrudOperations crud;
     private final Dispatcher dispatcher;
@@ -137,4 +126,17 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
                     });
         }
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(JMX_ADDRESS)
+    @NameToken(NameTokens.JMX)
+    public interface MyProxy extends ProxyPlace<JmxPresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<JmxPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

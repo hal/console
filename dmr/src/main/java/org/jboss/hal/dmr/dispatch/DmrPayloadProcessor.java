@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod;
 
-import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 
 public class DmrPayloadProcessor implements PayloadProcessor {
 

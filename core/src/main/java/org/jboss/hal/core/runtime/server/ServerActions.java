@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -99,85 +100,10 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.pfIcon;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class ServerActions {
-
-    private class ServerTimeoutCallback implements CompletableSubscriber {
-
-        private final Server server;
-        private final Action action;
-        private final SafeHtml successMessage;
-
-        ServerTimeoutCallback(final Server server, final Action action, final SafeHtml successMessage) {
-            this.server = server;
-            this.action = action;
-            this.successMessage = successMessage;
-        }
-
-        @Override
-        public void onCompleted() {
-            // TODO Check for server boot errors
-            if (Action.isStarting(action)) {
-                ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
-                Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
-                dispatcher.execute(operation, result -> {
-                    if (!result.asList().isEmpty()) {
-                        finish(server, Result.ERROR,
-                                Message.error(resources.messages().serverBootErrors(server.getName())));
-                    } else {
-                        finish(server, Result.SUCCESS, Message.success(successMessage));
-                    }
-                });
-            } else {
-                finish(server, Result.SUCCESS, Message.success(successMessage));
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            finish(server, Result.TIMEOUT, Message.error(resources.messages().serverTimeout(server.getName())));
-        }
-
-        @Override
-        public void onSubscribe(Subscription d) {}
-    }
-
-
-    private class ServerFailedCallback implements OnFail {
-
-        private final Server server;
-        private final SafeHtml errorMessage;
-
-        ServerFailedCallback(final Server server, final SafeHtml errorMessage) {
-            this.server = server;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onFailed(final Operation operation, final String failure) {
-            finish(server, Result.ERROR, Message.error(errorMessage, failure));
-        }
-    }
-
-
-    private class ServerExceptionCallback implements OnError {
-
-        private final Server server;
-        private final SafeHtml errorMessage;
-
-        ServerExceptionCallback(final Server server, SafeHtml errorMessage) {
-            this.server = server;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onException(final Operation operation, final Throwable exception) {
-            finish(server, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
-        }
-    }
-
 
     public static final int SERVER_SUSPEND_TIMEOUT = 1; // not the timeout specified by the user, but the time the server needs to get into suspend mode
     public static final int SERVER_RESUME_TIMEOUT = 3;
@@ -241,7 +167,7 @@ public class ServerActions {
                 public void onMetadata(final Metadata metadata) {
 
                     String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
-                            FORM_SUFFIX);
+                            FORM);
                     SingleSelectBoxItem hostFormItem = new SingleSelectBoxItem(HOST, Names.HOST, hosts,
                             false);
                     hostFormItem.setRequired(true);
@@ -391,7 +317,8 @@ public class ServerActions {
                 dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, SERVER_RESTART_TIMEOUT, ping)
                                 .subscribe(new CompletableSubscriber() {
                                     @Override
-                                    public void onSubscribe(Subscription d) {}
+                                    public void onSubscribe(Subscription d) {
+                                    }
 
                                     @Override
                                     public void onCompleted() {
@@ -449,7 +376,7 @@ public class ServerActions {
                 new MetadataProcessor.MetadataCallback() {
                     @Override
                     public void onMetadata(final Metadata metadata) {
-                        String id = Ids.build(SUSPEND, server.getName(), Ids.FORM_SUFFIX);
+                        String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
                         Dialog dialog = DialogFactory.buildConfirmation(
@@ -522,7 +449,7 @@ public class ServerActions {
                 new MetadataProcessor.MetadataCallback() {
                     @Override
                     public void onMetadata(final Metadata metadata) {
-                        String id = Ids.build(STOP, server.getName(), Ids.FORM_SUFFIX);
+                        String id = Ids.build(STOP, server.getName(), Ids.FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
                                 .include(TIMEOUT).build();
 
@@ -815,5 +742,81 @@ public class ServerActions {
         //noinspection Convert2MethodRef (method reference leads to an error!)
         return result -> statusToReach == asEnumValue(result, name -> SuspendState.valueOf(name),
                 SuspendState.UNDEFINED);
+    }
+
+
+    private class ServerTimeoutCallback implements CompletableSubscriber {
+
+        private final Server server;
+        private final Action action;
+        private final SafeHtml successMessage;
+
+        ServerTimeoutCallback(final Server server, final Action action, final SafeHtml successMessage) {
+            this.server = server;
+            this.action = action;
+            this.successMessage = successMessage;
+        }
+
+        @Override
+        public void onCompleted() {
+            // TODO Check for server boot errors
+            if (Action.isStarting(action)) {
+                ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
+                Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
+                dispatcher.execute(operation, result -> {
+                    if (!result.asList().isEmpty()) {
+                        finish(server, Result.ERROR,
+                                Message.error(resources.messages().serverBootErrors(server.getName())));
+                    } else {
+                        finish(server, Result.SUCCESS, Message.success(successMessage));
+                    }
+                });
+            } else {
+                finish(server, Result.SUCCESS, Message.success(successMessage));
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            finish(server, Result.TIMEOUT, Message.error(resources.messages().serverTimeout(server.getName())));
+        }
+
+        @Override
+        public void onSubscribe(Subscription d) {
+        }
+    }
+
+
+    private class ServerFailedCallback implements OnFail {
+
+        private final Server server;
+        private final SafeHtml errorMessage;
+
+        ServerFailedCallback(final Server server, final SafeHtml errorMessage) {
+            this.server = server;
+            this.errorMessage = errorMessage;
+        }
+
+        @Override
+        public void onFailed(final Operation operation, final String failure) {
+            finish(server, Result.ERROR, Message.error(errorMessage, failure));
+        }
+    }
+
+
+    private class ServerExceptionCallback implements OnError {
+
+        private final Server server;
+        private final SafeHtml errorMessage;
+
+        ServerExceptionCallback(final Server server, SafeHtml errorMessage) {
+            this.server = server;
+            this.errorMessage = errorMessage;
+        }
+
+        @Override
+        public void onException(final Operation operation, final Throwable exception) {
+            finish(server, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
+        }
     }
 }

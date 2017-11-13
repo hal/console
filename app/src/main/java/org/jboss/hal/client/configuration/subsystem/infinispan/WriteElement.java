@@ -54,8 +54,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
-    WriteElement(final Cache cache, final Store store, final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    WriteElement(Cache cache, Store store, MetadataRegistry metadataRegistry, Resources resources) {
 
         HTMLInputElement behindRadio;
         String radioName = Ids.build(cache.baseId, store.baseId, WRITE, "radio");
@@ -75,7 +74,8 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                         .attr(UIConstants.CHECKED, UIConstants.TRUE))
                                 .add(span().textContent(THROUGH.type))));
 
-        emptyState = new EmptyState.Builder(resources.constants().noWrite())
+        emptyState = new EmptyState.Builder(Ids.build(cache.baseId, store.baseId, WRITE, Ids.EMPTY),
+                resources.constants().noWrite())
                 .description(resources.messages().noWrite())
                 .addAll(elements.asElements())
                 .primaryAction(resources.constants().add(), () -> {
@@ -92,7 +92,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .on(click, event -> presenter.switchWrite(THROUGH, BEHIND)))
                 .asElement();
 
-        String id = Ids.build(cache.baseId, store.baseId, BEHIND.baseId, Ids.FORM_SUFFIX);
+        String id = Ids.build(cache.baseId, store.baseId, BEHIND.baseId, Ids.FORM);
         Metadata metadata = metadataRegistry.lookup(cache.template
                 .append(STORE + "=" + store.resource)
                 .append(WRITE + "=" + BEHIND.resource));
@@ -137,11 +137,11 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(final CacheContainerPresenter presenter) {
+    public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
     }
 
-    void update(final ModelNode storeNode) {
+    void update(ModelNode storeNode) {
         ModelNode behindNode = failSafeGet(storeNode, BEHIND.path());
         ModelNode throughNode = failSafeGet(storeNode, THROUGH.path());
 

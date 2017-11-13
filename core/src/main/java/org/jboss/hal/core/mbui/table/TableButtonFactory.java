@@ -17,6 +17,7 @@ package org.jboss.hal.core.mbui.table;
 
 import java.util.Collections;
 import java.util.function.Function;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.table.Button;

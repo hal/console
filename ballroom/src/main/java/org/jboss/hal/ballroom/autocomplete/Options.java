@@ -15,12 +15,11 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
+import elemental2.dom.Element;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
-
-import elemental2.dom.Element;
 
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options {

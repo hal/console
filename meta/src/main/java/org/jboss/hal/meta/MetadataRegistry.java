@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
@@ -31,15 +30,15 @@ import org.jboss.hal.spi.EsParam;
 @JsType
 public class MetadataRegistry implements Registry<Metadata> {
 
-    private final SecurityContextRegistry securityContextRegistry;
+    private SecurityContextRegistry securityContextRegistry;
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final Capabilities capabilities;
 
     @Inject
     @JsIgnore
-    public MetadataRegistry(final SecurityContextRegistry securityContextRegistry,
-            final ResourceDescriptionRegistry resourceDescriptionRegistry,
-            final Capabilities capabilities) {
+    public MetadataRegistry(SecurityContextRegistry securityContextRegistry,
+            ResourceDescriptionRegistry resourceDescriptionRegistry,
+            Capabilities capabilities) {
         this.securityContextRegistry = securityContextRegistry;
         this.resourceDescriptionRegistry = resourceDescriptionRegistry;
         this.capabilities = capabilities;
@@ -47,7 +46,7 @@ public class MetadataRegistry implements Registry<Metadata> {
 
     @Override
     @JsIgnore
-    public Metadata lookup(final AddressTemplate template) throws MissingMetadataException {
+    public Metadata lookup(AddressTemplate template) throws MissingMetadataException {
         ResourceDescription resourceDescription = resourceDescriptionRegistry.lookup(template);
         return new Metadata(template, () -> securityContextRegistry.lookup(template), resourceDescription,
                 capabilities);
@@ -55,14 +54,9 @@ public class MetadataRegistry implements Registry<Metadata> {
 
     @Override
     @JsIgnore
-    public boolean contains(final AddressTemplate template) {
-        return securityContextRegistry.contains(template) && resourceDescriptionRegistry.contains(template);
-    }
-
-    @Override
-    @JsIgnore
-    public void add(final ResourceAddress address, final Metadata metadata) {
-        // noop
+    public boolean contains(AddressTemplate template) {
+        return securityContextRegistry.contains(template) &&
+                resourceDescriptionRegistry.contains(template);
     }
 
 

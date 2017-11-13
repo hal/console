@@ -32,47 +32,6 @@ import static org.jboss.hal.resources.CSS.formControl;
 
 public class TextBoxItem extends AbstractFormItem<String> {
 
-    private static class TextBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
-
-        TextBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED, SENSITIVE));
-        }
-
-        @Override
-        protected String name() {
-            return "TextBoxReadOnlyAppearance";
-        }
-    }
-
-
-    private static class TextBoxEditingAppearance extends EditingAppearance<String> {
-
-        TextBoxEditingAppearance(HTMLInputElement inputElement) {
-            super(EnumSet.allOf(Decoration.class), inputElement);
-        }
-
-        @Override
-        protected String name() {
-            return "TextBoxEditingAppearance";
-        }
-
-        @Override
-        public void showValue(final String value) {
-            inputElement.value = value;
-        }
-
-        @Override
-        public void showExpression(final String expression) {
-            inputElement.value = expression;
-        }
-
-        @Override
-        public void clearValue() {
-            inputElement.value = "";
-        }
-    }
-
-
     public TextBoxItem(final String name) {
         this(name, new LabelBuilder().label(name), null);
     }
@@ -120,5 +79,46 @@ public class TextBoxItem extends AbstractFormItem<String> {
     @Override
     public void onSuggest(final String suggestion) {
         modifyValue(suggestion);
+    }
+
+
+    private static class TextBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
+
+        TextBoxReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED, SENSITIVE));
+        }
+
+        @Override
+        protected String name() {
+            return "TextBoxReadOnlyAppearance";
+        }
+    }
+
+
+    private static class TextBoxEditingAppearance extends EditingAppearance<String> {
+
+        TextBoxEditingAppearance(HTMLInputElement inputElement) {
+            super(EnumSet.allOf(Decoration.class), inputElement);
+        }
+
+        @Override
+        protected String name() {
+            return "TextBoxEditingAppearance";
+        }
+
+        @Override
+        public void showValue(final String value) {
+            inputElement.value = value;
+        }
+
+        @Override
+        public void showExpression(final String expression) {
+            inputElement.value = expression;
+        }
+
+        @Override
+        public void clearValue() {
+            inputElement.value = "";
+        }
     }
 }

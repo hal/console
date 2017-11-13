@@ -48,6 +48,7 @@ public class SimplePermissionMapperElement
 
     // removes the " [ ] from the principals and roles columns values
     private static final String REGEX = "\"|\\[|\\]";
+    public static final String COLON = ": ";
 
     private final Table<NamedNode> spmTable; // spm = simple permission mapper, the main resource table
     private final Form<NamedNode> spmForm;
@@ -131,13 +132,14 @@ public class SimplePermissionMapperElement
                 .addAll(permissionsTable, permissionsForm)
                 .asElement();
 
-        pages = new Pages(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE, primarySection);
+        pages = new Pages(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGES, Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE,
+                primarySection);
         pages.addPage(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE, Ids.ELYTRON_PERMISSION_MAPPINGS_PAGE,
-                () -> Names.SIMPLE_PERMISSION_MAPPER + ": " + selectedSimplePermissionMapper,
+                () -> Names.SIMPLE_PERMISSION_MAPPER + COLON + selectedSimplePermissionMapper,
                 () -> Names.PERMISSION_MAPPINGS,
                 permissionMappingsSection);
         pages.addPage(Ids.ELYTRON_PERMISSION_MAPPINGS_PAGE, Ids.ELYTRON_PERMISSIONS_PAGE,
-                () -> Names.PERMISSION_MAPPINGS + ": " + selectedPermissionMapping,
+                () -> Names.PERMISSION_MAPPINGS + COLON + selectedPermissionMapping,
                 () -> Names.PERMISSIONS,
                 permissionsSection);
     }
@@ -162,15 +164,15 @@ public class SimplePermissionMapperElement
             for (int i = 0; i < permissions.size(); i++) {
                 ModelNode node = permissions.get(i);
                 String className = node.get(CLASS_NAME).asString();
-                str.append(CLASS_NAME).append(": ").append(className);
+                str.append(CLASS_NAME).append(COLON).append(className);
                 if (node.hasDefined(MODULE)) {
-                    str.append(", module").append(": ").append(node.get(MODULE).asString());
+                    str.append(", module").append(COLON).append(node.get(MODULE).asString());
                 }
                 if (node.hasDefined("target-name")) {
-                    str.append(", target-name").append(": ").append(node.get("target-name").asString());
+                    str.append(", target-name").append(COLON).append(node.get("target-name").asString());
                 }
                 if (node.hasDefined(ACTION)) {
-                    str.append(", action").append(": ").append(node.get(ACTION).asString());
+                    str.append(", action").append(COLON).append(node.get(ACTION).asString());
                 }
                 if (i + 1 < permissions.size()) {
                     str.append(" | ");

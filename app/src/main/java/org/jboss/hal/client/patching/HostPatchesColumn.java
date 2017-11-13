@@ -18,6 +18,7 @@ package org.jboss.hal.client.patching;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -68,66 +69,6 @@ import static org.jboss.hal.flow.Flow.series;
 @Requires(value = "/host=*/core-service=patching")
 public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostActionEvent.HostActionHandler,
         HostResultEvent.HostResultHandler {
-
-    public static class AvailableHosts implements Task<FlowContext> {
-
-        private Dispatcher dispatcher;
-
-        AvailableHosts(Dispatcher dispatcher) {
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            ResourceAddress hostAddress = new ResourceAddress()
-                    .add(HOST, "*");
-            Operation opHosts = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-
-            ResourceAddress patchingAddress = new ResourceAddress()
-                    .add(HOST, "*")
-                    .add(CORE_SERVICE, PATCHING);
-            Operation opPatches = new Operation.Builder(patchingAddress, READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build();
-
-            return dispatcher.execute(new Composite(opHosts, opPatches)).doOnSuccess((CompositeResult result) -> {
-                ModelNode availableHosts = result.step(0).get(RESULT);
-                List<ModelNode> hostPatchingResults = result.step(1).get(RESULT).asList();
-
-                // this namednode list stores all hosts (and its attributes) and core-service=patching attributes
-                // the tweaked hostPatches is necessary as it is important to show hosts and core-service=patching information.
-                List<NamedNode> hostPatches = new ArrayList<>();
-                availableHosts.asList().forEach(hostNode -> {
-                    ModelNode hostPatchesNode = new ModelNode();
-                    hostNode.get(ADDRESS).asPropertyList().forEach(p -> {
-                        if (HOST.equals(p.getName())) {
-                            String hostName = p.getValue().asString();
-
-                            // as we navigate on each host, retrieve the patching attributes from hostPatchingResults
-                            hostPatchingResults.forEach(hostPatchingResult -> hostPatchingResult.get(ADDRESS)
-                                    .asPropertyList()
-                                    .forEach(pp -> {
-                                        if (HOST.equals(pp.getName()) && pp.getValue().asString().equals(hostName)) {
-                                            // add the core-service=patching attributes to a sub-resource
-                                            // this exists only in memory for HAL purposes to show them in the view
-                                            hostNode.get(RESULT).get(CORE_SERVICE_PATCHING)
-                                                    .set(hostPatchingResult.get(RESULT));
-                                        }
-                                    }));
-                            hostPatchesNode.get(hostName).set(hostNode.get(RESULT));
-                        }
-                    });
-                    NamedNode ac = new NamedNode(hostPatchesNode.asProperty());
-                    hostPatches.add(ac);
-                });
-                List<NamedNode> sortedHosts = orderedHostWithDomainControllerAsFirstElement(hostPatches);
-                context.set(HOSTS, sortedHosts);
-            }).toCompletable();
-        }
-    }
 
     static Host namedNodeToHost(NamedNode node) {
         return new Host(new Property(node.getName(), node.asModelNode()));
@@ -303,6 +244,67 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
             ItemMonitor.stopProgress(Ids.host(host.getAddressName()));
             event.getServers().forEach(server -> ItemMonitor.stopProgress(server.getId()));
             refresh(RESTORE_SELECTION);
+        }
+    }
+
+
+    public static class AvailableHosts implements Task<FlowContext> {
+
+        private Dispatcher dispatcher;
+
+        AvailableHosts(Dispatcher dispatcher) {
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            ResourceAddress hostAddress = new ResourceAddress()
+                    .add(HOST, "*");
+            Operation opHosts = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+
+            ResourceAddress patchingAddress = new ResourceAddress()
+                    .add(HOST, "*")
+                    .add(CORE_SERVICE, PATCHING);
+            Operation opPatches = new Operation.Builder(patchingAddress, READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build();
+
+            return dispatcher.execute(new Composite(opHosts, opPatches)).doOnSuccess((CompositeResult result) -> {
+                ModelNode availableHosts = result.step(0).get(RESULT);
+                List<ModelNode> hostPatchingResults = result.step(1).get(RESULT).asList();
+
+                // this namednode list stores all hosts (and its attributes) and core-service=patching attributes
+                // the tweaked hostPatches is necessary as it is important to show hosts and core-service=patching information.
+                List<NamedNode> hostPatches = new ArrayList<>();
+                availableHosts.asList().forEach(hostNode -> {
+                    ModelNode hostPatchesNode = new ModelNode();
+                    hostNode.get(ADDRESS).asPropertyList().forEach(p -> {
+                        if (HOST.equals(p.getName())) {
+                            String hostName = p.getValue().asString();
+
+                            // as we navigate on each host, retrieve the patching attributes from hostPatchingResults
+                            hostPatchingResults.forEach(hostPatchingResult -> hostPatchingResult.get(ADDRESS)
+                                    .asPropertyList()
+                                    .forEach(pp -> {
+                                        if (HOST.equals(pp.getName()) && pp.getValue().asString().equals(hostName)) {
+                                            // add the core-service=patching attributes to a sub-resource
+                                            // this exists only in memory for HAL purposes to show them in the view
+                                            hostNode.get(RESULT).get(CORE_SERVICE_PATCHING)
+                                                    .set(hostPatchingResult.get(RESULT));
+                                        }
+                                    }));
+                            hostPatchesNode.get(hostName).set(hostNode.get(RESULT));
+                        }
+                    });
+                    NamedNode ac = new NamedNode(hostPatchesNode.asProperty());
+                    hostPatches.add(ac);
+                });
+                List<NamedNode> sortedHosts = orderedHostWithDomainControllerAsFirstElement(hostPatches);
+                context.set(HOSTS, sortedHosts);
+            }).toCompletable();
         }
     }
 }

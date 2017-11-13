@@ -17,16 +17,17 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -49,7 +50,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
     private JmsBridgePresenter presenter;
 
     @Inject
-    JmsBridgeView(final MbuiContext mbuiContext, CredentialReference cr) {
+    JmsBridgeView(MbuiContext mbuiContext, CredentialReference cr) {
 
         Metadata jmsBridgeMetadata = mbuiContext.metadataRegistry().lookup(JMS_BRIDGE_TEMPLATE);
 
@@ -103,13 +104,13 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
         registerAttachable(attributesForm, sourceForm, targetForm, crSource, crTarget);
 
         LabelBuilder labelBuilder = new LabelBuilder();
-        Tabs tabs = new Tabs();
+        Tabs tabs = new Tabs(Ids.build(Ids.JMS_BRIDGE, Ids.TAB_CONTAINER));
         tabs.add(Ids.JMS_BRIDGE_TAB, mbuiContext.resources().constants().attributes(), attributesForm.asElement());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB_SUFFIX), Names.SOURCE, sourceForm.asElement());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE_CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX),
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), Names.SOURCE, sourceForm.asElement());
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE_CREDENTIAL_REFERENCE, Ids.TAB),
                 labelBuilder.label(SOURCE_CREDENTIAL_REFERENCE), crSource.asElement());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET, Ids.TAB_SUFFIX), Names.TARGET, targetForm.asElement());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET_CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX),
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET, Ids.TAB), Names.TARGET, targetForm.asElement());
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET_CREDENTIAL_REFERENCE, Ids.TAB),
                 labelBuilder.label(TARGET_CREDENTIAL_REFERENCE), crTarget.asElement());
 
         HTMLElement htmlSection = section()
@@ -122,7 +123,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
     }
 
     @Override
-    public void update(final NamedNode model) {
+    public void update(NamedNode model) {
         attributesForm.view(model);
         sourceForm.view(model);
         targetForm.view(model);
@@ -131,7 +132,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
     }
 
     @Override
-    public void setPresenter(final JmsBridgePresenter presenter) {
+    public void setPresenter(JmsBridgePresenter presenter) {
         this.presenter = presenter;
     }
 }

@@ -13,46 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class IntModelValue extends ModelValue {
+class IntModelValue extends ModelValue {
 
     private final int value;
 
-    IntModelValue(final int value) {
+    IntModelValue(int value) {
         super(ModelType.INT);
         this.value = value;
     }
 
     @Override
-    void writeExternal(final DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.writeInt(value);
     }
 
@@ -62,7 +41,7 @@ final class IntModelValue extends ModelValue {
     }
 
     @Override
-    long asLong(final long defVal) {
+    long asLong(long defVal) {
         return value;
     }
 
@@ -72,7 +51,7 @@ final class IntModelValue extends ModelValue {
     }
 
     @Override
-    int asInt(final int defVal) {
+    int asInt(int defVal) {
         return value;
     }
 
@@ -82,7 +61,7 @@ final class IntModelValue extends ModelValue {
     }
 
     @Override
-    boolean asBoolean(final boolean defVal) {
+    boolean asBoolean(boolean defVal) {
         return value != 0;
     }
 
@@ -92,13 +71,13 @@ final class IntModelValue extends ModelValue {
     }
 
     @Override
-    double asDouble(final double defVal) {
+    double asDouble(double defVal) {
         return value;
     }
 
     @Override
     byte[] asBytes() {
-        final byte[] bytes = new byte[4];
+        byte[] bytes = new byte[4];
         bytes[0] = (byte) (value >>> 24);
         bytes[1] = (byte) (value >>> 16);
         bytes[2] = (byte) (value >>> 8);
@@ -129,7 +108,7 @@ final class IntModelValue extends ModelValue {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         return other instanceof IntModelValue && equals((IntModelValue) other);
     }
 
@@ -140,7 +119,7 @@ final class IntModelValue extends ModelValue {
      *
      * @return {@code true} if they are equal, {@code false} otherwise
      */
-    public boolean equals(final IntModelValue other) {
+    public boolean equals(IntModelValue other) {
         return this == other || other != null && value == other.value;
     }
 

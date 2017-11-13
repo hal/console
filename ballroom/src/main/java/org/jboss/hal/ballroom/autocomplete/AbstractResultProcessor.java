@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.JsonObject;
 
 /**
  * Abstract result processor which makes it easy to unit test the processor. If your result processor is really trivial
@@ -40,9 +40,9 @@ abstract class AbstractResultProcessor<T> implements ResultProcessor {
         return asJson(processToModel(query, compositeResult));
     }
 
-    protected abstract List<T> processToModel(final String query, final ModelNode nodes);
+    protected abstract List<T> processToModel(String query, ModelNode nodes);
 
-    protected abstract List<T> processToModel(final String query, final CompositeResult compositeResult);
+    protected abstract List<T> processToModel(String query, CompositeResult compositeResult);
 
-    abstract JsonObject[] asJson(final List<T> models);
+    abstract JsonObject[] asJson(List<T> models);
 }

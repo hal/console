@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.io;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -44,31 +45,18 @@ public class IOPresenter
         extends MbuiPresenter<IOPresenter.MyView, IOPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.IO)
-    @Requires({IO_SUBSYSTEM_ADDRESS, BUFFER_POOL_ADDRESS, WORKER_ADDRESS})
-    public interface MyProxy extends ProxyPlace<IOPresenter> {}
-
-    public interface MyView extends MbuiView<IOPresenter> {
-        void updateBufferPool(List<NamedNode> items);
-        void updateWorkers(List<NamedNode> items);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
 
     @Inject
-    public IOPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public IOPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -98,4 +86,19 @@ public class IOPresenter
             getView().updateWorkers(asNamedNodes(failSafePropertyList(result, WORKER_TEMPLATE.lastName())));
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.IO)
+    @Requires({IO_SUBSYSTEM_ADDRESS, BUFFER_POOL_ADDRESS, WORKER_ADDRESS})
+    public interface MyProxy extends ProxyPlace<IOPresenter> {
+
+    }
+
+    public interface MyView extends MbuiView<IOPresenter> {
+        void updateBufferPool(List<NamedNode> items);
+        void updateWorkers(List<NamedNode> items);
+    }
+    // @formatter:on
 }

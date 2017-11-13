@@ -72,7 +72,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
 
         Metadata metadata = metadataRegistry.lookup(cache.template);
         ModelNodeTable.Builder<NamedNode> builder = new ModelNodeTable.Builder<NamedNode>(
-                Ids.build(cache.baseId, Ids.TABLE_SUFFIX), metadata)
+                Ids.build(cache.baseId, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(cache.template, table -> presenter.addCache(cache)))
                 .button(tableButtonFactory.remove(cache.template,
                         table -> presenter.removeCache(cache, table.selectedRow().getName())))
@@ -115,17 +115,17 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         }
         table = builder.build();
 
-        Tabs tabs = new Tabs();
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, Ids.FORM_SUFFIX), metadata)
+        Tabs tabs = new Tabs(Ids.build(cache.baseId, Ids.TAB_CONTAINER));
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveCache(cache, form.getModel().getName(), changedValues))
                 .prepareReset(form -> presenter.resetCache(cache, form.getModel().getName(), form))
                 .build();
-        tabs.add(Ids.build(cache.baseId, Ids.TAB_SUFFIX), resources.constants().attributes(), form.asElement());
+        tabs.add(Ids.build(cache.baseId, Ids.TAB), resources.constants().attributes(), form.asElement());
 
         components = new HashMap<>();
         for (Component component : cache.components) {
-            String tabId = Ids.build(cache.baseId, component.baseId, Ids.TAB_SUFFIX);
-            String formId = Ids.build(cache.baseId, component.baseId, Ids.FORM_SUFFIX);
+            String tabId = Ids.build(cache.baseId, component.baseId, Ids.TAB);
+            String formId = Ids.build(cache.baseId, component.baseId, Ids.FORM);
             Metadata cm = metadataRegistry.lookup(cache.template.append(COMPONENT + "=" + component.resource));
             Form<ModelNode> cf = new ModelNodeForm.Builder<>(formId, cm)
                     .singleton(() -> presenter.readCacheComponent(component),
@@ -147,16 +147,17 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .add(tabs)
                 .asElement();
 
-        String mainId = Ids.build(cache.baseId, Ids.PAGE_SUFFIX);
-        pages = new Pages(mainId, root);
-        pages.addPage(mainId, Ids.build(cache.baseId, STORE, Ids.PAGE_SUFFIX),
+        String id = Ids.build(cache.baseId, Ids.PAGES);
+        String mainId = Ids.build(cache.baseId, Ids.PAGE);
+        pages = new Pages(id, mainId, root);
+        pages.addPage(mainId, Ids.build(cache.baseId, STORE, Ids.PAGE),
                 () -> presenter.cacheSegment(), () -> presenter.storeSegment(), storeElement);
 
         if (cache.backups) {
             AddressTemplate backupTemplate = cache.template.append(COMPONENT + "=" + BACKUPS).append(BACKUP + "=*");
             Metadata backupMeta = metadataRegistry.lookup(backupTemplate);
 
-            backupTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX),
+            backupTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE),
                     backupMeta)
                     .button(tableButtonFactory.add(backupTemplate, table -> presenter.addCacheBackup()))
                     .button(tableButtonFactory.remove(backupTemplate,
@@ -164,7 +165,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                     .build();
 
-            backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.FORM_SUFFIX),
+            backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.FORM),
                     backupMeta)
                     .onSave((form, changedValues) -> presenter.saveCacheBackup(form.getModel().getName(),
                             changedValues))
@@ -178,7 +179,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     .add(backupForm)
                     .asElement();
 
-            pages.addPage(mainId, Ids.build(cache.baseId, BACKUPS, Ids.PAGE_SUFFIX),
+            pages.addPage(mainId, Ids.build(cache.baseId, BACKUPS, Ids.PAGE),
                     () -> presenter.cacheSegment(), () -> Names.BACKUPS, backupSection);
         }
     }
@@ -243,17 +244,17 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         //noinspection Convert2MethodRef
         components.values().forEach((fsf) -> fsf.clear());
         table.update(caches);
-        pages.showPage(Ids.build(cache.baseId, Ids.PAGE_SUFFIX));
+        pages.showPage(Ids.build(cache.baseId, Ids.PAGE));
     }
 
     void updateBackups(final List<NamedNode> backups) {
-        pages.showPage(Ids.build(cache.baseId, BACKUPS, Ids.PAGE_SUFFIX));
+        pages.showPage(Ids.build(cache.baseId, BACKUPS, Ids.PAGE));
         backupForm.clear();
         backupTable.update(backups);
     }
 
     void updateStore(final List<Property> stores) {
-        pages.showPage(Ids.build(cache.baseId, STORE, Ids.PAGE_SUFFIX));
+        pages.showPage(Ids.build(cache.baseId, STORE, Ids.PAGE));
         storeElement.update(stores);
     }
 }

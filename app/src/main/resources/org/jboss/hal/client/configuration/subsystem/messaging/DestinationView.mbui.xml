@@ -18,7 +18,7 @@
 <view>
     <vertical-navigation id="messaging-destination-vertical-navigation">
 
-        <item id="messaging-core-queue-entry" title="Core Queue" icon="fa fa-cog">
+        <item id="messaging-core-queue-item" title="Core Queue" icon="fa fa-cog">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/queue=*">
                 <h1>Core Queue</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -47,7 +47,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-jms-queue-entry" title="JMS Queue" icon="fa fa-long-arrow-right">
+        <item id="messaging-jms-queue-item" title="JMS Queue" icon="fa fa-long-arrow-right">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/jms-queue=*">
                 <h1>JMS Queue</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -76,7 +76,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-jms-topic-entry" title="JMS Topic" icon="fa fa-arrows">
+        <item id="messaging-jms-topic-item" title="JMS Topic" icon="fa fa-arrows">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/jms-topic=*">
                 <h1>JMS Topic</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -102,7 +102,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-address-setting-entry" title="Address Setting" icon="fa fa-address-card-o">
+        <item id="messaging-address-setting-item" title="Address Setting" icon="fa fa-address-card-o">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/address-setting=*">
                 <h1>Address Setting</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
@@ -125,7 +125,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-divert-entry" title="Divert" icon="fa fa-exchange">
+        <item id="messaging-divert-item" title="Divert" icon="fa fa-exchange">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/divert=*">
                 <h1>Divert</h1>
                 <p>${metadata.getDescription().getDescription()}</p>

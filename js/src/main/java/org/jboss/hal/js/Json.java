@@ -1,0 +1,51 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.js;
+
+import com.google.gwt.core.client.JavaScriptObject;
+
+/**
+ * A static API to the browser's JSON object.
+ * TODO(knorton) : Remove this when generated DOM bindings are submitted.
+ */
+public class Json {
+
+    /**
+     * Parse a string containing JSON into a {@link JavaScriptObject}.
+     *
+     * @param <T>          the overlay type to expect from the parse
+     * @param jsonAsString
+     *
+     * @return a JavaScript object constructed from the parse
+     */
+    public static native <T extends JavaScriptObject> T parse(String jsonAsString) /*-{
+        return JSON.parse(jsonAsString);
+    }-*/;
+
+    /**
+     * Convert a {@link JavaScriptObject} into a string representation.
+     *
+     * @param json a JavaScript object to be converted to a string
+     *
+     * @return JSON in string representation
+     */
+    public static native String stringify(JavaScriptObject json) /*-{
+        return JSON.stringify(json);
+    }-*/;
+
+    private Json() {
+    }
+}

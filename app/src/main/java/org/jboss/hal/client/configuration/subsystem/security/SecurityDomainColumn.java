@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.security;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
@@ -44,16 +45,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 
 @AsyncColumn(Ids.SECURITY_DOMAIN)
-@Requires(SECURITY_DOMAIN_ADDRESS)
+@Requires(value = SECURITY_DOMAIN_ADDRESS, recursive = false)
 public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
     @Inject
-    public SecurityDomainColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final Resources resources,
-            final Places places) {
+    public SecurityDomainColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            Resources resources,
+            Places places) {
 
         super(new FinderColumn.Builder<SecurityDomain>(finder, Ids.SECURITY_DOMAIN, Names.SECURITY_DOMAIN)
 

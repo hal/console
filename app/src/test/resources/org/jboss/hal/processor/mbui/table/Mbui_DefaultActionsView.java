@@ -55,7 +55,7 @@ public final class Mbui_DefaultActionsView extends DefaultActionsView {
         this.expressionElements = new HashMap<>();
 
         table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
-                .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Subsystem",
+                .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD), "Subsystem",
                         metadata0Template, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove("Subsystem", metadata0Template,
                         table -> table.selectedRow().getName(), () -> presenter.reload()))

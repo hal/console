@@ -42,222 +42,23 @@ public class Version implements Comparable<Version> {
     @JsIgnore
     public static final Version UNDEFINED = Version.valueOf("0.0.0-undefined"); //NON-NLS
 
-    /**
-     * The normal version.
-     */
+    /** The normal version. */
     private final NormalVersion normal;
 
-    /**
-     * The pre-release version.
-     */
+    /** The pre-release version. */
     private final MetadataVersion preRelease;
 
-    /**
-     * The build metadata.
-     */
+    /** The build metadata. */
     private final MetadataVersion build;
 
-    /**
-     * A separator that separates the pre-release
-     * version from the normal version.
-     */
+    /** A separator that separates the pre-release version from the normal version. */
     private static final String PRE_RELEASE_PREFIX = "-";
 
-    /**
-     * A separator that separates the build metadata from
-     * the normal version or the pre-release version.
-     */
+    /** A separator that separates the build metadata from the normal version or the pre-release version. */
     private static final String BUILD_PREFIX = "+";
 
-
-    /**
-     * A mutable builder for the immutable {@code Version} class.
-     */
-    public static class Builder {
-
-        /**
-         * The normal version string.
-         */
-        private String normal;
-
-        /**
-         * The pre-release version string.
-         */
-        private String preRelease;
-
-        /**
-         * The build metadata string.
-         */
-        private String build;
-
-        /**
-         * Constructs a {@code Builder} instance.
-         */
-        public Builder() {
-
-        }
-
-        /**
-         * Constructs a {@code Builder} instance with the
-         * string representation of the normal version.
-         *
-         * @param normal the string representation of the normal version
-         */
-        public Builder(String normal) {
-            this.normal = normal;
-        }
-
-        /**
-         * Sets the normal version.
-         *
-         * @param normal the string representation of the normal version
-         *
-         * @return this builder instance
-         */
-        public Builder setNormalVersion(String normal) {
-            this.normal = normal;
-            return this;
-        }
-
-        /**
-         * Sets the pre-release version.
-         *
-         * @param preRelease the string representation of the pre-release version
-         *
-         * @return this builder instance
-         */
-        public Builder setPreReleaseVersion(String preRelease) {
-            this.preRelease = preRelease;
-            return this;
-        }
-
-        /**
-         * Sets the build metadata.
-         *
-         * @param build the string representation of the build metadata
-         *
-         * @return this builder instance
-         */
-        public Builder setBuildMetadata(String build) {
-            this.build = build;
-            return this;
-        }
-
-        /**
-         * Builds a {@code Version} object.
-         *
-         * @return a newly built {@code Version} instance
-         *
-         * @throws ParseException               when invalid version string is provided
-         * @throws UnexpectedCharacterException is a special case of {@code ParseException}
-         */
-        public Version build() {
-            StringBuilder sb = new StringBuilder();
-            if (isFilled(normal)) {
-                sb.append(normal);
-            }
-            if (isFilled(preRelease)) {
-                sb.append(PRE_RELEASE_PREFIX).append(preRelease);
-            }
-            if (isFilled(build)) {
-                sb.append(BUILD_PREFIX).append(build);
-            }
-            return VersionParser.parseValidSemVer(sb.toString());
-        }
-
-        /**
-         * Checks if a string has a usable value.
-         *
-         * @param str the string to check
-         *
-         * @return {@code true} if the string is filled or {@code false} otherwise
-         */
-        private boolean isFilled(String str) {
-            return str != null && !str.isEmpty();
-        }
-    }
-
-
-    /**
-     * A comparator that respects the build metadata when comparing versions.
-     */
+    /** A comparator that respects the build metadata when comparing versions. */
     private static final Comparator<Version> BUILD_AWARE_ORDER = new BuildAwareOrder();
-
-
-    /**
-     * A build-aware comparator.
-     */
-    private static class BuildAwareOrder implements Comparator<Version> {
-
-        /**
-         * Compares two {@code Version} instances taking
-         * into account their build metadata.
-         * <p>
-         * When compared build metadata is divided into identifiers. The
-         * numeric identifiers are compared numerically, and the alphanumeric
-         * identifiers are compared in the ASCII sort order.
-         * <p>
-         * If one of the compared versions has no defined build
-         * metadata, this version is considered to have a lower
-         * precedence than that of the other.
-         *
-         * @return {@inheritDoc}
-         */
-        @Override
-        public int compare(Version v1, Version v2) {
-            int result = v1.compareTo(v2);
-            if (result == 0) {
-                result = v1.build.compareTo(v2.build);
-                if (v1.build == MetadataVersion.NULL ||
-                        v2.build == MetadataVersion.NULL
-                        ) {
-                    /*
-                     * Build metadata should have a higher precedence
-                     * than the associated normal version which is the
-                     * opposite compared to pre-release versions.
-                     */
-                    result = -1 * result;
-                }
-            }
-            return result;
-        }
-    }
-
-    /**
-     * Constructs a {@code Version} instance with the normal version.
-     *
-     * @param normal the normal version
-     */
-    private Version(NormalVersion normal) {
-        this(normal, MetadataVersion.NULL, MetadataVersion.NULL);
-    }
-
-    /**
-     * Constructs a {@code Version} instance with the
-     * normal version and the pre-release version.
-     *
-     * @param normal     the normal version
-     * @param preRelease the pre-release version
-     */
-    private Version(NormalVersion normal, MetadataVersion preRelease) {
-        this(normal, preRelease, MetadataVersion.NULL);
-    }
-
-    /**
-     * Constructs a {@code Version} instance with the normal
-     * version, the pre-release version and the build metadata.
-     *
-     * @param normal     the normal version
-     * @param preRelease the pre-release version
-     * @param build      the build metadata
-     */
-    Version(NormalVersion normal,
-            MetadataVersion preRelease,
-            MetadataVersion build) {
-        this.normal = normal;
-        this.preRelease = preRelease;
-        this.build = build;
-    }
 
     /**
      * Creates a new version as a result of parsing the specified version string.
@@ -321,6 +122,41 @@ public class Version implements Comparable<Version> {
         return new Version(new NormalVersion(major, minor, patch));
     }
 
+
+    /**
+     * Constructs a {@code Version} instance with the normal version.
+     *
+     * @param normal the normal version
+     */
+    private Version(NormalVersion normal) {
+        this(normal, MetadataVersion.NULL, MetadataVersion.NULL);
+    }
+
+    /**
+     * Constructs a {@code Version} instance with the
+     * normal version and the pre-release version.
+     *
+     * @param normal     the normal version
+     * @param preRelease the pre-release version
+     */
+    private Version(NormalVersion normal, MetadataVersion preRelease) {
+        this(normal, preRelease, MetadataVersion.NULL);
+    }
+
+    /**
+     * Constructs a {@code Version} instance with the normal
+     * version, the pre-release version and the build metadata.
+     *
+     * @param normal     the normal version
+     * @param preRelease the pre-release version
+     * @param build      the build metadata
+     */
+    Version(NormalVersion normal, MetadataVersion preRelease, MetadataVersion build) {
+        this.normal = normal;
+        this.preRelease = preRelease;
+        this.build = build;
+    }
+
     /**
      * Increments the major version.
      *
@@ -344,10 +180,7 @@ public class Version implements Comparable<Version> {
      */
     @JsIgnore
     public Version incrementMajorVersion(String preRelease) {
-        return new Version(
-                normal.incrementMajor(),
-                VersionParser.parsePreRelease(preRelease)
-        );
+        return new Version(normal.incrementMajor(), VersionParser.parsePreRelease(preRelease));
     }
 
     /**
@@ -373,10 +206,7 @@ public class Version implements Comparable<Version> {
      */
     @JsIgnore
     public Version incrementMinorVersion(String preRelease) {
-        return new Version(
-                normal.incrementMinor(),
-                VersionParser.parsePreRelease(preRelease)
-        );
+        return new Version(normal.incrementMinor(), VersionParser.parsePreRelease(preRelease));
     }
 
     /**
@@ -402,10 +232,7 @@ public class Version implements Comparable<Version> {
      */
     @JsIgnore
     public Version incrementPatchVersion(String preRelease) {
-        return new Version(
-                normal.incrementPatch(),
-                VersionParser.parsePreRelease(preRelease)
-        );
+        return new Version(normal.incrementPatch(), VersionParser.parsePreRelease(preRelease));
     }
 
     /**
@@ -648,5 +475,139 @@ public class Version implements Comparable<Version> {
             result = preRelease.compareTo(other.preRelease);
         }
         return result;
+    }
+
+
+    /** A mutable builder for the immutable {@code Version} class. */
+    public static class Builder {
+
+        /** The normal version string. */
+        private String normal;
+
+        /** The pre-release version string. */
+        private String preRelease;
+
+        /** The build metadata string. */
+        private String build;
+
+        /** Constructs a {@code Builder} instance. */
+        public Builder() {
+        }
+
+        /**
+         * Constructs a {@code Builder} instance with the string representation of the normal version.
+         *
+         * @param normal the string representation of the normal version
+         */
+        public Builder(String normal) {
+            this.normal = normal;
+        }
+
+        /**
+         * Sets the normal version.
+         *
+         * @param normal the string representation of the normal version
+         *
+         * @return this builder instance
+         */
+        public Builder setNormalVersion(String normal) {
+            this.normal = normal;
+            return this;
+        }
+
+        /**
+         * Sets the pre-release version.
+         *
+         * @param preRelease the string representation of the pre-release version
+         *
+         * @return this builder instance
+         */
+        public Builder setPreReleaseVersion(String preRelease) {
+            this.preRelease = preRelease;
+            return this;
+        }
+
+        /**
+         * Sets the build metadata.
+         *
+         * @param build the string representation of the build metadata
+         *
+         * @return this builder instance
+         */
+        public Builder setBuildMetadata(String build) {
+            this.build = build;
+            return this;
+        }
+
+        /**
+         * Builds a {@code Version} object.
+         *
+         * @return a newly built {@code Version} instance
+         *
+         * @throws ParseException               when invalid version string is provided
+         * @throws UnexpectedCharacterException is a special case of {@code ParseException}
+         */
+        public Version build() {
+            StringBuilder sb = new StringBuilder();
+            if (isFilled(normal)) {
+                sb.append(normal);
+            }
+            if (isFilled(preRelease)) {
+                sb.append(PRE_RELEASE_PREFIX).append(preRelease);
+            }
+            if (isFilled(build)) {
+                sb.append(BUILD_PREFIX).append(build);
+            }
+            return VersionParser.parseValidSemVer(sb.toString());
+        }
+
+        /**
+         * Checks if a string has a usable value.
+         *
+         * @param str the string to check
+         *
+         * @return {@code true} if the string is filled or {@code false} otherwise
+         */
+        private boolean isFilled(String str) {
+            return str != null && !str.isEmpty();
+        }
+    }
+
+
+    /** A build-aware comparator. */
+    private static class BuildAwareOrder implements Comparator<Version> {
+
+        /**
+         * Compares two {@code Version} instances taking
+         * into account their build metadata.
+         * <p>
+         * When compared build metadata is divided into identifiers. The
+         * numeric identifiers are compared numerically, and the alphanumeric
+         * identifiers are compared in the ASCII sort order.
+         * <p>
+         * If one of the compared versions has no defined build
+         * metadata, this version is considered to have a lower
+         * precedence than that of the other.
+         *
+         * @return {@inheritDoc}
+         */
+        @Override
+        public int compare(Version v1, Version v2) {
+            int result = v1.compareTo(v2);
+            if (result == 0) {
+                result = v1.build.compareTo(v2.build);
+                if (v1.build == MetadataVersion.NULL ||
+                        v2.build == MetadataVersion.NULL
+                        ) {
+                    /*
+                     * Build metadata should have a higher precedence
+                     * than the associated normal version which is the
+                     * opposite compared to pre-release versions.
+                     */
+                    result = -1 * result;
+                }
+            }
+            return result;
+        }
     }
 }

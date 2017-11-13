@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.core.deployment;
 
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 
 public class Subsystem extends NamedNode {
 

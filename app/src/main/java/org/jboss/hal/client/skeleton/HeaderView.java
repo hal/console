@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
@@ -78,6 +79,7 @@ import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.large;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 @SuppressWarnings("WeakerAccess")
 @Templated("MainLayout.html#header")
@@ -166,16 +168,28 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         tlcPlaceRequests.put(NameTokens.PATCHING,       new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
         tlcPlaceRequests.put(NameTokens.ACCESS_CONTROL, new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build());
         tlcPlaceRequests.put(NameTokens.MANAGEMENT,     new PlaceRequest.Builder().nameToken(NameTokens.MANAGEMENT).build());
+        // @formatter:on
 
         tlc = new HashMap<>();
-        tlc.put(NameTokens.HOMEPAGE,        (HTMLElement) root.querySelector("#" + Ids.TLC_HOMEPAGE));
-        tlc.put(NameTokens.DEPLOYMENTS,     (HTMLElement) root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
-        tlc.put(NameTokens.CONFIGURATION,   (HTMLElement) root.querySelector("#" + Ids.TLC_CONFIGURATION));
-        tlc.put(NameTokens.RUNTIME,         (HTMLElement) root.querySelector("#" + Ids.TLC_RUNTIME));
-        tlc.put(NameTokens.PATCHING,        (HTMLElement) root.querySelector("#" + Ids.TLC_PATCHING));
-        tlc.put(NameTokens.ACCESS_CONTROL,  (HTMLElement) root.querySelector("#" + Ids.TLC_ACCESS_CONTROL));
-        tlc.put(NameTokens.MANAGEMENT,      (HTMLElement) root.querySelector("#" + Ids.TLC_MANAGEMENT));
-        // @formatter:on
+        initTlc(root,
+                new String[]{
+                        NameTokens.HOMEPAGE,
+                        NameTokens.DEPLOYMENTS,
+                        NameTokens.CONFIGURATION,
+                        NameTokens.RUNTIME,
+                        NameTokens.PATCHING,
+                        NameTokens.ACCESS_CONTROL,
+                        NameTokens.MANAGEMENT,
+                },
+                new String[]{
+                        Ids.TLC_HOMEPAGE,
+                        Ids.TLC_DEPLOYMENTS,
+                        Ids.TLC_CONFIGURATION,
+                        Ids.TLC_RUNTIME,
+                        Ids.TLC_PATCHING,
+                        Ids.TLC_ACCESS_CONTROL,
+                        Ids.TLC_MANAGEMENT
+                });
 
         handlers = new ArrayList<>();
         breadcrumbHandlers = new ArrayList<>();
@@ -193,6 +207,15 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 bind(messages, click, event -> notificationDrawer.toggle()),
                 bind(logout, click, event -> presenter.logout()),
                 bind(reconnect, click, event -> presenter.reconnect())));
+    }
+
+    private void initTlc(HTMLElement root, String[] tokens, String[] ids) {
+        for (int i = 0; i < tokens.length; i++) {
+            HTMLElement element = (HTMLElement) root.querySelector(HASH + ids[i]);
+            if (element != null) {
+                tlc.put(tokens[i], element);
+            }
+        }
     }
 
     @Override
@@ -333,9 +356,16 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             case INFO:
                 logger.info(message.getMessage().asString());
                 break;
+            default:
+                break;
         }
         toastNotifications.add(message);
         notificationDrawer.add(message);
+        updateMessageElements();
+    }
+
+    @Override
+    public void onMarkAllAsRead() {
         updateMessageElements();
     }
 
@@ -345,9 +375,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     private void updateMessageElements() {
-        int count = notificationDrawer.getMessageCount();
-        Elements.setVisible(badgeIcon, count != 0);
-        messages.title = resources().messages().notifications(count);
+        int unreadCount = notificationDrawer.getUnreadCount();
+        Elements.setVisible(badgeIcon, unreadCount != 0);
+        messages.title = resources().messages().notifications(unreadCount);
     }
 
 
@@ -449,7 +479,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 String id = Ids.build(segment.getColumnId(), VALUE);
                 value.appendChild(a = a().css(clickable)
                         .id(id)
-                        .data(UIConstants.TARGET, "#")
+                        .data(UIConstants.TARGET, HASH)
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
@@ -54,15 +55,15 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
 
     // ------------------------------------------------------ initialization
 
-    public static LoggingView create(final MbuiContext mbuiContext) {
+    public static LoggingView create(MbuiContext mbuiContext) {
         return new Mbui_LoggingView(mbuiContext);
     }
 
     @MbuiElement("logging-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("logging-config-form") Form<ModelNode> loggingConfigForm;
     @MbuiElement("logging-root-logger-form") Form<ModelNode> rootLoggerForm;
-    @MbuiElement("logging-categories-table") Table<NamedNode> loggerTable;
-    @MbuiElement("logging-categories-form") Form<NamedNode> loggerForm;
+    @MbuiElement("logging-category-table") Table<NamedNode> loggerTable;
+    @MbuiElement("logging-category-form") Form<NamedNode> loggerForm;
     @MbuiElement("logging-handler-console-table") Table<NamedNode> consoleHandlerTable;
     @MbuiElement("logging-handler-console-form") Form<NamedNode> consoleHandlerForm;
     @MbuiElement("logging-handler-file-table") Table<NamedNode> fileHandlerTable;
@@ -86,13 +87,14 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
 
     EmptyState noRootLogger;
 
-    LoggingView(final MbuiContext mbuiContext) {
+    LoggingView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
     @PostConstruct
     void init() {
-        noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
+        noRootLogger = new EmptyState.Builder("logging-root-logger-empty",
+                mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon("fa fa-sitemap")
                 .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
@@ -108,7 +110,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     // ------------------------------------------------------ logging configuration
 
     @Override
-    public void updateLoggingConfig(final ModelNode modelNode) {
+    public void updateLoggingConfig(ModelNode modelNode) {
         loggingConfigForm.view(modelNode);
     }
 
@@ -116,7 +118,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     // ------------------------------------------------------ root logger
 
     @Override
-    public void updateRootLogger(final ModelNode modelNode) {
+    public void updateRootLogger(ModelNode modelNode) {
         rootLoggerVisibility(true);
         rootLoggerForm.view(modelNode);
     }
@@ -126,7 +128,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         rootLoggerVisibility(false);
     }
 
-    private void rootLoggerVisibility(final boolean visible) {
+    private void rootLoggerVisibility(boolean visible) {
         Elements.setVisible((HTMLElement) document.getElementById("logging-root-logger-header"), visible);
         Elements.setVisible((HTMLElement) document.getElementById("logging-root-logger-description"),
                 visible);
@@ -171,7 +173,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     // ------------------------------------------------------ logger / categories
 
     @Override
-    public void updateLogger(final List<NamedNode> items) {
+    public void updateLogger(List<NamedNode> items) {
         loggerForm.clear();
         loggerTable.update(items);
     }
@@ -180,56 +182,56 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     // ------------------------------------------------------ handler
 
     @Override
-    public void updateConsoleHandler(final List<NamedNode> items) {
+    public void updateConsoleHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-console-item", items.size());
         consoleHandlerForm.clear();
         consoleHandlerTable.update(items);
     }
 
     @Override
-    public void updateFileHandler(final List<NamedNode> items) {
+    public void updateFileHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-file-item", items.size());
         fileHandlerForm.clear();
         fileHandlerTable.update(items);
     }
 
     @Override
-    public void updatePeriodicHandler(final List<NamedNode> items) {
+    public void updatePeriodicHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-periodic-rotating-file-item", items.size());
         periodicHandlerForm.clear();
         periodicHandlerTable.update(items);
     }
 
     @Override
-    public void updatePeriodicSizeHandler(final List<NamedNode> items) {
+    public void updatePeriodicSizeHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-periodic-size-rotating-file-item", items.size());
         periodicSizeHandlerForm.clear();
         periodicSizeHandlerTable.update(items);
     }
 
     @Override
-    public void updateSizeHandlerHandler(final List<NamedNode> items) {
+    public void updateSizeHandlerHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-size-rotating-file-item", items.size());
         sizeHandlerForm.clear();
         sizeHandlerTable.update(items);
     }
 
     @Override
-    public void updateAsyncHandler(final List<NamedNode> items) {
+    public void updateAsyncHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-async-item", items.size());
         asyncHandlerForm.clear();
         asyncHandlerTable.update(items);
     }
 
     @Override
-    public void updateCustomHandler(final List<NamedNode> items) {
+    public void updateCustomHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-custom-item", items.size());
         customHandlerForm.clear();
         customHandlerTable.update(items);
     }
 
     @Override
-    public void updateSyslogHandler(final List<NamedNode> items) {
+    public void updateSyslogHandler(List<NamedNode> items) {
         navigation.updateBadge("logging-handler-syslog-item", items.size());
         syslogHandlerForm.clear();
         syslogHandlerTable.update(items);
@@ -239,14 +241,14 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     // ------------------------------------------------------ formatter
 
     @Override
-    public void updateCustomFormatter(final List<NamedNode> items) {
+    public void updateCustomFormatter(List<NamedNode> items) {
         navigation.updateBadge("logging-formatter-custom-item", items.size());
         customFormatterForm.clear();
         customFormatterTable.update(items);
     }
 
     @Override
-    public void updatePatternFormatter(final List<NamedNode> items) {
+    public void updatePatternFormatter(List<NamedNode> items) {
         navigation.updateBadge("logging-formatter-pattern-item", items.size());
         patternFormatterForm.clear();
         patternFormatterTable.update(items);

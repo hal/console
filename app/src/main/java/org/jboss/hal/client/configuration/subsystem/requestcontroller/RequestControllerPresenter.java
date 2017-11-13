@@ -41,17 +41,6 @@ public class RequestControllerPresenter
         extends MbuiPresenter<RequestControllerPresenter.MyView, RequestControllerPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.REQUEST_CONTROLLER)
-    public interface MyProxy extends ProxyPlace<RequestControllerPresenter> {}
-
-    public interface MyView extends MbuiView<RequestControllerPresenter> {
-        void update(ModelNode payload);
-    }
-    // @formatter:on
-
     private static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=request-controller";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
@@ -60,13 +49,13 @@ public class RequestControllerPresenter
     private final StatementContext statementContext;
 
     @Inject
-    public RequestControllerPresenter(final EventBus eventBus,
-            final RequestControllerPresenter.MyView view,
-            final RequestControllerPresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public RequestControllerPresenter(EventBus eventBus,
+            RequestControllerPresenter.MyView view,
+            RequestControllerPresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -93,4 +82,17 @@ public class RequestControllerPresenter
     protected void reload() {
         crud.readRecursive(ROOT_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.REQUEST_CONTROLLER)
+    public interface MyProxy extends ProxyPlace<RequestControllerPresenter> {
+    }
+
+    public interface MyView extends MbuiView<RequestControllerPresenter> {
+        void update(ModelNode payload);
+    }
+    // @formatter:on
 }

@@ -30,14 +30,10 @@ import org.jetbrains.annotations.NonNls;
 @JsType
 public class Role {
 
-    /**
-     * Has all permissions except cannot read or write resources related to the administrative audit logging system.
-     */
+    /** Has all permissions except cannot read or write resources related to the administrative audit logging system. */
     public static final Role ADMINISTRATOR = new Role("Administrator");
 
-    /**
-     * Can read anything. Can only modify the resources related to the administrative audit logging system.
-     */
+    /** Can read anything. Can only modify the resources related to the administrative audit logging system. */
     public static final Role AUDITOR = new Role("Auditor");
 
     /**
@@ -48,14 +44,10 @@ public class Role {
      */
     public static final Role DEPLOYER = new Role("Deployer");
 
-    /**
-     * Operator permissions, plus can modify the persistent configuration.
-     */
+    /** Operator permissions, plus can modify the persistent configuration. */
     public static final Role MAINTAINER = new Role("Maintainer");
 
-    /**
-     * A read-only role. Cannot modify any resource.
-     */
+    /** A read-only role. Cannot modify any resource. */
     public static final Role MONITOR = new Role("Monitor");
 
     /**
@@ -64,9 +56,7 @@ public class Role {
      */
     public static final Role OPERATOR = new Role("Operator");
 
-    /**
-     * Has all permissions. Equivalent to a JBoss AS 7 administrator.
-     */
+    /** Has all permissions. Equivalent to a JBoss AS 7 administrator. */
     public static final Role SUPER_USER = new Role("SuperUser");
 
 
@@ -123,9 +113,7 @@ public class Role {
         return name.hashCode();
     }
 
-    /**
-     * @return a string representation of this role.
-     */
+    /** @return a string representation of this role. */
     @Override
     public String toString() {
         if (isStandard()) {
@@ -136,41 +124,31 @@ public class Role {
                 .toLowerCase() + scope + ", includeAll: " + includeAll;
     }
 
-    /**
-     * @return the unique ID of this role.
-     */
+    /** @return the unique ID of this role. */
     @JsProperty
     public String getId() {
         return Ids.role(name);
     }
 
-    /**
-     * @return true if this is a standard role, false otherwise.
-     */
+    /** @return true if this is a standard role, false otherwise. */
     @JsProperty
     public boolean isStandard() {
         return type == Type.STANDARD;
     }
 
-    /**
-     * @return true if this is a scoped role, false otherwise.
-     */
+    /** @return true if this is a scoped role, false otherwise. */
     @JsProperty
     public boolean isScoped() {
         return type != Type.STANDARD;
     }
 
-    /**
-     * @return the name of this role.
-     */
+    /** @return the name of this role. */
     @JsProperty
     public String getName() {
         return name;
     }
 
-    /**
-     * @return the base role if this is a scoped role, null otherwise.
-     */
+    /** @return the base role if this is a scoped role, null otherwise. */
     @JsProperty
     public Role getBaseRole() {
         return baseRole;
@@ -199,9 +177,7 @@ public class Role {
 
     // ------------------------------------------------------ JS methods
 
-    /**
-     * @return the scopes if this is a scoped role, an empty array otherwise.
-     */
+    /** @return the scopes if this is a scoped role, an empty array otherwise. */
     @JsProperty(name = "scope")
     @EsReturn("string[]")
     public String[] jsScope() {

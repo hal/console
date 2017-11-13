@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -69,20 +70,6 @@ public class SocketBindingGroupPresenter
         extends MbuiPresenter<SocketBindingGroupPresenter.MyView, SocketBindingGroupPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.SOCKET_BINDING_GROUP)
-    public interface MyProxy extends ProxyPlace<SocketBindingGroupPresenter> {}
-
-    public interface MyView extends MbuiView<SocketBindingGroupPresenter> {
-        void reveal();
-        void update(NamedNode socketBindingGroup);
-        void showClientMappings(List<NamedNode> clientMappings);
-    }
-    // @formatter:on
-
-
     static final String ROOT_ADDRESS = "/socket-binding-group=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
     private static final String SELECTED_ADDRESS = "/socket-binding-group=" + SelectionAwareStatementContext.SELECTION_EXPRESSION;
@@ -97,15 +84,15 @@ public class SocketBindingGroupPresenter
     String inbound;
 
     @Inject
-    public SocketBindingGroupPresenter(final EventBus eventBus,
-            final SocketBindingGroupPresenter.MyView view,
-            final SocketBindingGroupPresenter.MyProxy proxy,
-            final Finder finder,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public SocketBindingGroupPresenter(EventBus eventBus,
+            SocketBindingGroupPresenter.MyView view,
+            SocketBindingGroupPresenter.MyProxy proxy,
+            Finder finder,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.dispatcher = dispatcher;
         this.crud = crud;
@@ -127,7 +114,7 @@ public class SocketBindingGroupPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         socketBindingGroup = request.getParameter(NAME, null);
     }
@@ -167,7 +154,7 @@ public class SocketBindingGroupPresenter
         ResourceAddress address = SELECTED_TEMPLATE.resolve(statementContext);
         crud.resetSingleton(Names.SOCKET_BINDING_GROUP, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
-            public void afterReset(final Form<NamedNode> form) {
+            public void afterReset(Form<NamedNode> form) {
                 reload();
             }
         });
@@ -180,7 +167,7 @@ public class SocketBindingGroupPresenter
         Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE.append(socketBinding.templateSuffix()));
 
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(socketBinding.baseId, Ids.ADD_SUFFIX), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(socketBinding.baseId, Ids.ADD), metadata)
                 .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .build();
@@ -215,7 +202,7 @@ public class SocketBindingGroupPresenter
                 .resolve(statementContext, name);
         crud.reset(socketBinding.type, name, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
-            public void afterReset(final Form<NamedNode> form) {
+            public void afterReset(Form<NamedNode> form) {
                 reload();
             }
         });
@@ -282,7 +269,7 @@ public class SocketBindingGroupPresenter
         });
     }
 
-    void removeClientMapping(final int index) {
+    void removeClientMapping(int index) {
         DialogFactory.showConfirmation(resources.messages().removeConfirmationTitle(Names.CLIENT_MAPPING),
                 resources.messages().removeSingletonConfirmationQuestion(), () -> {
                     ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())
@@ -298,4 +285,19 @@ public class SocketBindingGroupPresenter
                     });
                 });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.SOCKET_BINDING_GROUP)
+    public interface MyProxy extends ProxyPlace<SocketBindingGroupPresenter> {
+    }
+
+    public interface MyView extends MbuiView<SocketBindingGroupPresenter> {
+        void reveal();
+        void update(NamedNode socketBindingGroup);
+        void showClientMappings(List<NamedNode> clientMappings);
+    }
+    // @formatter:on
 }

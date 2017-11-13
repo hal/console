@@ -13,29 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
 package org.jboss.hal.dmr;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -43,17 +22,17 @@ import java.math.BigInteger;
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-final class StringModelValue extends ModelValue {
+class StringModelValue extends ModelValue {
 
     private final String value;
 
-    StringModelValue(final String value) {
+    StringModelValue(String value) {
         super(ModelType.STRING);
         this.value = value;
     }
 
     @Override
-    void writeExternal(final DataOutput out) throws IOException {
+    void writeExternal(DataOutput out) {
         out.writeUTF(value);
     }
 
@@ -63,7 +42,7 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    long asLong(final long defVal) {
+    long asLong(long defVal) {
         return Long.parseLong(value);
     }
 
@@ -73,7 +52,7 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    int asInt(final int defVal) {
+    int asInt(int defVal) {
         return Integer.parseInt(value);
     }
 
@@ -83,7 +62,7 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    boolean asBoolean(final boolean defVal) {
+    boolean asBoolean(boolean defVal) {
         return Boolean.parseBoolean(value);
     }
 
@@ -93,7 +72,7 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    double asDouble(final double defVal) {
+    double asDouble(double defVal) {
         return Double.parseDouble(value);
     }
 
@@ -101,7 +80,7 @@ final class StringModelValue extends ModelValue {
     byte[] asBytes() {
         try {
             return value.getBytes("UTF-8");
-        } catch (final UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             return value.getBytes();
         }
     }
@@ -127,12 +106,12 @@ final class StringModelValue extends ModelValue {
     }
 
     @Override
-    void format(final StringBuilder builder, final int indent, final boolean multiLine) {
+    void format(StringBuilder builder, int indent, boolean multiLine) {
         builder.append(quote(value));
     }
 
     @Override
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLine) {
+    void formatAsJSON(StringBuilder builder, int indent, boolean multiLine) {
         builder.append(jsonEscape(asString()));
     }
 
@@ -144,7 +123,7 @@ final class StringModelValue extends ModelValue {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         return other instanceof StringModelValue && equals((StringModelValue) other);
     }
 
@@ -155,7 +134,7 @@ final class StringModelValue extends ModelValue {
      *
      * @return {@code true} if they are equal, {@code false} otherwise
      */
-    public boolean equals(final StringModelValue other) {
+    public boolean equals(StringModelValue other) {
         return this == other || other != null && value.equals(other.value);
     }
 

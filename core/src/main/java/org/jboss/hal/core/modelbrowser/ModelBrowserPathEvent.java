@@ -21,12 +21,6 @@ import com.google.gwt.event.shared.GwtEvent;
 // No @GenEvent here due to naming conflicts
 public class ModelBrowserPathEvent extends GwtEvent<ModelBrowserPathEvent.ModelBrowserPathHandler> {
 
-    public interface ModelBrowserPathHandler extends EventHandler {
-
-        void onModelBrowserAddress(ModelBrowserPathEvent event);
-    }
-
-
     private static final Type<ModelBrowserPathHandler> TYPE = new Type<>();
 
     public static Type<ModelBrowserPathHandler> getType() {
@@ -35,7 +29,9 @@ public class ModelBrowserPathEvent extends GwtEvent<ModelBrowserPathEvent.ModelB
 
     private final ModelBrowserPath path;
 
-    public ModelBrowserPathEvent(final ModelBrowserPath path) {this.path = path;}
+    public ModelBrowserPathEvent(final ModelBrowserPath path) {
+        this.path = path;
+    }
 
     public ModelBrowserPath getPath() {
         return path;
@@ -49,5 +45,11 @@ public class ModelBrowserPathEvent extends GwtEvent<ModelBrowserPathEvent.ModelB
     @Override
     public Type<ModelBrowserPathHandler> getAssociatedType() {
         return TYPE;
+    }
+
+
+    public interface ModelBrowserPathHandler extends EventHandler {
+
+        void onModelBrowserAddress(ModelBrowserPathEvent event);
     }
 }

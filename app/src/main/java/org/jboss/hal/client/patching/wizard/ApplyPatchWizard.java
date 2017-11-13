@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.client.patching.wizard;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Consumer;
 import javax.inject.Provider;
 
 import org.jboss.hal.ballroom.wizard.Wizard;
@@ -47,7 +44,91 @@ import static org.jboss.hal.client.patching.wizard.PatchState.UPLOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
-public class ApplyPatchWizard {
+public class ApplyPatchWizard extends PatchWizard {
+
+    public ApplyPatchWizard(Resources resources, Environment environment, Metadata metadata,
+            StatementContext statementContext, Dispatcher dispatcher,
+            Provider<Progress> progress, ServerActions serverActions, Callback callback) {
+        super(resources, environment, metadata, statementContext, dispatcher, progress, serverActions, callback);
+    }
+
+    public void show() {
+        Messages messages = resources.messages();
+        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(
+                messages.addResourceTitle(Names.PATCH), new PatchContext());
+
+        checkServersState(servers -> {
+            if (servers != null) {
+                wb.addStep(CHECK_SERVERS, new CheckRunningServersStep(resources, servers,
+                        statementContext.selectedHost()));
+            }
+            wb.addStep(UPLOAD, new UploadPatchStep(resources.constants().uploadPatch(), messages.noSelectedPatch()))
+                    .addStep(CONFIGURE, new ConfigurationStep(metadata, resources))
+
+                    .onBack((context, currentState) -> {
+                        PatchState previous = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                break;
+                            case UPLOAD:
+                                previous = CHECK_SERVERS;
+                                break;
+                            case CONFIGURE:
+                                previous = UPLOAD;
+                                break;
+                            default:
+                                break;
+                        }
+                        return previous;
+                    })
+                    .onNext((context, currentState) -> {
+                        PatchState next = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                next = UPLOAD;
+                                break;
+                            case UPLOAD:
+                                next = CONFIGURE;
+                                break;
+                            case CONFIGURE:
+                                break;
+                            default:
+                                break;
+                        }
+                        return next;
+                    })
+
+                    .stayOpenAfterFinish()
+                    .onFinish((wzd, context) -> {
+                        String name = context.file.name;
+                        wzd.showProgress(resources.constants().patchInProgress(), messages.patchInProgress(name));
+
+                        series(new FlowContext(progress.get()),
+                                new UploadPatch(statementContext, dispatcher, serverActions, context))
+                                .subscribe(new Outcome<FlowContext>() {
+                                    @Override
+                                    public void onError(FlowContext flowContext, Throwable error) {
+                                        wzd.showError(resources.constants().patchError(),
+                                                messages.patchAddError(name, error.getMessage()),
+                                                error.getMessage());
+                                    }
+
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        callback.execute();
+                                        wzd.showSuccess(
+                                                resources.constants().patchSuccessful(),
+                                                messages.patchSucessfullyApplied(name),
+                                                messages.view(Names.PATCH),
+                                                cxt -> { /* nothing to do, content is already selected */ });
+                                    }
+                                });
+                    });
+            Wizard<PatchContext, PatchState> wizard = wb.build();
+            wizard.show();
+        });
+    }
+
 
     static class UploadPatch implements Task<FlowContext> {
 
@@ -90,141 +171,4 @@ public class ApplyPatchWizard {
             return dispatcher.upload(patchContext.file, operation).toCompletable();
         }
     }
-
-
-    private Resources resources;
-    private Environment environment;
-    private Metadata metadataOp;
-    private StatementContext statementContext;
-    private Dispatcher dispatcher;
-    private Provider<Progress> progress;
-    private ServerActions serverActions;
-    private Callback callback;
-
-    public ApplyPatchWizard(Resources resources, Environment environment, Metadata metadata,
-            StatementContext statementContext, Dispatcher dispatcher, Provider<Progress> progress,
-            ServerActions serverActions, Callback callback) {
-
-        this.resources = resources;
-        this.environment = environment;
-        this.metadataOp = metadata;
-        this.statementContext = statementContext;
-        this.dispatcher = dispatcher;
-        this.progress = progress;
-        this.serverActions = serverActions;
-        this.callback = callback;
-    }
-
-    public void show() {
-        Messages messages = resources.messages();
-        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(
-                messages.addResourceTitle(Names.PATCH), new PatchContext());
-
-        checkServersState(servers -> {
-            if (servers != null) {
-                wb.addStep(CHECK_SERVERS, new CheckRunningServersStep(resources, servers,
-                        statementContext.selectedHost()));
-            }
-            wb.addStep(UPLOAD, new UploadPatchStep(resources.constants().uploadPatch(), messages.noSelectedPatch()))
-                    .addStep(CONFIGURE, new ConfigurationStep(metadataOp, resources))
-
-                    .onBack((context, currentState) -> {
-                        PatchState previous = null;
-                        switch (currentState) {
-                            case CHECK_SERVERS:
-                                break;
-                            case UPLOAD:
-                                previous = CHECK_SERVERS;
-                                break;
-                            case CONFIGURE:
-                                previous = UPLOAD;
-                                break;
-                        }
-                        return previous;
-                    })
-                    .onNext((context, currentState) -> {
-                        PatchState next = null;
-                        switch (currentState) {
-                            case CHECK_SERVERS:
-                                next = UPLOAD;
-                                break;
-                            case UPLOAD:
-                                next = CONFIGURE;
-                                break;
-                            case CONFIGURE:
-                                break;
-                        }
-                        return next;
-                    })
-
-                    .stayOpenAfterFinish()
-                    .onFinish((wzd, context) -> {
-                        String name = context.file.name;
-                        wzd.showProgress(resources.constants().patchInProgress(), messages.patchInProgress(name));
-
-                        series(new FlowContext(progress.get()),
-                                new UploadPatch(statementContext, dispatcher, serverActions, context))
-                                .subscribe(new Outcome<FlowContext>() {
-                                    @Override
-                                    public void onError(FlowContext flowContext, Throwable error) {
-                                        wzd.showError(resources.constants().patchError(),
-                                                messages.patchAddError(name, error.getMessage()),
-                                                error.getMessage());
-                                    }
-
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        callback.execute();
-                                        wzd.showSuccess(
-                                                resources.constants().patchSuccessful(),
-                                                messages.patchSucessfullyApplied(name),
-                                                messages.view(Names.PATCH),
-                                                cxt -> { /* nothing to do, content is already selected */ });
-                                    }
-                                });
-                    });
-            Wizard<PatchContext, PatchState> wizard = wb.build();
-            wizard.show();
-        });
-    }
-
-    /**
-     * Checks if each servers of a host is stopped, if the server is started, asks the user to stop them.
-     * It is a good practice to apply/rollback a patch to a stopped server to prevent application and internal services
-     * from failing.
-     */
-    private void checkServersState(Consumer<List<Property>> callback) {
-
-        if (environment.isStandalone()) {
-            callback.accept(null);
-        } else {
-
-            String host = statementContext.selectedHost();
-            ResourceAddress address = new ResourceAddress().add(HOST, host);
-            Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(CHILD_TYPE, SERVER_CONFIG)
-                    .build();
-
-            dispatcher.execute(operation, result -> {
-                List<Property> servers = result.asPropertyList();
-                boolean anyServerStarted = false;
-                for (Iterator<Property> iter = servers.iterator(); iter.hasNext(); ) {
-                    Property serverProp = iter.next();
-                    Server server = new Server(host, serverProp);
-                    if (!server.isStopped()) {
-                        anyServerStarted = true;
-                    } else {
-                        iter.remove();
-                    }
-                }
-                if (anyServerStarted) {
-                    callback.accept(servers);
-                } else {
-                    callback.accept(null);
-                }
-            });
-        }
-    }
-
 }

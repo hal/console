@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.batch;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -45,33 +46,18 @@ public class BatchPresenter
         extends MbuiPresenter<BatchPresenter.MyView, BatchPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.BATCH_CONFIGURATION)
-    @Requires({BATCH_SUBSYSTEM_ADDRESS, IN_MEMORY_JOB_REPO_ADDRESS, JDBC_JOB_REPO_ADDRESS, THREAD_FACTORY_ADDRESS, THREAD_POOL_ADDRESS})
-    public interface MyProxy extends ProxyPlace<BatchPresenter> {}
-
-    public interface MyView extends MbuiView<BatchPresenter> {
-        void updateConfiguration(ModelNode conf);
-        void updateInMemoryJobRepository(List<NamedNode> items);
-        void updateJdbcJobRepository(List<NamedNode> items);
-        void updateThreadFactory(List<NamedNode> items);
-        void updateThreadPool(List<NamedNode> items);
-    }
-    // @formatter:on
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
 
     @Inject
-    public BatchPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public BatchPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -106,4 +92,26 @@ public class BatchPresenter
             // @formatter:on
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.BATCH_CONFIGURATION)
+    @Requires(value = {BATCH_SUBSYSTEM_ADDRESS,
+            IN_MEMORY_JOB_REPO_ADDRESS,
+            JDBC_JOB_REPO_ADDRESS,
+            THREAD_FACTORY_ADDRESS,
+            THREAD_POOL_ADDRESS},
+            recursive = false)
+    public interface MyProxy extends ProxyPlace<BatchPresenter> {
+    }
+
+    public interface MyView extends MbuiView<BatchPresenter> {
+        void updateConfiguration(ModelNode conf);
+        void updateInMemoryJobRepository(List<NamedNode> items);
+        void updateJdbcJobRepository(List<NamedNode> items);
+        void updateThreadFactory(List<NamedNode> items);
+        void updateThreadPool(List<NamedNode> items);
+    }
+    // @formatter:on
 }

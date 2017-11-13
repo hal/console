@@ -38,26 +38,14 @@ import static org.jboss.hal.resources.CSS.*;
 
 public class Tabs implements IsElement {
 
-    @JsType(isNative = true)
-    static class Api {
-
-        @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Api select(String selector);
-
-        public native void tab(String command);
-
-        public native void on(String event, JsCallback callback);
-    }
-
-
     private final HTMLElement root;
     private final HTMLElement tabs;
     private final HTMLElement panes;
     private final Map<Integer, String> indexToId;
     private final Map<String, HTMLElement> paneElements;
 
-    public Tabs() {
-        root = div()
+    public Tabs(String id) {
+        root = div().id(id)
                 .add(tabs = ul()
                         .css(nav, navTabs, navTabsPf, navTabsHal)
                         .attr(UIConstants.ROLE, UIConstants.TABLIST)
@@ -156,5 +144,17 @@ public class Tabs implements IsElement {
         if (id != null) {
             Api.select("a[href='#" + id + "']").on("shown.bs.tab", callback); //NON-NLS
         }
+    }
+
+
+    @JsType(isNative = true)
+    static class Api {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public static native Api select(String selector);
+
+        public native void tab(String command);
+
+        public native void on(String event, JsCallback callback);
     }
 }

@@ -48,17 +48,6 @@ import org.jboss.hal.spi.MessageEvent;
 public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         implements IsElement, MacroOperationHandler, MacroFinishedHandler {
 
-    // @formatter:off
-    public interface MyView extends HalView, HasPresenter<FooterPresenter> {
-        void updateEnvironment(Environment environment);
-        void updateVersion(Version version);
-        void startRecording();
-        void steps(int size);
-        void stopRecording();
-    }
-    // @formatter:on
-
-
     private final Environment environment;
     private final PlaceManager placeManager;
     private final Settings settings;
@@ -71,15 +60,15 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
 
     @Inject
     @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-    public FooterPresenter(final EventBus eventBus,
-            final MyView view,
-            final Environment environment,
-            final Endpoints endpoints,
-            final PlaceManager placeManager,
-            final Settings settings,
-            final Macros macros,
-            final ExpressionResolver expressionResolver,
-            final Resources resources) {
+    public FooterPresenter(EventBus eventBus,
+            MyView view,
+            Environment environment,
+            Endpoints endpoints,
+            PlaceManager placeManager,
+            Settings settings,
+            Macros macros,
+            ExpressionResolver expressionResolver,
+            Resources resources) {
         super(eventBus, view);
         this.environment = environment;
         this.placeManager = placeManager;
@@ -149,12 +138,12 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     }
 
     @Override
-    public void onMacroOperation(final MacroOperationEvent event) {
+    public void onMacroOperation(MacroOperationEvent event) {
         getView().steps(event.getMacro().getOperations().size());
     }
 
     @Override
-    public void onMacroFinished(final MacroFinishedEvent event) {
+    public void onMacroFinished(MacroFinishedEvent event) {
         MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStopped()));
 
         if (event.getOptions().openInEditor()) {
@@ -168,4 +157,15 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     void onSettings() {
         new SettingsDialog(environment, settings, resources).show();
     }
+
+
+    // @formatter:off
+    public interface MyView extends HalView, HasPresenter<FooterPresenter> {
+        void updateEnvironment(Environment environment);
+        void updateVersion(Version version);
+        void startRecording();
+        void steps(int size);
+        void stopRecording();
+    }
+    // @formatter:on
 }

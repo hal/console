@@ -18,8 +18,8 @@ package org.jboss.hal.client.rhcp;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
-import org.jboss.hal.json.Json;
-import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.js.Json;
+import org.jboss.hal.js.JsonObject;
 
 public interface RhcpResources extends ClientBundle {
 

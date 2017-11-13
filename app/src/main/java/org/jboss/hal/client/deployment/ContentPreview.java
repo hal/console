@@ -20,12 +20,16 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -34,10 +38,8 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.marginLeft5;
@@ -49,16 +51,19 @@ class ContentPreview extends PreviewContent<Content> {
     private final ContentColumn column;
     private final Places places;
     private final Resources resources;
+    private final AuthorisationDecision authorisationDecision;
     private final PreviewAttributes<Content> attributes;
     private final HTMLElement deploymentsDiv;
     private final HTMLElement deploymentsUl;
     private final HTMLElement undeployedContentDiv;
 
-    ContentPreview(final ContentColumn column, final Content content, final Places places, final Resources resources) {
+    ContentPreview(ContentColumn column, Content content, Environment environment, Places places,
+            Metadata serverGroupMetadata, Resources resources) {
         super(content.getName());
         this.column = column;
         this.places = places;
         this.resources = resources;
+        this.authorisationDecision = AuthorisationDecision.from(environment, serverGroupMetadata.getSecurityContext());
 
         LabelBuilder labelBuilder = new LabelBuilder();
         attributes = new PreviewAttributes<>(content, asList(NAME, RUNTIME_NAME));
@@ -75,6 +80,7 @@ class ContentPreview extends PreviewContent<Content> {
         });
         previewBuilder().addAll(attributes);
 
+        HTMLElement p;
         previewBuilder()
                 .add(h(2).textContent(resources.constants().deployments()))
                 .add(deploymentsDiv = div()
@@ -82,16 +88,19 @@ class ContentPreview extends PreviewContent<Content> {
                         .add(deploymentsUl = ul().asElement())
                         .asElement())
                 .add(undeployedContentDiv = div()
-                        .add(p()
+                        .add(p = p()
                                 .add(span()
                                         .innerHtml(resources.messages().undeployedContent(content.getName())))
-                                .add(a().css(clickable, marginLeft5).on(click, event -> column.deploy(content))
-                                        .textContent(resources.constants().deploy())))
+                                .asElement())
                         .asElement());
+        if (authorisationDecision.isAllowed(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))) {
+            p.appendChild(a().css(clickable, marginLeft5).on(click, event -> column.deploy(content))
+                    .textContent(resources.constants().deploy()).asElement());
+        }
     }
 
     @Override
-    public void update(final Content content) {
+    public void update(Content content) {
         attributes.refresh(content);
 
         boolean undeployed = content.getServerGroupDeployments().isEmpty();
@@ -109,12 +118,15 @@ class ContentPreview extends PreviewContent<Content> {
                 String serverGroupToken = places.historyToken(serverGroupPlaceRequest);
                 HTMLElement li = li()
                         .add(a(serverGroupToken).textContent(serverGroup))
-                        .add(span().textContent(" ("))
-                        .add(a().css(clickable)
-                                .on(click, event -> column.undeploy(content, serverGroup))
-                                .textContent(resources.constants().undeploy()))
-                        .add(span().textContent(")"))
                         .asElement();
+                if (authorisationDecision.isAllowed(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))) {
+                    li.appendChild(span().textContent(" (").asElement());
+                    li.appendChild(a().css(clickable)
+                            .on(click, event -> column.undeploy(content, serverGroup))
+                            .textContent(resources.constants().undeploy())
+                            .asElement());
+                    li.appendChild(span().textContent(")").asElement());
+                }
                 deploymentsUl.appendChild(li);
             });
         }

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -54,19 +55,6 @@ public class DataSourcePresenter
         extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.DATA_SOURCE_CONFIGURATION)
-    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
-    public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
-        void clear(boolean xa);
-        void update(DataSource dataSource);
-    }
-    // @formatter:on
-
-
     static final String XA_PARAM = "xa";
 
     private final CrudOperations crud;
@@ -77,14 +65,14 @@ public class DataSourcePresenter
     private boolean xa;
 
     @Inject
-    public DataSourcePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext) {
+    public DataSourcePresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -99,7 +87,7 @@ public class DataSourcePresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         name = request.getParameter(NAME, null);
         xa = Boolean.valueOf(request.getParameter(XA_PARAM, String.valueOf(false)));
@@ -130,11 +118,11 @@ public class DataSourcePresenter
         crud.read(resourceAddress(), result -> getView().update(new DataSource(name, result, xa)));
     }
 
-    void saveDataSource(final Map<String, Object> changedValues) {
+    void saveDataSource(Map<String, Object> changedValues) {
         crud.save(type(), name, resourceAddress(), changedValues, metadata(), this::reload);
     }
 
-    void resetDataSource(final Form<DataSource> form) {
+    void resetDataSource(Form<DataSource> form) {
         crud.reset(type(), name, resourceAddress(), form, metadata(), this::reload);
     }
 
@@ -145,4 +133,18 @@ public class DataSourcePresenter
     private Metadata metadata() {
         return metadataRegistry.lookup(xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE);
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.DATA_SOURCE_CONFIGURATION)
+    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
+    public interface MyProxy extends ProxyPlace<DataSourcePresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
+        void clear(boolean xa);
+        void update(DataSource dataSource);
+    }
+    // @formatter:on
 }

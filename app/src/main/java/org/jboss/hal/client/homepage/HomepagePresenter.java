@@ -32,20 +32,8 @@ import static org.jboss.hal.resources.Names.NYI;
 
 public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy> {
 
-    // @formatter:off
-    @NoGatekeeper
-    @ProxyStandard
-    @NameToken(NameTokens.HOMEPAGE)
-    public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
-
-    public interface MyView extends HalView, HasPresenter<HomepagePresenter> {}
-    // @formatter:on
-
-
     @Inject
-    public HomepagePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
+    public HomepagePresenter(EventBus eventBus, MyView view, MyProxy proxy) {
         super(eventBus, view, proxy);
     }
 
@@ -58,4 +46,16 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
     void launchGuidedTour() {
         Window.alert(NYI);
     }
+
+
+    // @formatter:off
+    @NoGatekeeper
+    @ProxyStandard
+    @NameToken(NameTokens.HOMEPAGE)
+    public interface MyProxy extends ProxyPlace<HomepagePresenter> {
+    }
+
+    public interface MyView extends HalView, HasPresenter<HomepagePresenter> {
+    }
+    // @formatter:on
 }

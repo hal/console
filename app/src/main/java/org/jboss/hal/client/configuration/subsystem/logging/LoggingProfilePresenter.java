@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -49,45 +50,19 @@ public class LoggingProfilePresenter
         extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.LOGGING_PROFILE)
-    @Requires(LOGGING_PROFILE_ADDRESS)
-    public interface MyProxy extends ProxyPlace<LoggingProfilePresenter> {}
-
-    public interface MyView extends MbuiView<LoggingProfilePresenter> {
-        void updateRootLogger(ModelNode modelNode);
-        void noRootLogger();
-        void updateLogger(List<NamedNode> items);
-
-        void updateAsyncHandler(List<NamedNode> items);
-        void updateConsoleHandler(List<NamedNode> items);
-        void updateCustomHandler(List<NamedNode> items);
-        void updateFileHandler(List<NamedNode> items);
-        void updatePeriodicHandler(List<NamedNode> items);
-        void updatePeriodicSizeHandler(List<NamedNode> items);
-        void updateSizeHandler(List<NamedNode> items);
-        void updateSyslogHandler(List<NamedNode> items);
-
-        void updateCustomFormatter(List<NamedNode> items);
-        void updatePatternFormatter(List<NamedNode> items);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private String loggingProfile;
 
     @Inject
-    public LoggingProfilePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public LoggingProfilePresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -101,7 +76,7 @@ public class LoggingProfilePresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         loggingProfile = request.getParameter(NAME, null);
     }
@@ -148,4 +123,31 @@ public class LoggingProfilePresenter
             // @formatter:on
         });
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.LOGGING_PROFILE)
+    @Requires(LOGGING_PROFILE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<LoggingProfilePresenter> {
+    }
+
+    public interface MyView extends MbuiView<LoggingProfilePresenter> {
+        void updateRootLogger(ModelNode modelNode);
+        void noRootLogger();
+        void updateLogger(List<NamedNode> items);
+
+        void updateAsyncHandler(List<NamedNode> items);
+        void updateConsoleHandler(List<NamedNode> items);
+        void updateCustomHandler(List<NamedNode> items);
+        void updateFileHandler(List<NamedNode> items);
+        void updatePeriodicHandler(List<NamedNode> items);
+        void updatePeriodicSizeHandler(List<NamedNode> items);
+        void updateSizeHandler(List<NamedNode> items);
+        void updateSyslogHandler(List<NamedNode> items);
+
+        void updateCustomFormatter(List<NamedNode> items);
+        void updatePatternFormatter(List<NamedNode> items);
+    }
+    // @formatter:on
 }

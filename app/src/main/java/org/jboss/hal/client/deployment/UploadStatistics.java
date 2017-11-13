@@ -46,7 +46,8 @@ class UploadStatistics {
 
     UploadStatistics(Environment environment) {
         this.environment = environment;
-        this.status = new HashMap<>();}
+        this.status = new HashMap<>();
+    }
 
     void recordAdded(String name) {
         status.put(name, UploadStatus.ADDED);
@@ -74,6 +75,8 @@ class UploadStatistics {
                     break;
                 case FAILED:
                     failed.add(entry.getKey());
+                    break;
+                default:
                     break;
             }
         }

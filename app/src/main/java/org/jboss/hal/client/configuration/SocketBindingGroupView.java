@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
@@ -27,12 +28,9 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
@@ -80,7 +78,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
         AddressTemplate inboundTemplate = ROOT_TEMPLATE.append(INBOUND.templateSuffix());
         Metadata inboundMetadata = mbuiContext.metadataRegistry().lookup(inboundTemplate);
 
-        inboundTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.TABLE_SUFFIX),
+        inboundTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.TABLE),
                 inboundMetadata)
                 .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
                         table -> presenter.addSocketBinding(INBOUND)))
@@ -91,7 +89,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .column(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row))
                 .build();
 
-        inboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.FORM_SUFFIX), inboundMetadata)
+        inboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.FORM), inboundMetadata)
                 .include(INTERFACE, PORT, FIXED_PORT, MULTICAST_ADDRESS, MULTICAST_PORT)
                 .unsorted()
                 .onSave((form, changedValues) -> presenter.saveSocketBinding(INBOUND, form, changedValues))
@@ -105,7 +103,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .add(inboundForm)
                 .asElement();
 
-        Metadata clientMappingsMetadata = clientMappingsMetadata(inboundMetadata);
+        Metadata clientMappingsMetadata = inboundMetadata.forComplexAttribute(CLIENT_MAPPINGS);
 
         clientMappingTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_TABLE, clientMappingsMetadata)
@@ -138,28 +136,18 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .add(clientMappingForm)
                 .asElement();
 
-        String parentId = Ids.build(INBOUND.baseId, Ids.PAGE_SUFFIX);
-        inboundPages = new Pages(parentId, inboundSection);
+        String id = Ids.build(INBOUND.baseId, Ids.PAGES);
+        String parentId = Ids.build(INBOUND.baseId, Ids.PAGE);
+        inboundPages = new Pages(id, parentId, inboundSection);
         inboundPages.addPage(parentId, Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_PAGE,
                 () -> Names.INBOUND + ": " + presenter.inbound, () -> Names.CLIENT_MAPPINGS,
                 clientMappingSection);
 
-        navigation.insertPrimary(Ids.build(INBOUND.baseId, Ids.ENTRY_SUFFIX),
+        navigation.insertPrimary(Ids.build(INBOUND.baseId, Ids.ITEM),
                 "socket-binding-group-outbound-local-item", //NON-NLS
                 Names.INBOUND, fontAwesome("arrow-circle-o-left"), inboundPages);
 
         registerAttachable(inboundTable, inboundForm, clientMappingTable, clientMappingForm);
-    }
-
-    private Metadata clientMappingsMetadata(final Metadata inboundMetadata) {
-        ModelNode modelNode = new ModelNode();
-        Property clientMappings = inboundMetadata.getDescription().findAttribute(ATTRIBUTES, CLIENT_MAPPINGS);
-        if (clientMappings != null) {
-            modelNode.get(DESCRIPTION).set(clientMappings.getValue().get(DESCRIPTION));
-            modelNode.get(ATTRIBUTES).set(clientMappings.getValue().get(VALUE_TYPE));
-        }
-        ResourceDescription resourceDescription = new ResourceDescription(modelNode);
-        return inboundMetadata.customResourceDescription(resourceDescription);
     }
 
     @Override
@@ -171,7 +159,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
 
     @Override
     public void reveal() {
-        inboundPages.showPage(Ids.build(INBOUND.baseId, Ids.PAGE_SUFFIX));
+        inboundPages.showPage(Ids.build(INBOUND.baseId, Ids.PAGE));
     }
 
     @Override

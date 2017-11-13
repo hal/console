@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.bower",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Bower dependencies",
   "license": "Apache-2.0",
   "private": true,
@@ -20,6 +20,7 @@
     "jquery": "~2.2.4",
     "jstree": "~3.3.4",
     "patternfly": "~3.26.1",
+    "pouchdb": "~6.3.4",
     "tagmanager": "~3.0.2",
     "zeroclipboard": "^2.2.0"
   },

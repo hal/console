@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -138,8 +139,8 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                         callback.onSuccess(deployments);
                     });
                 })
-                .onPreview(item -> new DeploymentPreview(item, finderPathFactory, places, environment, dispatcher,
-                        statementContext, serverActions))
+                .onPreview(item -> new DeploymentPreview(item, finderPathFactory, places, resources, environment,
+                        dispatcher, statementContext, serverActions))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount()
@@ -184,7 +185,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                 new MetadataProcessor.MetadataCallback() {
                     @Override
                     public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(INVALIDATE_SESSION_OPERATION, Ids.FORM_SUFFIX);
+                        String id = Ids.build(INVALIDATE_SESSION_OPERATION, Ids.FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, INVALIDATE_SESSION_OPERATION)
                                 .build();
 

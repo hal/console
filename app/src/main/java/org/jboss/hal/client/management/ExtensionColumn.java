@@ -17,6 +17,7 @@ package org.jboss.hal.client.management;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;

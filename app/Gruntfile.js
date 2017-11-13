@@ -23,9 +23,10 @@ module.exports = function (grunt) {
     grunt.initConfig({
         theme: grunt.option('theme') || 'hal',
         config: {
-            version: '0.9.1',
+            version: '0.9.2',
             bower: 'bower_components',
-            less: 'src/main/less',
+            js: 'src/js',
+            less: 'src/less',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
             esdoc: {
@@ -40,10 +41,7 @@ module.exports = function (grunt) {
                 '<%= config.public %>/css/**',
                 '<%= config.public %>/fonts/**',
                 '<%= config.public %>/img/**',
-                '<%= config.public %>/js/*.js',
-                '<%= config.public %>/js/*.swf',
-                '!<%= config.public %>/js/mode-logfile.js',
-                '!<%= config.public %>/js/theme-logfile.js'
+                '<%= config.public %>/js/**'
             ]
         },
 
@@ -72,6 +70,18 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= config.bower %>/zeroclipboard/dist',
                         src: 'ZeroClipboard.swf',
+                        dest: '<%= config.public %>/js'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= config.bower %>/pouchdb/dist',
+                        src: ['pouchdb.js', 'pouchdb.min.js'],
+                        dest: '<%= config.public %>/js'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= config.js %>',
+                        src: '*.js',
                         dest: '<%= config.public %>/js'
                     },
                     {
@@ -125,12 +135,13 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/ace-builds/src-noconflict/mode-text.js',
                     '<%= config.bower %>/ace-builds/src-noconflict/mode-typescript.js',
                     '<%= config.bower %>/ace-builds/src-noconflict/mode-xml.js',
+                    '<%= config.bower %>/google-code-prettify/src/prettify.js',
                     '<%= config.bower %>/javascript-auto-complete/auto-complete.js',
                     '<%= config.bower %>/js-cookie/src/js.cookie.js',
                     '<%= config.bower %>/jstree/dist/jstree.js',
+                    '<%= config.bower %>/pouchdb/dist/pouchdb.js',
                     '<%= config.bower %>/tagmanager/tagmanager.js',
                     '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.js',
-                    '<%= config.bower %>/google-code-prettify/src/prettify.js',
                     '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.js',
                     '<%= config.bower %>/patternfly/dist/js/patternfly.js'
                 ],
@@ -174,12 +185,13 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/ace-builds/src-min-noconflict/mode-text.js',
                     '<%= config.bower %>/ace-builds/src-min-noconflict/mode-typescript.js',
                     '<%= config.bower %>/ace-builds/src-min-noconflict/mode-xml.js',
+                    '<%= config.bower %>/google-code-prettify/bin/prettify.min.js',
                     '<%= config.bower %>/javascript-auto-complete/auto-complete.min.js',
                     '<%= config.bower %>/js-cookie/src/js.cookie.js',
                     '<%= config.bower %>/jstree/dist/jstree.min.js',
+                    '<%= config.bower %>/pouchdb/dist/pouchdb.min.js',
                     '<%= config.bower %>/tagmanager/tagmanager.js',
                     '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.min.js',
-                    '<%= config.bower %>/google-code-prettify/bin/prettify.min.js',
                     '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.min.js',
                     '<%= config.bower %>/patternfly/dist/js/patternfly.min.js'
                 ],

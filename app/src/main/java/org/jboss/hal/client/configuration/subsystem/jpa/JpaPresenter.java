@@ -39,19 +39,6 @@ public class JpaPresenter
         extends MbuiPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyStandard
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.JPA_CONFIGURATION)
-    public interface MyProxy extends ProxyPlace<JpaPresenter> {}
-
-    public interface MyView extends MbuiView<JpaPresenter> {
-        void update(ModelNode modelNode);
-        void clear();
-    }
-    // @formatter:on
-
-
     static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=jpa";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
@@ -60,13 +47,13 @@ public class JpaPresenter
     private final StatementContext statementContext;
 
     @Inject
-    public JpaPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+    public JpaPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy myProxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -93,4 +80,18 @@ public class JpaPresenter
     protected void reload() {
         crud.read(ROOT_TEMPLATE, result -> getView().update(result));
     }
+
+
+    // @formatter:off
+    @ProxyStandard
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.JPA_CONFIGURATION)
+    public interface MyProxy extends ProxyPlace<JpaPresenter> {
+    }
+
+    public interface MyView extends MbuiView<JpaPresenter> {
+        void update(ModelNode modelNode);
+        void clear();
+    }
+    // @formatter:on
 }

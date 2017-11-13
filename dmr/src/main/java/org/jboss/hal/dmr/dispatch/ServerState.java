@@ -43,13 +43,20 @@ public class ServerState {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof ServerState)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ServerState)) {
+            return false;
+        }
 
         ServerState that = (ServerState) o;
-
-        if (host != null ? !host.equals(that.host) : that.host != null) { return false; }
-        if (!server.equals(that.server)) { return false; }
+        if (host != null ? !host.equals(that.host) : that.host != null) {
+            return false;
+        }
+        if (!server.equals(that.server)) {
+            return false;
+        }
         return state == that.state;
     }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -94,7 +95,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM;
 
 @Column(Ids.SERVER)
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
@@ -361,7 +362,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (item.isStarted()) {
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().editURL())
-                                .handler(itm -> editURL(itm))
+                                .handler(itm -> serverActions.editUrl(itm, () -> refresh(RESTORE_SELECTION)))
                                 .build());
                         actions.add(ItemAction.separator());
                         // Order is: reload, restart, (resume | suspend), stop
@@ -435,7 +436,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     private void addServer(boolean browseByHost) {
         if (browseByHost) {
             AddressTemplate template = serverConfigTemplate(statementContext.selectedHost());
-            String id = Ids.build(HOST, statementContext.selectedHost(), SERVER, Ids.ADD_SUFFIX);
+            String id = Ids.build(HOST, statementContext.selectedHost(), SERVER, Ids.ADD);
             List<String> attributes = asList(AUTO_START, GROUP, SOCKET_BINDING_DEFAULT_INTERFACE,
                     SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET, UPDATE_AUTO_START_WITH_SERVER_STATUS);
             crud.add(id, Names.SERVER, template, attributes, (name, address) -> refresh(RESTORE_SELECTION));
@@ -460,7 +461,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             public void onMetadata(final Metadata metadata) {
 
                                 String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
-                                        FORM_SUFFIX);
+                                        FORM);
                                 SingleSelectBoxItem hostFormItem = new SingleSelectBoxItem(HOST, Names.HOST, hosts,
                                         false);
                                 hostFormItem.setRequired(true);
@@ -498,10 +499,6 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         });
             });
         }
-    }
-
-    private void editURL(Server server) {
-        serverActions.editUrl(server, () -> refresh(RESTORE_SELECTION));
     }
 
     private void copyServer(Server server) {

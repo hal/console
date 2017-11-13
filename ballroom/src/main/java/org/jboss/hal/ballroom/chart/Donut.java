@@ -25,13 +25,14 @@ import jsinterop.base.JsPropertyMap;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.ballroom.chart.Donut.Legend.NONE;
+import static org.jboss.hal.resources.UIConstants.HASH;
 
 /**
  * Chart to show the relationship of a set of values to a whole.
@@ -39,61 +40,6 @@ import static org.jboss.hal.ballroom.chart.Donut.Legend.NONE;
  * @see <a href="http://www.patternfly.org/pattern-library/data-visualization/donut-chart/">http://www.patternfly.org/pattern-library/data-visualization/donut-chart/</a>
  */
 public class Donut implements IsElement<HTMLElement>, Attachable {
-
-    public enum Legend {
-        NONE(200, 171), RIGHT(251, 161), BOTTOM(271, 191);
-
-        final int width;
-        final int height;
-        final double ratio;
-
-        Legend(int width, int height) {
-            this.width = width;
-            this.height = height;
-            this.ratio = (double) width / height;
-        }
-    }
-
-
-    public static class Builder {
-
-        private final String unit;
-        private final Map<String, String> colors;
-        private final Map<String, String> names;
-        private Legend legend;
-        private int width;
-        private boolean responsive;
-
-        public Builder(String unit) {
-            this.unit = unit;
-            this.colors = new HashMap<>();
-            this.names = new HashMap<>();
-            this.legend = NONE;
-            this.width = -1;
-            this.responsive = false;
-        }
-
-        public Builder add(String id, String text, String color) {
-            colors.put(id, color);
-            names.put(id, text);
-            return this;
-        }
-
-        public Builder legend(Legend legend) {
-            this.legend = legend;
-            return this;
-        }
-
-        public Builder responsive(boolean responsive) {
-            this.responsive = responsive;
-            return this;
-        }
-
-        public Donut build() {
-            return new Donut(this);
-        }
-    }
-
 
     private final Builder builder;
     private final HTMLElement root;
@@ -105,7 +51,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
 
         root = div().id().asElement();
         options = Charts.get().defaultDonutOptions();
-        options.bindto = "#" + root.id;
+        options.bindto = HASH + root.id;
         options.data = new Options.Data();
         options.data.colors = JsHelper.asJsMap(builder.colors);
         options.data.columns = new Array<>();
@@ -171,7 +117,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
             columns.push(column);
         }
 
-        Charts.setDonutChartTitle("#" + root.id, String.valueOf(total), builder.unit);
+        Charts.setDonutChartTitle(HASH + root.id, String.valueOf(total), builder.unit);
         dataMap.set("columns", columns); //NON-NLS
         api().load(dataMap);
     }
@@ -187,5 +133,60 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     private void resizeInParent() {
         HTMLElement parent = (HTMLElement) root.parentNode;
         resize((int) $(parent).width());
+    }
+
+
+    public enum Legend {
+        NONE(200, 171), RIGHT(251, 161), BOTTOM(271, 191);
+
+        final int width;
+        final int height;
+        final double ratio;
+
+        Legend(int width, int height) {
+            this.width = width;
+            this.height = height;
+            this.ratio = (double) width / height;
+        }
+    }
+
+
+    public static class Builder {
+
+        private final String unit;
+        private final Map<String, String> colors;
+        private final Map<String, String> names;
+        private Legend legend;
+        private int width;
+        private boolean responsive;
+
+        public Builder(String unit) {
+            this.unit = unit;
+            this.colors = new HashMap<>();
+            this.names = new HashMap<>();
+            this.legend = NONE;
+            this.width = -1;
+            this.responsive = false;
+        }
+
+        public Builder add(String id, String text, String color) {
+            colors.put(id, color);
+            names.put(id, text);
+            return this;
+        }
+
+        public Builder legend(Legend legend) {
+            this.legend = legend;
+            return this;
+        }
+
+        public Builder responsive(boolean responsive) {
+            this.responsive = responsive;
+            return this;
+        }
+
+        public Donut build() {
+            return new Donut(this);
+        }
     }
 }

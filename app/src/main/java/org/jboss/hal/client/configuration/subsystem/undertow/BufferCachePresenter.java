@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -47,32 +48,20 @@ public class BufferCachePresenter
         extends MbuiPresenter<BufferCachePresenter.MyView, BufferCachePresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.UNDERTOW_BUFFER_CACHE)
-    @Requires(AddressTemplates.BUFFER_CACHE_ADDRESS)
-    public interface MyProxy extends ProxyPlace<BufferCachePresenter> {}
-
-    public interface MyView extends MbuiView<BufferCachePresenter> {
-        void update(List<NamedNode> items);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
-    public BufferCachePresenter(final EventBus eventBus,
-            final BufferCachePresenter.MyView view,
-            final BufferCachePresenter.MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public BufferCachePresenter(EventBus eventBus,
+            BufferCachePresenter.MyView view,
+            BufferCachePresenter.MyProxy proxy,
+            Finder finder,
+            CrudOperations crud,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
@@ -103,4 +92,17 @@ public class BufferCachePresenter
         crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, BUFFER_CACHE, children ->
                 getView().update(asNamedNodes(children)));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.UNDERTOW_BUFFER_CACHE)
+    @Requires(AddressTemplates.BUFFER_CACHE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<BufferCachePresenter> {
+    }
+
+    public interface MyView extends MbuiView<BufferCachePresenter> {
+        void update(List<NamedNode> items);
+    }
+    // @formatter:on
 }

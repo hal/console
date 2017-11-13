@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -39,26 +40,14 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPresenter.MyProxy> {
 
-    // @formatter:off
-    @ProxyCodeSplit
-    @Requires("/path=*")
-    @NameToken(NameTokens.PATH)
-    public interface MyProxy extends ProxyPlace<PathsPresenter> {}
-
-    public interface MyView extends MbuiView<PathsPresenter> {
-        void update(List<NamedNode> paths);
-    }
-    // @formatter:on
-
-
     private final CrudOperations crud;
 
     @Inject
-    public PathsPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Finder finder,
-            final CrudOperations crud) {
+    public PathsPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Finder finder,
+            CrudOperations crud) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
     }
@@ -79,4 +68,17 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
     protected void reload() {
         crud.readChildren(ResourceAddress.root(), PATH, children -> getView().update(asNamedNodes(children)));
     }
+
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires("/path=*")
+    @NameToken(NameTokens.PATH)
+    public interface MyProxy extends ProxyPlace<PathsPresenter> {
+    }
+
+    public interface MyView extends MbuiView<PathsPresenter> {
+        void update(List<NamedNode> paths);
+    }
+    // @formatter:on
 }

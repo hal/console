@@ -24,15 +24,9 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = "Cookies")
 class Cookies {
 
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class CookieOptions {
+    static native String get(String name);
 
-        int expires;
-    }
-
-    native static String get(String name);
-
-    native static void set(String name, String value);
+    static native void set(String name, String value);
 
     @JsOverlay
     static void set(String name, String value, int expires) {
@@ -41,7 +35,17 @@ class Cookies {
         set(name, value, options);
     }
 
-    native static void set(String name, String value, CookieOptions options);
+    static native void set(String name, String value, CookieOptions options);
 
-    native static void remove(String name);
+    static native void remove(String name);
+
+    private Cookies() {
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class CookieOptions {
+
+        int expires;
+    }
 }

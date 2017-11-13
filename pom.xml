@@ -27,11 +27,11 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
-    <url>http://hal.github.io/</url>
     <packaging>pom</packaging>
+    <url>http://hal.github.io/</url>
 
     <organization>
         <name>JBoss, a division of Red Hat</name>
@@ -65,6 +65,11 @@
             <distribution>repo</distribution>
         </license>
         <license>
+            <name>GNU Lesser General Public License v3.0 only</name>
+            <url>http://repository.jboss.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
             <name>MIT License</name>
             <url>http://repository.jboss.org/licenses/mit.txt</url>
             <distribution>repo</distribution>
@@ -83,22 +88,24 @@
     </issueManagement>
 
     <properties>
+        <checkstyle.hal.version>2</checkstyle.hal.version>
+
         <grunt-task>dev</grunt-task>
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>
-        <gwt.logLevel>INFO</gwt.logLevel>
-        <gwt.namespace>NONE</gwt.namespace>
+        <gwt.logLevel>FINE</gwt.logLevel>
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>PRETTY</gwt.style>
         <hal.version>${project.version}</hal.version>
 
+        <linkXRef>false</linkXRef>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
         <plugin.docker.version>0.22.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
-        <plugin.gwt.version>1.0-SNAPSHOT</plugin.gwt.version>
+        <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
         <plugin.processor.version>3.2.0</plugin.processor.version>
         <plugin.swarm.version>60</plugin.swarm.version>
 
@@ -114,10 +121,11 @@
         <module>bom</module>
         <module>core</module>
         <module>config</module>
+        <module>db</module>
         <module>dmr</module>
         <module>flow</module>
         <module>fraction</module>
-        <module>json</module>
+        <module>js</module>
         <module>meta</module>
         <module>parent-with-dependencies</module>
         <module>parent-with-gwt</module>
@@ -126,6 +134,7 @@
         <module>spi</module>
         <module>standalone</module>
         <module>themes</module>
+        <module>testsuite</module>
         <module>yarn</module>
     </modules>
 
@@ -167,6 +176,31 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jboss.hal</groupId>
+                        <artifactId>checkstyle-config</artifactId>
+                        <version>${checkstyle.hal.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <configLocation>checkstyle/checkstyle.xml</configLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -214,11 +248,11 @@
             <id>prod</id>
             <properties>
                 <gwt.draftCompile>false</gwt.draftCompile>
-                <gwt.namespace>PACKAGE</gwt.namespace>
                 <!--
                     Do not optimize: It will wipe out code which actually must not be erased.
                     TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
                 -->
+                <gwt.logLevel>INFO</gwt.logLevel>
                 <gwt.optimize>0</gwt.optimize>
                 <gwt.style>OBFUSCATED</gwt.style>
                 <grunt-task>prod</grunt-task>
@@ -228,7 +262,7 @@
             <id>release</id>
             <build>
                 <plugins>
-                    <!-- Enable if there's a stable RxGWT version which is compatible with Elemento -->
+                    <!-- Enable when there's a stable RxGWT version which is compatible with Elemento -->
 <!--
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

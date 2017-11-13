@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jboss.hal.core.deployment.DeploymentResource;
 import org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus;
+import org.jboss.hal.core.deployment.DeploymentResource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
 

@@ -46,4 +46,7 @@ public class Main {
         server.start();
         Logger.getLogger("HAL").info("Serving console from http://localhost:9090");
     }
+
+    private Main() {
+    }
 }

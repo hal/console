@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-gwt</artifactId>
-        <version>0.9.1</version>
+        <version>0.9.2</version>
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
@@ -60,30 +60,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>testsuite</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>testsuite</classifier>
-                            <includes>
-                                <include>**/CSS.*</include>
-                                <include>**/Icons.*</include>
-                                <include>**/Ids.*</include>
-                                <include>**/Names.*</include>
-                                <include>**/UIConstants.*</include>
-                                <include>**/Urls.*</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>

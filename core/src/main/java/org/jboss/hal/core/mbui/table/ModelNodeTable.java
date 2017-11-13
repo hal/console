@@ -59,165 +59,6 @@ import static org.jboss.hal.resources.UIConstants.data;
 
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
-    /** Builder to create tables based on resource metadata. By default the table has no columns and no actions. */
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    @JsType(namespace = "hal.ui", name = "TableBuilder")
-    public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
-
-        private final String id;
-        private final Metadata metadata;
-        private final ColumnFactory columnFactory;
-
-        @JsIgnore
-        public Builder(@NonNls final String id, final Metadata metadata) {
-            this.id = id;
-            this.metadata = metadata;
-            this.columnFactory = new ColumnFactory();
-        }
-
-        @JsIgnore
-        public Builder<T> columns(@NonNls String first, @NonNls String... rest) {
-            List<String> columns = Lists.asList(first, rest);
-            for (String column : columns) {
-                column(column);
-            }
-            return that();
-        }
-
-        @JsIgnore
-        public Builder<T> columns(Iterable<String> attributes) {
-            if (attributes != null) {
-                attributes.forEach(this::column);
-            }
-            return that();
-        }
-
-        /** Adds a column which maps to the specified attribute. */
-        @EsReturn("TableBuilder")
-        public Builder<T> column(@NonNls String attribute) {
-            Property attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute);
-            if (attributeDescription != null) {
-                Column<T> column = columnFactory.createColumn(attributeDescription);
-                return column(column);
-            } else {
-                logger.error("No attribute description for column '{}' found in resource description\n{}",
-                        attribute, metadata.getDescription());
-                return that();
-            }
-        }
-
-        @Override
-        protected Builder<T> that() {
-            return this;
-        }
-
-        @Override
-        protected void validate() {
-            super.validate();
-            if (!metadata.getDescription().hasDefined(ATTRIBUTES)) {
-                throw new IllegalStateException(
-                        "No attributes found in resource description\n" + metadata.getDescription());
-            }
-        }
-
-        /**
-         * Creates and returns the table.
-         */
-        @EsReturn("Table")
-        public ModelNodeTable<T> build() {
-            return new ModelNodeTable<>(this);
-        }
-
-
-        // ------------------------------------------------------ JS methods
-
-
-        @JsFunction
-        public interface JsNameFunction<T> {
-
-            String getName(Table<T> table);
-        }
-
-        /**
-         * Adds a button to add a new resource.
-         *
-         * @param type       The human readable resource type used in the dialog header and success message.
-         * @param template   The address template for the add operation. Must end in <code>&lt;resource
-         *                   type&gt;=&lt;resource
-         *                   name&gt;</code>.
-         * @param attributes attributes which should be part of the add resource dialog
-         * @param callback   the callback executed after the resource has been added
-         */
-        @JsMethod(name = "add")
-        @EsReturn("TableBuilder")
-        public Builder<T> jsAdd(final String type,
-                @EsParam("AddressTemplate|string") Object template,
-                @EsParam("string[]") String[] attributes,
-                @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {
-            TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
-            String id = Ids.build(Ids.uniqueId(), Ids.ADD_SUFFIX);
-            return button(buttonFactory.add(id, type, jsTemplate("add", template), asList(attributes),
-                    callback));
-        }
-
-        /**
-         * Adds a button to remove the selected resource.
-         *
-         * @param type     The human readable resource type used in the success message.
-         * @param template The address template for the add operation. Must end in <code>&lt;resource
-         *                 type&gt;=&lt;resource
-         * @param name     A function to get the name of the selected resource.
-         * @param callback The callback executed after the resource has been removed.
-         */
-        @JsMethod(name = "remove")
-        @EsReturn("TableBuilder")
-        public Builder<T> jsRemove(String type,
-                @EsParam("AddressTemplate|string") Object template,
-                @EsParam("function(table: Table): string") JsNameFunction<T> name,
-                @EsParam("function()") JsCallback callback) {
-            TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
-            return button(buttonFactory.remove(type, jsTemplate("remove", template), name::getName, callback::execute));
-        }
-
-        /**
-         * Add a button which executes the specified callback.
-         *
-         * @param text    The text on the button
-         * @param scope   The scope: "selected" or "selectedSingle"
-         * @param handler The callback to execute when the button is clicked
-         */
-        @JsMethod(name = "button")
-        @EsReturn("TableBuilder")
-        public Builder<T> jsButton(String text, String scope,
-                @EsParam("function(table: Table)") ButtonHandler<T> handler) {
-            return button(text, handler, Scope.fromSelector(scope));
-        }
-
-        /**
-         * Adds columns for the specified attributes.
-         * @param columns The attributes
-         */
-        @JsMethod(name = "columns")
-        @EsReturn("TableBuilder")
-        public Builder<T> jsColumns(@EsParam("string[]") String[] columns) {
-            return columns(asList(columns));
-        }
-
-        private AddressTemplate jsTemplate(String method, Object template) {
-            AddressTemplate t;
-            if (template instanceof String) {
-                t = AddressTemplate.of(((String) template));
-            } else if (template instanceof AddressTemplate) {
-                t = (AddressTemplate) template;
-            } else {
-                throw new IllegalArgumentException(
-                        "Invalid 2nd argument: Use TableBuilder." + method + "(string, (string|AddressTemplate), string[], function(string, ResourceAddress))");
-            }
-            return t;
-        }
-    }
-
-
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
     private final Metadata metadata;
@@ -317,5 +158,165 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     @JsMethod(name = "update")
     public void jsUpdate(T[] rows) {
         update(asList(rows));
+    }
+
+
+    /** Builder to create tables based on resource metadata. By default the table has no columns and no actions. */
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    @JsType(namespace = "hal.ui", name = "TableBuilder")
+    public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
+
+        private final String id;
+        private final Metadata metadata;
+        private final ColumnFactory columnFactory;
+
+        @JsIgnore
+        public Builder(@NonNls final String id, final Metadata metadata) {
+            this.id = id;
+            this.metadata = metadata;
+            this.columnFactory = new ColumnFactory();
+        }
+
+        @JsIgnore
+        public Builder<T> columns(@NonNls String first, @NonNls String... rest) {
+            List<String> columns = Lists.asList(first, rest);
+            for (String column : columns) {
+                column(column);
+            }
+            return that();
+        }
+
+        @JsIgnore
+        public Builder<T> columns(Iterable<String> attributes) {
+            if (attributes != null) {
+                attributes.forEach(this::column);
+            }
+            return that();
+        }
+
+        /** Adds a column which maps to the specified attribute. */
+        @EsReturn("TableBuilder")
+        public Builder<T> column(@NonNls String attribute) {
+            Property attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute);
+            if (attributeDescription != null) {
+                Column<T> column = columnFactory.createColumn(attributeDescription);
+                return column(column);
+            } else {
+                logger.error("No attribute description for column '{}' found in resource description\n{}",
+                        attribute, metadata.getDescription());
+                return that();
+            }
+        }
+
+        @Override
+        protected Builder<T> that() {
+            return this;
+        }
+
+        @Override
+        protected void validate() {
+            super.validate();
+            if (!metadata.getDescription().hasDefined(ATTRIBUTES)) {
+                throw new IllegalStateException(
+                        "No attributes found in resource description\n" + metadata.getDescription());
+            }
+        }
+
+        /**
+         * Creates and returns the table.
+         */
+        @EsReturn("Table")
+        public ModelNodeTable<T> build() {
+            return new ModelNodeTable<>(this);
+        }
+
+
+        // ------------------------------------------------------ JS methods
+
+
+        /**
+         * Adds a button to add a new resource.
+         *
+         * @param type       The human readable resource type used in the dialog header and success message.
+         * @param template   The address template for the add operation. Must end in <code>&lt;resource
+         *                   type&gt;=&lt;resource
+         *                   name&gt;</code>.
+         * @param attributes attributes which should be part of the add resource dialog
+         * @param callback   the callback executed after the resource has been added
+         */
+        @JsMethod(name = "add")
+        @EsReturn("TableBuilder")
+        public Builder<T> jsAdd(final String type,
+                @EsParam("AddressTemplate|string") Object template,
+                @EsParam("string[]") String[] attributes,
+                @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {
+            TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
+            String id = Ids.build(Ids.uniqueId(), Ids.ADD);
+            return button(buttonFactory.add(id, type, jsTemplate("add", template), asList(attributes),
+                    callback));
+        }
+
+        /**
+         * Adds a button to remove the selected resource.
+         *
+         * @param type     The human readable resource type used in the success message.
+         * @param template The address template for the add operation. Must end in <code>&lt;resource
+         *                 type&gt;=&lt;resource
+         * @param name     A function to get the name of the selected resource.
+         * @param callback The callback executed after the resource has been removed.
+         */
+        @JsMethod(name = "remove")
+        @EsReturn("TableBuilder")
+        public Builder<T> jsRemove(String type,
+                @EsParam("AddressTemplate|string") Object template,
+                @EsParam("function(table: Table): string") JsNameFunction<T> name,
+                @EsParam("function()") JsCallback callback) {
+            TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
+            return button(buttonFactory.remove(type, jsTemplate("remove", template), name::getName, callback::execute));
+        }
+
+        /**
+         * Add a button which executes the specified callback.
+         *
+         * @param text    The text on the button
+         * @param scope   The scope: "selected" or "selectedSingle"
+         * @param handler The callback to execute when the button is clicked
+         */
+        @JsMethod(name = "button")
+        @EsReturn("TableBuilder")
+        public Builder<T> jsButton(String text, String scope,
+                @EsParam("function(table: Table)") ButtonHandler<T> handler) {
+            return button(text, handler, Scope.fromSelector(scope));
+        }
+
+        /**
+         * Adds columns for the specified attributes.
+         *
+         * @param columns The attributes
+         */
+        @JsMethod(name = "columns")
+        @EsReturn("TableBuilder")
+        public Builder<T> jsColumns(@EsParam("string[]") String[] columns) {
+            return columns(asList(columns));
+        }
+
+        private AddressTemplate jsTemplate(String method, Object template) {
+            AddressTemplate t;
+            if (template instanceof String) {
+                t = AddressTemplate.of(((String) template));
+            } else if (template instanceof AddressTemplate) {
+                t = (AddressTemplate) template;
+            } else {
+                throw new IllegalArgumentException(
+                        "Invalid 2nd argument: Use TableBuilder." + method + "(string, (string|AddressTemplate), string[], function(string, ResourceAddress))");
+            }
+            return t;
+        }
+
+        @JsFunction
+        public interface JsNameFunction<T> {
+
+            String getName(Table<T> table);
+        }
     }
 }

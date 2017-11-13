@@ -20,12 +20,15 @@ import jsinterop.annotations.JsMethod;
 class Ace {
 
     @JsMethod(namespace = "ace")
-    native static Editor edit(String id);
+    static native Editor edit(String id);
 
     @JsMethod(namespace = "ace")
-    native static ModeList require(String module);
+    static native ModeList require(String module);
 
-    native static void init() /*-{
+    static native void init() /*-{
         $wnd.ace.config.set('basePath', 'js');
     }-*/;
+
+    private Ace() {
+    }
 }

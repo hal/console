@@ -27,7 +27,8 @@ import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "WeakerAccess"})
-public abstract class BufferCacheView extends MbuiViewImpl<BufferCachePresenter> implements BufferCachePresenter.MyView {
+public abstract class BufferCacheView extends MbuiViewImpl<BufferCachePresenter>
+        implements BufferCachePresenter.MyView {
 
     // ------------------------------------------------------ initialization
 

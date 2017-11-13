@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.meta.search;
 
-import org.jboss.hal.spi.Keywords;
-
 import java.util.Set;
+
+import org.jboss.hal.spi.Keywords;
 
 public interface SearchIndex {
 
