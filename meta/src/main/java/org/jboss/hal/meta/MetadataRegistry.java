@@ -30,14 +30,14 @@ import org.jboss.hal.spi.EsParam;
 @JsType
 public class MetadataRegistry implements Registry<Metadata> {
 
-    private SecurityContextRegistry securityContextRegistry;
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private final Capabilities capabilities;
 
     @Inject
     @JsIgnore
-    public MetadataRegistry(SecurityContextRegistry securityContextRegistry,
-            ResourceDescriptionRegistry resourceDescriptionRegistry,
+    public MetadataRegistry(ResourceDescriptionRegistry resourceDescriptionRegistry,
+            SecurityContextRegistry securityContextRegistry,
             Capabilities capabilities) {
         this.securityContextRegistry = securityContextRegistry;
         this.resourceDescriptionRegistry = resourceDescriptionRegistry;

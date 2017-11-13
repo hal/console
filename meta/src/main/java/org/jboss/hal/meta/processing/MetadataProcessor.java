@@ -150,7 +150,6 @@ public class MetadataProcessor {
             };
 
             LookupContext context = new LookupContext(progress, templates, recursive);
-            context.journal.log(templates, recursive);
             Stopwatch stopwatch = Stopwatch.createStarted();
             series(context, tasks)
                     .subscribe(new Outcome<LookupContext>() {

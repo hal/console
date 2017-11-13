@@ -33,7 +33,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
 /** A registry for resource descriptions. */
 public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescription> {
 
-    private static final int CACHE_SIZE = 500;
+    private static final int CACHE_SIZE = 250;
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionRegistry.class);
 

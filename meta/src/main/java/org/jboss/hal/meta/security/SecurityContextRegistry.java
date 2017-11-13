@@ -31,7 +31,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
 
 public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
-    private static final int CACHE_SIZE = 1000;
+    private static final int CACHE_SIZE = 500;
     private static final String SECURITY_CONTEXT_TYPE = "security context";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(SecurityContextRegistry.class);
 
