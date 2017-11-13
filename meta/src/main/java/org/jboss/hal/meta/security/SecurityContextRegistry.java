@@ -15,38 +15,46 @@
  */
 package org.jboss.hal.meta.security;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
 
 public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
+    private static final int CACHE_SIZE = 500;
     private static final String SECURITY_CONTEXT_TYPE = "security context";
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(SecurityContextRegistry.class);
 
-    // TODO Evaluate using a Guava cache to save memory
-    private final Map<ResourceAddress, SecurityContext> registry;
+    private final Cache<ResourceAddress, SecurityContext> cache;
 
     @Inject
     public SecurityContextRegistry(StatementContext statementContext, Environment environment) {
         super(new SecurityContextStatementContext(statementContext, environment), SECURITY_CONTEXT_TYPE);
-        this.registry = new HashMap<>();
+        this.cache = CacheBuilder.newBuilder()
+                .maximumSize(CACHE_SIZE)
+                .removalListener(notification -> {
+                    logger.debug("Remove {} from {} cache", notification.getKey(), type);
+                })
+                .build();
     }
 
     public void add(ResourceAddress address, SecurityContext securityContext, boolean recursive) {
         securityContext.get(HAL_RECURSIVE).set(recursive);
-        registry.put(address, securityContext);
+        cache.put(address, securityContext);
     }
 
     @Override
     protected SecurityContext lookupAddress(ResourceAddress address) {
-        return registry.get(address);
+        return cache.getIfPresent(address);
     }
 }

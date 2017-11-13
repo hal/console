@@ -44,16 +44,15 @@ class UpdateRegistryTask implements Task<LookupContext> {
     @Override
     public Completable call(LookupContext context) {
         if (context.updateRegistry()) {
-            LookupJournal journal = context.journal;
             for (Map.Entry<ResourceAddress, ResourceDescription> entry : context.toResourceDescriptionRegistry.entrySet()) {
                 ResourceAddress address = entry.getKey();
                 ResourceDescription resourceDescription = entry.getValue();
-                resourceDescriptionRegistry.add(address, resourceDescription, journal.isRecursive(address));
+                resourceDescriptionRegistry.add(address, resourceDescription, context.recursive);
             }
             for (Map.Entry<ResourceAddress, SecurityContext> entry : context.toSecurityContextRegistry.entrySet()) {
                 ResourceAddress address = entry.getKey();
                 SecurityContext securityContext = entry.getValue();
-                securityContextRegistry.add(address, securityContext, journal.isRecursive(address));
+                securityContextRegistry.add(address, securityContext, context.recursive);
             }
             logger.debug("Added {} resource descriptions and {} security contexts to the registries",
                     context.toResourceDescriptionRegistry.size(), context.toSecurityContextRegistry.size());

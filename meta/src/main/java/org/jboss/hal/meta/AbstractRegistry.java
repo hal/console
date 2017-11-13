@@ -21,7 +21,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 public abstract class AbstractRegistry<T> implements Registry<T> {
 
     private final StatementContext statementContext;
-    private final String type;
+    protected final String type;
 
     protected AbstractRegistry(StatementContext statementContext, String type) {
         this.statementContext = statementContext;

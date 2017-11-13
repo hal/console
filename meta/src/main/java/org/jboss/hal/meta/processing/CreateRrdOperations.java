@@ -44,7 +44,6 @@ class CreateRrdOperations {
     }
 
     public List<Operation> create(LookupContext context, boolean recursive, boolean optional) {
-        LookupJournal journal = context.journal;
         LookupResult lookupResult = context.lookupResult;
         List<Operation> operations = new ArrayList<>();
         lookupResult.templates().stream()
@@ -79,7 +78,6 @@ class CreateRrdOperations {
                                 builder.param(RECURSIVE_DEPTH, depth);
                             }
                             operations.add(builder.build());
-                            journal.log(address, template);
                         }
                     }
                 });

@@ -15,6 +15,7 @@
   ~ limitations under the License.
   -->
 <module>
+    <inherits name="com.google.common.cache.Cache"/>
     <inherits name="com.google.common.collect.Collect"/>
     <inherits name="com.gwtplatform.mvp.MvpWithEntryPoint"/>
     <inherits name="elemental2.core.Core"/>
@@ -33,7 +34,7 @@
                                    value="org.jboss.hal.client.gin.CompositeModule"/>
 
     <define-configuration-property name="hal.version" is-multi-valued="false"/>
-    <set-configuration-property name="hal.version" value="0.9.2"/>
+    <set-configuration-property name="hal.version" value="0.9.3"/>
 
     <set-configuration-property name="CssResource.enableGss" value="true"/>
 
