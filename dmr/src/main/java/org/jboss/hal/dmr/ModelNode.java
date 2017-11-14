@@ -1457,6 +1457,7 @@ public class ModelNode implements Cloneable {
      *
      * @param out the target to which the content should be written
      */
+    @JsIgnore
     public void writeExternal(DataOutput out) {
         ModelValue value = this.value;
         ModelType type = value.getType();
