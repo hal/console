@@ -356,7 +356,7 @@ public class VerticalNavigation implements Attachable {
                 primaryItem.asElement().appendChild(div);
             }
 
-            HTMLElement li = li().css(listGroupItem)
+            HTMLElement li = li().id(id).css(listGroupItem)
                     .add(a().css(clickable).on(click, event -> show(id))
                             .add(span().css(listGroupItemValue).textContent(text)))
                     .asElement();
