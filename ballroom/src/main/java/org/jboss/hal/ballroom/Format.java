@@ -29,10 +29,15 @@ public final class Format {
     private static final DateTimeFormat DATE_TIME_SHORT = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
     private static final DateTimeFormat DATE_TIME_MEDIUM = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM);
     private static final DateTimeFormat TIME_MEDIUM = DateTimeFormat.getFormat(PredefinedFormat.TIME_MEDIUM);
+    private static final DateTimeFormat TIMESTAMP = DateTimeFormat.getFormat("HH:mm:ss.SSS");
     private static final NumberFormat SIZE_FORMAT = NumberFormat.getFormat("#,##0.#");
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String SPACE = " ";
 
+
+    public static String timestamp(Date date) {
+        return TIMESTAMP.format(date);
+    }
 
     public static String time(Date date) {
         return TIME_MEDIUM.format(date);
@@ -50,7 +55,7 @@ public final class Format {
         if (size <= 0) {
             return "0";
         }
-        final String[] units = new String[]{"Bytes", "KB", "MB", "GB", "TB"}; //NON-NLS
+        String[] units = new String[]{"Bytes", "KB", "MB", "GB", "TB"}; //NON-NLS
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + SPACE + units[digitGroups];
     }

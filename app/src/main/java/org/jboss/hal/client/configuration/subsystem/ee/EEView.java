@@ -74,9 +74,9 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     private EEPresenter presenter;
 
     @Inject
-    public EEView(final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    public EEView(MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory,
+            Resources resources) {
         this.metadataRegistry = metadataRegistry;
         this.tableButtonFactory = tableButtonFactory;
         this.resources = resources;
@@ -105,7 +105,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(p().textContent(eeMetadata.getDescription().getDescription()))
                 .add(eeAttributesForm)
                 .asElement();
-        navigation.addPrimary(EE_ATTRIBUTES_ITEM, Names.DEPLOYMENTS, fontAwesome("archive"), navigationElement);
+        navigation.addPrimary(EE_ATTRIBUTES_ITEM, Names.CONFIGURATION, pfIcon("settings"), navigationElement);
 
         // ============================================
         // global modules
@@ -184,13 +184,13 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final EEPresenter presenter) {
+    public void setPresenter(EEPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void update(final ModelNode eeData) {
+    public void update(ModelNode eeData) {
         // update the attributes - deployments tab
         Form<ModelNode> formDeployments = forms.get(EE_ATTRIBUTES_FORM);
         formDeployments.view(eeData);
@@ -223,7 +223,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     }
 
     @SuppressWarnings("unchecked")
-    private void update(final ModelNode eeData, String resourceType, String navigationId) {
+    private void update(ModelNode eeData, String resourceType, String navigationId) {
         if (eeData.hasDefined(resourceType)) {
             List<NamedNode> models = asNamedNodes(eeData.get(resourceType).asPropertyList());
             Form form = forms.get(resourceType);

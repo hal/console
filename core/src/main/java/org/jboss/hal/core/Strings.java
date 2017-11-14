@@ -27,6 +27,35 @@ public final class Strings {
     private static final String SCHEME_HOST_SEPARATOR = "://";
     private static final String FQ_CLASS_NAME = "\\B\\w+(\\.[a-z])";
 
+    public static String abbreviate(String str, int offset, int maxWidth) {
+        if (str == null) {
+            return null;
+        }
+        if (maxWidth < 4) {
+            throw new IllegalArgumentException("Minimum abbreviation width is 4");
+        }
+        if (str.length() <= maxWidth) {
+            return str;
+        }
+        if (offset > str.length()) {
+            offset = str.length();
+        }
+        if (str.length() - offset < maxWidth - 3) {
+            offset = str.length() - (maxWidth - 3);
+        }
+        String abrevMarker = "...";
+        if (offset <= 4) {
+            return str.substring(0, maxWidth - 3) + abrevMarker;
+        }
+        if (maxWidth < 7) {
+            throw new IllegalArgumentException("Minimum abbreviation width with offset is 7");
+        }
+        if (offset + maxWidth - 3 < str.length()) {
+            return abrevMarker + abbreviate(str.substring(offset), 0, maxWidth - 3);
+        }
+        return abrevMarker + str.substring(str.length() - (maxWidth - 3));
+    }
+
     public static String abbreviateMiddle(String string, int maxLength) {
         if (string == null || maxLength >= string.length()) {
             return string;
@@ -50,14 +79,14 @@ public final class Strings {
 
     }
 
-    public static String substringAfterLast(final String str, final String separator) {
+    public static String substringAfterLast(String str, String separator) {
         if (isNullOrEmpty(str)) {
             return str;
         }
         if (isNullOrEmpty(separator)) {
             return EMPTY;
         }
-        final int pos = str.lastIndexOf(separator);
+        int pos = str.lastIndexOf(separator);
         if (pos == INDEX_NOT_FOUND || pos == str.length() - separator.length()) {
             return EMPTY;
         }
@@ -120,7 +149,7 @@ public final class Strings {
      *
      * @return the stripped String, {@code null} if null String input
      */
-    public static String stripStart(final String str, final String stripChars) {
+    public static String stripStart(String str, String stripChars) {
         int strLen;
         if (str == null || (strLen = str.length()) == 0) {
             return str;
@@ -166,7 +195,7 @@ public final class Strings {
      *
      * @return the stripped String, {@code null} if null String input
      */
-    public static String stripEnd(final String str, final String stripChars) {
+    public static String stripEnd(String str, String stripChars) {
         int end;
         if (str == null || (end = str.length()) == 0) {
             return str;

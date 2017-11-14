@@ -26,6 +26,7 @@ import org.jboss.hal.client.bootstrap.tasks.ReadAuthentication;
 import org.jboss.hal.client.bootstrap.tasks.ReadEnvironment;
 import org.jboss.hal.client.bootstrap.tasks.ReadExtensions;
 import org.jboss.hal.client.bootstrap.tasks.RegisterStaticCapabilities;
+import org.jboss.hal.client.bootstrap.tasks.SetupLoggingTask;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
@@ -33,15 +34,15 @@ public class BootstrapModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
+        bind(BootstrapTasks.class).in(Singleton.class);
         bind(EndpointManager.class).in(Singleton.class);
         bind(EndpointStorage.class).in(Singleton.class);
-
+        bind(FindDomainController.class).in(Singleton.class);
         bind(LoadSettings.class).in(Singleton.class);
+        bind(ReadAuthentication.class).in(Singleton.class);
         bind(ReadEnvironment.class).in(Singleton.class);
         bind(ReadExtensions.class).in(Singleton.class);
-        bind(ReadAuthentication.class).in(Singleton.class);
-        bind(FindDomainController.class).in(Singleton.class);
         bind(RegisterStaticCapabilities.class).in(Singleton.class);
-        bind(BootstrapTasks.class).in(Singleton.class);
+        bind(SetupLoggingTask.class).in(Singleton.class);
     }
 }
