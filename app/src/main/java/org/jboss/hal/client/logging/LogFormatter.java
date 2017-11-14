@@ -16,6 +16,7 @@
 package org.jboss.hal.client.logging;
 
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import com.google.gwt.logging.impl.FormatterImpl;
@@ -23,6 +24,7 @@ import com.google.gwt.logging.impl.StackTracePrintStream;
 import org.jboss.hal.ballroom.Format;
 
 import static com.google.common.base.Strings.padEnd;
+import static elemental2.dom.DomGlobal.console;
 import static org.jboss.hal.core.Strings.abbreviate;
 import static org.jboss.hal.core.Strings.abbreviateFqClassName;
 import static org.jboss.hal.core.Strings.abbreviateMiddle;
@@ -36,13 +38,11 @@ class LogFormatter extends FormatterImpl {
     public String format(LogRecord record) {
         StringBuilder builder = new StringBuilder();
         String timestamp = Format.timestamp(new Date(record.getMillis()));
-        String level = abbreviateMiddle(padEnd(record.getLevel().getName(), LEVEL_LENGTH, ' '), LEVEL_LENGTH);
         String logger = abbreviate(padEnd(abbreviateFqClassName(record.getLoggerName()), LOGGER_LENGTH, ' '),
                 LOGGER_LENGTH - 4, LOGGER_LENGTH);
         builder.append(timestamp)
                 .append(" ")
-                .append(level)
-                .append(" ")
+                .append(level(record.getLevel().intValue()))
                 .append(logger)
                 .append(" ")
                 .append(record.getMessage());
@@ -51,5 +51,17 @@ class LogFormatter extends FormatterImpl {
             record.getThrown().printStackTrace(new StackTracePrintStream(builder));
         }
         return builder.toString();
+    }
+
+    public String level(int level) {
+        if (level >= Level.SEVERE.intValue()) {
+            return "ERROR ";
+        } else if (level >= Level.WARNING.intValue()) {
+            return "WARN  ";
+        } else if (level >= Level.INFO.intValue()) {
+            return "INFO  ";
+        } else {
+            return "DEBUG ";
+        }
     }
 }
