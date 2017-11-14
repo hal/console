@@ -24,14 +24,11 @@ import com.google.gwt.logging.impl.StackTracePrintStream;
 import org.jboss.hal.ballroom.Format;
 
 import static com.google.common.base.Strings.padEnd;
-import static elemental2.dom.DomGlobal.console;
 import static org.jboss.hal.core.Strings.abbreviate;
 import static org.jboss.hal.core.Strings.abbreviateFqClassName;
-import static org.jboss.hal.core.Strings.abbreviateMiddle;
 
 class LogFormatter extends FormatterImpl {
 
-    private static final int LEVEL_LENGTH = 4;
     private static final int LOGGER_LENGTH = 40;
 
     @Override
