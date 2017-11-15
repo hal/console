@@ -476,7 +476,7 @@ public class VerticalNavigation implements Attachable {
         private final HTMLElement element;
         private final LinkedHashSet<String> children;
 
-        private Item(final String id, String parentId, final String text, final HTMLElement element) {
+        private Item(String id, String parentId, String text, HTMLElement element) {
             this.id = id;
             this.parentId = parentId;
             this.text = text;
@@ -508,12 +508,13 @@ public class VerticalNavigation implements Attachable {
         private final String id;
         private final HTMLElement element;
 
-        private Pane(final String id, final HTMLElement element) {
+        private Pane(String id, HTMLElement element) {
             this.id = id;
             this.element = element;
+            this.element.dataset.set("itemFor", id);
         }
 
-        private Pane(final String id, final IsElement isElement) {
+        private Pane(String id, IsElement isElement) {
             this.id = id;
             this.element = isElement.asElement();
         }
