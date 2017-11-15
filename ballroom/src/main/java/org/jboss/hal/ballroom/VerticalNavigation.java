@@ -511,7 +511,7 @@ public class VerticalNavigation implements Attachable {
         private Pane(String id, HTMLElement element) {
             this.id = id;
             this.element = element;
-            this.element.dataset.set("itemFor", id);
+            this.element.dataset.set("vnItemFor", id);
         }
 
         private Pane(String id, IsElement isElement) {
