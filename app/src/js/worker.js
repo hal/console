@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 self.importScripts("pouchdb.min.js");
+
 self.addEventListener("message", function (e) {
     var db = new PouchDB(e.data.database);
     db.get(e.data.document._id)
@@ -22,20 +23,38 @@ self.addEventListener("message", function (e) {
             e.data.document._rev = doc._rev;
             db.put(e.data.document)
                 .then(function (response) {
-                    console.log("Update " + e.data.database + response.id);
+                    info("Update " + e.data.database + response.id);
                 })
                 .catch(function (error) {
-                    console.log("Unable to put " + e.data.database + e.data.document._id + ": " + failure);
+                    error("Unable to put " + e.data.database + e.data.document._id + ": " + error);
                 });
         })
         .catch(function (err) {
             // put new document
             db.put(e.data.document)
                 .then(function (response) {
-                    console.log("Insert " + e.data.database + response.id);
+                    info("Insert " + e.data.database + response.id);
                 })
                 .catch(function (error) {
-                    console.log("Unable to put " + e.data.database + e.data.document._id + ": " + failure);
+                    error("Unable to put " + e.data.database + e.data.document._id + ": " + error);
                 });
         });
 }, false);
+
+self.info = function (message) {
+    // use the same log format as HAL
+    console.info(timestamp() + " INFO  worker.js                                " + message);
+};
+
+self.error = function (message) {
+    // use the same log format as HAL
+    console.error(timestamp() + " ERROR worker.js                                " + message);
+};
+
+self.timestamp = function () {
+    var d = new Date();
+    return d.getHours().toString().padStart(2, "0") + ":" +
+        d.getMinutes().toString().padStart(2, "0") + ":" +
+        d.getSeconds().toString().padStart(2, "0") + "." +
+        d.getMilliseconds().toString().padStart(3, "0");
+}
