@@ -403,6 +403,18 @@ public class VerticalNavigation implements Attachable {
                 callbacks.get(id).execute();
             }
 
+            // highlight active item(s)
+            for (Item item : items.values()) {
+                item.asElement().classList.remove(active);
+            }
+            show.asElement().classList.add(active);
+            if (show.parentId != null) {
+                Item showParent = items.get(show.parentId);
+                if (showParent != null) {
+                    showParent.asElement().classList.add(active);
+                }
+            }
+
         } else {
             logger.error("Unable to show item for id '{}': No such item!", id);
         }
