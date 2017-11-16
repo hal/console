@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
@@ -45,15 +46,15 @@ public class DataSourceTemplate {
 
     private final String id;
     private final Vendor vendor;
-    private final DataSource dataSource;
-    private final JdbcDriver driver;
+    private final Supplier<DataSource> dataSource;
+    private final Supplier<JdbcDriver> driver;
     private final Map<String, String> xaProperties;
 
-    DataSourceTemplate(String id, Vendor vendor, DataSource dataSource, JdbcDriver driver) {
+    DataSourceTemplate(String id, Vendor vendor, Supplier<DataSource> dataSource, Supplier<JdbcDriver> driver) {
         this(id, vendor, dataSource, driver, emptyMap());
     }
 
-    DataSourceTemplate(String id, Vendor vendor, DataSource dataSource, JdbcDriver driver,
+    DataSourceTemplate(String id, Vendor vendor, Supplier<DataSource> dataSource, Supplier<JdbcDriver> driver,
             Map<String, String> xaProperties) {
         this.id = id;
         this.vendor = vendor;
@@ -90,7 +91,7 @@ public class DataSourceTemplate {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(vendor.label).append(" ");
-        if (dataSource.isXa()) {
+        if (!xaProperties.isEmpty()) {
             builder.append("XA ");
         }
         builder.append("Datasource");
@@ -98,11 +99,11 @@ public class DataSourceTemplate {
     }
 
     public DataSource getDataSource() {
-        return dataSource;
+        return dataSource.get();
     }
 
     public JdbcDriver getDriver() {
-        return driver;
+        return driver.get();
     }
 
     public String getId() {
