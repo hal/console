@@ -134,6 +134,7 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_STATISTICS_NOT_AVAILABLE = "ds-runtime-statistics-na";
     String DATA_SOURCE_RUNTIME_STATISTICS_NOT_ENABLED = "ds-runtime-statistics-disabled";
     String DATA_SOURCE_RUNTIME_TAB_CONTAINER = "ds-runtime-tab-container";
+    String DATA_SOURCE_TEST_CONNECTION = "ds-configuration-test-connection";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = "deployment-add-actions";
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
