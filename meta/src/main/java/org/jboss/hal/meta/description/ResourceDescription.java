@@ -156,6 +156,9 @@ public class ResourceDescription extends ModelNode {
                     return true;
                 } else {
                     ModelType type = attribute.get(TYPE).asType();
+                    if (type.equals(ModelType.INT)) {
+                        type = ModelType.LONG;
+                    }
                     Object defaultValue = attribute.get(DEFAULT).as(type);
                     return value.equals(defaultValue);
                 }

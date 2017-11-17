@@ -320,11 +320,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
-    protected void prepareEditState() {
-        super.prepareEditState();
-    }
-
-    @Override
     public boolean isUndefined() {
         return getModel() == null || !getModel().isDefined();
     }
