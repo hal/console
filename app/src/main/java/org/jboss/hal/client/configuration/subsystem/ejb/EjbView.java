@@ -61,33 +61,33 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
     abstract Environment environment();
 
-    @MbuiElement("ejb-vertical-navigation") VerticalNavigation navigation;
+    @MbuiElement("ejb3-vertical-navigation") VerticalNavigation navigation;
 
-    @MbuiElement("ejb-configuration-form") Form<ModelNode> configurationForm;
+    @MbuiElement("ejb3-configuration-form") Form<ModelNode> configurationForm;
 
-    @MbuiElement("ejb-thread-pool-table") Table<NamedNode> threadPoolTable;
-    @MbuiElement("ejb-thread-pool-form") Form<NamedNode> threadPoolForm;
+    @MbuiElement("ejb3-thread-pool-table") Table<NamedNode> threadPoolTable;
+    @MbuiElement("ejb3-thread-pool-form") Form<NamedNode> threadPoolForm;
 
-    @MbuiElement("ejb-remoting-profile-table") Table<NamedNode> remotingProfileTable;
-    @MbuiElement("ejb-remoting-profile-form") Form<NamedNode> remotingProfileForm;
+    @MbuiElement("ejb3-remoting-profile-table") Table<NamedNode> remotingProfileTable;
+    @MbuiElement("ejb3-remoting-profile-form") Form<NamedNode> remotingProfileForm;
 
-    @MbuiElement("ejb-bean-pool-table") Table<NamedNode> beanPoolTable;
-    @MbuiElement("ejb-bean-pool-form") Form<NamedNode> beanPoolForm;
+    @MbuiElement("ejb3-bean-pool-table") Table<NamedNode> beanPoolTable;
+    @MbuiElement("ejb3-bean-pool-form") Form<NamedNode> beanPoolForm;
 
-    @MbuiElement("ejb-cache-table") Table<NamedNode> cacheTable;
-    @MbuiElement("ejb-cache-form") Form<NamedNode> cacheForm;
+    @MbuiElement("ejb3-cache-table") Table<NamedNode> cacheTable;
+    @MbuiElement("ejb3-cache-form") Form<NamedNode> cacheForm;
 
-    @MbuiElement("ejb-passivation-table") Table<NamedNode> passivationTable;
-    @MbuiElement("ejb-passivation-form") Form<NamedNode> passivationForm;
+    @MbuiElement("ejb3-passivation-table") Table<NamedNode> passivationTable;
+    @MbuiElement("ejb3-passivation-form") Form<NamedNode> passivationForm;
 
-    @MbuiElement("ejb-service-async-form") Form<ModelNode> serviceAsyncForm;
-    @MbuiElement("ejb-service-identity-form") Form<ModelNode> serviceIdentityForm;
-    @MbuiElement("ejb-service-iiop-form") Form<ModelNode> serviceIiopForm;
-    @MbuiElement("ejb-service-remote-form") Form<ModelNode> serviceRemoteForm;
-    @MbuiElement("ejb-service-timer-form") Form<ModelNode> serviceTimerForm;
+    @MbuiElement("ejb3-service-async-form") Form<ModelNode> serviceAsyncForm;
+    @MbuiElement("ejb3-service-identity-form") Form<ModelNode> serviceIdentityForm;
+    @MbuiElement("ejb3-service-iiop-form") Form<ModelNode> serviceIiopForm;
+    @MbuiElement("ejb3-service-remote-form") Form<ModelNode> serviceRemoteForm;
+    @MbuiElement("ejb3-service-timer-form") Form<ModelNode> serviceTimerForm;
 
-    @MbuiElement("ejb-mdb-delivery-group-table") Table<NamedNode> mdbDeliveryGroupTable;
-    @MbuiElement("ejb-mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
+    @MbuiElement("ejb3-mdb-delivery-group-table") Table<NamedNode> mdbDeliveryGroupTable;
+    @MbuiElement("ejb3-mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
 
     Table<NamedNode> appSecurityDomainTable;
     Form<NamedNode> appSecurityDomainForm;
