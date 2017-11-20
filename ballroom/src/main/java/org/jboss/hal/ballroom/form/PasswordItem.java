@@ -41,7 +41,7 @@ public class PasswordItem extends AbstractFormItem<String> {
 
     private final HTMLInputElement inputElement;
 
-    public PasswordItem(final String name, final String label) {
+    public PasswordItem(String name, String label) {
         super(name, label, null);
 
         // read-only appearance
@@ -104,7 +104,7 @@ public class PasswordItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public void showValue(final String value) {
+        public void showValue(String value) {
             if (isEmpty()) {
                 Elements.failSafeRemove(valueContainer, peekLink);
             } else {
@@ -114,7 +114,7 @@ public class PasswordItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public String asString(final String value) {
+        public String asString(String value) {
             if (hidden) {
                 return value.replaceAll(".", "\u25CF");
             } else {
@@ -165,7 +165,7 @@ public class PasswordItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public void showValue(final String value) {
+        public void showValue(String value) {
             inputElement.value = value;
         }
 

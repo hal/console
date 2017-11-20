@@ -77,11 +77,10 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                 h2Driver));
         setup.add(new DataSourceTemplate("h2-xa", DataSourceTemplate.Vendor.H2,
                 () -> {
-                    DataSource dataSource = new DataSource("H2DS", false);
+                    DataSource dataSource = new DataSource("H2XADS", true);
                     dataSource.get(POOL_NAME).set("H2DS_Pool");
-                    dataSource.get(JNDI_NAME).set("java:/H2DS");
+                    dataSource.get(JNDI_NAME).set("java:/H2XADS");
                     dataSource.get(DRIVER_NAME).set(H2);
-                    dataSource.get(CONNECTION_URL).set("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
                     dataSource.get(USER_NAME).set(SA);
                     dataSource.get(PASSWORD).set(SA);
                     dataSource.get(BACKGROUND_VALIDATION).set(false);

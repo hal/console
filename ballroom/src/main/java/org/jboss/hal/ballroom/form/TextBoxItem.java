@@ -34,15 +34,15 @@ public class TextBoxItem extends AbstractFormItem<String> {
 
     private HTMLInputElement inputElement;
 
-    public TextBoxItem(final String name) {
+    public TextBoxItem(String name) {
         this(name, new LabelBuilder().label(name), null);
     }
 
-    public TextBoxItem(final String name, final String label) {
+    public TextBoxItem(String name, String label) {
         this(name, label, null);
     }
 
-    public TextBoxItem(final String name, final String label, final String hint) {
+    public TextBoxItem(String name, String label, String hint) {
         super(name, label, hint);
 
         // read-only appearance
@@ -83,7 +83,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    public void onSuggest(final String suggestion) {
+    public void onSuggest(String suggestion) {
         modifyValue(suggestion);
     }
 
@@ -113,12 +113,12 @@ public class TextBoxItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public void showValue(final String value) {
+        public void showValue(String value) {
             inputElement.value = value;
         }
 
         @Override
-        public void showExpression(final String expression) {
+        public void showExpression(String expression) {
             inputElement.value = expression;
         }
 
