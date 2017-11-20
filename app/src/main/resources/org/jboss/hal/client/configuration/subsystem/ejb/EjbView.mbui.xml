@@ -175,7 +175,7 @@
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=iiop">
                     <h1>IIOP</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <form id="ejb-service-iiop-form" title="IIOP" auto-save="true" reset="true"/>
+                    <singleton-form id="ejb-service-iiop-form" title="IIOP" auto-save="true" reset="true"/>
                 </metadata>
             </sub-item>
 

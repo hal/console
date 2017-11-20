@@ -158,6 +158,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         super.attach();
         appSecurityDomainTable.attach();
         appSecurityDomainForm.attach();
+        appSecurityDomainTable.bindForm(appSecurityDomainForm);
     }
 
     @Override
