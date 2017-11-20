@@ -32,6 +32,8 @@ import static org.jboss.hal.resources.CSS.formControl;
 
 public class TextBoxItem extends AbstractFormItem<String> {
 
+    private HTMLInputElement inputElement;
+
     public TextBoxItem(final String name) {
         this(name, new LabelBuilder().label(name), null);
     }
@@ -47,10 +49,16 @@ public class TextBoxItem extends AbstractFormItem<String> {
         addAppearance(Form.State.READONLY, new TextBoxReadOnlyAppearance());
 
         // editing appearance
-        HTMLInputElement inputElement = input(text)
+        inputElement = input(text)
                 .css(formControl)
                 .asElement();
 
+        addAppearance(EDITING, new TextBoxEditingAppearance(inputElement));
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         bind(inputElement, change, event -> {
             if (hasExpressionScheme(inputElement.value)) {
                 modifyExpressionValue(inputElement.value);
@@ -62,8 +70,6 @@ public class TextBoxItem extends AbstractFormItem<String> {
             toggleExpressionSupport(inputElement.value);
             inputElement.focus();
         });
-
-        addAppearance(EDITING, new TextBoxEditingAppearance(inputElement));
     }
 
     @Override

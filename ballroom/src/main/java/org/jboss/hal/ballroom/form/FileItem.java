@@ -47,7 +47,11 @@ public class FileItem extends AbstractFormItem<File> {
         fileInput = input(file).css(formControl).asElement();
         FileEditingAppearance editingAppearance = new FileEditingAppearance(fileInput);
         addAppearance(Form.State.EDITING, editingAppearance);
+    }
 
+    @Override
+    public void attach() {
+        super.attach();
         remember(bind(fileInput, change, event -> {
             setValue(fileInput.files.getAt(0), true);
             setModified(true);

@@ -39,6 +39,8 @@ public class PasswordItem extends AbstractFormItem<String> {
     private static final String FA_EYE_SLASH = "fa-eye-slash";
     private static final String FA_EYE = "fa-eye";
 
+    private final HTMLInputElement inputElement;
+
     public PasswordItem(final String name, final String label) {
         super(name, label, null);
 
@@ -46,8 +48,13 @@ public class PasswordItem extends AbstractFormItem<String> {
         addAppearance(Form.State.READONLY, new PasswordReadOnlyAppearance());
 
         // editing appearance
-        HTMLInputElement inputElement = input(password).css(formControl).asElement();
+        inputElement = input(password).css(formControl).asElement();
         addAppearance(EDITING, new PasswordEditingAppearance(inputElement));
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         remember(bind(inputElement, change, event -> modifyValue(inputElement.value)));
     }
 
