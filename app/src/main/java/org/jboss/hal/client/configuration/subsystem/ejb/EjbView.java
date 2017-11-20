@@ -81,6 +81,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     @MbuiElement("ejb-passivation-form") Form<NamedNode> passivationForm;
 
     @MbuiElement("ejb-service-async-form") Form<ModelNode> serviceAsyncForm;
+    @MbuiElement("ejb-service-identity-form") Form<ModelNode> serviceIdentityForm;
     @MbuiElement("ejb-service-iiop-form") Form<ModelNode> serviceIiopForm;
     @MbuiElement("ejb-service-remote-form") Form<ModelNode> serviceRemoteForm;
     @MbuiElement("ejb-service-timer-form") Form<ModelNode> serviceTimerForm;
@@ -189,6 +190,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         passivationForm.clear();
 
         serviceAsyncForm.view(payload.get(SERVICE).get(SERVICE_ASYNC_TEMPLATE.lastValue()));
+        serviceIdentityForm.view(payload.get(SERVICE).get(SERVICE_IDENTITY_TEMPLATE.lastValue()));
         serviceIiopForm.view(payload.get(SERVICE).get(SERVICE_IIOP_TEMPLATE.lastValue()));
         serviceRemoteForm.view(payload.get(SERVICE).get(SERVICE_REMOTE_TEMPLATE.lastValue()));
         serviceTimerForm.view(payload.get(SERVICE).get(SERVICE_TIMER_TEMPLATE.lastValue()));

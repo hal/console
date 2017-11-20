@@ -163,6 +163,14 @@
                 </metadata>
             </sub-item>
 
+            <sub-item id="ejb-service-identity-item" title="Identity">
+                <metadata address="/{selected.profile}/subsystem=ejb3/service=identity">
+                    <h1>Identity</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <singleton-form id="ejb-service-identity-form" title="Identity" auto-save="true" reset="true"/>
+                </metadata>
+            </sub-item>
+
             <sub-item id="ejb-service-iiop-item" title="IIOP">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=iiop">
                     <h1>IIOP</h1>
