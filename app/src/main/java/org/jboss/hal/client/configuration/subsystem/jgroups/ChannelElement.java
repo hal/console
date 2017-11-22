@@ -81,8 +81,8 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .onSave((form, changedValues) -> presenter
                         .saveResource(CHANNEL_TEMPLATE, table.selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(Names.CHANNEL)))
-                .prepareReset(form -> presenter.resetResource(CHANNEL_TEMPLATE, Names.CHANNEL,
-                        table.selectedRow().getName(), form, metadata))
+                .prepareReset(form -> presenter.resetResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
+                        Names.CHANNEL, form, metadata))
                 .build();
 
         HTMLElement section = section()

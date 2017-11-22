@@ -134,9 +134,10 @@ class TransportElement extends GenericElement {
     void update(List<NamedNode> models) {
         super.update(models);
         boolean resourcesIsEmpty = models.isEmpty();
-        // disable the ADD button if there is already a transport in the list
-        // only one transport is allowed per stack
-        table.enableButton(0, resourcesIsEmpty);
+        // disable the ADD and REMOVE buttons, as the transport is a required singleton resource, but the r-r-d
+        // doesn't says so
+        table.enableButton(0, false);
+        table.enableButton(1, false);
         if (!resourcesIsEmpty) {
             NamedNode transport = models.get(0);
             // the thread-pool are singleton resources
