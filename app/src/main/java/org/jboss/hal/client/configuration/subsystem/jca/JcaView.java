@@ -87,11 +87,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
     @Inject
     @SuppressWarnings("ConstantConditions")
-    public JcaView(final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    public JcaView(Dispatcher dispatcher,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory,
+            Resources resources) {
 
         labelBuilder = new LabelBuilder();
         pages = new HashMap<>();
@@ -141,7 +141,6 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         navigation.addPrimary(Ids.JCA_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
 
-
         // ------------------------------------------------------ tracer
 
         String tracerType = labelBuilder.label(TRACER_TEMPLATE.lastName());
@@ -165,7 +164,6 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         navigation.addPrimary(Ids.JCA_TRACER_ITEM, tracerType, fontAwesome("bug"), tracerLayout);
         registerAttachable(tracerForm);
-
 
         // ------------------------------------------------------ bootstrap context (bc)
 
@@ -221,7 +219,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         Form<ModelNode> wmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_WORKMANAGER_ADD, wmMetadata)
                 .fromRequestProperties()
-                .requiredOnly()
+                .include(NAME, ELYTRON_ENABLED)
+                .unsorted()
                 .build();
         AddResourceDialog wmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(wmType), wmAddForm,
                 (name, model) -> presenter.add(wmType, name, WORKMANAGER_TEMPLATE, model));
@@ -231,6 +230,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.reload()))
                 .column(NAME)
+                .column(ELYTRON_ENABLED)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
 
@@ -257,9 +257,10 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         String dwmType = labelBuilder.label(DISTRIBUTED_WORKMANAGER_TEMPLATE.lastName());
         Metadata dwmMetadata = metadataRegistry.lookup(DISTRIBUTED_WORKMANAGER_TEMPLATE);
 
-        Form<ModelNode> dwmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_ADD, wmMetadata)
+        Form<ModelNode> dwmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_ADD, dwmMetadata)
                 .fromRequestProperties()
-                .requiredOnly()
+                .include(NAME, ELYTRON_ENABLED)
+                .unsorted()
                 .build();
         AddResourceDialog dwmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(dwmType),
                 dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
@@ -269,9 +270,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .button(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
+                .column(ELYTRON_ENABLED)
                 .column(POLICY)
                 .column(SELECTOR)
-                .column(THREAD_POOLS, row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName()))
+                .column(Names.THREAD_POOLS,
+                        row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
 
         dwmForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
@@ -300,7 +303,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Pages dwmPages = new Pages(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGES, Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE,
                 dwmLayout);
         dwmPages.addPage(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
-                () -> labelBuilder.label(dwmType) + ": " + selectedWorkmanager, () -> Names.THREAD_POOLS,
+                () -> labelBuilder.label(dwmType) + ": " + selectedWorkmanager, () -> THREAD_POOLS,
                 dwmTpEditor.asElement());
         pages.put(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmPages);
 
@@ -315,7 +318,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final JcaPresenter presenter) {
+    public void setPresenter(JcaPresenter presenter) {
         this.presenter = presenter;
         wmTpEditor.setPresenter(presenter);
         dwmTpEditor.setPresenter(presenter);
@@ -330,7 +333,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void update(final ModelNode payload) {
+    public void update(ModelNode payload) {
         ccmForm.view(failSafeGet(payload, "cached-connection-manager/cached-connection-manager"));
         avForm.view(failSafeGet(payload, "archive-validation/archive-validation"));
         bvForm.view(failSafeGet(payload, "bean-validation/bean-validation"));
@@ -339,7 +342,6 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         bcForm.clear();
         dwmForm.clear();
-        dwmForm.clear();
 
         bcTable.update(asNamedNodes(failSafePropertyList(payload, BOOTSTRAP_CONTEXT_TEMPLATE.lastName())));
         wmTable.update(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastName())));
@@ -347,8 +349,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     }
 
     @Override
-    public void updateThreadPools(final AddressTemplate workmanagerTemplate, final String workmanager,
-            final List<Property> lrt, final List<Property> srt) {
+    public void updateThreadPools(AddressTemplate workmanagerTemplate, String workmanager,
+            List<Property> lrt, List<Property> srt) {
         selectedWorkmanager = workmanager;
         Pages pages = this.pages.get(workmanagerTemplate);
         if (pages != null) {
