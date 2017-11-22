@@ -529,6 +529,7 @@ public class VerticalNavigation implements Attachable {
         private Pane(String id, IsElement isElement) {
             this.id = id;
             this.element = isElement.asElement();
+            this.element.dataset.set("vnItemFor", id);
         }
 
         @Override
