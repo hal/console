@@ -71,7 +71,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                         table -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column("Forks", row -> {
+                .column(Names.FORK, row -> {
                     selectedChannel = row.getName();
                     presenter.showForks(row);
                     presenter.showChannelInnerPage(FORK_ID);
