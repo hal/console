@@ -343,6 +343,7 @@ public interface ModelDescriptionConstants {
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
+    String INTERNAL = "internal";
     String INVALIDATE_SESSION_OPERATION = "invalidate-session";
     String INVOCATIONS = "invocations";
     String IO = "io";
@@ -481,6 +482,7 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_SYSTEM_ROLLBACKS = "number-of-system-rollbacks";
     String NUMBER_OF_TIMEDOUT_TRANSACTIONS = "number-of-timed-out-transactions";
     String NUMBER_OF_TRANSACTIONS = "number-of-transactions";
+    String OOB = "oob";
     String OP = "operation";
     String OPERATION = "operation";
     String OPERATION_DATE = "operation-date";
@@ -771,6 +773,7 @@ public interface ModelDescriptionConstants {
     String THROUGH = "through";
     String TIMEOUT = "timeout";
     String TIME_REMAINING = "time-remaining";
+    String TIMER = "timer";
     String TIMERS = "timers";
     String TIMESTAMP = "timestamp";
     String TIMESTAMP_COLUMN = "timestamp-column";

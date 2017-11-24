@@ -79,9 +79,9 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     private Resources resources;
     private MetadataRegistry metadataRegistry;
     private Dispatcher dispatcher;
-    private String currentStack;
+    private String selectedStack;
     private String currentChannel;
-    private String currentFork;
+    private String selectedFork;
     private StatementContext filterStatementContext;
 
     @Inject
@@ -110,9 +110,9 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
                             case "selected.channel":
                                 return currentChannel;
                             case "selected.fork":
-                                return currentFork;
+                                return selectedFork;
                             case "selected.stack":
-                                return currentStack;
+                                return selectedStack;
                             default:
                                 break;
                         }
@@ -155,23 +155,23 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
             // stack / relays
             List<NamedNode> relayNode = asNamedNodes(
-                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, RELAY)));
+                    failSafePropertyList(modelNode, String.join("/", STACK, selectedStack, RELAY)));
             getView().updateRelays(relayNode);
 
             // stack / relay / remote-site
             //noinspection HardCodedStringLiteral
             List<NamedNode> remoteSite = asNamedNodes(failSafePropertyList(modelNode,
-                    String.join("/", STACK, currentStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
+                    String.join("/", STACK, selectedStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
             getView().updateRemoteSite(remoteSite);
 
             // stack / protocols
             List<NamedNode> protocol = asNamedNodes(
-                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, PROTOCOL)));
+                    failSafePropertyList(modelNode, String.join("/", STACK, selectedStack, PROTOCOL)));
             getView().updateProtocols(protocol);
 
             // stack / transport
             List<NamedNode> transport = asNamedNodes(
-                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, TRANSPORT)));
+                    failSafePropertyList(modelNode, String.join("/", STACK, selectedStack, TRANSPORT)));
             getView().updateTransports(transport);
 
             // channel / fork
@@ -181,7 +181,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
             // channel / fork / protocol
             List<NamedNode> channelProtocols = asNamedNodes(failSafePropertyList(modelNode,
-                    String.join("/", CHANNEL, currentChannel, FORK, currentFork, PROTOCOL)));
+                    String.join("/", CHANNEL, currentChannel, FORK, selectedFork, PROTOCOL)));
             getView().updateChannelProtocols(channelProtocols);
 
         });
@@ -191,8 +191,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         crud.readRecursive(JGROUPS_TEMPLATE, payload::accept);
     }
 
-    void saveSingleton(AddressTemplate template, Map<String, Object> changedValues, SafeHtml successMessage) {
-        Metadata metadata = metadataRegistry.lookup(template);
+    void saveSingleton(AddressTemplate template, Metadata metadata, Map<String, Object> changedValues, SafeHtml successMessage) {
         crud.saveSingleton(template.resolve(filterStatementContext), changedValues, metadata, successMessage,
                 this::reload);
     }
@@ -286,7 +285,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     // relay resources
 
     void showRelays(NamedNode selectedStack) {
-        currentStack = selectedStack.getName();
+        this.selectedStack = selectedStack.getName();
         List<NamedNode> relayNode = asNamedNodes(failSafePropertyList(selectedStack.asModelNode(), RELAY));
         getView().updateRelays(relayNode);
     }
@@ -307,14 +306,14 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     // protocol resources
 
     void showProtocols(NamedNode selectedStack) {
-        currentStack = selectedStack.getName();
+        this.selectedStack = selectedStack.getName();
         getView().updateProtocols(asNamedNodes(failSafePropertyList(selectedStack, PROTOCOL)));
     }
 
     // transport resources
 
     void showTransports(NamedNode selectedStack) {
-        currentStack = selectedStack.getName();
+        this.selectedStack = selectedStack.getName();
         List<NamedNode> model = asNamedNodes(failSafePropertyList(selectedStack.asModelNode(), TRANSPORT));
         getView().updateTransports(model);
     }
@@ -330,15 +329,14 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     }
 
     void showChannelProtocol(NamedNode selectedFork) {
-        currentFork = selectedFork.getName();
+        this.selectedFork = selectedFork.getName();
         List<NamedNode> model = asNamedNodes(failSafePropertyList(selectedFork.asModelNode(), PROTOCOL));
         getView().updateChannelProtocols(model);
     }
 
-    String getCurrentFork() {
-        return currentFork;
+    String getSelectedFork() {
+        return selectedFork;
     }
-
 
     // @formatter:off
     @ProxyCodeSplit

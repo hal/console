@@ -79,6 +79,7 @@ public class LabelBuilder {
             .put("sql", "SQL")
             .put("ssl", "SSL")
             .put("tcp", "TCP")
+            .put("tls", "TLS")
             .put("ttl", "TTL")
             .put("tx", "TX")
             .put("uri", "URI")

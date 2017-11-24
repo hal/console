@@ -66,8 +66,8 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
                 })
                 .build();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.FORM), metadata)
-                .onSave((form, changedValues) -> presenter.saveSingleton(SELECTED_RELAY_TEMPLATE, changedValues,
-                        resources.messages().modifySingleResourceSuccess(Names.RELAY)))
+                .onSave((form, changedValues) -> presenter.saveSingleton(SELECTED_RELAY_TEMPLATE, metadata,
+                        changedValues, resources.messages().modifySingleResourceSuccess(Names.RELAY)))
                 .prepareReset(form -> presenter.resetSingleton(SELECTED_RELAY_TEMPLATE, Names.RELAY, form, metadata))
                 .build();
 

@@ -95,8 +95,8 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                                 presenter.showStackInnerPage(TRANSPORT_ID);
                             });
 
-                            return actionLink(id1, Names.RELAY) + actionLink(id2, Names.PROTOCOL) + actionLink(id3,
-                                    Names.TRANSPORT);
+                            return String.join(" / ", actionLink(id1, Names.RELAY), actionLink(id2, Names.PROTOCOL), actionLink(id3,
+                                    Names.TRANSPORT));
                         })
                         .orderable(false)
                         .searchable(false)
@@ -152,7 +152,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     }
 
     private String actionLink(String id, String displayName) {
-        return "<a id=\"" + id + "\" class=\"" + columnAction + "\">" + displayName + "</a> / ";
+        return "<a id=\"" + id + "\" class=\"" + columnAction + "\">" + displayName + "</a>";
     }
 
     @Override
