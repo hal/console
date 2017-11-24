@@ -107,6 +107,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
     void update(List<NamedNode> models) {
         table.update(models);
         table.enableButton(0, models.isEmpty());
+        table.enableButton(1, !models.isEmpty());
         form.clear();
     }
 }
