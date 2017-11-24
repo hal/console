@@ -52,6 +52,7 @@ class ConnectionStep extends WizardStep<Context, State> {
                     wizard().getContext().dataSource = form.getModel();
                 })
                 .build();
+        registerAttachable(form);
     }
 
     @Override
