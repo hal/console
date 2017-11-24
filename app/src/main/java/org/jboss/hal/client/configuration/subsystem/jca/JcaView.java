@@ -258,9 +258,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Metadata dwmMetadata = metadataRegistry.lookup(DISTRIBUTED_WORKMANAGER_TEMPLATE);
 
         Form<ModelNode> dwmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_ADD, dwmMetadata)
-                .fromRequestProperties()
                 .include(NAME, ELYTRON_ENABLED)
                 .unsorted()
+                .addOnly()
                 .build();
         AddResourceDialog dwmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(dwmType),
                 dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
