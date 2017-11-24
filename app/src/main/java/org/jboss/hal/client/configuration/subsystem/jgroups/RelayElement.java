@@ -60,7 +60,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
                         table -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
                                 Names.RELAY)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column("Remote Sites", row -> {
+                .column(Names.REMOTE_SITE, row -> {
                     presenter.showRemoteSites(row);
                     presenter.showStackInnerPage(REMOTE_SITE_ID);
                 })

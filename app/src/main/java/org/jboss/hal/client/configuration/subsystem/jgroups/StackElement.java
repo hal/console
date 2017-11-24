@@ -21,8 +21,10 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Table;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -51,6 +53,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
 
     private final Pages innerPages;
     private final Table<NamedNode> table;
+    private final Form<NamedNode> form;
     private JGroupsPresenter presenter;
     private String selectedStack;
 
@@ -66,8 +69,6 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(STACK_TEMPLATE, table -> presenter.addStack()))
-                //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD),
-                //        Names.STACK))
                 .button(tableButtonFactory.remove(STACK_TEMPLATE,
                         table -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),
                                 Names.STACK)))
@@ -94,9 +95,8 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                                 presenter.showStackInnerPage(TRANSPORT_ID);
                             });
 
-                            return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">Relays</a> / " +
-                                    "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">Protocol</a> / " +
-                                    "<a id=\"" + id3 + "\" class=\"" + columnAction + "\">Transport</a>";
+                            return actionLink(id1, Names.RELAY) + actionLink(id2, Names.PROTOCOL) + actionLink(id3,
+                                    Names.TRANSPORT);
                         })
                         .orderable(false)
                         .searchable(false)
@@ -104,10 +104,19 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                         .build())
                 .build();
 
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.FORM), metadata)
+                .onSave((form, changedValues) -> presenter
+                        .saveResource(STACK_TEMPLATE, table.selectedRow().getName(), changedValues, metadata,
+                                resources.messages().modifySingleResourceSuccess(Names.STACK)))
+                .prepareReset(form -> presenter.resetResource(STACK_TEMPLATE, table.selectedRow().getName(),
+                        Names.STACK, form, metadata))
+                .build();
+
         HTMLElement section = section()
                 .add(h(1).textContent(Names.STACK))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
+                .add(form)
                 .asElement();
 
         relayElement = new RelayElement(metadataRegistry, tableButtonFactory, resources);
@@ -142,6 +151,10 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                 transportElement);
     }
 
+    private String actionLink(String id, String displayName) {
+        return "<a id=\"" + id + "\" class=\"" + columnAction + "\">" + displayName + "</a> / ";
+    }
+
     @Override
     public HTMLElement asElement() {
         return innerPages.asElement();
@@ -151,6 +164,8 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     @SuppressWarnings("ConstantConditions")
     public void attach() {
         table.attach();
+        form.attach();
+        table.bindForm(form);
         relayElement.attach();
         remoteSiteElement.attach();
         protocolElement.attach();
@@ -161,6 +176,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     public void detach() {
         relayElement.detach();
         table.detach();
+        form.detach();
         remoteSiteElement.detach();
         protocolElement.detach();
         transportElement.detach();
@@ -177,6 +193,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
 
     void update(List<NamedNode> models) {
         table.update(models);
+        form.clear();
     }
 
     void updateRelays(List<NamedNode> node) {
