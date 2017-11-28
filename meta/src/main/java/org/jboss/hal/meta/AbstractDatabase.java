@@ -20,9 +20,6 @@ import java.util.Set;
 
 import org.jboss.hal.db.PouchDB;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rx.Single;
 
 import static java.util.function.Function.identity;
@@ -31,8 +28,6 @@ import static java.util.stream.Collectors.toSet;
 
 /** Abstract database which uses the specified statement context to resolve address templates. */
 public abstract class AbstractDatabase<T> implements Database<T> {
-
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(AbstractDatabase.class);
 
     private StatementContext statementContext;
     private final String type;
@@ -43,7 +38,12 @@ public abstract class AbstractDatabase<T> implements Database<T> {
     }
 
     @Override
-    public Map<ResourceAddress, AddressTemplate> addressLookup(Set<AddressTemplate> templates) {
+    public ResourceAddress resolveTemplate(AddressTemplate template) {
+        return template.resolve(statementContext);
+    }
+
+    @Override
+    public Map<ResourceAddress, AddressTemplate> resolveTemplates(Set<AddressTemplate> templates) {
         return templates.stream().collect(toMap(template -> template.resolve(statementContext), identity()));
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractDatabase<T> implements Database<T> {
                 .then(documents -> {
                     Map<ResourceAddress, T> metadata = documents.stream().collect(toMap(
                             document -> ResourceAddress.from(document.getId()),
-                            document -> asMetadata(document)));
+                            this::asMetadata));
                     em.onSuccess(metadata);
                     return null;
                 })
@@ -74,7 +74,7 @@ public abstract class AbstractDatabase<T> implements Database<T> {
                 .then(documents -> {
                     Map<ResourceAddress, T> metadata = documents.stream().collect(toMap(
                             document -> ResourceAddress.from(document.getId()),
-                            document -> asMetadata(document)));
+                            this::asMetadata));
                     em.onSuccess(metadata);
                     return null;
                 })

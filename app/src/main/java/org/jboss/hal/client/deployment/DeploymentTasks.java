@@ -87,7 +87,7 @@ class DeploymentTasks {
                 tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
             }
 
-            logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
+            logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder);
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
@@ -113,7 +113,7 @@ class DeploymentTasks {
             }
 
             logger.debug("About to upload and deploy {} file(s): {} to server group {}",
-                    files.getLength(), builder.toString(), serverGroup);
+                    files.getLength(), builder, serverGroup);
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }

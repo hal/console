@@ -75,7 +75,6 @@ public class PouchDB {
         return allDocs(options).then(response -> {
             List<Document> documents = new ArrayList<>();
             for (int i = 0; i < response.rows.getLength(); i++) {
-                Document document = null;
                 Row row = response.rows.getAt(i);
                 if (!"not_found".equals(row.error)) {
                     documents.add(row.doc);

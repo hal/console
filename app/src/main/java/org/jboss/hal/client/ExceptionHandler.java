@@ -23,8 +23,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.client.bootstrap.LoadingPanel;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
@@ -49,14 +52,17 @@ public class ExceptionHandler {
 
     private final EventBus eventBus;
     private final PlaceManager placeManager;
+    private final Progress progress;
     private final Resources resources;
 
     @Inject
     public ExceptionHandler(EventBus eventBus,
             PlaceManager placeManager,
+            @Footer Progress progress,
             Resources resources) {
         this.eventBus = eventBus;
         this.placeManager = placeManager;
+        this.progress = progress;
         this.resources = resources;
     }
 
@@ -65,6 +71,8 @@ public class ExceptionHandler {
             String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
             logger.error("Uncaught exception: {}", errorMessage);
             placeManager.unlock();
+            progress.finish();
+            CSS.stopProgress();
             MessageEvent.fire(eventBus,
                     Message.error(resources.messages().unknownError(), errorMessage));
         });
