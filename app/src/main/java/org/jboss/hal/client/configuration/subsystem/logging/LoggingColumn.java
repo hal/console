@@ -38,19 +38,19 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
-@AsyncColumn(Ids.LOGGING)
+@AsyncColumn(Ids.LOGGING_CONFIG_AND_PROFILES)
 public class LoggingColumn extends StaticItemColumn {
 
     @Inject
-    public LoggingColumn(final Finder finder,
-            final ItemMonitor itemMonitor,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final PlaceManager placeManager,
-            final Places places,
-            final Resources resources) {
+    public LoggingColumn(Finder finder,
+            ItemMonitor itemMonitor,
+            StatementContext statementContext,
+            Dispatcher dispatcher,
+            PlaceManager placeManager,
+            Places places,
+            Resources resources) {
 
-        super(finder, Ids.LOGGING, Names.LOGGING, asList(
+        super(finder, Ids.LOGGING_CONFIG_AND_PROFILES, Names.LOGGING, asList(
 
                 new StaticItem.Builder(Names.CONFIGURATION)
                         .id(Ids.LOGGING_CONFIGURATION)

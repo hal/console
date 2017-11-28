@@ -174,8 +174,8 @@ public class MetadataProcessor {
     // ------------------------------------------------------ JS methods
 
     /**
-     * Reads the metadata for the template, stores it in the registry and passes it to the callback. If the metadata is
-     * already in the registry it's passed directly to the callback.
+     * Reads the metadata for the template and passes it to the callback. If the metadata has been already processed,
+     * it's passed directly to the callback.
      *
      * @param template The address template to lookup.
      * @param callback The callback which receives the metadata.

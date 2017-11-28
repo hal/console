@@ -123,7 +123,7 @@ public class ColumnRegistrationProcessor extends AbstractProcessor {
         private final String id;
         private final boolean async;
 
-        public ColumnInfo(final String fqClassName, final String id, final boolean async) {
+        public ColumnInfo(String fqClassName, String id, boolean async) {
             this.fqClassName = fqClassName;
             this.id = id;
             this.async = async;
@@ -131,7 +131,7 @@ public class ColumnRegistrationProcessor extends AbstractProcessor {
 
         @Override
         @SuppressWarnings("SimplifiableIfStatement")
-        public boolean equals(final Object o) {
+        public boolean equals(Object o) {
             if (this == o) {
                 return true;
             }

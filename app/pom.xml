@@ -208,96 +208,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <!--
-                    Execution order matters! Generate code for hal-app first, then generate the composite GIN module
-                -->
-                <executions>
-                    <execution>
-                        <id>generate-app-code</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <options>
-                                <!-- Uncomment to get more messages from the annotation processors -->
-                                <!--<debug>true</debug>-->
-                            </options>
-                            <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-app
-                            </defaultOutputDirectory>
-                            <failOnError>true</failOnError>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-composite-gin</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <options>
-                                <!-- Uncomment to get more messages from the annotation processors -->
-                                <!--<debug>true</debug>-->
-                            </options>
-                            <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-gin
-                            </defaultOutputDirectory>
-                            <additionalSourceDirectories>
-                                <additionalSourceDirectory>${project.build.directory}/generated-sources/apt-app
-                                </additionalSourceDirectory>
-                                <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../js/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../themes/${theme.name}/src/main/java
-                                </additionalSourceDirectory>
-                            </additionalSourceDirectories>
-                            <processors>
-                                <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
-                            </processors>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-esdoc</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <options>
-                                <!-- Uncomment to get more messages from the annotation processors -->
-                                <!--<debug>true</debug>-->
-                            </options>
-                            <defaultOutputDirectory>${project.build.directory}/generated-resources</defaultOutputDirectory>
-                            <additionalSourceDirectories>
-                                <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../db/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../flow/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../js/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../themes/${theme.name}/src/main/java
-                                </additionalSourceDirectory>
-                            </additionalSourceDirectories>
-                            <processors>
-                                <processor>org.jboss.hal.processor.EsDocProcessor</processor>
-                            </processors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -309,8 +219,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/apt-app</source>
-                                <source>${project.build.directory}/generated-sources/apt-gin</source>
+                                <source>${project.build.directory}/generated-sources/annotations</source>
                                 <source>../ballroom/src/main/java</source>
                                 <source>../config/src/main/java</source>
                                 <source>../core/src/main/java</source>
@@ -321,20 +230,11 @@
                                 <source>../meta/src/main/java</source>
                                 <source>../resources/src/main/java</source>
                                 <source>../spi/src/main/java</source>
-                                <source>../themes/eap/src/main/java</source>
-                                <source>../themes/hal/src/main/java</source>
-                                <source>../themes/wildfly/src/main/java</source>
+                                <source>../themes/${theme.name}/src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerArgument>-proc:none</compilerArgument>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -403,11 +303,32 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>process-es6-documentation</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <compilerArgs>
+                                        <arg>-proc:only</arg>
+                                        <arg>-processor</arg>
+                                        <arg>org.jboss.hal.processor.EsDocProcessor</arg>
+                                    </compilerArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>grunt esdoc</id>
+                                <id>grunt-esdoc</id>
+                                <phase>generate-resources</phase>
                                 <goals>
                                     <goal>grunt</goal>
                                 </goals>

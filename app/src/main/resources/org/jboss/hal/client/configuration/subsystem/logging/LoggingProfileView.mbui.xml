@@ -72,7 +72,7 @@
 
         <item id="logging-profile-handler-item" title="Handler" icon="fa fa-cogs">
             <!--
-                ConsActionHandlerdler
+                Console Handler
             -->
             <sub-item id="logging-profile-handler-console-item" title="Console Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*">
@@ -119,7 +119,7 @@
 
 
             <!--
-                FActionHandlerdler
+                File Handler
             -->
             <sub-item id="logging-profile-handler-file-item" title="File Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*">
@@ -166,7 +166,7 @@
 
 
             <!--
-                Periodic Rotating FActionHandlerdler
+                Periodic Rotating Handler
             -->
             <sub-item id="logging-profile-handler-periodic-rotating-file-item" title="Periodic Handler">
                 <metadata
@@ -217,7 +217,7 @@
 
 
             <!--
-                Periodic Size Rotating FActionHandlerdler
+                Periodic Size Rotating Handler
             -->
             <sub-item id="logging-profile-handler-periodic-size-rotating-file-item" title="Periodic Size Handler">
                 <metadata
@@ -271,7 +271,7 @@
 
 
             <!--
-                Size Rotating FActionHandlerdler
+                Size Rotating Handler
             -->
             <sub-item id="logging-profile-handler-size-rotating-file-item" title="Size Handler">
                 <metadata
@@ -324,7 +324,7 @@
 
 
             <!--
-                AsActionHandlerdler
+                Async Handler
             -->
             <sub-item id="logging-profile-handler-async-item" title="Async Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*">
@@ -371,7 +371,7 @@
 
 
             <!--
-                CusActionHandlerdler
+                Custom Handler
             -->
             <sub-item id="logging-profile-handler-custom-item" title="Custom Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*">
@@ -417,7 +417,7 @@
 
 
             <!--
-                SysActionHandlerdler
+                Syslog Handler
             -->
             <sub-item id="logging-profile-handler-syslog-item" title="Syslog Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*">

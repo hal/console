@@ -45,9 +45,10 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
         super(new ResourceDescriptionStatementContext(statementContext, environment), RESOURCE_DESCRIPTION_TYPE);
         this.cache = CacheBuilder.newBuilder()
                 .maximumSize(CACHE_SIZE)
-                .removalListener(notification -> {
-                    logger.debug("Remove {} from {} cache", notification.getKey(), type);
-                })
+                .recordStats()
+                .removalListener(
+                        notification -> logger.debug("Remove {} from {} cache: {}", notification.getKey(), type,
+                                notification.getCause()))
                 .build();
         this.templateProcessor = new ResourceDescriptionTemplateProcessor();
     }

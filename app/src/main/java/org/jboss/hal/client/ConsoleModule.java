@@ -182,6 +182,17 @@ public class ConsoleModule extends AbstractPresenterModule {
         bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.HOMEPAGE);
 
 
+        // ------------------------------------------------------ HAL modules
+
+        // install(new BootstrapModule());
+        // install(new ConfigModule());
+        // install(new CoreModule());
+        // install(new DmrModule());
+        // install(new MetaModule());
+        // install(new ResourcesModule());
+        // install(new HalThemeModule());
+
+
         // ------------------------------------------------------ misc
 
         bind(AccessControl.class).in(Singleton.class);

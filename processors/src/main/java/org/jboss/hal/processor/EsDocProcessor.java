@@ -78,7 +78,7 @@ public class EsDocProcessor extends AbstractProcessor {
     }
 
     @Override
-    protected boolean onProcess(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+    protected boolean onProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(JsType.class)) {
             JsType jsType = element.getAnnotation(JsType.class);
             if (jsType.isNative()) {
@@ -96,7 +96,7 @@ public class EsDocProcessor extends AbstractProcessor {
             types.put(type.getNamespace(), type);
             debug("Discovered JsType [%s]", type);
 
-            final List<? extends Element> elements = typeElement.getEnclosedElements();
+            List<? extends Element> elements = typeElement.getEnclosedElements();
             Predicate<Element> jsRelevant = e -> e != null &&
                     e.getAnnotation(JsIgnore.class) == null &&
                     e.getModifiers().contains(Modifier.PUBLIC);
@@ -135,13 +135,17 @@ public class EsDocProcessor extends AbstractProcessor {
         }
 
         if (!types.isEmpty()) {
-            types.asMap().forEach((namespace, nsTypes) ->
-                    resource(TEMPLATE, PACKAGE + "." + namespace, namespace + ".es6",
-                            () -> {
-                                Map<String, Object> context = new HashMap<>();
-                                context.put(TYPES, nsTypes);
-                                return context;
-                            }));
+            types.asMap().forEach((namespace, nsTypes) -> {
+                debug("Generating documentation for %s.es6", namespace);
+                resource(TEMPLATE, PACKAGE + "." + namespace, namespace + ".es6",
+                        () -> {
+                            Map<String, Object> context = new HashMap<>();
+                            context.put(TYPES, nsTypes);
+                            return context;
+                        });
+            });
+
+            info("Successfully generated ES6 documentation.");
             types.clear();
         }
         return false;
@@ -234,7 +238,7 @@ public class EsDocProcessor extends AbstractProcessor {
         return comment;
     }
 
-    private VariableElement getParameter(final ExecutableElement method, int index) {
+    private VariableElement getParameter(ExecutableElement method, int index) {
         List<? extends VariableElement> parameters = method.getParameters();
         return index < parameters.size() ? parameters.get(index) : null;
     }
@@ -322,7 +326,7 @@ public class EsDocProcessor extends AbstractProcessor {
         private final List<Property> properties;
         private final List<Method> methods;
 
-        Type(final String namespace, final String name, final String comment) {
+        Type(String namespace, String name, String comment) {
             this.namespace = namespace;
             this.name = name;
             this.comment = comment;
@@ -359,7 +363,7 @@ public class EsDocProcessor extends AbstractProcessor {
             return constructor;
         }
 
-        public void setConstructor(final Constructor constructor) {
+        public void setConstructor(Constructor constructor) {
             this.constructor = constructor;
         }
 
@@ -378,7 +382,7 @@ public class EsDocProcessor extends AbstractProcessor {
         private final String parameters;
         private final String comment;
 
-        Constructor(final String parameters, final String comment) {
+        Constructor(String parameters, String comment) {
             this.parameters = parameters;
             this.comment = comment;
         }
@@ -406,8 +410,8 @@ public class EsDocProcessor extends AbstractProcessor {
         private final boolean setter;
         private final boolean _static;
 
-        Property(final String name, final String comment, final boolean getter, final boolean setter,
-                final boolean _static) {
+        Property(String name, String comment, boolean getter, boolean setter,
+                boolean _static) {
             this.name = name;
             this.comment = comment;
             this.getter = getter;
@@ -449,7 +453,7 @@ public class EsDocProcessor extends AbstractProcessor {
         private final String comment;
         private final boolean _static;
 
-        Method(final String name, final String parameters, final String comment, final boolean _static) {
+        Method(String name, String parameters, String comment, boolean _static) {
             this.name = name;
             this.parameters = parameters;
             this.comment = comment;

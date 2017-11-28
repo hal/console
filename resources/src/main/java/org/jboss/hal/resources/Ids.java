@@ -436,7 +436,7 @@ public interface Ids {
     String LOG_FILE_EDITOR = "lf-editor";
     String LOG_FILE_REFRESH = "lf-refresh";
     String LOG_FILE_SEARCH = "lf-search";
-    String LOGGING = "logging";
+    String LOGGING_CONFIG_AND_PROFILES = "lcap";
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";
     String LOGGING_PROFILE_ADD = "logging-profile-add";
@@ -834,7 +834,7 @@ public interface Ids {
     }
 
     static String loggingProfile(String name) {
-        return build(LOGGING, name);
+        return build(LOGGING_CONFIG_AND_PROFILES, name);
     }
 
     static String messagingServer(String name) {

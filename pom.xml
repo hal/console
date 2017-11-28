@@ -102,11 +102,12 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
+        <plugin.buildhelper.version>3.0.0</plugin.buildhelper.version>
         <plugin.docker.version>0.22.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
-        <plugin.processor.version>3.2.0</plugin.processor.version>
+        <plugin.processor.version>3.3.2</plugin.processor.version>
         <plugin.swarm.version>60</plugin.swarm.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -142,6 +143,11 @@
         <pluginManagement>
             <!-- plugins ordered by artifactId -->
             <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${plugin.buildhelper.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>

@@ -108,10 +108,10 @@ public class ServerActions {
     public static final int SERVER_SUSPEND_TIMEOUT = 1; // not the timeout specified by the user, but the time the server needs to get into suspend mode
     public static final int SERVER_RESUME_TIMEOUT = 3;
     public static final int SERVER_START_TIMEOUT = 15;
-    public static final int SERVER_STOP_TIMEOUT = 4;
-    public static final int SERVER_RELOAD_TIMEOUT = 5;
+    public static final int SERVER_STOP_TIMEOUT = 5;
+    public static final int SERVER_RELOAD_TIMEOUT = 10;
     public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
-    private static final int SERVER_KILL_TIMEOUT = 3;
+    private static final int SERVER_KILL_TIMEOUT = 5;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
 
     private static AddressTemplate serverConfigTemplate(Server server) {
@@ -164,7 +164,7 @@ public class ServerActions {
             AddressTemplate template = AddressTemplate.of("/host=" + hosts.get(0) + "/server-config=*");
             metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                 @Override
-                public void onMetadata(final Metadata metadata) {
+                public void onMetadata(Metadata metadata) {
 
                     String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
                             FORM);
@@ -375,7 +375,7 @@ public class ServerActions {
         metadataProcessor.lookup(serverConfigTemplate(server), progress.get(),
                 new MetadataProcessor.MetadataCallback() {
                     @Override
-                    public void onMetadata(final Metadata metadata) {
+                    public void onMetadata(Metadata metadata) {
                         String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
@@ -417,7 +417,7 @@ public class ServerActions {
                     }
 
                     @Override
-                    public void onError(final Throwable error) {
+                    public void onError(Throwable error) {
                         MessageEvent.fire(eventBus,
                                 Message.error(resources.messages().metadataError(), error.getMessage()));
                     }
@@ -448,7 +448,7 @@ public class ServerActions {
         metadataProcessor.lookup(serverConfigTemplate(server), progress.get(),
                 new MetadataProcessor.MetadataCallback() {
                     @Override
-                    public void onMetadata(final Metadata metadata) {
+                    public void onMetadata(Metadata metadata) {
                         String id = Ids.build(STOP, server.getName(), Ids.FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
                                 .include(TIMEOUT).build();
@@ -491,7 +491,7 @@ public class ServerActions {
                     }
 
                     @Override
-                    public void onError(final Throwable error) {
+                    public void onError(Throwable error) {
                         MessageEvent
                                 .fire(eventBus,
                                         Message.error(resources.messages().metadataError(), error.getMessage()));
@@ -751,7 +751,7 @@ public class ServerActions {
         private final Action action;
         private final SafeHtml successMessage;
 
-        ServerTimeoutCallback(final Server server, final Action action, final SafeHtml successMessage) {
+        ServerTimeoutCallback(Server server, Action action, SafeHtml successMessage) {
             this.server = server;
             this.action = action;
             this.successMessage = successMessage;
@@ -792,13 +792,13 @@ public class ServerActions {
         private final Server server;
         private final SafeHtml errorMessage;
 
-        ServerFailedCallback(final Server server, final SafeHtml errorMessage) {
+        ServerFailedCallback(Server server, SafeHtml errorMessage) {
             this.server = server;
             this.errorMessage = errorMessage;
         }
 
         @Override
-        public void onFailed(final Operation operation, final String failure) {
+        public void onFailed(Operation operation, String failure) {
             finish(server, Result.ERROR, Message.error(errorMessage, failure));
         }
     }
@@ -809,13 +809,13 @@ public class ServerActions {
         private final Server server;
         private final SafeHtml errorMessage;
 
-        ServerExceptionCallback(final Server server, SafeHtml errorMessage) {
+        ServerExceptionCallback(Server server, SafeHtml errorMessage) {
             this.server = server;
             this.errorMessage = errorMessage;
         }
 
         @Override
-        public void onException(final Operation operation, final Throwable exception) {
+        public void onException(Operation operation, Throwable exception) {
             finish(server, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
         }
     }

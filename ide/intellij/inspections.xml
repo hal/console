@@ -473,7 +473,6 @@
   <inspection_tool class="ClassMayBeInterface" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="CloneCallsSuperClone" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="CloneDeclaresCloneNotSupported" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="CodeBlock2Expr" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="CoffeeScriptArgumentsOutsideFunction" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="CoffeeScriptFunctionSignatures" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   <inspection_tool class="CoffeeScriptInfiniteLoop" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -516,7 +515,6 @@
   <inspection_tool class="Contract" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="ControlFlowStatementWithoutBraces" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="Convert2Diamond" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="Convert2MethodRef" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="Convert2streamapi" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="ConvertLambdaToReference" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="ConvertReferenceToLambda" enabled="false" level="INFORMATION" enabled_by_default="false" />
@@ -593,7 +591,6 @@
     <option name="MIN_STRING_LENGTH" value="5" />
     <option name="IGNORE_PROPERTY_KEYS" value="false" />
   </inspection_tool>
-  <inspection_tool class="DuplicateThrows" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="DuplicatedBeanNamesInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="DuplicatedDataProviderNames" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="Duplicates" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
@@ -942,7 +939,6 @@
   <inspection_tool class="Java8ArraySetAll" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="Java8CollectionRemoveIf" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="Java8ListSort" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="Java8MapApi" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="Java8MapForEach" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="Java9CollectionFactory" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="Java9ModuleExportsPackageToItself" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1029,10 +1025,6 @@
   <inspection_tool class="KotlinSpringFacetCode" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="KotlinTestJUnit" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="KotlinUnusedImport" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="LambdaBodyCanBeCodeBlock" enabled="false" level="INFORMATION" enabled_by_default="false" />
-  <inspection_tool class="LambdaCanBeMethodCall" enabled="false" level="INFORMATION" enabled_by_default="false" />
-  <inspection_tool class="LambdaCanBeReplacedWithAnonymous" enabled="false" level="INFORMATION" enabled_by_default="false" />
-  <inspection_tool class="LambdaParameterTypeCanBeSpecified" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="LanguageMismatch" enabled="false" level="WARNING" enabled_by_default="false">
     <option name="CHECK_NON_ANNOTATED_REFERENCES" value="true" />
   </inspection_tool>
@@ -1064,7 +1056,6 @@
   <inspection_tool class="MetaAnnotationWithoutRuntimeRetention" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="MethodCanBeVariableArityMethod" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="MethodNameSameAsClassName" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="MethodRefCanBeReplacedWithLambda" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="MimeType" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="MinMaxValuesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="MismatchedArrayReadWrite" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1179,13 +1170,12 @@
   <inspection_tool class="RedundantCast" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantExplicitType" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantIf" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-  <inspection_tool class="RedundantLambdaParameterType" enabled="false" level="INFORMATION" enabled_by_default="false" />
   <inspection_tool class="RedundantModalityModifier" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantSamConstructor" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantScopeBinding" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantSemicolon" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantStringFormatCall" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="RedundantThrows" enabled="false" level="WARNING" enabled_by_default="false" />
+  <inspection_tool class="RedundantThrowsDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="RedundantToBinding" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantToProviderBinding" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="RedundantTypeArguments" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1273,7 +1263,6 @@
   <inspection_tool class="SimplifyCollector" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="SimplifyNegatedBinaryExpression" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   <inspection_tool class="SimplifyOptionalCallChains" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="SimplifyStreamApiCallChains" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="Since15" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="SingleCharAlternation" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="SingleElementAnnotation" enabled="false" level="INFORMATION" enabled_by_default="false" />
@@ -1492,6 +1481,7 @@
   <inspection_tool class="UnnecessaryStaticInjection" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="UnnecessaryTemporaryOnConversionFromString" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="UnnecessaryTemporaryOnConversionToString" enabled="false" level="WARNING" enabled_by_default="false" />
+  <inspection_tool class="UnnecessaryToStringCall" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnnecessaryUnboxing" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="UnnecessaryVariable" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   <inspection_tool class="UnparsedCustomBeanInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1581,16 +1571,4 @@
     </option>
   </inspection_tool>
   <inspection_tool class="gwtRawAsyncCallback" enabled="false" level="WARNING" enabled_by_default="false" />
-  <inspection_tool class="unused" enabled="false" level="WARNING" enabled_by_default="false">
-    <option name="LOCAL_VARIABLE" value="true" />
-    <option name="FIELD" value="true" />
-    <option name="METHOD" value="true" />
-    <option name="CLASS" value="true" />
-    <option name="PARAMETER" value="true" />
-    <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
-    <option name="ADD_MAINS_TO_ENTRIES" value="true" />
-    <option name="ADD_APPLET_TO_ENTRIES" value="true" />
-    <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
-    <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
-  </inspection_tool>
 </profile>

@@ -56,10 +56,8 @@ class LookupDatabaseTask implements Task<LookupContext> {
     @Override
     public Completable call(LookupContext context) {
         Completable completable = context.recursive ? lookupRecursive(context) : bulkLookup(context);
-        return completable.andThen(Completable.fromAction(() -> {
-            logger.debug("Database lookup: {}", context.lookupResult);
-        }));
-
+        return completable.andThen(
+                Completable.fromAction(() -> logger.debug("Database lookup: {}", context.lookupResult)));
     }
 
     private Completable lookupRecursive(LookupContext context) {

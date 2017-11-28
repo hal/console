@@ -39,11 +39,11 @@ public class FinderPathFactory {
     private final Resources resources;
 
     @Inject
-    public FinderPathFactory(final Environment environment,
-            final StatementContext statementContext,
-            final Finder finder,
-            final Subsystems subsystems,
-            final Resources resources) {
+    public FinderPathFactory(Environment environment,
+            StatementContext statementContext,
+            Finder finder,
+            Subsystems subsystems,
+            Resources resources) {
         this.environment = environment;
         this.statementContext = statementContext;
         this.finder = finder;
@@ -54,9 +54,7 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ configuration
 
-    /**
-     * Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode.
-     */
+    /** Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode. */
     public FinderPath configurationSubsystemPath(String subsystem) {
         FinderPath path = new FinderPath();
 
@@ -76,7 +74,7 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ deployment
 
-    public FinderPath content(final String content) {
+    public FinderPath content(String content) {
         if (environment.isStandalone()) {
             // in standalone content and deployment are the same thing
             return deployment(content);
