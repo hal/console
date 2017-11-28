@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.jgroups;
 
+import java.util.List;
+
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
@@ -29,8 +31,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.TRANSPORT_THREAD_POOL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class TransportElement extends GenericElement {
@@ -46,62 +47,67 @@ class TransportElement extends GenericElement {
             String name, String resourceId) {
         super(formMetadata, tableButtonFactory, resources, template, name, resourceId);
 
-        Metadata threadPoolMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_TEMPLATE);
+        // thread-pool are singletons resources, but each one has different "default" values
+        // then, we need specific metadata for each one, for the reset operation to work properly
+        Metadata threadPoolDefaultMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_DEFAULT_TEMPLATE);
+        Metadata threadPoolInternalMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_INTERNAL_TEMPLATE);
+        Metadata threadPoolOobMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_OOB_TEMPLATE);
+        Metadata threadPoolTimerMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_TIMER_TEMPLATE);
 
         threadPoolDefaultForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_FORM,
-                threadPoolMetadata)
+                threadPoolDefaultMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), DEFAULT);
-                    presenter.saveSingleton(template1, threadPoolMetadata, changedValues,
+                    presenter.saveSingleton(template1, threadPoolDefaultMetadata, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Default"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), DEFAULT);
-                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form, threadPoolMetadata);
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form, threadPoolDefaultMetadata);
                 })
                 .build();
         threadPoolTimerForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_TIMER_FORM,
-                threadPoolMetadata)
+                threadPoolTimerMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), TIMER);
-                    presenter.saveSingleton(template1, threadPoolMetadata, changedValues,
+                    presenter.saveSingleton(template1, threadPoolTimerMetadata, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Timer"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), TIMER);
-                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Timer", form, threadPoolMetadata);
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Timer", form, threadPoolTimerMetadata);
                 })
                 .build();
         threadPoolInternalForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_INTERNAL_FORM,
-                threadPoolMetadata)
+                threadPoolInternalMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), INTERNAL);
-                    presenter.saveSingleton(template1, threadPoolMetadata, changedValues,
+                    presenter.saveSingleton(template1, threadPoolInternalMetadata, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Internal"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), INTERNAL);
-                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Internal", form, threadPoolMetadata);
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Internal", form, threadPoolInternalMetadata);
                 })
                 .build();
         threadPoolOobForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_OOB_FORM,
-                threadPoolMetadata)
+                threadPoolOobMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), OOB);
-                    presenter.saveSingleton(template1, threadPoolMetadata, changedValues,
+                    presenter.saveSingleton(template1, threadPoolOobMetadata, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " OOB"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.selectedRow().getName(), OOB);
-                    presenter.resetSingleton(template1, Names.THREAD_POOL + " OOB", form, threadPoolMetadata);
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " OOB", form, threadPoolOobMetadata);
                 })
                 .build();
 
@@ -148,11 +154,6 @@ class TransportElement extends GenericElement {
                 threadPoolTimerForm.clear();
             }
         });
-
-        // disable the ADD and REMOVE buttons, as the transport is a required singleton resource, but the r-r-d
-        // doesn't says so
-        table.enableButton(0, false);
-        table.enableButton(1, false);
     }
 
     @Override
@@ -162,5 +163,15 @@ class TransportElement extends GenericElement {
         threadPoolInternalForm.detach();
         threadPoolOobForm.detach();
         threadPoolTimerForm.detach();
+    }
+
+    @Override
+    void update(List<NamedNode> models) {
+        super.update(models);
+        // disable the ADD and REMOVE buttons, as the transport is a required singleton resource, but the r-r-d
+        // doesn't says so
+        // super.update enables the "remove" button if the model is not empty
+        table.enableButton(0, false);
+        table.enableButton(1, false);
     }
 }

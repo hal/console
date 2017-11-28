@@ -65,7 +65,7 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
                         table -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
                                 table.selectedRow().getName(), Names.FORK)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column("Protocols", row -> {
+                .column(Names.PROTOCOL, row -> {
                     presenter.showChannelProtocol(row);
                     presenter.showChannelInnerPage(PROTOCOL_ID);
                 })
@@ -101,5 +101,7 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
 
     void update(List<NamedNode> models) {
         table.update(models);
+        // disable "remove" button if the table is empty
+        table.enableButton(1, !models.isEmpty());
     }
 }
