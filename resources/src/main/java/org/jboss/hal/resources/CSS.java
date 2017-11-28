@@ -19,10 +19,8 @@ import java.util.Arrays;
 
 import elemental2.dom.CSSProperties.HeightUnionType;
 import elemental2.dom.CSSProperties.WidthUnionType;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jetbrains.annotations.NonNls;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -505,11 +503,5 @@ public interface CSS {
      */
     static String glyphicon(@NonNls String name) {
         return "glyphicon glyphicon-" + name; //NON-NLS
-    }
-
-    /** Removes {@link #withProgress} on all elements. */
-    static void stopProgress() {
-        Elements.stream(document.querySelectorAll("." + withProgress))
-                .forEach(element -> element.classList.remove(withProgress));
     }
 }

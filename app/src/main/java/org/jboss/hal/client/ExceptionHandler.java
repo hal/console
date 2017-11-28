@@ -20,11 +20,11 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.client.bootstrap.LoadingPanel;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.document;
+import static org.jboss.hal.resources.CSS.withProgress;
 
 public class ExceptionHandler {
 
@@ -72,9 +73,14 @@ public class ExceptionHandler {
             logger.error("Uncaught exception: {}", errorMessage);
             placeManager.unlock();
             progress.finish();
-            CSS.stopProgress();
+            stopProgress();
             MessageEvent.fire(eventBus,
                     Message.error(resources.messages().unknownError(), errorMessage));
         });
+    }
+
+    private void stopProgress() {
+        Elements.stream(document.querySelectorAll("." + withProgress))
+                .forEach(element -> element.classList.remove(withProgress));
     }
 }
