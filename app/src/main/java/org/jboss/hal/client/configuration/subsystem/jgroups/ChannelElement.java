@@ -105,7 +105,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 forkElement);
         // Fork / Protocol
         innerPages.addPage(FORK_ID, PROTOCOL_ID,
-                () -> Names.FORK + ": " + presenter.getCurrentFork(),
+                () -> Names.FORK + ": " + presenter.getSelectedFork(),
                 () -> Names.PROTOCOL,
                 protocolElement);
 

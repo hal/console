@@ -101,6 +101,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
     void update(List<NamedNode> models) {
         table.update(models);
         form.clear();
+        table.enableButton(1, !models.isEmpty());
     }
 
 }
