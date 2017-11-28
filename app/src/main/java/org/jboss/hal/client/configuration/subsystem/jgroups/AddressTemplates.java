@@ -27,7 +27,10 @@ interface AddressTemplates {
     String SELECTED_REMOTE_SITE_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/relay=relay.RELAY2/remote-site=*";
     String PROTOCOL_ADDRESS = JGROUPS_ADDRESS + "/stack=*/protocol=*";
     String SELECTED_PROTOCOL_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/protocol=*";
-    String TRANSPORT_THREAD_POOL_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*/thread-pool=default";
+    String TRANSPORT_THREAD_POOL_DEFAULT_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*/thread-pool=default";
+    String TRANSPORT_THREAD_POOL_INTERNAL_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*/thread-pool=internal";
+    String TRANSPORT_THREAD_POOL_OOB_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*/thread-pool=oob";
+    String TRANSPORT_THREAD_POOL_TIMER_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*/thread-pool=timer";
     String SELECTED_TRANSPORT_THREAD_POOL_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/transport=*/thread-pool=*";
     String TRANSPORT_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*";
     String SELECTED_TRANSPORT_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/transport=*";
@@ -47,7 +50,11 @@ interface AddressTemplates {
     AddressTemplate SELECTED_TRANSPORT_TEMPLATE = AddressTemplate.of(SELECTED_TRANSPORT_ADDRESS);
     AddressTemplate SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE = AddressTemplate.of(
             SELECTED_TRANSPORT_THREAD_POOL_ADDRESS);
-    AddressTemplate TRANSPORT_THREAD_POOL_TEMPLATE = AddressTemplate.of(TRANSPORT_THREAD_POOL_ADDRESS);
+    AddressTemplate TRANSPORT_THREAD_POOL_DEFAULT_TEMPLATE = AddressTemplate.of(TRANSPORT_THREAD_POOL_DEFAULT_ADDRESS);
+    AddressTemplate TRANSPORT_THREAD_POOL_INTERNAL_TEMPLATE = AddressTemplate.of(
+            TRANSPORT_THREAD_POOL_INTERNAL_ADDRESS);
+    AddressTemplate TRANSPORT_THREAD_POOL_OOB_TEMPLATE = AddressTemplate.of(TRANSPORT_THREAD_POOL_OOB_ADDRESS);
+    AddressTemplate TRANSPORT_THREAD_POOL_TIMER_TEMPLATE = AddressTemplate.of(TRANSPORT_THREAD_POOL_TIMER_ADDRESS);
     AddressTemplate REMOTE_SITE_TEMPLATE = AddressTemplate.of(REMOTE_SITE_ADDRESS);
     AddressTemplate SELECTED_REMOTE_SITE_TEMPLATE = AddressTemplate.of(SELECTED_REMOTE_SITE_ADDRESS);
     AddressTemplate CHANNEL_TEMPLATE = AddressTemplate.of(CHANNEL_ADDRESS);
