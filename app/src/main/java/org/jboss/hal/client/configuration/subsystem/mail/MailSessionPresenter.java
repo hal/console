@@ -122,7 +122,7 @@ public class MailSessionPresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(MAIL)
-                .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
+                .append(Ids.MAIL_SESSION, Ids.mailSession(mailSessionName), Names.MAIL_SESSION, mailSessionName);
     }
 
     @Override

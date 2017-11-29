@@ -56,15 +56,15 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class MailSessionColumn extends FinderColumn<MailSession> {
 
     @Inject
-    protected MailSessionColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final Places places,
-            final Resources resources) {
+    protected MailSessionColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            Places places,
+            Resources resources) {
 
         super(new Builder<MailSession>(finder, Ids.MAIL_SESSION, Names.MAIL_SESSION)
                 .withFilter()
@@ -110,6 +110,11 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
         addColumnAction(columnActionFactory.refresh(Ids.MAIL_SESSION_REFRESH));
 
         setItemRenderer(mailSession -> new ItemDisplay<MailSession>() {
+            @Override
+            public String getId() {
+                return Ids.mailSession(mailSession.getName());
+            }
+
             @Override
             public String getTitle() {
                 return mailSession.getName();

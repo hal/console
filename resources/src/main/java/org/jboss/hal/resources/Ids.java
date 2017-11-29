@@ -38,7 +38,7 @@ import static java.util.stream.StreamSupport.stream;
 public interface Ids {
 
     // ------------------------------------------------------ ids (a-z)
-    // Don't compose IDs by using the build() method, otherwise they cannot be used in annotations.
+    // Don't compose IDs with build(), otherwise they cannot be used in annotations.
     String ABOUT_MODAL = "about-modal";
     String ABOUT_MODAL_TITLE = "about-modal-title";
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
@@ -783,7 +783,7 @@ public interface Ids {
     // ------------------------------------------------------ resource ids (a-z)
 
     static String cacheContainer(String name) {
-        return Ids.build(CACHE_CONTAINER, name);
+        return Ids.build("cc", name);
     }
 
     static String content(String name) {
@@ -791,15 +791,15 @@ public interface Ids {
     }
 
     static String dataSourceConfiguration(String name, boolean xa) {
-        return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
+        return build(xa ? "xa" : "non-xa", "dsc", name);
     }
 
     static String dataSourceRuntime(String name, boolean xa) {
-        return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
+        return build(xa ? "xa" : "non-xa", "dsr", name);
     }
 
     static String deployment(String name) {
-        return name;
+        return Ids.build("dply", name);
     }
 
     static String destination(String deployment, String subdeployment, String messageServer, String type, String name) {
@@ -826,7 +826,7 @@ public interface Ids {
     }
 
     static String jmsBridge(String name) {
-        return build(JMS_BRIDGE, name);
+        return build("jmsb", name);
     }
 
     static String jpaStatistic(String deployment, String subdeployment, String persistenceUnit) {
@@ -837,16 +837,20 @@ public interface Ids {
         return build(LOGGING_CONFIG_AND_PROFILES, name);
     }
 
+    static String mailSession(String name) {
+        return Ids.build("ms", name);
+    }
+
     static String messagingServer(String name) {
-        return build(MESSAGING_SERVER, name);
+        return build("msgs", name);
     }
 
     static String webServer(String name) {
-        return build(UNDERTOW_SERVER, name);
+        return build("us", name);
     }
 
     static String webListener(String name) {
-        return build(UNDERTOW_RUNTIME_LISTENER, name);
+        return build("ulst", name);
     }
 
     /**
@@ -857,7 +861,7 @@ public interface Ids {
     }
 
     static String resourceAdapter(String name) {
-        return build(RESOURCE_ADAPTER, name);
+        return build("ra", name);
     }
 
     static String restResource(String deployment, String subdeployment, String name) {
@@ -869,11 +873,11 @@ public interface Ids {
     }
 
     static String securityDomain(String name) {
-        return build(SECURITY_DOMAIN, name);
+        return build("sd", name);
     }
 
     static String serverGroup(String name) {
-        return build(SERVER_GROUP, name);
+        return build("sg", name);
     }
 
     static String serverGroupDeployment(String serverGroup, String name) {
@@ -881,15 +885,15 @@ public interface Ids {
     }
 
     static String undertowApplicationSecurityDomain(String name) {
-        return build(UNDERTOW_APP_SECURITY_DOMAIN, name);
+        return build("uasd", name);
     }
 
     static String undertowServer(String name) {
-        return build(UNDERTOW_SERVER, name);
+        return build("us", name);
     }
 
     static String undertowServletContainer(String name) {
-        return build(UNDERTOW_SERVLET_CONTAINER, name);
+        return build("usc", name);
     }
 
 
