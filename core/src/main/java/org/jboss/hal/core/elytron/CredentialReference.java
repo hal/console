@@ -110,7 +110,8 @@ public class CredentialReference {
         String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
         Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
 
-        EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(Ids.build(baseId, Ids.EMPTY),
+        EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(
+                Ids.build(baseId, credentialReferenceName, Ids.EMPTY),
                 resources.constants().noResource());
 
         if (crMetadata.getSecurityContext().isWritable()) {
@@ -141,6 +142,7 @@ public class CredentialReference {
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
                 .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
+                .unsorted()
                 .singleton(
                         () -> {
                             ResourceAddress fqAddress = address.get();
@@ -211,7 +213,7 @@ public class CredentialReference {
             String id = Ids.build(baseId, credentialReferenceName, Ids.ADD);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, crMetadata)
                     .addOnly()
-                    .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
+                    .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
                     .unsorted()
                     .build();
             new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
