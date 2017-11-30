@@ -107,7 +107,7 @@ public class CredentialReference {
     public Form<ModelNode> form(String baseId, Metadata metadata, String crName, String alternativeName,
             Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
 
-        final String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
+        String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
         Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
 
         EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(Ids.build(baseId, Ids.EMPTY),
@@ -140,6 +140,7 @@ public class CredentialReference {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
+                .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
                 .singleton(
                         () -> {
                             ResourceAddress fqAddress = address.get();
@@ -203,7 +204,7 @@ public class CredentialReference {
     }
 
     private void addCredentialReference(String baseId, Metadata crMetadata,
-            final String credentialReferenceName, String alternativeName,
+            String credentialReferenceName, String alternativeName,
             Supplier<ResourceAddress> address, Callback callback) {
         ResourceAddress fqAddress = address.get();
         if (fqAddress != null) {
