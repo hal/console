@@ -199,7 +199,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
             String xaId = Ids.build(Ids.XA_DATA_SOURCE, group);
 
             if (CREDENTIAL_REFERENCE.equals(group)) {
-                nonXaCrForm = credentialReference.form(nonXaId, nonXaMeta, PASSWORD,
+                nonXaCrForm = credentialReference.form(Ids.DATA_SOURCE_CONFIGURATION, nonXaMeta, PASSWORD,
                         () -> nonXaForm.<String>getFormItem(PASSWORD).getValue(),
                         () -> presenter.resourceAddress(),
                         () -> presenter.reload());
