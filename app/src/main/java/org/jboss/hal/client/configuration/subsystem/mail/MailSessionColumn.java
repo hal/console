@@ -101,7 +101,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                                         MessageEvent.fire(eventBus,
                                                 Message.success(resources.messages()
                                                         .addResourceSuccess(Names.MAIL_SESSION, name)));
-                                        column.refresh(name);
+                                        column.refresh(Ids.mailSession(name));
                                     });
                                 }
                             });
