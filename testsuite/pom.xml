@@ -98,6 +98,7 @@
                                         org/jboss/hal/resources/FontAwesomeSize.java,
                                         org/jboss/hal/resources/Ids.java,
                                         org/jboss/hal/resources/Names.java,
+                                        org/jboss/hal/resources/UIConstants.java,
                                         org/jboss/hal/resources/Urls.java
                                     </includes>
                                 </artifactItem>
