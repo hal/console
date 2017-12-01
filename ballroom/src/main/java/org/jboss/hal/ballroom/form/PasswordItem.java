@@ -33,6 +33,7 @@ import static org.jboss.gwt.elemento.core.InputType.password;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.MASK_CHARACTER;
 
 public class PasswordItem extends AbstractFormItem<String> {
 
@@ -88,7 +89,7 @@ public class PasswordItem extends AbstractFormItem<String> {
                             peekLink.classList.add(FA_EYE_SLASH);
                             peekLink.classList.remove(FA_EYE);
                         } else {
-                            valueElement.textContent = getValue().replaceAll(".", "\u25CF");
+                            valueElement.textContent = getValue().replaceAll(".", MASK_CHARACTER);
                             peekLink.title = CONSTANTS.showSensitive();
                             peekLink.classList.add(FA_EYE);
                             peekLink.classList.remove(FA_EYE_SLASH);
@@ -116,7 +117,7 @@ public class PasswordItem extends AbstractFormItem<String> {
         @Override
         public String asString(String value) {
             if (hidden) {
-                return value.replaceAll(".", "\u25CF");
+                return value.replaceAll(".", MASK_CHARACTER);
             } else {
                 return value;
             }

@@ -49,6 +49,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
+import static org.jboss.hal.resources.Ids.MESSAGING_SERVER_DIRECTORY_ITEM;
 
 public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
@@ -76,14 +78,14 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         });
 
         String clusterCR = "cluster-credential-reference";
-        crForm = cr.form(Ids.MESSAGING_SERVER, metadata, clusterCR, "cluster-password",
+        crForm = cr.form(MESSAGING_SERVER, metadata, clusterCR, "cluster-password",
                 () -> form.<String>getFormItem("cluster-password").getValue(),
                 () -> presenter.resourceAddress(),
                 () -> presenter.reload());
 
         LabelBuilder lb = new LabelBuilder();
-        form = new GroupedForm.Builder<NamedNode>("messaging-server-form", metadata)
-                .customGroup(Ids.build(Ids.MESSAGING_SERVER, ATTRIBUTES, Ids.FORM),
+        form = new GroupedForm.Builder<NamedNode>(MESSAGING_SERVER, metadata)
+                .customGroup(Ids.build(MESSAGING_SERVER, ATTRIBUTES),
                         mbuiContext.resources().constants().attributes())
                 .include(attrs)
                 .end()
@@ -91,7 +93,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .attributeGroup("security").end()
                 .attributeGroup("journal").end()
                 .attributeGroup("cluster").end()
-                .customGroup(Ids.build(Ids.MESSAGING_SERVER, clusterCR, Ids.TAB), lb.label(clusterCR))
+                .customGroup(Ids.build(MESSAGING_SERVER, clusterCR), lb.label(clusterCR))
                 .add(crForm)
                 .end()
                 .attributeGroup("message-expiry").end()
@@ -102,7 +104,6 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .prepareReset(form -> presenter.resetServer(form))
                 .build();
 
-
         registerAttachable(form, crForm);
 
         HTMLElement htmlSection = section()
@@ -111,8 +112,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(form)
                 .asElement();
 
-
-        verticalNavigation.addPrimary(Ids.build(Ids.MESSAGING_SERVER, "item", Ids.TAB), Names.CONFIGURATION,
+        verticalNavigation.addPrimary(Ids.build(MESSAGING_SERVER, Ids.ITEM), Names.CONFIGURATION,
                 "pficon pficon-settings", htmlSection);
 
         Metadata bindingMetadata = mbuiContext.metadataRegistry().lookup(BINDING_DIRECTORY_TEMPLATE);
@@ -186,9 +186,6 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         () -> presenter.reload()))
                 .build();
 
-
-        String primaryIdDirectory = "messaging-server-directory-item";
-
         HTMLElement pagingDirectoryElement = section()
                 .add(h(1).textContent(Names.PAGING_DIRECTORY))
                 .add(p().textContent(pagingMetadata.getDescription().getDescription()))
@@ -213,21 +210,24 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(journalDirectoryForm)
                 .asElement();
 
-
-        verticalNavigation.addPrimary(primaryIdDirectory, "Directories", "pficon pficon-repository");
-        verticalNavigation.addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_PAGING_DIRECTORY, Ids.ITEM),
+        verticalNavigation.addPrimary(MESSAGING_SERVER_DIRECTORY_ITEM, "Directories", "pficon pficon-repository");
+        verticalNavigation.addSecondary(MESSAGING_SERVER_DIRECTORY_ITEM,
+                Ids.build(Ids.MESSAGING_SERVER_PAGING_DIRECTORY, Ids.ITEM),
                 "Paging",
                 pagingDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_BINDING_DIRECTORY, Ids.ITEM),
+                .addSecondary(MESSAGING_SERVER_DIRECTORY_ITEM,
+                        Ids.build(Ids.MESSAGING_SERVER_BINDING_DIRECTORY, Ids.ITEM),
                         "Bindings",
                         bindingsDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY, Ids.ITEM),
+                .addSecondary(MESSAGING_SERVER_DIRECTORY_ITEM,
+                        Ids.build(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY, Ids.ITEM),
                         "Large Messages",
                         largeMessagesElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY, Ids.ITEM),
+                .addSecondary(MESSAGING_SERVER_DIRECTORY_ITEM,
+                        Ids.build(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY, Ids.ITEM),
                         "Journal",
                         journalElement);
 
@@ -243,7 +243,6 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .asElement();
 
         initElement(root);
-
 
         form.getFormItem("journal-datasource").registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), mbuiContext.statementContext(),

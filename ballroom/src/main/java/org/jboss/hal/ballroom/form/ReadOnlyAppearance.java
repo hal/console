@@ -38,6 +38,7 @@ import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.MASK_CHARACTER;
 import static org.jboss.hal.resources.UIConstants.TRUE;
 
 /**
@@ -179,7 +180,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     @SuppressWarnings("HardCodedStringLiteral")
     private void mask() {
         backupValue = valueElement.textContent;
-        valueElement.textContent = backupValue.replaceAll(".", "\u25CF");
+        valueElement.textContent = backupValue.replaceAll(".", MASK_CHARACTER);
         peekLink.title = CONSTANTS.showSensitive();
         peekLink.classList.add("fa-eye");
         peekLink.classList.remove("fa-eye-slash");

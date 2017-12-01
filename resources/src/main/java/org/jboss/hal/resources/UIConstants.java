@@ -34,6 +34,7 @@ public interface UIConstants {
     long RESTART_MESSAGE_ID = 1102010;
     long DOMAIN_CHANGED_MESSAGE_ID = 291973;
 
+    String MASK_CHARACTER = "\u25CF";
 
     String ARIA_DESCRIBEDBY = "aria-describedby";
     String ALERT = "alert";

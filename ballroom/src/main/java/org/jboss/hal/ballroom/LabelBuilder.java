@@ -49,6 +49,7 @@ public class LabelBuilder {
             .put("ha", "HA")
             .put("http", "HTTP")
             .put("http2", "HTTP/2")
+            .put("id", "ID")
             .put("io", "IO")
             .put("jacc", "JACC")
             .put("jaxrs", "JAX-RS")
@@ -85,6 +86,7 @@ public class LabelBuilder {
             .put("uri", "URI")
             .put("url", "URL")
             .put("uuid", "UUID")
+            .put("vm", "VM")
             .put("xa", "XA")
             .put("wsdl", "WSDL")
             .build();
