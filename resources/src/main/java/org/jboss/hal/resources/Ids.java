@@ -510,7 +510,7 @@ public interface Ids {
     String MESSAGING_SECURITY_SETTING_ROLE_ITEM = "messaging-security-setting-role-item";
     String MESSAGING_SECURITY_SETTING_ROLE_TABLE = "messaging-security-setting-role-table";
     String MESSAGING_SERVER = "msg-server";
-    String MESSAGING_SERVER_ADD = "msg-server-add";
+    String MESSAGING_SERVER_ADD = "msg-server-c-add";
     String MESSAGING_SERVER_BINDING_DIRECTORY = "msg-server-bindings-directory";
     String MESSAGING_SERVER_BINDING_DIRECTORY_FORM = "msg-server-bindings-directory-form";
     String MESSAGING_SERVER_CLUSTERING = "msg-server-clustering";

@@ -97,7 +97,7 @@ public class ServerSettingsColumn
                     .map(FinderSegment::getItemId);
             if (optional.isPresent()) {
                 // Extract the server name from the item id "messaging-server-<server name>"
-                String server = substringAfterLast(optional.get(), Ids.MESSAGING_SERVER + "-");
+                String server = substringAfterLast(optional.get(), "msgs" + "-");
                 StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
                         () -> server);
                 ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(serverStatementContext);
