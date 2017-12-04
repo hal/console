@@ -127,6 +127,9 @@ public class ServerPresenter
                 });
     }
 
+    public String getServerName() {
+        return serverName;
+    }
 
     // @formatter:off
     @ProxyCodeSplit

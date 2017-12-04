@@ -280,6 +280,35 @@ public class CrudOperations {
         });
     }
 
+    /**
+     * Opens an add-resource-dialog for the given singleton resource type. The dialog contains fields for all required
+     * request properties. plus the ones specified by {@code attributes}. When clicking "Add", a new singleton resource
+     * is added using the specified address template. After the singleton resource has been added a success message is
+     * fired and the specified callback is executed.
+     *
+     * @param id         the id used for the add resource dialog
+     * @param type       the human readable resource type used in the dialog header and success message
+     * @param metadata   the metadata that contains the resource description
+     * @param callback   the callback executed after the singleton resource has been added
+     */
+    @JsIgnore
+    public void addSingleton(String id, String type, Metadata metadata, AddressTemplate template,
+            AddSingletonCallback callback) {
+        boolean hasRequiredAttributes = !metadata.getDescription()
+                .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
+        if (hasRequiredAttributes) {
+            // no unbound name item!
+            ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
+                    .fromRequestProperties()
+                    .requiredOnly();
+            AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type),
+                    builder.build(), (name, model) -> addSingleton(type, template, model, callback));
+            dialog.show();
+        } else {
+            addSingleton(type, template, null, callback);
+        }
+    }
+
 
     // ------------------------------------------------------ (c)reate singleton operation
 
