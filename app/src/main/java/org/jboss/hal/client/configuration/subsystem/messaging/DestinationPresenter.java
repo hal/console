@@ -49,6 +49,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -125,6 +126,50 @@ public class DestinationPresenter
                     getView().updateAddressSetting(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
                     getView().updateDivert(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
                 });
+    }
+
+    // ------------------------------------------------------ core queue
+
+    // the custom add resource dialog is necessary because the "durable" and "filter" attributes are read-only
+    // after created
+    void addCoreQueue() {
+        Metadata metadata = metadataRegistry.lookup(CORE_QUEUE_TEMPLATE);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_CORE_QUEUE, ADD), metadata)
+                .fromRequestProperties()
+                .unboundFormItem(nameItem, 0)
+                .include(DURABLE, FILTER)
+                .unsorted()
+                .build();
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.CORE_QUEUE), form,
+                (name, model) -> {
+                    AddressTemplate template = SELECTED_SERVER_TEMPLATE.append("queue=" + nameItem.getValue());
+                    ResourceAddress address = template.resolve(statementContext);
+                    crud.add(Names.CORE_QUEUE, nameItem.getValue(), address, model, (name1, address1) -> reload());
+                }).show();
+    }
+
+    // ------------------------------------------------------ jms queue
+
+    // the custom add resource dialog is necessary because the "durable" and "selector" attributes are read-only
+    // after created
+    void addJMSQueue() {
+        Metadata metadata = metadataRegistry.lookup(JMS_QUEUE_TEMPLATE);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_JMS_QUEUE, ADD), metadata)
+                .fromRequestProperties()
+                .unboundFormItem(nameItem, 0)
+                .include(DURABLE, SELECTOR)
+                .unsorted()
+                .build();
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.JMS_QUEUE), form,
+                (name, model) -> {
+                    AddressTemplate template = SELECTED_SERVER_TEMPLATE.append("jms-queue=" + nameItem.getValue());
+                    ResourceAddress address = template.resolve(statementContext);
+                    crud.add(Names.JMS_QUEUE, nameItem.getValue(), address, model, (name1, address1) -> reload());
+                }).show();
     }
 
     // ------------------------------------------------------ security setting

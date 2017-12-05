@@ -25,7 +25,7 @@
                 <table id="messaging-core-queue-table" title="Core Queue" form-ref="messaging-core-queue-form">
                     <actions>
                         <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.add(ServerSubResource.CORE_QUEUE)}" constraint="add"/>
+                                handler="${presenter.addCoreQueue()}" constraint="add"/>
                         <action title="${mbuiContext.resources().constants().remove()}"
                                 handler="${presenter.remove(ServerSubResource.CORE_QUEUE, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
@@ -54,7 +54,7 @@
                 <table id="messaging-jms-queue-table" title="JMS Queue" form-ref="messaging-jms-queue-form">
                     <actions>
                         <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.add(ServerSubResource.JMS_QUEUE)}" constraint="add"/>
+                                handler="${presenter.addJMSQueue()}" constraint="add"/>
                         <action title="${mbuiContext.resources().constants().remove()}"
                                 handler="${presenter.remove(ServerSubResource.JMS_QUEUE, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
