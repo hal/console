@@ -172,7 +172,7 @@ public class RemotingPresenter
                 SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), ADD).build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().addSingleResourceSuccess(
-                    resources.constants().security())));
+                    Names.REMOTE_CONNECTOR_SECURITY)));
             reload();
         });
     }
@@ -275,7 +275,7 @@ public class RemotingPresenter
                 SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext), ADD).build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().addSingleResourceSuccess(
-                    resources.constants().security())));
+                    Names.HTTP_CONNECTOR_SECURITY)));
             reload();
         });
     }
