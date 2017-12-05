@@ -221,7 +221,7 @@
                            form-ref="messaging-http-connector-form">
                         <actions>
                             <action title="${mbuiContext.resources().constants().add()}"
-                                    handler="${presenter.addHttp(ServerSubResource.HTTP_CONNECTOR)}" constraint="add"/>
+                                    handler="${presenter.addHttpConnector()}" constraint="add"/>
                             <action title="${mbuiContext.resources().constants().remove()}"
                                     handler="${presenter.remove(ServerSubResource.HTTP_CONNECTOR, table.selectedRow())}"
                                     scope="selected" constraint="remove"/>
@@ -242,6 +242,7 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
+                            <attribute name="server-name"/>
                             <attribute name="socket-binding">
                                 <suggest-handler>
                                     <templates>

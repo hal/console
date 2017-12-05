@@ -182,10 +182,11 @@ public class DestinationPresenter
         Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
         TextBoxItem patternItem = new TextBoxItem(PATTERN, Names.PATTERN);
         patternItem.setRequired(true);
-        NameItem nameItem = new NameItem();
+        TextBoxItem roleItem = new TextBoxItem(ROLE, resources.constants().role());
+        roleItem.setRequired(true);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_ADD, metadata)
                 .unboundFormItem(patternItem, 0)
-                .unboundFormItem(nameItem, 1)
+                .unboundFormItem(roleItem, 1)
                 .fromRequestProperties()
                 .requiredOnly()
                 .build();
@@ -197,7 +198,7 @@ public class DestinationPresenter
                     .resolve(statementContext);
             ResourceAddress roleAddress = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + EQUALS + pattern)
-                    .append(ROLE + EQUALS + name)
+                    .append(ROLE + EQUALS + roleItem.getValue())
                     .resolve(statementContext);
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
@@ -228,7 +229,7 @@ public class DestinationPresenter
     void saveSecuritySettingRole(Form<NamedNode> form, Map<String, Object> changedValues) {
         if (securitySetting != null) {
             String name = form.getModel().getName();
-            ResourceAddress address = SERVER_TEMPLATE
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + EQUALS + securitySetting)
                     .append(ROLE + EQUALS + name)
                     .resolve(statementContext);
@@ -243,7 +244,7 @@ public class DestinationPresenter
     void resetSecuritySettingRole(Form<NamedNode> form) {
         if (securitySetting != null) {
             String name = form.getModel().getName();
-            ResourceAddress address = SERVER_TEMPLATE
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + EQUALS + securitySetting)
                     .append(ROLE + EQUALS + name)
                     .resolve(statementContext);

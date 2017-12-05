@@ -132,6 +132,28 @@ public class ConnectionPresenter
         }).show();
     }
 
+    void addHttpConnector() {
+        ServerSubResource ssr = ServerSubResource.HTTP_CONNECTOR;
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .fromRequestProperties()
+                .requiredOnly()
+                .build();
+        form.getFormItem(SOCKET_BINDING).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        AddressTemplate.of("/socket-binding-group=*/socket-binding=*")));
+        form.getFormItem(ENDPOINT).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        AddressTemplate.of("/{selected.profile}/subsystem=messaging-activemq/server=*/http-acceptor=*")));
+
+        new AddResourceDialog(ssr.type, form, (name, model) -> {
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
+
     void addRemote(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
