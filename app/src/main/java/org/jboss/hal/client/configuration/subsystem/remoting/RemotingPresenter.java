@@ -211,16 +211,16 @@ public class RemotingPresenter
     }
 
     void saveConnectorSecurityPolicy(Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_POLICY_TEMPLATE);
         crud.saveSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
-                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues, metadata,
+                SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE.resolve(selectedConnectorContext), changedValues, metadata,
                 this::reload);
     }
 
     void resetConnectorSecurityPolicy(Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_POLICY_TEMPLATE);
         crud.resetSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
-                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, metadata,
+                SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE.resolve(selectedConnectorContext), form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(Form<ModelNode> form) {
@@ -231,7 +231,7 @@ public class RemotingPresenter
 
     void removeConnectorSecurityPolicy(Form<ModelNode> form) {
         crud.removeSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
-                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext),
+                SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE.resolve(selectedConnectorContext),
                 new FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(Form<ModelNode> form) {
@@ -281,14 +281,14 @@ public class RemotingPresenter
     }
 
     void saveHttpConnectorSecurity(Form<ModelNode> form, Map<String, Object> changedValues) {
-        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext);
         Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         propertiesOperations.saveSingletonWithProperties(Names.HTTP_CONNECTOR_SECURITY, address, changedValues,
                 metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void resetHttpConnectorSecurity(Form<ModelNode> form) {
-        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext);
         Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         crud.resetSingleton(Names.HTTP_CONNECTOR_SECURITY, address, form, metadata, new FinishReset<ModelNode>(form) {
             @Override
@@ -299,7 +299,7 @@ public class RemotingPresenter
     }
 
     void removeHttpConnectorSecurity(Form<ModelNode> form) {
-        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext);
         crud.removeSingleton(Names.HTTP_CONNECTOR_SECURITY, address, new FinishRemove<ModelNode>(form) {
             @Override
             public void afterRemove(Form<ModelNode> form) {
@@ -314,16 +314,16 @@ public class RemotingPresenter
     }
 
     void saveHttpConnectorSecurityPolicy(Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE);
         crud.saveSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
-                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues, metadata,
-                this::reload);
+                SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE.resolve(selectedHttpConnectorContext), changedValues,
+                metadata, this::reload);
     }
 
     void resetHttpConnectorSecurityPolicy(Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE);
         crud.resetSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
-                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, metadata,
+                SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE.resolve(selectedHttpConnectorContext), form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(Form<ModelNode> form) {
@@ -334,7 +334,7 @@ public class RemotingPresenter
 
     void removeHttpConnectorSecurityPolicy(Form<ModelNode> form) {
         crud.removeSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
-                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext),
+                SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE.resolve(selectedHttpConnectorContext),
                 new FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(Form<ModelNode> form) {
