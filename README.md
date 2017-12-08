@@ -106,17 +106,7 @@ The module `hal-fraction` contains the WildFly Swarm fraction `org.jboss.hal.fra
 
 ### Docker 
 
-The `docker` module provides a docker image with WildFly 11.x and HAL.next.
-
-1. `cd docker`
-1. `mvn install`
-1. `docker run -p 9990:9990 -it hpehl/hal-console /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0` or 
-1. `docker run -p 9990:9990 -it hpehl/hal-console /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
-1. Open http://localhost:9990 and log in with `admin:admin`
-
-The docker image is also available in the public docker repository: https://hub.docker.com/r/hpehl/hal-console/
-
-`docker pull hpehl/hal-console`
+The `docker` module provides docker images to run HAL.next standalone or with WildFly 11. See https://hub.docker.com/u/halconsole/ for more details.
 
 ### GitHub Pages
 
