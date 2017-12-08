@@ -157,7 +157,7 @@ public class DestinationPresenter
     void addJMSQueue() {
         Metadata metadata = metadataRegistry.lookup(JMS_QUEUE_TEMPLATE);
         NameItem nameItem = new NameItem();
-        ModelNodeForm form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_JMS_QUEUE, ADD), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_JMS_QUEUE, ADD), metadata)
                 .fromRequestProperties()
                 .unboundFormItem(nameItem, 0)
                 .include(DURABLE, SELECTOR)

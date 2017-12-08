@@ -138,7 +138,12 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.gwt.elemento</groupId>
-                <artifactId>elemento-template</artifactId>
+                <artifactId>elemento-template-api</artifactId>
+                <version>${elemento.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.elemento</groupId>
+                <artifactId>elemento-template-processor</artifactId>
                 <version>${elemento.version}</version>
             </dependency>
             <dependency>
