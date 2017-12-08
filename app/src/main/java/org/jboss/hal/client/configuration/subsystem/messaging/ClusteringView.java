@@ -30,6 +30,7 @@ import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
@@ -89,6 +90,8 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 () -> bridgeForm.<String>getFormItem(PASSWORD).getValue(),
                 () -> presenter.bridgeAddress(bridgeTable.hasSelection() ? bridgeTable.selectedRow().getName() : null),
                 () -> presenter.reload());
+        crForm.addFormValidation(
+                new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()));
 
         bridgeTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(MESSAGING_SERVER, BRIDGE, Ids.TABLE), metadata)
                 .button(mbuiContext.resources().constants().add(),
@@ -104,6 +107,9 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 .onSave((form, changedValues) -> presenter.save(ServerSubResource.BRIDGE, form, changedValues))
                 .prepareReset(form -> presenter.reset(ServerSubResource.BRIDGE, form))
                 .build();
+        bridgeForm.addFormValidation(
+                new CredentialReference.AlternativeValidation<>(PASSWORD, () -> crForm.getModel(),
+                        mbuiContext.resources()));
 
         Tabs tabs = new Tabs(Ids.build(MESSAGING_SERVER, BRIDGE, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, ATTRIBUTES, Ids.TAB),

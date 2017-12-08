@@ -59,6 +59,7 @@ public class ConnectionPresenter
 
     private static final String EQ = "=";
     private static final String EQ_WILDCARD = "=*";
+    private static final String EQ = "=";
     private final Dispatcher dispatcher;
 
     @Inject
