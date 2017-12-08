@@ -23,7 +23,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.core.RegExp;
+import elemental2.core.JsRegExp;
 import elemental2.dom.CSSProperties.MarginBottomUnionType;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -69,7 +69,7 @@ import static org.jboss.hal.resources.CSS.*;
 class RestResourcePreview extends PreviewContent<RestResource> {
 
     private static final String LINK = "link";
-    private static final RegExp REGEX = new RegExp("\\{([\\w-\\.]+)\\}", "g"); //NON-NLS
+    private static final JsRegExp REGEX = new JsRegExp("\\{([\\w-\\.]+)\\}", "g"); //NON-NLS
 
     private final Environment environment;
     private final ServerActions serverActions;

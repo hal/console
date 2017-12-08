@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.db;
 
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -27,7 +27,7 @@ class AllDocsResponse {
 
     int offset;
     int total_rows;
-    Array<Row> rows;
+    JsArray<Row> rows;
 
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

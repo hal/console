@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import elemental2.dom.File;
 import elemental2.dom.File.ConstructorContentsArrayUnionType;
 import elemental2.dom.HTMLButtonElement;
@@ -526,7 +526,7 @@ class BrowseContentElement implements IsElement, Attachable {
                             .folder()
                             .open()
                             .build();
-                    Array<Node<ContentEntry>> nodes = new Array<>();
+                    JsArray<Node<ContentEntry>> nodes = new JsArray<>();
                     new ContentParser().parse(root, nodes, result.isDefined() ? result.asList() : emptyList());
 
                     if (tree != null) {

@@ -57,6 +57,7 @@ public class ConnectionPresenter
         extends ServerSettingsPresenter<ConnectionPresenter.MyView, ConnectionPresenter.MyProxy>
         implements SupportsExpertMode {
 
+    private static final String EQ = "=";
     private static final String EQ_WILDCARD = "=*";
     private final Dispatcher dispatcher;
 
@@ -126,7 +127,7 @@ public class ConnectionPresenter
                         AddressTemplate.of("/{selected.profile}/subsystem=undertow/server=*/http-listener=*")));
 
         new AddResourceDialog(ssr.type, form, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + EQ + name)
                     .resolve(statementContext);
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();
@@ -145,10 +146,11 @@ public class ConnectionPresenter
                         AddressTemplate.of("/socket-binding-group=*/socket-binding=*")));
         form.getFormItem(ENDPOINT).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext,
-                        AddressTemplate.of("/{selected.profile}/subsystem=messaging-activemq/server=*/http-acceptor=*")));
+                        AddressTemplate.of(
+                                "/{selected.profile}/subsystem=messaging-activemq/server=*/http-acceptor=*")));
 
         new AddResourceDialog(ssr.type, form, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + EQ + name)
                     .resolve(statementContext);
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();
@@ -166,7 +168,7 @@ public class ConnectionPresenter
                         AddressTemplate.of("/socket-binding-group=*/socket-binding=*")));
 
         new AddResourceDialog(ssr.type, form, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + EQ + name)
                     .resolve(statementContext);
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();
@@ -195,7 +197,7 @@ public class ConnectionPresenter
 
         new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
             name = nameItem.getValue();
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + EQ + name)
                     .resolve(statementContext);
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();

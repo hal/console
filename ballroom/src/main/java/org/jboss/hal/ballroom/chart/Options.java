@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.ballroom.chart;
 
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Any;
-import jsinterop.base.JsPropertyMapOfAny;
+import jsinterop.base.JsPropertyMap;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -49,17 +49,17 @@ class Options {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Color {
 
-        public Array<String> pattern;
+        public JsArray<String> pattern;
     }
 
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Data {
 
-        JsPropertyMapOfAny colors;
-        Array<Array<Any>> columns;
-        Array<Array<String>> groups;
-        JsPropertyMapOfAny names;
+        JsPropertyMap<Object> colors;
+        JsArray<JsArray<Any>> columns;
+        JsArray<JsArray<String>> groups;
+        JsPropertyMap<Object> names;
         @NonNls public String type;
     }
 
@@ -106,7 +106,7 @@ class Options {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class X {
 
-        public Array<String> categories;
+        public JsArray<String> categories;
         public String type;
     }
 }

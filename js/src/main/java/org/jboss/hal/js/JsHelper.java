@@ -22,24 +22,22 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.google.web.bindery.event.shared.HandlerRegistrations;
 import elemental2.dom.DragEvent;
 import elemental2.dom.HTMLElement;
-import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
-import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.EventType;
 import org.jboss.hal.resources.CSS;
 
 public final class JsHelper {
 
-    public static Map<String, Object> asMap(JsPropertyMapOfAny jsMap) {
+    public static Map<String, Object> asMap(JsPropertyMap<Object> jsMap) {
         Map<String, Object> map = new HashMap<>();
         jsMap.forEach(key -> map.put(key, jsMap.get(key)));
         return map;
     }
 
-    public static <T> JsPropertyMapOfAny asJsMap(Map<String, T> map) {
-        JsPropertyMapOfAny jsMap = JsPropertyMap.of();
-        map.forEach((key, value) -> jsMap.set(key, Any.of(value)));
+    public static <T> JsPropertyMap<Object> asJsMap(Map<String, T> map) {
+        JsPropertyMap<Object> jsMap = JsPropertyMap.of();
+        map.forEach(jsMap::set);
         return jsMap;
     }
 

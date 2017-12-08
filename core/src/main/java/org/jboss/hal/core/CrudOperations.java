@@ -31,7 +31,7 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import jsinterop.base.JsPropertyMapOfAny;
+import jsinterop.base.JsPropertyMap;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -286,10 +286,10 @@ public class CrudOperations {
      * is added using the specified address template. After the singleton resource has been added a success message is
      * fired and the specified callback is executed.
      *
-     * @param id         the id used for the add resource dialog
-     * @param type       the human readable resource type used in the dialog header and success message
-     * @param metadata   the metadata that contains the resource description
-     * @param callback   the callback executed after the singleton resource has been added
+     * @param id       the id used for the add resource dialog
+     * @param type     the human readable resource type used in the dialog header and success message
+     * @param metadata the metadata that contains the resource description
+     * @param callback the callback executed after the singleton resource has been added
      */
     @JsIgnore
     public void addSingleton(String id, String type, Metadata metadata, AddressTemplate template,
@@ -1517,7 +1517,7 @@ public class CrudOperations {
     @JsMethod(name = "save")
     public void jsSave(String type, String name,
             @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("{key: string, value: object}") JsPropertyMapOfAny changeSet,
+            @EsParam("{key: string, value: object}") JsPropertyMap<Object> changeSet,
             @EsParam("function()") JsCallback callback) {
 
         Callback c = callback::execute;
@@ -1547,7 +1547,7 @@ public class CrudOperations {
     @JsMethod(name = "saveSingleton")
     public void jsSaveSingleton(String type,
             @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("{key: string, value: object}") JsPropertyMapOfAny changeSet,
+            @EsParam("{key: string, value: object}") JsPropertyMap<Object> changeSet,
             @EsParam("function()") JsCallback callback) {
 
         Callback c = callback::execute;

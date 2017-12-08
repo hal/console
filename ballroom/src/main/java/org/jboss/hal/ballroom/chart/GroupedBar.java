@@ -24,11 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import elemental2.dom.HTMLElement;
-import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
-import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.js.JsHelper;
@@ -65,20 +63,20 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
         options.axis = new Options.Axis();
         options.axis.rotated = builder.orientation == Orientation.HORIZONTAL;
         options.axis.x = new Options.X();
-        options.axis.x.categories = new Array<>();
+        options.axis.x.categories = new JsArray<>();
         for (String category : builder.categories) {
             options.axis.x.categories.push(category);
         }
         options.axis.x.type = "category";
         options.bindto = HASH + root.id;
         options.data = new Options.Data();
-        options.data.columns = new Array<>();
+        options.data.columns = new JsArray<>();
         if (builder.stacked) {
-            Array<String> names = new Array<>();
+            JsArray<String> names = new JsArray<>();
             for (String id : builder.order) {
                 names.push(builder.names.get(id));
             }
-            options.data.groups = new Array<>();
+            options.data.groups = new JsArray<>();
             options.data.groups.push(names);
         }
         options.data.names = JsHelper.asJsMap(builder.names);
@@ -141,14 +139,14 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
      */
     @SuppressWarnings("unchecked")
     public void update(ArrayListMultimap<String, Long> data) {
-        JsPropertyMapOfAny dataMap = JsPropertyMap.of();
-        Array<Array<Any>> columns = new Array<>();
+        JsPropertyMap<Object> dataMap = JsPropertyMap.of();
+        JsArray<JsArray<Object>> columns = new JsArray<>();
 
         for (Map.Entry<String, Collection<Long>> entry : data.asMap().entrySet()) {
-            Array<Any> column = new Array<>();
-            column.push(Any.of(entry.getKey()));
+            JsArray<Object> column = new JsArray<>();
+            column.push(entry.getKey());
             for (Long value : entry.getValue()) {
-                column.push(Any.of(value.longValue()));
+                column.push(value.longValue());
             }
             columns.push(column);
         }
@@ -159,8 +157,8 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public void resize(int width) {
-        JsPropertyMapOfAny dimension = JsPropertyMap.of();
-        dimension.set(UIConstants.WIDTH, Any.of(width));
+        JsPropertyMap<Object> dimension = JsPropertyMap.of();
+        dimension.set(UIConstants.WIDTH, width);
         int height;
         if (builder.orientation == Orientation.HORIZONTAL) {
             height = builder.stacked
@@ -169,7 +167,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
         } else {
             height = VERTICAL_HEIGHT;
         }
-        dimension.set(UIConstants.HEIGHT, Any.of(height));
+        dimension.set(UIConstants.HEIGHT, height);
         api().resize(dimension);
     }
 

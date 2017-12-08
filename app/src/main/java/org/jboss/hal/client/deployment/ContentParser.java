@@ -23,7 +23,7 @@ import java.util.function.Function;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
@@ -42,7 +42,7 @@ class ContentParser {
     static final Function<String, String> NODE_ID = path -> Ids.build("bct", path, "node");
 
     @SuppressWarnings("unchecked")
-    void parse(Node<ContentEntry> root, Array<Node<ContentEntry>> nodes, List<ModelNode> content) {
+    void parse(Node<ContentEntry> root, JsArray<Node<ContentEntry>> nodes, List<ModelNode> content) {
         nodes.push(root);
 
         Map<String, Node<ContentEntry>> nodesByPath = new HashMap<>();
@@ -87,7 +87,7 @@ class ContentParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Node<ContentEntry> pushFolder(Array<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
+    private Node<ContentEntry> pushFolder(JsArray<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
             ContentEntry contentEntry) {
         Node<ContentEntry> node = new Node.Builder<>(NODE_ID.apply(contentEntry.path), contentEntry.name, contentEntry)
                 .parent(parent.id)
@@ -98,7 +98,7 @@ class ContentParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Node<ContentEntry> pushEntry(Array<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
+    private Node<ContentEntry> pushEntry(JsArray<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
             ContentEntry contentEntry) {
         Node<ContentEntry> node = new Node.Builder<>(NODE_ID.apply(contentEntry.path), contentEntry.name, contentEntry)
                 .parent(parent.id)

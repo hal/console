@@ -16,17 +16,17 @@
 package org.jboss.hal.dmr;
 
 import com.google.common.base.Charsets;
-import elemental2.core.Array;
 import elemental2.core.ArrayBuffer;
 import elemental2.core.DataView;
 import elemental2.core.Int8Array;
+import elemental2.core.JsArray;
 
 class DataOutput {
 
-    private final Array<Byte> bytes;
+    private final JsArray<Byte> bytes;
 
     DataOutput() {
-        bytes = new Array<>();
+        bytes = new JsArray<>();
     }
 
     @Override

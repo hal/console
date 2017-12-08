@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>hal-js</artifactId>
-    <name>HAL :: JavaScrip</name>
+    <name>HAL :: JavaScript</name>
     <description>Low level JavaScript code</description>
     <packaging>gwt-lib</packaging>
 

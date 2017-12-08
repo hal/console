@@ -37,7 +37,7 @@
         <apt-tools.version>0.0.3</apt-tools.version>
         <auto-service.version>1.0-rc3</auto-service.version>
         <compile-testing.version>0.12</compile-testing.version>
-        <elemental.version>1.0.0-beta-1</elemental.version>
+        <elemental.version>1.0.0-beta-3</elemental.version>
         <elemento.version>HEAD-SNAPSHOT</elemento.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>23.0</guava.version>

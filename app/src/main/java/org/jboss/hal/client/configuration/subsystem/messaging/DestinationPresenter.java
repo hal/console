@@ -135,7 +135,7 @@ public class DestinationPresenter
     void addCoreQueue() {
         Metadata metadata = metadataRegistry.lookup(CORE_QUEUE_TEMPLATE);
         NameItem nameItem = new NameItem();
-        ModelNodeForm form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_CORE_QUEUE, ADD), metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_CORE_QUEUE, ADD), metadata)
                 .fromRequestProperties()
                 .unboundFormItem(nameItem, 0)
                 .include(DURABLE, FILTER)
