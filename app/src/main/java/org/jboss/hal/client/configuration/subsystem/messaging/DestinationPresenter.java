@@ -252,7 +252,7 @@ public class DestinationPresenter
             crud.reset(Names.SECURITY_SETTING, securitySetting + "/" + name, address, form, metadata,
                     new FinishReset<NamedNode>(form) {
                         @Override
-                        public void afterReset(final Form<NamedNode> form) {
+                        public void afterReset(Form<NamedNode> form) {
                             reload();
                         }
                     });
