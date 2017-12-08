@@ -40,11 +40,11 @@ public class Main {
                 .setCachable(not(suffixes(".nocache.js", "index.html")));
 
         Undertow server = Undertow.builder()
-                .addHttpListener(9090, "localhost")
+                .addHttpListener(9090, "0.0.0.0")
                 .setHandler(handler)
                 .build();
         server.start();
-        Logger.getLogger("HAL").info("Serving console from http://localhost:9090");
+        Logger.getLogger("HAL").info("HAL listening on port 9090");
     }
 
     private Main() {
