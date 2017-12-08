@@ -287,8 +287,8 @@
                         <devmodeArg>-generateJsInteropExports</devmodeArg>
                     </devmodeArgs>
                     <jvmArgs>
-                        <jvmArg>-Xms2048m</jvmArg>
-                        <jvmArg>-Xmx4096m</jvmArg>
+                        <jvmArg>-Xms1024m</jvmArg>
+                        <jvmArg>-Xmx2048m</jvmArg>
                         <jvmArg>-Xss1024k</jvmArg>
                     </jvmArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
