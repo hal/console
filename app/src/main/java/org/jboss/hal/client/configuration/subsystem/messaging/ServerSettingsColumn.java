@@ -174,6 +174,10 @@ public class ServerSettingsColumn
     }
 
     private void removeHaPolicy(final StatementContext statementContext, final HaPolicy haPolicy) {
-        haPolicy.remove(dispatcher, statementContext, resources, () -> refresh(RefreshMode.RESTORE_SELECTION));
+        haPolicy.remove(dispatcher, statementContext, resources, () -> {
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.messages().removeSingletonSuccess(haPolicy.type)));
+            refresh(RefreshMode.RESTORE_SELECTION);
+        });
     }
 }
