@@ -31,6 +31,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.resources.Ids.JMS_BRIDGE_ITEM;
 
 @AsyncColumn(Ids.MESSAGING_CATEGORY)
 public class MessagingCategoryColumn extends StaticItemColumn {
@@ -54,6 +55,7 @@ public class MessagingCategoryColumn extends StaticItemColumn {
                                 resources.previews().configurationMessagingServer()))
                         .build(),
                 new StaticItem.Builder(Names.JMS_BRIDGE)
+                        .id(JMS_BRIDGE_ITEM)
                         .nextColumn(Ids.JMS_BRIDGE)
                         .onPreview(new PreviewContent(Names.JMS_BRIDGE,
                                 resources.previews().configurationMessagingJmsBridge()))

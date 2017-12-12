@@ -382,6 +382,7 @@ public interface Ids {
     String JMS_BRIDGE = "jms-bridge";
     String JMS_BRIDGE_ADD = "jms-bridge-add";
     String JMS_BRIDGE_FORM = "jms-bridge-form";
+    String JMS_BRIDGE_ITEM = "jms-bridge-item";
     String JMS_BRIDGE_REFRESH = "jms-bridge-refresh";
     String JMS_BRIDGE_TAB = "jms-bridge-tab";
     String JMS_MESSAGE = "jms-message";
