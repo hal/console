@@ -155,7 +155,7 @@
                                 <runCmds>
                                     <run><![CDATA[
                                         cd $HOME \
-                                        && mv /maven/hal-standalone-${project.version}.jar .
+&& mv /maven/hal-standalone-${project.version}.jar .
                                     ]]></run>
                                 </runCmds>
                                 <cmd>
