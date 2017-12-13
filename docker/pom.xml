@@ -209,16 +209,16 @@
                                 </ports>
                                 <runCmds>
                                     <run><![CDATA[
-                                        cd $HOME \
-                                        && unzip -o -q /maven/wildfly-$WILDFLY_VERSION.zip \
-                                        && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
-                                        && mv /maven/* $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main \
-                                        && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone.xml > $JBOSS_HOME/standalone/configuration/standalone-insecure.xml \
-                                        && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full.xml > $JBOSS_HOME/standalone/configuration/standalone-full-insecure.xml \
-                                        && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-ha-insecure.xml \
-                                        && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-full-ha-insecure.xml \
-                                        && rm -rf /maven/* \
-                                        && $JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent
+                                        cd $HOME
+                                        unzip -o -q /maven/wildfly-$WILDFLY_VERSION.zip
+                                        mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME
+                                        mv /maven/* $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main
+                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone.xml > $JBOSS_HOME/standalone/configuration/standalone-insecure.xml
+                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full.xml > $JBOSS_HOME/standalone/configuration/standalone-full-insecure.xml
+                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-ha-insecure.xml
+                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-full-ha-insecure.xml
+                                        rm -rf /maven/*
+                                        $JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent
                                     ]]></run>
                                 </runCmds>
                                 <cmd>
