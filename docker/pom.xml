@@ -131,7 +131,7 @@
                             <build>
                                 <assembly>
                                     <mode>dir</mode>
-                                    <user>jboss</user>
+                                    <user>jboss:jboss:jboss</user>
                                     <inline>
                                         <fileSets>
                                             <fileSet>
@@ -165,78 +165,80 @@
                                 </cmd>
                             </build>
                         </image>
-                        <image>
-                            <alias>hal-wildfly</alias>
-                            <name>halconsole/hal-wildfly</name>
-                            <build>
-                                <assembly>
-                                    <mode>dir</mode>
-                                    <user>jboss:jboss:jboss</user>
-                                    <inline>
-                                        <fileSets>
-                                            <fileSet>
-                                                <directory>${project.basedir}/src/main/docker</directory>
-                                                <includes>
-                                                    <include>module.xml</include>
-                                                </includes>
-                                                <filtered>true</filtered>
-                                                <outputDirectory>.</outputDirectory>
-                                            </fileSet>
-                                            <fileSet>
-                                                <directory>${project.build.directory}</directory>
-                                                <includes>
-                                                    <include>wildfly-${wildfly.version}.zip</include>
-                                                    <include>hal-console-${project.version}-resources.jar</include>
-                                                </includes>
-                                                <outputDirectory>.</outputDirectory>
-                                            </fileSet>
-                                        </fileSets>
-                                    </inline>
-                                </assembly>
-                                <from>jboss/base-jdk:8</from>
-                                <tags>
-                                    <tag>${project.version}</tag>
-                                    <tag>latest</tag>
-                                </tags>
-                                <env>
-                                    <WILDFLY_VERSION>${wildfly.version}</WILDFLY_VERSION>
-                                    <JBOSS_HOME>/opt/jboss/wildfly</JBOSS_HOME>
-                                    <LAUNCH_JBOSS_IN_BACKGROUND>true</LAUNCH_JBOSS_IN_BACKGROUND>
-                                </env>
-                                <ports>
-                                    <port>8080</port>
-                                    <port>9990</port>
-                                </ports>
-                                <runCmds>
-                                    <run>cd $HOME</run>
-                                    <run>unzip -o -q /maven/wildfly-$WILDFLY_VERSION.zip</run>
-                                    <run>mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME</run>
-                                    <run>mv /maven/* $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main
-                                    </run>
-                                    <run><![CDATA[
-                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone.xml > $JBOSS_HOME/standalone/configuration/standalone-insecure.xml
-                                    ]]></run>
-                                    <run><![CDATA[
-                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full.xml > $JBOSS_HOME/standalone/configuration/standalone-full-insecure.xml
-                                    ]]></run>
-                                    <run><![CDATA[
-                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-ha-insecure.xml
-                                    ]]></run>
-                                    <run><![CDATA[
-                                        sed "s/<http-interface security-realm=\"ManagementRealm\">/ <http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-full-ha-insecure.xml
-                                    ]]></run>
-                                    <run>rm -rf /maven/*</run>
-                                    <run>$JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent</run>
-                                </runCmds>
-                                <cmd>
-                                    <arg>/opt/jboss/wildfly/bin/standalone.sh</arg>
-                                    <arg>-b</arg>
-                                    <arg>0.0.0.0</arg>
-                                    <arg>-bmanagement</arg>
-                                    <arg>0.0.0.0</arg>
-                                </cmd>
-                            </build>
-                        </image>
+                        <!--
+                                                <image>
+                                                    <alias>hal-wildfly</alias>
+                                                    <name>halconsole/hal-wildfly</name>
+                                                    <build>
+                                                        <assembly>
+                                                            <mode>dir</mode>
+                                                            <user>jboss:jboss:jboss</user>
+                                                            <inline>
+                                                                <fileSets>
+                                                                    <fileSet>
+                                                                        <directory>${project.basedir}/src/main/docker</directory>
+                                                                        <includes>
+                                                                            <include>module.xml</include>
+                                                                        </includes>
+                                                                        <filtered>true</filtered>
+                                                                        <outputDirectory>.</outputDirectory>
+                                                                    </fileSet>
+                                                                    <fileSet>
+                                                                        <directory>${project.build.directory}</directory>
+                                                                        <includes>
+                                                                            <include>wildfly-${wildfly.version}.zip</include>
+                                                                            <include>hal-console-${project.version}-resources.jar</include>
+                                                                        </includes>
+                                                                        <outputDirectory>.</outputDirectory>
+                                                                    </fileSet>
+                                                                </fileSets>
+                                                            </inline>
+                                                        </assembly>
+                                                        <from>jboss/base-jdk:8</from>
+                                                        <tags>
+                                                            <tag>${project.version}</tag>
+                                                            <tag>latest</tag>
+                                                        </tags>
+                                                        <env>
+                                                            <WILDFLY_VERSION>${wildfly.version}</WILDFLY_VERSION>
+                                                            <JBOSS_HOME>/opt/jboss/wildfly</JBOSS_HOME>
+                                                            <LAUNCH_JBOSS_IN_BACKGROUND>true</LAUNCH_JBOSS_IN_BACKGROUND>
+                                                        </env>
+                                                        <ports>
+                                                            <port>8080</port>
+                                                            <port>9990</port>
+                                                        </ports>
+                                                        <runCmds>
+                                                            <run>cd $HOME</run>
+                                                            <run>unzip -o -q /maven/wildfly-$WILDFLY_VERSION.zip</run>
+                                                            <run>mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME</run>
+                                                            <run>mv /maven/* $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main
+                                                            </run>
+                                                            <run><![CDATA[
+                                                                sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone.xml > $JBOSS_HOME/standalone/configuration/standalone-insecure.xml
+                                                            ]]></run>
+                                                            <run><![CDATA[
+                                                                sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full.xml > $JBOSS_HOME/standalone/configuration/standalone-full-insecure.xml
+                                                            ]]></run>
+                                                            <run><![CDATA[
+                                                                sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-ha-insecure.xml
+                                                            ]]></run>
+                                                            <run><![CDATA[
+                                                                sed "s/<http-interface security-realm=\"ManagementRealm\">/ <http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-full-ha-insecure.xml
+                                                            ]]></run>
+                                                            <run>rm -rf /maven/*</run>
+                                                            <run>$JBOSS_HOME/bin/add-user.sh -u admin -p admin &#45;&#45;silent</run>
+                                                        </runCmds>
+                                                        <cmd>
+                                                            <arg>/opt/jboss/wildfly/bin/standalone.sh</arg>
+                                                            <arg>-b</arg>
+                                                            <arg>0.0.0.0</arg>
+                                                            <arg>-bmanagement</arg>
+                                                            <arg>0.0.0.0</arg>
+                                                        </cmd>
+                                                    </build>
+                                                </image>
+                        -->
                     </images>
                 </configuration>
             </plugin>
