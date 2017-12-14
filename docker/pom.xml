@@ -131,7 +131,6 @@
                             <build>
                                 <assembly>
                                     <mode>dir</mode>
-                                    <!--<user>jboss:jboss:jboss</user>-->
                                     <inline>
                                         <fileSets>
                                             <fileSet>
@@ -152,14 +151,6 @@
                                 <ports>
                                     <port>9090</port>
                                 </ports>
-                                <!--
-                                                                <runCmds>
-                                                                    <run><![CDATA[
-                                                                        cd $HOME \
-                                    && mv /maven/hal-standalone-${project.version}.jar .
-                                                                    ]]></run>
-                                                                </runCmds>
-                                -->
                                 <cmd>
                                     <arg>java</arg>
                                     <arg>-jar</arg>

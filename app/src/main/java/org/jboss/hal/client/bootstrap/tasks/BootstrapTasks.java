@@ -28,16 +28,18 @@ public class BootstrapTasks {
             ReadAuthentication readAuthentication,
             FindDomainController findDomainController,
             RegisterStaticCapabilities registerStaticCapabilities,
+            ReadExtensions readExtensions,
             LoadSettings loadSettings,
-            ReadExtensions readExtensions) {
+            StartAnalytics startAnalytics) {
         this.functions = new BootstrapTask[]{
                 setupLoggingTask,
                 readEnvironment,
                 readAuthentication,
                 findDomainController,
                 registerStaticCapabilities,
+                readExtensions,
                 loadSettings,
-                readExtensions
+                startAnalytics,
         };
     }
 

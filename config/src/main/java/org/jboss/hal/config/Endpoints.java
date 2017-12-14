@@ -58,7 +58,7 @@ public class Endpoints {
     }
 
     @JsIgnore
-    public void useBase(final String baseUrl) {
+    public void useBase(String baseUrl) {
         String safeUrl = baseUrl;
         if (baseUrl.endsWith("/")) {
             safeUrl = baseUrl.substring(0, baseUrl.length() - 1);

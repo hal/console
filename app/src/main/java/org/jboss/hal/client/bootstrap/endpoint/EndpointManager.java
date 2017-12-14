@@ -17,7 +17,6 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
@@ -27,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
+import static org.jboss.hal.js.JsHelper.requestParameter;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
 
 /**
@@ -58,7 +58,7 @@ public class EndpointManager {
     public void select(Callback callback) {
         this.callback = callback;
 
-        String connect = Window.Location.getParameter(CONNECT_PARAMETER);
+        String connect = requestParameter(CONNECT_PARAMETER);
         if (connect != null) {
             // Connect to a server given as a request parameter
             Endpoint endpoint = storage.get(connect);
@@ -115,7 +115,7 @@ public class EndpointManager {
         new EndpointDialog(this, storage).show();
     }
 
-    void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
+    void pingServer(Endpoint endpoint, AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
         XMLHttpRequest xhr = new XMLHttpRequest();
         xhr.onload = event -> {
