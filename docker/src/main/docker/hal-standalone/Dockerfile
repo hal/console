@@ -1,5 +1,6 @@
 FROM jboss/base-jdk:8
-MAINTAINER Harald Pehl <hpehl@redhat.com>
+
+LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
 
 COPY --chown=jboss /maven/hal-standalone.jar hal-standalone.jar
 

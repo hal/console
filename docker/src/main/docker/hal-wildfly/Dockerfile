@@ -1,5 +1,6 @@
 FROM jboss/wildfly:11.0.0.Final
-MAINTAINER Harald Pehl <hpehl@redhat.com>
+
+LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
 
 COPY --chown=jboss /module.xml $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main/
 COPY --chown=jboss /maven/hal-console.jar $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main/
