@@ -26,9 +26,13 @@ public class GoogleAnalytics {
         ga("send", "pageview"); // TODO Send parameters as custom dimension
     }
 
+    public void customDimension(int index, Object value) {
+        ga("set", "dimension" + index, value);
+    }
+
     @JsMethod(namespace = GLOBAL, name = "ga")
     static native void ga(String command, String type);
 
     @JsMethod(namespace = GLOBAL, name = "ga")
-    static native void ga(String command, String type, String parameter);
+    static native void ga(String command, String type, Object value);
 }

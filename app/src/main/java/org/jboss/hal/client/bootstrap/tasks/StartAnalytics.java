@@ -87,6 +87,18 @@ public class StartAnalytics implements BootstrapTask {
             document.head.appendChild(script);
 
             GoogleAnalytics ga = new GoogleAnalytics();
+            ga.customDimension(1, environment.getAccessControlProvider().name().toLowerCase());
+            ga.customDimension(2, environment.getHalBuild().name().toLowerCase());
+            ga.customDimension(3, environment.getHalVersion().toString());
+            ga.customDimension(4, environment.getManagementVersion().toString());
+            ga.customDimension(5, environment.getOperationMode().name().toLowerCase());
+            ga.customDimension(6, environment.getInstanceInfo().productName());
+            ga.customDimension(7, environment.getInstanceInfo().productVersion().toString());
+            ga.customDimension(8, environment.getInstanceInfo().releaseName());
+            ga.customDimension(9, environment.getInstanceInfo().releaseVersion().toString());
+            ga.customDimension(10, endpoints.isSameOrigin());
+            ga.customDimension(11, environment.isSingleSignOn());
+
             NavigationTracker tracker = new NavigationTracker(ga);
             eventBus.addHandler(NavigationEvent.getType(), tracker);
             eventBus.addHandler(FinderContextEvent.getType(), tracker);
@@ -104,20 +116,6 @@ public class StartAnalytics implements BootstrapTask {
         config.put("anonymizeIp", true);
         config.put("cookieDomain", "auto");
         config.put("trackingId", id);
-
-        // custom data send with every page view
-        // TODO Configure custom dimensions
-        // config.put("access_control_provider", environment.getAccessControlProvider().name().toLowerCase());
-        // config.put("hal_build", environment.getHalBuild().name().toLowerCase());
-        // config.put("hal_version", environment.getHalVersion().toString());
-        // config.put("management_version", environment.getManagementVersion().toString());
-        // config.put("operation_mode", environment.getOperationMode().name().toLowerCase());
-        // config.put("product_name", environment.getInstanceInfo().productName());
-        // config.put("product_version", environment.getInstanceInfo().productVersion().toString());
-        // config.put("release_name", environment.getInstanceInfo().releaseName());
-        // config.put("release_version", environment.getInstanceInfo().releaseVersion().toString());
-        // config.put("same_origin", endpoints.isSameOrigin());
-        // config.put("sso", environment.isSingleSignOn());
         return config;
     }
 }
