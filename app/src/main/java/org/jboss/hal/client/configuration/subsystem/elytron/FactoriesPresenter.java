@@ -103,7 +103,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(Ids.ELYTRON)
-                .append(Ids.ELYTRON, Ids.asId(Names.FACTORIES_TRANSFORMERS),
+                .append(Ids.ELYTRON, Ids.ELYTRON_FACTORIES_TRANSFORMERS,
                         resources.constants().settings(), Names.FACTORIES_TRANSFORMERS);
     }
 
