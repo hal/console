@@ -208,6 +208,7 @@ public interface Ids {
     String ELYTRON_CUSTOM_ROLE_DECODER = "elytron-custom-role-decoder";
     String ELYTRON_CUSTOM_ROLE_MAPPER = "elytron-custom-role-mapper";
     String ELYTRON_DIR_CONTEXT = "elytron-dir-context";
+    String ELYTRON_FACTORIES_TRANSFORMERS = "elytron-factories-transformers";
     String ELYTRON_FILE_AUDIT_LOG = "elytron-file-audit-log";
     String ELYTRON_FILESYSTEM_REALM = "elytron-filesystem-realm";
     String ELYTRON_FILTERING_KEY_STORE = "elytron-filtering-key-store";
@@ -226,6 +227,7 @@ public interface Ids {
     String ELYTRON_LOGICAL_ROLE_MAPPER = "elytron-logical-role-mapper";
     String ELYTRON_LOGS_ITEM = "logs-item";
     String ELYTRON_MAPPED_REGEX_REALM_MAPPER = "elytron-mapped-regex-realm-mapper";
+    String ELYTRON_MAPPERS_DECODERS = "elytron-mappers-decoders";
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "elytron-mechanism-provider-filtering-sasl-server-factory";
     String ELYTRON_OTHER_ITEM = "other-item";
     String ELYTRON_PERIODIC_ROTATING_FILE_AUDIT_LOG = "elytron-periodic-rotating-file-audit-log";

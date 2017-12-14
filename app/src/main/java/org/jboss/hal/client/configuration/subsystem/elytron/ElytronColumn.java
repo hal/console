@@ -66,7 +66,8 @@ public class ElytronColumn
                         .build(),
 
                 new StaticItem.Builder(Names.FACTORIES_TRANSFORMERS)
-                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.FACTORIES_TRANSFORMERS),
+                        .id(Ids.ELYTRON_FACTORIES_TRANSFORMERS)
+                        .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_FACTORIES_TRANSFORMERS,
                                 places.selectedProfile(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS).build()))
                         .onPreview(new PreviewContent(Names.FACTORIES_TRANSFORMERS,
                                 resources.previews().configurationElytronFactories()))
@@ -74,7 +75,8 @@ public class ElytronColumn
                         .build(),
 
                 new StaticItem.Builder(Names.MAPPERS_DECODERS)
-                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.MAPPERS_DECODERS),
+                        .id(Ids.ELYTRON_MAPPERS_DECODERS)
+                        .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_MAPPERS_DECODERS,
                                 places.selectedProfile(NameTokens.ELYTRON_MAPPERS_DECODERS).build()))
                         .onPreview(new PreviewContent(Names.MAPPERS_DECODERS,
                                 resources.previews().configurationElytronMappersDecoders()))
