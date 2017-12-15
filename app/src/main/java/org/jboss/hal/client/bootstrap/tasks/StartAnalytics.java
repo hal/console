@@ -26,7 +26,7 @@ import org.jboss.hal.config.Settings;
 import org.jboss.hal.core.analytics.GoogleAnalytics;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
-import org.jboss.hal.core.mvp.NavigationTracker;
+import org.jboss.hal.core.analytics.Tracker;
 import org.jboss.hal.js.JsonObject;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.js.Json.stringify;
 
-/** Initialises google analytics and binds {@link org.jboss.hal.core.mvp.NavigationTracker} */
+/** Initialises google analytics and binds {@link Tracker} */
 public class StartAnalytics implements BootstrapTask {
 
     private static final String PRODUCTION_ID = "UA-89365654-1";
@@ -82,8 +82,7 @@ public class StartAnalytics implements BootstrapTask {
             logger.info("Collect user data is on: {}", id);
 
             HTMLScriptElement script = (HTMLScriptElement) document.createElement("script");
-            script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');\n" +
-                    "ga('create', " + stringify(config(id)) + ");\n";
+            script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', " + stringify(config(id)) + ");";
             document.head.appendChild(script);
 
             GoogleAnalytics ga = new GoogleAnalytics();
@@ -99,7 +98,7 @@ public class StartAnalytics implements BootstrapTask {
             ga.customDimension(10, endpoints.isSameOrigin());
             ga.customDimension(11, environment.isSingleSignOn());
 
-            NavigationTracker tracker = new NavigationTracker(ga);
+            Tracker tracker = new Tracker(ga);
             eventBus.addHandler(NavigationEvent.getType(), tracker);
             eventBus.addHandler(FinderContextEvent.getType(), tracker);
             eventBus.addHandler(ModelBrowserPathEvent.getType(), tracker);
@@ -107,7 +106,6 @@ public class StartAnalytics implements BootstrapTask {
         } else {
             logger.info("Collect user data is off.");
         }
-
         return Completable.complete();
     }
 
