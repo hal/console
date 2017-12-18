@@ -43,7 +43,6 @@ public class StartAnalytics implements BootstrapTask {
 
     private static final String PRODUCTION_ID = "UA-89365654-1";
     private static final String DEVELOPMENT_ID = "UA-89365654-2";
-    private static final String TEST_SUITE_ID = "UA-89365654-3";
     private static final String UNKNOWN_ID = "UA-89365654-4";
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(StartAnalytics.class);
@@ -63,17 +62,15 @@ public class StartAnalytics implements BootstrapTask {
 
     @Override
     public Completable call() {
+        String pathname = window.location.getPathname();
+        boolean testSuite = pathname.endsWith("ts.html");
         boolean collectUserData = settings.get(COLLECT_USER_DATA).asBoolean();
-        if (collectUserData) {
+        if (!testSuite && collectUserData) {
             String id;
-            String pathname = window.location.getPathname();
             boolean devMode = System.getProperty("superdevmode", "").equals("on");
-            boolean testSuite = pathname.endsWith("ts.html");
             boolean productionMode = pathname.equals("/") || pathname.endsWith("index.html");
             if (devMode) {
                 id = DEVELOPMENT_ID;
-            } else if (testSuite) {
-                id = TEST_SUITE_ID;
             } else if (productionMode) {
                 id = PRODUCTION_ID;
             } else {
