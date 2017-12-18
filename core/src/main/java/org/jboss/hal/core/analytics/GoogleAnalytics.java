@@ -23,7 +23,7 @@ public class GoogleAnalytics {
 
     public void trackPageView(String page) {
         ga("set", "page", page);
-        ga("send", "pageview"); // TODO Send parameters as custom dimension
+        ga("send", "pageview");
     }
 
     public void customDimension(int index, Object value) {
