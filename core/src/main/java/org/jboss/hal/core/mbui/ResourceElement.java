@@ -288,6 +288,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             clForm.attach();
             clTable.bindForm(clForm);
             clTable.onSelectionChange(table -> {
+                clTable.enableButton(1, clTable.hasSelection());
                 if (table.hasSelection()) {
                     clIndex = table.selectedRow().get(HAL_INDEX).asInt();
                 } else {
@@ -326,6 +327,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             } else {
                 clTable.update(clNodes);
             }
+            clTable.enableButton(1, clTable.hasSelection());
             pages.showPage(complexListPageId());
         }
     }

@@ -216,6 +216,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         iamTable.attach();
         iamTable.bindForm(iamForm);
         iamTable.onSelectionChange(table -> {
+            iamTable.enableButton(1, iamTable.hasSelection());
             if (table.hasSelection()) {
                 iamIndex = table.selectedRow().get(HAL_INDEX).asInt();
             } else {
@@ -251,6 +252,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         storeIndex(iamNodes);
         iamForm.clear();
         iamTable.update(iamNodes, modelNode -> Ids.build(modelNode.get(FROM).asString(), modelNode.get(TO).asString()));
+        iamTable.enableButton(1, iamTable.hasSelection());
         pages.showPage(id(ATTRIBUTE_MAPPING, PAGE));
     }
 }
