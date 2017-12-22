@@ -86,8 +86,7 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     // @formatter:off
-    public static HeaderView create(final Places places, final AccessControl ac, final User user,
-            final Resources resources) {
+    public static HeaderView create(Places places, AccessControl ac, User user, Resources resources) {
         return new Templated_HeaderView(places, ac, user, resources);
     }
 
@@ -479,7 +478,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 String id = Ids.build(segment.getColumnId(), VALUE);
                 value.appendChild(a = a().css(clickable)
                         .id(id)
-                        .data(UIConstants.TARGET, HASH)
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)
