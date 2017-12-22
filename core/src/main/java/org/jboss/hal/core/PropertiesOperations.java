@@ -80,7 +80,6 @@ public class PropertiesOperations {
     private final Provider<Progress> progress;
     private final StatementContext statementContext;
     private final Resources resources;
-    private final CrudOperations crud;
     private final OperationFactory operationFactory;
 
     @Inject
@@ -89,15 +88,13 @@ public class PropertiesOperations {
             MetadataProcessor metadataProcessor,
             @Footer Provider<Progress> progress,
             StatementContext statementContext,
-            Resources resources,
-            CrudOperations crud) {
+            Resources resources) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.statementContext = statementContext;
         this.resources = resources;
-        this.crud = crud;
         this.operationFactory = new OperationFactory();
     }
 
@@ -126,23 +123,19 @@ public class PropertiesOperations {
      * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
-    public void saveWithProperties(final String type, final String name, final AddressTemplate template,
-            final Map<String, Object> changedValues, final String psr, final Map<String, String> properties,
-            final Callback callback) {
+    public void saveWithProperties(String type, String name, AddressTemplate template,
+            Map<String, Object> changedValues, String psr, Map<String, String> properties,
+            Callback callback) {
 
         changedValues.remove(psr);
-        if (properties.isEmpty()) {
-            crud.save(type, name, template, changedValues, callback);
-        } else {
-            metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
-                @Override
-                public void onMetadata(final Metadata metadata) {
-                    ResourceAddress address = template.resolve(statementContext, name);
-                    Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
-                    saveInternal(type, name, address, operations, psr, properties, callback);
-                }
-            });
-        }
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
+            @Override
+            public void onMetadata(Metadata metadata) {
+                ResourceAddress address = template.resolve(statementContext, name);
+                Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+                saveInternal(type, name, address, operations, psr, properties, callback);
+            }
+        });
     }
 
     /**
@@ -166,17 +159,13 @@ public class PropertiesOperations {
      * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
-    public void saveWithProperties(final String type, final String name, final ResourceAddress address,
-            final Map<String, Object> changedValues, final Metadata metadata, final String psr,
-            final Map<String, String> properties, final Callback callback) {
+    public void saveWithProperties(String type, String name, ResourceAddress address,
+            Map<String, Object> changedValues, Metadata metadata, String psr,
+            Map<String, String> properties, Callback callback) {
 
         changedValues.remove(psr);
-        if (properties.isEmpty()) {
-            crud.save(type, name, address, changedValues, metadata, callback);
-        } else {
-            Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
-            saveInternal(type, name, address, operations, psr, properties, callback);
-        }
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+        saveInternal(type, name, address, operations, psr, properties, callback);
     }
 
     /**
@@ -198,15 +187,11 @@ public class PropertiesOperations {
      * @param properties the properties to save
      * @param callback   the callback executed after saving the resource
      */
-    public void saveWithProperties(final String type, final String name, final ResourceAddress address,
-            final Composite operations, final String psr, final Map<String, String> properties,
-            final Callback callback) {
+    public void saveWithProperties(String type, String name, ResourceAddress address,
+            Composite operations, String psr, Map<String, String> properties,
+            Callback callback) {
 
-        if (properties.isEmpty()) {
-            crud.save(type, name, operations, callback);
-        } else {
-            saveInternal(type, name, address, operations, psr, properties, callback);
-        }
+        saveInternal(type, name, address, operations, psr, properties, callback);
     }
 
     /**
@@ -229,18 +214,13 @@ public class PropertiesOperations {
      * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
-    public void saveSingletonWithProperties(final String type, final ResourceAddress address,
-            final Map<String, Object> changedValues, final Metadata metadata, final String psr,
-            final Map<String, String> properties, final Callback callback) {
+    public void saveSingletonWithProperties(String type, ResourceAddress address,
+            Map<String, Object> changedValues, Metadata metadata, String psr,
+            Map<String, String> properties, Callback callback) {
 
         changedValues.remove(psr);
-
-        if (properties.isEmpty()) {
-            crud.saveSingleton(type, address, changedValues, metadata, callback);
-        } else {
-            Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
-            saveInternal(type, null, address, operations, psr, properties, callback);
-        }
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+        saveInternal(type, null, address, operations, psr, properties, callback);
     }
 
     private void saveInternal(String type, String name, ResourceAddress address,
