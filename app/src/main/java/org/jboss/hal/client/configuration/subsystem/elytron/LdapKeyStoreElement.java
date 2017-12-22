@@ -114,6 +114,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
 
         table.bindForm(attributes);
         table.onSelectionChange(table -> {
+            table.enableButton(1, table.hasSelection());
             if (table.hasSelection()) {
                 newItemTemplate.view(failSafeGet(table.selectedRow(), NEW_ITEM_TEMPLATE));
             } else {
@@ -131,5 +132,6 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
         attributes.clear();
         newItemTemplate.clear();
         table.update(nodes);
+        table.enableButton(1, table.hasSelection());
     }
 }

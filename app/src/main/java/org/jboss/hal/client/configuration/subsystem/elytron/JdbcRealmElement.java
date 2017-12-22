@@ -179,6 +179,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
             form.attach();
         }
         pqTable.onSelectionChange(table -> {
+            pqTable.enableButton(1, pqTable.hasSelection());
             if (table.hasSelection()) {
                 pqIndex = table.selectedRow().get(HAL_INDEX).asInt();
                 selectedPrincipalQuery = table.selectedRow().get(SQL).asString();
@@ -195,6 +196,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         amForm.attach();
         amTable.bindForm(amForm);
         amTable.onSelectionChange(table -> {
+            amTable.enableButton(1, amTable.hasSelection());
             if (table.hasSelection()) {
                 amIndex = table.selectedRow().get(HAL_INDEX).asInt();
             } else {
@@ -245,6 +247,8 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
             form.clear();
         }
         pqTable.update(pqNodes, node -> Ids.build(node.get(SQL).asString(), node.get(DATA_SOURCE).asString()));
+        // a minimum of one item is required
+        pqTable.enableButton(1, pqNodes.size() > 1);
         pages.showPage(id(PRINCIPAL_QUERY, PAGE));
     }
 
@@ -255,6 +259,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         storeIndex(amNodes);
         amForm.clear();
         amTable.update(amNodes, node -> Ids.build(node.get(TO).asString(), String.valueOf(node.get(INDEX).asInt())));
+        amTable.enableButton(1, amTable.hasSelection());
         pages.showPage(id(ATTRIBUTE_MAPPING, PAGE));
     }
 }
