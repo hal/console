@@ -52,7 +52,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPresenter>
         implements ResourceAdapterPresenter.MyView {
 
-    public static ResourceAdapterView create(final MbuiContext mbuiContext) {
+    public static ResourceAdapterView create(MbuiContext mbuiContext) {
         return new Mbui_ResourceAdapterView(mbuiContext);
     }
 
@@ -64,7 +64,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     @MbuiElement("resource-adapter-admin-object-table") Table<NamedNode> adminObjectsTable;
     @MbuiElement("resource-adapter-admin-object-form") Form<NamedNode> adminObjectsForm;
 
-    public ResourceAdapterView(final MbuiContext mbuiContext) {
+    public ResourceAdapterView(MbuiContext mbuiContext) {
         super(mbuiContext);
         selectionAwareStatementContext = new SelectionAwareStatementContext(mbuiContext.statementContext(),
                 () -> presenter.getResourceAdapter());
@@ -108,7 +108,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         mbuiContext.crud().reset(Names.RESOURCE_ADAPTER, presenter.getResourceAdapter(), address, form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         presenter.reload();
                     }
                 });
@@ -170,7 +170,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         mbuiContext.crud().reset(Names.CONNECTION_DEFINITION, name, address, form, metadata,
                 new FinishReset<NamedNode>(form) {
                     @Override
-                    public void afterReset(final Form<NamedNode> form) {
+                    public void afterReset(Form<NamedNode> form) {
                         presenter.reload();
                     }
                 });
@@ -210,7 +210,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         mbuiContext.crud().reset(Names.ADMIN_OBJECT, name, address, form, metadata,
                 new FinishReset<NamedNode>(form) {
                     @Override
-                    public void afterReset(final Form<NamedNode> form) {
+                    public void afterReset(Form<NamedNode> form) {
                         presenter.reload();
                     }
                 });
@@ -225,7 +225,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     }
 
     @Override
-    public void update(final ResourceAdapter resourceAdapter) {
+    public void update(ResourceAdapter resourceAdapter) {
         configurationForm.view(resourceAdapter);
         Map<String, String> p = failSafePropertyList(resourceAdapter, CONFIG_PROPERTIES).stream()
                 .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
