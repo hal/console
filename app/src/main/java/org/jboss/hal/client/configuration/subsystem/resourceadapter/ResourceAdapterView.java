@@ -96,9 +96,10 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
             operations.add(userMappings);
         }
 
+        FormItem<Map<String, String>> formItem = form.getFormItem(CONFIG_PROPERTIES);
+        Map<String, String> configProperties = formItem != null ? formItem.getValue() : Collections.emptyMap();
         mbuiContext.po().saveWithProperties(Names.RESOURCE_ADAPTER, presenter.getResourceAdapter(), address,
-                operations, CONFIG_PROPERTIES, form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(),
-                () -> presenter.reload());
+                operations, CONFIG_PROPERTIES, configProperties, () -> presenter.reload());
     }
 
     void resetConfiguration(Form<ModelNode> form) {
