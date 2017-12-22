@@ -67,12 +67,12 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
     private StatementContext statementContext;
 
     @Inject
-    public ListenerColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final Dispatcher dispatcher,
-            final Resources resources,
-            final EventBus eventBus,
-            final StatementContext statementContext) {
+    public ListenerColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            Dispatcher dispatcher,
+            Resources resources,
+            EventBus eventBus,
+            StatementContext statementContext) {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_LISTENER, Names.LISTENER)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_LISTENER_REFRESH))
@@ -84,8 +84,8 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
                             .findAny()
                             .map(FinderSegment::getItemId);
                     if (optional.isPresent()) {
-                        // Extract the server name from the item id "undertow-server-<server name>"
-                        String server = substringAfterLast(optional.get(), Ids.UNDERTOW_SERVER + "-");
+                        // Extract the server name from the item id "us-<server name>"
+                        String server = substringAfterLast(optional.get(), "us-");
                         ResourceAddress address = WEB_SERVER_TEMPLATE.resolve(statementContext, server);
 
                         Operation opAjp = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
@@ -162,7 +162,7 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
         });
     }
 
-    private void resetStatistics(final NamedNode item) {
+    private void resetStatistics(NamedNode item) {
 
         DialogFactory.showConfirmation(resources.messages().resetStatisticsTitle(),
                 resources.messages().resetStatisticsQuestion(item.getName()), () -> {

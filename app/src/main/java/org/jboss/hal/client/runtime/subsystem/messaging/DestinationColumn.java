@@ -107,8 +107,8 @@ public class DestinationColumn extends FinderColumn<Destination> {
                     .findAny()
                     .map(FinderSegment::getItemId);
             if (optional.isPresent()) {
-                // Extract the server name from the item id "msg-server-<server name>"
-                String server = substringAfterLast(optional.get(), Ids.MESSAGING_SERVER + "-");
+                // Extract the server name from the item id "msgs-<server name>"
+                String server = substringAfterLast(optional.get(), "msgs-");
                 List<Operation> operations = new ArrayList<>();
                 for (Type type : SUBSYSTEM_RESOURCES) {
                     ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
