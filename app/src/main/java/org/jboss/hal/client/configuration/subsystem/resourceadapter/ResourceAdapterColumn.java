@@ -61,13 +61,13 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
 
     @Inject
-    public ResourceAdapterColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final MetadataRegistry metadataRegistry,
-            final Places places,
-            final Resources resources) {
+    public ResourceAdapterColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            MetadataRegistry metadataRegistry,
+            Places places,
+            Resources resources) {
 
         super(new Builder<ResourceAdapter>(finder, Ids.RESOURCE_ADAPTER, Names.RESOURCE_ADAPTER)
 
@@ -142,6 +142,11 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                 return item.getAdapterType() == AdapterType.ARCHIVE
                         ? span().css(fontAwesome("archive")).asElement()
                         : span().css(fontAwesome("cubes")).asElement();
+            }
+
+            @Override
+            public String getTooltip() {
+                return item.getAdapterType() == AdapterType.ARCHIVE ? Names.ARCHIVE : Names.MODULE;
             }
 
             @Override
