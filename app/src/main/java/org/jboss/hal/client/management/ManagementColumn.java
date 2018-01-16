@@ -36,11 +36,11 @@ import static java.util.Arrays.asList;
 public class ManagementColumn extends StaticItemColumn {
 
     @Inject
-    public ManagementColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public ManagementColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            StatementContext statementContext,
+            Resources resources) {
 
         super(finder, Ids.MANAGEMENT, Names.MANAGEMENT, asList(
 
@@ -51,7 +51,7 @@ public class ManagementColumn extends StaticItemColumn {
 
                 new StaticItem.Builder(Names.EXTENSIONS)
                         .nextColumn(Ids.EXTENSION)
-                        .onPreview(new PreviewContent(Names.EXTENSIONS, resources.previews().managementExtensions()))
+                        .onPreview(new PreviewContent<>(Names.EXTENSIONS, resources.previews().managementExtensions()))
                         .build()
         ));
     }

@@ -23,6 +23,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NonNls;
 
+import static com.google.common.base.CharMatcher.inRange;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
 
@@ -45,12 +46,10 @@ public interface Ids {
     String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_OPERATION_EMPTY = "active-operation-empty";
     String ADD = "add";
-    String ADD_ACTIONS = "add-actions";
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_EXCLUDE = "assignement-exclude";
     String ASSIGNMENT_INCLUDE = "assignement-include";
     String ATTRIBUTES = "attributes";
-    String BOOT_ERRORS = "boot-errors";
     String BOOT_ERRORS_ADDRESS_COLUMN = "boot-errors-address-column";
     String BOOT_ERRORS_EMPTY = "boot-errors-empty";
     String BOOT_ERRORS_FORM = "boot-errors-form";
@@ -73,7 +72,6 @@ public interface Ids {
     String CACHE_CONTAINER_FORM = "cc-form";
     String CACHE_CONTAINER_ITEM = "cc-item";
     String CACHE_CONTAINER_REFRESH = "cc-refresh";
-    String CACHE_CONTAINER_THREAD_POOL = "cc-thread-pool";
     String CACHE_CONTAINER_THREAD_POOL_ASYNC_OPERATIONS = "cc-thread-pool-async-operations";
     String CACHE_CONTAINER_THREAD_POOL_EXPIRATION = "cc-thread-pool-expiration";
     String CACHE_CONTAINER_THREAD_POOL_LISTENER = "cc-thread-pool-listener";
@@ -82,7 +80,6 @@ public interface Ids {
     String CACHE_CONTAINER_THREAD_POOL_STATE_TRANSFER = "cc-thread-pool-state-transfer";
     String CACHE_CONTAINER_THREAD_POOL_TRANSPORT = "cc-thread-pool-transport";
     String CACHE_CONTAINER_THREAD_POOLS_ITEM = "cc-thread-pools-item";
-    String CACHE_CONTAINER_TRANSPORT = "cc-transport";
     String CACHE_CONTAINER_TRANSPORT_EMPTY = "cc-transport-empty";
     String CACHE_CONTAINER_TRANSPORT_FORM = "cc-transport-form";
     String CACHE_CONTAINER_TRANSPORT_ITEM = "cc-transport-item";
@@ -164,7 +161,6 @@ public interface Ids {
     String EE_MANAGED_THREAD_FACTORY = "ee-service-thread-factories";
     String EE_SERVICES_ITEM = "ee-services-item";
     String EJB3 = "ejb3";
-    String EJB3_APPLICATION_SECURITY_DOMAIN = "ejb3-app-security-domain";
     String EJB3_APPLICATION_SECURITY_DOMAIN_ADD = "ejb3-app-security-domain-add";
     String EJB3_APPLICATION_SECURITY_DOMAIN_FORM = "ejb3-app-security-domain-form";
     String EJB3_APPLICATION_SECURITY_DOMAIN_ITEM = "ejb3-app-security-domain-item";
@@ -214,7 +210,6 @@ public interface Ids {
     String ELYTRON_FILTERING_KEY_STORE = "elytron-filtering-key-store";
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY = "elytron-http-authentication-factory";
     String ELYTRON_IDENTITY_REALM = "elytron-identity-realm";
-    String ELYTRON_JACC_POLICY = "elytron-jacc-policy";
     String ELYTRON_JACC_POLICY_FORM = "elytron-jacc-policy-form";
     String ELYTRON_JDBC_REALM = "elytron-jdbc-realm";
     String ELYTRON_KERBEROS_SECURITY_FACTORY = "elytron-kerberos-security-factory";
@@ -231,12 +226,10 @@ public interface Ids {
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "elytron-mechanism-provider-filtering-sasl-server-factory";
     String ELYTRON_OTHER_ITEM = "other-item";
     String ELYTRON_PERIODIC_ROTATING_FILE_AUDIT_LOG = "elytron-periodic-rotating-file-audit-log";
-    String ELYTRON_PERMISSION_MAPPINGS = "elytron-permission-mappings";
     String ELYTRON_PERMISSION_MAPPINGS_ADD = "elytron-permission-mappings-add";
     String ELYTRON_PERMISSION_MAPPINGS_FORM = "elytron-permission-mappings-form";
     String ELYTRON_PERMISSION_MAPPINGS_PAGE = "elytron-permission-mappings-page";
     String ELYTRON_PERMISSION_MAPPINGS_TABLE = "elytron-permission-mappings-table";
-    String ELYTRON_PERMISSIONS = "elytron-permissions";
     String ELYTRON_PERMISSIONS_ADD = "elytron-permissions-add";
     String ELYTRON_PERMISSIONS_FORM = "elytron-permissions-form";
     String ELYTRON_PERMISSIONS_PAGE = "elytron-permissions-page";
@@ -280,7 +273,6 @@ public interface Ids {
     String EXTENSION_REVIEW_FORM = "extension-review-form";
     String EXTENSION_STORAGE = "hal-local-storage-extension";
     String EXTENSION_URL_FORM = "extension-url-form";
-    String FIND_NON_PROGRESSING_OPERATION = "find-non-progressing-operation";
     String FINDER = "hal-finder";
     String FOOTER_EXTENSIONS = "footer-extensions";
     String FOOTER_EXTENSIONS_DROPDOWN = "footer-extensions-dropdown";
@@ -314,12 +306,10 @@ public interface Ids {
     String INTERFACE_REFRESH = "interface-refresh";
     String INVALIDATION_CACHE = "invalidation-cache";
     String ITEM = "item";
-    String JCA = "jca";
     String JCA_ARCHIVE_VALIDATION_FORM = "jca-archive-validation-form";
     String JCA_ARCHIVE_VALIDATION_TAB = "jca-archive-validation-tab";
     String JCA_BEAN_VALIDATION_FORM = "jca-bean-validation-form";
     String JCA_BEAN_VALIDATION_TAB = "jca-bean-validation-tab";
-    String JCA_BOOTSTRAP_CONTEXT = "jca-bootstrap-context";
     String JCA_BOOTSTRAP_CONTEXT_ADD = "jca-bootstrap-context-add";
     String JCA_BOOTSTRAP_CONTEXT_FORM = "jca-bootstrap-context-form";
     String JCA_BOOTSTRAP_CONTEXT_ITEM = "jca-bootstrap-context-item";
@@ -335,7 +325,6 @@ public interface Ids {
     String JCA_DISTRIBUTED_WORKMANAGER_PAGES = "jca-distributed-workmanager-pages";
     String JCA_DISTRIBUTED_WORKMANAGER_TABLE = "jca-distributed-workmanager-table";
     String JCA_TAB_CONTAINER = "jca-tab-container";
-    String JCA_THREAD_POOL = "thread-pool";
     String JCA_THREAD_POOL_ADD = "thread-pool-add";
     String JCA_THREAD_POOL_ATTRIBUTES_FORM = "thread-pool-attributes-form";
     String JCA_THREAD_POOL_ATTRIBUTES_TAB = "thread-pool-attributes-tab";
@@ -357,7 +346,6 @@ public interface Ids {
     String JDBC_DRIVER_ADD = "jdbc-driver-add";
     String JDBC_DRIVER_ADD_FORM = "jdbc-driver-add-form";
     String JDBC_DRIVER_REFRESH = "jdbc-driver-refresh";
-    String JGROUPS = "jgroups";
     String JGROUPS_CHANNEL_CONFIG = "jgroups-channel";
     String JGROUPS_CHANNEL_FORK = "fork";
     String JGROUPS_CHANNEL_FORK_ITEM = "jgroups-channel-item-fork-item";
@@ -387,7 +375,6 @@ public interface Ids {
     String JMS_BRIDGE_ITEM = "jms-bridge-item";
     String JMS_BRIDGE_REFRESH = "jms-bridge-refresh";
     String JMS_BRIDGE_TAB = "jms-bridge-tab";
-    String JMS_MESSAGE = "jms-message";
     String JMS_MESSAGE_CHANGE_PRIORITY = "jms-message-change-priority";
     String JMS_MESSAGE_CHANGE_PRIORITY_FORM = "jms-message-change-priority-form";
     String JMS_MESSAGE_EXPIRE = "jms-message-expire";
@@ -405,7 +392,6 @@ public interface Ids {
     String JMS_MESSAGE_MOVE_FORM = "jms-message-move-form";
     String JMS_MESSAGE_REMOVE = "jms-message-remove";
     String JMS_MESSAGE_SEND_TO_DEAD_LETTER = "jms-message-send-to-dead-letter";
-    String JMX = "jmx";
     String JMX_AUDIT_LOG_FORM = "jmx-audit-log-form";
     String JMX_AUDIT_LOG_ITEM = "jmx-audit-log-item";
     String JMX_CONFIGURATION_FORM = "jmx-configuration-form";
@@ -434,7 +420,6 @@ public interface Ids {
     String JPA_RUNTIME_STATISTICS_DISABLED = "jpa-runtime-statistics-disabled";
     String JPA_RUNTIME_TAB_CONTAINER = "jpa-runtime-tab-container";
     String LOCAL_CACHE = "local-cache";
-    String LOCATION = "location";
     String LOG_FILE = "lf";
     String LOG_FILE_EDITOR = "lf-editor";
     String LOG_FILE_REFRESH = "lf-refresh";
@@ -443,7 +428,6 @@ public interface Ids {
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";
     String LOGGING_PROFILE_ADD = "logging-profile-add";
-    String MACRO = "macro";
     String MACRO_EDITOR = "macro-editor";
     String MACRO_EMPTY = "macro-empty";
     String MACRO_LIST = "macro-list";
@@ -462,12 +446,9 @@ public interface Ids {
     String MAIL_SESSION_ITEM = "mail-session-item";
     String MAIL_SESSION_REFRESH = "mail-session-refresh";
     String MANAGEMENT = "management";
-    String MANAGEMENT_OPERATIONS = "management-operations";
-    String MASTER = "master";
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_EXCLUDE = "membership-exclude";
     String MEMBERSHIP_INCLUDE = "membership-include";
-    String MESSAGING = "messaging";
     String MESSAGING_ACCEPTOR = "messaging-acceptor";
     String MESSAGING_ADDRESS_SETTING = "messaging-address-setting";
     String MESSAGING_BRIDGE = "messaging-bridge";
@@ -482,7 +463,6 @@ public interface Ids {
     String MESSAGING_DIVERT = "messaging-divert";
     String MESSAGING_GLOBAL_SETTINGS = "messaging-global-settings";
     String MESSAGING_GROUPING_HANDLER = "messaging-grouping-handler";
-    String MESSAGING_HA = "messaging-ha";
     String MESSAGING_HA_CHOOSE_STRATEGY = "messaging-ha-choose-strategy";
     String MESSAGING_HA_POLICY_EMPTY = "messaging-ha-policy=empty";
     String MESSAGING_HA_REPLICATION = "messaging-ha-replication";
@@ -507,7 +487,6 @@ public interface Ids {
     String MESSAGING_POOLED_CONNECTION_FACTORY = "messaging-pooled-connection-factory";
     String MESSAGING_REMOTE_ACCEPTOR = "messaging-remote-acceptor";
     String MESSAGING_REMOTE_CONNECTOR = "messaging-remote-connector";
-    String MESSAGING_SECURITY_SETTING_ROLE = "messaging-security-setting-role";
     String MESSAGING_SECURITY_SETTING_ROLE_ADD = "messaging-security-setting-role-add";
     String MESSAGING_SECURITY_SETTING_ROLE_FORM = "messaging-security-setting-role-form";
     String MESSAGING_SECURITY_SETTING_ROLE_ITEM = "messaging-security-setting-role-item";
@@ -537,7 +516,6 @@ public interface Ids {
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = "model-browser-create-singleton-form";
     String MODEL_BROWSER_ROOT = "model-browser-root";
     String NO_MATCH = "no-match";
-    String NOTIFICATION_DRAWER = "notification-drawer";
     String NOTIFICATION_DRAWER_CLEAR_ALL = "notification-drawer-clear-all";
     String NOTIFICATION_DRAWER_CLOSE = "notification-drawer-close";
     String NOTIFICATION_DRAWER_MARK_ALL_READ = "notification-drawer-mark-all-read";
@@ -549,7 +527,6 @@ public interface Ids {
     String PATCHES_REFRESH = "patching-refresh";
     String PATCHING = "patching";
     String PATCHING_DOMAIN = "patching-domain";
-    String POOL = "pool";
     String PREVIEW_ID = "hal-finder-preview";
     String PROFILE = "profile";
     String PROFILE_ADD = "profile-add";
@@ -557,7 +534,6 @@ public interface Ids {
     String PROFILE_REFRESH = "profile-refresh";
     String REFERENCE_SERVER_EMPTY = "reference-server-empty";
     String REFRESH = "refresh";
-    String REMOTING = "remoting";
     String REMOTING_CONNECTOR_FORM = "remoting-connector-form";
     String REMOTING_CONNECTOR_SECURITY_FORM = "remoting-connector-security-form";
     String REMOTING_CONNECTOR_SECURITY_POLICY_FORM = "remoting-connector-security-policy-form";
@@ -573,7 +549,6 @@ public interface Ids {
     String REMOTING_HTTP_CONNECTOR_TAB = "remoting-http-connector-tab";
     String REMOTING_HTTP_CONNECTOR_TAB_CONTAINER = "remoting-http-connector-tab-container";
     String REPLICATED_CACHE = "replicated-cache";
-    String RESOLVE_EXPRESSION = "resolve-expression";
     String RESOLVE_EXPRESSION_FORM = "resolve-expression-form";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTER_ADD = "resource-adapter-add";
@@ -616,7 +591,6 @@ public interface Ids {
     String SERVER_GROUP_DEPLOYMENT_UPLOAD = "server-group-deployment-upload";
     String SERVER_GROUP_REFRESH = "server-group-refresh";
     String SERVER_REFRESH = "server-refresh";
-    String SERVER_RUNTIME = "server-runtime";
     String SERVER_RUNTIME_BOOTSTRAP_FORM = "server-runtime-bootstrap-form";
     String SERVER_RUNTIME_ITEM = "server-runtime-item";
     String SERVER_RUNTIME_JVM_ATTRIBUTES_FORM = "server-runtime-jvm-attributes-form";
@@ -625,15 +599,12 @@ public interface Ids {
     String SERVER_STATUS_BOOTSTRAP_ITEM = "server-runtime-bootstrap-item";
     String SERVER_STATUS_MAIN_ATTRIBUTES_ITEM = "server-runtime-main-attributes-item";
     String SERVER_STATUS_SYSTEM_PROPERTIES_ITEM = "server-runtime-system-properties-item";
-    String SERVER_URL = "server-url";
     String SERVER_URL_FORM = "server-url-form";
     String SERVER_URL_STORAGE = "hal-local-storage-server-url";
-    String SERVICE = "service";
     String SETTINGS_FORM = "settings-form";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_GROUP_ADD = "socket-binding-group-add";
     String SOCKET_BINDING_GROUP_INBOUND = "socket-binding-group-inbound";
-    String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING = "socket-binding-group-inbound-client-mapping";
     String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_ADD = "socket-binding-group-inbound-client-mapping-add";
     String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_FORM = "socket-binding-group-inbound-client-mapping-form";
     String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_PAGE = "socket-binding-group-inbound-client-mapping-page";
@@ -644,19 +615,16 @@ public interface Ids {
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String STORAGE = "hal-local-storage";
-    String SYSTEM_PROPERTY = "system-property";
     String SYSTEM_PROPERTY_ADD = "system-property-add";
     String SYSTEM_PROPERTY_FORM = "system-property-form";
     String SYSTEM_PROPERTY_TABLE = "system-property-table";
     String TAB = "tab";
     String TAB_CONTAINER = "tab-container";
     String TABLE = "table";
-    String TASKS = "tasks";
     String TASKS_ACTIVE = "tasks-active";
     String TASKS_COMPLETED = "tasks-completed";
     String TASKS_QUEUE = "tasks-queue";
     String TASKS_REJECTED = "tasks-rejected";
-    String TLC = "tlc";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
@@ -675,25 +643,20 @@ public interface Ids {
     String UNDERTOW_APP_SECURITY_DOMAIN_FORM = "undertow-application-security-domain-form";
     String UNDERTOW_APP_SECURITY_DOMAIN_REFRESH = "undertow-application-security-domain-refresh";
     String UNDERTOW_APP_SECURITY_DOMAIN_TAB = "undertow-application-security-domain-tab";
-    String UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER = "undertow-application-security-domain-tab-container";
     String UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED = "undertow-deployment-statistics-disabled";
     String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
-    String UNDERTOW_HOST = "undertow-host";
     String UNDERTOW_HOST_ACCESS_LOG = "undertow-host-access-log";
     String UNDERTOW_HOST_ACTION_COLUMN = "undertow-host-action-column";
     String UNDERTOW_HOST_ADD = "undertow-host-add";
     String UNDERTOW_HOST_ATTRIBUTES_FORM = "undertow-host-form";
     String UNDERTOW_HOST_ATTRIBUTES_TAB = "undertow-host-tab";
-    String UNDERTOW_HOST_FILTER_REF = "undertow-host-filter-ref";
     String UNDERTOW_HOST_FILTER_REF_ADD = "undertow-host-filter-ref-add";
     String UNDERTOW_HOST_FILTER_REF_FORM = "undertow-host-filter-ref-form";
     String UNDERTOW_HOST_FILTER_REF_PAGE = "undertow-host-filter-ref-page";
     String UNDERTOW_HOST_FILTER_REF_TABLE = "undertow-host-filter-ref-table";
     String UNDERTOW_HOST_HTTP_INVOKER = "undertow-host-http-invoker";
     String UNDERTOW_HOST_ITEM = "undertow-host-item";
-    String UNDERTOW_HOST_LOCATION = "undertow-host-location";
     String UNDERTOW_HOST_LOCATION_ADD = "undertow-host-location-add";
-    String UNDERTOW_HOST_LOCATION_FILTER_REF = "undertow-host-location-filter-ref";
     String UNDERTOW_HOST_LOCATION_FILTER_REF_ADD = "undertow-host-location-filter-ref-add";
     String UNDERTOW_HOST_LOCATION_FILTER_REF_FORM = "undertow-host-location-filter-ref-form";
     String UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE = "undertow-host-location-filter-ref-page";
@@ -704,11 +667,9 @@ public interface Ids {
     String UNDERTOW_HOST_MAIN_PAGE = "undertow-host-main-page";
     String UNDERTOW_HOST_PAGES = "undertow-host-pages";
     String UNDERTOW_HOST_SINGLE_SIGN_ON = "undertow-host-single-sign-on";
-    String UNDERTOW_HOST_TAB_CONTAINER = "undertow-host-tab-container";
     String UNDERTOW_HOST_TABLE = "undertow-host-table";
     String UNDERTOW_LISTENER_PROCESSING_DISABLED = "undertow-listener-processing-disabled";
     String UNDERTOW_LISTENER_REFRESH = "undertow-listener-refresh";
-    String UNDERTOW_MODCLUSTER = "undertow-modcluster";
     String UNDERTOW_MODCLUSTER_BALANCER_NODE_CONTEXT_REFRESH = "undertow-modcluster-balancer-node-context-refresh";
     String UNDERTOW_MODCLUSTER_BALANCER_NODE_REFRESH = "undertow-modcluster-balancer-node-refresh";
     String UNDERTOW_MODCLUSTER_BALANCER_REFRESH = "undertow-modcluster-balancer-refresh";
@@ -750,18 +711,14 @@ public interface Ids {
     String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM = "undertow-servlet-container-welcome-file-form";
     String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB = "undertow-servlet-container-welcome-file-tab";
     String UNDERTOW_SETTINGS = "undertow-settings";
-    String UNDERTOW_SINGLE_SIGN_ON = "undertow-single-sign-on";
     String UNDERTOW_SINGLE_SIGN_ON_ADD = "undertow-single-sign-on-add";
     String UNDERTOW_SINGLE_SIGN_ON_FORM = "undertow-single-sign-on-form";
     String UNDERTOW_SINGLE_SIGN_ON_TAB = "undertow-single-sign-on-table";
     String UNDERTOW_STATISTICS_DISABLED = "undertow-statistics-disabled";
-    String UNMANAGED = "unmanaged";
     String UNMANAGED_FORM = "unmanaged-form";
-    String UPLOAD = "upload";
     String UPLOAD_FILE_INPUT = "upload-file-input";
     String UPLOAD_NAMES_FORM = "upload-names-form";
     String USER = "user";
-    String WEBSERVICES = "webservices";
     String WEBSERVICES_CLIENT_CONFIG = "webservices-client-config";
     String WEBSERVICES_CLIENT_CONFIG_ITEM = "webservices-client-config-item";
     String WEBSERVICES_ENDPOINT_CONFIG = "webservices-endpoint-config";
@@ -776,7 +733,6 @@ public interface Ids {
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = "xa-data-source-add";
     String XA_DATA_SOURCE_FORM = "xa-data-source-form";
-    String XA_DATA_SOURCE_RUNTIME = "xa-data-source-runtime";
     String XA_DATA_SOURCE_RUNTIME_JDBC_FORM = "xa-data-source-runtime-jdbc-form";
     String XA_DATA_SOURCE_RUNTIME_JDBC_TAB = "xa-data-source-runtime-jdbc-tab";
     String XA_DATA_SOURCE_RUNTIME_POOL_FORM = "xa-data-source-runtime-pool-form";
@@ -915,7 +871,7 @@ public interface Ids {
                 .split(text);
         return stream(parts.spliterator(), false)
                 .map(String::toLowerCase)
-                .map(CharMatcher.javaLetterOrDigit()::retainFrom)
+                .map(inRange('a', 'z').or(inRange('0', '9'))::retainFrom)
                 .collect(joining("-"));
     }
 

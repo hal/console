@@ -70,18 +70,18 @@ public class BrowseByColumn extends StaticItemColumn {
     }
 
     @Inject
-    public BrowseByColumn(final Finder finder,
-            final Environment environment,
-            final SecurityContextRegistry securityContextRegistry,
-            final @Footer Provider<Progress> progress,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final Places places,
-            final FinderPathFactory finderPathFactory,
-            final HostActions hostActions,
-            final ServerGroupActions serverGroupActions,
-            final ServerActions serverActions,
-            final Resources resources) {
+    public BrowseByColumn(Finder finder,
+            Environment environment,
+            SecurityContextRegistry securityContextRegistry,
+            @Footer Provider<Progress> progress,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            Places places,
+            FinderPathFactory finderPathFactory,
+            HostActions hostActions,
+            ServerGroupActions serverGroupActions,
+            ServerActions serverActions,
+            Resources resources) {
         super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
@@ -91,11 +91,11 @@ public class BrowseByColumn extends StaticItemColumn {
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(Ids.HOST)
-                                .onPreview(new PreviewContent(Names.HOSTS, resources.previews().runtimeHosts()))
+                                .onPreview(new PreviewContent<>(Names.HOSTS, resources.previews().runtimeHosts()))
                                 .build(),
                         new StaticItem.Builder(Names.SERVER_GROUPS)
                                 .nextColumn(Ids.SERVER_GROUP)
-                                .onPreview(new PreviewContent(Names.SERVER_GROUPS,
+                                .onPreview(new PreviewContent<>(Names.SERVER_GROUPS,
                                         resources.previews().runtimeServerGroups()))
                                 .build()
                 ));

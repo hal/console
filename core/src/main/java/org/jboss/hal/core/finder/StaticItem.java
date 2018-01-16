@@ -30,7 +30,7 @@ public class StaticItem {
     private final List<ItemAction<StaticItem>> actions;
     private final List<String> keywords;
     private final String nextColumn;
-    private final PreviewContent previewContent;
+    private final PreviewContent<StaticItem> previewContent;
     private String id;
 
     private StaticItem(Builder builder) {
@@ -55,7 +55,7 @@ public class StaticItem {
         return keywords;
     }
 
-    public PreviewContent getPreviewContent() {
+    public PreviewContent<StaticItem> getPreviewContent() {
         return previewContent;
     }
 
@@ -79,14 +79,14 @@ public class StaticItem {
         private final List<String> keywords;
         private String id;
         private String subtitle;
-        private PreviewContent previewContent;
+        private PreviewContent<StaticItem> previewContent;
         private String nextColumn;
 
-        public Builder(final String title) {
+        public Builder(String title) {
             this.title = title;
             this.actions = new ArrayList<>();
             this.keywords = new ArrayList<>();
-            this.previewContent = new PreviewContent(title);
+            this.previewContent = new PreviewContent<>(title);
         }
 
         public Builder id(String id) {
@@ -122,7 +122,7 @@ public class StaticItem {
             return this;
         }
 
-        public Builder onPreview(PreviewContent previewContent) {
+        public Builder onPreview(PreviewContent<StaticItem> previewContent) {
             this.previewContent = previewContent;
             return this;
         }

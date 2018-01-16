@@ -60,14 +60,14 @@ public class ServerSettingsColumn
     private final Resources resources;
 
     @Inject
-    public ServerSettingsColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final Places places,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public ServerSettingsColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            Places places,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            StatementContext statementContext,
+            Resources resources) {
 
         super(new Builder<StaticItem>(finder, Ids.MESSAGING_SERVER_SETTINGS, resources.constants().settings())
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
@@ -75,10 +75,13 @@ public class ServerSettingsColumn
                 .onBreadcrumbItem((item, context) -> {
                     if (item.getId().equals(Ids.MESSAGING_SERVER_HA_POLICY)) {
                         // the first action for HA policy might be 'add'
-                        Optional<ItemAction<StaticItem>> itemAction = item.getActions().stream()
-                                .filter(ia -> resources.constants().view().equals(ia.getTitle()))
-                                .findAny();
-                        itemAction.ifPresent(ia -> ia.getHandler().execute(item));
+                        for (ItemAction<StaticItem> itemAction : item.getActions()) {
+                            String title = itemAction.getTitle();
+                            if (resources.constants().view().equals(title)) {
+                                itemAction.getHandler().execute(item);
+                                break;
+                            }
+                        }
                     } else {
                         item.getActions().get(0).getHandler().execute(item);
                     }
@@ -109,7 +112,7 @@ public class ServerSettingsColumn
                                     places.selectedProfile(NameTokens.MESSAGING_SERVER_DESTINATION)
                                             .with(SERVER, server)
                                             .build()))
-                            .onPreview(new PreviewContent(Names.DESTINATIONS,
+                            .onPreview(new PreviewContent<>(Names.DESTINATIONS,
                                     resources.previews().configurationMessagingDestinations()))
                             .build());
                     items.add(new StaticItem.Builder(Names.CONNECTIONS)
@@ -118,7 +121,7 @@ public class ServerSettingsColumn
                                     places.selectedProfile(NameTokens.MESSAGING_SERVER_CONNECTION)
                                             .with(SERVER, server)
                                             .build()))
-                            .onPreview(new PreviewContent(Names.CONNECTIONS,
+                            .onPreview(new PreviewContent<>(Names.CONNECTIONS,
                                     resources.previews().configurationMessagingConnections()))
                             .build());
                     items.add(new StaticItem.Builder(Names.CLUSTERING)
@@ -127,7 +130,7 @@ public class ServerSettingsColumn
                                     places.selectedProfile(NameTokens.MESSAGING_SERVER_CLUSTERING)
                                             .with(SERVER, server)
                                             .build()))
-                            .onPreview(new PreviewContent(Names.CLUSTERING,
+                            .onPreview(new PreviewContent<>(Names.CLUSTERING,
                                     resources.previews().configurationMessagingClustering()))
                             .build());
 
@@ -164,7 +167,7 @@ public class ServerSettingsColumn
         });
     }
 
-    private void addHaPolicy(final StatementContext statementContext) {
+    private void addHaPolicy(StatementContext statementContext) {
         new HaPolicyWizard(resources, (wizard, context) ->
                 context.haPolicy.add(dispatcher, statementContext, () -> {
                     MessageEvent.fire(eventBus,
@@ -173,7 +176,7 @@ public class ServerSettingsColumn
                 })).show();
     }
 
-    private void removeHaPolicy(final StatementContext statementContext, final HaPolicy haPolicy) {
+    private void removeHaPolicy(StatementContext statementContext, HaPolicy haPolicy) {
         haPolicy.remove(dispatcher, statementContext, resources, () -> {
             MessageEvent.fire(eventBus,
                     Message.success(resources.messages().removeSingletonSuccess(haPolicy.type)));

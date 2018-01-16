@@ -62,7 +62,7 @@ public class LoggingColumn extends StaticItemColumn {
                                     placeManager.revealPlace(placeRequest);
                                 }).execute(item)
                         )
-                        .onPreview(new LoggingPreview<StaticItem>(dispatcher, resources, Names.CONFIGURATION,
+                        .onPreview(new LoggingPreview<>(dispatcher, resources, Names.CONFIGURATION,
                                 resources.previews().configurationLoggingConfiguration(),
                                 () -> new Operation.Builder(ROOT_LOGGER_TEMPLATE.resolve(statementContext),
                                         READ_RESOURCE_OPERATION).build()))
@@ -70,7 +70,7 @@ public class LoggingColumn extends StaticItemColumn {
 
                 new StaticItem.Builder(Names.LOGGING_PROFILES)
                         .nextColumn(Ids.LOGGING_PROFILE)
-                        .onPreview(new PreviewContent(Names.LOGGING_PROFILES,
+                        .onPreview(new PreviewContent<>(Names.LOGGING_PROFILES,
                                 resources.previews().configurationLoggingProfiles()))
                         .build()
         ));
