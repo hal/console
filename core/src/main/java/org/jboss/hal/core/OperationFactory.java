@@ -93,6 +93,10 @@ public class OperationFactory {
         // look for alternatives
         Set<String> conflicts = new HashSet<>();
         Map<String, List<String>> allAlternatives = localChanges.keySet().stream()
+                .filter(name -> {
+                    Object value = changeSet.get(name);
+                    return !isNullOrEmpty(value);
+                })
                 .collect(toMap(identity(), name -> resourceDescription.findAlternatives(ATTRIBUTES, name)));
         allAlternatives.forEach((attribute, alternatives) -> {
 
