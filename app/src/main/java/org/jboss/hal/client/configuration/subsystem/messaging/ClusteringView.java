@@ -59,7 +59,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
     private static final String EQ_WILDCARD = "=*";
 
-    public static ClusteringView create(final MbuiContext mbuiContext) {
+    public static ClusteringView create(MbuiContext mbuiContext) {
         return new Mbui_ClusteringView(mbuiContext);
     }
 
@@ -138,12 +138,14 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
         bridgeTable.onSelectionChange(t -> {
             if (t.hasSelection()) {
                 crForm.view(failSafeGet(t.selectedRow(), CREDENTIAL_REFERENCE));
+            } else {
+                crForm.clear();
             }
         });
     }
 
     @Override
-    public void setPresenter(final ClusteringPresenter presenter) {
+    public void setPresenter(ClusteringPresenter presenter) {
         super.setPresenter(presenter);
 
         // register the suggestion handlers here rather than in a @PostConstruct method
@@ -173,31 +175,31 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     }
 
     @Override
-    public void updateBroadcastGroup(final List<NamedNode> broadcastGroups) {
+    public void updateBroadcastGroup(List<NamedNode> broadcastGroups) {
         broadcastGroupForm.clear();
         broadcastGroupTable.update(broadcastGroups);
     }
 
     @Override
-    public void updateDiscoveryGroup(final List<NamedNode> discoveryGroups) {
+    public void updateDiscoveryGroup(List<NamedNode> discoveryGroups) {
         discoveryGroupForm.clear();
         discoveryGroupTable.update(discoveryGroups);
     }
 
     @Override
-    public void updateClusterConnection(final List<NamedNode> clusterConnections) {
+    public void updateClusterConnection(List<NamedNode> clusterConnections) {
         clusterConnectionForm.clear();
         clusterConnectionTable.update(clusterConnections);
     }
 
     @Override
-    public void updateGroupingHandler(final List<NamedNode> groupingHandlers) {
+    public void updateGroupingHandler(List<NamedNode> groupingHandlers) {
         groupingHandlerForm.clear();
         groupingHandlerTable.update(groupingHandlers);
     }
 
     @Override
-    public void updateBridge(final List<NamedNode> bridges) {
+    public void updateBridge(List<NamedNode> bridges) {
         crForm.clear();
         bridgeForm.clear();
         bridgeTable.update(bridges);
