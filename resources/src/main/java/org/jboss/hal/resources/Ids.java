@@ -252,7 +252,7 @@ public interface Ids {
     String ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE = "elytron-simple-permission-mapper-page";
     String ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGES = "elytron-simple-permission-mapper-pages";
     String ELYTRON_SIMPLE_PERMISSION_MAPPER_TABLE = "elytron-simple-permission-mapper-table";
-    String ELYTRON_SIMPLE_REGEX_REALM_MAPPER = "elytron-single-regex-realm-mapper";
+    String ELYTRON_SIMPLE_REGEX_REALM_MAPPER = "elytron-simple-regex-realm-mapper";
     String ELYTRON_SIMPLE_ROLE_DECODER = "elytron-simple-role-decoder";
     String ELYTRON_SIZE_ROTATING_FILE_AUDIT_LOG = "elytron-size-rotating-file-audit-log";
     String ELYTRON_SSL_ITEM = "ssl-item";

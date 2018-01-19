@@ -69,8 +69,8 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         // JDBC realm
         jdbcRealmTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addJdbcRealm()))
-                .button(tableButtonFactory.remove(Names.JDBC_REALM, AddressTemplates.JDBC_REALM_TEMPLATE,
-                        () -> presenter.reloadJdbcRealms()))
+                .button(tableButtonFactory.remove(Names.JDBC_REALM, metadata.getTemplate(),
+                        (table) -> table.selectedRow().getName(), () -> presenter.reloadJdbcRealms()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(Names.PRINCIPAL_QUERY, this::showPrincipalQuery)
                 .build();
@@ -93,7 +93,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
 
         Tabs tabs = new Tabs(id(PRINCIPAL_QUERY, TAB_CONTAINER));
 
-        pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, TAB), pqMetadata)
+        pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, Ids.ATTRIBUTES, FORM), pqMetadata)
                 .include(SQL, DATA_SOURCE)
                 .onSave((f, changedValues) -> presenter.savePrincipalQuery(selectedJdbcRealm, pqIndex, changedValues))
                 .build();
@@ -179,7 +179,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
             form.attach();
         }
         pqTable.onSelectionChange(table -> {
-            pqTable.enableButton(1, pqTable.hasSelection());
+            pqTable.enableButton(1, pqTable.hasSelection() && pqTable.getRows().size() > 1);
             if (table.hasSelection()) {
                 pqIndex = table.selectedRow().get(HAL_INDEX).asInt();
                 selectedPrincipalQuery = table.selectedRow().get(SQL).asString();
