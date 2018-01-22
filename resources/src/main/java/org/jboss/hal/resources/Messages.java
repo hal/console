@@ -84,6 +84,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String credentialReferenceParentNoResource(String parentResource);
     String credentialReferenceValidationError(String alternative);
     String currentOfTotal(long current, long total);
+    SafeHtml customListItemHint(String propAttribute, String valueAttribute);
 
     SafeHtml dataSourceAddError();
     SafeHtml dataSourceDisabled(String name);
