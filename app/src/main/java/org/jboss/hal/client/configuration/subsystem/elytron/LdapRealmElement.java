@@ -78,10 +78,8 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING);
         identityMappingForm = new ModelNodeForm.Builder<>(id(IDENTITY_MAPPING, FORM), imMetadata)
                 .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES))
-                .onSave((form, changedValues) -> presenter.saveIdentityMappingComplexAttribute(selectedLdapRealm,
-                        IDENTITY_MAPPING, Names.IDENTITY_MAPPING, changedValues))
-                .prepareReset(form -> presenter.resetIdentityMappingComplexAttribute(selectedLdapRealm,
-                        IDENTITY_MAPPING, Names.IDENTITY_MAPPING, form))
+                .onSave((form, changedValues) -> presenter.saveIdentityMapping(selectedLdapRealm, changedValues))
+                .prepareReset(form -> presenter.resetIdentityMapping(selectedLdapRealm, form))
                 .build();
 
         Metadata upMetadata = metadata

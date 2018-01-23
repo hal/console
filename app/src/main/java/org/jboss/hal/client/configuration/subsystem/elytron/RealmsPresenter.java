@@ -38,6 +38,7 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -403,6 +404,20 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         return null;
     }
 
+    void saveIdentityMapping(String ldapRealm, Map<String, Object> changedValues) {
+        ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
+        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
+                .forComplexAttribute(IDENTITY_MAPPING);
+        ca.save(IDENTITY_MAPPING, Names.IDENTITY_MAPPING, address, changedValues, metadata, this::reloadLdapRealms);
+    }
+
+    void resetIdentityMapping(String ldapRealm, Form<ModelNode> form) {
+        ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
+        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
+                .forComplexAttribute(IDENTITY_MAPPING);
+        ca.reset(IDENTITY_MAPPING, Names.IDENTITY_MAPPING, address, metadata, form, this::reloadLdapRealms);
+    }
+
     void saveIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type,
             Map<String, Object> changedValues) {
         ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
@@ -446,6 +461,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .addOnly()
                 .include(FROM, TO)
                 .build();
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
+                asList(FROM, TO), resources));
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
                 form, (name, model) ->
                 ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
