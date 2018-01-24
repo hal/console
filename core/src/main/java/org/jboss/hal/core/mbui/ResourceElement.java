@@ -157,13 +157,16 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 }
 
                 Supplier<Operation> ping = () -> {
-                    ResourceAddress address = builder.metadata.getTemplate()
-                            .resolve(builder.mbuiContext.statementContext(), selectedResource);
-                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                            .param(NAME, complexAttribute)
-                            .build();
+                    Operation op = null;
+                    if (selectedResource != null) {
+                        ResourceAddress address = builder.metadata.getTemplate()
+                                .resolve(builder.mbuiContext.statementContext(), selectedResource);
+                        op = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                .param(NAME, complexAttribute)
+                                .build();
+                    }
+                    return op;
                 };
-
                 ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                         Ids.build(builder.baseId, complexAttribute, Ids.FORM), metadata)
                         .singleton(ping, callback)
@@ -279,6 +282,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 }
             }
         });
+        coForms.forEach((s, form1) -> form1.attach());
         if (Iterables.isEmpty(form.getFormItems())) {
             Elements.setVisible(form.asElement(), false);
         }
