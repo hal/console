@@ -46,7 +46,7 @@ Please make sure that your extension doesn't use the global scope. Use idioms li
 To get started quickly you can use the yarn package hal-edk (extension development kit). Follow these steps to setup a new extension project:
 
 1. Create a new yarn project
-1. Install a developer dependency for hal-edk: `yarn install --save-dev hal-edk`  
+1. Install a developer dependency for hal-edk: `yarn add hal-edk --dev`  
    This will install the management console in `node_modules/hal-edk` and create three files in the project's root folder:
    
     1. index.html: Starts the console and loads extension.js
