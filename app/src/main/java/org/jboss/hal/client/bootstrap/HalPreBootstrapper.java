@@ -15,13 +15,29 @@
  */
 package org.jboss.hal.client.bootstrap;
 
+import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.PreBootstrapper;
-import org.jboss.hal.client.ExceptionHandler;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.resources.Names;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static elemental2.dom.DomGlobal.document;
 
 public class HalPreBootstrapper implements PreBootstrapper {
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(HalPreBootstrapper.class);
+
     @Override
     public void onPreBootstrap() {
-        ExceptionHandler.beforeBootstrap();
+        GWT.setUncaughtExceptionHandler(e -> {
+            LoadingPanel.get().off();
+            String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
+            logger.error("Uncaught bootstrap error: {}", errorMessage);
+            Elements.removeChildrenFrom(document.body);
+            document.body.appendChild(BootstrapFailed.create(errorMessage, Endpoints.INSTANCE).asElement());
+        });
     }
 }

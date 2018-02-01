@@ -160,6 +160,7 @@ import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.client.tools.ModelBrowserView;
+import org.jboss.hal.core.ExceptionHandler;
 import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.GinModule;

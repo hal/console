@@ -28,6 +28,7 @@ import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
@@ -65,7 +66,7 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 public class HostActions {
 
     private static final int RELOAD_TIMEOUT = 10; // seconds w/o servers
-    private static final int RESTART_TIMEOUT = 15; // seconds w/o servers
+    private static final int RESTART_TIMEOUT = 20; // seconds w/o servers
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
 
     private static AddressTemplate hostTemplate(Host host) {
@@ -100,10 +101,10 @@ public class HostActions {
     // ------------------------------------------------------ reload
 
     @SuppressWarnings("HardCodedStringLiteral")
-    public void reload(final Host host) {
+    public void reload(Host host) {
         metadataProcessor.lookup(hostTemplate(host), progress.get(), new MetadataCallback() {
             @Override
-            public void onMetadata(final Metadata metadata) {
+            public void onMetadata(Metadata metadata) {
                 Form<ModelNode> form = new OperationFormBuilder<>(
                         Ids.build(RELOAD_HOST, host.getName(), Ids.FORM), metadata, RELOAD)
                         .include(RESTART_SERVERS)
@@ -157,7 +158,7 @@ public class HostActions {
             }
 
             @Override
-            public void onError(final Throwable error) {
+            public void onError(Throwable error) {
                 MessageEvent.fire(eventBus,
                         Message.error(resources.messages().metadataError(), error.getMessage()));
             }
@@ -167,14 +168,14 @@ public class HostActions {
 
     // ------------------------------------------------------ restart
 
-    public void restart(final Host host) {
+    public void restart(Host host) {
         SafeHtml question = host.isDomainController()
                 ? resources.messages().restartDomainControllerQuestion(host.getName())
                 : resources.messages().restartHostControllerQuestion(host.getName());
         restart(host, question);
     }
 
-    public void restart(final Host host, SafeHtml question) {
+    public void restart(Host host, SafeHtml question) {
         DialogFactory.showConfirmation(resources.messages().restart(host.getName()), question, () -> {
             // execute the restart with a little delay to ensure the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)
@@ -275,13 +276,13 @@ public class HostActions {
     }
 
     private void markAsPending(Host host) {
-        Dispatcher.setPendingLifecycleAction(true);
+        Core.setPendingLifecycleAction(true);
         pendingHosts.put(host.getName(), host);
         logger.debug("Mark host {} as pending", host.getName());
     }
 
     private void clearPending(Host host) {
-        Dispatcher.setPendingLifecycleAction(false);
+        Core.setPendingLifecycleAction(false);
         pendingHosts.remove(host.getName());
         logger.debug("Clear pending state for host {}", host.getName());
     }
@@ -324,14 +325,14 @@ public class HostActions {
         private final List<Server> servers;
         private final SafeHtml errorMessage;
 
-        HostFailedCallback(final Host host, final List<Server> servers, final SafeHtml errorMessage) {
+        HostFailedCallback(Host host, List<Server> servers, SafeHtml errorMessage) {
             this.host = host;
             this.servers = servers;
             this.errorMessage = errorMessage;
         }
 
         @Override
-        public void onFailed(final Operation operation, final String failure) {
+        public void onFailed(Operation operation, String failure) {
             finish(host, servers, Result.ERROR, Message.error(errorMessage, failure));
         }
     }
@@ -343,14 +344,14 @@ public class HostActions {
         private final List<Server> servers;
         private final SafeHtml errorMessage;
 
-        HostExceptionCallback(final Host host, final List<Server> servers, final SafeHtml errorMessage) {
+        HostExceptionCallback(Host host, List<Server> servers, SafeHtml errorMessage) {
             this.host = host;
             this.servers = servers;
             this.errorMessage = errorMessage;
         }
 
         @Override
-        public void onException(final Operation operation, final Throwable exception) {
+        public void onException(Operation operation, Throwable exception) {
             finish(host, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
         }
     }
