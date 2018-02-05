@@ -9,7 +9,7 @@
     "node_modules"
   ],
   "dependencies": {
-    "ace-builds": "^1.2.9",
+    "ace-builds": "^1.3.0",
     "datatables.net": "~1.10.16",
     "datatables.net-buttons": "~1.4.2",
     "datatables.net-keytable": "^2.3.2",

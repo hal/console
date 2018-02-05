@@ -33,11 +33,7 @@ public class AceEditor implements IsElement, Attachable {
     private Editor editor;
     private ModeList modeList;
 
-    public AceEditor(final String id) {
-        this(id, null);
-    }
-
-    public AceEditor(final String id, final Options options) {
+    public AceEditor(String id, Options options) {
         this.id = id;
         this.options = options;
         this.preElement = pre().id(id).css(CSS.editor).asElement();

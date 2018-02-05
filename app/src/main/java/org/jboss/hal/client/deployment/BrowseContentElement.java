@@ -563,6 +563,7 @@ class BrowseContentElement implements IsElement, Attachable {
                     ? Strings.substringAfterLast(selection.data.path, "/")
                     : selection.data.path;
             String editorContent = editor.getEditor().getSession().getValue();
+
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
             ModelNode contentNode = new ModelNode();
             contentNode.get(INPUT_STREAM_INDEX).set(0);
@@ -570,6 +571,7 @@ class BrowseContentElement implements IsElement, Attachable {
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
+
             dispatcher.upload(file(filename, editorContent), operation)
                     .doOnSuccess(result -> saveContentButton.ifPresent(button -> button.disabled = true))
                     .toCompletable()
