@@ -23,11 +23,19 @@ import elemental2.dom.HTMLTableElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Api.CallbackUnionType;
+import org.jboss.hal.ballroom.table.Api.DrawCallback;
+import org.jboss.hal.ballroom.table.Api.SelectCallback;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
+import static org.jboss.gwt.elemento.core.Elements.htmlElements;
 import static org.jboss.gwt.elemento.core.Elements.table;
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
+import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.CSS.dataTable;
 import static org.jboss.hal.resources.CSS.hover;
 import static org.jboss.hal.resources.CSS.table;
@@ -70,6 +78,7 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 public class DataTable<T> implements Table<T> {
 
     private static final String DESELECT = "deselect";
+    private static final String DRAW = "draw";
     private static final String ROW = "row";
     private static final String SELECT = "select";
     private static final String WRAPPER_SUFFIX = "_wrapper";
@@ -105,6 +114,34 @@ public class DataTable<T> implements Table<T> {
         if (api == null) {
             options.id = id;
             api = Api.<T>select(HASH + id).dataTable(options);
+            api.on(DRAW, CallbackUnionType.of((DrawCallback) (evt, settings) -> {
+                ColumnActions<T> columnActions = options.columnActions;
+                elemental2.dom.Element table = document.getElementById(options.id);
+                if (table != null && columnActions != null && !columnActions.isEmpty()) {
+                    Elements.stream(table.querySelectorAll("." + columnAction))
+                            .filter(htmlElements())
+                            .map(asHtmlElement())
+                            .forEach(link -> {
+                                ColumnAction<T> columnAction = columnActions.get(link.id);
+                                if (columnAction != null) {
+                                    bind(link, click, event -> {
+                                        event.stopPropagation();
+                                        HTMLElement e = link; // find enclosing tr
+                                        while (e != null && e != document.body && !"tr".equalsIgnoreCase(
+                                                e.tagName)) {
+                                            e = (HTMLElement) e.parentNode;
+                                        }
+                                        if (e != null) {
+                                            T[] array = api.rows(e).data().toArray();
+                                            if (array.length != 0) {
+                                                columnAction.action(array[0]);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                }
+            }));
         }
     }
 
@@ -193,16 +230,16 @@ public class DataTable<T> implements Table<T> {
 
     @Override
     public void onSelectionChange(SelectionChangeHandler<T> handler) {
-        api().on(SELECT, (event, api, type) -> {
+        api().on(SELECT, CallbackUnionType.of((SelectCallback) (event, api, type) -> {
+            if (ROW.equals(type)) {
+                handler.onSelectionChanged(this);
+            }
+        }));
+        api().on(DESELECT, CallbackUnionType.of((SelectCallback) (event, api, type) -> {
             if (ROW.equals(type)) {
                 handler.onSelectionChanged(DataTable.this);
             }
-        });
-        api().on(DESELECT, (event, api, type) -> {
-            if (ROW.equals(type)) {
-                handler.onSelectionChanged(DataTable.this);
-            }
-        });
+        }));
     }
 
     @Override
@@ -272,7 +309,7 @@ public class DataTable<T> implements Table<T> {
     @Override
     public void update(Iterable<T> data, RefreshMode mode, Function<T, String> identifier) {
         List<T> selection = api().selectedRows();
-        api().clear().add(data).refresh(mode);
+        api().clear().add(data).draw(mode.mode());
         if (identifier != null) {
             if (!selection.isEmpty()) {
                 Api.RowSelection<T> rows = (index, d1, tr) -> {

@@ -94,7 +94,6 @@ public class StartAnalytics implements BootstrapTask {
             ga.customDimension(8, environment.getInstanceInfo().releaseName());
             ga.customDimension(9, environment.getInstanceInfo().releaseVersion().toString());
             ga.customDimension(10, endpoints.isSameOrigin());
-            ga.customDimension(11, environment.isSingleSignOn());
 
             Tracker tracker = new Tracker(ga);
             eventBus.addHandler(NavigationEvent.getType(), tracker);

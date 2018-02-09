@@ -569,7 +569,7 @@ public interface Ids {
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEM = "rss";
     String SEARCH = "search";
-    String SECURITY_DOMAIN = "security-domain";
+    String SECURITY_DOMAIN = "sd";
     String SECURITY_DOMAIN_ACL_MODULE_ADD = "security-domain-acl-add";
     String SECURITY_DOMAIN_ADD = "security-domain-add";
     String SECURITY_DOMAIN_AUDIT_ADD = "security-domain-provider-add";

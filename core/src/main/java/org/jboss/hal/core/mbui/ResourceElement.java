@@ -220,8 +220,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             pages = new Pages(Ids.build(builder.baseId, Ids.PAGES), mainPageId(), section);
 
             Metadata metadata = builder.metadata.forComplexAttribute(builder.clAttribute);
-            clTable = new ModelNodeTable.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.TABLE),
-                    metadata)
+            clTable = new ModelNodeTable.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.TABLE), metadata)
                     .button(builder.mbuiContext.tableButtonFactory().add(metadata.getTemplate(),
                             table -> builder.mbuiContext.ca()
                                     .listAdd(Ids.build(builder.baseId, builder.clAttribute, Ids.ADD),
@@ -234,8 +233,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                                     builder.crudCallback)))
                     .columns(builder.clColumns)
                     .build();
-            clForm = new ModelNodeForm.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.FORM),
-                    metadata)
+            clForm = new ModelNodeForm.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.FORM), metadata)
                     .onSave((f, changedValues) -> builder.mbuiContext.ca().save(selectedResource, builder.clAttribute,
                             labelBuilder.label(builder.clAttribute), clIndex, metadata.getTemplate(), changedValues,
                             builder.crudCallback))

@@ -62,6 +62,7 @@ import rx.Completable;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SELECTED_SECURITY_DOMAIN_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.TRUST_MODULE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -254,7 +255,7 @@ public class SecurityDomainPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(SECURITY_DOMAIN)
-    @Requires(SECURITY_DOMAIN_ADDRESS)
+    @Requires({SECURITY_DOMAIN_ADDRESS, TRUST_MODULE_ADDRESS})
     public interface MyProxy extends ProxyPlace<SecurityDomainPresenter> {
     }
 
