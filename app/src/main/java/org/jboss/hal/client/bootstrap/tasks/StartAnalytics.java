@@ -36,6 +36,7 @@ import rx.Completable;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
+import static org.jboss.hal.config.Settings.Key.LOCALE;
 import static org.jboss.hal.js.Json.stringify;
 
 /** Initialises google analytics and binds {@link Tracker} */
@@ -94,6 +95,8 @@ public class StartAnalytics implements BootstrapTask {
             ga.customDimension(8, environment.getInstanceInfo().releaseName());
             ga.customDimension(9, environment.getInstanceInfo().releaseVersion().toString());
             ga.customDimension(10, endpoints.isSameOrigin());
+            ga.customDimension(11, environment.isSingleSignOn());
+            ga.customDimension(12, settings.get(LOCALE));
 
             Tracker tracker = new Tracker(ga);
             eventBus.addHandler(NavigationEvent.getType(), tracker);
