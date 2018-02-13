@@ -72,7 +72,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
                 .button(resources.constants().probe(), table -> presenter.probe())
                 .button(resources.constants().reload(), table -> presenter.reload())
                 .column(Names.TRANSACTION, (cell, type, row, meta) -> row.getName())
-                .column(new InlineAction<>(Names.PARTICIPANTS, "20em", this::showParticipants))
+                .column(new InlineAction<>(Names.PARTICIPANTS, this::showParticipants), "20em")
                 .build();
 
         transactionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(TRANSACTIONS, FORM), metadataTx)

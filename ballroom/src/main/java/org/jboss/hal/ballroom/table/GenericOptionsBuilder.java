@@ -40,6 +40,7 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T>, T> {
 
+    private static final String INLINE_ACTIONS_DEFAULT_WIDTH = "10em";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     protected List<Api.Button<T>> buttons;
@@ -128,14 +129,22 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B column(InlineAction<T> inlineAction) {
-        return column(singletonList(inlineAction));
+        return column(singletonList(inlineAction), INLINE_ACTIONS_DEFAULT_WIDTH);
+    }
+
+    public B column(InlineAction<T> inlineAction, String width) {
+        return column(singletonList(inlineAction), width);
+    }
+
+    public B column(List<InlineAction<T>> inlineActions) {
+        return column(inlineActions, INLINE_ACTIONS_DEFAULT_WIDTH);
     }
 
     /**
      * Adds several column actions. If the list contains more than one action, it's assumed that this is the last
      * column (the {@code colspan} attribute is adjusted for the last table header)
      */
-    public B column(List<InlineAction<T>> inlineActions) {
+    public B column(List<InlineAction<T>> inlineActions, String width) {
         assertNoOptions();
 
         if (!inlineActions.isEmpty()) {
@@ -156,7 +165,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
                     .className(tableViewHalActions)
                     .orderable(false)
                     .searchable(false)
-                    .width("12em")
+                    .width(width)
                     .build();
             columns.add(column);
         }

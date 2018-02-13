@@ -22,17 +22,11 @@ public class InlineAction<T> {
 
     final String id;
     final String title;
-    final String width;
     final InlineActionHandler<T> handler;
 
     public InlineAction(String title, InlineActionHandler<T> handler) {
-        this(title, "10em", handler);
-    }
-
-    public InlineAction(String title, String width, InlineActionHandler<T> handler) {
         this.id = Ids.uniqueId();
         this.title = title;
-        this.width = width;
         this.handler = handler;
     }
 }

@@ -72,7 +72,7 @@ public class SimplePermissionMapperElement
                 .button(tableButtonFactory.remove(Names.SIMPLE_PERMISSION_MAPPER, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadSimplePermissionMapper()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(new InlineAction<>(Names.PERMISSION_MAPPINGS, "15em", this::showPermissionMappings))
+                .column(new InlineAction<>(Names.PERMISSION_MAPPINGS, this::showPermissionMappings), "15em")
                 .build();
 
         spmForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_FORM, metadata)

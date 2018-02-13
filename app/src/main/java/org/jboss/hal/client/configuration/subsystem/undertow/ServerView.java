@@ -111,7 +111,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.remove(HOST_TEMPLATE,
                         table -> presenter.removeHost(table.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
-                .column(inlineActions)
+                .column(inlineActions, "15em")
                 .build();
 
         hostForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_ATTRIBUTES_FORM, hostMetadata)

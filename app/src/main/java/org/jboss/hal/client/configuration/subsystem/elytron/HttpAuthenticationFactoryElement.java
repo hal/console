@@ -69,7 +69,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .button(tableButtonFactory.remove(Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadHttpAuthenticationFactories()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(new InlineAction<>(Names.MECHANISM_CONFIGURATIONS, "15em", this::showMechanismConfiguration))
+                .column(new InlineAction<>(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration), "15em")
                 .build();
         factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveHttpAuthenticationFactory(form, changedValues))
@@ -89,8 +89,8 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                         table -> presenter.removeHttpMechanismConfiguration(selectedFactory,
                                 table.selectedRow().get(HAL_INDEX).asInt())))
                 .column(MECHANISM_NAME)
-                .column(new InlineAction<>(Names.MECHANISM_REALM_CONFIGURATIONS, "20em",
-                        this::showMechanismRealmConfiguration))
+                .column(new InlineAction<>(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration),
+                        "20em")
                 .build();
         mcForm = new ModelNodeForm.Builder<>(id(MECHANISM_CONFIGURATIONS, FORM), mcMetadata)
                 .onSave(((form, changedValues) -> presenter.saveHttpMechanismConfiguration(selectedFactory,
