@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -59,7 +60,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
     private String selectedJdbcRealm;
     private int pqIndex = -1;
 
-    JdbcRealmElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
+    JdbcRealmElement(Metadata metadata, TableButtonFactory tableButtonFactory, Resources resources) {
 
         // JDBC realm
         jdbcRealmTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
@@ -67,7 +68,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .button(tableButtonFactory.remove(Names.JDBC_REALM, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadJdbcRealms()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(Names.PRINCIPAL_QUERY, this::showPrincipalQuery)
+                .column(new InlineAction<>(Names.PRINCIPAL_QUERY, this::showPrincipalQuery))
                 .build();
         HTMLElement jdbcRealmSection = section()
                 .add(h(1).textContent(Names.JDBC_REALM))
@@ -119,7 +120,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         return Ids.build(Ids.ELYTRON_JDBC_REALM, ids);
     }
 
-    private Form<ModelNode> keyMapperForm(final Metadata metadata, @NonNls String keyMapper) {
+    private Form<ModelNode> keyMapperForm(Metadata metadata, @NonNls String keyMapper) {
         Metadata keyMapperMetadata = metadata.forComplexAttribute(keyMapper);
         return new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, keyMapper, FORM), keyMapperMetadata)
                 .singleton(
@@ -165,7 +166,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
     }
 
     @Override
-    public void setPresenter(final RealmsPresenter presenter) {
+    public void setPresenter(RealmsPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -193,7 +194,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         }
     }
 
-    private void showPrincipalQuery(final NamedNode jdbcRealm) {
+    private void showPrincipalQuery(NamedNode jdbcRealm) {
         selectedJdbcRealm = jdbcRealm.getName();
         List<ModelNode> pqNodes = failSafeList(jdbcRealm, PRINCIPAL_QUERY);
         storeIndex(pqNodes);

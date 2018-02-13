@@ -16,6 +16,7 @@
 package org.jboss.hal.ballroom.table;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import elemental2.dom.HTMLElement;
@@ -37,9 +38,9 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.CSS.dataTable;
-import static org.jboss.hal.resources.CSS.hover;
 import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.CSS.tableBordered;
+import static org.jboss.hal.resources.CSS.tableHover;
 import static org.jboss.hal.resources.CSS.tableStriped;
 import static org.jboss.hal.resources.UIConstants.HASH;
 
@@ -91,7 +92,7 @@ public class DataTable<T> implements Table<T> {
     public DataTable(String id, Options<T> options) {
         this.id = id;
         this.options = options;
-        this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, hover).asElement();
+        this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, tableHover).asElement();
         if (options.buttons != null && options.buttons.buttons != null) {
             for (Api.Button<T> button : options.buttons.buttons) {
                 button.table = this;
@@ -115,14 +116,14 @@ public class DataTable<T> implements Table<T> {
             options.id = id;
             api = Api.<T>select(HASH + id).dataTable(options);
             api.on(DRAW, CallbackUnionType.of((DrawCallback) (evt, settings) -> {
-                ColumnActions<T> columnActions = options.columnActions;
+                Map<String, InlineActionHandler<T>> columnActionHandler = options.columnActionHandler;
                 elemental2.dom.Element table = document.getElementById(options.id);
-                if (table != null && columnActions != null && !columnActions.isEmpty()) {
+                if (table != null && columnActionHandler != null && !columnActionHandler.isEmpty()) {
                     Elements.stream(table.querySelectorAll("." + columnAction))
                             .filter(htmlElements())
                             .map(asHtmlElement())
                             .forEach(link -> {
-                                ColumnAction<T> columnAction = columnActions.get(link.id);
+                                InlineActionHandler<T> columnAction = columnActionHandler.get(link.id);
                                 if (columnAction != null) {
                                     bind(link, click, event -> {
                                         event.stopPropagation();

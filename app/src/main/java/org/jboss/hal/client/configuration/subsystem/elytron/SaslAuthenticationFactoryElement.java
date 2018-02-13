@@ -22,6 +22,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -60,7 +61,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     private int mcIndex;
     private int mrcIndex;
 
-    SaslAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
+    SaslAuthenticationFactoryElement(Metadata metadata, TableButtonFactory tableButtonFactory) {
         // SASL authentication factory
         factoryTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(id(Ids.ADD), Names.SASL_AUTHENTICATION_FACTORY,
@@ -68,7 +69,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .button(tableButtonFactory.remove(Names.SASL_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadSaslAuthenticationFactories()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration, "15em") //NON-NLS
+                .column(new InlineAction<>(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration), "15em")
                 .build();
         factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveSaslAuthenticationFactory(form, changedValues))
@@ -88,8 +89,8 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                         table -> presenter.removeSaslMechanismConfiguration(selectedFactory,
                                 table.selectedRow().get(HAL_INDEX).asInt())))
                 .column(MECHANISM_NAME)
-                .column(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration,
-                        "20em") //NON-NLS
+                .column(new InlineAction<>(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration),
+                        "20em")
                 .build();
         mcForm = new ModelNodeForm.Builder<>(id(MECHANISM_CONFIGURATIONS, FORM), mcMetadata)
                 .onSave(((form, changedValues) -> presenter.saveSaslMechanismConfiguration(selectedFactory,
@@ -165,7 +166,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     }
 
     @Override
-    public void setPresenter(final FactoriesPresenter presenter) {
+    public void setPresenter(FactoriesPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -195,7 +196,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         }
     }
 
-    private void showMechanismConfiguration(final NamedNode saslAuthenticationFactory) {
+    private void showMechanismConfiguration(NamedNode saslAuthenticationFactory) {
         selectedFactory = saslAuthenticationFactory.getName();
         List<ModelNode> mcNodes = failSafeList(saslAuthenticationFactory, MECHANISM_CONFIGURATIONS);
         storeIndex(mcNodes);
@@ -205,7 +206,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         pages.showPage(id(MECHANISM_CONFIGURATIONS, PAGE));
     }
 
-    private void showMechanismRealmConfiguration(final ModelNode mechanismConfiguration) {
+    private void showMechanismRealmConfiguration(ModelNode mechanismConfiguration) {
         selectedMc = mechanismConfiguration.get(MECHANISM_NAME).asString();
         mcIndex = mechanismConfiguration.get(HAL_INDEX).asInt();
         List<ModelNode> mrcNodes = failSafeList(mechanismConfiguration, MECHANISM_REALM_CONFIGURATIONS);

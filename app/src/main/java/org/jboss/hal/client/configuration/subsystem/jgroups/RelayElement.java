@@ -21,6 +21,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -49,8 +50,8 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
     private HTMLElement section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    RelayElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    RelayElement(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(RELAY_TEMPLATE);
 
@@ -60,10 +61,10 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
                         table -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
                                 Names.RELAY)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column(Names.REMOTE_SITE, row -> {
+                .column(new InlineAction<>(Names.REMOTE_SITE, row -> {
                     presenter.showRemoteSites(row);
                     presenter.showStackInnerPage(REMOTE_SITE_ID);
-                })
+                }))
                 .build();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveSingleton(SELECTED_RELAY_TEMPLATE, metadata,
@@ -100,7 +101,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
     }
 
     @Override
-    public void setPresenter(final JGroupsPresenter presenter) {
+    public void setPresenter(JGroupsPresenter presenter) {
         this.presenter = presenter;
     }
 

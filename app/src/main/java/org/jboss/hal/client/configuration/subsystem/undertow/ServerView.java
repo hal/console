@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.ColumnBuilder;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -55,7 +56,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
-import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -80,8 +80,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     @Inject
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    public ServerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory, final Resources resources) {
+    public ServerView(Dispatcher dispatcher, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory, Resources resources) {
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
 
@@ -101,26 +101,17 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         // ------------------------------------------------------ hosts
 
+        List<InlineAction<NamedNode>> inlineActions = new ArrayList<>();
+        inlineActions.add(new InlineAction<>(Names.FILTERS, row -> presenter.showFilterRef(row)));
+        inlineActions.add(new InlineAction<>(Names.LOCAL_CACHE, row -> presenter.showLocation(row)));
+
         Metadata hostMetadata = metadataRegistry.lookup(HOST_TEMPLATE);
         hostTable = new ModelNodeTable.Builder<NamedNode>(Ids.UNDERTOW_HOST_TABLE, hostMetadata)
                 .button(tableButtonFactory.add(HOST_TEMPLATE, table -> presenter.addHost()))
                 .button(tableButtonFactory.remove(HOST_TEMPLATE,
                         table -> presenter.removeHost(table.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
-                .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.UNDERTOW_HOST_ACTION_COLUMN,
-                        resources.constants().references(),
-                        (cell, t, row, meta) -> {
-                            String id1 = Ids.uniqueId();
-                            String id2 = Ids.uniqueId();
-                            columnActions.add(id1, row1 -> presenter.showFilterRef(row1));
-                            columnActions.add(id2, row2 -> presenter.showLocation(row2));
-                            return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">" + Names.FILTERS + "</a> / " +
-                                    "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">" + Names.LOCATIONS + "</a>";
-                        })
-                        .orderable(false)
-                        .searchable(false)
-                        .width("13em")
-                        .build())
+                .column(inlineActions, "15em")
                 .build();
 
         hostForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_ATTRIBUTES_FORM, hostMetadata)
@@ -179,7 +170,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         table -> presenter.removeLocation(table.selectedRow().getName())))
                 .column(LOCATION, Names.LOCATION, (cell, type, row, meta) -> row.getName())
                 .column(HANDLER)
-                .column(Names.FILTERS, row -> presenter.showLocationFilterRef(row))
+                .column(new InlineAction<>(Names.FILTERS, row -> presenter.showLocationFilterRef(row)))
                 .build();
 
         locationForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FORM, locationMetadata)
@@ -261,7 +252,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         .addAll(navigation.panes())));
     }
 
-    private Form<ModelNode> hostSetting(final HostSetting hostSetting) {
+    private Form<ModelNode> hostSetting(HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
         return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM), metadata)
                 .singleton(() -> presenter.hostSettingOperation(hostSetting),
@@ -295,7 +286,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final ServerPresenter presenter) {
+    public void setPresenter(ServerPresenter presenter) {
         this.presenter = presenter;
         this.listener.values().forEach(l -> l.setPresenter(presenter));
 
@@ -310,7 +301,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void update(final ModelNode payload) {
+    public void update(ModelNode payload) {
         configurationForm.view(payload);
 
         hostForm.clear();
@@ -324,21 +315,21 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void updateFilterRef(final List<NamedNode> filters) {
+    public void updateFilterRef(List<NamedNode> filters) {
         filterRefForm.clear();
         filterRefTable.update(filters);
         hostPages.showPage(Ids.UNDERTOW_HOST_FILTER_REF_PAGE);
     }
 
     @Override
-    public void updateLocation(final List<NamedNode> locations) {
+    public void updateLocation(List<NamedNode> locations) {
         locationForm.clear();
         locationTable.update(locations);
         hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_PAGE);
     }
 
     @Override
-    public void updateLocationFilterRef(final List<NamedNode> filters) {
+    public void updateLocationFilterRef(List<NamedNode> filters) {
         locationFilterRefForm.clear();
         locationFilterRefTable.update(filters);
         hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE);

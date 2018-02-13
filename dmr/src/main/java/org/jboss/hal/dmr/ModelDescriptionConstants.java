@@ -33,7 +33,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_MECHANISM = "access-mechanism";
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
-    String ACTION = "action";
+    String ACTION = "actions";
     String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
     String ACTIVE_OPERATION = "active-operation";

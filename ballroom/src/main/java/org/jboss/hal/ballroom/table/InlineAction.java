@@ -15,29 +15,18 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import java.util.LinkedHashMap;
+import org.jboss.hal.resources.Ids;
 
-public class ColumnActions<T> {
+/** An action in a table row (typically in the last column) */
+public class InlineAction<T> {
 
-    private final LinkedHashMap<String, InlineActionHandler<T>> columnActions;
+    final String id;
+    final String title;
+    final InlineActionHandler<T> handler;
 
-    ColumnActions() {
-        columnActions = new LinkedHashMap<>();
-    }
-
-    public void add(String id, InlineActionHandler<T> columnAction) {
-        columnActions.put(id, columnAction);
-    }
-
-    public boolean isEmpty() {
-        return columnActions.isEmpty();
-    }
-
-    public InlineActionHandler<T> get(String key) {
-        return columnActions.get(key);
-    }
-
-    public LinkedHashMap<String, InlineActionHandler<T>> getColumnActions() {
-        return columnActions;
+    public InlineAction(String title, InlineActionHandler<T> handler) {
+        this.id = Ids.uniqueId();
+        this.title = title;
+        this.handler = handler;
     }
 }
