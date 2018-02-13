@@ -43,6 +43,6 @@ public class Options<T> {
     public Api.Select select;
     // not part of the DataTables API, but used internally
     String id;
-    ColumnActions<T> columnActions;
+    Map<String, InlineActionHandler<T>> columnActionHandler;
     public Map<Integer, String> buttonConstraints;
 }

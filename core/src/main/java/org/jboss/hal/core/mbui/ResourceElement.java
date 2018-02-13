@@ -34,6 +34,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.table.Column;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
@@ -116,7 +117,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 table -> builder.mbuiContext.crud().remove(builder.type, table.selectedRow().getName(),
                         builder.metadata.getTemplate(), builder.crudCallback)));
         if (builder.clAttribute != null) {
-            builder.tableBuilder.column(labelBuilder.label(builder.clAttribute), this::showComplexList);
+            builder.tableBuilder.column(
+                    new InlineAction<>(labelBuilder.label(builder.clAttribute), this::showComplexList));
         }
         table = builder.tableBuilder.build();
 

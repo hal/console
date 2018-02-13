@@ -24,6 +24,7 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
 import org.jboss.hal.ballroom.table.Scope;
@@ -57,14 +58,14 @@ class ChildrenPanel implements HasElements, Attachable {
     private final Table<String> table;
     private Node<Context> parent;
 
-    ChildrenPanel(final ModelBrowser modelBrowser, final Dispatcher dispatcher, final Resources resources) {
+    ChildrenPanel(ModelBrowser modelBrowser, Dispatcher dispatcher, Resources resources) {
         this.dispatcher = dispatcher;
 
         //noinspection HardCodedStringLiteral
         Options<String> options = new OptionsBuilder<String>()
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
-                .column(resources.constants().view(), row -> modelBrowser.tree.openNode(parent.id,
-                        () -> modelBrowser.select(uniqueId(parent, row), false)))
+                .column(new InlineAction<>(resources.constants().view(), row -> modelBrowser.tree.openNode(parent.id,
+                        () -> modelBrowser.select(uniqueId(parent, row), false))))
                 .button(resources.constants().add(), table -> modelBrowser.add(parent, table.getRows()))
 
                 .button(resources.constants().remove(), table -> {
@@ -94,7 +95,7 @@ class ChildrenPanel implements HasElements, Attachable {
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    void update(final Node<Context> node, final ResourceAddress address) {
+    void update(Node<Context> node, ResourceAddress address) {
         this.parent = node;
 
         SafeHtmlBuilder safeHtml = new SafeHtmlBuilder();

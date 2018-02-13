@@ -301,6 +301,8 @@ public interface Ids {
     String HOST_PRUNE_DISCONNECTED = "host-prune-disconnected";
     String HOST_PRUNE_EXPIRED = "host-prune-expired";
     String HOST_REFRESH = "host-refresh";
+    String INLINE_ACTION = "inline-action";
+    String INLINE_ACTION_DROPDOWN = "inline-action-dropdown";
     String INTERFACE = "interface";
     String INTERFACE_ADD = "interface-add";
     String INTERFACE_REFRESH = "interface-refresh";

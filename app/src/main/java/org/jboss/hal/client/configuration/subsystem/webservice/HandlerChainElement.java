@@ -21,6 +21,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -47,8 +48,8 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
     private WebservicePresenter presenter;
 
     @SuppressWarnings("ConstantConditions")
-    HandlerChainElement(final Config configType, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory) {
+    HandlerChainElement(Config configType, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory) {
 
         String tableId = Ids.build(configType.baseId, "handler-chain", Ids.TABLE);
         Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
@@ -57,7 +58,7 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .button(tableButtonFactory.remove(HANDLER_CHAIN_TEMPLATE,
                         table -> presenter.removeHandlerChain(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column(Names.HANDLER, row -> presenter.showHandlers(row))
+                .column(new InlineAction<>(Names.HANDLER, row -> presenter.showHandlers(row)))
                 .build();
 
         String formId = Ids.build(configType.baseId, "handler-chain", Ids.FORM);
@@ -92,7 +93,7 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
     }
 
     @Override
-    public void setPresenter(final WebservicePresenter presenter) {
+    public void setPresenter(WebservicePresenter presenter) {
         this.presenter = presenter;
     }
 

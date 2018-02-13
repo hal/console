@@ -22,7 +22,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String aborted();
     String accessMechanism();
     String accessType();
-    String action();
+    String actions();
     String active();
     String activeFilters();
     String activeLower();

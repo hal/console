@@ -18,7 +18,7 @@ package org.jboss.hal.ballroom.table;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -28,6 +28,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -46,7 +47,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     protected boolean keys;
     protected boolean searching;
     protected Api.Select select;
-    private ColumnActions<T> columnActions;
+    private Map<String, InlineActionHandler<T>> columnActionHandler;
     private int pageLength;
     private boolean paging;
     private Options<T> options;
@@ -54,7 +55,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     protected GenericOptionsBuilder() {
         this.buttons = new ArrayList<>();
         this.columns = new ArrayList<>();
-        this.columnActions = new ColumnActions<>();
+        this.columnActionHandler = new HashMap<>();
         this.pageLength = Settings.INSTANCE.get(PAGE_SIZE).asInt(Settings.DEFAULT_PAGE_SIZE);
         this.keys = true;
         this.paging = true;
@@ -122,44 +123,44 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
 
     public B column(Column<T> column) {
         assertNoOptions();
-
-        this.columns.add(column);
+        columns.add(column);
         return that();
+    }
+
+    public B column(InlineAction<T> inlineAction) {
+        return column(singletonList(inlineAction));
     }
 
     /**
-     * Adds an action column named {@link Constants#action()} with the specified link title and action handler.
-     *
-     * @param link         the link title
-     * @param columnAction the action handler which receives the row data as parameter
+     * Adds several column actions. If the list contains more than one action, it's assumed that this is the last
+     * column (the {@code colspan} attribute is adjusted for the last table header)
      */
-    @SuppressWarnings("HardCodedStringLiteral")
-    public B column(String link, ColumnAction<T> columnAction) {
-        return column(link, columnAction, "10em");
-    }
-
-    @SuppressWarnings("HardCodedStringLiteral")
-    public B column(String link, ColumnAction<T> columnAction, String width) {
+    public B column(List<InlineAction<T>> inlineActions) {
         assertNoOptions();
 
-        Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
-                (cell, type, row, meta) -> {
-                    String id = Ids.uniqueId();
-                    columnActions.add(id, columnAction);
-                    return "<a id=\"" + id + "\" class=\"" + CSS.columnAction + "\">" + link + "</a>";
-                })
-                .orderable(false)
-                .searchable(false)
-                .width(width)
-                .build();
-        this.columns.add(column);
-        return that();
-    }
+        if (!inlineActions.isEmpty()) {
+            StringBuilder buttons = new StringBuilder();
+            for (InlineAction<T> inlineAction : inlineActions) {
+                columnActionHandler.put(inlineAction.id, inlineAction.handler);
+                buttons.append("<button id=\"")
+                        .append(inlineAction.id)
+                        .append("\" class=\"")
+                        .append(CSS.columnAction + SPACE + btn + SPACE + btnDefault)
+                        .append("\" type=\"button\">")
+                        .append(inlineAction.title)
+                        .append("</button>");
+            }
+            Column<T> column = new ColumnBuilder<T>(Ids.build(Ids.INLINE_ACTION, Ids.uniqueId()),
+                    CONSTANTS.actions(),
+                    (cell, type, row, meta) -> "<div class=\"" + tableViewHalBtn + "\">" + buttons + "</div>")
+                    .className(tableViewHalActions)
+                    .orderable(false)
+                    .searchable(false)
+                    .width("12em")
+                    .build();
+            columns.add(column);
+        }
 
-    public B column(Function<ColumnActions<T>, Column<T>> actionColumn) {
-        assertNoOptions();
-
-        this.columns.add(actionColumn.apply(columnActions));
         return that();
     }
 
@@ -240,7 +241,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         options.select = select;
 
         // custom options
-        options.columnActions = columnActions;
+        options.columnActionHandler = columnActionHandler;
         return options;
     }
 

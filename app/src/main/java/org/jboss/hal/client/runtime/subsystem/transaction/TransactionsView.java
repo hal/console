@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -60,7 +61,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
 
     @Inject
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    public TransactionsView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public TransactionsView(MetadataRegistry metadataRegistry, Resources resources) {
 
 
         // ==================================== transactions
@@ -71,7 +72,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
                 .button(resources.constants().probe(), table -> presenter.probe())
                 .button(resources.constants().reload(), table -> presenter.reload())
                 .column(Names.TRANSACTION, (cell, type, row, meta) -> row.getName())
-                .column(Names.PARTICIPANTS, this::showParticipants, "20em") //NON-NLS
+                .column(new InlineAction<>(Names.PARTICIPANTS, "20em", this::showParticipants))
                 .build();
 
         transactionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(TRANSACTIONS, FORM), metadataTx)
@@ -119,7 +120,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
                         .addAll(section, sectionParticipants)));
     }
 
-    private void showParticipants(final NamedNode transactionNode) {
+    private void showParticipants(NamedNode transactionNode) {
         selectedTx = transactionNode.getName();
         List<NamedNode> participants = asNamedNodes(transactionNode.asPropertyList());
         participantsForm.clear();
@@ -136,12 +137,12 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
     }
 
     @Override
-    public void setPresenter(final TransactionsPresenter presenter) {
+    public void setPresenter(TransactionsPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void update(final List<NamedNode> model) {
+    public void update(List<NamedNode> model) {
         transactionsForm.clear();
         transactionsTable.update(model);
     }

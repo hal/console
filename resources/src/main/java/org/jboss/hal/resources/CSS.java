@@ -173,7 +173,6 @@ public interface CSS {
     String hide = "hide";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
-    String hover = "hover";
     String hostContainer = "host-container";
 
     String i = "i";
@@ -361,7 +360,10 @@ public interface CSS {
     String tabPane = "tab-pane";
     String table = "table";
     String tableBordered = "table-bordered";
+    String tableHover = "table-hover";
     String tableStriped = "table-striped";
+    String tableViewHalActions = "table-view-hal-actions";
+    String tableViewHalBtn = "table-view-hal-btn";
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";

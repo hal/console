@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -231,7 +232,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                         () -> presenter.reload()))
                 .column(NAME)
                 .column(ELYTRON_ENABLED)
-                .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
+                .column(new InlineAction<>(THREAD_POOLS,
+                        row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName())))
                 .build();
 
         HTMLElement wmLayout = div()
@@ -273,8 +275,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .column(ELYTRON_ENABLED)
                 .column(POLICY)
                 .column(SELECTOR)
-                .column(Names.THREAD_POOLS,
-                        row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName()))
+                .column(new InlineAction<>(Names.THREAD_POOLS,
+                        row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName())))
                 .build();
 
         dwmForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
