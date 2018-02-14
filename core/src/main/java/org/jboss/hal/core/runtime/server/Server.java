@@ -42,15 +42,15 @@ public class Server extends NamedNode {
     private Version managementVersion;
     private boolean bootErrors;
 
-    public Server(final String host, final ModelNode node) {
+    public Server(String host, ModelNode node) {
         this(host, node.get(NAME).asString(), node, false);
     }
 
-    public Server(final String host, final Property property) {
+    public Server(String host, Property property) {
         this(host, property.getName(), property.getValue(), false);
     }
 
-    private Server(final String host, final String server, final ModelNode modelNode, final boolean standalone) {
+    private Server(String host, String server, ModelNode modelNode, boolean standalone) {
         super(server, modelNode);
         this.standalone = standalone;
         this.managementVersion = ManagementModel.parseVersion(modelNode);
@@ -62,9 +62,7 @@ public class Server extends NamedNode {
         }
     }
 
-    /**
-     * Unique server identifier containing the host and server name.
-     */
+    /** Unique server identifier containing the host and server name. */
     public String getId() {
         return Ids.hostServer(getHost(), getName());
     }
@@ -81,7 +79,7 @@ public class Server extends NamedNode {
         return bootErrors;
     }
 
-    public void setBootErrors(final boolean bootErrors) {
+    public void setBootErrors(boolean bootErrors) {
         this.bootErrors = bootErrors;
     }
 
@@ -98,30 +96,22 @@ public class Server extends NamedNode {
         return hasDefined(HOST) ? get(HOST).asString() : null;
     }
 
-    /**
-     * @return the status as defined by {@code server-config.status}
-     */
+    /** @return the status as defined by {@code server-config.status} */
     public ServerConfigStatus getServerConfigStatus() {
         return asEnumValue(this, STATUS, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED);
     }
 
-    /**
-     * @return the state as defined by {@code server.server-status}
-     */
+    /** @return the state as defined by {@code server.server-status} */
     public RunningState getServerState() {
         return asEnumValue(this, SERVER_STATE, RunningState::valueOf, RunningState.UNDEFINED);
     }
 
-    /**
-     * @return the state as defined by {@code server.suspend-state}
-     */
+    /** @return the state as defined by {@code server.suspend-state} */
     public SuspendState getSuspendState() {
         return asEnumValue(this, SUSPEND_STATE, SuspendState::valueOf, SuspendState.UNDEFINED);
     }
 
-    /**
-     * @return the state as defined by {@code server.running-mode}
-     */
+    /** @return the state as defined by {@code server.running-mode} */
     public RunningMode getRunningMode() {
         return asEnumValue(this, RUNNING_MODE, RunningMode::valueOf, RunningMode.UNDEFINED);
     }
@@ -188,10 +178,8 @@ public class Server extends NamedNode {
                 .add(SERVER, getName());
     }
 
-    /**
-     * Adds the {@code server} attributes to this instance. Existing attributes will be overwritten.
-     */
-    public void addServerAttributes(final ModelNode modelNode) {
+    /** Adds the {@code server} related attributes to this instance. Existing attributes will be overwritten. */
+    public void addServerAttributes(ModelNode modelNode) {
         modelNode.asPropertyList().forEach(property -> get(property.getName()).set(property.getValue()));
         managementVersion = ManagementModel.parseVersion(modelNode);
     }

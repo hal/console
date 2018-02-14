@@ -48,7 +48,7 @@ public class ManagementModel {
      * Checks support for the capabilities registry.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 5.0.0}
+     * equal to {@code 5.0.0}
      */
     public static boolean supportsCapabilitiesRegistry(Version version) {
         return ensureVersion(version, V_5_0_0);
@@ -59,7 +59,7 @@ public class ManagementModel {
      * by {@code {selected.host}/subsystem=core-management/service=configuration-changes}.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 5.0.0}
+     * equal to {@code 5.0.0}
      */
     public static boolean supportsConfigurationChanges(Version version) {
         return ensureVersion(version, V_5_0_0);
@@ -69,7 +69,7 @@ public class ManagementModel {
      * Checks support for the resource {@code /subsystem=ejb3/application-security-domain=*}.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 5.0.0}
+     * equal to {@code 5.0.0}
      */
     public static boolean supportsEjbApplicationSecurityDomain(Version version) {
         return ensureVersion(version, V_5_0_0);
@@ -79,7 +79,7 @@ public class ManagementModel {
      * Check support for {@code :explode} operation on deployment resources.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 5.0.0}
+     * equal to {@code 5.0.0}
      */
     public static boolean supportsExplodeDeployment(Version version) {
         return ensureVersion(version, V_5_0_0);
@@ -89,7 +89,7 @@ public class ManagementModel {
      * Check support for {@code :list-log-files} operation.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 2.0.0}
+     * equal to {@code 2.0.0}
      */
     public static boolean supportsListLogFiles(Version version) {
         return ensureVersion(version, V_2_0_0);
@@ -99,7 +99,7 @@ public class ManagementModel {
      * Check support for {@code :read-content} operation for deployments.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 5.0.0}
+     * equal to {@code 5.0.0}
      */
     public static boolean supportsReadContentFromDeployment(Version version) {
         return ensureVersion(version, V_5_0_0);
@@ -109,7 +109,7 @@ public class ManagementModel {
      * Check support for suspend operation and related attributes.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 3.0.0}
+     * equal to {@code 3.0.0}
      */
     public static boolean supportsSuspend(Version version) {
         return ensureVersion(version, V_3_0_0);

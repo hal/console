@@ -161,6 +161,7 @@ public class ConfigurationChangesPresenter extends
                 .closeOnEsc(true)
                 .build();
 
+        dialog.registerAttachable(form);
         dialog.show();
         form.edit(changeModel);
     }
