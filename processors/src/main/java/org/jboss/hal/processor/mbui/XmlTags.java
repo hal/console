@@ -17,7 +17,7 @@ package org.jboss.hal.processor.mbui;
 
 public interface XmlTags {
 
-    String ACTION = "actions";
+    String ACTION = "action";
     String ACTIONS = "actions";
     String ADDRESS = "address";
     String ATTRIBUTES = "attributes";
