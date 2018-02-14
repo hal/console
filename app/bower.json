@@ -23,5 +23,8 @@
     "pouchdb": "~6.4.3",
     "tagmanager": "~3.0.2",
     "zeroclipboard": "~2.3.0"
+  },
+  "resolutions": {
+    "jquery": "~3.3.1"
   }
 }
