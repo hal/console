@@ -24,6 +24,5 @@ public interface Attachable {
     void attach();
 
     default void detach() {
-
     }
 }

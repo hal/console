@@ -135,7 +135,6 @@ public class ConfigurationChangesPresenter extends
             } else {
                 getView().update(new ModelNode());
             }
-
         });
     }
 
