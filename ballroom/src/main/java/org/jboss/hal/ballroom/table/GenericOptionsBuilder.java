@@ -40,7 +40,7 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T>, T> {
 
-    private static final String INLINE_ACTIONS_DEFAULT_WIDTH = "10em";
+    private static final int INLINE_ACTIONS_DEFAULT_WIDTH = 10;
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     protected List<Api.Button<T>> buttons;
@@ -129,7 +129,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B column(InlineAction<T> inlineAction) {
-        return column(singletonList(inlineAction), INLINE_ACTIONS_DEFAULT_WIDTH);
+        return column(singletonList(inlineAction), INLINE_ACTIONS_DEFAULT_WIDTH + "em");
     }
 
     public B column(InlineAction<T> inlineAction, String width) {
@@ -137,7 +137,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B column(List<InlineAction<T>> inlineActions) {
-        return column(inlineActions, INLINE_ACTIONS_DEFAULT_WIDTH);
+        return column(inlineActions, (INLINE_ACTIONS_DEFAULT_WIDTH * inlineActions.size()) + "em");
     }
 
     /**
