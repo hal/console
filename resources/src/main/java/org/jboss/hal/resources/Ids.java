@@ -573,7 +573,7 @@ public interface Ids {
     String SEARCH = "search";
     String SECURITY_DOMAIN = "sd";
     String SECURITY_DOMAIN_ACL_MODULE_ADD = "security-domain-acl-add";
-    String SECURITY_DOMAIN_ADD = "security-domain-add";
+    String SECURITY_DOMAIN_ADD = "sd-add";
     String SECURITY_DOMAIN_AUDIT_ADD = "security-domain-provider-add";
     String SECURITY_DOMAIN_AUTHENTICATION_ADD = "security-domain-authentication-add";
     String SECURITY_DOMAIN_AUTHORIZATION_ADD = "security-domain-authorization-add";

@@ -136,14 +136,14 @@ public class SecurityDomainPresenter
     }
 
     void saveSecurityDomain(Map<String, Object> changedValues) {
-        crud.save(Names.SECURITY_DOMAIN, securityDomain, SELECTED_SECURITY_DOMAIN_TEMPLATE, changedValues,
-                this::reload);
+        crud.save(Names.SECURITY_DOMAIN, securityDomain, SECURITY_DOMAIN_TEMPLATE.replaceWildcards(securityDomain),
+                changedValues, this::reload);
     }
 
     void resetSecurityDomain(Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
-        crud.reset(Names.SECURITY_DOMAIN, securityDomain, SELECTED_SECURITY_DOMAIN_TEMPLATE, form, metadata,
-                new FinishReset<ModelNode>(form) {
+        crud.reset(Names.SECURITY_DOMAIN, securityDomain, SECURITY_DOMAIN_TEMPLATE.replaceWildcards(securityDomain),
+                form, metadata, new FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(Form<ModelNode> form) {
                         reload();

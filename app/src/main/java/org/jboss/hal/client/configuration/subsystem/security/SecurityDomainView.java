@@ -62,6 +62,7 @@ public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPres
         configurationForm.view(securityDomain);
 
         authenticationForm.clear();
+        authorizationForm.clear();
         auditForm.clear();
         aclForm.clear();
         trustForm.clear();
@@ -69,7 +70,9 @@ public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPres
 
         authenticationTable.update(
                 asNamedNodes(failSafePropertyList(securityDomain, "authentication/classic/" + LOGIN_MODULE)));
-        auditTable.update(asNamedNodes(failSafePropertyList(securityDomain, "audit/classic" + PROVIDER_MODULE)));
+        authorizationTable.update(
+                asNamedNodes(failSafePropertyList(securityDomain, "authorization/classic/" + POLICY_MODULE)));
+        auditTable.update(asNamedNodes(failSafePropertyList(securityDomain, "audit/classic/" + PROVIDER_MODULE)));
         aclTable.update(asNamedNodes(failSafePropertyList(securityDomain, "acl/classic/" + ACL_MODULE)));
         trustTable.update(asNamedNodes(failSafePropertyList(securityDomain, "identity-trust/classic/" + TRUST_MODULE)));
         mappingTable.update(asNamedNodes(failSafePropertyList(securityDomain, "mapping/classic/" + MAPPING_MODULE)));
