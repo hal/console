@@ -158,12 +158,12 @@ public class Finder implements IsElement, Attachable {
     void appendColumn(String columnId, AsyncCallback<FinderColumn> callback) {
         columnRegistry.lookup(columnId, new LookupCallback() {
             @Override
-            public void found(final FinderColumn column) {
+            public void found(FinderColumn column) {
                 appendColumn(column, callback);
             }
 
             @Override
-            public void error(final String failure) {
+            public void error(String failure) {
                 logger.error(failure);
                 if (callback != null) {
                     callback.onFailure(new RuntimeException(failure));
@@ -297,7 +297,7 @@ public class Finder implements IsElement, Attachable {
         }
     }
 
-    void selectPreviousColumn(final String columnId) {
+    void selectPreviousColumn(String columnId) {
         List<String> columnIds = new ArrayList<>(columns.keySet());
         int index = 0;
         for (String id : columnIds) {
@@ -364,7 +364,7 @@ public class Finder implements IsElement, Attachable {
     /**
      * Resets the finder to its initial state by showing the initial column and preview.
      */
-    public void reset(final String token, final String initialColumn, final PreviewContent initialPreview,
+    public void reset(String token, String initialColumn, PreviewContent initialPreview,
             AsyncCallback<FinderColumn> callback) {
         initialColumnsByToken.put(token, initialColumn);
         initialPreviewsByToken.put(token, initialPreview);
@@ -436,7 +436,7 @@ public class Finder implements IsElement, Attachable {
      * <p>
      * If the path is empty, the fallback operation is executed.
      */
-    public void select(final String token, final FinderPath path, final Runnable fallback) {
+    public void select(String token, FinderPath path, Runnable fallback) {
         if (path.isEmpty()) {
             fallback.run();
 
@@ -540,9 +540,11 @@ public class Finder implements IsElement, Attachable {
                                 context.push(column);
                                 emitter.onCompleted();
                             } else {
-                                emitter.onError(
-                                        new RuntimeException("Error in Finder.SelectTask: Unable to select item '" +
-                                                segment.getItemId() + "' in column '" + segment.getColumnId() + "'"));
+                                // Ignore items which cannot be selected. If a deployment was disabled
+                                // runtime items might no longer be available.
+                                logger.warn("Unable to select item '{} in column '{}'", segment.getItemId(),
+                                        segment.getColumnId());
+                                emitter.onCompleted();
                             }
                         }
                     }));
