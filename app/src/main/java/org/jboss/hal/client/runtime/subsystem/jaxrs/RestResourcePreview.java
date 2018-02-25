@@ -69,7 +69,7 @@ import static org.jboss.hal.resources.CSS.*;
 class RestResourcePreview extends PreviewContent<RestResource> {
 
     private static final String LINK = "link";
-    private static final JsRegExp REGEX = new JsRegExp("\\{([\\w-\\.]+)\\}", "g"); //NON-NLS
+    private static final JsRegExp REGEX = new JsRegExp("\\{(.+)\\}", "g"); //NON-NLS
 
     private final Environment environment;
     private final ServerActions serverActions;
