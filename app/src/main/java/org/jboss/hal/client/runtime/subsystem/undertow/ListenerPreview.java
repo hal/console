@@ -83,7 +83,8 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 .horizontal()
                 .build();
         registerAttachable(processingTime);
-        processingElement = section().add(h(2, resources.constants().processingTime()))
+        processingElement = section()
+                .add(h(2, resources.constants().processingTime()))
                 .add(processingTime)
                 .asElement();
 
@@ -94,7 +95,8 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 .responsive(true)
                 .build();
         registerAttachable(requests);
-        requestsElement = section().add(h(2, resources.constants().requests()))
+        requestsElement = section()
+                .add(h(2, resources.constants().requests()))
                 .add(requests)
                 .asElement();
 
@@ -168,9 +170,6 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 .param(NAME, RECORD_REQUEST_START_TIME)
                 .param(VALUE, true)
                 .build();
-        dispatcher.execute(operation, result -> {
-            Elements.setVisible(noStatistics.asElement(), false);
-            Elements.setVisible(processingTime.asElement(), true);
-        });
+        dispatcher.execute(operation, result -> update(listener));
     }
 }
