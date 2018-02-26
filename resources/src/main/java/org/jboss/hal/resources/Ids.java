@@ -413,7 +413,7 @@ public interface Ids {
     String JOP_EXECUTION_REFRESH = "job-execution-refresh";
     String JOP_EXECUTION_RESTART = "job-execution-restart";
     String JOP_EXECUTION_STOP = "job-execution-stop";
-    String JPA_RUNTIME = "jpa-runtime";
+    String JPA_RUNTIME = "jpa-runtime-column";
     String JPA_RUNTIME_COLLECTION_ITEM = "jpa-runtime-collection-item";
     String JPA_RUNTIME_ENTITY_CACHE_ITEM = "jpa-runtime-entity-cache-item";
     String JPA_RUNTIME_ENTITY_ITEM = "jpa-runtime-entity-item";
