@@ -66,6 +66,7 @@ public class LabelBuilder {
             .put("jsf", "JSF")
             .put("jsse", "JSSE")
             .put("jsr", "JSR")
+            .put("jta", "JTA")
             .put("jts", "JTS")
             .put("jvm", "JVM")
             .put("jwt", "JWT")

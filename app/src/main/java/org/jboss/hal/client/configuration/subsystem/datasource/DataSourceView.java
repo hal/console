@@ -110,6 +110,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         attributes.putAll(CONSTANTS.security(), asList(
                 new Attribute("user-name"),
                 new Attribute("password"),
+                new Attribute("authentication-context"),
                 new Attribute("security-domain"),
                 new Attribute("allow-multiple-users"),
                 new Attribute("reauth-plugin-class-name"),
