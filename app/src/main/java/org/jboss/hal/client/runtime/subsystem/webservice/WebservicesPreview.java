@@ -37,8 +37,6 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.webservice.AddressTemplates.WEBSERVICES_CONFIGURATION_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.webservice.AddressTemplates.WEBSERVICES_RUNTIME_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
@@ -48,54 +46,35 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
     private StatementContext statementContext;
     private HTMLElement attributesElement;
     private PreviewAttributes<ModelNode> attributes;
-    private String profile;
 
-
-    public WebservicesPreview(final Dispatcher dispatcher, final StatementContext statementContext,
-            final Resources resources) {
+    public WebservicesPreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
         super(Names.WEBSERVICES);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
 
-        ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                .param(ATTRIBUTES_ONLY, true)
+        noStatistics = new EmptyState.Builder(Ids.WEBSERVICES_STATISTICS_DISABLED,
+                resources.constants().statisticsDisabledHeader())
+                .description(resources.messages().statisticsDisabled(Names.WEBSERVICES))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
+                        Constraint.writable(WEBSERVICES_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
                 .build();
-        dispatcher.execute(operation, result -> {
-
-            profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(Ids.WEBSERVICES_STATISTICS_DISABLED,
-                    resources.constants().statisticsDisabledHeader())
-                    .description(resources.messages().statisticsDisabled(Names.WEBSERVICES, profile))
-                    .icon(fontAwesome("line-chart"))
-                    .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
-                            Constraint.writable(WEBSERVICES_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
-                    .build();
-
-            previewBuilder()
-                    .add(noStatistics);
-
-            // to prevent flickering we initially hide everything
-            Elements.setVisible(noStatistics.asElement(), false);
-            update(null);
-        });
+        Elements.setVisible(noStatistics.asElement(), false);
 
         attributes = new PreviewAttributes<>(new ModelNode(), resources.constants().attributes(),
                 asList("modify-wsdl-address", "wsdl-host", "wsdl-path-rewrite-rule", "wsdl-port", "wsdl-secure-port",
                         "wsdl-uri-scheme"));
-
         attributesElement = section()
                 .addAll(attributes)
                 .asElement();
 
         previewBuilder()
+                .add(noStatistics)
                 .add(attributesElement);
-
     }
 
     @Override
-    public void update(final SubsystemMetadata item) {
+    public void update(SubsystemMetadata item) {
         ResourceAddress runtimeAddress = WEBSERVICES_RUNTIME_TEMPLATE.resolve(statementContext);
         Operation opSubsystem = new Operation.Builder(runtimeAddress, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
@@ -110,16 +89,12 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
     }
 
     private void enableStatistics() {
-        ResourceAddress address = new ResourceAddress()
-                .add(PROFILE, profile)
-                .add(SUBSYSTEM, WEBSERVICES);
+        ResourceAddress address = AddressTemplate.of("{selected.profile}/subsystem=webservices")
+                .resolve(statementContext);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, STATISTICS_ENABLED)
                 .param(VALUE, true)
                 .build();
-        dispatcher.execute(operation, result -> {
-            Elements.setVisible(noStatistics.asElement(), false);
-            Elements.setVisible(attributesElement, true);
-        });
+        dispatcher.execute(operation, result -> update(null));
     }
 }

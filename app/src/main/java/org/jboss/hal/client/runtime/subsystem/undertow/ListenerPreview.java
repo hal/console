@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.PatternFly;
@@ -39,34 +40,40 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_CONFIGURATION_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_LISTENER_TYPE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_WEB_SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 class ListenerPreview extends PreviewContent<NamedNode> {
 
-    private GroupedBar processingTime;
-    private Dispatcher dispatcher;
-    private StatementContext statementContext;
-    private Resources resources;
-    private PreviewAttributes<NamedNode> previewAttributes;
-    private Donut requests;
-    private EmptyState noProcessingTime;
-    private String profile;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final Resources resources;
 
-    ListenerPreview(final Dispatcher dispatcher, final StatementContext statementContext, final Resources resources,
-            NamedNode server) {
+    private final EmptyState noStatistics;
+    private final PreviewAttributes<NamedNode> previewAttributes;
+    private final HTMLElement processingElement;
+    private final GroupedBar processingTime;
+    private final HTMLElement requestsElement;
+    private final Donut requests;
+
+    ListenerPreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources, NamedNode server) {
         super(server.getName());
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.resources = resources;
-        previewAttributes = new PreviewAttributes<>(server, asList("bytes-received", "bytes-sent"));
+
         getHeaderContainer().appendChild(refreshLink(() -> update(server)));
+        previewAttributes = new PreviewAttributes<>(server, asList("bytes-received", "bytes-sent"));
+
+        noStatistics = new EmptyState.Builder(Ids.UNDERTOW_LISTENER_PROCESSING_DISABLED,
+                resources.constants().statisticsDisabledHeader())
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enable(), () -> recordProcessingTime(server))
+                .build();
 
         // the order of rows is determined at update time.
         processingTime = new GroupedBar.Builder(resources.constants().milliseconds())
@@ -76,43 +83,34 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 .horizontal()
                 .build();
         registerAttachable(processingTime);
+        processingElement = section().add(h(2, resources.constants().processingTime()))
+                .add(processingTime)
+                .asElement();
 
-        ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                .param(ATTRIBUTES_ONLY, true)
+        requests = new Donut.Builder(Names.REQUESTS)
+                .add(REQUEST_COUNT, resources.constants().requests(), PatternFly.colors.green)
+                .add(ERROR_COUNT, resources.constants().error(), PatternFly.colors.red)
+                .legend(Donut.Legend.BOTTOM)
+                .responsive(true)
                 .build();
-        dispatcher.execute(operation, result -> {
+        registerAttachable(requests);
+        requestsElement = section().add(h(2, resources.constants().requests()))
+                .add(requests)
+                .asElement();
 
-            profile = result.get(PROFILE_NAME).asString();
-            noProcessingTime = new EmptyState.Builder(Ids.UNDERTOW_LISTENER_PROCESSING_DISABLED,
-                    resources.constants().undertowListenerProcessingDisabledHeader())
-                    .icon(fontAwesome("line-chart"))
-                    .primaryAction(resources.constants().enable(), () -> recordProcessingTime(server))
-                    .build();
+        previewBuilder().addAll(previewAttributes);
+        previewBuilder()
+                .add(noStatistics)
+                .add(processingElement)
+                .add(requestsElement);
 
-            requests = new Donut.Builder(Names.REQUESTS)
-                    .add(REQUEST_COUNT, resources.constants().requests(), PatternFly.colors.green)
-                    .add(ERROR_COUNT, resources.constants().error(), PatternFly.colors.red)
-                    .legend(Donut.Legend.BOTTOM)
-                    .responsive(true)
-                    .build();
-            registerAttachable(requests);
-
-            previewBuilder().addAll(previewAttributes);
-            previewBuilder()
-                    .add(h(2, resources.constants().processingTime()))
-                    .add(processingTime)
-                    .add(noProcessingTime)
-                    .add(h(2, resources.constants().requests()))
-                    .add(requests);
-
-            Elements.setVisible(noProcessingTime.asElement(), false);
-        });
+        Elements.setVisible(noStatistics.asElement(), false);
+        Elements.setVisible(processingElement, false);
+        Elements.setVisible(requestsElement, false);
     }
 
     @Override
-    public void update(final NamedNode item) {
+    public void update(NamedNode item) {
         // the HAL_LISTENER_TYPE and HAL_WEB_SERVER is added to the model in ListenerColumn class.
         String listenerType = item.asModelNode().get(HAL_LISTENER_TYPE).asString();
         String webserver = item.asModelNode().get(HAL_WEB_SERVER).asString();
@@ -124,8 +122,9 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         dispatcher.execute(operation, result -> {
             NamedNode listenerResult = new NamedNode(result);
             previewAttributes.refresh(listenerResult);
+            boolean statisticsEnabled = listenerResult.get(RECORD_REQUEST_START_TIME).asBoolean();
 
-            if (listenerResult.get(RECORD_REQUEST_START_TIME).asBoolean()) {
+            if (statisticsEnabled) {
                 Map<String, Long> processingTimes = new HashMap<>();
                 long procTime = result.get(PROCESSING_TIME).asLong();
                 long maxProcTime = result.get(MAX_PROCESSING_TIME).asLong();
@@ -142,39 +141,35 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 processingTimes.put(PROCESSING_TIME, procTime);
                 processingTime.update(processingTimes);
 
-                Elements.setVisible(noProcessingTime.asElement(), false);
-                Elements.setVisible(processingTime.asElement(), true);
+                Map<String, Long> metricUpdates = new HashMap<>(7);
+                metricUpdates.put(REQUEST_COUNT, result.get(REQUEST_COUNT).asLong());
+                metricUpdates.put(ERROR_COUNT, result.get(ERROR_COUNT).asLong());
+                requests.update(metricUpdates);
             } else {
-                Elements.setVisible(noProcessingTime.asElement(), true);
-                Elements.setVisible(processingTime.asElement(), false);
+                SafeHtml desc = SafeHtmlUtils.fromTrustedString(
+                        resources.messages().undertowListenerProcessingDisabled(listenerType, webserver));
+                noStatistics.setDescription(desc);
             }
 
-            SafeHtml desc = SafeHtmlUtils
-                    .fromTrustedString(
-                            resources.messages().undertowListenerProcessingDisabled(listenerType, webserver, profile));
-            noProcessingTime.setDescription(desc);
-
-            Map<String, Long> metricUpdates = new HashMap<>(7);
-            metricUpdates.put(REQUEST_COUNT, result.get(REQUEST_COUNT).asLong());
-            metricUpdates.put(ERROR_COUNT, result.get(ERROR_COUNT).asLong());
-            requests.update(metricUpdates);
+            Elements.setVisible(noStatistics.asElement(), !statisticsEnabled);
+            Elements.setVisible(processingElement, statisticsEnabled);
+            Elements.setVisible(requestsElement, statisticsEnabled);
         });
     }
 
-    private void recordProcessingTime(final NamedNode listener) {
+    private void recordProcessingTime(NamedNode listener) {
         // the HAL_LISTENER_TYPE and HAL_WEB_SERVER is added to the model in ListenerColumn class.
-        String listenerType = listener.asModelNode().get(HAL_LISTENER_TYPE).asString();
         String webserver = listener.asModelNode().get(HAL_WEB_SERVER).asString();
-
-        ResourceAddress address = WEB_SERVER_CONFIGURATION_TEMPLATE.append(
-                "/" + listenerType + "=" + listener.getName())
-                .resolve(statementContext, profile, webserver);
+        String listenerType = listener.asModelNode().get(HAL_LISTENER_TYPE).asString();
+        ResourceAddress address = AddressTemplate.of(
+                "{selected.profile}/subsystem=undertow/server=" + webserver + "/" + listenerType + "=" + listener.getName())
+                .resolve(statementContext);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, RECORD_REQUEST_START_TIME)
                 .param(VALUE, true)
                 .build();
         dispatcher.execute(operation, result -> {
-            Elements.setVisible(noProcessingTime.asElement(), false);
+            Elements.setVisible(noStatistics.asElement(), false);
             Elements.setVisible(processingTime.asElement(), true);
         });
     }

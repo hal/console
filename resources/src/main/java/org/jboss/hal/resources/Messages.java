@@ -433,7 +433,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml startServerGroupSuccess(String name);
     SafeHtml startServerSuccess(String name);
 
-    SafeHtml statisticsDisabled(String subsystem, String profile);
+    SafeHtml statisticsDisabled(String subsystem);
     SafeHtml statisticsEnabled(String name);
 
     String stop(String name);
@@ -472,7 +472,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml unauthorized();
     SafeHtml undeployedContent(String name);
 
-    String undertowListenerProcessingDisabled(String listener, String server, String profile);
+    String undertowListenerProcessingDisabled(String listener, String server);
     String updateAvailable(String current, String update);
     SafeHtml updateServerError(String name);
     SafeHtml uploadContentDescription();

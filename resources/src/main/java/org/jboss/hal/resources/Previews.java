@@ -273,8 +273,14 @@ public interface Previews extends ClientBundleWithLookup {
 
     // ------------------------------------------------------ runtime
 
+    @Source("previews/runtime/application-security.html")
+    ExternalTextResource runtimeApplicationSecurity();
+
     @Source("previews/runtime/datasources.html")
     ExternalTextResource runtimeDatasources();
+
+    @Source("previews/runtime/deployment.html")
+    ExternalTextResource runtimeDeployment();
 
     @Source("previews/runtime/domain.html")
     ExternalTextResource runtimeDomain();
@@ -297,6 +303,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/messaging-server.html")
     ExternalTextResource runtimeMessagingServer();
 
+    @Source("previews/runtime/mod-cluster.html")
+    ExternalTextResource runtimeModCluster();
+
     @Source("previews/runtime/server-groups.html")
     ExternalTextResource runtimeServerGroups();
 
@@ -305,6 +314,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/runtime/topology.html")
     ExternalTextResource runtimeTopology();
+
+    @Source("previews/runtime/undertow-server.html")
+    ExternalTextResource runtimeUndertowServer();
 
     @Source("previews/runtime/worker.html")
     ExternalTextResource runtimeWorker();
@@ -324,7 +336,7 @@ public interface Previews extends ClientBundleWithLookup {
             try {
                 resource.getText(new ResourceCallback<TextResource>() {
                     @Override
-                    public void onError(final ResourceException e) {
+                    public void onError(ResourceException e) {
                         logger.error("Unable to get preview content from '{}': {}", resource.getName(), e.getMessage());
                     }
 

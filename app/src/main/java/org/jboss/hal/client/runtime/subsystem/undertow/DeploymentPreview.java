@@ -59,8 +59,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 class DeploymentPreview extends PreviewContent<DeploymentResource> {
@@ -75,7 +73,6 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
     private GroupedBar sessionTime;
     private Utilization maxSessions;
     private EmptyState noStatistics;
-    private String profile;
     private HTMLHeadingElement sessionsHeader;
     private HTMLHeadingElement sessionTimeHeader;
 
@@ -118,62 +115,51 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .append(VIRTUAL_HOST);
         getHeaderContainer().appendChild(refreshLink(() -> update(deploymentResource)));
 
-        ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                .param(ATTRIBUTES_ONLY, true)
+        noStatistics = new EmptyState.Builder(Ids.UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED,
+                resources.constants().statisticsDisabledHeader())
+                .description(resources.messages().statisticsDisabled(Names.UNDERTOW))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
+                        Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
                 .build();
-        dispatcher.execute(operation, result -> {
 
-            profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(Ids.UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED,
-                    resources.constants().statisticsDisabledHeader())
-                    .description(resources.messages().statisticsDisabled(Names.UNDERTOW, profile))
-                    .icon(fontAwesome("line-chart"))
-                    .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
-                            Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
-                    .build();
+        sessions = new Donut.Builder(Names.SESSIONS)
+                .add(ACTIVE_SESSIONS, resources.constants().activeSessions(), PatternFly.colors.green)
+                .add(EXPIRED_SESSIONS, resources.constants().expiredSessions(), PatternFly.colors.orange)
+                .add(REJECTED_SESSIONS, resources.constants().rejectedSessions(), PatternFly.colors.red)
+                .legend(Donut.Legend.BOTTOM)
+                .responsive(true)
+                .build();
+        registerAttachable(sessions);
 
-            previewBuilder().addAll(previewAttributes);
-            previewBuilder()
-                    .add(noStatistics);
+        // the order of rows is determined at update time.
+        sessionTime = new GroupedBar.Builder(resources.constants().seconds())
+                .add(SESSION_MAX_ALIVE_TIME, resources.constants().sessionsMaxAliveTime(), PatternFly.colors.orange)
+                .add(SESSION_AVG_ALIVE_TIME, resources.constants().sessionsAvgAliveTime(), PatternFly.colors.green)
+                .responsive(true)
+                .horizontal()
+                .build();
+        registerAttachable(sessionTime);
 
-            sessions = new Donut.Builder(Names.SESSIONS)
-                    .add(ACTIVE_SESSIONS, resources.constants().activeSessions(), PatternFly.colors.green)
-                    .add(EXPIRED_SESSIONS, resources.constants().expiredSessions(), PatternFly.colors.orange)
-                    .add(REJECTED_SESSIONS, resources.constants().rejectedSessions(), PatternFly.colors.red)
-                    .legend(Donut.Legend.BOTTOM)
-                    .responsive(true)
-                    .build();
-            registerAttachable(sessions);
+        maxSessions = new Utilization(resources.constants().activeSessions(),
+                resources.constants().maxActiveSessions(), false, false);
 
-            // the order of rows is determined at update time.
-            sessionTime = new GroupedBar.Builder(resources.constants().seconds())
-                    .add(SESSION_MAX_ALIVE_TIME, resources.constants().sessionsMaxAliveTime(), PatternFly.colors.orange)
-                    .add(SESSION_AVG_ALIVE_TIME, resources.constants().sessionsAvgAliveTime(), PatternFly.colors.green)
-                    .responsive(true)
-                    .horizontal()
-                    .build();
-            registerAttachable(sessionTime);
+        sessionsHeader = h(2, resources.constants().sessions()).asElement();
+        sessionTimeHeader = h(2, resources.constants().sessionTime()).asElement();
 
-            maxSessions = new Utilization(resources.constants().activeSessions(),
-                    resources.constants().maxActiveSessions(), false, false);
+        previewBuilder().addAll(previewAttributes);
+        previewBuilder()
+                .add(noStatistics)
+                .add(sessionsHeader)
+                .add(sessions)
+                .add(sessionTimeHeader)
+                .add(maxSessions)
+                .add(sessionTime);
 
-            sessionsHeader = h(2, resources.constants().sessions()).asElement();
-            sessionTimeHeader = h(2, resources.constants().sessionTime()).asElement();
-
-            previewBuilder()
-                    .add(sessionsHeader)
-                    .add(sessions)
-                    .add(sessionTimeHeader)
-                    .add(maxSessions)
-                    .add(sessionTime);
-
-            Elements.setVisible(noStatistics.asElement(), false);
-            Elements.setVisible(maxSessions.asElement(), false);
-            Elements.setVisible(sessionsHeader, false);
-            Elements.setVisible(sessionTimeHeader, false);
-        });
+        Elements.setVisible(noStatistics.asElement(), false);
+        Elements.setVisible(maxSessions.asElement(), false);
+        Elements.setVisible(sessionsHeader, false);
+        Elements.setVisible(sessionTimeHeader, false);
     }
 
     @Override
@@ -183,7 +169,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
     }
 
     @Override
-    public void update(final DeploymentResource item) {
+    public void update(DeploymentResource item) {
         Operation opDeployment = new Operation.Builder(item.getAddress(), READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
@@ -235,9 +221,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
     }
 
     private void enableStatistics() {
-        ResourceAddress address = new ResourceAddress()
-                .add(PROFILE, profile)
-                .add(SUBSYSTEM, UNDERTOW);
+        ResourceAddress address = AddressTemplate.of("{selected.profile}/subsystem=undertow").resolve(statementContext);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, STATISTICS_ENABLED)
                 .param(VALUE, true)

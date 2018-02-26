@@ -21,10 +21,12 @@ import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
 import static java.util.Arrays.asList;
@@ -34,7 +36,7 @@ import static java.util.stream.Collectors.toList;
 public class UndertowColumn extends FinderColumn<StaticItem> {
 
     @Inject
-    public UndertowColumn(Finder finder) {
+    public UndertowColumn(Finder finder, Resources resources) {
 
         super(new Builder<StaticItem>(finder, Ids.UNDERTOW_RUNTIME, Names.WEB)
 
@@ -44,16 +46,21 @@ public class UndertowColumn extends FinderColumn<StaticItem> {
 
         List<StaticItem> items = asList(
                 new StaticItem.Builder(Names.APPLICATION_SECURITY_DOMAIN)
+                        .onPreview(new PreviewContent<>(Names.APPLICATION_SECURITY_DOMAIN,
+                                resources.previews().runtimeApplicationSecurity()))
                         .nextColumn(Ids.UNDERTOW_RUNTIME_APP_SEC_DOMAIN)
                         .build(),
                 new StaticItem.Builder(Names.DEPLOYMENT)
                         .nextColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
+                        .onPreview(new PreviewContent<>(Names.DEPLOYMENT, resources.previews().runtimeDeployment()))
                         .build(),
                 new StaticItem.Builder(Names.MODCLUSTER)
                         .nextColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER)
+                        .onPreview(new PreviewContent<>(Names.MODCLUSTER, resources.previews().runtimeModCluster()))
                         .build(),
                 new StaticItem.Builder(Names.SERVER)
                         .nextColumn(Ids.UNDERTOW_RUNTIME_SERVER)
+                        .onPreview(new PreviewContent<>(Names.SERVER, resources.previews().runtimeUndertowServer()))
                         .build()
 
         );

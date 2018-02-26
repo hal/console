@@ -34,58 +34,40 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
 
-    private EmptyState noStatistics;
-    private Dispatcher dispatcher;
-    private StatementContext statementContext;
-    private String profile;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final EmptyState noStatistics;
+    private final HTMLElement descriptionPreview;
 
-
-    public UndertowPreview(final Dispatcher dispatcher, final StatementContext statementContext,
-            final Resources resources) {
+    public UndertowPreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
         super(Names.WEB, Names.UNDERTOW);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
 
-        ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                .param(ATTRIBUTES_ONLY, true)
+        noStatistics = new EmptyState.Builder(Ids.UNDERTOW_STATISTICS_DISABLED,
+                resources.constants().statisticsDisabledHeader())
+                .description(resources.messages().statisticsDisabled(Names.UNDERTOW))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
+                        Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
                 .build();
-        dispatcher.execute(operation, result -> {
+        Elements.setVisible(noStatistics.asElement(), false);
 
-            profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(Ids.UNDERTOW_STATISTICS_DISABLED,
-                    resources.constants().statisticsDisabledHeader())
-                    .description(resources.messages().statisticsDisabled(Names.UNDERTOW, profile))
-                    .icon(fontAwesome("line-chart"))
-                    .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
-                            Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
-                    .build();
-
-            previewBuilder()
-                    .add(noStatistics);
-
-            // to prevent flickering we initially hide everything
-            Elements.setVisible(noStatistics.asElement(), false);
-            update(null);
-
-        });
-
-        HTMLElement descriptionPreview = section().asElement();
+        descriptionPreview = section().asElement();
+        Elements.setVisible(descriptionPreview, false);
         Previews.innerHtml(descriptionPreview, resources.previews().runtimeWeb());
 
         previewBuilder()
+                .add(noStatistics)
                 .add(descriptionPreview);
     }
 
     @Override
-    public void update(final SubsystemMetadata item) {
+    public void update(SubsystemMetadata item) {
         ResourceAddress addressWeb = WEB_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         Operation opWeb = new Operation.Builder(addressWeb, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
@@ -93,19 +75,16 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
         dispatcher.execute(opWeb, result -> {
             boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
             Elements.setVisible(noStatistics.asElement(), !statsEnabled);
+            Elements.setVisible(descriptionPreview, statsEnabled);
         });
     }
 
     private void enableStatistics() {
-        ResourceAddress address = new ResourceAddress()
-                .add(PROFILE, profile)
-                .add(SUBSYSTEM, UNDERTOW);
+        ResourceAddress address = AddressTemplate.of("{selected.profile}/subsystem=undertow").resolve(statementContext);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, STATISTICS_ENABLED)
                 .param(VALUE, true)
                 .build();
-        dispatcher.execute(operation, result -> {
-            Elements.setVisible(noStatistics.asElement(), false);
-        });
+        dispatcher.execute(operation, result -> update(null));
     }
 }

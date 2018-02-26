@@ -31,7 +31,6 @@ import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
 import org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPreview;
 import org.jboss.hal.client.runtime.subsystem.undertow.UndertowPreview;
 import org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPreview;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -73,7 +72,6 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     @Inject
     public SubsystemColumn(Finder finder,
-            Environment environment,
             Dispatcher dispatcher,
             Places places,
             StatementContext statementContext,
