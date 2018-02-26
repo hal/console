@@ -152,7 +152,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         eventBus.fireEvent(new ServerGroupSelectionEvent(server.getServerGroup()));
                     }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
-                    if (server.isRunning()) {
+                    if (server.isStarted()) {
                         // some runtime screens use "{selected.profile}"
                         eventBus.fireEvent(new ProfileSelectionEvent(server.get(PROFILE_NAME).asString()));
                     }
