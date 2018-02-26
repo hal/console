@@ -128,6 +128,10 @@ public class Server extends NamedNode {
         return getServerState() == RunningState.STARTING;
     }
 
+    /**
+     * @return {@code true} if the server is running, {@code false} if not or if
+     * {@link #needsReload()} or {@link #needsRestart()} is {@code true}.
+     */
     public boolean isRunning() {
         return getServerState() == RunningState.RUNNING && !isSuspended();
     }
