@@ -66,9 +66,8 @@ import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 
-@AsyncColumn(Ids.MESSAGING_SERVER_DESTINATION)
+@AsyncColumn(Ids.MESSAGING_SERVER_DESTINATION_RUNTIME)
 public class DestinationColumn extends FinderColumn<Destination> {
 
     private final Dispatcher dispatcher;
@@ -86,7 +85,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
             StatementContext statementContext,
             Resources resources) {
 
-        super(new Builder<Destination>(finder, Ids.MESSAGING_SERVER_DESTINATION, Names.DESTINATION)
+        super(new Builder<Destination>(finder, Ids.MESSAGING_SERVER_DESTINATION_RUNTIME, Names.DESTINATION)
                 .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_DESTINATION_REFRESH))
                 .onPreview(item -> new DestinationPreview(item, finderPathFactory, places, dispatcher, resources))
                 .useFirstActionAsBreadcrumbHandler()
@@ -138,8 +137,6 @@ public class DestinationColumn extends FinderColumn<Destination> {
                     callback.onSuccess(destinations);
                 });
             }
-
-
         };
         setItemsProvider(itemsProvider);
         setBreadcrumbItemsProvider(
@@ -218,7 +215,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
                             builder.with(SUBDEPLOYMENT, item.getSubdeployment());
                         }
                     }
-                    builder.with(MESSAGING_SERVER, messageServer()).with(NAME, item.getName());
+                    builder.with(Ids.MESSAGING_SERVER, messageServer()).with(NAME, item.getName());
                     actions.add(itemActionFactory.view(builder.build()));
 
                     if (item.isPaused()) {
@@ -251,7 +248,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
         Optional<String> server = stream(getFinder().getContext().getPath().spliterator(), false)
                 .filter(segment -> Ids.MESSAGING_SERVER_RUNTIME.equals(segment.getColumnId()))
                 .findFirst()
-                .map(segment -> segment.getItemId().substring(MESSAGING_SERVER.length() + 1));
+                .map(segment -> segment.getItemId().substring("msgs-".length())); // decode Ids.messagingServer()
         return server.orElse(UNDEFINED);
     }
 

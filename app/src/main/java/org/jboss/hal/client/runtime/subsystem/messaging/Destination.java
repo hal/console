@@ -32,7 +32,7 @@ class Destination extends DeploymentResource {
     enum Type {
         JMS_QUEUE("jms-queue", NameTokens.JMS_QUEUE, Names.JMS_QUEUE),
         JMS_TOPIC("jms-topic", NameTokens.JMS_TOPIC, Names.JMS_TOPIC),
-        QUEUE("queue", NameTokens.QUEUE, Names.QUERY);
+        QUEUE("queue", NameTokens.QUEUE, Names.CORE_QUEUE);
 
         static Type[] SUBSYSTEM_RESOURCES = new Type[]{JMS_QUEUE, JMS_TOPIC, QUEUE};
         static Type[] DEPLOYMENT_RESOURCES = new Type[]{JMS_QUEUE, JMS_TOPIC};

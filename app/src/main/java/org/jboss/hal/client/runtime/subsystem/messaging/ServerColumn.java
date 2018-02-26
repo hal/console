@@ -80,7 +80,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
                     @Override
                     public String nextColumn() {
-                        return Ids.MESSAGING_SERVER_DESTINATION;
+                        return Ids.MESSAGING_SERVER_DESTINATION_RUNTIME;
                     }
                 })
                 .onPreview(ServerPreview::new)

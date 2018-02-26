@@ -502,6 +502,7 @@ public interface Ids {
     String MESSAGING_SERVER_CONFIGURATION_REFRESH = "msg-server-c-refresh";
     String MESSAGING_SERVER_CONNECTION = "msg-server-connection";
     String MESSAGING_SERVER_DESTINATION = "msg-server-destination";
+    String MESSAGING_SERVER_DESTINATION_RUNTIME = "msg-server-destination-r";
     String MESSAGING_SERVER_DESTINATION_REFRESH = "msg-server-destination-refresh";
     String MESSAGING_SERVER_DIRECTORY_ITEM = "msg-server-directory-item";
     String MESSAGING_SERVER_HA_POLICY = "msg-server-ha-policy";
