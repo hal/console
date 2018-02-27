@@ -22,14 +22,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.spi.EsReturn;
 
 import static java.util.Comparator.comparing;
-import static org.jboss.hal.config.Role.*;
 
 /** Provides access to all standard and scoped roles. */
 @JsType
@@ -37,14 +35,6 @@ public class Roles implements Iterable<Role> {
 
     @JsIgnore public static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
     @JsIgnore public static final Comparator<Role> BY_NAME = comparing(Role::getName);
-    @JsIgnore public static final Set<Role> DEFAULT_ROLES = Sets.newHashSet(
-            ADMINISTRATOR,
-            AUDITOR,
-            DEPLOYER,
-            MAINTAINER,
-            MONITOR,
-            OPERATOR,
-            SUPER_USER);
 
     private final Map<String, Role> lookup;
     private final Set<Role> standardRoles;

@@ -40,7 +40,7 @@ public class User {
     private final Set<Role> roles;
     private String name;
 
-    private User(final String name, final Set<Role> roles) {
+    private User(String name, Set<Role> roles) {
         this.name = name;
         this.roles = roles;
     }
@@ -52,7 +52,7 @@ public class User {
     }
 
     @JsIgnore
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
