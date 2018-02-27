@@ -37,6 +37,7 @@ import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
@@ -126,6 +127,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             MetadataProcessor metadataProcessor,
             @Footer Provider<Progress> progress,
             Dispatcher dispatcher,
+            Environment environment,
             EventBus eventBus,
             Resources resources) {
         this.crud = crud;
@@ -165,7 +167,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         }
         resourcePanel.hide();
 
-        childrenPanel = new ChildrenPanel(this, dispatcher, resources);
+        childrenPanel = new ChildrenPanel(this, environment, dispatcher, metadataProcessor, resources);
         for (HTMLElement element : childrenPanel.asElements()) {
             content.appendChild(element);
         }
@@ -281,7 +283,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         }
     }
 
-    private void refresh(final Node<Context> node) {
+    private void refresh(Node<Context> node) {
         if (node != null) {
             updateNode(node);
             tree.refreshNode(node.id);
@@ -340,14 +342,14 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         AddressTemplate template = asGenericTemplate(parent, address);
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
-            public void onMetadata(final Metadata metadata) {
+            public void onMetadata(Metadata metadata) {
                 resourcePanel.update(node, node.data.getAddress(), metadata);
                 resourcePanel.show();
             }
         });
     }
 
-    void add(final Node<Context> parent, final List<String> children) {
+    void add(Node<Context> parent, List<String> children) {
         if (parent.data.hasSingletons()) {
             if (parent.data.getSingletons().size() == children.size()) {
                 MessageEvent.fire(eventBus, Message.warning(resources.messages().allSingletonsExist()));
@@ -453,7 +455,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         crud.reset(address.lastName(), address.lastValue(), address, form, metadata,
                 new FinishReset<ModelNode>(form) {
                     @Override
-                    public void afterReset(final Form<ModelNode> form) {
+                    public void afterReset(Form<ModelNode> form) {
                         refresh(tree.getSelected());
                     }
                 });
@@ -469,7 +471,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
      *
      * @param surroundingHeight the sum of the height of all surrounding elements
      */
-    public void setSurroundingHeight(final int surroundingHeight) {
+    public void setSurroundingHeight(int surroundingHeight) {
         this.surroundingHeight = surroundingHeight;
         adjustHeight();
     }
@@ -518,7 +520,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 });
     }
 
-    public void select(final String id, final boolean closeSelected) {
+    public void select(String id, boolean closeSelected) {
         tree.selectNode(id, closeSelected);
     }
 

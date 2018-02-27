@@ -16,6 +16,7 @@
 package org.jboss.hal.core.modelbrowser;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
@@ -30,10 +31,17 @@ import org.jboss.hal.ballroom.table.OptionsBuilder;
 import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.ballroom.tree.Node;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -43,31 +51,37 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.hal.core.modelbrowser.ModelBrowser.asGenericTemplate;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /** Panel which holds the children of the selected resource. */
 class ChildrenPanel implements HasElements, Attachable {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ChildrenPanel.class);
 
+    private final Environment environment;
     private final Dispatcher dispatcher;
+    private final MetadataProcessor metadataProcessor;
     private final ElementsBuilder builder;
     private final HTMLElement header;
     private final Table<String> table;
     private Node<Context> parent;
 
-    ChildrenPanel(ModelBrowser modelBrowser, Dispatcher dispatcher, Resources resources) {
+    ChildrenPanel(ModelBrowser modelBrowser, Environment environment, Dispatcher dispatcher,
+            MetadataProcessor metadataProcessor, Resources resources) {
+        this.environment = environment;
         this.dispatcher = dispatcher;
+        this.metadataProcessor = metadataProcessor;
 
-        //noinspection HardCodedStringLiteral
         Options<String> options = new OptionsBuilder<String>()
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
                 .column(new InlineAction<>(resources.constants().view(), row -> modelBrowser.tree.openNode(parent.id,
                         () -> modelBrowser.select(uniqueId(parent, row), false))))
                 .button(resources.constants().add(), table -> modelBrowser.add(parent, table.getRows()))
-
                 .button(resources.constants().remove(), table -> {
                             ResourceAddress fq = parent.data.getAddress()
                                     .getParent()
@@ -117,6 +131,25 @@ class ChildrenPanel implements HasElements, Attachable {
             if (node.data.hasSingletons()) {
                 logger.debug("Read {} / {} singletons", names.size(), node.data.getSingletons().size());
             }
+
+            AddressTemplate template = asGenericTemplate(node, address);
+            metadataProcessor.lookup(template, Progress.NOOP,
+                    new MetadataProcessor.MetadataCallback() {
+                        @Override
+                        public void onMetadata(Metadata metadata) {
+                            table.enableButton(0, AuthorisationDecision.from(environment,
+                                    constraint -> Optional.of(metadata.getSecurityContext()))
+                                    .isAllowed(Constraint.executable(template, ADD)));
+                            table.enableButton(1, AuthorisationDecision.from(environment,
+                                    constraint -> Optional.of(metadata.getSecurityContext()))
+                                    .isAllowed(Constraint.executable(template, REMOVE)));
+                        }
+
+                        @Override
+                        public void onError(Throwable error) {
+                            logger.warn("Unable to enable / disable table buttons for {}", address);
+                        }
+                    });
         });
     }
 

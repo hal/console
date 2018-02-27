@@ -54,8 +54,8 @@ public class AuthorisationDecision {
 
     // ------------------------------------------------------ factory methods
 
-    public static AuthorisationDecision from(final Environment environment,
-            final SecurityContextRegistry securityContextRegistry) {
+    public static AuthorisationDecision from(Environment environment,
+            SecurityContextRegistry securityContextRegistry) {
         return new AuthorisationDecision(environment, constraint -> {
             if (securityContextRegistry.contains(constraint.getTemplate())) {
                 return Optional.of(securityContextRegistry.lookup(constraint.getTemplate()));
@@ -64,11 +64,11 @@ public class AuthorisationDecision {
         });
     }
 
-    public static AuthorisationDecision from(final Environment environment, final SecurityContext securityContext) {
+    public static AuthorisationDecision from(Environment environment, SecurityContext securityContext) {
         return new AuthorisationDecision(environment, constraint -> Optional.of(securityContext));
     }
 
-    public static AuthorisationDecision from(final Environment environment, final SecurityContextResolver resolver) {
+    public static AuthorisationDecision from(Environment environment, SecurityContextResolver resolver) {
         return new AuthorisationDecision(environment, resolver);
     }
 
@@ -80,7 +80,7 @@ public class AuthorisationDecision {
     private final Environment environment;
     private final SecurityContextResolver resolver;
 
-    private AuthorisationDecision(final Environment environment, final SecurityContextResolver resolver) {
+    private AuthorisationDecision(Environment environment, SecurityContextResolver resolver) {
         this.environment = environment;
         this.resolver = resolver;
     }
