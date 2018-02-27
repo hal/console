@@ -147,8 +147,15 @@ class TestStep extends WizardStep<Context, State> {
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext flowContext, Throwable error) {
-                        String title = flowContext.get(WIZARD_TITLE);
-                        SafeHtml text = flowContext.get(WIZARD_TEXT);
+                        String title;
+                        SafeHtml text;
+                        if (flowContext == null) {
+                            title = resources.constants().unknownError();
+                            text = resources.messages().unknownError();
+                        } else {
+                            title = flowContext.get(WIZARD_TITLE);
+                            text = flowContext.get(WIZARD_TEXT);
+                        }
                         wizard().showError(title, text, error.getMessage(), false);
                     }
 
