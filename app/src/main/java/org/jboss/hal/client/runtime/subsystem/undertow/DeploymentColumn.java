@@ -57,15 +57,18 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
+@Requires(WEB_DEPLOYMENT_ADDRESS)
 public class DeploymentColumn extends FinderColumn<DeploymentResource> {
 
     /**
@@ -180,7 +183,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
         });
     }
 
-    private void invalidateSession(final DeploymentResource item) {
+    private void invalidateSession(DeploymentResource item) {
         metadataProcessor.lookup(WEB_DEPLOYMENT_TEMPLATE, progress.get(),
                 new MetadataProcessor.MetadataCallback() {
                     @Override
@@ -219,7 +222,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                     }
 
                     @Override
-                    public void onError(final Throwable error) {
+                    public void onError(Throwable error) {
                         MessageEvent
                                 .fire(eventBus,
                                         Message.error(resources.messages().metadataError(), error.getMessage()));

@@ -62,7 +62,6 @@ import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.setInterval;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -186,7 +185,7 @@ public class JobColumn extends FinderColumn<JobNode> {
                 actions.add(itemActionFactory.view(placeRequest));
                 actions.add(new ItemAction.Builder<JobNode>()
                         .title(resources.constants().start())
-                        .constraint(Constraint.executable(BATCH_DEPLOYMENT_JOB_TEMPLATE, START_JOB))
+                        .constraint(Constraint.executable(BATCH_DEPLOYMENT_TEMPLATE, START_JOB))
                         .handler(itm -> startJob(itm))
                         .build());
                 return actions;

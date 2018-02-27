@@ -206,7 +206,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
         if (messages.isEmpty()) {
             noMessagesSelected();
         } else {
-            Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
+            Metadata metadata = metadataRegistry.lookup(MESSAGING_CORE_QUEUE_TEMPLATE);
             Form<ModelNode> form = new OperationFormBuilder<>(Ids.JMS_MESSAGE_CHANGE_PRIORITY_FORM, metadata,
                     CHANGE_MESSAGE_PRIORITY)
                     .build();
@@ -286,7 +286,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
         if (messages.isEmpty()) {
             noMessagesSelected();
         } else {
-            Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
+            Metadata metadata = metadataRegistry.lookup(MESSAGING_CORE_QUEUE_TEMPLATE);
             Form<ModelNode> form = new OperationFormBuilder<>(Ids.JMS_MESSAGE_MOVE_FORM, metadata, MOVE_MESSAGE)
                     .build();
 
@@ -422,7 +422,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.JMS_QUEUE)
-    @Requires(MESSAGING_QUEUE_ADDRESS)
+    @Requires(MESSAGING_CORE_QUEUE_ADDRESS)
     public interface MyProxy extends ProxyPlace<JmsQueuePresenter> {
     }
 

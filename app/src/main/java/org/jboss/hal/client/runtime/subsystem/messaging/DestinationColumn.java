@@ -55,11 +55,11 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.DEPLOYMENT_RESOURCES;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.SUBSYSTEM_RESOURCES;
 import static org.jboss.hal.core.Strings.substringAfterLast;
@@ -68,6 +68,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @AsyncColumn(Ids.MESSAGING_SERVER_DESTINATION_RUNTIME)
+@Requires({MESSAGING_CORE_QUEUE_ADDRESS,
+        MESSAGING_JMS_QUEUE_ADDRESS,
+        MESSAGING_JMS_TOPIC_ADDRESS,
+        MESSAGING_DEPLOYMENT_JMS_QUEUE_ADDRESS,
+        MESSAGING_DEPLOYMENT_JMS_TOPIC_ADDRESS})
 public class DestinationColumn extends FinderColumn<Destination> {
 
     private final Dispatcher dispatcher;

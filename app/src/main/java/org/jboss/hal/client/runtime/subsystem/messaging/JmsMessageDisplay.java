@@ -30,7 +30,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jetbrains.annotations.NonNls;
 
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_QUEUE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
@@ -88,23 +88,23 @@ class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
         List<ItemAction<JmsMessage>> actions = new ArrayList<>();
         actions.add(new ItemAction<>(Ids.JMS_MESSAGE_CHANGE_PRIORITY,
                 resources.constants().changePriority(),
-                Constraint.executable(MESSAGING_QUEUE_TEMPLATE, CHANGE_MESSAGE_PRIORITY),
+                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, CHANGE_MESSAGE_PRIORITY),
                 item -> presenter.changePriority(Collections.singletonList(item))));
         actions.add(new ItemAction<>(Ids.JMS_MESSAGE_EXPIRE,
                 resources.constants().expire(),
-                Constraint.executable(MESSAGING_QUEUE_TEMPLATE, EXPIRE_MESSAGE),
+                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, EXPIRE_MESSAGE),
                 item -> presenter.expire(Collections.singletonList(item))));
         actions.add(new ItemAction<>(Ids.JMS_MESSAGE_MOVE,
                 resources.constants().move(),
-                Constraint.executable(MESSAGING_QUEUE_TEMPLATE, MOVE_MESSAGE),
+                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, MOVE_MESSAGE),
                 item -> presenter.move(Collections.singletonList(item))));
         actions.add(new ItemAction<>(Ids.JMS_MESSAGE_SEND_TO_DEAD_LETTER,
                 resources.constants().sendToDeadLetter(),
-                Constraint.executable(MESSAGING_QUEUE_TEMPLATE, SEND_MESSAGE_TO_DEAD_LETTER_ADDRESS),
+                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, SEND_MESSAGE_TO_DEAD_LETTER_ADDRESS),
                 item -> presenter.sendToDeadLetter(Collections.singletonList(item))));
         actions.add(new ItemAction<>(Ids.JMS_MESSAGE_REMOVE,
                 resources.constants().remove(),
-                Constraint.executable(MESSAGING_QUEUE_TEMPLATE, REMOVE_MESSAGE),
+                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, REMOVE_MESSAGE),
                 item -> presenter.remove(Collections.singletonList(item))));
         return actions;
     }

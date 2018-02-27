@@ -41,28 +41,25 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
-import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @AsyncColumn(Ids.JPA_RUNTIME)
-@Requires(JPA_DEPLOYMENT_ADDRESS)
 public class JpaColumn extends FinderColumn<JpaStatistic> {
 
     @Inject
-    public JpaColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final Environment environment,
-            final Dispatcher dispatcher,
-            final DeploymentResources deploymentResources,
-            final FinderPathFactory finderPathFactory,
-            final PlaceManager placeManager,
-            final Places places,
-            final Resources resources) {
+    public JpaColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            Environment environment,
+            Dispatcher dispatcher,
+            DeploymentResources deploymentResources,
+            FinderPathFactory finderPathFactory,
+            PlaceManager placeManager,
+            Places places,
+            Resources resources) {
 
         super(new Builder<JpaStatistic>(finder, Ids.JPA_RUNTIME, Names.JPA)
 
@@ -132,12 +129,12 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<JpaStatistic>>() {
                     @Override
-                    public void onFailure(final Throwable caught) {
+                    public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
                     }
 
                     @Override
-                    public void onSuccess(final List<JpaStatistic> result) {
+                    public void onSuccess(List<JpaStatistic> result) {
                         // only persistence units w/ enabled statistics will show up in the breadcrumb dropdown
                         List<JpaStatistic> puWithStatistics = result.stream()
                                 .filter(JpaStatistic::isStatisticsEnabled)
