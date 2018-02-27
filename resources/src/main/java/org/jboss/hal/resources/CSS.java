@@ -375,7 +375,6 @@ public interface CSS {
     String tmTag = "tm-tag";
     String tmTagRemove = "tm-tag-remove";
     String toastNotificationsListPf = "toast-notifications-list-pf";
-    String toastPf = "toast-pf";
     String toastPfAction = "toast-pf-action";
     String toolbarPf = "toolbar-pf";
     String toolbarPfActionRight = "toolbar-pf-action-right";

@@ -23,44 +23,36 @@ import org.jboss.hal.spi.Message;
 
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.ALERT;
-import static org.jboss.hal.resources.UIConstants.DISMISS;
-import static org.jboss.hal.resources.UIConstants.HIDDEN;
-import static org.jboss.hal.resources.UIConstants.TRUE;
+import static org.jboss.hal.resources.UIConstants.*;
 
 /** A message inside the {@link ToastNotifications} element. */
 class ToastNotificationElement implements IsElement {
 
     private final HTMLElement root;
 
-    ToastNotificationElement(final ToastNotifications toastNotifications, final Message message,
-            final Resources resources) {
+    ToastNotificationElement(ToastNotifications toastNotifications, Message message, Resources resources) {
         String[] cssIcon = cssIcon(message.getLevel());
-        if (message.isSticky()) {
-            cssIcon[0] = cssIcon[0] + " " + alertDismissable;
-        }
-
-        root = Elements.div().css(toastPf, alert, cssIcon[0])
+        root = Elements.div().css(alert, cssIcon[0])
                 .asElement();
-        if (message.isSticky()) {
-            root.appendChild(button()
-                    .css(close)
-                    .data(DISMISS, ALERT)
-                    .aria(HIDDEN, TRUE)
-                    .on(click, event -> toastNotifications.closeSticky(message))
-                    .add(span().css(pfIcon(close)))
-                    .asElement());
-        }
+        root.appendChild(button()
+                .css(close)
+                .aria(HIDDEN, TRUE)
+                .aria(LABEL, "Close")
+                .data(DISMISS, ALERT)
+                .on(click, event -> toastNotifications.close(message))
+                .add(span().css(pfIcon(close)))
+                .asElement());
+        root.appendChild(span().css(pfIcon(cssIcon[1])).asElement());
+        root.appendChild(span().innerHtml(message.getMessage()).asElement());
         if (message.hasAction() || message.getDetails() != null) {
             HTMLElement a;
-            root.appendChild(div().css(pullRight, toastPfAction)
+            root.appendChild(span().css(marginLeft5)
                     .add(a = a()
-                            .css(clickable)
+                            .css(clickable, alertLink)
                             .data(DISMISS, ALERT)
                             .asElement())
                     .asElement());
@@ -72,11 +64,9 @@ class ToastNotificationElement implements IsElement {
                 bind(a, click, event -> showMessage(message));
             }
         }
-        root.appendChild(span().css(pfIcon(cssIcon[1])).asElement());
-        root.appendChild(span().innerHtml(message.getMessage()).asElement());
     }
 
-    private void showMessage(final Message message) {
+    private void showMessage(Message message) {
         new ToastNotificationDialog(message).show();
     }
 
@@ -108,6 +98,6 @@ class ToastNotificationElement implements IsElement {
             default:
                 break;
         }
-        return new String[]{css, icon};
+        return new String[]{css + " " + alertDismissable, icon};
     }
 }
