@@ -297,13 +297,19 @@
                                             </executions>
                                         </plugin>
                     -->
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>site</id>
-            <build>
-                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -316,6 +322,35 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>site</id>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>com.github.github</groupId>
                         <artifactId>site-maven-plugin</artifactId>
@@ -334,13 +369,11 @@
                     </plugin>
                 </plugins>
             </build>
-
             <reporting>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-project-info-reports-plugin</artifactId>
-                        <version>${plugin.reports.version}</version>
                         <reportSets>
                             <reportSet>
                                 <reports>
@@ -354,20 +387,12 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <detectLinks>true</detectLinks>
-                            <excludePackageNames>
-                                org.jboss.hal.processor:org.jboss.gwt.elemento.processor.context:org.jboss.hal.processor.mbui
-                            </excludePackageNames>
                             <links>
                                 <link>http://www.gwtproject.org/javadoc/latest/</link>
                             </links>
-                            <tags>
-                                <tag>
-                                    <name>example</name>
-                                    <placement>tcmf</placement>
-                                    <head>Example</head>
-                                </tag>
-                            </tags>
-                            <useStandardDocletOptions>true</useStandardDocletOptions>
+                            <excludePackageNames>
+                                org.jboss.gwt.elemento.processor:org.jboss.gwt.elemento.processor.context
+                            </excludePackageNames>
                         </configuration>
                         <reportSets>
                             <reportSet>
