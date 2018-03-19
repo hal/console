@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 ROOT="$PWD"
 SCRIPT=`basename $0`

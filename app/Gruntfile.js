@@ -23,17 +23,18 @@ module.exports = function (grunt) {
     grunt.initConfig({
         theme: grunt.option('theme') || 'hal',
         config: {
-            version: '0.9.4-SNAPSHOT',
             bower: 'bower_components',
-            js: 'src/js',
-            less: 'src/less',
-            public: 'src/main/resources/org/jboss/hal/public',
-            themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
+            devmodeTarget: 'target/gwt/devmode/war/hal',
             esdoc: {
                 source: 'target/generated-resources/esdoc',
                 destination: 'target/esdoc',
                 input: 'src/esdoc'
-            }
+            },
+            js: 'src/js',
+            less: 'src/less',
+            public: 'src/main/resources/org/jboss/hal/public',
+            themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
+            version: '0.9.4-SNAPSHOT'
         },
 
         clean: {
@@ -89,6 +90,16 @@ module.exports = function (grunt) {
                         cwd: '<%= config.themeDir %>',
                         src: ['apple-touch-icon.png', 'favicon.ico'],
                         dest: '<%= config.public %>'
+                    }
+                ]
+            },
+            css: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '<%= config.public %>/css',
+                        src: 'hal.css',
+                        dest: '<%= config.devmodeTarget %>/css'
                     }
                 ]
             }
@@ -216,7 +227,7 @@ module.exports = function (grunt) {
             }
         },
 
-        esdoc : {
+        esdoc: {
             dist: {
                 options: {
                     source: '<%= config.esdoc.source %>',
@@ -241,9 +252,15 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.registerTask('css', [
+        'less',
+        'postcss',
+        'copy:css'
+    ]);
+
     grunt.registerTask('dev', [
         'clean',
-        'copy',
+        'copy:resources',
         'concat:dev',
         'less',
         'postcss'
@@ -251,7 +268,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('prod', [
         'clean',
-        'copy',
+        'copy:resources',
         'concat:prod',
         'less',
         'postcss',
