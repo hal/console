@@ -73,12 +73,12 @@ public class FormLinks<T> implements IsElement {
     private HTMLElement removeLink;
     private HTMLElement helpLink;
 
-    FormLinks(final AbstractForm<T> form,
-            final StateMachine stateMachine,
-            final LinkedHashMap<String, SafeHtml> helpTexts,
-            final EventCallbackFn<MouseEvent> onEdit,
-            final EventCallbackFn<MouseEvent> onReset,
-            final EventCallbackFn<MouseEvent> onRemove) {
+    FormLinks(AbstractForm<T> form,
+            StateMachine stateMachine,
+            LinkedHashMap<String, SafeHtml> helpTexts,
+            EventCallbackFn<MouseEvent> onEdit,
+            EventCallbackFn<MouseEvent> onReset,
+            EventCallbackFn<MouseEvent> onRemove) {
         this.helpTexts = helpTexts;
 
         String linksId = Ids.build(form.getId(), "links");

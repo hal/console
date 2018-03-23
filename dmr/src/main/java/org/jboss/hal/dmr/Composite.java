@@ -40,9 +40,7 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     private List<Operation> operations;
 
-    /**
-     * Creates a new empty composite.
-     */
+    /** Creates a new empty composite. */
     @JSConstructor
     public Composite() {
         super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
@@ -98,41 +96,33 @@ public class Composite extends Operation implements Iterable<Operation> {
         return operations.iterator();
     }
 
-    /**
-     * @return whether this composite contains operations
-     */
+    /** @return whether this composite contains operations */
     @JsProperty
     public boolean isEmpty() {
         return operations.isEmpty();
     }
 
-    /**
-     * @return the number of operations
-     */
+    /** @return the number of operations */
     @JsProperty(name = "size")
     public int size() {
         return operations.size();
     }
 
     @JsIgnore
-    public Composite runAs(final Set<String> runAs) {
+    public Composite runAs(Set<String> runAs) {
         List<Operation> runAsOperations = operations.stream()
                 .map(operation -> operation.runAs(runAs))
                 .collect(Collectors.toList());
         return new Composite(runAsOperations);
     }
 
-    /**
-     * @return a string representation of this composite
-     */
+    /** @return a string representation of this composite */
     @Override
     public String toString() {
         return "Composite(" + operations.size() + ")";
     }
 
-    /**
-     * @return the string representation of the operation as used in the CLI
-     */
+    /** @return the string representation of the operation as used in the CLI */
     public String asCli() {
         return operations.stream().map(Operation::asCli).collect(joining("\n"));
     }
@@ -140,9 +130,7 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     // ------------------------------------------------------ JS Methods
 
-    /**
-     * @return the operations of this composite
-     */
+    /** @return the operations of this composite */
     @JsProperty(name = "operations")
     @EsReturn("Operation[]")
     public Operation[] jsOperations() {

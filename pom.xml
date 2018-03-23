@@ -88,6 +88,7 @@
     </issueManagement>
 
     <properties>
+        <github.global.server>github</github.global.server>
         <grunt-task>dev</grunt-task>
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>

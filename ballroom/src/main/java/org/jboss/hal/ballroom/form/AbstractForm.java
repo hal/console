@@ -110,8 +110,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     // ------------------------------------------------------ initialization
 
-    public AbstractForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
-            final EmptyState emptyState) {
+    public AbstractForm(String id, StateMachine stateMachine, DataMapping<T> dataMapping,
+            EmptyState emptyState) {
         this.id = id;
         this.stateMachine = stateMachine;
         this.dataMapping = dataMapping;
@@ -323,7 +323,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * @param model the model to view.
      */
     @Override
-    public final void view(final T model) {
+    public final void view(T model) {
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
@@ -357,7 +357,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * @param model the model to edit.
      */
     @Override
-    public final void edit(final T model) {
+    public final void edit(T model) {
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
@@ -396,7 +396,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     @Override
-    public void setSaveCallback(final SaveCallback<T> saveCallback) {
+    public void setSaveCallback(SaveCallback<T> saveCallback) {
         this.saveCallback = saveCallback;
     }
 
@@ -434,11 +434,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     @Override
-    public void setCancelCallback(final CancelCallback<T> cancelCallback) {
+    public void setCancelCallback(CancelCallback<T> cancelCallback) {
         this.cancelCallback = cancelCallback;
     }
 
-    public void setPrepareReset(final PrepareReset<T> prepareReset) {
+    public void setPrepareReset(PrepareReset<T> prepareReset) {
         this.prepareReset = prepareReset;
     }
 
@@ -457,7 +457,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     @Override
-    public void setPrepareRemove(final PrepareRemove<T> removeCallback) {
+    public void setPrepareRemove(PrepareRemove<T> removeCallback) {
         this.prepareRemove = removeCallback;
     }
 
@@ -483,11 +483,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     // ------------------------------------------------------ state transition
 
-    private void stateExec(final Operation operation) {
+    private void stateExec(Operation operation) {
         stateExec(operation, null);
     }
 
-    private <C> void stateExec(final Operation operation, final C context) {
+    private <C> void stateExec(Operation operation, C context) {
         stateMachine.execute(operation, context);
         prepare(stateMachine.current());
         flip(stateMachine.current());
