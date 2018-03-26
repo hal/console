@@ -74,19 +74,23 @@ public final class DialogFactory {
                 .build();
     }
 
+    public static BlockingDialog buildBlocking(String title, SafeHtml message) {
+        return buildBlocking(title, Dialog.Size.SMALL, message);
+    }
+
     /**
      * Creates and returns a blocking dialog which can only be closed programmatically.
      * <p>
      * Please note that the dialog is <strong>not</strong> shown by this method. You need to call {@link Dialog#show()}
      * on the returned dialog.
      */
-    public static BlockingDialog buildBlocking(String title, SafeHtml message) {
+    public static BlockingDialog buildBlocking(String title, Dialog.Size size, SafeHtml message) {
         HTMLElement element = div().css(centerBlock)
                 .add(p().style("text-align: center").innerHtml(message))
                 .asElement();
 
         return new BlockingDialog(new Dialog.Builder(title)
-                .size(SMALL)
+                .size(size)
                 .add(element));
     }
 

@@ -232,6 +232,11 @@ public class Wizard<C, S extends Enum<S>> {
 
     public void showSuccess(final String title, final SafeHtml text, final String successButton,
             SuccessAction<C> successAction, final boolean lastStep) {
+        showSuccess(title, text, successButton, successAction, null, true);
+    }
+
+    public void showSuccess(final String title, final SafeHtml text, final String successButton,
+            SuccessAction<C> successAction, SuccessAction<C> closeAction, final boolean lastStep) {
         blankSlate.classList.remove(wizardPfProcess);
         blankSlate.classList.add(wizardPfComplete);
         Elements.removeChildrenFrom(blankSlate);
@@ -261,6 +266,14 @@ public class Wizard<C, S extends Enum<S>> {
         if (lastStep) {
             nextText.textContent = CONSTANTS.close();
             Elements.setVisible(nextIcon, false);
+        }
+        if (closeAction != null) {
+            nextButton.onclick = event -> {
+                closeAction.execute(context);
+                return  null;
+            };
+        } else {
+            nextButton.onclick = null;
         }
         finishCanClose = lastStep;
     }

@@ -53,7 +53,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
     @Override
     public boolean isEmpty() {
-        return isExpressionValue() && Strings.isNullOrEmpty(getExpressionValue());
+        return isExpressionValue() ? Strings.isNullOrEmpty(getExpressionValue()) : getValue() == null;
     }
 
     @Override

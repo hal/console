@@ -70,12 +70,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String closed();
     String collapse();
+    String configurationSslManagement();
     String committed();
     String completed();
     String completedExecutions();
     String composite();
+    String configuration();
     String configurationChanges();
     String configurationChangesNotEnabled();
+    String confirmation();
     String connectedTo();
     String connection();
     String connections();
@@ -111,10 +114,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String disable();
     String disableConfigurationChanges();
     String disabled();
+    String disableSSL();
     String disconnected();
     String disconnectedUpper();
     String domainConfigurationChanged();
     String domainConfigurationChangedTooltip();
+    String domainController();
     String download();
     String dropSubscriptions();
     String duplicateMacro();
@@ -127,6 +132,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String enabled();
     String enableDeployment();
     String enableRbac();
+    String enableSSL();
+    String enableSSLManagementErrorMsg();
+    String enableSSLManagementTitle();
+    String enableSSLManagementInitialSetup();
     String enableStatistics();
     String endpointSelectTitle();
     String endpointSelectDescription();
@@ -255,6 +264,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String hostScopedRole();
     String hour();
     String hours();
+    String httpInterfaceManagement();
 
     String inactive();
     String includeRole();
@@ -429,6 +439,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartResourceServices();
     String restartStandaloneTooltip();
     String restricted();
+    String results();
     String resume();
     String review();
     String role();
@@ -466,6 +477,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sizing();
     String specifyNames();
     String specifyParameters();
+    String standaloneServer();
     String start();
     String startDelivery();
     String startJob();
@@ -483,6 +495,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String stoppedExecution();
     String storage();
     String subscriptions();
+    String success();
     String supportsExpressions();
     String suspend();
     String suspended();

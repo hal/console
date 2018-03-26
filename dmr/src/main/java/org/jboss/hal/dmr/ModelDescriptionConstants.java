@@ -45,6 +45,7 @@ public interface ModelDescriptionConstants {
     String ADDRESS = "address";
     String ADDRESS_SETTING = "address-setting";
     String ADMIN_OBJECTS = "admin-objects";
+    String ADMIN_ONLY = "admin-only";
     String AGEOUT_HISTORY_OPERATION = "ageout-history";
     String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "aggregate-http-server-mechanism-factory";
     String AGGREGATE_PRINCIPAL_DECODER = "aggregate-principal-decoder";
@@ -55,6 +56,7 @@ public interface ModelDescriptionConstants {
     String AGGREGATE_SASL_SERVER_FACTORY = "aggregate-sasl-server-factory";
     String AGGREGATE_SECURITY_EVENT_LISTENER = "aggregate-security-event-listener";
     String AJP_LISTENER = "ajp-listener";
+    String ALGORITHM = "algorithm";
     String ALIAS = "alias";
     String ALLOW_BLANK_PASSWORD = "allow-blank-password";
     String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
@@ -218,6 +220,7 @@ public interface ModelDescriptionConstants {
     String DISABLED_TIME = "disabled-time";
     String DISCONNECTED = "disconnected";
     String DISCOVERY_GROUP = "discovery-group";
+    String DISTINGUISHED_NAME = "distinguished-name";
     String DIVERT = "divert";
     String DOMAIN_UUID = "domain-uuid";
     String DOMAIN_ROLLOUT = "domain-rollout";
@@ -291,6 +294,7 @@ public interface ModelDescriptionConstants {
     String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
+    String GENERATE_KEY_PAIR = "generate-key-pair";
     String GLOBAL_MODULES = "global-modules";
     String GROUP = "group";
     String GROUPS_ATTRIBUTE = "groups-attribute";
@@ -326,6 +330,7 @@ public interface ModelDescriptionConstants {
     String IDENTITY_MAPPING = "identity-mapping";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
+    String IMPORT_CERTIFICATE_OPERATION = "import-certificate";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
     String IN_VM_CONNECTOR = "in-vm-connector";
     String INCLUDE = "include";
@@ -548,6 +553,7 @@ public interface ModelDescriptionConstants {
     String PROPERTIES_REALM = "properties-realm";
     String PROPERTY = "property";
     String PROTOCOL = "protocol";
+    String PROTOCOLS = "protocols";
     String PROVIDER = "provider";
     String PROVIDER_NAME = "provider-name";
     String PROVIDER_HTTP_SERVER_MECHANISM_FACTORY = "provider-http-server-mechanism-factory";
@@ -659,6 +665,8 @@ public interface ModelDescriptionConstants {
     String SCRIPT = "script";
     String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";
+    String SECURE_INTERFACE = "secure-interface";
+    String SECURE_PORT = "secure-port";
     String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
@@ -728,6 +736,7 @@ public interface ModelDescriptionConstants {
     String START = "start";
     String START_DELIVERY = "start-delivery";
     String START_JOB = "start-job";
+    String START_MODE = "start-mode";
     String START_SERVERS = "start-servers";
     String START_TIME = "start-time";
     String STARTED = "started";
@@ -790,6 +799,7 @@ public interface ModelDescriptionConstants {
     String TRANSACTIONS = "transactions";
     String TRANSPORT = "transport";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
+    String TRUST_CACERTS = "trust-cacerts";
     String TRUST_MANAGER = "trust-manager";
     String TRUST_MODULE = "trust-module";
     String TYPE = "type";
@@ -808,6 +818,8 @@ public interface ModelDescriptionConstants {
     String USERS_PROPERTIES = "users-properties";
     String USERNAME = "username";
     String VALID_CONNECTION_CHECKER_CLASS_NAME = "valid-connection-checker-class-name";
+    String VALIDATE = "validate";
+    String VALIDITY = "validity";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
@@ -816,6 +828,7 @@ public interface ModelDescriptionConstants {
     String VM_NAME = "vm-name";
     String VM_VENDOR = "vm-vendor";
     String VM_VERSION = "vm-version";
+    String WANT_CLIENT_AUTH = "want-client-auth";
     String WEBSERVICES = "webservices";
     String WEBSOCKET = "websocket";
     String WEBSOCKETS = "websockets";

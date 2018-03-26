@@ -145,6 +145,7 @@ public interface Ids {
     String DEPLOYMENT_UNMANAGED_ADD = "deployment-unmanaged-add";
     String DEPLOYMENT_UPLOAD = "deployment-upload";
     String DISTRIBUTED_CACHE = "distributed-cache";
+    String DISABLE_SSL = "disable-ssl";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
     String EE = "ee";
@@ -262,6 +263,7 @@ public interface Ids {
     String ELYTRON_TRUST_MANAGER = "elytron-trust-manager";
     String ELYTRON_X500_ATTRIBUTE_PRINCIPAL_DECODER = "elytron-x500-attribute-principal-decoder";
     String EMPTY = "empty";
+    String ENABLE_SSL = "enable-ssl";
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = "endpoint-add";
     String ENDPOINT_PING = "endpoint-ping";

@@ -23,6 +23,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml accessMechanismLabel(String name);
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
+    SafeHtml addKeyStoreError(String name);
     SafeHtml addResourceError(String name, String cause);
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String type);
@@ -120,6 +121,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentUnknownState(String name);
     String deprecated(String since, String reason);
     String destinationFilterDescription();
+    SafeHtml disableSSLManagementQuestion(String serverName);
+    SafeHtml disableSSLManagementError(String cause);
+    SafeHtml disableSSLManagementSuccess();
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
     String domainUuidLabel(String uuid);
@@ -133,6 +137,17 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String ejbFilterDescription();
     SafeHtml emptyModelNodeForm();
+    String enableSSLConfirmationDescription();
+    SafeHtml enableSSLDescription();
+    SafeHtml enableSSLMutualQuestion();
+    SafeHtml enableSSLResultsError();
+    SafeHtml enableSSLResultsSuccessDomain(String url);
+    SafeHtml enableSSLResultsSuccessStandalone(String url);
+    SafeHtml enableSSLStrategyQuestion();
+    SafeHtml enableSSLStrategyQuestionCreateAll();
+    SafeHtml enableSSLStrategyQuestionCreateKeyStore();
+    SafeHtml enableSSLStrategyQuestionReuseKeyStore();
+    SafeHtml enableSSLSuccess();
     String endpointColumnFilterDescription();
     SafeHtml endpointError(String interfce, String url);
     SafeHtml endpointOk(String url);
@@ -156,6 +171,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml extensionScriptError();
     SafeHtml extensionUrl();
 
+    SafeHtml failedRedirectConsole(String url, String message);
     String filterBy(String name);
     SafeHtml flushConnectionSuccess();
 
@@ -303,10 +319,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String referenceServer(String server);
     String reload(String name);
+
+    SafeHtml reloadConsoleRedirect(String url);
+    SafeHtml reloadConsoleTimeout(String type, String url);
     SafeHtml reloadDomainControllerPending(String name);
     SafeHtml reloadDomainControllerQuestion(String name);
     SafeHtml reloadHostControllerQuestion(String name);
     SafeHtml reloadHostError(String name);
+    SafeHtml reloadErrorCause(String type, String name, String failure);
     SafeHtml reloadHostSuccess(String name);
     SafeHtml reloadServerGroupError(String name);
     SafeHtml reloadServerGroupQuestion(String name);
