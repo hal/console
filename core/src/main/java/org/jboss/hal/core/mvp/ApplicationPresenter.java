@@ -37,12 +37,12 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
 
     private boolean external;
 
-    protected ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
+    protected ApplicationPresenter(EventBus eventBus, V view, Proxy_ proxy) {
         super(eventBus, view, proxy, Slots.MAIN);
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         external = Boolean.parseBoolean(request.getParameter(Places.EXTERNAL_PARAM, String.valueOf(false)));
     }

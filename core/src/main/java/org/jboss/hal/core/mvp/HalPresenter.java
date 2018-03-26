@@ -36,8 +36,7 @@ abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         extends Presenter<V, Proxy_>
         implements IsElement, HasElements {
 
-    HalPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
-            final GwtEvent.Type<RevealContentHandler<?>> slot) {
+    HalPresenter(EventBus eventBus, V view, Proxy_ proxy, GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
     }
 
@@ -56,9 +55,7 @@ abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         getView().detach();
     }
 
-    /**
-     * Override this method and return a {@link HeaderModeEvent} to change the state of the header.
-     */
+    /** Override this method and return a {@link HeaderModeEvent} to change the state of the header. */
     protected abstract HeaderModeEvent headerMode();
 
     @Override

@@ -25,11 +25,11 @@ import static org.jboss.hal.meta.security.Target.OPERATION;
 /** A constraint for an attribute or operation of a DMR resource. */
 public class Constraint {
 
-    public static Constraint executable(final AddressTemplate template, final String operation) {
+    public static Constraint executable(AddressTemplate template, String operation) {
         return new Constraint(template, operation, OPERATION, Permission.EXECUTABLE);
     }
 
-    public static Constraint writable(final AddressTemplate template, final String attribute) {
+    public static Constraint writable(AddressTemplate template, String attribute) {
         return new Constraint(template, attribute, ATTRIBUTE, Permission.WRITABLE);
     }
 
@@ -55,8 +55,7 @@ public class Constraint {
     private final String name;
     private final Permission permission;
 
-    private Constraint(final AddressTemplate template, final String name, final Target target,
-            final Permission permission) {
+    private Constraint(AddressTemplate template, String name, Target target, Permission permission) {
         this.template = template;
         this.target = target;
         this.name = name;
@@ -64,7 +63,7 @@ public class Constraint {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }

@@ -199,6 +199,7 @@
                 <artifactId>depgraph-maven-plugin</artifactId>
                 <configuration>
                     <createImage>true</createImage>
+                    <customStyleConfiguration>build/degraph-style.json</customStyleConfiguration>
                     <includes>
                         <include>org.jboss.hal:hal-console</include>
                         <include>org.jboss.hal:hal-ballroom</include>
@@ -211,9 +212,18 @@
                         <include>org.jboss.hal:hal-meta</include>
                         <include>org.jboss.hal:hal-resources</include>
                         <include>org.jboss.hal:hal-spi</include>
+                        <include>com.google.elemental2:*</include>
+                        <include>com.google.gwt:gwt-user</include>
+                        <include>com.google.guava:guava</include>
+                        <include>com.gwtplatform:gwtp-all</include>
+                        <include>com.intendia.gwt.rxgwt:rxgwt</include>
+                        <include>org.jboss.gwt.elemento:elemento-core</include>
+                        <include>org.jboss.gwt.elemento:elemento-template-api</include>
+                        <include>org.slf4j:slf4j-api</include>
                     </includes>
                     <mergeTypes>true</mergeTypes>
                     <scope>compile</scope>
+                    <showGroupIds>true</showGroupIds>
                 </configuration>
             </plugin>
             <plugin>
