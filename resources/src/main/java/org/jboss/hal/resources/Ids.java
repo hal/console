@@ -646,6 +646,7 @@ public interface Ids {
     String UNDERTOW_APP_SECURITY_DOMAIN_FORM = "undertow-application-security-domain-form";
     String UNDERTOW_APP_SECURITY_DOMAIN_REFRESH = "undertow-application-security-domain-refresh";
     String UNDERTOW_APP_SECURITY_DOMAIN_TAB = "undertow-application-security-domain-tab";
+    String UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER = "undertow-application-security-domain-tab-container";
     String UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED = "undertow-deployment-statistics-disabled";
     String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
     String UNDERTOW_HOST_ACCESS_LOG = "undertow-host-access-log";
