@@ -17,6 +17,7 @@ package org.jboss.hal.client.management;
 
 import javax.inject.Inject;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.ItemActionFactory;
@@ -40,13 +41,14 @@ public class ManagementColumn extends StaticItemColumn {
             ItemActionFactory itemActionFactory,
             CrudOperations crud,
             StatementContext statementContext,
-            Resources resources) {
+            Resources resources,
+            Environment environment) {
 
         super(finder, Ids.MANAGEMENT, Names.MANAGEMENT, asList(
 
                 new StaticItem.Builder(Names.MANAGEMENT_INTERFACE)
                         .action(itemActionFactory.view(NameTokens.MANAGEMENT_INTERFACE))
-                        .onPreview(new ManagementInterfacePreview(crud, statementContext))
+                        .onPreview(new ManagementInterfacePreview(crud, statementContext, environment))
                         .build(),
 
                 new StaticItem.Builder(Names.EXTENSIONS)

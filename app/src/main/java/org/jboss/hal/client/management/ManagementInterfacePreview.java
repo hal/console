@@ -17,6 +17,7 @@ package org.jboss.hal.client.management;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
@@ -42,13 +43,14 @@ class ManagementInterfacePreview extends PreviewContent<StaticItem> {
     private final StatementContext statementContext;
     private final PreviewAttributes<ModelNode> attributes;
 
-    ManagementInterfacePreview(final CrudOperations crud, final StatementContext statementContext) {
+    ManagementInterfacePreview(final CrudOperations crud, final StatementContext statementContext,
+            Environment environment) {
         super(Names.MANAGEMENT_INTERFACE);
         this.crud = crud;
         this.statementContext = statementContext;
 
         LabelBuilder labelBuilder = new LabelBuilder();
-        this.attributes = new PreviewAttributes<>(new ModelNode())
+        this.attributes = new PreviewAttributes<>(new ModelNode(), Names.HTTP)
                 .append(model -> {
                     String allowedOrigins = ModelNodeHelper.failSafeList(model, ALLOWED_ORIGINS)
                             .stream()
@@ -61,11 +63,19 @@ class ManagementInterfacePreview extends PreviewContent<StaticItem> {
                     boolean httpUpgrade = ModelNodeHelper.failSafeBoolean(model, HTTP_UPGRADE + "/" + ENABLED);
                     HTMLElement element = span().css(flag(httpUpgrade)).asElement();
                     return new PreviewAttribute(label, element);
-                })
-                .append(SOCKET_BINDING)
-                .append(SECURE_SOCKET_BINDING)
+                });
+        if (environment.isStandalone()) {
+            attributes.append(SECURE_SOCKET_BINDING)
+                    .append(SOCKET_BINDING);
+        } else {
+            attributes.append(INTERFACE)
+                    .append(PORT)
+                    .append(SECURE_INTERFACE)
+                    .append(SECURE_PORT);
+
+        }
+        attributes.append(SASL_PROTOCOL)
                 .append(SECURITY_REALM)
-                .append(SASL_PROTOCOL)
                 .append(SSL_CONTEXT);
 
         previewBuilder().addAll(attributes);
