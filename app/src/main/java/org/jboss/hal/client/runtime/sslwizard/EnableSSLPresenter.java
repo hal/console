@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.jboss.hal.client.management.sslwizard;
+package org.jboss.hal.client.runtime.sslwizard;
 
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import org.jboss.hal.core.runtime.host.Host;
 
-public interface EnableSSLResources extends ClientBundle {
+public interface EnableSSLPresenter {
 
-    @Source("ssl-mgmt-wizard.base64")
-    TextResource enableSslWizard();
+    void reloadServer(Host host, String urlConsole);
+    void reloadView();
 }

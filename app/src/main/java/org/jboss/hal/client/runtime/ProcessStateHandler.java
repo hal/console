@@ -191,7 +191,7 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
         }
         if (environment.isStandalone() && NameTokens.RUNTIME
                 .equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
-            FinderColumn column = finder.getColumn(Ids.STANDALONE_SERVER);
+            FinderColumn column = finder.getColumn(Ids.STANDALONE_SERVER_COLUMN);
             if (column != null) {
                 column.refresh(RESTORE_SELECTION);
             }

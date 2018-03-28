@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.management.sslwizard;
+package org.jboss.hal.client.runtime.sslwizard;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.AsyncStep;

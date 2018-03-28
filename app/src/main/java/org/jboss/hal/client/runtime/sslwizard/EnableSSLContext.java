@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.management.sslwizard;
+package org.jboss.hal.client.runtime.sslwizard;
 
 import org.jboss.hal.dmr.ModelNode;
 
@@ -26,7 +26,7 @@ class EnableSSLContext {
         // the java key store file exists in the filesystem, asks to create a key-store elytron resource
         KEYSTORE_FILE_EXISTS,
         // an elytron key-store already exists, and will be used.
-        KEYSTORE_RESOURCE_EXISTS;
+        KEYSTORE_RESOURCE_EXISTS
 
     }
 

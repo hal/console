@@ -145,7 +145,7 @@ public class FinderPathFactory {
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
             String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
-            return new FinderPath().append(Ids.STANDALONE_SERVER, serverId,
+            return new FinderPath().append(Ids.STANDALONE_SERVER_COLUMN, serverId,
                     Names.SERVER, Names.STANDALONE_SERVER);
         } else {
             String host = statementContext.selectedHost();
@@ -161,7 +161,7 @@ public class FinderPathFactory {
     public FinderPath runtimeServerPath(String host, String server) {
         if (environment.isStandalone()) {
             String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
-            return new FinderPath().append(Ids.STANDALONE_SERVER, serverId,
+            return new FinderPath().append(Ids.STANDALONE_SERVER_COLUMN, serverId,
                     Names.SERVER, Names.STANDALONE_SERVER);
         } else {
             return runtimeHostPath(host).append(Ids.SERVER, Ids.hostServer(host, server), Names.SERVER, server);

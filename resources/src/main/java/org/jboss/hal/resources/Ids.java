@@ -303,6 +303,7 @@ public interface Ids {
     String HOST_PRUNE_DISCONNECTED = "host-prune-disconnected";
     String HOST_PRUNE_EXPIRED = "host-prune-expired";
     String HOST_REFRESH = "host-refresh";
+    String HTTP_INTERFACE_ITEM = "http-interface-item";
     String INLINE_ACTION = "inline-action";
     String INLINE_ACTION_DROPDOWN = "inline-action-dropdown";
     String INTERFACE = "interface";
@@ -521,6 +522,7 @@ public interface Ids {
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = "model-browser-create-singleton-form";
     String MODEL_BROWSER_ROOT = "model-browser-root";
     String NO_MATCH = "no-match";
+    String NATIVE_INTERFACE_ITEM = "native-interface-item";
     String NOTIFICATION_DRAWER_CLEAR_ALL = "notification-drawer-clear-all";
     String NOTIFICATION_DRAWER_CLOSE = "notification-drawer-close";
     String NOTIFICATION_DRAWER_MARK_ALL_READ = "notification-drawer-mark-all-read";
@@ -618,7 +620,7 @@ public interface Ids {
     String SOCKET_BINDING_GROUP_OUTBOUND_REMOTE = "socket-binding-group-outbound-remote";
     String SOCKET_BINDING_GROUP_REFRESH = "socket-binding-group-refresh";
     String STANDALONE_HOST = "standalone-host";
-    String STANDALONE_SERVER = "standalone-server";
+    String STANDALONE_SERVER_COLUMN = "standalone-server-column";
     String STORAGE = "hal-local-storage";
     String SYSTEM_PROPERTY_ADD = "system-property-add";
     String SYSTEM_PROPERTY_FORM = "system-property-form";

@@ -41,7 +41,7 @@ public class Tracker implements NavigationHandler, FinderContextHandler, ModelBr
             NameTokens.ACCESS_CONTROL,
             NameTokens.CONFIGURATION,
             NameTokens.DEPLOYMENTS,
-            NameTokens.MANAGEMENT,
+            // NameTokens.MANAGEMENT,
             NameTokens.MODEL_BROWSER,
             NameTokens.PATCHING,
             NameTokens.RUNTIME);

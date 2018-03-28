@@ -117,8 +117,6 @@ import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
 import org.jboss.hal.client.deployment.StandaloneDeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
-import org.jboss.hal.client.management.ManagementInterfacePresenter;
-import org.jboss.hal.client.management.ManagementInterfaceView;
 import org.jboss.hal.client.management.ManagementPresenter;
 import org.jboss.hal.client.management.ManagementView;
 import org.jboss.hal.client.patching.PatchingFinderPresenter;
@@ -142,6 +140,8 @@ import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
 import org.jboss.hal.client.runtime.server.ServerRuntimePresenter;
 import org.jboss.hal.client.runtime.server.ServerRuntimeView;
+import org.jboss.hal.client.runtime.server.StandaloneServerPresenter;
+import org.jboss.hal.client.runtime.server.StandaloneServerView;
 import org.jboss.hal.client.runtime.subsystem.batch.JobPresenter;
 import org.jboss.hal.client.runtime.subsystem.batch.JobView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
@@ -429,11 +429,6 @@ public class ConsoleModule extends AbstractPresenterModule {
                 MacroEditorView.class,
                 MacroEditorPresenter.MyProxy.class);
 
-        bindPresenter(ManagementInterfacePresenter.class,
-                ManagementInterfacePresenter.MyView.class,
-                ManagementInterfaceView.class,
-                ManagementInterfacePresenter.MyProxy.class);
-
         bindPresenter(ManagementPresenter.class,
                 ManagementPresenter.MyView.class,
                 ManagementView.class,
@@ -573,6 +568,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 StandaloneDeploymentPresenter.MyView.class,
                 StandaloneDeploymentView.class,
                 StandaloneDeploymentPresenter.MyProxy.class);
+
+        bindPresenter(StandaloneServerPresenter.class,
+                StandaloneServerPresenter.MyView.class,
+                StandaloneServerView.class,
+                StandaloneServerPresenter.MyProxy.class);
 
         bindPresenter(SystemPropertiesPresenter.class,
                 SystemPropertiesPresenter.MyView.class,

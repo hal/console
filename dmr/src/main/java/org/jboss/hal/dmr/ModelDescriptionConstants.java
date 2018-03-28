@@ -320,6 +320,7 @@ public interface ModelDescriptionConstants {
     String HTTP_ACCEPTOR = "http-acceptor";
     String HTTP_AUTHENTICATION_FACTORY = "http-authentication-factory";
     String HTTP_CONNECTOR = "http-connector";
+    String HTTP_INTERFACE = "http-interface";
     String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
     String HTTP_UPGRADE = "http-upgrade";
@@ -423,6 +424,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_ADDRESS = "management-address";
     String MANAGEMENT_HTTP = "management-http";
     String MANAGEMENT_HTTPS = "management-https";
+    String MANAGEMENT_INTERFACE = "management-interface";
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
@@ -462,7 +464,9 @@ public interface ModelDescriptionConstants {
     String MULTICAST_ADDRESS = "multicast-address";
     String MULTICAST_PORT = "multicast-port";
     String NAME = "name";
+    String NAMESPACES = "namespaces";
     String NAMING = "naming";
+    String NATIVE_INTERFACE = "native-interface";
     String NEW_IDENTITY_ATTRIBUTES = "new-identity-attributes";
     String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
     String NEW_ITEM_PATH = "new-item-path";
@@ -662,6 +666,7 @@ public interface ModelDescriptionConstants {
     String SASL_PROTOCOL = "sasl-protocol";
     String SCHEDULED_COUNT = "scheduled-count";
     String SCHEDULED_THREAD_POOL_MAX_SIZE = "scheduled-thread-pool-max-size";
+    String SCHEMA_LOCATIONS = "schema-locations";
     String SCRIPT = "script";
     String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";
