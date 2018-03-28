@@ -24,10 +24,10 @@ mvn process-sources
 grunt esdoc
 
 if [ "$1" == "deploy" ]; then
-    rm -rf /tmp/hal.next
+    rm -rf /tmp/console
     cd /tmp/
-    git clone -b esdoc --single-branch git@github.com:hal/hal.next.git
-    cd hal.next
+    git clone -b esdoc --single-branch git@github.com:hal/console.git
+    cd console
     rm -rf *.json *.html ast class css file image manual script user
     cp -R ${ROOT}/app/target/esdoc/ .
     date > .build

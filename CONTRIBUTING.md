@@ -14,13 +14,13 @@ We use [Git Flow](https://github.com/nvie/gitflow) to manage branches. Although 
 
 ## Fork HAL
 
-Fork https://github.com/hal/hal.next into your GitHub account.
+Fork https://github.com/hal/console into your GitHub account.
 
 ## Clone your newly forked repository onto your local machine
 
 ```bash
-git clone git@github.com:[your username]/hal.next.git
-cd hal.next
+git clone git@github.com:[your username]/console.git
+cd console
 ```
 
 ## Add a remote reference to upstream
@@ -28,7 +28,7 @@ cd hal.next
 This makes it easy to pull down changes in the project over time
 
 ```bash
-git remote add upstream git://github.com/hal/hal.next.git
+git remote add upstream git://github.com/hal/console.git
 ```
 
 # Development Process
@@ -50,7 +50,7 @@ git pull --rebase upstream develop
 ## Discuss your planned changes (if you want feedback)
 
  * HAL Issue Tracker - https://issues.jboss.org/browse/HAL
- * Gitter - https://gitter.im/hal/hal.next
+ * Gitter - https://gitter.im/hal/console
 
 ## Create a simple topic branch to isolate your work (recommended)
 

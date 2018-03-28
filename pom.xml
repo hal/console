@@ -77,9 +77,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git@github.com:hal/hal.next.git</connection>
-        <developerConnection>scm:git:git@github.com:hal/hal.next.git</developerConnection>
-        <url>git@github.com:hal/hal.next.git</url>
+        <connection>scm:git@github.com:hal/console.git</connection>
+        <developerConnection>scm:git:git@github.com:hal/console.git</developerConnection>
+        <url>git@github.com:hal/console.git</url>
     </scm>
 
     <issueManagement>

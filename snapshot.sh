@@ -24,14 +24,14 @@ if ! docker info > /dev/null 2>&1; then
     exit -1
 fi
 
-# Deploying hal.next
+# Deploying console
 mvn clean deploy -pl \!yarn -P prod,theme-hal,docker
 
 echo
 echo
-echo "+----------------------------------+"
-echo "|                                  |"
-echo "|  HAL.next successfully deployed  |"
-echo "|                                  |"
-echo "+----------------------------------+"
+echo "+-----------------------------+"
+echo "|                             |"
+echo "|  HAL successfully deployed  |"
+echo "|                             |"
+echo "+-----------------------------+"
 echo
