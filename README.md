@@ -25,7 +25,7 @@ For a full build use
 mvn clean install
 ``` 
 
-This includes the GWT compiler, which might take a while. If you just want to make sure that there are no compilation or test failures, you canskip the GWT compiler and use
+This includes the GWT compiler, which might take a while. If you just want to make sure that there are no compilation or test failures, you can skip the GWT compiler and use
 
 ```bash
 mvn clean install -Dgwt.skipCompilation
