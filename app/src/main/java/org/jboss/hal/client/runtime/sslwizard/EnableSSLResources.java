@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.management.sslwizard;
 
-public enum EnableSSLState {
-    DEFINE_STRATEGY,
-    CONFIGURATION,
-    REVIEW,
-    RESULTS;
+package org.jboss.hal.client.runtime.sslwizard;
+
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
+
+public interface EnableSSLResources extends ClientBundle {
+
+    @Source("ssl-mgmt-wizard.base64")
+    TextResource enableSslWizard();
 }

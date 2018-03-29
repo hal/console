@@ -190,6 +190,11 @@ public class VerticalNavigation implements Attachable {
         insertPrimary(id, beforeId, text, iconClass, element.asElement());
     }
 
+    public void insertPrimary(String id, String beforeId, String text, String iconClass) {
+        HTMLElement ele = null;
+        insertPrimary(id, beforeId, text, iconClass, ele);
+    }
+
     public void insertPrimary(String id, String beforeId, String text, String iconClass, HTMLElement element) {
         if (items.isEmpty()) {
             logger.error("Cannot insert {}: There has to be at least one other item.", id);
@@ -199,10 +204,13 @@ public class VerticalNavigation implements Attachable {
         if (beforeId == null) {
             // as last item
             Pane lastPane = panes.values().iterator().next();
-            Pane pane = new Pane(id, element);
-            addPrimary(items, panes, id, text, iconClass, pane);
-            lastPane.asElement().parentNode.appendChild(pane.asElement());
-
+            if (element != null) {
+                Pane pane = new Pane(id, element);
+                addPrimary(items, panes, id, text, iconClass, pane);
+                lastPane.asElement().parentNode.appendChild(pane.asElement());
+            } else {
+                addPrimary(items, panes, id, text, iconClass, null);
+            }
         } else {
             if (items.containsKey(beforeId)) {
                 // TODO Could be simplified: The order of panes does not matter, only the order of items matters
@@ -216,10 +224,14 @@ public class VerticalNavigation implements Attachable {
                     paneIterator.next();
 
                     if (currentId.equals(beforeId)) {
-                        Pane pane = new Pane(id, element);
-                        addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, pane);
-                        Pane refPane = panes.get(currentId);
-                        refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
+                        if (element != null) {
+                            Pane pane = new Pane(id, element);
+                            addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, pane);
+                            Pane refPane = panes.get(currentId);
+                            refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
+                        } else {
+                            addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, null);
+                        }
                         reshuffledItems.put(currentId, items.get(currentId));
                         reshuffledPanes.put(currentId, panes.get(currentId));
 

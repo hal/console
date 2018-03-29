@@ -264,7 +264,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String hostScopedRole();
     String hour();
     String hours();
-    String httpInterfaceManagement();
+    String httpManagementInterface();
 
     String inactive();
     String includeRole();
@@ -325,6 +325,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String move();
 
     String nanoseconds();
+    String nativeManagementInterface();
     String needsReload();
     String needsRestart();
     String networkError();

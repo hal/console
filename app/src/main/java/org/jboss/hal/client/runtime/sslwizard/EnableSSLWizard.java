@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.management.sslwizard;
+package org.jboss.hal.client.runtime.sslwizard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,6 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.management.ManagementInterfacePresenter;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.runtime.host.Host;
@@ -43,10 +42,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.hal.client.management.sslwizard.AbstractConfiguration.*;
-import static org.jboss.hal.client.management.sslwizard.EnableSSLState.CONFIGURATION;
-import static org.jboss.hal.client.management.sslwizard.EnableSSLState.DEFINE_STRATEGY;
-import static org.jboss.hal.client.management.sslwizard.EnableSSLState.REVIEW;
+import static org.jboss.hal.client.runtime.sslwizard.AbstractConfiguration.*;
+import static org.jboss.hal.client.runtime.sslwizard.EnableSSLState.CONFIGURATION;
+import static org.jboss.hal.client.runtime.sslwizard.EnableSSLState.DEFINE_STRATEGY;
+import static org.jboss.hal.client.runtime.sslwizard.EnableSSLState.REVIEW;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
@@ -57,13 +56,13 @@ public class EnableSSLWizard {
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private Host host;
-    private ManagementInterfacePresenter presenter;
+    private EnableSSLPresenter presenter;
     private Provider<Progress> progress;
     private EventBus eventBus;
     private Map<String, List<String>> existingResources;
 
     public EnableSSLWizard(Map<String, List<String>> existingResources, Resources resources, Environment environment,
-            StatementContext statementContext, Dispatcher dispatcher, Host host, ManagementInterfacePresenter presenter,
+            StatementContext statementContext, Dispatcher dispatcher, Host host, EnableSSLPresenter presenter,
             Provider<Progress> progress, EventBus eventBus) {
         this.existingResources = existingResources;
         this.resources = resources;
@@ -331,7 +330,7 @@ public class EnableSSLWizard {
                                     urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
                                     location.append(urlSuffix);
                                     wizard.showSuccess(resources.constants().success(), description, label,
-                                            context1 -> presenter.reloadBackend(host, location.toString(), false),
+                                            context1 -> presenter.reloadServer(host, location.toString()),
                                             context2 -> {
                                                 presenter.reloadView();
                                                 MessageEvent.fire(eventBus,

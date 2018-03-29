@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.host;
+package org.jboss.hal.client.runtime.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,10 +46,10 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.host.Host;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -63,7 +63,6 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -72,27 +71,19 @@ import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.runtime.sslwizard.AbstractConfiguration.ELYTRON_TEMPLATE;
+import static org.jboss.hal.client.runtime.sslwizard.AbstractConfiguration.SOCKET_BINDING_GROUP_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
 
-public class HostPresenter
-        extends MbuiPresenter<HostPresenter.MyView, HostPresenter.MyProxy>
-        implements SupportsExpertMode, EnableSSLPresenter {
+public class StandaloneServerPresenter
+        extends MbuiPresenter<StandaloneServerPresenter.MyView, StandaloneServerPresenter.MyProxy>
+        implements EnableSSLPresenter, SupportsExpertMode {
 
-    static final String HOST_ADDRESS = "/{selected.host}";
-    static final String INTERFACE_ADDRESS = HOST_ADDRESS + "/interface=*";
-    static final String JVM_ADDRESS = HOST_ADDRESS + "/jvm=*";
-    static final String PATH_ADDRESS = HOST_ADDRESS + "/path=*";
-    static final String SOCKET_BINDING_GROUP_ADDRESS = HOST_ADDRESS + "/socket-binding-group=*";
-    static final String SYSTEM_PROPERTY_ADDRESS = HOST_ADDRESS + "/system-property=*";
-    static final String MANAGEMENT_INTERFACE_ADDRESS = HOST_ADDRESS + "/core-service=management/management-interface=*";
-
-    private static final String HTTP_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=http-interface";
+    static final String ROOT_ADDRESS = "/";
+    static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
+    static final String HTTP_INTERFACE_ADDRESS = "/core-service=management/management-interface=http-interface";
     static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
-    private static final String NATIVE_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=native-interface";
-    static final AddressTemplate NATIVE_INTERFACE_TEMPLATE = AddressTemplate.of(NATIVE_INTERFACE_ADDRESS);
 
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -103,9 +94,9 @@ public class HostPresenter
     private final Resources resources;
 
     @Inject
-    public HostPresenter(EventBus eventBus,
-            HostPresenter.MyView view,
-            HostPresenter.MyProxy proxy,
+    public StandaloneServerPresenter(EventBus eventBus,
+            StandaloneServerPresenter.MyView view,
+            StandaloneServerPresenter.MyProxy proxy,
             Finder finder,
             FinderPathFactory finderPathFactory,
             StatementContext statementContext,
@@ -132,91 +123,46 @@ public class HostPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return new ResourceAddress().add(HOST, statementContext.selectedHost());
+        return ROOT_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.runtimeHostPath();
+        return finderPathFactory.runtimeServerPath();
     }
 
     @Override
     protected void reload() {
-        ResourceAddress hostAddress = new ResourceAddress().add(HOST, statementContext.selectedHost());
-        Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
+        Operation attrOperation = new Operation.Builder(resourceAddress(), READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
+                .param(ATTRIBUTES_ONLY, true)
                 .build();
-        Operation interfacesOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, INTERFACE)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation jvmsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, JVM)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation pathsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, PATH)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation socketBindingGroupsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation systemPropertiesOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, SYSTEM_PROPERTY)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        ResourceAddress coreServiceAddress = hostAddress.add(CORE_SERVICE, MANAGEMENT);
-        Operation mgmtInterfacesOp = new Operation.Builder(coreServiceAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, MANAGEMENT_INTERFACE)
-                .param(INCLUDE_RUNTIME, true)
+        ResourceAddress coreServiceAddress = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
+        Operation mgmtInterfacesOp = new Operation.Builder(coreServiceAddress, READ_RESOURCE_OPERATION)
                 .build();
 
         dispatcher.execute(
-                new Composite(hostOp, interfacesOp, jvmsOp, pathsOp, socketBindingGroupsOp, systemPropertiesOp, mgmtInterfacesOp),
+                new Composite(attrOperation, mgmtInterfacesOp),
                 (CompositeResult result) -> {
-                    getView().updateHost(new Host(result.step(0).get(RESULT)));
-                    getView().updateInterfaces(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
-                    getView().updateJvms(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updatePaths(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
-                    getView().updateSocketBindingGroups(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
-                    getView().updateSystemProperties(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
-                    getView().updateManagementInterfaces(asNamedNodes(result.step(6).get(RESULT).asPropertyList()));
+                    getView().updateAttributes(result.step(0).get(RESULT));
+                    getView().updateHttpInterface(result.step(1).get(RESULT));
                 });
     }
 
     @Override
     public void reloadView() {
-        ResourceAddress coreServiceAddress = resourceAddress().add(CORE_SERVICE, MANAGEMENT);
-        Operation operation = new Operation.Builder(coreServiceAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, MANAGEMENT_INTERFACE)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        dispatcher.execute(operation,
-                result -> getView().updateManagementInterfaces(asNamedNodes(result.asPropertyList())));
+        reload();
     }
 
-    void saveHost(Form<Host> form, Map<String, Object> changedValues) {
-        boolean hostNameChanged = changedValues.containsKey(NAME);
-        crud.save(Names.HOST, form.getModel().getName(), AddressTemplate.of(HOST_ADDRESS), changedValues, () -> {
-            reload();
-            if (hostNameChanged) {
-                DialogFactory.showConfirmation(resources.constants().hostNameChanged(),
-                        resources.messages().hostNameChanged(),
-                        () -> window.location.reload());
-            }
-        });
+    public void save(String type, AddressTemplate template, Map<String, Object> changedValues) {
+        crud.saveSingleton(type, template, changedValues, this::reload);
     }
 
-    void save(String type, AddressTemplate template, Map<String, Object> changedValues) {
-        crud.saveSingleton(type, template, changedValues, this::reloadView);
+    public void reset(String type, AddressTemplate template, Form<ModelNode> form, Metadata metadata) {
+        crud.resetSingleton(type, template, form, metadata, this::reload);
     }
 
-    void reset(String type, AddressTemplate template, Form<ModelNode> form, Metadata metadata) {
-        crud.resetSingleton(type, template, form, metadata, this::reloadView);
-    }
-
-    void launchEnableSSLWizard() {
+    public void launchEnableSSLWizard() {
         // load some elytron resources in advance for later use in the wizard for form validation
         List<Task<FlowContext>> tasks = new ArrayList<>();
 
@@ -232,29 +178,15 @@ public class HostPresenter
         Task<FlowContext> loadTrustManagerTask = loadResourceTask(TRUST_MANAGER);
         tasks.add(loadTrustManagerTask);
 
-        Task<FlowContext> loadDc = flowContext -> {
-            ResourceAddress dcAddress = AddressTemplate.of("/host=" + environment.getDomainController())
-                    .resolve(statementContext);
-            Operation readDcOp = new Operation.Builder(dcAddress, READ_RESOURCE_OPERATION)
-                    .param(ATTRIBUTES_ONLY, true)
-                    .build();
-
-            return dispatcher.execute(readDcOp)
-                    .doOnSuccess(value -> flowContext.push(new Host(value)))
-                    .toCompletable();
-        };
-        tasks.add(loadDc);
-
         series(new FlowContext(progress.get()), tasks).subscribe(
                 new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                     @Override
                     public void onSuccess(FlowContext flowContext) {
                         Map<String, List<String>> existingResources = new HashMap<>();
                         flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
-                        Host host = flowContext.emptyStack() ? null : flowContext.pop();
 
                         new EnableSSLWizard(existingResources, resources, environment, statementContext, dispatcher,
-                                host, HostPresenter.this, progress, getEventBus()).show();
+                                null, StandaloneServerPresenter.this, progress, getEventBus()).show();
                     }
                 });
     }
@@ -280,7 +212,7 @@ public class HostPresenter
         return task;
     }
 
-    void disableSSLWizard() {
+    public void disableSSLWizard() {
         Constants constants = resources.constants();
         String serverName = environment.isStandalone() ? constants.standaloneServer() : constants.domainController();
         String label = constants.reload() + " " + serverName;
@@ -301,27 +233,19 @@ public class HostPresenter
                 resources.messages().disableSSLManagementQuestion(serverName), formElement, Dialog.Size.MEDIUM, () -> {
 
                     List<Task<FlowContext>> tasks = new ArrayList<>();
-                    // load the http-interface resource to get the port
+                    // load the http-interface resource to get the port, there are differente attributes for
+                    // standalone and domain mode.
                     Task<FlowContext> loadHttpInterface = flowContext -> {
                         Operation readHttpInterface = new Operation.Builder(httpAddress, READ_RESOURCE_OPERATION)
                                 .build();
                         return dispatcher.execute(readHttpInterface)
                                 .doOnSuccess(value -> {
-                                    if (value.hasDefined(PORT)) {
-                                        // only domain mode contains "port" attribute
-                                        String port = value.get(PORT).asString();
-                                        if (port.contains("$")) {
-                                            // if it contains an expression value, resolve it at host level
-                                            ResourceAddress address = AddressTemplate.of("/host=" + environment.getDomainController())
-                                                    .resolve(statementContext);
-                                            Operation readPort = new Operation.Builder(address, RESOLVE_EXPRESSION)
-                                                    .param(EXPRESSION, port)
-                                                    .build();
-                                            dispatcher.execute(readPort,
-                                                    portResult -> flowContext.set(PORT, portResult.asString()));
-                                        } else {
-                                            flowContext.set(PORT, port);
-                                        }
+                                    if (value.hasDefined(SOCKET_BINDING)) {
+                                        // standalone mode uses a socket-binding for port
+                                        // store the socket-binding name in the flow context and on a later call
+                                        // read the socket-binding-group=<s-b-g>/socket-binding=<http-binding> to
+                                        // retrieve the port number
+                                        flowContext.set(SOCKET_BINDING, value.get(SOCKET_BINDING).asString());
                                     }
                                 })
                                 .toCompletable();
@@ -329,30 +253,39 @@ public class HostPresenter
                     };
                     tasks.add(loadHttpInterface);
 
-                    // in domain-mode read the /host=<dc> domain controller
-                    // it is important for later use if user wants to reload dc if in admin-mode
-                    Task<FlowContext> loadDc = flowContext -> {
-                        ResourceAddress dcAddress = AddressTemplate.of("/host=" + environment.getDomainController())
-                                .resolve(statementContext);
-                        Operation readDcOp = new Operation.Builder(dcAddress, READ_RESOURCE_OPERATION)
-                                .param(ATTRIBUTES_ONLY, true)
+                    // if standalone mode, read the socket-binding-group=<s-b-g>/socket-binding=<http-binding>
+                    // to retrieve the port number
+                    Task<FlowContext> readHttpPortTask = flowContext -> {
+                        Operation op = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
+                                .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                                 .build();
-
-                        return dispatcher.execute(readDcOp)
-                                .doOnSuccess(value -> flowContext.set(HOST, new Host(value)))
+                        return dispatcher.execute(op)
+                                .doOnSuccess(result -> {
+                                    String sbg = result.asList().get(0).asString();
+                                    String httpBinding = flowContext.get(SOCKET_BINDING);
+                                    ResourceAddress address = SOCKET_BINDING_GROUP_TEMPLATE.resolve(statementContext, sbg, httpBinding);
+                                    Operation readPort = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                            .param(NAME, PORT)
+                                            .param(RESOLVE_EXPRESSIONS, true)
+                                            .build();
+                                    dispatcher.execute(readPort, portResult -> flowContext.set(PORT, portResult.asString()));
+                                })
                                 .toCompletable();
                     };
-                    tasks.add(loadDc);
+                    tasks.add(readHttpPortTask);
 
-                    // as part of the disable ssl task, undefine the secure-port, it only exists in domain mode
-                    Task<FlowContext> undefineSecurePortTask = flowContext -> {
+                    // as part of the disable ssl task, undefine the secure-socket-binding
+                    // the attribute only exists in standalone mode
+                    Task<FlowContext> undefSslTask = flowContext -> {
                         Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
-                                .param(NAME, SECURE_PORT)
+                                .param(NAME, SECURE_SOCKET_BINDING)
                                 .build();
                         return dispatcher.execute(op)
                                 .toCompletable();
+
                     };
-                    tasks.add(undefineSecurePortTask);
+                    tasks.add(undefSslTask);
+
                     // as part of the disable ssl task, undefine the ssl-context
                     Task<FlowContext> undefineSslContextTask = flowContext -> {
                         Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
@@ -375,10 +308,9 @@ public class HostPresenter
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
                                         // the location to redirect the browser to the unsecure URL
                                         String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
-                                        Host host = flowContext.get(HOST);
-                                        reloadServer(host, location);
+                                        reloadServer(null, location);
                                     } else {
-                                        reloadView();
+                                        reload();
                                         MessageEvent.fire(getEventBus(),
                                                 Message.success(resources.messages().disableSSLManagementSuccess()));
                                     }
@@ -394,19 +326,24 @@ public class HostPresenter
                 .show();
     }
 
-    @Override
     public void reloadServer(Host host, String urlConsole) {
         Messages messages = resources.messages();
-        ModelNode dc = new ModelNode();
-        dc.get(HOST).set(environment.getDomainController());
-        ResourceAddress address = new ResourceAddress(dc);
-        Operation operation = new Operation.Builder(address, RELOAD)
-                .param(RESTART_SERVERS, false)
-                .param(ADMIN_ONLY, host.isAdminMode())
+        boolean adminMode = Server.STANDALONE.isAdminMode();
+        boolean suspended = Server.STANDALONE.isSuspended();
+        String startMode;
+        if (adminMode || suspended) {
+            startMode = adminMode ? "admin-only" : "suspend";
+        } else {
+            startMode = "normal";
+        }
+
+        Operation operation = new Operation.Builder(ResourceAddress.root(), RELOAD)
+                .param(START_MODE, startMode)
                 .build();
-        String type = resources.constants().domainController();
-        String name = host.getName();
-        String title = messages.reload(name);
+
+        String type = resources.constants().standaloneServer();
+        String name = Server.STANDALONE.getName();
+        String title = messages.restart(name);
 
         dispatcher.execute(operation,
                 result -> DialogFactory.buildBlocking(title, Dialog.Size.MEDIUM,
@@ -419,23 +356,16 @@ public class HostPresenter
 
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.HOST_CONFIGURATION)
-    @Requires(value = {HOST_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS, MANAGEMENT_INTERFACE_ADDRESS}, recursive = false)
-    public interface MyProxy extends ProxyPlace<HostPresenter> {
+    @NameToken(NameTokens.STANDALONE_SERVER)
+    @Requires(value = {ROOT_ADDRESS, HTTP_INTERFACE_ADDRESS}, recursive = false)
+    public interface MyProxy extends ProxyPlace<StandaloneServerPresenter> {
     }
 
-    public interface MyView extends MbuiView<HostPresenter> {
-        void updateHost(Host host);
-        void updateManagementInterfaces(List<NamedNode> endpoints);
-        void updateInterfaces(List<NamedNode> interfaces);
-        void updateJvms(List<NamedNode> interfaces);
-        void updatePaths(List<NamedNode> paths);
-        void updateSocketBindingGroups(List<NamedNode> groups);
-        void updateSystemProperties(List<NamedNode> properties);
+    public interface MyView extends MbuiView<StandaloneServerPresenter> {
+        void updateAttributes(ModelNode attributes);
+        void updateHttpInterface(ModelNode httpModel);
     }
     // @formatter:on
 }

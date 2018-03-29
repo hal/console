@@ -56,8 +56,8 @@
         "key-alias" => {
             "type" => STRING,
             "description" => "The alias of the new KeyStore entry.",
-            "required" => false,
-            "nillable" => true,
+            "required" => true,
+            "nillable" => false,
             "min-length" => 1L,
             "max-length" => 2147483647L
         },
