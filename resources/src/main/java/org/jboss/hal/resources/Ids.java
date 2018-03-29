@@ -658,6 +658,7 @@ public interface Ids {
     String UNDERTOW_HOST_ADD = "undertow-host-add";
     String UNDERTOW_HOST_ATTRIBUTES_FORM = "undertow-host-form";
     String UNDERTOW_HOST_ATTRIBUTES_TAB = "undertow-host-tab";
+    String UNDERTOW_HOST_ATTRIBUTES_TAB_CONTAINER = "undertow-host-tab-container";
     String UNDERTOW_HOST_FILTER_REF_ADD = "undertow-host-filter-ref-add";
     String UNDERTOW_HOST_FILTER_REF_FORM = "undertow-host-filter-ref-form";
     String UNDERTOW_HOST_FILTER_REF_PAGE = "undertow-host-filter-ref-page";

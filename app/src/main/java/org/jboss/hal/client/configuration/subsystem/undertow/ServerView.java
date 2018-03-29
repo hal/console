@@ -124,7 +124,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
             hostSettingForms.put(setting, hostSetting(setting));
         }
 
-        Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB);
+        Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
         for (HostSetting setting : HostSetting.values()) {
             tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
