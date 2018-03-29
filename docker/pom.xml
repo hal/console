@@ -99,7 +99,7 @@
                 </executions>
             </plugin>
             <!--
-             Produce three docker images:
+             Produce two docker images:
                 1. halconsole/hal-standalone: Contains HAL standalone
                 2. halconsole/hal-wildfly: Contains latest WildFly and and HAL
             -->
