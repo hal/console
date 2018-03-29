@@ -106,32 +106,24 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ runtime
 
-    /**
-     * Creates a finder path for the selected host.
-     */
+    /** Creates a finder path for the selected host. */
     public FinderPath runtimeHostPath() {
         return runtimeHostPath(statementContext.selectedHost());
     }
 
-    /**
-     * Creates a finder path for the specified host.
-     */
+    /** Creates a finder path for the specified host. */
     public FinderPath runtimeHostPath(String host) {
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.HOSTS), resources.constants().browseBy(), Names.HOSTS)
                 .append(Ids.HOST, Ids.host(host), Names.HOST, host);
     }
 
-    /**
-     * Creates a finder path for the selected server group.
-     */
+    /** Creates a finder path for the selected server group. */
     public FinderPath runtimeServerGroupPath() {
         return runtimeServerGroupPath(statementContext.selectedServerGroup());
     }
 
-    /**
-     * Creates a finder path for the specified server group.
-     */
+    /** Creates a finder path for the specified server group. */
     public FinderPath runtimeServerGroupPath(String serverGroup) {
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS),
@@ -139,9 +131,7 @@ public class FinderPathFactory {
                 .append(SERVER_GROUP, Ids.serverGroup(serverGroup), Names.SERVER_GROUP, serverGroup);
     }
 
-    /**
-     * Creates a finder path for the selected server. Adds the selected host / server group when running domain mode.
-     */
+    /** Creates a finder path for the selected server. Adds the selected host / server group when running domain mode. */
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
             String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
@@ -155,9 +145,7 @@ public class FinderPathFactory {
         }
     }
 
-    /**
-     * Creates a finder path for the specified host and server.
-     */
+    /** Creates a finder path for the specified host and server. */
     public FinderPath runtimeServerPath(String host, String server) {
         if (environment.isStandalone()) {
             String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
