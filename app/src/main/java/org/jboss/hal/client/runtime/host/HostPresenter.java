@@ -91,7 +91,7 @@ public class HostPresenter
 
     private static final String HTTP_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=http-interface";
     static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
-    private static final String NATIVE_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=native-interface";
+    private static final String NATIVE_INTERFACE_ADDRESS = "{selected.host}/core-service=management/management-interface=native-interface";
     static final AddressTemplate NATIVE_INTERFACE_TEMPLATE = AddressTemplate.of(NATIVE_INTERFACE_ADDRESS);
 
     private final FinderPathFactory finderPathFactory;

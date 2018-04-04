@@ -82,7 +82,7 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS,
+@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS,
         HOST_MANAGEMENT_OPERATIONS_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
