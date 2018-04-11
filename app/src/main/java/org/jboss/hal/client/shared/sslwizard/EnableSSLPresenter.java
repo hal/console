@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.jboss.hal.client.runtime.sslwizard;
+package org.jboss.hal.client.shared.sslwizard;
 
 import org.jboss.hal.core.runtime.host.Host;
 
 public interface EnableSSLPresenter {
 
-    void reloadServer(Host host, String urlConsole);
+    default void reloadServer(Host host, String urlConsole) {
+    }
+
     void reloadView();
 }

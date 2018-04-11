@@ -15,22 +15,36 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
+import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.client.shared.sslwizard.EnableSSLPresenter;
+import org.jboss.hal.client.shared.sslwizard.EnableSSLWizard;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -41,11 +55,17 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.FilteringStatementContext.Filter;
 import org.jboss.hal.meta.Metadata;
@@ -55,27 +75,36 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.encodeValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
 public class ServerPresenter
         extends ApplicationFinderPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
-        implements SupportsExpertMode {
+        implements SupportsExpertMode, EnableSSLPresenter {
 
     private static final String EQUALS = "=";
+    private static final String EQ_WILDCARD = "=*";
 
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
     private final MetadataRegistry metadataRegistry;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
+    private Provider<Progress> progress;
+    private Environment environment;
     private final Resources resources;
     private String serverName;
     private String hostName;
@@ -92,6 +121,8 @@ public class ServerPresenter
             MetadataRegistry metadataRegistry,
             FinderPathFactory finderPathFactory,
             StatementContext statementContext,
+            @Footer Provider<Progress> progress,
+            Environment environment,
             Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.dispatcher = dispatcher;
@@ -115,6 +146,8 @@ public class ServerPresenter
                         return null;
                     }
                 });
+        this.progress = progress;
+        this.environment = environment;
         this.resources = resources;
     }
 
@@ -455,7 +488,7 @@ public class ServerPresenter
     // ------------------------------------------------------ listener
 
     void addListener(Listener listenerType) {
-        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
+        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + EQ_WILDCARD));
         AddResourceDialog dialog = new AddResourceDialog(Ids.build(listenerType.baseId, Ids.ADD),
                 resources.messages().addResourceTitle(listenerType.type), metadata,
                 (name, model) -> {
@@ -469,14 +502,14 @@ public class ServerPresenter
     void saveListener(Listener listenerType, String name, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(listenerType.resource + EQUALS + name)
                 .resolve(statementContext);
-        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
+        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + EQ_WILDCARD));
         crud.save(listenerType.type, name, address, changedValues, metadata, this::reload);
     }
 
     void resetListener(Listener listenerType, String name, Form<NamedNode> form) {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(listenerType.resource + EQUALS + name)
                 .resolve(statementContext);
-        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
+        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + EQ_WILDCARD));
         crud.reset(listenerType.type, name, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
             public void afterReset(Form<NamedNode> form) {
@@ -489,6 +522,130 @@ public class ServerPresenter
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(listenerType.resource + EQUALS + name)
                 .resolve(statementContext);
         crud.remove(listenerType.type, name, address, this::reload);
+    }
+
+    // ------------------------------------------------------ enable / disable ssl context
+
+    void enableSsl(String httpsName) {
+        // load some elytron resources in advance for later use in the wizard for form validation
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+
+        Task<FlowContext> loadKeyStoreTask = loadResourceTask(KEY_STORE);
+        tasks.add(loadKeyStoreTask);
+
+        Task<FlowContext> loadKeyManagerTask = loadResourceTask(KEY_MANAGER);
+        tasks.add(loadKeyManagerTask);
+
+        Task<FlowContext> loadServerSslContextTask = loadResourceTask(SERVER_SSL_CONTEXT);
+        tasks.add(loadServerSslContextTask);
+
+        Task<FlowContext> loadTrustManagerTask = loadResourceTask(TRUST_MANAGER);
+        tasks.add(loadTrustManagerTask);
+
+        series(new FlowContext(progress.get()), tasks).subscribe(
+                new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                    @Override
+                    public void onSuccess(FlowContext flowContext) {
+                        Map<String, List<String>> existingResources = new HashMap<>();
+                        flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
+
+                        EnableSSLWizard ww = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
+                                statementContext, dispatcher, progress, ServerPresenter.this, environment)
+                                .undertowServer(serverName)
+                                .httpsListenerName(httpsName)
+                                .build();
+                        ww.show();
+                    }
+                });
+    }
+
+    void disableSsl(String httpsListener) {
+        AddressTemplate httpsTemplate = SERVER_TEMPLATE.append(HTTPS_LISTENER + EQ_WILDCARD);
+        Metadata metadata = metadataRegistry.lookup(httpsTemplate);
+        SafeHtml description = resources.messages().disableSSLUndertowQuestion(httpsListener);
+        String label = new LabelBuilder().label(SECURITY_REALM);
+        TextBoxItem securityRealmItem = new TextBoxItem(SECURITY_REALM, label);
+        securityRealmItem.setRequired(true);
+        SafeHtml securityRealmDescription = SafeHtmlUtils.fromTrustedString(
+                metadata.getDescription().get(ATTRIBUTES).get(SECURITY_REALM).get(DESCRIPTION).asString());
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(SECURITY_REALM, Ids.FORM), Metadata.empty())
+                .unboundFormItem(securityRealmItem, 0, securityRealmDescription)
+                .build();
+
+        HTMLElement content = div()
+                    .add(p().innerHtml(description))
+                    .add(form.asElement())
+                    .asElement();
+
+        Dialog dialog = new Dialog.Builder(resources.constants().disableSSL())
+                .size(Dialog.Size.MEDIUM)
+                .primary(resources.constants().yes(), () -> {
+                    boolean valid = form.save();
+                    // if the form contains validation error, don't close the dialog
+                    if (valid) {
+                        ResourceAddress httpsAddress = httpsTemplate.resolve(statementContext, serverName,
+                                httpsListener);
+                        Operation undefineSslCtx = new Operation.Builder(httpsAddress, UNDEFINE_ATTRIBUTE_OPERATION)
+                                .param(NAME, SSL_CONTEXT)
+                                .build();
+                        Operation writeSecurityRealm = new Operation.Builder(httpsAddress, WRITE_ATTRIBUTE_OPERATION)
+                                .param(NAME, SECURITY_REALM)
+                                .param(VALUE, securityRealmItem.getValue())
+                                .build();
+                        Composite composite = new Composite();
+                        composite.add(undefineSslCtx);
+                        composite.add(writeSecurityRealm);
+
+                        dispatcher.execute(composite, (CompositeResult result) -> {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.success(resources.messages().disableSSLUndertowSuccess(httpsListener)));
+                            reload();
+                        }, (operation, failure) -> {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(
+                                            resources.messages().disableSSLUndertowError(httpsListener, failure)));
+                        }, (operation, exception) -> {
+                            SafeHtml message = resources.messages()
+                                    .disableSSLUndertowError(httpsListener, exception.getMessage());
+                            MessageEvent.fire(getEventBus(), Message.error(message));
+                        });
+                    }
+                    return valid;
+                })
+                .secondary(resources.constants().no(), () -> true)
+                .closeIcon(true)
+                .closeOnEsc(true)
+                .add(content)
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
+        ModelNode model = new ModelNode().setEmptyObject();
+        form.edit(model);
+    }
+
+    @Override
+    public void reloadView() {
+        reload();
+    }
+
+    private Task<FlowContext> loadResourceTask(String resourceName) {
+        Task<FlowContext> task = context -> {
+            ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+            Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
+                    .param(CHILD_TYPE, resourceName)
+                    .build();
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> {
+                        List<String> res = result.asList().stream()
+                                .map(ModelNode::asString)
+                                .collect(Collectors.toList());
+                        if (!res.isEmpty()) {
+                            context.set(resourceName, res);
+                        }
+                    })
+                    .toCompletable();
+        };
+        return task;
     }
 
     // ------------------------------------------------------ getter

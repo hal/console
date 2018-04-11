@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.sslwizard;
+package org.jboss.hal.client.shared.sslwizard;
 
 import com.google.gwt.core.client.GWT;
 import elemental2.dom.Element;
@@ -28,6 +28,7 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
@@ -36,21 +37,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_PORT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_SOCKET_BINDING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MANAGER;
+import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.jboss.hal.resources.Ids.MANAGEMENT;
 
 public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSSLState> {
 
-    public static final AddressTemplate ELYTRON_TEMPLATE = AddressTemplate.of("{domain.controller}/subsystem=elytron");
-    static final AddressTemplate KEY_STORE_TEMPLATE = AddressTemplate.of(
-            "{domain.controller}/subsystem=elytron/key-store=*");
-    static final AddressTemplate KEY_MANAGER_TEMPLATE = AddressTemplate.of(
-            "{domain.controller}/subsystem=elytron/key-manager=*");
-    static final AddressTemplate TRUST_MANAGER_TEMPLATE = AddressTemplate.of(
-            "{domain.controller}/subsystem=elytron/trust-manager=*");
-    static final AddressTemplate SERVER_SSL_CONTEXT_TEMPLATE = AddressTemplate.of(
-            "{domain.controller}/subsystem=elytron/server-ssl-context=*");
-    static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(
-            "{domain.controller}/core-service=management/management-interface=http-interface");
     public static final AddressTemplate SOCKET_BINDING_GROUP_TEMPLATE = AddressTemplate.of(
             "/socket-binding-group=*/socket-binding=*");
 
@@ -83,26 +74,30 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
     final Form<ModelNode> form;
     private boolean editMode;
 
-    AbstractConfiguration(String title, Environment environment, boolean editMode) {
+    AbstractConfiguration(String title, Environment environment, boolean editMode, boolean undertowHttps,
+            AddressTemplate template) {
         super(title);
         this.editMode = editMode;
 
         String mode = editMode ? "edit" : "read";
         String id = Ids.build(MANAGEMENT, "enable-ssl", mode, Ids.FORM);
         description = StaticResourceDescription.from(RESOURCES.enableSslWizard());
-        Metadata metadata = Metadata.staticDescription(description, environment);
+        // the button to enable/disable ssl has a contraint to write-attribute to ssl-context
+        // then, even as the metadata has RWX permission, it can only be created when he has permission to the above constraint
+        Metadata metadata = new Metadata(template, () -> RWX, new ResourceDescription(description),
+                new Capabilities(environment));
         ModelNodeForm.Builder builder = new ModelNodeForm.Builder<>(id, metadata)
                 .unsorted();
 
-        if (environment.isStandalone()) {
-            builder.exclude(SECURE_PORT);
+        if (!undertowHttps) {
+            if (environment.isStandalone()) {
+                builder.exclude(SECURE_PORT);
+            } else {
+                builder.exclude(SECURE_SOCKET_BINDING);
+            }
         } else {
             builder.exclude(SECURE_SOCKET_BINDING);
-        }
-        if (editMode) {
-            builder.addOnly();
-        } else {
-            builder.readOnly();
+            builder.exclude(SECURE_PORT);
         }
 
         form = builder.build();
@@ -116,7 +111,6 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
 
     @Override
     protected void onShow(final EnableSSLContext context) {
-
         if (context.strategy == EnableSSLContext.Strategy.KEYSTORE_RESOURCE_EXISTS) {
             show(KEY_STORE);
             show(KEY_STORE_PASSWORD);

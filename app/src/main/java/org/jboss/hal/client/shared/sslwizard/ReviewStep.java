@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.sslwizard;
+package org.jboss.hal.client.shared.sslwizard;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.AsyncStep;
@@ -22,6 +22,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
@@ -35,9 +36,11 @@ public class ReviewStep extends AbstractConfiguration implements AsyncStep<Enabl
     private StatementContext statementContext;
     private HTMLElement section;
     private Environment environment;
+    private boolean undertowHttps;
 
-    ReviewStep(Dispatcher dispatcher, StatementContext statementContext, Resources resources, Environment environment) {
-        super(resources.constants().review(), environment, false);
+    ReviewStep(Dispatcher dispatcher, StatementContext statementContext, Resources resources, Environment environment,
+            boolean undertowHttps, AddressTemplate template) {
+        super(resources.constants().review(), environment, false, undertowHttps, template);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
 
@@ -46,6 +49,7 @@ public class ReviewStep extends AbstractConfiguration implements AsyncStep<Enabl
                 .add(form)
                 .asElement();
         this.environment = environment;
+        this.undertowHttps = undertowHttps;
     }
 
     @Override
@@ -56,7 +60,7 @@ public class ReviewStep extends AbstractConfiguration implements AsyncStep<Enabl
 
     @Override
     public void onNext(EnableSSLContext context, WorkflowCallback callback) {
-        if (environment.isStandalone()) {
+        if (environment.isStandalone() && !undertowHttps) {
             // read the port attribute associated to the socket-binding-group/socket-binding
             // the user had chosen
             Operation readSbgOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)

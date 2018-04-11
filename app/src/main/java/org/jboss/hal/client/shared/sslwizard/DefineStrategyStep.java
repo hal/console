@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.sslwizard;
+package org.jboss.hal.client.shared.sslwizard;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.InputType;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -36,10 +37,13 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
     private EnableSSLContext.Strategy strategy;
     private HTMLDivElement errorMsg;
 
-    DefineStrategyStep(final Resources resources) {
+    DefineStrategyStep(final Resources resources, boolean standaloneMode, boolean undertowHttps) {
         super(resources.constants().enableSSLManagementInitialSetup());
 
-        SafeHtml description = resources.messages().enableSSLDescription();
+        SafeHtml description = resources.messages().enableManagementSSLDescription();
+        if (undertowHttps) {
+            description = resources.messages().enableUndertowSSLDescription();
+        }
 
         errorMsg = div().css(alert, alertDanger)
                 .add(span().css(pfIcon(errorCircleO)))
@@ -48,7 +52,8 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
 
         String radioMutualName = "mutual";
         String radioStrategyName = "key-store-strategy";
-        root = div().css(formHorizontal)
+        HtmlContentBuilder<HTMLDivElement> builder;
+        builder = div().css(formHorizontal)
                 .add(errorMsg)
                 .add(p().innerHtml(description))
 
@@ -72,23 +77,33 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                                 .add(span().textContent(resources.constants().no()))))
 
                 // asks the user to choose the key-store strategy
-                .add(p().css(marginTopLarge).innerHtml(resources.messages().enableSSLStrategyQuestion()))
-                .add(div().css(radio)
-                        .add(label()
-                                .add(input(InputType.radio)
-                                        .id("strategy-create-all")
-                                        .attr(UIConstants.NAME, radioStrategyName)
-                                        .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_CREATE)
-                                        .asElement())
-                                .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateAll()))))
-                .add(div().css(radio)
-                        .add(label()
-                                .add(input(InputType.radio)
-                                        .id("strategy-create-key-store")
-                                        .attr(UIConstants.NAME, radioStrategyName)
-                                        .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS)
-                                        .asElement())
-                                .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateKeyStore()))))
+                .add(p().css(marginTopLarge).innerHtml(resources.messages().enableSSLStrategyQuestion()));
+
+
+        // the option to generate a self signed certificate is not available on domain mode and profile level
+        // because the operation to generate the self signed certificate is only available
+        // on a runtime resource (/host=any/server=any/subsysem=elytron/key-store=any:generate-key-pair)
+        // and it would generate a different certificate for each key-store
+        boolean generateSelfSigned = standaloneMode || !undertowHttps;
+        if (generateSelfSigned) {
+            builder.add(div().css(radio)
+                    .add(label()
+                            .add(input(InputType.radio)
+                                    .id("strategy-create-all")
+                                    .attr(UIConstants.NAME, radioStrategyName)
+                                    .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_CREATE)
+                                    .asElement())
+                            .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateAll()))));
+        }
+
+        builder.add(div().css(radio)
+                .add(label()
+                        .add(input(InputType.radio)
+                                .id("strategy-create-key-store")
+                                .attr(UIConstants.NAME, radioStrategyName)
+                                .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS)
+                                .asElement())
+                        .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateKeyStore()))))
                 .add(div().css(radio)
                         .add(label()
                                 .add(input(InputType.radio)
@@ -96,8 +111,9 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                                         .attr(UIConstants.NAME, radioStrategyName)
                                         .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_RESOURCE_EXISTS)
                                         .asElement())
-                                .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionReuseKeyStore()))))
-                .asElement();
+                                .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionReuseKeyStore()))));
+
+        root = builder.asElement();
 
         Elements.setVisible(errorMsg, false);
     }

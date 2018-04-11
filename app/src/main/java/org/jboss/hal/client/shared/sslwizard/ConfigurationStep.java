@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.sslwizard;
+package org.jboss.hal.client.shared.sslwizard;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -34,8 +35,9 @@ public class ConfigurationStep extends AbstractConfiguration {
     private Map<String, List<String>> existingResources;
     private Resources resources;
 
-    ConfigurationStep(Map<String, List<String>> existingResources, Resources resources, Environment environment) {
-        super(resources.constants().configuration(), environment, true);
+    ConfigurationStep(Map<String, List<String>> existingResources, Resources resources, Environment environment,
+            boolean undertowHttps, AddressTemplate template) {
+        super(resources.constants().configuration(), environment, true, undertowHttps, template);
         this.existingResources = existingResources;
         this.resources = resources;
 
@@ -83,9 +85,10 @@ public class ConfigurationStep extends AbstractConfiguration {
             getFormItem(KEY_STORE_PASSWORD).setRequired(true);
             getFormItem(KEY_STORE_PATH).setRequired(true);
 
-            // if the user went back and forward, do not require an existing key-store
+            // if the user goes back and forward, do not require an existing key-store
             getFormItem(KEY_STORE).setRequired(false);
             getFormItem(KEY_STORE).setEnabled(false);
+            getFormItem(PRIVATE_KEY_ALIAS).setRequired(true);
 
         } else if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS)) {
             getFormItem(KEY_STORE_NAME).setRequired(true);
@@ -93,9 +96,10 @@ public class ConfigurationStep extends AbstractConfiguration {
             getFormItem(KEY_STORE_PASSWORD).setRequired(true);
             getFormItem(KEY_STORE_PATH).setRequired(true);
 
-            // if the user went back and forward, do not require an existing key-store
+            // if the user goes back and forward, do not require an existing key-store
             getFormItem(KEY_STORE).setRequired(false);
             getFormItem(KEY_STORE).setEnabled(false);
+            getFormItem(PRIVATE_KEY_ALIAS).setRequired(false);
         } else {
             getFormItem(KEY_STORE).setRequired(true);
             getFormItem(KEY_STORE).setEnabled(true);
@@ -105,6 +109,7 @@ public class ConfigurationStep extends AbstractConfiguration {
             getFormItem(KEY_STORE_NAME).setEnabled(false);
             getFormItem(KEY_STORE_NAME).setRequired(false);
             getFormItem(KEY_STORE_PATH).setRequired(false);
+            getFormItem(PRIVATE_KEY_ALIAS).setRequired(false);
         }
 
         getFormItem(KEY_MANAGER).setRequired(true);

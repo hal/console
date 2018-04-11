@@ -40,10 +40,13 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 
 class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<ServerPresenter> {
 
-    private final HTMLElement root;
-    private final Table<NamedNode> table;
-    private final Form<NamedNode> form;
-    private ServerPresenter presenter;
+    HTMLElement root;
+    Table<NamedNode> table;
+    Form<NamedNode> form;
+    ServerPresenter presenter;
+
+    ListenerElement() {
+    }
 
     @SuppressWarnings("ConstantConditions")
     ListenerElement(Listener listenerType, MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory) {

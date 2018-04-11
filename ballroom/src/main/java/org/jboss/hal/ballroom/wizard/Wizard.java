@@ -225,6 +225,10 @@ public class Wizard<C, S extends Enum<S>> {
         showSuccess(title, text, null, null, lastStep);
     }
 
+    public void showSuccess(final String title, final SafeHtml text, CloseAction<C> closeAction, final boolean lastStep) {
+        showSuccess(title, text, null, null, closeAction, lastStep);
+    }
+
     public void showSuccess(final String title, final SafeHtml text,
             final String successButton, SuccessAction<C> successAction) {
         showSuccess(title, text, successButton, successAction, true);
@@ -236,7 +240,7 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     public void showSuccess(final String title, final SafeHtml text, final String successButton,
-            SuccessAction<C> successAction, SuccessAction<C> closeAction, final boolean lastStep) {
+            SuccessAction<C> successAction, CloseAction<C> closeAction, final boolean lastStep) {
         blankSlate.classList.remove(wizardPfProcess);
         blankSlate.classList.add(wizardPfComplete);
         Elements.removeChildrenFrom(blankSlate);
@@ -499,6 +503,15 @@ public class Wizard<C, S extends Enum<S>> {
      */
     @FunctionalInterface
     public interface SuccessAction<C> {
+
+        void execute(C context);
+    }
+
+    /**
+     * An action executed when the user clicks on the close button of the success page.
+     */
+    @FunctionalInterface
+    public interface CloseAction<C> {
 
         void execute(C context);
     }

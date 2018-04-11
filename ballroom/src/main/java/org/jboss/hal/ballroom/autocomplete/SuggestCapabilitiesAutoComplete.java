@@ -48,6 +48,7 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
                                         .map(ModelNode::asString)
                                         .filter(value -> SHOW_ALL_VALUE.equals(query) ||
                                                 value.toLowerCase().contains(query.toLowerCase()))
+                                        .sorted()
                                         .toArray(String[]::new);
                                 response.response(items);
                             } else {
