@@ -224,7 +224,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         listener = new EnumMap<>(Listener.class);
         listener.put(AJP, new ListenerElement(AJP, metadataRegistry, tableButtonFactory));
         listener.put(HTTP, new ListenerElement(HTTP, metadataRegistry, tableButtonFactory));
-        listener.put(HTTPS, new ListenerElement(HTTPS, metadataRegistry, tableButtonFactory));
+        listener.put(HTTPS, new HttpsListenerElement(resources, metadataRegistry, tableButtonFactory));
 
         navigation = new VerticalNavigation();
         navigation.addPrimary(Ids.UNDERTOW_SERVER_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"),

@@ -124,6 +124,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml disableSSLManagementQuestion(String serverName);
     SafeHtml disableSSLManagementError(String cause);
     SafeHtml disableSSLManagementSuccess();
+    SafeHtml disableSSLUndertowQuestion(String httpsListener);
+    SafeHtml disableSSLUndertowSuccess(String httpsListener);
+    SafeHtml disableSSLUndertowError(String httpsListener, String cause);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
     String domainUuidLabel(String uuid);
@@ -138,7 +141,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String ejbFilterDescription();
     SafeHtml emptyModelNodeForm();
     String enableSSLConfirmationDescription();
-    SafeHtml enableSSLDescription();
+    SafeHtml enableManagementSSLDescription();
     SafeHtml enableSSLMutualQuestion();
     SafeHtml enableSSLResultsError();
     SafeHtml enableSSLResultsSuccessDomain(String url);
@@ -148,6 +151,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml enableSSLStrategyQuestionCreateKeyStore();
     SafeHtml enableSSLStrategyQuestionReuseKeyStore();
     SafeHtml enableSSLSuccess();
+    SafeHtml enableUndertowSSLDescription();
+    SafeHtml enableSSLResultsSuccessUndertow(String listener, String sslContext);
     String endpointColumnFilterDescription();
     SafeHtml endpointError(String interfce, String url);
     SafeHtml endpointOk(String url);

@@ -64,7 +64,6 @@ public class ModclusterBalancerNodeContextColumn extends FinderColumn<NamedNode>
                         }
                         if ("undertow-runtime-modcluster-balancer-node".equals(finderSegment.getColumnId())) {
                             node = substringAfterLast(finderSegment.getItemId(), "undertow-modcluster-balancer-node-");
-                            //_log.info("  node item id: " + finderSegment.getItemId() );
                         }
                     }
                     ResourceAddress address = MODCLUSTER_BALANCER_NODE_TEMPLATE.resolve(statementContext, modcluster,
@@ -73,10 +72,8 @@ public class ModclusterBalancerNodeContextColumn extends FinderColumn<NamedNode>
                             .param(CHILD_TYPE, CONTEXT)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    //_log.info(" operation: " + operation);
 
                     dispatcher.execute(operation, result -> {
-                        //_log.info(" result: " + result);
                         callback.onSuccess(asNamedNodes(result.asPropertyList()));
                     });
                 })

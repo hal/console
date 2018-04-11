@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.sslwizard;
+package org.jboss.hal.client.shared.sslwizard;
 
 import org.jboss.hal.dmr.ModelNode;
 

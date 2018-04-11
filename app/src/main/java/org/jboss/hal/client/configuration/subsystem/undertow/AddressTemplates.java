@@ -24,6 +24,8 @@ import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRES
 
 interface AddressTemplates {
 
+    String ELYTRON_SUBSYSTEM_ADDRESS = "{selected.profile}/subsystem=elytron";
+    AddressTemplate ELYTRON_SUBSYSTEM_TEMPLATE = AddressTemplate.of(ELYTRON_SUBSYSTEM_ADDRESS);
     String UNDERTOW_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=undertow";
     String APPLICATION_SECURITY_DOMAIN_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/application-security-domain=*";
     String SINGLE_SIGN_ON_ADDRESS = APPLICATION_SECURITY_DOMAIN_ADDRESS + "/setting=single-sign-on";

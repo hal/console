@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.hal.client.runtime.sslwizard;
+package org.jboss.hal.client.shared.sslwizard;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;

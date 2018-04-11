@@ -33,8 +33,8 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SwitchItem;
-import org.jboss.hal.client.runtime.sslwizard.EnableSSLPresenter;
-import org.jboss.hal.client.runtime.sslwizard.EnableSSLWizard;
+import org.jboss.hal.client.shared.sslwizard.EnableSSLPresenter;
+import org.jboss.hal.client.shared.sslwizard.EnableSSLWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
@@ -70,8 +70,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.hal.client.runtime.sslwizard.AbstractConfiguration.ELYTRON_TEMPLATE;
-import static org.jboss.hal.client.runtime.sslwizard.AbstractConfiguration.SOCKET_BINDING_GROUP_TEMPLATE;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.SOCKET_BINDING_GROUP_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
@@ -84,6 +83,7 @@ public class StandaloneServerPresenter
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
     static final String HTTP_INTERFACE_ADDRESS = "/core-service=management/management-interface=http-interface";
     static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
+    private static final AddressTemplate ELYTRON_TEMPLATE = AddressTemplate.of("/subsystem=elytron");
 
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -185,8 +185,10 @@ public class StandaloneServerPresenter
                         Map<String, List<String>> existingResources = new HashMap<>();
                         flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
 
-                        new EnableSSLWizard(existingResources, resources, environment, statementContext, dispatcher,
-                                null, StandaloneServerPresenter.this, progress, getEventBus()).show();
+                        new EnableSSLWizard.Builder(existingResources, resources, getEventBus(), statementContext,
+                                dispatcher, progress, StandaloneServerPresenter.this, environment)
+                                .build()
+                                .show();
                     }
                 });
     }
