@@ -17,10 +17,10 @@ package org.jboss.hal.client.bootstrap.tasks;
 
 import javax.inject.Inject;
 
-/** Simple wrapper around an ordered array of HAL's bootstrap tasks. */
+/** Simple wrapper around an ordered array of bootstrap tasks. */
 public class BootstrapTasks {
 
-    private final BootstrapTask[] functions;
+    private final BootstrapTask[] tasks;
 
     @Inject
     public BootstrapTasks(SetupLoggingTask setupLoggingTask,
@@ -31,7 +31,7 @@ public class BootstrapTasks {
             ReadExtensions readExtensions,
             LoadSettings loadSettings,
             StartAnalytics startAnalytics) {
-        this.functions = new BootstrapTask[]{
+        this.tasks = new BootstrapTask[]{
                 setupLoggingTask,
                 readEnvironment,
                 readAuthentication,
@@ -43,7 +43,7 @@ public class BootstrapTasks {
         };
     }
 
-    public BootstrapTask[] functions() {
-        return functions;
+    public BootstrapTask[] tasks() {
+        return tasks;
     }
 }

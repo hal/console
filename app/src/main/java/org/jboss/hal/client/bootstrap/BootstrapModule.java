@@ -20,7 +20,10 @@ import com.google.inject.Singleton;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointStorage;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
+import org.jboss.hal.client.bootstrap.tasks.CheckForUpdate;
+import org.jboss.hal.client.bootstrap.tasks.CheckTargetVersion;
 import org.jboss.hal.client.bootstrap.tasks.FindDomainController;
+import org.jboss.hal.client.bootstrap.tasks.InitializationTasks;
 import org.jboss.hal.client.bootstrap.tasks.LoadSettings;
 import org.jboss.hal.client.bootstrap.tasks.ReadAuthentication;
 import org.jboss.hal.client.bootstrap.tasks.ReadEnvironment;
@@ -36,9 +39,12 @@ public class BootstrapModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(BootstrapTasks.class).in(Singleton.class);
+        bind(CheckForUpdate.class).in(Singleton.class);
+        bind(CheckTargetVersion.class).in(Singleton.class);
         bind(EndpointManager.class).in(Singleton.class);
         bind(EndpointStorage.class).in(Singleton.class);
         bind(FindDomainController.class).in(Singleton.class);
+        bind(InitializationTasks.class).in(Singleton.class);
         bind(LoadSettings.class).in(Singleton.class);
         bind(ReadAuthentication.class).in(Singleton.class);
         bind(ReadEnvironment.class).in(Singleton.class);

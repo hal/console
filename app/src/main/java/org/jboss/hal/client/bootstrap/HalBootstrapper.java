@@ -22,6 +22,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental2.dom.Event;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
+import org.jboss.hal.client.bootstrap.tasks.InitializationTasks;
+import org.jboss.hal.client.bootstrap.tasks.InitializedTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.ExceptionHandler;
 import org.jetbrains.annotations.NonNls;
@@ -41,6 +43,7 @@ public class HalBootstrapper implements Bootstrapper {
     private final EndpointManager endpointManager;
     private final Endpoints endpoints;
     private final BootstrapTasks bootstrapTasks;
+    private final InitializationTasks initializationTasks;
     private final ExceptionHandler exceptionHandler;
 
     @Inject
@@ -48,11 +51,13 @@ public class HalBootstrapper implements Bootstrapper {
             EndpointManager endpointManager,
             Endpoints endpoints,
             BootstrapTasks bootstrapTasks,
+            InitializationTasks initializationTasks,
             ExceptionHandler exceptionHandler) {
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;
         this.endpoints = endpoints;
         this.bootstrapTasks = bootstrapTasks;
+        this.initializationTasks = initializationTasks;
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -65,13 +70,16 @@ public class HalBootstrapper implements Bootstrapper {
         endpointManager.select(() -> {
             LoadingPanel.get().on();
 
-            Observable.from(bootstrapTasks.functions())
+            Observable.from(bootstrapTasks.tasks())
                     .flatMapCompletable(Func0::call, false, 1)
                     .doOnTerminate(() -> LoadingPanel.get().off())
                     .doOnCompleted(() -> {
                         logger.info("Bootstrap finished");
                         placeManager.revealCurrentPlace();
                         exceptionHandler.afterBootstrap();
+                        for (InitializedTask task : initializationTasks.tasks()) {
+                            task.run();
+                        }
                     })
                     .doOnError(e -> {
                         logger.error("Bootstrap error: {}", e.getMessage());

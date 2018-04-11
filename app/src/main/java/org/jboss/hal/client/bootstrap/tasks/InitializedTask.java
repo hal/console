@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import rx.Completable;
-import rx.functions.Func0;
-
-/** A task executed as part of the initialization process. */
-public interface BootstrapTask extends Func0<Completable> {
+/** A task executed after the console has been fully initialized. */
+public interface InitializedTask extends Runnable {
 }

@@ -238,6 +238,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml macroPlaybackSuccessful();
     String mailColumnFilterDescription();
     SafeHtml managementOperationsFindNoResult();
+
+    SafeHtml managementVersionMismatch(String managementVersion, String targetVersion);
     SafeHtml manyMessages(long number);
     SafeHtml mappingHint();
     String membershipColumnFilterDescription();
