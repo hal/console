@@ -304,6 +304,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String managed();
     String managementOperations();
     String managementVersion();
+
+    String managementVersionMismatchDescription();
     String manyMessages();
     String markAllRead();
     String maxActiveSessions();

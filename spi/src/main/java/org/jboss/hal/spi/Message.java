@@ -34,218 +34,208 @@ public class Message {
 
     // ------------------------------------------------------ error
 
-    public static Message error(final SafeHtml message) {
+    public static Message error(SafeHtml message) {
         return error(currentTimeMillis(), message, null, false);
     }
 
-    public static Message error(final long id, final SafeHtml message) {
+    public static Message error(long id, SafeHtml message) {
         return error(id, message, null, false);
     }
 
-    public static Message error(final SafeHtml message, final boolean sticky) {
+    public static Message error(SafeHtml message, boolean sticky) {
         return error(currentTimeMillis(), message, null, sticky);
     }
 
-    public static Message error(final long id, final SafeHtml message, final boolean sticky) {
+    public static Message error(long id, SafeHtml message, boolean sticky) {
         return error(id, message, null, sticky);
     }
 
-    public static Message error(final SafeHtml message, final String details) {
+    public static Message error(SafeHtml message, String details) {
         return error(currentTimeMillis(), message, details, false);
     }
 
-    public static Message error(final long id, final SafeHtml message, final String details) {
+    public static Message error(long id, SafeHtml message, String details) {
         return error(id, message, details, false);
     }
 
-    public static Message error(final SafeHtml message, final String details, final boolean sticky) {
+    public static Message error(SafeHtml message, String details, boolean sticky) {
         return new Message(currentTimeMillis(), Level.ERROR, message, details, null, null, sticky);
     }
 
-    public static Message error(final long id, final SafeHtml message, final String details, final boolean sticky) {
+    public static Message error(long id, SafeHtml message, String details, boolean sticky) {
         return new Message(id, Level.ERROR, message, details, null, null, sticky);
     }
 
-    public static Message error(final SafeHtml message, final String actionTitle, final Callback callback) {
+    public static Message error(SafeHtml message, String actionTitle, Callback callback) {
         return error(currentTimeMillis(), message, actionTitle, callback, false);
     }
 
-    public static Message error(final long id, final SafeHtml message, final String actionTitle,
-            final Callback callback) {
+    public static Message error(long id, SafeHtml message, String actionTitle, Callback callback) {
         return error(id, message, actionTitle, callback, false);
     }
 
-    public static Message error(final SafeHtml message, final String actionTitle, final Callback callback,
-            final boolean sticky) {
+    public static Message error(SafeHtml message, String actionTitle, Callback callback, boolean sticky) {
         return new Message(currentTimeMillis(), Level.ERROR, message, null, actionTitle, callback, sticky);
     }
 
-    public static Message error(final long id, final SafeHtml message, final String actionTitle,
-            final Callback callback, final boolean sticky) {
+    public static Message error(long id, SafeHtml message, String actionTitle,
+            Callback callback, boolean sticky) {
         return new Message(id, Level.ERROR, message, null, actionTitle, callback, sticky);
     }
 
 
     // ------------------------------------------------------ warning
 
-    public static Message warning(final SafeHtml message) {
+    public static Message warning(SafeHtml message) {
         return warning(currentTimeMillis(), message, null, false);
     }
 
-    public static Message warning(final long id, final SafeHtml message) {
+    public static Message warning(long id, SafeHtml message) {
         return warning(id, message, null, false);
     }
 
-    public static Message warning(final SafeHtml message, final boolean sticky) {
+    public static Message warning(SafeHtml message, boolean sticky) {
         return warning(currentTimeMillis(), message, null, sticky);
     }
 
-    public static Message warning(final long id, final SafeHtml message, final boolean sticky) {
+    public static Message warning(long id, SafeHtml message, boolean sticky) {
         return warning(id, message, null, sticky);
     }
 
-    public static Message warning(final SafeHtml message, final String details) {
+    public static Message warning(SafeHtml message, String details) {
         return warning(currentTimeMillis(), message, details, false);
     }
 
-    public static Message warning(final long id, final SafeHtml message, final String details) {
+    public static Message warning(long id, SafeHtml message, String details) {
         return warning(id, message, details, false);
     }
 
-    public static Message warning(final SafeHtml message, final String details, final boolean sticky) {
+    public static Message warning(SafeHtml message, String details, boolean sticky) {
         return new Message(currentTimeMillis(), Level.WARNING, message, details, null, null, sticky);
     }
 
-    public static Message warning(final long id, final SafeHtml message, final String details, final boolean sticky) {
+    public static Message warning(long id, SafeHtml message, String details, boolean sticky) {
         return new Message(id, Level.WARNING, message, details, null, null, sticky);
     }
 
-    public static Message warning(final SafeHtml message, final String actionTitle, final Callback callback) {
+    public static Message warning(SafeHtml message, String actionTitle, Callback callback) {
         return warning(currentTimeMillis(), message, actionTitle, callback, false);
     }
 
-    public static Message warning(final long id, final SafeHtml message, final String actionTitle,
-            final Callback callback) {
+    public static Message warning(long id, SafeHtml message, String actionTitle, Callback callback) {
         return warning(id, message, actionTitle, callback, false);
     }
 
-    public static Message warning(final SafeHtml message, final String actionTitle, final Callback callback,
-            boolean sticky) {
+    public static Message warning(SafeHtml message, String actionTitle, Callback callback, boolean sticky) {
         return new Message(currentTimeMillis(), Level.WARNING, message, null, actionTitle, callback, sticky);
     }
 
-    public static Message warning(final long id, final SafeHtml message, final String actionTitle,
-            final Callback callback,
-            boolean sticky) {
+    public static Message warning(long id, SafeHtml message, String actionTitle, Callback callback, boolean sticky) {
         return new Message(id, Level.WARNING, message, null, actionTitle, callback, sticky);
     }
 
 
     // ------------------------------------------------------ info
 
-    public static Message info(final SafeHtml message) {
+    public static Message info(SafeHtml message) {
         return info(currentTimeMillis(), message, null, false);
     }
 
-    public static Message info(final long id, final SafeHtml message) {
+    public static Message info(long id, SafeHtml message) {
         return info(id, message, null, false);
     }
 
-    public static Message info(final SafeHtml message, final boolean sticky) {
+    public static Message info(SafeHtml message, boolean sticky) {
         return info(currentTimeMillis(), message, null, sticky);
     }
 
-    public static Message info(final long id, final SafeHtml message, final boolean sticky) {
+    public static Message info(long id, SafeHtml message, boolean sticky) {
         return info(id, message, null, sticky);
     }
 
-    public static Message info(final SafeHtml message, final String details) {
+    public static Message info(SafeHtml message, String details) {
         return info(currentTimeMillis(), message, details, false);
     }
 
-    public static Message info(final long id, final SafeHtml message, final String details) {
+    public static Message info(long id, SafeHtml message, String details) {
         return info(id, message, details, false);
     }
 
-    public static Message info(final SafeHtml message, final String details, final boolean sticky) {
+    public static Message info(SafeHtml message, String details, boolean sticky) {
         return new Message(currentTimeMillis(), Level.INFO, message, details, null, null, sticky);
     }
 
-    public static Message info(final long id, final SafeHtml message, final String details, final boolean sticky) {
+    public static Message info(long id, SafeHtml message, String details, boolean sticky) {
         return new Message(id, Level.INFO, message, details, null, null, sticky);
     }
 
-    public static Message info(final SafeHtml message, final String actionTitle, final Callback callback) {
+    public static Message info(SafeHtml message, String actionTitle, Callback callback) {
         return info(currentTimeMillis(), message, actionTitle, callback, false);
     }
 
-    public static Message info(final long id, final SafeHtml message, final String actionTitle,
-            final Callback callback) {
+    public static Message info(long id, SafeHtml message, String actionTitle, Callback callback) {
         return info(id, message, actionTitle, callback, false);
     }
 
-    public static Message info(final SafeHtml message, final String actionTitle, final Callback callback,
-            final boolean sticky) {
+    public static Message info(SafeHtml message, String actionTitle, Callback callback, boolean sticky) {
         return new Message(currentTimeMillis(), Level.INFO, message, null, actionTitle, callback, sticky);
     }
 
-    public static Message info(final long id, final SafeHtml message, final String actionTitle, final Callback callback,
-            final boolean sticky) {
+    public static Message info(long id, SafeHtml message, String actionTitle, Callback callback,
+            boolean sticky) {
         return new Message(id, Level.INFO, message, null, actionTitle, callback, sticky);
     }
 
 
     // ------------------------------------------------------ success
 
-    public static Message success(final SafeHtml message) {
+    public static Message success(SafeHtml message) {
         return success(message, null, false);
     }
 
-    public static Message success(final long id, final SafeHtml message) {
+    public static Message success(long id, SafeHtml message) {
         return success(id, message, null, false);
     }
 
-    public static Message success(final SafeHtml message, final boolean sticky) {
+    public static Message success(SafeHtml message, boolean sticky) {
         return success(currentTimeMillis(), message, null, sticky);
     }
 
-    public static Message success(final long id, final SafeHtml message, final boolean sticky) {
+    public static Message success(long id, SafeHtml message, boolean sticky) {
         return success(id, message, null, sticky);
     }
 
-    public static Message success(final SafeHtml message, final String details) {
+    public static Message success(SafeHtml message, String details) {
         return success(currentTimeMillis(), message, details, false);
     }
 
-    public static Message success(final long id, final SafeHtml message, final String details) {
+    public static Message success(long id, SafeHtml message, String details) {
         return success(id, message, details, false);
     }
 
-    public static Message success(final SafeHtml message, final String details, final boolean sticky) {
+    public static Message success(SafeHtml message, String details, boolean sticky) {
         return new Message(currentTimeMillis(), Level.SUCCESS, message, details, null, null, sticky);
     }
 
-    public static Message success(final long id, final SafeHtml message, final String details, final boolean sticky) {
+    public static Message success(long id, SafeHtml message, String details, boolean sticky) {
         return new Message(id, Level.SUCCESS, message, details, null, null, sticky);
     }
 
-    public static Message success(final SafeHtml message, final String actionTitle, final Callback callback) {
+    public static Message success(SafeHtml message, String actionTitle, Callback callback) {
         return success(currentTimeMillis(), message, actionTitle, callback, false);
     }
 
-    public static Message success(final long id, final SafeHtml message, final String actionTitle,
-            final Callback callback) {
+    public static Message success(long id, SafeHtml message, String actionTitle, Callback callback) {
         return success(id, message, actionTitle, callback, false);
     }
 
-    public static Message success(final SafeHtml message, final String actionTitle, final Callback callback,
-            final boolean sticky) {
+    public static Message success(SafeHtml message, String actionTitle, Callback callback, boolean sticky) {
         return new Message(currentTimeMillis(), Level.SUCCESS, message, null, actionTitle, callback, sticky);
     }
 
-    public static Message success(final long id, final SafeHtml message, final String actionTitle,
-            final Callback callback,
-            final boolean sticky) {
+    public static Message success(long id, SafeHtml message, String actionTitle,
+            Callback callback,
+            boolean sticky) {
         return new Message(id, Level.SUCCESS, message, null, actionTitle, callback, sticky);
     }
 
@@ -263,8 +253,8 @@ public class Message {
     private final Callback callback;
     private final boolean sticky;
 
-    private Message(final long id, final Level level, final SafeHtml message, final String details,
-            final String actionTitle, final Callback callback, final boolean sticky) {
+    private Message(long id, Level level, SafeHtml message, String details, String actionTitle, Callback callback,
+            boolean sticky) {
         Date now = new Date();
 
         this.id = id;
@@ -324,7 +314,7 @@ public class Message {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }

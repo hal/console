@@ -15,9 +15,22 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import rx.Completable;
-import rx.functions.Func0;
+import javax.inject.Inject;
 
-/** A task executed as part of the initialization process. */
-public interface BootstrapTask extends Func0<Completable> {
+/** Simple wrapper around an ordered array of initialization tasks. */
+public class InitializationTasks {
+
+    private final InitializedTask[] tasks;
+
+    @Inject
+    public InitializationTasks(CheckForUpdate checkForUpdate, CheckTargetVersion checkTargetVersion) {
+        this.tasks = new InitializedTask[]{
+                checkForUpdate,
+                checkTargetVersion,
+        };
+    }
+
+    public InitializedTask[] tasks() {
+        return tasks;
+    }
 }

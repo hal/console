@@ -15,9 +15,12 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import rx.Completable;
-import rx.functions.Func0;
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.hal.config.semver.Version;
 
-/** A task executed as part of the initialization process. */
-public interface BootstrapTask extends Func0<Completable> {
+@GenEvent
+public class VersionUpdate {
+
+    @Order(1) Version version;
 }

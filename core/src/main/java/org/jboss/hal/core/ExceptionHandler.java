@@ -39,7 +39,7 @@ public class ExceptionHandler {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
     private static boolean pendingLifecycleAction = false;
 
-    public static void setPendingLifecycleAction(boolean value) {
+    static void setPendingLifecycleAction(boolean value) {
         pendingLifecycleAction = value;
         logger.debug("ExceptionHandler.pendingLifecycleAction = {}", pendingLifecycleAction);
     }
@@ -68,8 +68,7 @@ public class ExceptionHandler {
                 placeManager.unlock();
                 progress.finish();
                 stopProgress();
-                MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().unknownError(), errorMessage));
+                MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
             }
         });
     }
