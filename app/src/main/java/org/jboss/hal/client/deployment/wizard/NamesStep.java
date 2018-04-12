@@ -92,13 +92,17 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
 
     @Override
     protected boolean onBack(UploadContext context) {
-        form.cancel();
+        if (!form.isUndefined()) {
+            form.cancel();
+        }
         return true;
     }
 
     @Override
     protected boolean onCancel(UploadContext context) {
-        form.cancel();
+        if (!form.isUndefined()) {
+            form.cancel();
+        }
         return true;
     }
 }
