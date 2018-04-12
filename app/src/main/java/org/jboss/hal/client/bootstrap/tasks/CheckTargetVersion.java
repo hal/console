@@ -52,7 +52,7 @@ public class CheckTargetVersion implements InitializedTask {
                         environment.getManagementVersion(), ManagementModel.TARGET_VERSION);
                 MessageEvent.fire(eventBus, Message.warning(resources.messages().managementVersionMismatch(
                         environment.getManagementVersion().toString(), ManagementModel.TARGET_VERSION.toString()),
-                        resources.constants().managementVersionMismatchDescription()));
+                        resources.constants().managementVersionMismatchDescription(), true));
             }
         }, UIConstants.MEDIUM_TIMEOUT);
     }
