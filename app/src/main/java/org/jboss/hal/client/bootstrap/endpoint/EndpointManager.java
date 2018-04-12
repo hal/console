@@ -17,6 +17,7 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
@@ -59,7 +60,7 @@ public class EndpointManager {
         this.callback = callback;
 
         String connect = requestParameter(CONNECT_PARAMETER);
-        if (connect != null) {
+        if (Strings.emptyToNull(connect) != null) {
             // Connect to a server given as a request parameter
             Endpoint endpoint = storage.get(connect);
             if (endpoint != null) {

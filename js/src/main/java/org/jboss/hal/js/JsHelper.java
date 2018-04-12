@@ -52,6 +52,9 @@ public final class JsHelper {
         if (results == null || results.length < 2) {
             return null;
         }
+        if (results[2] == null) {
+            return null;
+        }
         return decodeURIComponent(results[2].replace('+', ' '));
     }
 
