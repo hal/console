@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <annotations.version>15.0</annotations.version>
+        <annotations.version>16.0.1</annotations.version>
         <apt-tools.version>0.0.3</apt-tools.version>
         <auto-service.version>1.0-rc4</auto-service.version>
         <compile-testing.version>0.15</compile-testing.version>

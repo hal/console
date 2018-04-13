@@ -55,7 +55,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
     // ------------------------------------------------------ initialization
 
-    public static EjbView create(final MbuiContext mbuiContext, final Environment environment) {
+    public static EjbView create(MbuiContext mbuiContext, Environment environment) {
         return new Mbui_EjbView(mbuiContext, environment);
     }
 
@@ -92,7 +92,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     Table<NamedNode> appSecurityDomainTable;
     Form<NamedNode> appSecurityDomainForm;
 
-    EjbView(final MbuiContext mbuiContext) {
+    EjbView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -172,7 +172,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     // ------------------------------------------------------ update from DMR
 
     @Override
-    public void update(final ModelNode payload) {
+    public void update(ModelNode payload) {
         configurationForm.view(payload);
 
         threadPoolTable.update(asNamedNodes(failSafePropertyList(payload, THREAD_POOL_TEMPLATE.lastName())));

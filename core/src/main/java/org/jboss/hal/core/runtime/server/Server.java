@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.core.runtime.server;
 
-import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
@@ -35,7 +35,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 public class Server extends NamedNode {
 
-    public static final Server STANDALONE = new Server(Ids.STANDALONE_HOST, Ids.STANDALONE_SERVER_COLUMN, new ModelNode(),
+    public static final Server STANDALONE = new Server(Ids.STANDALONE_HOST, Ids.STANDALONE_SERVER_COLUMN,
+            new ModelNode(),
             true);
 
     private final boolean standalone;
