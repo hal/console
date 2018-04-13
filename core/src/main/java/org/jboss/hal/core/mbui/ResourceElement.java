@@ -34,6 +34,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.table.Column;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
@@ -116,7 +117,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 table -> builder.mbuiContext.crud().remove(builder.type, table.selectedRow().getName(),
                         builder.metadata.getTemplate(), builder.crudCallback)));
         if (builder.clAttribute != null) {
-            builder.tableBuilder.column(labelBuilder.label(builder.clAttribute), this::showComplexList);
+            builder.tableBuilder.column(
+                    new InlineAction<>(labelBuilder.label(builder.clAttribute), this::showComplexList));
         }
         table = builder.tableBuilder.build();
 
@@ -157,13 +159,16 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 }
 
                 Supplier<Operation> ping = () -> {
-                    ResourceAddress address = builder.metadata.getTemplate()
-                            .resolve(builder.mbuiContext.statementContext(), selectedResource);
-                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                            .param(NAME, complexAttribute)
-                            .build();
+                    Operation op = null;
+                    if (selectedResource != null) {
+                        ResourceAddress address = builder.metadata.getTemplate()
+                                .resolve(builder.mbuiContext.statementContext(), selectedResource);
+                        op = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                .param(NAME, complexAttribute)
+                                .build();
+                    }
+                    return op;
                 };
-
                 ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                         Ids.build(builder.baseId, complexAttribute, Ids.FORM), metadata)
                         .singleton(ping, callback)
@@ -217,8 +222,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             pages = new Pages(Ids.build(builder.baseId, Ids.PAGES), mainPageId(), section);
 
             Metadata metadata = builder.metadata.forComplexAttribute(builder.clAttribute);
-            clTable = new ModelNodeTable.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.TABLE),
-                    metadata)
+            clTable = new ModelNodeTable.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.TABLE), metadata)
                     .button(builder.mbuiContext.tableButtonFactory().add(metadata.getTemplate(),
                             table -> builder.mbuiContext.ca()
                                     .listAdd(Ids.build(builder.baseId, builder.clAttribute, Ids.ADD),
@@ -231,8 +235,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                                     builder.crudCallback)))
                     .columns(builder.clColumns)
                     .build();
-            clForm = new ModelNodeForm.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.FORM),
-                    metadata)
+            clForm = new ModelNodeForm.Builder<>(Ids.build(builder.baseId, builder.clAttribute, Ids.FORM), metadata)
                     .onSave((f, changedValues) -> builder.mbuiContext.ca().save(selectedResource, builder.clAttribute,
                             labelBuilder.label(builder.clAttribute), clIndex, metadata.getTemplate(), changedValues,
                             builder.crudCallback))
@@ -279,6 +282,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 }
             }
         });
+        coForms.forEach((s, form1) -> form1.attach());
         if (Iterables.isEmpty(form.getFormItems())) {
             Elements.setVisible(form.asElement(), false);
         }
@@ -288,6 +292,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             clForm.attach();
             clTable.bindForm(clForm);
             clTable.onSelectionChange(table -> {
+                clTable.enableButton(1, clTable.hasSelection());
                 if (table.hasSelection()) {
                     clIndex = table.selectedRow().get(HAL_INDEX).asInt();
                 } else {
@@ -326,6 +331,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             } else {
                 clTable.update(clNodes);
             }
+            clTable.enableButton(1, clTable.hasSelection());
             pages.showPage(complexListPageId());
         }
     }

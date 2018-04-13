@@ -23,17 +23,18 @@ module.exports = function (grunt) {
     grunt.initConfig({
         theme: grunt.option('theme') || 'hal',
         config: {
-            version: '0.9.3',
             bower: 'bower_components',
-            js: 'src/js',
-            less: 'src/less',
-            public: 'src/main/resources/org/jboss/hal/public',
-            themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
+            devmodeTarget: 'target/gwt/devmode/war/hal',
             esdoc: {
                 source: 'target/generated-resources/esdoc',
                 destination: 'target/esdoc',
                 input: 'src/esdoc'
-            }
+            },
+            js: 'src/js',
+            less: 'src/less',
+            public: 'src/main/resources/org/jboss/hal/public',
+            themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
+            version: '0.9.4-SNAPSHOT'
         },
 
         clean: {
@@ -50,13 +51,13 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= config.bower %>/patternfly/dist/fonts',
-                        src: '*',
-                        dest: '<%= config.public %>/fonts'
+                        cwd: '<%= config.bower %>/ace-builds/src-min-noconflict',
+                        src: ['mode-*.js', 'theme-*.js', 'worker-*.js'],
+                        dest: '<%= config.public %>/js'
                     },
                     {
                         expand: true,
-                        cwd: '<%= config.bower %>/font-awesome/fonts',
+                        cwd: '<%= config.bower %>/patternfly/dist/fonts',
                         src: '*',
                         dest: '<%= config.public %>/fonts'
                     },
@@ -91,6 +92,16 @@ module.exports = function (grunt) {
                         dest: '<%= config.public %>'
                     }
                 ]
+            },
+            css: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '<%= config.public %>/css',
+                        src: 'hal.css',
+                        dest: '<%= config.devmodeTarget %>/css'
+                    }
+                ]
             }
         },
 
@@ -118,23 +129,6 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/datatables.net-select/js/dataTables.select.js',
                     '<%= config.bower %>/ace-builds/src-noconflict/ace.js',
                     '<%= config.bower %>/ace-builds/src-noconflict/ext-modelist.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-css.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-html.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-java.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-javascript.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-json.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-jsp.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-less.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-markdown.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-php.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-properties.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-python.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-ruby.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-sh.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-sql.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-text.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-typescript.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/mode-xml.js',
                     '<%= config.bower %>/google-code-prettify/src/prettify.js',
                     '<%= config.bower %>/javascript-auto-complete/auto-complete.js',
                     '<%= config.bower %>/js-cookie/src/js.cookie.js',
@@ -168,23 +162,6 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/datatables.net-select/js/dataTables.select.min.js',
                     '<%= config.bower %>/ace-builds/src-min-noconflict/ace.js',
                     '<%= config.bower %>/ace-builds/src-min-noconflict/ext-modelist.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-css.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-html.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-java.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-javascript.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-json.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-jsp.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-less.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-markdown.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-php.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-properties.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-python.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-ruby.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-sh.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-sql.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-text.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-typescript.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/mode-xml.js',
                     '<%= config.bower %>/google-code-prettify/bin/prettify.min.js',
                     '<%= config.bower %>/javascript-auto-complete/auto-complete.min.js',
                     '<%= config.bower %>/js-cookie/src/js.cookie.js',
@@ -250,7 +227,7 @@ module.exports = function (grunt) {
             }
         },
 
-        esdoc : {
+        esdoc: {
             dist: {
                 options: {
                     source: '<%= config.esdoc.source %>',
@@ -275,9 +252,15 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.registerTask('css', [
+        'less',
+        'postcss',
+        'copy:css'
+    ]);
+
     grunt.registerTask('dev', [
         'clean',
-        'copy',
+        'copy:resources',
         'concat:dev',
         'less',
         'postcss'
@@ -285,7 +268,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('prod', [
         'clean',
-        'copy',
+        'copy:resources',
         'concat:prod',
         'less',
         'postcss',

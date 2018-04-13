@@ -26,8 +26,11 @@ public interface Database<T> {
 
     String PAYLOAD = "payload";
 
+    /** Turns a template into a resource addresses for later lookup. */
+    ResourceAddress resolveTemplate(AddressTemplate template);
+
     /** Turns the templates into resource addresses and returns a map for later lookup. */
-    Map<ResourceAddress, AddressTemplate> addressLookup(Set<AddressTemplate> templates);
+    Map<ResourceAddress, AddressTemplate> resolveTemplates(Set<AddressTemplate> templates);
 
     /** Returns a map with metadata for the specified templates. */
     Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates);

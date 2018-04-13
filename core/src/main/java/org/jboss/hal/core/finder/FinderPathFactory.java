@@ -39,11 +39,11 @@ public class FinderPathFactory {
     private final Resources resources;
 
     @Inject
-    public FinderPathFactory(final Environment environment,
-            final StatementContext statementContext,
-            final Finder finder,
-            final Subsystems subsystems,
-            final Resources resources) {
+    public FinderPathFactory(Environment environment,
+            StatementContext statementContext,
+            Finder finder,
+            Subsystems subsystems,
+            Resources resources) {
         this.environment = environment;
         this.statementContext = statementContext;
         this.finder = finder;
@@ -54,9 +54,7 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ configuration
 
-    /**
-     * Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode.
-     */
+    /** Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode. */
     public FinderPath configurationSubsystemPath(String subsystem) {
         FinderPath path = new FinderPath();
 
@@ -76,7 +74,7 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ deployment
 
-    public FinderPath content(final String content) {
+    public FinderPath content(String content) {
         if (environment.isStandalone()) {
             // in standalone content and deployment are the same thing
             return deployment(content);
@@ -108,32 +106,24 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ runtime
 
-    /**
-     * Creates a finder path for the selected host.
-     */
+    /** Creates a finder path for the selected host. */
     public FinderPath runtimeHostPath() {
         return runtimeHostPath(statementContext.selectedHost());
     }
 
-    /**
-     * Creates a finder path for the specified host.
-     */
+    /** Creates a finder path for the specified host. */
     public FinderPath runtimeHostPath(String host) {
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.HOSTS), resources.constants().browseBy(), Names.HOSTS)
                 .append(Ids.HOST, Ids.host(host), Names.HOST, host);
     }
 
-    /**
-     * Creates a finder path for the selected server group.
-     */
+    /** Creates a finder path for the selected server group. */
     public FinderPath runtimeServerGroupPath() {
         return runtimeServerGroupPath(statementContext.selectedServerGroup());
     }
 
-    /**
-     * Creates a finder path for the specified server group.
-     */
+    /** Creates a finder path for the specified server group. */
     public FinderPath runtimeServerGroupPath(String serverGroup) {
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS),
@@ -141,13 +131,11 @@ public class FinderPathFactory {
                 .append(SERVER_GROUP, Ids.serverGroup(serverGroup), Names.SERVER_GROUP, serverGroup);
     }
 
-    /**
-     * Creates a finder path for the selected server. Adds the selected host / server group when running domain mode.
-     */
+    /** Creates a finder path for the selected server. Adds the selected host / server group when running domain mode. */
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
             String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
-            return new FinderPath().append(Ids.STANDALONE_SERVER, serverId,
+            return new FinderPath().append(Ids.STANDALONE_SERVER_COLUMN, serverId,
                     Names.SERVER, Names.STANDALONE_SERVER);
         } else {
             String host = statementContext.selectedHost();
@@ -157,13 +145,11 @@ public class FinderPathFactory {
         }
     }
 
-    /**
-     * Creates a finder path for the specified host and server.
-     */
+    /** Creates a finder path for the specified host and server. */
     public FinderPath runtimeServerPath(String host, String server) {
         if (environment.isStandalone()) {
             String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
-            return new FinderPath().append(Ids.STANDALONE_SERVER, serverId,
+            return new FinderPath().append(Ids.STANDALONE_SERVER_COLUMN, serverId,
                     Names.SERVER, Names.STANDALONE_SERVER);
         } else {
             return runtimeHostPath(host).append(Ids.SERVER, Ids.hostServer(host, server), Names.SERVER, server);

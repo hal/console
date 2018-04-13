@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.9.3</version>
+    <version>3.0.0.Alpha1</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -77,9 +77,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git@github.com:hal/hal.next.git</connection>
-        <developerConnection>scm:git:git@github.com:hal/hal.next.git</developerConnection>
-        <url>git@github.com:hal/hal.next.git</url>
+        <connection>scm:git@github.com:hal/console.git</connection>
+        <developerConnection>scm:git:git@github.com:hal/console.git</developerConnection>
+        <url>git@github.com:hal/console.git</url>
     </scm>
 
     <issueManagement>
@@ -88,8 +88,7 @@
     </issueManagement>
 
     <properties>
-        <checkstyle.hal.version>2</checkstyle.hal.version>
-
+        <github.global.server>github</github.global.server>
         <grunt-task>dev</grunt-task>
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>
@@ -102,11 +101,15 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
+        <plugin.buildhelper.version>3.0.0</plugin.buildhelper.version>
+        <plugin.degraph.version>3.0.1</plugin.degraph.version>
         <plugin.docker.version>0.22.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
-        <plugin.processor.version>3.2.0</plugin.processor.version>
+        <plugin.processor.version>3.3.2</plugin.processor.version>
+        <plugin.reports.version>2.9</plugin.reports.version>
+        <plugin.github.site.version>0.12</plugin.github.site.version>
         <plugin.swarm.version>60</plugin.swarm.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -143,6 +146,16 @@
             <!-- plugins ordered by artifactId -->
             <plugins>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${plugin.buildhelper.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.ferstl</groupId>
+                    <artifactId>depgraph-maven-plugin</artifactId>
+                    <version>${plugin.degraph.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
                     <version>${plugin.docker.version}</version>
@@ -169,6 +182,11 @@
                     <version>${plugin.processor.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>${plugin.github.site.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.wildfly.swarm</groupId>
                     <artifactId>wildfly-swarm-fraction-plugin</artifactId>
                     <version>${plugin.swarm.version}</version>
@@ -177,49 +195,54 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.hal</groupId>
-                        <artifactId>checkstyle-config</artifactId>
-                        <version>${checkstyle.hal.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <configLocation>checkstyle/checkstyle.xml</configLocation>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>com.github.ferstl</groupId>
+                <artifactId>depgraph-maven-plugin</artifactId>
+                <configuration>
+                    <createImage>true</createImage>
+                    <customStyleConfiguration>build/degraph-style.json</customStyleConfiguration>
+                    <includes>
+                        <include>org.jboss.hal:hal-console</include>
+                        <include>org.jboss.hal:hal-ballroom</include>
+                        <include>org.jboss.hal:hal-config</include>
+                        <include>org.jboss.hal:hal-core</include>
+                        <include>org.jboss.hal:hal-db</include>
+                        <include>org.jboss.hal:hal-dmr</include>
+                        <include>org.jboss.hal:hal-flow</include>
+                        <include>org.jboss.hal:hal-js</include>
+                        <include>org.jboss.hal:hal-meta</include>
+                        <include>org.jboss.hal:hal-resources</include>
+                        <include>org.jboss.hal:hal-spi</include>
+                        <include>com.google.elemental2:*</include>
+                        <include>com.google.gwt:gwt-user</include>
+                        <include>com.google.guava:guava</include>
+                        <include>com.gwtplatform:gwtp-all</include>
+                        <include>com.intendia.gwt.rxgwt:rxgwt</include>
+                        <include>org.jboss.gwt.elemento:elemento-core</include>
+                        <include>org.jboss.gwt.elemento:elemento-template-api</include>
+                        <include>org.slf4j:slf4j-api</include>
+                    </includes>
+                    <mergeTypes>true</mergeTypes>
+                    <scope>compile</scope>
+                    <showGroupIds>true</showGroupIds>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <debug>true</debug>
-                    <detectLinks>true</detectLinks>
-                    <excludePackageNames>org.jboss.hal.processor:org.jboss.hal.processor.mbui</excludePackageNames>
-                    <links>
-                        <link>http://www.gwtproject.org/javadoc/latest/</link>
-                    </links>
-                    <tags>
-                        <tag>
-                            <name>example</name>
-                            <placement>tcmf</placement>
-                            <head>Example</head>
-                        </tag>
-                    </tags>
-                    <useStandardDocletOptions>true</useStandardDocletOptions>
-                </configuration>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <configLocation>build/checkstyle.xml</configLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -263,30 +286,136 @@
             <build>
                 <plugins>
                     <!-- Enable when there's a stable RxGWT version which is compatible with Elemento -->
-<!--
+                    <!--
+                                        <plugin>
+                                            <groupId>org.apache.maven.plugins</groupId>
+                                            <artifactId>maven-enforcer-plugin</artifactId>
+                                            <executions>
+                                                <execution>
+                                                    <id>enforce-no-snapshots</id>
+                                                    <goals>
+                                                        <goal>enforce</goal>
+                                                    </goals>
+                                                    <configuration>
+                                                        <rules>
+                                                            <requireReleaseDeps>
+                                                                <message>No Snapshots Allowed!</message>
+                                                            </requireReleaseDeps>
+                                                        </rules>
+                                                        <fail>true</fail>
+                                                    </configuration>
+                                                </execution>
+                                            </executions>
+                                        </plugin>
+                    -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>enforce-no-snapshots</id>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
                                 <goals>
-                                    <goal>enforce</goal>
+                                    <goal>sign</goal>
                                 </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireReleaseDeps>
-                                            <message>No Snapshots Allowed!</message>
-                                        </requireReleaseDeps>
-                                    </rules>
-                                    <fail>true</fail>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
--->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>site</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>site-maven-plugin</artifactId>
+                        <configuration>
+                            <branch>refs/heads/site</branch>
+                            <message>Creating site for ${project.name} ${project.version}</message>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>site</goal>
+                                </goals>
+                                <phase>site</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-project-info-reports-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>index</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <detectLinks>true</detectLinks>
+                            <links>
+                                <link>http://www.gwtproject.org/javadoc/latest/</link>
+                            </links>
+                            <excludePackageNames>
+                                org.jboss.gwt.elemento.processor:org.jboss.gwt.elemento.processor.context
+                            </excludePackageNames>
+                        </configuration>
+                        <reportSets>
+                            <reportSet>
+                                <id>aggregate</id>
+                                <reports>
+                                    <report>aggregate</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
         <profile>
             <id>theme-eap</id>

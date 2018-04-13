@@ -130,6 +130,13 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                         Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), ENABLED))
                 .build();
 
+        Constraint reloadConstraint = environment.isStandalone()
+                ? Constraint.executable(AddressTemplate.of("/"), RELOAD)
+                : Constraint.executable(AddressTemplate.of("/{selected.host}/server-config=*"), RELOAD);
+        Constraint restartConstraint = environment.isStandalone()
+                ? Constraint.executable(AddressTemplate.of("/"), RELOAD)
+                : Constraint.executable(AddressTemplate.of("/{selected.host}/server-config=*"), RESTART);
+
         needsReloadWarning = new Alert(Icons.WARNING,
                 new SafeHtmlBuilder()
                         .append(resources.messages().serverNeedsReload(server.getName()))
@@ -137,7 +144,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),
                 resources.constants().reload(), event -> serverActions.reload(server),
-                Constraint.executable(AddressTemplate.of("/{selected.host}/server-config=*"), RELOAD));
+                reloadConstraint);
 
         needsRestartWarning = new Alert(Icons.WARNING,
                 new SafeHtmlBuilder()
@@ -146,7 +153,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),
                 resources.constants().restart(), event -> serverActions.restart(server),
-                Constraint.executable(AddressTemplate.of("/{selected.host}/server-config=*"), RESTART));
+                restartConstraint);
 
         disabledWarning = new Alert(Icons.WARNING,
                 resources.messages().dataSourceDisabledNoStatistics(dataSource.getName()),
@@ -188,7 +195,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void update(final DataSource ds) {
+    public void update(DataSource ds) {
 
         // if the data source is from a deployment we don't need to refresh
         if (ds != null && ds.fromDeployment()) {

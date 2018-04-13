@@ -40,16 +40,16 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
     private final Elements elementUtils;
     final XPathFactory xPathFactory;
 
-    AbstractMbuiElementProcessor(final MbuiViewProcessor processor, final Types typeUtils,
-            final Elements elementUtils, final XPathFactory xPathFactory) {
+    AbstractMbuiElementProcessor(MbuiViewProcessor processor, Types typeUtils,
+            Elements elementUtils, XPathFactory xPathFactory) {
         this.processor = processor;
         this.typeUtils = typeUtils;
         this.elementUtils = elementUtils;
         this.xPathFactory = xPathFactory;
     }
 
-    MetadataInfo findMetadata(final VariableElement field, final org.jdom2.Element element,
-            final MbuiViewContext context) {
+    MetadataInfo findMetadata(VariableElement field, org.jdom2.Element element,
+            MbuiViewContext context) {
         MetadataInfo metadataInfo = null;
         //noinspection HardCodedStringLiteral
         XPathExpression<Element> expression = xPathFactory.compile("ancestor::" + XmlTags.METADATA, Filters.element());
@@ -69,17 +69,17 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
         return metadataInfo;
     }
 
-    TypeParameter getTypeParameter(final VariableElement field) {
+    TypeParameter getTypeParameter(VariableElement field) {
         TypeMirror type = elementUtils.getTypeElement("org.jboss.hal.dmr.ModelNode").asType();
         DeclaredType declaredType = MoreTypes.asDeclared(field.asType());
         List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
         if (!typeArguments.isEmpty()) {
             type = typeArguments.get(0);
         }
-        return new TypeParameter(MoreTypes.asTypeElement(typeUtils, type).getQualifiedName().toString());
+        return new TypeParameter(MoreTypes.asTypeElement(type).getQualifiedName().toString());
     }
 
-    List<Attribute> processAttributes(final VariableElement field, org.jdom2.Element attributesContainer) {
+    List<Attribute> processAttributes(VariableElement field, org.jdom2.Element attributesContainer) {
         return attributesContainer.getChildren(XmlTags.ATTRIBUTE).stream()
                 .map(element -> processAttribute(field, element))
                 .collect(toList());

@@ -95,8 +95,6 @@ import org.jboss.hal.client.configuration.subsystem.security.Mbui_SecurityDomain
 import org.jboss.hal.client.configuration.subsystem.security.Mbui_SecurityView;
 import org.jboss.hal.client.configuration.subsystem.security.SecurityDomainPresenter;
 import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
-import org.jboss.hal.client.configuration.subsystem.transaction.Mbui_TransactionView;
-import org.jboss.hal.client.configuration.subsystem.transaction.TransactionPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainView;
 import org.jboss.hal.client.configuration.subsystem.undertow.BufferCachePresenter;
@@ -113,8 +111,6 @@ import org.jboss.hal.client.configuration.subsystem.webservice.WebservicePresent
 import org.jboss.hal.client.configuration.subsystem.webservice.WebserviceView;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
 import org.jboss.hal.client.deployment.BrowseContentView;
-import org.jboss.hal.client.deployment.DeploymentPresenter;
-import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.deployment.ServerGroupDeploymentPresenter;
 import org.jboss.hal.client.deployment.ServerGroupDeploymentView;
 import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
@@ -144,6 +140,8 @@ import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
 import org.jboss.hal.client.runtime.server.ServerRuntimePresenter;
 import org.jboss.hal.client.runtime.server.ServerRuntimeView;
+import org.jboss.hal.client.runtime.server.StandaloneServerPresenter;
+import org.jboss.hal.client.runtime.server.StandaloneServerView;
 import org.jboss.hal.client.runtime.subsystem.batch.JobPresenter;
 import org.jboss.hal.client.runtime.subsystem.batch.JobView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
@@ -160,6 +158,7 @@ import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.client.tools.ModelBrowserView;
+import org.jboss.hal.core.ExceptionHandler;
 import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.GinModule;
@@ -270,10 +269,10 @@ public class ConsoleModule extends AbstractPresenterModule {
                 org.jboss.hal.client.runtime.subsystem.datasource.DataSourceView.class,
                 org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.MyProxy.class);
 
-        bindPresenter(DeploymentPresenter.class,
-                DeploymentPresenter.MyView.class,
-                DeploymentView.class,
-                DeploymentPresenter.MyProxy.class);
+        bindPresenter(org.jboss.hal.client.deployment.DeploymentPresenter.class,
+                org.jboss.hal.client.deployment.DeploymentPresenter.MyView.class,
+                org.jboss.hal.client.deployment.DeploymentView.class,
+                org.jboss.hal.client.deployment.DeploymentPresenter.MyProxy.class);
 
         bindPresenter(org.jboss.hal.client.runtime.subsystem.undertow.DeploymentPresenter.class,
                 org.jboss.hal.client.runtime.subsystem.undertow.DeploymentPresenter.MyView.class,
@@ -570,15 +569,20 @@ public class ConsoleModule extends AbstractPresenterModule {
                 StandaloneDeploymentView.class,
                 StandaloneDeploymentPresenter.MyProxy.class);
 
+        bindPresenter(StandaloneServerPresenter.class,
+                StandaloneServerPresenter.MyView.class,
+                StandaloneServerView.class,
+                StandaloneServerPresenter.MyProxy.class);
+
         bindPresenter(SystemPropertiesPresenter.class,
                 SystemPropertiesPresenter.MyView.class,
                 SystemPropertiesView.class,
                 SystemPropertiesPresenter.MyProxy.class);
 
-        bindPresenter(TransactionPresenter.class,
-                TransactionPresenter.MyView.class,
-                Mbui_TransactionView.class,
-                TransactionPresenter.MyProxy.class);
+        bindPresenter(org.jboss.hal.client.configuration.subsystem.transaction.TransactionPresenter.class,
+                org.jboss.hal.client.configuration.subsystem.transaction.TransactionPresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.transaction.Mbui_TransactionView.class,
+                org.jboss.hal.client.configuration.subsystem.transaction.TransactionPresenter.MyProxy.class);
 
         bindPresenter(org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.class,
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyView.class,
@@ -599,6 +603,5 @@ public class ConsoleModule extends AbstractPresenterModule {
                 WebservicePresenter.MyView.class,
                 WebserviceView.class,
                 WebservicePresenter.MyProxy.class);
-
     }
 }

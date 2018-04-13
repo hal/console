@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -45,23 +46,26 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 public class SocketBindingGroupColumn extends FinderColumn<NamedNode> {
 
     @Inject
-    public SocketBindingGroupColumn(final Finder finder,
-            final Places places,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud) {
+    public SocketBindingGroupColumn(Finder finder,
+            Places places,
+            Environment environment,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.SOCKET_BINDING_GROUP, Names.SOCKET_BINDING_GROUP)
-                .columnAction(columnActionFactory.add(
-                        Ids.SOCKET_BINDING_GROUP_ADD,
-                        Names.SOCKET_BINDING_GROUP,
-                        SocketBindingGroupPresenter.ROOT_TEMPLATE))
-                .columnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_GROUP_REFRESH))
                 .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), SOCKET_BINDING_GROUP, 1,
                         result -> callback.onSuccess(ModelNodeHelper.asNamedNodes(result))))
                 .useFirstActionAsBreadcrumbHandler()
-                .onPreview((socketBinding) -> new SocketBindingGroupPreview(socketBinding, places))
-        );
+                .onPreview((socketBinding) -> new SocketBindingGroupPreview(socketBinding, places)));
+
+        if (!environment.isStandalone()) {
+            addColumnAction(columnActionFactory.add(
+                    Ids.SOCKET_BINDING_GROUP_ADD,
+                    Names.SOCKET_BINDING_GROUP,
+                    SocketBindingGroupPresenter.ROOT_TEMPLATE));
+        }
+        addColumnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_GROUP_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override

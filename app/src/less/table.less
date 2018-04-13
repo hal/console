@@ -1,17 +1,10 @@
-.datatable.hover {
-  tbody tr:hover {
-    background-color: #d1d1d1;
-  }
-  tbody td.dataTables_empty:hover {
+.table-hover {
+  tbody td.dataTables_empty, tbody td.dataTables_empty:hover {
     background-color: #fff;
   }
 }
 
 .datatable {
-  tr.selected td {
-    background-color: #bee1f4;
-  }
-
   .focus {
     outline: 1px dashed #666;
   }
@@ -42,4 +35,64 @@
 
 .column-action {
   cursor: pointer;
+}
+
+table.dataTable {
+  tbody {
+    > tr {
+      > td {
+        &.table-view-hal-actions {
+          padding: 0;
+          vertical-align: middle;
+        }
+      }
+      &:hover {
+        > td.table-view-hal-actions {
+          background-color: @table-bg-accent;
+          border-bottom-color: @table-border-color;
+        }
+      }
+    }
+    > tr.selected {
+      > td {
+        &.table-view-hal-actions {
+          background-color: @table-bg-accent;
+          border-bottom-color: @table-border-color;
+        }
+      }
+      &:hover {
+        > td {
+          &.table-view-hal-actions {
+            background-color: @table-bg-accent;
+            border-bottom-color: @table-border-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+.table-view-hal-actions {
+  background-color: @btn-default-bg;
+  height: 100%;
+
+  .table-view-hal-btn {
+    display: flex;
+  }
+
+  .btn {
+    border-left: none;
+    border-top: none;
+    border-right: 1px solid #d1d1d1;
+    border-bottom: none;
+    box-shadow: none;
+    flex: 1;
+    height: 100%;
+    .text-overflow();
+    width: 0;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
 }

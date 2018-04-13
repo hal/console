@@ -31,7 +31,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
     private final boolean allowEmpty;
 
-    public SingleSelectBoxItem(final String name, final String label, List<String> options, boolean allowEmpty) {
+    public SingleSelectBoxItem(String name, String label, List<String> options, boolean allowEmpty) {
         super(name, label, null);
         this.allowEmpty = allowEmpty;
 
@@ -53,7 +53,6 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
                     select.multiple = false;
                 })
                 .asElement();
-
         addAppearance(Form.State.EDITING, new SingleSelectBoxEditingAppearance(selectElement, options, allowEmpty));
     }
 
@@ -75,7 +74,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    public void setUndefined(final boolean undefined) {
+    public void setUndefined(boolean undefined) {
         if (allowEmpty || !undefined) {
             // ok
             super.setUndefined(undefined);
@@ -101,8 +100,8 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
     private class SingleSelectBoxEditingAppearance extends SelectBoxEditingAppearance<String> {
 
-        SingleSelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options,
-                final boolean allowEmpty) {
+        SingleSelectBoxEditingAppearance(HTMLSelectElement selectElement, List<String> options,
+                boolean allowEmpty) {
             super(selectElement, options, allowEmpty);
         }
 
@@ -119,7 +118,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public void showValue(final String value) {
+        public void showValue(String value) {
             if (attached) {
                 Single.element(selectElement).setValue(value);
             } else {

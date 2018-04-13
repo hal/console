@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.config.Environment;
@@ -28,9 +29,11 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
@@ -40,8 +43,8 @@ import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -58,32 +61,33 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
     abstract Environment environment();
 
-    @MbuiElement("ejb-vertical-navigation") VerticalNavigation navigation;
+    @MbuiElement("ejb3-vertical-navigation") VerticalNavigation navigation;
 
-    @MbuiElement("ejb-configuration-form") Form<ModelNode> configurationForm;
+    @MbuiElement("ejb3-configuration-form") Form<ModelNode> configurationForm;
 
-    @MbuiElement("ejb-thread-pool-table") Table<NamedNode> threadPoolTable;
-    @MbuiElement("ejb-thread-pool-form") Form<NamedNode> threadPoolForm;
+    @MbuiElement("ejb3-thread-pool-table") Table<NamedNode> threadPoolTable;
+    @MbuiElement("ejb3-thread-pool-form") Form<NamedNode> threadPoolForm;
 
-    @MbuiElement("ejb-remoting-profile-table") Table<NamedNode> remotingProfileTable;
-    @MbuiElement("ejb-remoting-profile-form") Form<NamedNode> remotingProfileForm;
+    @MbuiElement("ejb3-remoting-profile-table") Table<NamedNode> remotingProfileTable;
+    @MbuiElement("ejb3-remoting-profile-form") Form<NamedNode> remotingProfileForm;
 
-    @MbuiElement("ejb-bean-pool-table") Table<NamedNode> beanPoolTable;
-    @MbuiElement("ejb-bean-pool-form") Form<NamedNode> beanPoolForm;
+    @MbuiElement("ejb3-bean-pool-table") Table<NamedNode> beanPoolTable;
+    @MbuiElement("ejb3-bean-pool-form") Form<NamedNode> beanPoolForm;
 
-    @MbuiElement("ejb-cache-table") Table<NamedNode> cacheTable;
-    @MbuiElement("ejb-cache-form") Form<NamedNode> cacheForm;
+    @MbuiElement("ejb3-cache-table") Table<NamedNode> cacheTable;
+    @MbuiElement("ejb3-cache-form") Form<NamedNode> cacheForm;
 
-    @MbuiElement("ejb-passivation-table") Table<NamedNode> passivationTable;
-    @MbuiElement("ejb-passivation-form") Form<NamedNode> passivationForm;
+    @MbuiElement("ejb3-passivation-table") Table<NamedNode> passivationTable;
+    @MbuiElement("ejb3-passivation-form") Form<NamedNode> passivationForm;
 
-    @MbuiElement("ejb-service-async-form") Form<ModelNode> serviceAsyncForm;
-    @MbuiElement("ejb-service-iiop-form") Form<ModelNode> serviceIiopForm;
-    @MbuiElement("ejb-service-remote-form") Form<ModelNode> serviceRemoteForm;
-    @MbuiElement("ejb-service-timer-form") Form<ModelNode> serviceTimerForm;
+    @MbuiElement("ejb3-service-async-form") Form<ModelNode> serviceAsyncForm;
+    @MbuiElement("ejb3-service-identity-form") Form<ModelNode> serviceIdentityForm;
+    @MbuiElement("ejb3-service-iiop-form") Form<ModelNode> serviceIiopForm;
+    @MbuiElement("ejb3-service-remote-form") Form<ModelNode> serviceRemoteForm;
+    @MbuiElement("ejb3-service-timer-form") Form<ModelNode> serviceTimerForm;
 
-    @MbuiElement("ejb-mdb-delivery-group-table") Table<NamedNode> mdbDeliveryGroupTable;
-    @MbuiElement("ejb-mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
+    @MbuiElement("ejb3-mdb-delivery-group-table") Table<NamedNode> mdbDeliveryGroupTable;
+    @MbuiElement("ejb3-mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
 
     Table<NamedNode> appSecurityDomainTable;
     Form<NamedNode> appSecurityDomainForm;
@@ -95,6 +99,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     @PostConstruct
     @SuppressWarnings("ConstantConditions")
     void init() {
+        StatementContext statementContext = mbuiContext.statementContext();
         if (ManagementModel.supportsEjbApplicationSecurityDomain(environment().getManagementVersion())) {
             AddressTemplate template = AddressTemplate.of(
                     "/{selected.profile}/subsystem=ejb3/application-security-domain=*");
@@ -115,12 +120,12 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     .onSave((form, changedValues) -> {
                         String name = form.getModel().getName();
                         saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                template.resolve(mbuiContext.statementContext(), name), changedValues, metadata);
+                                template.resolve(statementContext, name), changedValues, metadata);
                     })
                     .prepareReset(form -> {
                         String name = form.getModel().getName();
                         resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                template.resolve(mbuiContext.statementContext(), name), form, metadata);
+                                template.resolve(statementContext, name), form, metadata);
                     })
                     .build();
 
@@ -133,6 +138,19 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
             navigation.insertPrimary(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ITEM, null, Names.SECURITY_DOMAIN,
                     fontAwesome("link"), section);
         }
+        Dispatcher dispatcher = mbuiContext.dispatcher();
+        configurationForm.getFormItem(DEFAULT_SFSB_CACHE)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, CACHE_TEMPLATE));
+        configurationForm.getFormItem(DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, CACHE_TEMPLATE));
+        configurationForm.getFormItem(DEFAULT_SLSB_INSTANCE_POOL)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, BEAN_POOL_TEMPLATE));
+        configurationForm.getFormItem(DEFAULT_SECURITY_DOMAIN)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        SECURITY_DOMAIN_TEMPLATE));
+        cacheForm.getFormItem(PASSIVATION_STORE)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        PASSIVATION_TEMPLATE));
     }
 
     @Override
@@ -140,6 +158,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         super.attach();
         appSecurityDomainTable.attach();
         appSecurityDomainForm.attach();
+        appSecurityDomainTable.bindForm(appSecurityDomainForm);
     }
 
     @Override
@@ -172,6 +191,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         passivationForm.clear();
 
         serviceAsyncForm.view(payload.get(SERVICE).get(SERVICE_ASYNC_TEMPLATE.lastValue()));
+        serviceIdentityForm.view(payload.get(SERVICE).get(SERVICE_IDENTITY_TEMPLATE.lastValue()));
         serviceIiopForm.view(payload.get(SERVICE).get(SERVICE_IIOP_TEMPLATE.lastValue()));
         serviceRemoteForm.view(payload.get(SERVICE).get(SERVICE_REMOTE_TEMPLATE.lastValue()));
         serviceTimerForm.view(payload.get(SERVICE).get(SERVICE_TIMER_TEMPLATE.lastValue()));

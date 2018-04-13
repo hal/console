@@ -22,12 +22,12 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-gwt</artifactId>
-        <version>0.9.3</version>
+        <version>3.0.0.Alpha1</version>
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
     <artifactId>hal-js</artifactId>
-    <name>HAL :: JavaScrip</name>
+    <name>HAL :: JavaScript</name>
     <description>Low level JavaScript code</description>
     <packaging>gwt-lib</packaging>
 

@@ -75,8 +75,8 @@ class NamesStep extends WizardStep<Context, State> {
         nameItem.setUndefined(false);
 
         nameItem.setEnabled(!context.isCreated());
-        form.getFormItem(JNDI_NAME).setEnabled(!context.isCreated());
         form.edit(context.dataSource);
+        form.getFormItem(JNDI_NAME).setEnabled(!context.isCreated());
     }
 
     @Override

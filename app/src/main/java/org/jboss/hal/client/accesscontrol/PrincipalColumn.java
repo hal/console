@@ -193,10 +193,13 @@ class PrincipalColumn extends FinderColumn<Principal> {
                                                             AddressTemplates.assignment(assignment), REMOVE
                                                     ).build())
                                                     .collect(toList());
-                                            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
-                                                MessageEvent.fire(eventBus, Message.success(success));
-                                                accessControl.reload(() -> refresh(CLEAR_SELECTION));
-                                            });
+                                            if (!operations.isEmpty()) {
+                                                dispatcher.execute(new Composite(operations),
+                                                        (CompositeResult result) -> {
+                                                            MessageEvent.fire(eventBus, Message.success(success));
+                                                            accessControl.reload(() -> refresh(CLEAR_SELECTION));
+                                                        });
+                                            }
                                         });
                             }
                         })

@@ -32,25 +32,33 @@ import static org.jboss.hal.resources.CSS.formControl;
 
 public class TextBoxItem extends AbstractFormItem<String> {
 
-    public TextBoxItem(final String name) {
+    private HTMLInputElement inputElement;
+
+    public TextBoxItem(String name) {
         this(name, new LabelBuilder().label(name), null);
     }
 
-    public TextBoxItem(final String name, final String label) {
+    public TextBoxItem(String name, String label) {
         this(name, label, null);
     }
 
-    public TextBoxItem(final String name, final String label, final String hint) {
+    public TextBoxItem(String name, String label, String hint) {
         super(name, label, hint);
 
         // read-only appearance
         addAppearance(Form.State.READONLY, new TextBoxReadOnlyAppearance());
 
         // editing appearance
-        HTMLInputElement inputElement = input(text)
+        inputElement = input(text)
                 .css(formControl)
                 .asElement();
 
+        addAppearance(EDITING, new TextBoxEditingAppearance(inputElement));
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         bind(inputElement, change, event -> {
             if (hasExpressionScheme(inputElement.value)) {
                 modifyExpressionValue(inputElement.value);
@@ -62,8 +70,6 @@ public class TextBoxItem extends AbstractFormItem<String> {
             toggleExpressionSupport(inputElement.value);
             inputElement.focus();
         });
-
-        addAppearance(EDITING, new TextBoxEditingAppearance(inputElement));
     }
 
     @Override
@@ -77,7 +83,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    public void onSuggest(final String suggestion) {
+    public void onSuggest(String suggestion) {
         modifyValue(suggestion);
     }
 
@@ -107,12 +113,12 @@ public class TextBoxItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public void showValue(final String value) {
+        public void showValue(String value) {
             inputElement.value = value;
         }
 
         @Override
-        public void showExpression(final String expression) {
+        public void showExpression(String expression) {
             inputElement.value = expression;
         }
 

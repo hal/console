@@ -24,6 +24,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.Widgets;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
@@ -47,7 +48,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     public RootView() {
         slots = new HashMap<>();
         rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).asElement();
-        initWidget(Elements.asWidget(rootContainer));
+        initWidget(Widgets.asWidget(rootContainer));
     }
 
     @Override
@@ -57,7 +58,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             // single elements only!
             HTMLElement element = content instanceof IsElement ?
                     ((IsElement) content).asElement() :
-                    Elements.asElement(content);
+                    Widgets.asElement(content);
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
                 // append all three building blocks to the document body
@@ -85,7 +86,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             if (!finished) {
                 HTMLElement element = content instanceof IsElement
                         ? ((IsElement) content).asElement()
-                        : Elements.asElement(content);
+                        : Widgets.asElement(content);
                 rootContainer.appendChild(element);
             }
 

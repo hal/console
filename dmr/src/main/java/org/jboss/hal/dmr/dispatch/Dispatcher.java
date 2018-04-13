@@ -23,8 +23,12 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import elemental2.dom.Blob;
+import elemental2.dom.Blob.ConstructorBlobPartsArrayUnionType;
+import elemental2.dom.BlobPropertyBag;
 import elemental2.dom.File;
 import elemental2.dom.FormData;
+import elemental2.dom.FormData.AppendValueUnionType;
 import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -61,6 +65,7 @@ import rx.SingleSubscriber;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
+import static elemental2.dom.DomGlobal.navigator;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -248,16 +253,24 @@ public class Dispatcher implements RecordingHandler {
     @JsIgnore
     public Single<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
-        FormData formData = createFormData(file, uploadOperation.toBase64String());
+
+        ConstructorBlobPartsArrayUnionType blob = ConstructorBlobPartsArrayUnionType.of(
+                uploadOperation.toBase64String());
+        BlobPropertyBag options = BlobPropertyBag.create();
+        options.setType("application/dmr-encoded");
+
+        FormData formData = new FormData();
+        if (navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1) {
+            // Safari does not support sending new files
+            // https://bugs.webkit.org/show_bug.cgi?id=165081
+            ConstructorBlobPartsArrayUnionType fileAsBlob = ConstructorBlobPartsArrayUnionType.of(file);
+            formData.append(file.name, new Blob(new ConstructorBlobPartsArrayUnionType[]{fileAsBlob}));
+        } else {
+            formData.append(file.name, AppendValueUnionType.of(file));
+        }
+        formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[]{blob}, options));
         return uploadFormData(formData, uploadOperation).map(payload -> payload.get(RESULT));
     }
-
-    private native FormData createFormData(File file, String operation) /*-{
-        var formData = new $wnd.FormData();
-        formData.append(file.name, file);
-        formData.append("operation", new Blob([operation], {type: "application/dmr-encoded"}));
-        return formData;
-    }-*/;
 
     private Single<ModelNode> uploadFormData(FormData formData, Operation operation) {
         return Single.fromEmitter(emitter -> {

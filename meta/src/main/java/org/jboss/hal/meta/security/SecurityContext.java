@@ -27,9 +27,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @SuppressWarnings("SimplifiableIfStatement")
 public class SecurityContext extends ModelNode {
 
-    /**
-     * A security context with hardcoded permissions to read resources, write and execute operations are not allowed.
-     */
+    /** A security context with hardcoded permissions to read resources, write and execute operations are not allowed. */
     public static final SecurityContext READ_ONLY = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {
@@ -42,24 +40,22 @@ public class SecurityContext extends ModelNode {
         }
 
         @Override
-        public boolean isReadable(final String attribute) {
+        public boolean isReadable(String attribute) {
             return true;
         }
 
         @Override
-        public boolean isWritable(final String attribute) {
+        public boolean isWritable(String attribute) {
             return false;
         }
 
         @Override
-        public boolean isExecutable(final String operation) {
+        public boolean isExecutable(String operation) {
             return false;
         }
     };
 
-    /**
-     * A security context with hardcoded permissions to read, write and execute any resource.
-     */
+    /** A security context with hardcoded permissions to read, write and execute any resource. */
     public static final SecurityContext RWX = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {
@@ -72,17 +68,17 @@ public class SecurityContext extends ModelNode {
         }
 
         @Override
-        public boolean isReadable(final String attribute) {
+        public boolean isReadable(String attribute) {
             return true;
         }
 
         @Override
-        public boolean isWritable(final String attribute) {
+        public boolean isWritable(String attribute) {
             return true;
         }
 
         @Override
-        public boolean isExecutable(final String operation) {
+        public boolean isExecutable(String operation) {
             return true;
         }
     };

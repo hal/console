@@ -15,18 +15,17 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class ColumnActions<T> {
 
-    private final Map<String, ColumnAction<T>> columnActions;
+    private final LinkedHashMap<String, InlineActionHandler<T>> columnActions;
 
     ColumnActions() {
-        columnActions = new HashMap<>();
+        columnActions = new LinkedHashMap<>();
     }
 
-    public void add(String id, ColumnAction<T> columnAction) {
+    public void add(String id, InlineActionHandler<T> columnAction) {
         columnActions.put(id, columnAction);
     }
 
@@ -34,7 +33,11 @@ public class ColumnActions<T> {
         return columnActions.isEmpty();
     }
 
-    public ColumnAction<T> get(String key) {
+    public InlineActionHandler<T> get(String key) {
         return columnActions.get(key);
+    }
+
+    public LinkedHashMap<String, InlineActionHandler<T>> getColumnActions() {
+        return columnActions;
     }
 }

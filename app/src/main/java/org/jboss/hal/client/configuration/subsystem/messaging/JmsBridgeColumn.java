@@ -58,18 +58,9 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
 
     @SuppressWarnings("HardCodedStringLiteral")
     static <T> void registerSuggestionHandler(Dispatcher dispatcher, StatementContext statementContext, Form<T> form) {
-        form.getFormItem("source-connection-factory").registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
-                        CONNECTION_FACTORY_TEMPLATE, POOLED_CONNECTION_FACTORY_TEMPLATE)));
         form.getFormItem("target-connection-factory").registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
                         CONNECTION_FACTORY_TEMPLATE, POOLED_CONNECTION_FACTORY_TEMPLATE)));
-        form.getFormItem("source-destination").registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
-                        JMS_QUEUE_TEMPLATE, JMS_TOPIC_TEMPLATE)));
-        form.getFormItem("target-destination").registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
-                        JMS_QUEUE_TEMPLATE, JMS_TOPIC_TEMPLATE)));
     }
 
     @Inject
@@ -95,6 +86,7 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
                     Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JMS_BRIDGE_ADD, metadata)
                             .unboundFormItem(new NameItem(), 0)
+                            .include("target-context")
                             .fromRequestProperties()
                             .requiredOnly()
                             .build();

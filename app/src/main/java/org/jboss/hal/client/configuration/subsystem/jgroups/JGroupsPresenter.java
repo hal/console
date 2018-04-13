@@ -26,20 +26,28 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.Metadata;
@@ -49,11 +57,14 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.JGROUPS_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_RELAY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.STACK_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.TRANSPORT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -62,13 +73,15 @@ import static org.jboss.hal.resources.Ids.JGROUPS_REMOTE_SITE;
 public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresenter.MyView, JGroupsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    private Resources resources;
-    private MetadataRegistry metadataRegistry;
     private final FinderPathFactory finderPathFactory;
     private final CrudOperations crud;
-    private String currentStack;
+    private EventBus eventBus;
+    private Resources resources;
+    private MetadataRegistry metadataRegistry;
+    private Dispatcher dispatcher;
+    private String selectedStack;
     private String currentChannel;
-    private String currentFork;
+    private String selectedFork;
     private StatementContext filterStatementContext;
 
     @Inject
@@ -76,13 +89,16 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
             MyView view, Resources resources,
             MyProxy myProxy, MetadataRegistry metadataRegistry,
             Finder finder,
+            Dispatcher dispatcher,
             FinderPathFactory finderPathFactory,
             StatementContext statementContext,
             CrudOperations crud) {
 
         super(eventBus, view, myProxy, finder);
+        this.eventBus = eventBus;
         this.resources = resources;
         this.metadataRegistry = metadataRegistry;
+        this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
         this.crud = crud;
         this.filterStatementContext = new FilteringStatementContext(statementContext,
@@ -94,9 +110,9 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
                             case "selected.channel":
                                 return currentChannel;
                             case "selected.fork":
-                                return currentFork;
+                                return selectedFork;
                             case "selected.stack":
-                                return currentStack;
+                                return selectedStack;
                             default:
                                 break;
                         }
@@ -139,23 +155,23 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
             // stack / relays
             List<NamedNode> relayNode = asNamedNodes(
-                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, RELAY)));
+                    failSafePropertyList(modelNode, String.join("/", STACK, selectedStack, RELAY)));
             getView().updateRelays(relayNode);
 
             // stack / relay / remote-site
             //noinspection HardCodedStringLiteral
             List<NamedNode> remoteSite = asNamedNodes(failSafePropertyList(modelNode,
-                    String.join("/", STACK, currentStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
+                    String.join("/", STACK, selectedStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
             getView().updateRemoteSite(remoteSite);
 
             // stack / protocols
             List<NamedNode> protocol = asNamedNodes(
-                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, PROTOCOL)));
+                    failSafePropertyList(modelNode, String.join("/", STACK, selectedStack, PROTOCOL)));
             getView().updateProtocols(protocol);
 
             // stack / transport
             List<NamedNode> transport = asNamedNodes(
-                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, TRANSPORT)));
+                    failSafePropertyList(modelNode, String.join("/", STACK, selectedStack, TRANSPORT)));
             getView().updateTransports(transport);
 
             // channel / fork
@@ -165,7 +181,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
             // channel / fork / protocol
             List<NamedNode> channelProtocols = asNamedNodes(failSafePropertyList(modelNode,
-                    String.join("/", CHANNEL, currentChannel, FORK, currentFork, PROTOCOL)));
+                    String.join("/", CHANNEL, currentChannel, FORK, selectedFork, PROTOCOL)));
             getView().updateChannelProtocols(channelProtocols);
 
         });
@@ -175,8 +191,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         crud.readRecursive(JGROUPS_TEMPLATE, payload::accept);
     }
 
-    void saveSingleton(AddressTemplate template, Map<String, Object> changedValues, SafeHtml successMessage) {
-        Metadata metadata = metadataRegistry.lookup(template);
+    void saveSingleton(AddressTemplate template, Metadata metadata, Map<String, Object> changedValues, SafeHtml successMessage) {
         crud.saveSingleton(template.resolve(filterStatementContext), changedValues, metadata, successMessage,
                 this::reload);
     }
@@ -222,14 +237,43 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     @SuppressWarnings("ConstantConditions")
     void addStack() {
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD),
-                resources.messages().addResourceTitle(Names.STACK), metadata,
+        Metadata transportMetadata = metadataRegistry.lookup(TRANSPORT_TEMPLATE).forOperation(ADD);
+        transportMetadata.copyAttribute(SOCKET_BINDING, metadata);
+        metadata.makeWritable(SOCKET_BINDING);
+
+        NameItem nameItem = new NameItem();
+        String transportLabel = new LabelBuilder().label(TRANSPORT);
+        TextBoxItem transportItem = new TextBoxItem(TRANSPORT, transportLabel);
+        transportItem.setRequired(true);
+        String id = Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD);
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .unboundFormItem(nameItem, 0)
+                .unboundFormItem(transportItem, 2)
+                .unsorted()
+                .requiredOnly()
+                .build();
+
+        AddResourceDialog dialog = new AddResourceDialog(Names.STACK, form,
                 (name, model) -> {
-                    ResourceAddress address = STACK_TEMPLATE.resolve(filterStatementContext, name);
-                    // add operation requires a transport parameter
-                    model.get(TRANSPORT).setEmptyObject();
-                    model.get(TRANSPORT).get(TYPE).set(DEFAULT);
-                    crud.add(Names.STACK, name, address, model, (n, a) -> reload());
+                    ResourceAddress stackAddress = STACK_TEMPLATE.resolve(filterStatementContext, name);
+
+                    String transport = transportItem.getValue();
+                    ResourceAddress transportAddress = TRANSPORT_TEMPLATE.resolve(filterStatementContext, name,
+                            transport);
+
+                    Operation addStackOperation = new Operation.Builder(stackAddress, ADD)
+                            .build();
+                    Operation addTransportOperation = new Operation.Builder(transportAddress, ADD)
+                            .payload(model)
+                            .build();
+
+                    Composite composite = new Composite(addStackOperation, addTransportOperation);
+                    dispatcher.execute(composite, (CompositeResult result) -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().addResourceSuccess(Names.STACK, name)));
+                        reload();
+                    });
+
                 });
         dialog.show();
     }
@@ -241,7 +285,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     // relay resources
 
     void showRelays(NamedNode selectedStack) {
-        currentStack = selectedStack.getName();
+        this.selectedStack = selectedStack.getName();
         List<NamedNode> relayNode = asNamedNodes(failSafePropertyList(selectedStack.asModelNode(), RELAY));
         getView().updateRelays(relayNode);
     }
@@ -262,14 +306,14 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     // protocol resources
 
     void showProtocols(NamedNode selectedStack) {
-        currentStack = selectedStack.getName();
+        this.selectedStack = selectedStack.getName();
         getView().updateProtocols(asNamedNodes(failSafePropertyList(selectedStack, PROTOCOL)));
     }
 
     // transport resources
 
     void showTransports(NamedNode selectedStack) {
-        currentStack = selectedStack.getName();
+        this.selectedStack = selectedStack.getName();
         List<NamedNode> model = asNamedNodes(failSafePropertyList(selectedStack.asModelNode(), TRANSPORT));
         getView().updateTransports(model);
     }
@@ -285,15 +329,14 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     }
 
     void showChannelProtocol(NamedNode selectedFork) {
-        currentFork = selectedFork.getName();
+        this.selectedFork = selectedFork.getName();
         List<NamedNode> model = asNamedNodes(failSafePropertyList(selectedFork.asModelNode(), PROTOCOL));
         getView().updateChannelProtocols(model);
     }
 
-    String getCurrentFork() {
-        return currentFork;
+    String getSelectedFork() {
+        return selectedFork;
     }
-
 
     // @formatter:off
     @ProxyCodeSplit

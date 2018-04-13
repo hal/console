@@ -42,11 +42,11 @@ public class UndertowSettingsColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility
 
     @Inject
-    public UndertowSettingsColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final Places places,
-            final Resources resources) {
+    public UndertowSettingsColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            Places places,
+            Resources resources) {
 
         super(new Builder<StaticItem>(finder, Ids.UNDERTOW_SETTINGS, resources.constants().settings())
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
@@ -61,22 +61,23 @@ public class UndertowSettingsColumn
                         .build(),
                 new StaticItem.Builder(Names.APPLICATION_SECURITY_DOMAIN)
                         .nextColumn(Ids.UNDERTOW_APP_SECURITY_DOMAIN)
-                        .onPreview(new PreviewContent(Names.APPLICATION_SECURITY_DOMAIN,
+                        .onPreview(new PreviewContent<>(Names.APPLICATION_SECURITY_DOMAIN,
                                 resources.previews().configurationUndertowApplicationSecurityDomain()))
                         .build(),
                 new StaticItem.Builder(Names.BUFFER_CACHES)
                         .action(itemActionFactory.view(
                                 places.selectedProfile(NameTokens.UNDERTOW_BUFFER_CACHE).build()))
-                        .onPreview(new PreviewContent(Names.BUFFER_CACHES,
+                        .onPreview(new PreviewContent<>(Names.BUFFER_CACHES,
                                 resources.previews().configurationUndertowBufferCaches()))
                         .build(),
                 new StaticItem.Builder(Names.SERVER)
                         .nextColumn(Ids.UNDERTOW_SERVER)
-                        .onPreview(new PreviewContent(Names.SERVER, resources.previews().configurationUndertowServer()))
+                        .onPreview(
+                                new PreviewContent<>(Names.SERVER, resources.previews().configurationUndertowServer()))
                         .build(),
                 new StaticItem.Builder(Names.SERVLET_CONTAINER)
                         .nextColumn(Ids.UNDERTOW_SERVLET_CONTAINER)
-                        .onPreview(new PreviewContent(Names.SERVLET_CONTAINER,
+                        .onPreview(new PreviewContent<>(Names.SERVLET_CONTAINER,
                                 resources.previews().configurationUndertowServletContainer()))
                         .build(),
                 new StaticItem.Builder(Names.FILTERS)

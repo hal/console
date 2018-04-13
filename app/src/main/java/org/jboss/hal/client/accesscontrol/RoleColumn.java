@@ -291,17 +291,19 @@ public class RoleColumn extends FinderColumn<Role> {
         form.getFormItem(scopeAttribute).setRequired(true);
         form.getFormItem(scopeAttribute)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, typeaheadTemplate));
+        form.attach();
 
         new AddResourceDialog(resources.messages().addResourceTitle(typeName), form, (name, model) -> {
             List<Task<FlowContext>> tasks = new ArrayList<>();
             tasks.add(new AddScopedRole(dispatcher, type, name, model));
-            if (model.hasDefined(INCLUDE_ALL) && model.get(INCLUDE_ALL).asBoolean()) {
-                // We only need the role name in the functions,
-                // so it's ok to setup a transient role w/o the other attributes.
-                Role transientRole = new Role(name, null, type, null);
-                tasks.add(new CheckRoleMapping(dispatcher, transientRole));
-                tasks.add(new AddRoleMapping(dispatcher, transientRole, status -> status == 404));
-                tasks.add(new ModifyIncludeAll(dispatcher, transientRole, true));
+            Boolean includeAll = form.<Boolean>getFormItem(INCLUDE_ALL).getValue();
+            Role transientRole = new Role(name, null, type, null);
+            // We only need the role name in the functions,
+            // so it's ok to setup a transient role w/o the other attributes.
+            tasks.add(new CheckRoleMapping(dispatcher, transientRole));
+            tasks.add(new AddRoleMapping(dispatcher, transientRole, status -> status == 404));
+            if (includeAll != null && includeAll) {
+                tasks.add(new ModifyIncludeAll(dispatcher, transientRole, includeAll));
             }
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
@@ -371,21 +373,20 @@ public class RoleColumn extends FinderColumn<Role> {
         form.getFormItem(scopeAttribute)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, typeaheadTemplate));
         form.getFormItem(INCLUDE_ALL).setValue(role.isIncludeAll());
-
+        form.attach();
         ModelNode modelNode = new ModelNode();
         modelNode.get(BASE_ROLE).set(role.getBaseRole().getName());
         role.getScope().forEach(scope -> modelNode.get(scopeAttribute).add(scope));
         new ModifyResourceDialog(resources.messages().modifyResourceTitle(type), form, (frm, changedValues) -> {
-            boolean hasIncludesAll = changedValues.containsKey(INCLUDE_ALL);
-            boolean includesAll = (boolean) changedValues.getOrDefault(INCLUDE_ALL, false);
-            changedValues.remove(INCLUDE_ALL); // must not be in changedValues when calling ModifyScopedRole
+            boolean includeAll = frm.<Boolean>getFormItem(INCLUDE_ALL).getValue();
+            boolean includeAllChanged = includeAll != role.isIncludeAll();
 
             List<Task<FlowContext>> tasks = new ArrayList<>();
-            tasks.add(new ModifyScopedRole(dispatcher, role, changedValues, metadata));
-            if (hasIncludesAll) {
-                tasks.add(new CheckRoleMapping(dispatcher, role));
-                tasks.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
-                tasks.add(new ModifyIncludeAll(dispatcher, role, includesAll));
+            if (!changedValues.isEmpty()) {
+                tasks.add(new ModifyScopedRole(dispatcher, role, changedValues, metadata));
+            }
+            if (includeAllChanged) {
+                tasks.add(new ModifyIncludeAll(dispatcher, role, includeAll));
             }
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {

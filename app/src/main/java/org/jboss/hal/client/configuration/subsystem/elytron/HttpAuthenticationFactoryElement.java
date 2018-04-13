@@ -22,6 +22,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -43,7 +44,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
 import static org.jboss.hal.resources.Ids.PAGES;
-import static org.jboss.hal.resources.Ids.TAB;
 
 class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
         HasPresenter<FactoriesPresenter> {
@@ -61,7 +61,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     private int mcIndex;
     private int mrcIndex;
 
-    HttpAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
+    HttpAuthenticationFactoryElement(Metadata metadata, TableButtonFactory tableButtonFactory) {
         // HTTP authentication factory
         factoryTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(id(Ids.ADD), Names.HTTP_AUTHENTICATION_FACTORY,
@@ -69,7 +69,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .button(tableButtonFactory.remove(Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadHttpAuthenticationFactories()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration, "15em") //NON-NLS
+                .column(new InlineAction<>(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration), "15em")
                 .build();
         factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
                 .onSave((form, changedValues) -> presenter.saveHttpAuthenticationFactory(form, changedValues))
@@ -82,14 +82,15 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
         // mechanism configurations
         Metadata mcMetadata = metadata.forComplexAttribute(MECHANISM_CONFIGURATIONS);
-        mcTable = new ModelNodeTable.Builder<>(id(MECHANISM_CONFIGURATIONS, TAB), mcMetadata)
+        mcTable = new ModelNodeTable.Builder<>(id(MECHANISM_CONFIGURATIONS, TABLE), mcMetadata)
                 .button(tableButtonFactory.add(mcMetadata.getTemplate(),
                         table -> presenter.addHttpMechanismConfiguration(selectedFactory)))
                 .button(tableButtonFactory.remove(mcMetadata.getTemplate(),
-                        table -> presenter.removeHttpMechanismConfiguration(selectedFactory, mcIndex)))
+                        table -> presenter.removeHttpMechanismConfiguration(selectedFactory,
+                                table.selectedRow().get(HAL_INDEX).asInt())))
                 .column(MECHANISM_NAME)
-                .column(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration,
-                        "20em") //NON-NLS
+                .column(new InlineAction<>(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration),
+                        "20em")
                 .build();
         mcForm = new ModelNodeForm.Builder<>(id(MECHANISM_CONFIGURATIONS, FORM), mcMetadata)
                 .onSave(((form, changedValues) -> presenter.saveHttpMechanismConfiguration(selectedFactory,
@@ -107,7 +108,8 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .button(tableButtonFactory.add(mrcMetadata.getTemplate(),
                         table -> presenter.addHttpMechanismRealmConfiguration(selectedFactory, mcIndex)))
                 .button(tableButtonFactory.remove(mrcMetadata.getTemplate(),
-                        table -> presenter.removeHttpMechanismRealmConfiguration(selectedFactory, mcIndex, mrcIndex)))
+                        table -> presenter.removeHttpMechanismRealmConfiguration(selectedFactory, mcIndex,
+                                table.selectedRow().get(HAL_INDEX).asInt())))
                 .column(REALM_NAME)
                 .build();
         mrcForm = new ModelNodeForm.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, FORM), mrcMetadata)
@@ -150,11 +152,13 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         mcTable.attach();
         mcForm.attach();
         mcTable.bindForm(mcForm);
+        mcTable.onSelectionChange(table -> mcTable.enableButton(1, mcTable.hasSelection()));
 
         mrcTable.attach();
         mrcForm.attach();
         mrcTable.bindForm(mrcForm);
         mrcTable.onSelectionChange(table -> {
+            mrcTable.enableButton(1, mrcTable.hasSelection());
             if (table.hasSelection()) {
                 mrcIndex = table.selectedRow().get(HAL_INDEX).asInt();
             }
@@ -162,7 +166,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     }
 
     @Override
-    public void setPresenter(final FactoriesPresenter presenter) {
+    public void setPresenter(FactoriesPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -192,22 +196,24 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         }
     }
 
-    private void showMechanismConfiguration(final NamedNode httpAuthenticationFactory) {
+    private void showMechanismConfiguration(NamedNode httpAuthenticationFactory) {
         selectedFactory = httpAuthenticationFactory.getName();
         List<ModelNode> mcNodes = failSafeList(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS);
         storeIndex(mcNodes);
         mcForm.clear();
         mcTable.update(mcNodes, modelNode -> modelNode.get(MECHANISM_NAME).asString());
+        mcTable.enableButton(1, mcTable.hasSelection());
         pages.showPage(id(MECHANISM_CONFIGURATIONS, PAGE));
     }
 
-    private void showMechanismRealmConfiguration(final ModelNode mechanismConfiguration) {
+    private void showMechanismRealmConfiguration(ModelNode mechanismConfiguration) {
         selectedMc = mechanismConfiguration.get(MECHANISM_NAME).asString();
         mcIndex = mechanismConfiguration.get(HAL_INDEX).asInt();
         List<ModelNode> mrcNodes = failSafeList(mechanismConfiguration, MECHANISM_REALM_CONFIGURATIONS);
         storeIndex(mrcNodes);
         mrcForm.clear();
         mrcTable.update(mrcNodes, modelNode -> modelNode.get(REALM_NAME).asString());
+        mrcTable.enableButton(1, mrcTable.hasSelection());
         pages.showPage(id(MECHANISM_REALM_CONFIGURATIONS, PAGE));
     }
 }

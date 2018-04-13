@@ -56,7 +56,7 @@ class ToastNotifications implements IsElement {
     private final Map<Long, Message> stickyMessages;
     private final HTMLElement root;
 
-    ToastNotifications(final Resources resources) {
+    ToastNotifications(Resources resources) {
         this.resources = resources;
         this.messageIds = new HashMap<>();
         this.stickyMessages = new HashMap<>();
@@ -89,9 +89,11 @@ class ToastNotifications implements IsElement {
         }
     }
 
-    void closeSticky(Message message) {
-        stickyMessages.remove(message.getId());
-        logger.debug("Closed sticky message: {}", message);
+    void close(Message message) {
+        if (message.isSticky()) {
+            stickyMessages.remove(message.getId());
+            logger.debug("Closed sticky message: {}", message);
+        }
     }
 
     private boolean containsStickyMessage(Message message) {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
   ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
   ~
@@ -14,17 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<module xmlns="urn:jboss:module:1.5" name="org.jboss.as.console">
-    <properties>
-        <property name="jboss.api" value="private"/>
-    </properties>
-
-    <resources>
-        <resource-root path="hal-console-${project.version}-resources.jar"/>
-    </resources>
-
-    <dependencies>
-        <!-- Do not add dependencies to the console as resources in any
-             dependencies could be served up through the HTTP interface. -->
-    </dependencies>
-</module>
+<config xmlns="http://zanata.org/namespace/config/">
+    <url>https://vendors.zanata.redhat.com/</url>
+    <project>hal-next-resource-bundles</project>
+    <project-version>master</project-version>
+    <project-type>properties</project-type>
+</config>

@@ -28,6 +28,7 @@ public interface AddressTemplates {
     String WEB_SUBSYSTEM_ADDRESS = "/{selected.host}/{selected.server}" + WEB_ADDRESS;
     String WEB_SERVER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + SERVER_ADDRESS;
 
+    String AJP_LISTENER_ADDRESS = WEB_SERVER_ADDRESS + "/ajp-listener=*";
     String MODCLUSTER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*";
     String MODCLUSTER_BALANCER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*/balancer=*";
     String MODCLUSTER_BALANCER_NODE_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*/balancer=*/node=*";
@@ -35,14 +36,13 @@ public interface AddressTemplates {
     String WEB_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + WEB_ADDRESS;
     String WEB_SUBDEPLOYMENT_ADDRESS = SUBDEPLOYMENT_ADDRESS + WEB_ADDRESS;
 
-    AddressTemplate AJP_LISTENER_TEMPLATE = AddressTemplate.of(WEB_SERVER_ADDRESS + "/ajp-listener=*");
+    AddressTemplate AJP_LISTENER_TEMPLATE = AddressTemplate.of(AJP_LISTENER_ADDRESS);
     AddressTemplate MODCLUSTER_TEMPLATE = AddressTemplate.of(MODCLUSTER_ADDRESS);
     AddressTemplate MODCLUSTER_BALANCER_TEMPLATE = AddressTemplate.of(MODCLUSTER_BALANCER_ADDRESS);
     AddressTemplate MODCLUSTER_BALANCER_NODE_TEMPLATE = AddressTemplate.of(MODCLUSTER_BALANCER_NODE_ADDRESS);
 
     AddressTemplate WEB_SUBSYSTEM_TEMPLATE = AddressTemplate.of(WEB_SUBSYSTEM_ADDRESS);
     AddressTemplate WEB_SERVER_TEMPLATE = AddressTemplate.of(WEB_SERVER_ADDRESS);
-    AddressTemplate WEB_SERVER_CONFIGURATION_TEMPLATE = AddressTemplate.of("/profile=*/subsystem=undertow/server=*");
 
     AddressTemplate WEB_DEPLOYMENT_TEMPLATE = AddressTemplate.of(WEB_DEPLOYMENT_ADDRESS);
     AddressTemplate WEB_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(WEB_SUBDEPLOYMENT_ADDRESS);

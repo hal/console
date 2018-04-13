@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.webservice;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PropertiesItem;
-import org.jboss.hal.ballroom.table.ColumnBuilder;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -50,7 +51,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
-import static org.jboss.hal.resources.CSS.columnAction;
 
 /** Element to configure client and endpoint configurations. */
 class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
@@ -64,8 +64,12 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     private WebservicePresenter presenter;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    ConfigElement(final Config configType, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory) {
+    ConfigElement(Config configType, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory) {
+
+        List<InlineAction<NamedNode>> inlineActions = new ArrayList<>();
+        inlineActions.add(new InlineAction<>("Pre", row -> presenter.showHandlerChains(row, PRE_HANDLER_CHAIN)));
+        inlineActions.add(new InlineAction<>("Post", row -> presenter.showHandlerChains(row, POST_HANDLER_CHAIN)));
 
         Metadata metadata = metadataRegistry.lookup(configType.template);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(configType.baseId, Ids.TABLE), metadata)
@@ -73,20 +77,7 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .button(tableButtonFactory.remove(configType.template,
                         table -> presenter.removeConfig(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.WEBSERVICES_HANDLER_CHAIN_COLUMN,
-                        Names.HANDLER_CHAIN,
-                        (cell, t, row, meta) -> {
-                            String id1 = Ids.uniqueId();
-                            String id2 = Ids.uniqueId();
-                            columnActions.add(id1, row1 -> presenter.showHandlerChains(row1, PRE_HANDLER_CHAIN));
-                            columnActions.add(id2, row2 -> presenter.showHandlerChains(row2, POST_HANDLER_CHAIN));
-                            return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">Pre</a> / " +
-                                    "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">Post</a>";
-                        })
-                        .orderable(false)
-                        .searchable(false)
-                        .width("12em")
-                        .build())
+                .column(inlineActions)
                 .build();
 
         ModelNode propertyDescription = failSafeGet(metadata.getDescription(), "children/property/description");
@@ -163,7 +154,7 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     @Override
-    public void setPresenter(final WebservicePresenter presenter) {
+    public void setPresenter(WebservicePresenter presenter) {
         this.presenter = presenter;
         handlerChain.setPresenter(presenter);
         handler.setPresenter(presenter);

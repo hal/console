@@ -23,6 +23,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
@@ -51,7 +52,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingGroupPresenter>
         implements SocketBindingGroupPresenter.MyView {
 
-    public static SocketBindingGroupView create(final MbuiContext mbuiContext) {
+    public static SocketBindingGroupView create(MbuiContext mbuiContext) {
         return new Mbui_SocketBindingGroupView(mbuiContext);
     }
 
@@ -68,7 +69,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
     Table<NamedNode> clientMappingTable;
     Form<NamedNode> clientMappingForm;
 
-    SocketBindingGroupView(final MbuiContext mbuiContext) {
+    SocketBindingGroupView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -86,7 +87,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                         table -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
-                .column(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row))
+                .column(new InlineAction<>(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row)))
                 .build();
 
         inboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.FORM), inboundMetadata)
@@ -163,7 +164,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
     }
 
     @Override
-    public void update(final NamedNode socketBindingGroup) {
+    public void update(NamedNode socketBindingGroup) {
         configurationForm.view(socketBindingGroup);
 
         inboundForm.clear();
@@ -179,7 +180,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
     }
 
     @Override
-    public void showClientMappings(final List<NamedNode> clientMappings) {
+    public void showClientMappings(List<NamedNode> clientMappings) {
         clientMappingForm.clear();
         clientMappingTable.update(clientMappings);
         inboundPages.showPage(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_PAGE);

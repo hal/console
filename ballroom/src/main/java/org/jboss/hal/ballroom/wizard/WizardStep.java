@@ -35,12 +35,12 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
     private Wizard<C, S> wizard;
     protected String title;
 
-    protected WizardStep(final String title) {
+    protected WizardStep(String title) {
         this.title = title;
         this.attachables = new ArrayList<>();
     }
 
-    void init(final Wizard<C, S> wizard) {
+    void init(Wizard<C, S> wizard) {
         this.wizard = wizard;
     }
 

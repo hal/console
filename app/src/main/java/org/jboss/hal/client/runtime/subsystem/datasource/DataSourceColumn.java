@@ -68,7 +68,8 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 
 // TODO Add data sources from deployments
 @AsyncColumn(Ids.DATA_SOURCE_RUNTIME)
-@Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
+@Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, DATA_SOURCE_DEPLOYMENT_ADDRESS,
+        XA_DATA_SOURCE_DEPLOYMENT_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private static final String EQ_WILDCARD = "=*";
@@ -82,16 +83,16 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     private Server server;
 
     @Inject
-    public DataSourceColumn(final ServerActions serverActions,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final StatementContext statementContext,
-            final Environment environment,
-            final Resources resources,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final ItemActionFactory itemActionFactory,
-            final Places places) {
+    public DataSourceColumn(ServerActions serverActions,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            StatementContext statementContext,
+            Environment environment,
+            Resources resources,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            ItemActionFactory itemActionFactory,
+            Places places) {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_RUNTIME, Names.DATASOURCE)
                 .withFilter()
@@ -196,12 +197,12 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<DataSource>>() {
                     @Override
-                    public void onFailure(final Throwable caught) {
+                    public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
                     }
 
                     @Override
-                    public void onSuccess(final List<DataSource> result) {
+                    public void onSuccess(List<DataSource> result) {
                         // only datasources defined in configuration w/ enabled statistics
                         // will show up in the breadcrumb dropdown
                         List<DataSource> dataSourceWithStatistics = result.stream()

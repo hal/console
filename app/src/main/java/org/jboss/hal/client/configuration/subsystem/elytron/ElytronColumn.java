@@ -44,11 +44,11 @@ public class ElytronColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility
 
     @Inject
-    public ElytronColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final Places places,
-            final Resources resources) {
+    public ElytronColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            Places places,
+            Resources resources) {
 
         super(new Builder<StaticItem>(finder, Ids.ELYTRON, resources.constants().settings())
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
@@ -66,17 +66,19 @@ public class ElytronColumn
                         .build(),
 
                 new StaticItem.Builder(Names.FACTORIES_TRANSFORMERS)
-                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.FACTORIES_TRANSFORMERS),
+                        .id(Ids.ELYTRON_FACTORIES_TRANSFORMERS)
+                        .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_FACTORIES_TRANSFORMERS,
                                 places.selectedProfile(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS).build()))
-                        .onPreview(new PreviewContent(Names.FACTORIES_TRANSFORMERS,
+                        .onPreview(new PreviewContent<>(Names.FACTORIES_TRANSFORMERS,
                                 resources.previews().configurationElytronFactories()))
                         .keywords("factory", "transformer", "http", "sasl", "kerberos", "principal")
                         .build(),
 
                 new StaticItem.Builder(Names.MAPPERS_DECODERS)
-                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.MAPPERS_DECODERS),
+                        .id(Ids.ELYTRON_MAPPERS_DECODERS)
+                        .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_MAPPERS_DECODERS,
                                 places.selectedProfile(NameTokens.ELYTRON_MAPPERS_DECODERS).build()))
-                        .onPreview(new PreviewContent(Names.MAPPERS_DECODERS,
+                        .onPreview(new PreviewContent<>(Names.MAPPERS_DECODERS,
                                 resources.previews().configurationElytronMappersDecoders()))
                         .keywords("mapper", "decoder", "role", "permission", "principal")
                         .build(),
@@ -84,7 +86,7 @@ public class ElytronColumn
                 new StaticItem.Builder(Names.OTHER_SETTINGS)
                         .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.OTHER_SETTINGS),
                                 places.selectedProfile(NameTokens.ELYTRON_OTHER).build()))
-                        .onPreview(new PreviewContent(Names.OTHER_SETTINGS,
+                        .onPreview(new PreviewContent<>(Names.OTHER_SETTINGS,
                                 resources.previews().configurationElytronOtherSettings()))
                         .keywords("store", "ssl", "authentication", "ldap")
                         .build(),
@@ -92,7 +94,7 @@ public class ElytronColumn
                 new StaticItem.Builder(Names.SECURITY_REALMS)
                         .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.SECURITY_REALMS),
                                 places.selectedProfile(NameTokens.ELYTRON_SECURITY_REALMS).build()))
-                        .onPreview(new PreviewContent(Names.SECURITY_REALMS,
+                        .onPreview(new PreviewContent<>(Names.SECURITY_REALMS,
                                 resources.previews().configurationElytronSecurityRealms()))
                         .keywords("realm")
                         .build()

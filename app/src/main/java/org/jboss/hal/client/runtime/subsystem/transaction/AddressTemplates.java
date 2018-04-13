@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 public interface AddressTemplates {
 
     String TRANSACTION_RUNTIME_ADDRESS = "/{selected.host}/{selected.server}/subsystem=transactions";
-    String TRANSACTION_CONFIGURATION_ADDRESS = "/{selected.profile}/{selected.server}/subsystem=transactions";
+    String TRANSACTION_CONFIGURATION_ADDRESS = "/{selected.profile}/subsystem=transactions";
 
     AddressTemplate TRANSACTION_RUNTIME_TEMPLATE = AddressTemplate.of(TRANSACTION_RUNTIME_ADDRESS);
     AddressTemplate LOGSTORE_RUNTIME_TEMPLATE = AddressTemplate.of(

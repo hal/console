@@ -34,6 +34,7 @@ import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -151,6 +152,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         eventBus.fireEvent(new ServerGroupSelectionEvent(server.getServerGroup()));
                     }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
+                    if (server.isStarted()) {
+                        // some runtime screens use "{selected.profile}"
+                        eventBus.fireEvent(new ProfileSelectionEvent(server.get(PROFILE_NAME).asString()));
+                    }
                 })
 
                 .onBreadcrumbItem((item, context) -> {
@@ -269,12 +274,12 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<Server>>() {
                     @Override
-                    public void onFailure(final Throwable throwable) {
+                    public void onFailure(Throwable throwable) {
                         callback.onFailure(throwable);
                     }
 
                     @Override
-                    public void onSuccess(final List<Server> servers) {
+                    public void onSuccess(List<Server> servers) {
                         if (!serverIsLastSegment()) {
                             // When the server is not the last segment in the finder path, we assume that
                             // the current path is related to something which requires a running server.
@@ -458,7 +463,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 metadataProcessor
                         .lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                             @Override
-                            public void onMetadata(final Metadata metadata) {
+                            public void onMetadata(Metadata metadata) {
 
                                 String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
                                         FORM);
@@ -522,7 +527,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     @Override
-    public void onServerAction(final ServerActionEvent event) {
+    public void onServerAction(ServerActionEvent event) {
         if (isVisible()) {
             // remember current selection for onServerResult()
             refreshPath = finder.getContext().getPath().copy();
@@ -532,7 +537,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     @Override
-    public void onServerResult(final ServerResultEvent event) {
+    public void onServerResult(ServerResultEvent event) {
         //noinspection Duplicates
         if (isVisible()) {
             ItemMonitor.stopProgress(event.getServer().getId());

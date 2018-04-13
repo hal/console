@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.9.3</version>
+        <version>3.0.0.Alpha1</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
     <artifactId>hal-docker</artifactId>
     <name>HAL :: Docker</name>
-    <description>Builds a docker container with the latest WildFly and HAL.next</description>
+    <description>Builds various docker containers</description>
     <packaging>docker-build</packaging>
 
     <dependencies>
@@ -36,6 +36,22 @@
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-console</artifactId>
             <classifier>resources</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-standalone</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -68,97 +84,72 @@
                                     <classifier>resources</classifier>
                                     <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>hal-console.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>hal-standalone</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>hal-standalone.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>download-wildfly</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>http://download.jboss.org/wildfly/${wildfly.version}/wildfly-${wildfly.version}.zip</url>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--
+             Produce two docker images:
+                1. halconsole/hal-standalone: Contains HAL standalone
+                2. halconsole/hal-wildfly: Contains latest WildFly and and HAL
+            -->
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
                     <logDate>default</logDate>
-                    <verbose>true</verbose>
                     <images>
                         <image>
-                            <alias>hal-console</alias>
-                            <name>hpehl/hal-console</name>
+                            <alias>hal-standalone</alias>
+                            <name>halconsole/hal-standalone</name>
                             <build>
+                                <dockerFileDir>hal-standalone</dockerFileDir>
                                 <assembly>
                                     <mode>dir</mode>
-                                    <user>jboss:jboss:jboss</user>
                                     <inline>
                                         <fileSets>
                                             <fileSet>
-                                                <directory>${project.basedir}/src/main/docker</directory>
-                                                <outputDirectory>.</outputDirectory>
-                                                <includes>
-                                                    <include>module.xml</include>
-                                                </includes>
-                                                <filtered>true</filtered>
-                                            </fileSet>
-                                            <fileSet>
                                                 <directory>${project.build.directory}</directory>
-                                                <outputDirectory>.</outputDirectory>
                                                 <includes>
-                                                    <include>wildfly-${wildfly.version}.zip</include>
-                                                    <include>hal-console-${project.version}-resources.jar</include>
+                                                    <include>hal-standalone.jar</include>
                                                 </includes>
+                                                <outputDirectory>.</outputDirectory>
                                             </fileSet>
                                         </fileSets>
                                     </inline>
                                 </assembly>
-                                <from>jboss/base-jdk:8</from>
-                                <tags>
-                                    <tag>${project.version}</tag>
-                                    <tag>latest</tag>
-                                </tags>
-                                <env>
-                                    <WILDFLY_VERSION>${wildfly.version}</WILDFLY_VERSION>
-                                    <JBOSS_HOME>/opt/jboss/wildfly</JBOSS_HOME>
-                                    <LAUNCH_JBOSS_IN_BACKGROUND>true</LAUNCH_JBOSS_IN_BACKGROUND>
-                                </env>
-                                <ports>
-                                    <port>8080</port>
-                                    <port>9990</port>
-                                </ports>
-                                <runCmds>
-                                    <run><![CDATA[
-                                        cd $HOME \
-                                        && unzip -o -q /maven/wildfly-$WILDFLY_VERSION.zip \
-                                        && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
-                                        && rm /maven/wildfly-$WILDFLY_VERSION.zip \
-                                        && $JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent
-                                    ]]></run>
-                                    <run>
-                                        mv /maven/* $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main
-                                    </run>
-                                </runCmds>
-                                <cmd>
-                                    <arg>/opt/jboss/wildfly/bin/standalone.sh</arg>
-                                    <arg>-b</arg>
-                                    <arg>0.0.0.0</arg>
-                                    <arg>-bmanagement</arg>
-                                    <arg>0.0.0.0</arg>
-                                </cmd>
+                            </build>
+                        </image>
+                        <image>
+                            <alias>hal-wildfly</alias>
+                            <name>halconsole/hal-wildfly</name>
+                            <build>
+                                <dockerFileDir>hal-wildfly</dockerFileDir>
+                                <assembly>
+                                    <mode>dir</mode>
+                                    <inline>
+                                        <fileSets>
+                                            <fileSet>
+                                                <directory>${project.build.directory}</directory>
+                                                <includes>
+                                                    <include>hal-console.jar</include>
+                                                </includes>
+                                                <outputDirectory>.</outputDirectory>
+                                            </fileSet>
+                                        </fileSets>
+                                    </inline>
+                                </assembly>
                             </build>
                         </image>
                     </images>

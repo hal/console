@@ -100,7 +100,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(Ids.ELYTRON)
-                .append(Ids.ELYTRON, Ids.asId(Names.MAPPERS_DECODERS),
+                .append(Ids.ELYTRON, Ids.ELYTRON_MAPPERS_DECODERS,
                         resources.constants().settings(), Names.MAPPERS_DECODERS);
     }
 

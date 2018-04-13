@@ -82,7 +82,7 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS,
+@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS,
         HOST_MANAGEMENT_OPERATIONS_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
@@ -259,6 +259,21 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                     List<ItemAction<Host>> actions = new ArrayList<>();
                     actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
                     if (!hostActions.isPending(item)) {
+                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                            PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
+                                    .nameToken(NameTokens.CONFIGURATION_CHANGES)
+                                    .with(HOST, item.getAddressName())
+                                    .build();
+                            actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
+                                    ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                        }
+                        PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
+                                .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();
+                        actions.add(itemActionFactory.placeRequest(resources.constants().managementOperations(),
+                                moPlaceRequest, Constraint.executable(MANAGEMENT_OPERATIONS_TEMPLATE,
+                                        READ_RESOURCE_OPERATION)));
+                        // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
+                        actions.add(ItemAction.separator());
                         actions.add(new ItemAction.Builder<Host>()
                                 .title(resources.constants().reload())
                                 .handler(hostActions::reload)
@@ -269,18 +284,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                 .handler(hostActions::restart)
                                 .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
                                 .build());
-                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
-                            PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
-                                    .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
-                            actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                    ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
-                        }
-                        PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
-                                .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();
-                        actions.add(itemActionFactory.placeRequest(resources.constants().managementOperations(),
-                                moPlaceRequest, Constraint.executable(MANAGEMENT_OPERATIONS_TEMPLATE,
-                                        READ_RESOURCE_OPERATION)));
-                        // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                     }
                     return actions;
                 } else {
@@ -294,7 +297,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     }
 
     @Override
-    public void onHostAction(final HostActionEvent event) {
+    public void onHostAction(HostActionEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
             ItemMonitor.startProgress(Ids.host(host.getAddressName()));
@@ -304,7 +307,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
     @Override
     @SuppressWarnings("Duplicates")
-    public void onHostResult(final HostResultEvent event) {
+    public void onHostResult(HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
             ItemMonitor.stopProgress(Ids.host(host.getAddressName()));

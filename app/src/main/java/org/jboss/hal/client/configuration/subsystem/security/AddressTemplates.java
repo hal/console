@@ -19,11 +19,12 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 
-interface AddressTemplates {
+public interface AddressTemplates {
 
     String SECURITY_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=security";
     String SECURITY_DOMAIN_ADDRESS = SECURITY_SUBSYSTEM_ADDRESS + "/security-domain=*";
     String SELECTED_SECURITY_DOMAIN_ADDRESS = SECURITY_SUBSYSTEM_ADDRESS + "/security-domain=" + SELECTION_EXPRESSION;
+    String TRUST_MODULE_ADDRESS = SECURITY_DOMAIN_ADDRESS + "/identity-trust=classic/trust-module=*";
 
     AddressTemplate SECURITY_SUBSYSTEM_TEMPLATE = AddressTemplate.of(SECURITY_SUBSYSTEM_ADDRESS);
     AddressTemplate SECURITY_DOMAIN_TEMPLATE = AddressTemplate.of(SECURITY_DOMAIN_ADDRESS);

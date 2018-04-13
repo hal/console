@@ -33,6 +33,7 @@ interface AddressTemplates {
 
     // Services
     String SERVICE_ASYNC_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/service=async";
+    String SERVICE_IDENTITY_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/service=identity";
     String SERVICE_IIOP_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/service=iiop";
     String SERVICE_REMOTE_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/service=remote";
     String SERVICE_TIMER_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/service=timer-service";
@@ -51,6 +52,7 @@ interface AddressTemplates {
     AddressTemplate PASSIVATION_TEMPLATE = AddressTemplate.of(PASSIVATION_ADDRESS);
 
     AddressTemplate SERVICE_ASYNC_TEMPLATE = AddressTemplate.of(SERVICE_ASYNC_ADDRESS);
+    AddressTemplate SERVICE_IDENTITY_TEMPLATE = AddressTemplate.of(SERVICE_IDENTITY_ADDRESS);
     AddressTemplate SERVICE_IIOP_TEMPLATE = AddressTemplate.of(SERVICE_IIOP_ADDRESS);
     AddressTemplate SERVICE_REMOTE_TEMPLATE = AddressTemplate.of(SERVICE_REMOTE_ADDRESS);
     AddressTemplate SERVICE_TIMER_TEMPLATE = AddressTemplate.of(SERVICE_TIMER_ADDRESS);

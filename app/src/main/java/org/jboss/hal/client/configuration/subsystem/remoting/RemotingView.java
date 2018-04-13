@@ -56,7 +56,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 @SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection", "unused"})
 public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> implements RemotingPresenter.MyView {
 
-    public static RemotingView create(final MbuiContext mbuiContext) {
+    public static RemotingView create(MbuiContext mbuiContext) {
         return new Mbui_RemotingView(mbuiContext);
     }
 
@@ -104,9 +104,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 .singleton(
                         () -> new Operation.Builder(
                                 SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(presenter.selectedConnectorContext),
-                                READ_RESOURCE_OPERATION
-                        )
-                                .build(),
+                                READ_RESOURCE_OPERATION).build(),
                         () -> presenter.createConnectorSecurity())
                 .onSave((form, changedValues) -> presenter.saveConnectorSecurity(form, changedValues))
                 .prepareReset(form -> presenter.resetConnectorSecurity(form))
@@ -121,7 +119,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 connectorSecurityPolicyMetadata)
                 .singleton(
                         () -> new Operation.Builder(SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE
-                                .resolve(presenter.selectedHttpConnectorContext), READ_RESOURCE_OPERATION)
+                                .resolve(presenter.selectedConnectorContext), READ_RESOURCE_OPERATION)
                                 .build(),
                         () -> presenter.createConnectorSecurityPolicy()
                 )

@@ -19,7 +19,7 @@ import jsinterop.annotations.JsFunction;
 
 @JsFunction
 @FunctionalInterface
-public interface ColumnAction<T> {
+public interface InlineActionHandler<T> {
 
     void action(T row);
 }

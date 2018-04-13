@@ -146,7 +146,8 @@ public class MetadataProcessor {
                     lookupRegistries,
                     new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase),
                     new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH),
-                    new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry)
+                    new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry),
+                    new UpdateDatabaseTask(workerChannel)
             };
 
             LookupContext context = new LookupContext(progress, templates, recursive);
@@ -164,9 +165,6 @@ public class MetadataProcessor {
                             stopwatch.stop();
                             logger.info("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
                             callback.onSuccess(null);
-
-                            // database update is *not* part of the flow!
-                            new UpdateDatabase(workerChannel).post(context);
                         }
                     });
         }
@@ -176,8 +174,8 @@ public class MetadataProcessor {
     // ------------------------------------------------------ JS methods
 
     /**
-     * Reads the metadata for the template, stores it in the registry and passes it to the callback. If the metadata is
-     * already in the registry it's passed directly to the callback.
+     * Reads the metadata for the template and passes it to the callback. If the metadata has been already processed,
+     * it's passed directly to the callback.
      *
      * @param template The address template to lookup.
      * @param callback The callback which receives the metadata.

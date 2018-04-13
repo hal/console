@@ -17,6 +17,7 @@ package org.jboss.hal.flow;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -76,6 +77,13 @@ public class FlowContext {
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         return (T) data.get(key);
+    }
+
+    /**
+     * @return the object for the given key from the context map or {@code null} if no such key was found.
+     */
+    public Set<String> keys() {
+        return data.keySet();
     }
 
     @Override

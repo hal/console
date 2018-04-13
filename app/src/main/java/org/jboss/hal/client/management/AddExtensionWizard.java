@@ -117,6 +117,7 @@ class AddExtensionWizard {
                     .unboundFormItem(urlItem, 0, resources.messages().extensionUrl())
                     .addOnly()
                     .build();
+            registerAttachable(form);
         }
 
         @Override

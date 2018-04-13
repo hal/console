@@ -31,7 +31,7 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import jsinterop.base.JsPropertyMapOfAny;
+import jsinterop.base.JsPropertyMap;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -278,6 +278,35 @@ public class CrudOperations {
                 }
             }
         });
+    }
+
+    /**
+     * Opens an add-resource-dialog for the given singleton resource type. The dialog contains fields for all required
+     * request properties. plus the ones specified by {@code attributes}. When clicking "Add", a new singleton resource
+     * is added using the specified address template. After the singleton resource has been added a success message is
+     * fired and the specified callback is executed.
+     *
+     * @param id       the id used for the add resource dialog
+     * @param type     the human readable resource type used in the dialog header and success message
+     * @param metadata the metadata that contains the resource description
+     * @param callback the callback executed after the singleton resource has been added
+     */
+    @JsIgnore
+    public void addSingleton(String id, String type, Metadata metadata, AddressTemplate template,
+            AddSingletonCallback callback) {
+        boolean hasRequiredAttributes = !metadata.getDescription()
+                .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
+        if (hasRequiredAttributes) {
+            // no unbound name item!
+            ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
+                    .fromRequestProperties()
+                    .requiredOnly();
+            AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type),
+                    builder.build(), (name, model) -> addSingleton(type, template, model, callback));
+            dialog.show();
+        } else {
+            addSingleton(type, template, null, callback);
+        }
     }
 
 
@@ -1488,7 +1517,7 @@ public class CrudOperations {
     @JsMethod(name = "save")
     public void jsSave(String type, String name,
             @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("{key: string, value: object}") JsPropertyMapOfAny changeSet,
+            @EsParam("{key: string, value: object}") JsPropertyMap<Object> changeSet,
             @EsParam("function()") JsCallback callback) {
 
         Callback c = callback::execute;
@@ -1518,7 +1547,7 @@ public class CrudOperations {
     @JsMethod(name = "saveSingleton")
     public void jsSaveSingleton(String type,
             @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("{key: string, value: object}") JsPropertyMapOfAny changeSet,
+            @EsParam("{key: string, value: object}") JsPropertyMap<Object> changeSet,
             @EsParam("function()") JsCallback callback) {
 
         Callback c = callback::execute;

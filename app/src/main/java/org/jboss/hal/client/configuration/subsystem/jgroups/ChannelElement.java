@@ -22,6 +22,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -59,8 +60,8 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     private final GenericElement protocolElement;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    ChannelElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    ChannelElement(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(CHANNEL_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE), metadata)
@@ -71,18 +72,18 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                         table -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column("Forks", row -> {
+                .column(new InlineAction<>(Names.FORK, row -> {
                     selectedChannel = row.getName();
                     presenter.showForks(row);
                     presenter.showChannelInnerPage(FORK_ID);
-                })
+                }))
                 .build();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter
                         .saveResource(CHANNEL_TEMPLATE, table.selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(Names.CHANNEL)))
-                .prepareReset(form -> presenter.resetResource(CHANNEL_TEMPLATE, Names.CHANNEL,
-                        table.selectedRow().getName(), form, metadata))
+                .prepareReset(form -> presenter.resetResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
+                        Names.CHANNEL, form, metadata))
                 .build();
 
         HTMLElement section = section()
@@ -105,7 +106,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 forkElement);
         // Fork / Protocol
         innerPages.addPage(FORK_ID, PROTOCOL_ID,
-                () -> Names.FORK + ": " + presenter.getCurrentFork(),
+                () -> Names.FORK + ": " + presenter.getSelectedFork(),
                 () -> Names.PROTOCOL,
                 protocolElement);
 
@@ -135,7 +136,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     }
 
     @Override
-    public void setPresenter(final JGroupsPresenter presenter) {
+    public void setPresenter(JGroupsPresenter presenter) {
         this.presenter = presenter;
         forkElement.setPresenter(presenter);
         protocolElement.setPresenter(presenter);
@@ -150,11 +151,11 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
         protocolElement.update(node);
     }
 
-    void updateForks(final List<NamedNode> model) {
+    void updateForks(List<NamedNode> model) {
         forkElement.update(model);
     }
 
-    void showInnerPage(final String id) {
+    void showInnerPage(String id) {
         innerPages.showPage(id);
     }
 

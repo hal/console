@@ -22,6 +22,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -63,7 +64,7 @@ public class SimplePermissionMapperElement
     private int pmIndex = -1;
     private int permissionsIndex = -1;
 
-    SimplePermissionMapperElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
+    SimplePermissionMapperElement(Metadata metadata, TableButtonFactory tableButtonFactory) {
 
         spmTable = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_TABLE, metadata)
                 .button(tableButtonFactory.add(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_ADD, Names.SIMPLE_PERMISSION_MAPPER,
@@ -71,7 +72,7 @@ public class SimplePermissionMapperElement
                 .button(tableButtonFactory.remove(Names.SIMPLE_PERMISSION_MAPPER, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadSimplePermissionMapper()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(Names.PERMISSION_MAPPINGS, this::showPermissionMappings, "15em") //NON-NLS
+                .column(new InlineAction<>(Names.PERMISSION_MAPPINGS, this::showPermissionMappings), "15em")
                 .build();
 
         spmForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_FORM, metadata)
@@ -98,7 +99,7 @@ public class SimplePermissionMapperElement
                 .column(PRINCIPALS, (cell, type, row, meta) -> extractValue(row, PRINCIPALS))
                 .column(ROLES, (cell, type, row, meta) -> extractValue(row, ROLES))
                 .column(PERMISSIONS, (cell, type, row, meta) -> extractPermissionsString(row))
-                .column(Names.PERMISSIONS, this::showPermissions, "10em") //NON-NLS
+                .column(new InlineAction<>(Names.PERMISSIONS, this::showPermissions))
                 .build();
         pmForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_PERMISSION_MAPPINGS_FORM, pmMetadata)
                 .onSave(((form, changedValues) -> presenter.savePermissionMappings(selectedSimplePermissionMapper,
@@ -183,19 +184,21 @@ public class SimplePermissionMapperElement
         return value;
     }
 
-    private void showPermissionMappings(final NamedNode spmNode) {
+    private void showPermissionMappings(NamedNode spmNode) {
         selectedSimplePermissionMapper = spmNode.getName();
         List<ModelNode> permissionMappingsNodes = failSafeList(spmNode, ModelDescriptionConstants.PERMISSION_MAPPINGS);
         storeIndex(permissionMappingsNodes);
         pmTable.update(permissionMappingsNodes, node -> Ids.build(node.get(HAL_INDEX).asString()));
+        pmTable.enableButton(1, pmTable.hasSelection());
         pages.showPage(Ids.ELYTRON_PERMISSION_MAPPINGS_PAGE);
     }
 
-    private void showPermissions(final ModelNode permissionMappingNode) {
+    private void showPermissions(ModelNode permissionMappingNode) {
         selectedPermissionMapping = permissionMappingNode.get(HAL_INDEX).asString();
         List<ModelNode> permissionsNodes = failSafeList(permissionMappingNode, ModelDescriptionConstants.PERMISSIONS);
         storeIndex(permissionsNodes);
         permissionsTable.update(permissionsNodes, node -> Ids.build(node.get(CLASS_NAME).asString()));
+        permissionsTable.enableButton(1, permissionsTable.hasSelection());
         pages.showPage(Ids.ELYTRON_PERMISSIONS_PAGE);
     }
 
@@ -219,6 +222,7 @@ public class SimplePermissionMapperElement
         permissionsTable.bindForm(permissionsForm);
 
         pmTable.onSelectionChange(table -> {
+            pmTable.enableButton(1, pmTable.hasSelection());
             if (table.hasSelection()) {
                 pmIndex = table.selectedRow().get(HAL_INDEX).asInt();
             } else {
@@ -227,6 +231,7 @@ public class SimplePermissionMapperElement
             }
         });
         permissionsTable.onSelectionChange(table -> {
+            permissionsTable.enableButton(1, permissionsTable.hasSelection());
             if (table.hasSelection()) {
                 permissionsIndex = table.selectedRow().get(HAL_INDEX).asInt();
             } else {
@@ -237,7 +242,7 @@ public class SimplePermissionMapperElement
     }
 
     @Override
-    public void setPresenter(final MapperDecoderPresenter presenter) {
+    public void setPresenter(MapperDecoderPresenter presenter) {
         this.presenter = presenter;
     }
 

@@ -24,18 +24,12 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.gwt.elemento.core.Elements;
+import jsinterop.base.Js;
 import org.jboss.hal.ballroom.JQuery;
 import org.jetbrains.annotations.NonNls;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
-import static org.jboss.gwt.elemento.core.Elements.htmlElements;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
@@ -81,22 +75,18 @@ class Api<T> {
      */
     native Api<T> enable(boolean enable);
 
-    native Options<T> init();
-
     /**
      * Returns the jQuery object for the button selected with {@link #button(int)}
      */
     native JQuery node();
 
     /**
-     * Adds a selection callback. Currently restricted to the "select" and "deselect" event.
+     * Adds a callback. Currently restricted to the "select", "deselect" and "draw" event.
      *
-     * @param event    must be "select" or "deselect"
-     * @param callback the select callback
+     * @param event    must be "select", "deselect" or "draw"
+     * @param callback the callback
      */
-    native Api<T> on(String event, SelectCallback callback);
-
-    native Api<T> off(String event);
+    native Api<T> on(String event, CallbackUnionType<T> callback);
 
     /**
      * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()}
@@ -133,41 +123,6 @@ class Api<T> {
             }
         }
         return this;
-    }
-
-    @JsOverlay
-    final Api<T> refresh(RefreshMode mode) {
-        Api<T> api = draw(mode.mode());
-        Options<T> options = api.init();
-        ColumnActions<T> columnActions = options.columnActions;
-        if (columnActions != null && !columnActions.isEmpty()) {
-            elemental2.dom.Element table = document.getElementById(options.id);
-            if (table != null) {
-                Elements.stream(table.querySelectorAll("." + columnAction))
-                        .filter(htmlElements())
-                        .map(asHtmlElement())
-                        .forEach(link -> {
-                            ColumnAction<T> columnAction = columnActions.get(link.id);
-                            if (columnAction != null) {
-                                bind(link, click, event -> {
-                                    event.stopPropagation();
-                                    HTMLElement e = link; // find enclosing tr
-                                    while (e != null && e != document.body && !"tr".equalsIgnoreCase(
-                                            e.tagName)) {
-                                        e = (HTMLElement) e.parentNode;
-                                    }
-                                    if (e != null) {
-                                        T[] array = rows(e).data().toArray();
-                                        if (array.length != 0) {
-                                            columnAction.action(array[0]);
-                                        }
-                                    }
-                                });
-                            }
-                        });
-            }
-        }
-        return api;
     }
 
     @JsOverlay
@@ -329,5 +284,28 @@ class Api<T> {
     interface SelectCallback<T> {
 
         void onSelect(Object event, Api<T> api, String type);
+    }
+
+
+    // ------------------------------------------------------ draw
+
+
+    @JsFunction
+    interface DrawCallback {
+
+        void afterDraw(Object event, Object settings);
+    }
+
+
+    // ------------------------------------------------------ callback union type
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = "?")
+    interface CallbackUnionType<T> {
+
+        @JsOverlay
+        static <T> CallbackUnionType<T> of(Object o) {
+            return Js.cast(o);
+        }
     }
 }

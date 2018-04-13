@@ -33,7 +33,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 
 public class InstalledExtension extends NamedNode {
 
-    public static InstalledExtension fromJson(final String url, final JsonObject json) {
+    public static InstalledExtension fromJson(String url, JsonObject json) {
         ModelNode node = new ModelNode();
         node.get(URL).set(url);
         for (String key : json.keys()) {
@@ -49,7 +49,7 @@ public class InstalledExtension extends NamedNode {
         return new InstalledExtension(url, node);
     }
 
-    static InstalledExtension fromModelNode(final ModelNode modelNode) {
+    static InstalledExtension fromModelNode(ModelNode modelNode) {
         if (!modelNode.hasDefined(URL)) {
             throw new IllegalArgumentException("ModelNode does not contain an URL");
         }
@@ -60,7 +60,7 @@ public class InstalledExtension extends NamedNode {
     private final SafeUri domain;
     private final SafeUri baseUrl;
 
-    private InstalledExtension(final String url, final ModelNode modelNode) {
+    private InstalledExtension(String url, ModelNode modelNode) {
         super(modelNode);
         this.domain = UriUtils.fromString(Strings.getDomain(url));
         this.baseUrl = UriUtils.fromString(baseUrl(url));

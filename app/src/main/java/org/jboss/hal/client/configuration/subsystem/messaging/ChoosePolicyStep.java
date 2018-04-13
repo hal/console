@@ -130,17 +130,34 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
         Elements.setVisible(replicationForm, context.replication);
         Elements.setVisible(sharedStoreForm, !context.replication);
 
+
         if (context.haPolicy != null) {
-            replicationLiveRadio.checked = context.haPolicy == HaPolicy.LIVE_ONLY;
-            replicationMasterRadio.checked = context.haPolicy == HaPolicy.REPLICATION_MASTER;
-            replicationSlaveRadio.checked = context.haPolicy == HaPolicy.REPLICATION_SLAVE;
-            replicationColocatedRadio.checked = context.haPolicy == HaPolicy.REPLICATION_COLOCATED;
+            // change the default checked policy if user go back and change the strategy
+            if (context.replication && isNotReplicationPolicySelected(context.haPolicy)) {
+                replicationLiveRadio.checked = true;
+                context.haPolicy = HaPolicy.LIVE_ONLY;
+            } else if (!context.replication && isNotSharedStorePolicySelected(context.haPolicy)) {
+                sharedStoreMasterRadio.checked = true;
+                context.haPolicy = HaPolicy.SHARED_STORE_MASTER;
+            } else {
+                // check the policy when user go back and do not change the strategy
+                replicationLiveRadio.checked = context.haPolicy == HaPolicy.LIVE_ONLY;
+                replicationMasterRadio.checked = context.haPolicy == HaPolicy.REPLICATION_MASTER;
+                replicationSlaveRadio.checked = context.haPolicy == HaPolicy.REPLICATION_SLAVE;
+                replicationColocatedRadio.checked = context.haPolicy == HaPolicy.REPLICATION_COLOCATED;
 
-            sharedStoreMasterRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_MASTER;
-            sharedStoreSlaveRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_SLAVE;
-            sharedStoreColocatedRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_COLOCATED;
-
+                sharedStoreMasterRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_MASTER;
+                sharedStoreSlaveRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_SLAVE;
+                sharedStoreColocatedRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_COLOCATED;
+            }
         } else {
+            // set the default policy, if the user clicks "finish" without selecting a policy
+            if (context.replication) {
+                context.haPolicy = HaPolicy.LIVE_ONLY;
+            } else {
+                context.haPolicy = HaPolicy.SHARED_STORE_MASTER;
+            }
+
             replicationLiveRadio.checked = true;
             replicationMasterRadio.checked = false;
             replicationSlaveRadio.checked = false;
@@ -150,5 +167,18 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
             sharedStoreSlaveRadio.checked = false;
             sharedStoreColocatedRadio.checked = false;
         }
+    }
+
+    private boolean isNotReplicationPolicySelected(HaPolicy haPolicy) {
+        return haPolicy != HaPolicy.LIVE_ONLY
+                && haPolicy != HaPolicy.REPLICATION_MASTER
+                && haPolicy != HaPolicy.REPLICATION_SLAVE
+                && haPolicy != HaPolicy.REPLICATION_COLOCATED;
+    }
+
+    private boolean isNotSharedStorePolicySelected(HaPolicy haPolicy) {
+        return haPolicy != HaPolicy.SHARED_STORE_MASTER
+                && haPolicy != HaPolicy.SHARED_STORE_SLAVE
+                && haPolicy != HaPolicy.SHARED_STORE_COLOCATED;
     }
 }

@@ -49,7 +49,9 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_SUBDEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDeploymentTemplate;
@@ -61,6 +63,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.EJB3)
+@Requires(EJB3_DEPLOYMENT_ADDRESS)
 public class EjbColumn extends FinderColumn<EjbNode> {
 
     private final EventBus eventBus;

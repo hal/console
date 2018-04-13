@@ -18,11 +18,9 @@ package org.jboss.hal.ballroom.chart;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import elemental2.dom.HTMLElement;
-import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
-import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.js.JsHelper;
@@ -54,7 +52,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         options.bindto = HASH + root.id;
         options.data = new Options.Data();
         options.data.colors = JsHelper.asJsMap(builder.colors);
-        options.data.columns = new Array<>();
+        options.data.columns = new JsArray<>();
         options.data.names = JsHelper.asJsMap(builder.names);
         options.data.type = "donut";
         options.donut.title = builder.unit;
@@ -105,15 +103,15 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     @SuppressWarnings("unchecked")
     public void update(Map<String, Long> data) {
         long total = 0;
-        JsPropertyMapOfAny dataMap = JsPropertyMap.of();
-        Array<Array<Any>> columns = new Array<>();
+        JsPropertyMap<Object> dataMap = JsPropertyMap.of();
+        JsArray<JsArray<Object>> columns = new JsArray<>();
 
         for (Map.Entry<String, Long> entry : data.entrySet()) {
             String key = entry.getKey();
             long value = entry.getValue();
             total += value;
-            Array<Any> column = new Array<>();
-            column.push(Any.of(key), Any.of(value));
+            JsArray<Object> column = new JsArray<>();
+            column.push(key, value);
             columns.push(column);
         }
 
@@ -124,9 +122,9 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public void resize(int width) {
-        JsPropertyMapOfAny dimension = JsPropertyMap.of();
-        dimension.set(UIConstants.WIDTH, Any.of(width));
-        dimension.set(UIConstants.HEIGHT, Any.of(width / builder.legend.ratio));
+        JsPropertyMap<Object> dimension = JsPropertyMap.of();
+        dimension.set(UIConstants.WIDTH, width);
+        dimension.set(UIConstants.HEIGHT, width / builder.legend.ratio);
         api().resize(dimension);
     }
 

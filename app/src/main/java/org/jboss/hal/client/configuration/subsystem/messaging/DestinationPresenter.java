@@ -49,6 +49,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -127,6 +128,50 @@ public class DestinationPresenter
                 });
     }
 
+    // ------------------------------------------------------ core queue
+
+    // the custom add resource dialog is necessary because the "durable" and "filter" attributes are read-only
+    // after created
+    void addCoreQueue() {
+        Metadata metadata = metadataRegistry.lookup(CORE_QUEUE_TEMPLATE);
+        NameItem nameItem = new NameItem();
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_CORE_QUEUE, ADD), metadata)
+                .fromRequestProperties()
+                .unboundFormItem(nameItem, 0)
+                .include(DURABLE, FILTER)
+                .unsorted()
+                .build();
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.CORE_QUEUE), form,
+                (name, model) -> {
+                    AddressTemplate template = SELECTED_SERVER_TEMPLATE.append("queue=" + nameItem.getValue());
+                    ResourceAddress address = template.resolve(statementContext);
+                    crud.add(Names.CORE_QUEUE, nameItem.getValue(), address, model, (name1, address1) -> reload());
+                }).show();
+    }
+
+    // ------------------------------------------------------ jms queue
+
+    // the custom add resource dialog is necessary because the "durable" and "selector" attributes are read-only
+    // after created
+    void addJMSQueue() {
+        Metadata metadata = metadataRegistry.lookup(JMS_QUEUE_TEMPLATE);
+        NameItem nameItem = new NameItem();
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.MESSAGING_JMS_QUEUE, ADD), metadata)
+                .fromRequestProperties()
+                .unboundFormItem(nameItem, 0)
+                .include(DURABLE, SELECTOR)
+                .unsorted()
+                .build();
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.JMS_QUEUE), form,
+                (name, model) -> {
+                    AddressTemplate template = SELECTED_SERVER_TEMPLATE.append("jms-queue=" + nameItem.getValue());
+                    ResourceAddress address = template.resolve(statementContext);
+                    crud.add(Names.JMS_QUEUE, nameItem.getValue(), address, model, (name1, address1) -> reload());
+                }).show();
+    }
+
     // ------------------------------------------------------ security setting
 
     void selectSecuritySetting(String securitySetting) {
@@ -137,10 +182,11 @@ public class DestinationPresenter
         Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
         TextBoxItem patternItem = new TextBoxItem(PATTERN, Names.PATTERN);
         patternItem.setRequired(true);
-        NameItem nameItem = new NameItem();
+        TextBoxItem roleItem = new TextBoxItem(ROLE, resources.constants().role());
+        roleItem.setRequired(true);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_ADD, metadata)
                 .unboundFormItem(patternItem, 0)
-                .unboundFormItem(nameItem, 1)
+                .unboundFormItem(roleItem, 1)
                 .fromRequestProperties()
                 .requiredOnly()
                 .build();
@@ -152,7 +198,7 @@ public class DestinationPresenter
                     .resolve(statementContext);
             ResourceAddress roleAddress = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + EQUALS + pattern)
-                    .append(ROLE + EQUALS + name)
+                    .append(ROLE + EQUALS + roleItem.getValue())
                     .resolve(statementContext);
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
@@ -183,7 +229,7 @@ public class DestinationPresenter
     void saveSecuritySettingRole(Form<NamedNode> form, Map<String, Object> changedValues) {
         if (securitySetting != null) {
             String name = form.getModel().getName();
-            ResourceAddress address = SERVER_TEMPLATE
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + EQUALS + securitySetting)
                     .append(ROLE + EQUALS + name)
                     .resolve(statementContext);
@@ -198,7 +244,7 @@ public class DestinationPresenter
     void resetSecuritySettingRole(Form<NamedNode> form) {
         if (securitySetting != null) {
             String name = form.getModel().getName();
-            ResourceAddress address = SERVER_TEMPLATE
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + EQUALS + securitySetting)
                     .append(ROLE + EQUALS + name)
                     .resolve(statementContext);
@@ -206,7 +252,7 @@ public class DestinationPresenter
             crud.reset(Names.SECURITY_SETTING, securitySetting + "/" + name, address, form, metadata,
                     new FinishReset<NamedNode>(form) {
                         @Override
-                        public void afterReset(final Form<NamedNode> form) {
+                        public void afterReset(Form<NamedNode> form) {
                             reload();
                         }
                     });

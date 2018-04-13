@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client;
+package org.jboss.hal.core;
 
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.hal.client.bootstrap.BootstrapFailed;
-import org.jboss.hal.client.bootstrap.LoadingPanel;
-import org.jboss.hal.config.Endpoints;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
@@ -32,41 +32,49 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.document;
+import static org.jboss.hal.resources.CSS.withProgress;
 
 public class ExceptionHandler {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+    private static boolean pendingLifecycleAction = false;
 
-    public static void beforeBootstrap() {
-        GWT.setUncaughtExceptionHandler(e -> {
-            LoadingPanel.get().off();
-            String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
-            logger.error("Uncaught bootstrap error: {}", errorMessage);
-            document.body.appendChild(BootstrapFailed.create(errorMessage, Endpoints.INSTANCE).asElement());
-        });
+    static void setPendingLifecycleAction(boolean value) {
+        pendingLifecycleAction = value;
+        logger.debug("ExceptionHandler.pendingLifecycleAction = {}", pendingLifecycleAction);
     }
-
 
     private final EventBus eventBus;
     private final PlaceManager placeManager;
+    private final Progress progress;
     private final Resources resources;
 
     @Inject
     public ExceptionHandler(EventBus eventBus,
             PlaceManager placeManager,
+            @Footer Progress progress,
             Resources resources) {
         this.eventBus = eventBus;
         this.placeManager = placeManager;
+        this.progress = progress;
         this.resources = resources;
     }
 
     public void afterBootstrap() {
         GWT.setUncaughtExceptionHandler(e -> {
-            String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
-            logger.error("Uncaught exception: {}", errorMessage);
-            placeManager.unlock();
-            MessageEvent.fire(eventBus,
-                    Message.error(resources.messages().unknownError(), errorMessage));
+            if (!pendingLifecycleAction) {
+                String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
+                logger.error("Uncaught exception: {}", errorMessage);
+                placeManager.unlock();
+                progress.finish();
+                stopProgress();
+                MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
+            }
         });
+    }
+
+    private void stopProgress() {
+        Elements.stream(document.querySelectorAll("." + withProgress))
+                .forEach(element -> element.classList.remove(withProgress));
     }
 }

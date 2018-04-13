@@ -63,7 +63,7 @@ import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEM
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-@Column(Ids.STANDALONE_SERVER)
+@Column(Ids.STANDALONE_SERVER_COLUMN)
 @Requires(value = {"/", MANAGEMENT_ADDRESS, CONFIGURATION_CHANGES_ADDRESS, MANAGEMENT_OPERATIONS_ADDRESS},
         recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
@@ -79,7 +79,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
             FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
             ServerActions serverActions, PlaceManager placeManager, Places places,
             Resources resources) {
-        super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
+        super(new Builder<Server>(finder, Ids.STANDALONE_SERVER_COLUMN, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
                     Operation attributes = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
@@ -139,6 +139,9 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest,
                             Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
                 }
+                PlaceRequest placeRequest = new PlaceRequest.Builder()
+                        .nameToken(NameTokens.STANDALONE_SERVER).build();
+                actions.add(itemActionFactory.viewAndMonitor(Ids.STANDALONE_SERVER_COLUMN, placeRequest));
                 if (!serverActions.isPending(item)) {
                     // Order is: reload, restart, (resume | suspend)
                     actions.add(new ItemAction.Builder<Server>()

@@ -215,7 +215,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
             HTMLElement ul = null;
             for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); i++) {
                 Action action = iterator.next();
-                String actionId = Ids.build(Ids.TOOLBAR, "action", action.id);
+                String actionId = Ids.build(Ids.TOOLBAR, "actions", action.id);
                 if (i < 3) {
                     actionsContainer.appendChild(button()
                             .css(btn, btnDefault)

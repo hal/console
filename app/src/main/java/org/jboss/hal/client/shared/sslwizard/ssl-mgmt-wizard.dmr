@@ -1,0 +1,252 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "A definition to enable SSL on the management interface, it combines elytron resources: key-store, key-manager, server-ssl-context, http-interface",
+    "attributes" => {
+        "key-store" => {
+            "type" => STRING,
+            "description" => "An existing key-store elytron resource",
+            "required" => false,
+            "capability-reference" => "org.wildfly.security.key-store",
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "key-store-name" => {
+            "type" => STRING,
+            "description" => "A key-store name definition",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "key-store-password" => {
+            "type" => STRING,
+            "description" => "The password for the key-store",
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "key-store-path" => {
+            "type" => STRING,
+            "description" => "The path to the KeyStore file.",
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "key-store-relative-to" => {
+            "type" => STRING,
+            "description" => "The base path this Key Store is relative to.",
+            "required" => false,
+            "nillable" => true,
+            "requires" => ["key-store-path"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "key-store-type" => {
+            "type" => STRING,
+            "description" => "The type of the KeyStore, used when creating the new KeyStore instance.",
+            "required" => false,
+            "nillable" => true,
+            "default" => "JKS",
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "key-alias" => {
+            "type" => STRING,
+            "description" => "The alias of the new KeyStore entry.",
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-algorithm" => {
+            "type" => STRING,
+            "description" => "The algorithm to be used to generate the key pair.",
+            "required" => false,
+            "nillable" => true,
+            "default" => "RSA",
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-dn-common-name" => {
+            "type" => STRING,
+            "description" => "The Common Name, part of DN to use as both the subject DN and the issuer DN.",
+            "default" => "My Name",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-dn-organizational-unit" => {
+            "type" => STRING,
+            "description" => "The Organizational Unit, part of DN to use as both the subject DN and the issuer DN.",
+            "default" => "My Org Unit",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-dn-organization" => {
+            "type" => STRING,
+            "description" => "The Organization, part of DN to use as both the subject DN and the issuer DN.",
+            "default" => "My Org",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-dn-locality" => {
+            "type" => STRING,
+            "description" => "The Locality, part of DN to use as both the subject DN and the issuer DN.",
+            "default" => "My Local",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-dn-state" => {
+            "type" => STRING,
+            "description" => "The State, part of DN to use as both the subject DN and the issuer DN.",
+            "required" => false,
+            "nillable" => true,
+            "default" => "My State",
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-dn-country" => {
+            "type" => STRING,
+            "description" => "The Country, part of DN to use as both the subject DN and the issuer DN.",
+            "required" => false,
+            "nillable" => true,
+            "default" => "My Country",
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "key-validity" => {
+            "type" => LONG,
+            "description" => "The number of days for which the self-signed certificate should be considered valid. The default value is 90 days.",
+            "required" => false,
+            "nillable" => true,
+            "default" => 90,
+            "min" => 1L,
+            "max" => 9223372036854775807L
+        },
+        "key-manager" => {
+            "type" => STRING,
+            "description" => "A Key Manager definition",
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "trust-manager" => {
+            "type" => STRING,
+            "description" => "A Trust Manager definition",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "server-ssl-context" => {
+            "type" => STRING,
+            "description" => "A Server SSL Context definition",
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "client-certificate-alias" => {
+            "type" => STRING,
+            "description" => "The alias of the imported certificate.",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "client-certificate-path" => {
+            "type" => STRING,
+            "description" => "The path to the file that contains the certificate or certificate chain to import in binary encoding format or printable encoding format.",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "client-certificate-trust-cacerts" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies whether certificates from the cacerts file should be included when creating / validating the certificate chain.",
+            "required" => false,
+            "nillable" => true,
+            "default" => false
+        },
+        "client-certificate-validate" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies whether to validate that the top-most certificate is actually trusted when importing a certificate chain or whether to validate the certificate is actually trusted when importing a certificate. The default value is true. When this is set to true and validation fails, the certificate or certificate chain will not be imported into a KeyStore entry.",
+            "required" => false,
+            "nillable" => true,
+            "default" => true
+        },
+        "trust-store-name" => {
+            "type" => STRING,
+            "description" => "A trust-store name definition",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "trust-store-password" => {
+            "type" => STRING,
+            "description" => "The password for the trust-store",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "trust-store-path" => {
+            "type" => STRING,
+            "description" => "The path to the KeyStore file.",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "trust-store-relative-to" => {
+            "type" => STRING,
+            "description" => "The base path this Key Store is relative to.",
+            "required" => false,
+            "nillable" => true,
+            "requires" => ["trust-store-path"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "trust-store-type" => {
+            "type" => STRING,
+            "description" => "The type of the KeyStore, used when creating the new KeyStore instance.",
+            "required" => false,
+            "nillable" => true,
+            "default" => "JKS",
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "secure-socket-binding" => {
+            "type" => STRING,
+            "description" => "The name of the socket binding configuration to use for the HTTPS management interface's socket.  When defined at least one of ssl-context or security-realm must also be defined.",
+            "required" => false,
+            "nillable" => true,
+            "default" => "management-https",
+            "capability-reference" => "org.wildfly.network.socket-binding",
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+        },
+        "secure-port" => {
+            "type" => INT,
+            "description" => "The port on which the host controller's socket for HTTPS management communication should be opened. When defined at least one of ssl-context or security-realm must also be defined.",
+            "required" => false,
+            "nillable" => true,
+            "default" => 9993,
+            "min" => 0L,
+            "max" => 65535L,
+        }
+    }
+}

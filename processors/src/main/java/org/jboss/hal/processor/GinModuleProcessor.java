@@ -20,11 +20,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
+import com.google.auto.service.AutoService;
 import com.google.common.base.Joiner;
 import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.spi.GinModule;
@@ -35,8 +37,7 @@ import static org.jboss.hal.processor.TemplateNames.GIN_PACKAGE;
 import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;
 
 /** Processor for GIN modules. */
-// Do not export this processor using @AutoService(Processor.class)
-// It's executed explicitly in hal-app to process all GIN modules in all maven modules.
+@AutoService(Processor.class)
 @SuppressWarnings("HardCodedStringLiteral")
 @SupportedAnnotationTypes("org.jboss.hal.spi.GinModule")
 public class GinModuleProcessor extends AbstractProcessor {
@@ -54,13 +55,15 @@ public class GinModuleProcessor extends AbstractProcessor {
 
     @Override
     protected boolean onProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        for (Element e : roundEnv.getElementsAnnotatedWith(GinModule.class)) {
+        Set<? extends Element> roundModules = roundEnv.getElementsAnnotatedWith(GinModule.class);
+        for (Element e : roundModules) {
             TypeElement moduleElement = (TypeElement) e;
             modules.add(moduleElement.getQualifiedName().toString());
             debug("Added %s as GIN module", moduleElement.getQualifiedName());
         }
 
-        if (!modules.isEmpty()) {
+        // TODO Don't rely on a specific round, but find other ways to run this processor last.
+        if (round() == 1 && !modules.isEmpty()) {
             debug("Generating composite GIN module");
             code(MODULE_TEMPLATE, MODULE_PACKAGE, MODULE_CLASS, () -> {
                 Map<String, Object> context = new HashMap<>();
@@ -70,8 +73,9 @@ public class GinModuleProcessor extends AbstractProcessor {
                 context.put("modules", modules);
                 return context;
             });
-            info("Successfully generated composite GIN module [%s] based on \n\t- %s.", MODULE_CLASS,
-                    Joiner.on("\n\t- ").join(modules));
+
+            info("Successfully generated composite GIN module [%s] based on \n\t%s.", MODULE_CLASS,
+                    Joiner.on("\n\t").join(modules));
             modules.clear();
         }
         return false;

@@ -190,6 +190,11 @@ public class VerticalNavigation implements Attachable {
         insertPrimary(id, beforeId, text, iconClass, element.asElement());
     }
 
+    public void insertPrimary(String id, String beforeId, String text, String iconClass) {
+        HTMLElement ele = null;
+        insertPrimary(id, beforeId, text, iconClass, ele);
+    }
+
     public void insertPrimary(String id, String beforeId, String text, String iconClass, HTMLElement element) {
         if (items.isEmpty()) {
             logger.error("Cannot insert {}: There has to be at least one other item.", id);
@@ -199,10 +204,13 @@ public class VerticalNavigation implements Attachable {
         if (beforeId == null) {
             // as last item
             Pane lastPane = panes.values().iterator().next();
-            Pane pane = new Pane(id, element);
-            addPrimary(items, panes, id, text, iconClass, pane);
-            lastPane.asElement().parentNode.appendChild(pane.asElement());
-
+            if (element != null) {
+                Pane pane = new Pane(id, element);
+                addPrimary(items, panes, id, text, iconClass, pane);
+                lastPane.asElement().parentNode.appendChild(pane.asElement());
+            } else {
+                addPrimary(items, panes, id, text, iconClass, null);
+            }
         } else {
             if (items.containsKey(beforeId)) {
                 // TODO Could be simplified: The order of panes does not matter, only the order of items matters
@@ -216,10 +224,14 @@ public class VerticalNavigation implements Attachable {
                     paneIterator.next();
 
                     if (currentId.equals(beforeId)) {
-                        Pane pane = new Pane(id, element);
-                        addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, pane);
-                        Pane refPane = panes.get(currentId);
-                        refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
+                        if (element != null) {
+                            Pane pane = new Pane(id, element);
+                            addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, pane);
+                            Pane refPane = panes.get(currentId);
+                            refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
+                        } else {
+                            addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, null);
+                        }
                         reshuffledItems.put(currentId, items.get(currentId));
                         reshuffledPanes.put(currentId, panes.get(currentId));
 
@@ -356,7 +368,7 @@ public class VerticalNavigation implements Attachable {
                 primaryItem.asElement().appendChild(div);
             }
 
-            HTMLElement li = li().css(listGroupItem)
+            HTMLElement li = li().id(id).css(listGroupItem)
                     .add(a().css(clickable).on(click, event -> show(id))
                             .add(span().css(listGroupItemValue).textContent(text)))
                     .asElement();
@@ -401,6 +413,18 @@ public class VerticalNavigation implements Attachable {
             show.asElement().click();
             if (callbacks.containsKey(id)) {
                 callbacks.get(id).execute();
+            }
+
+            // highlight active item(s)
+            for (Item item : items.values()) {
+                item.asElement().classList.remove(active);
+            }
+            show.asElement().classList.add(active);
+            if (show.parentId != null) {
+                Item showParent = items.get(show.parentId);
+                if (showParent != null) {
+                    showParent.asElement().classList.add(active);
+                }
             }
 
         } else {
@@ -476,7 +500,7 @@ public class VerticalNavigation implements Attachable {
         private final HTMLElement element;
         private final LinkedHashSet<String> children;
 
-        private Item(final String id, String parentId, final String text, final HTMLElement element) {
+        private Item(String id, String parentId, String text, HTMLElement element) {
             this.id = id;
             this.parentId = parentId;
             this.text = text;
@@ -508,14 +532,16 @@ public class VerticalNavigation implements Attachable {
         private final String id;
         private final HTMLElement element;
 
-        private Pane(final String id, final HTMLElement element) {
+        private Pane(String id, HTMLElement element) {
             this.id = id;
             this.element = element;
+            this.element.dataset.set("vnItemFor", id);
         }
 
-        private Pane(final String id, final IsElement isElement) {
+        private Pane(String id, IsElement isElement) {
             this.id = id;
             this.element = isElement.asElement();
+            this.element.dataset.set("vnItemFor", id);
         }
 
         @Override

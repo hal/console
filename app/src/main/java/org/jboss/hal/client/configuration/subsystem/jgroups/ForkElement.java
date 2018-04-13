@@ -20,6 +20,7 @@ import java.util.List;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -48,15 +49,15 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
     private HTMLElement section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    ForkElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    ForkElement(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Resources resources) {
 
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
 
         Metadata metadata = metadataRegistry.lookup(CHANNEL_FORK_TEMPLATE);
 
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_FORK_ITEM, Ids.TABLE),
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_FORK, Ids.TABLE),
                 metadata)
                 .button(tableButtonFactory.add(CHANNEL_FORK_TEMPLATE,
                         table -> presenter.addResourceDialog(SELECTED_CHANNEL_FORK_TEMPLATE,
@@ -65,10 +66,10 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
                         table -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
                                 table.selectedRow().getName(), Names.FORK)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column("Protocols", row -> {
+                .column(new InlineAction<>(Names.PROTOCOL, row -> {
                     presenter.showChannelProtocol(row);
                     presenter.showChannelInnerPage(PROTOCOL_ID);
-                })
+                }))
                 .build();
 
         section = section()
@@ -95,11 +96,13 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
     }
 
     @Override
-    public void setPresenter(final JGroupsPresenter presenter) {
+    public void setPresenter(JGroupsPresenter presenter) {
         this.presenter = presenter;
     }
 
     void update(List<NamedNode> models) {
         table.update(models);
+        // disable "remove" button if the table is empty
+        table.enableButton(1, !models.isEmpty());
     }
 }

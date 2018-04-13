@@ -37,8 +37,7 @@ public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ exten
 
     private final Finder finder;
 
-    protected ApplicationFinderPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
-            final Finder finder) {
+    protected ApplicationFinderPresenter(EventBus eventBus, V view, Proxy_ proxy, Finder finder) {
         super(eventBus, view, proxy);
         this.finder = finder;
     }

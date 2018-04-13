@@ -56,7 +56,6 @@ class RrdTask implements Task<LookupContext> {
     @Override
     public Completable call(LookupContext context) {
         boolean recursive = context.recursive;
-        LookupResult lookupResult = context.lookupResult;
         List<Completable> completables = new ArrayList<>();
 
         // create and partition non-optional operations

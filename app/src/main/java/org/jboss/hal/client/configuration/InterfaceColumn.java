@@ -48,12 +48,12 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class InterfaceColumn extends FinderColumn<NamedNode> {
 
     @Inject
-    public InterfaceColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final Places places,
-            final Dispatcher dispatcher,
-            final CrudOperations crud) {
+    public InterfaceColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Places places,
+            Dispatcher dispatcher,
+            CrudOperations crud) {
 
         super(new Builder<NamedNode>(finder, Ids.INTERFACE, Names.INTERFACE)
                 .columnAction(columnActionFactory.add(

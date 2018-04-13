@@ -67,8 +67,7 @@ public class Operation extends ModelNode {
         set(modelNode.clone());
     }
 
-    Operation(final String name, final ResourceAddress address, final ModelNode parameter,
-            final ModelNode header, final Set<String> roles) {
+    Operation(String name, ResourceAddress address, ModelNode parameter, ModelNode header, Set<String> roles) {
         this.name = name;
         this.address = address;
         this.parameter = parameter == null ? new ModelNode() : parameter;
@@ -139,7 +138,7 @@ public class Operation extends ModelNode {
     }
 
     @JsIgnore
-    public Operation runAs(final Set<String> runAs) {
+    public Operation runAs(Set<String> runAs) {
         return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
 
@@ -201,7 +200,7 @@ public class Operation extends ModelNode {
         private Set<String> roles;
 
         @JsIgnore
-        public Builder(final ResourceAddress address, final String name) {
+        public Builder(ResourceAddress address, String name) {
             this.address = address;
             this.name = name;
             this.parameter = new ModelNode();

@@ -121,7 +121,7 @@ public class NameTokenProcessor extends AbstractProcessor {
         return false;
     }
 
-    private Supplier<Map<String, Object>> context(final String packageName, final String className) {
+    private Supplier<Map<String, Object>> context(String packageName, String className) {
         return () -> {
             Map<String, Object> context = new HashMap<>();
             context.put(GENERATED_WITH, NameTokenProcessor.class.getName());

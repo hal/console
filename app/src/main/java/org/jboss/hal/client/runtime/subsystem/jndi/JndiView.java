@@ -17,7 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 
 import javax.inject.Inject;
 
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Search;
@@ -99,7 +99,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final JndiPresenter presenter) {
+    public void setPresenter(JndiPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -118,9 +118,9 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void update(final ModelNode jndi) {
+    public void update(ModelNode jndi) {
         JndiParser jndiParser = new JndiParser();
-        Array<Node<JndiContext>> nodes = new Array<>();
+        JsArray<Node<JndiContext>> nodes = new JsArray<>();
 
         if (jndi.hasDefined(JAVA_CONTEXTS)) {
             JndiContext jndiContext = new JndiContext();

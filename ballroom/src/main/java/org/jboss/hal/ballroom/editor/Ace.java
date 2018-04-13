@@ -27,6 +27,7 @@ class Ace {
 
     static native void init() /*-{
         $wnd.ace.config.set('basePath', 'js');
+        $wnd.ace.config.setDefaultValue("session", "useWorker", false);
     }-*/;
 
     private Ace() {

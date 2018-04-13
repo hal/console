@@ -135,7 +135,6 @@ public class ConfigurationChangesPresenter extends
             } else {
                 getView().update(new ModelNode());
             }
-
         });
     }
 
@@ -161,6 +160,7 @@ public class ConfigurationChangesPresenter extends
                 .closeOnEsc(true)
                 .build();
 
+        dialog.registerAttachable(form);
         dialog.show();
         form.edit(changeModel);
     }

@@ -16,23 +16,23 @@
   ~ limitations under the License.
   -->
 <view>
-    <vertical-navigation id="ejb-vertical-navigation">
+    <vertical-navigation id="ejb3-vertical-navigation">
 
-        <item id="ejb-container-item" title="Container" icon="fa fa-cogs">
+        <item id="ejb3-container-item" title="Container" icon="fa fa-cogs">
 
-            <sub-item id="ejb-configuration-item" title="Container">
+            <sub-item id="ejb3-configuration-item" title="Container">
                 <metadata address="/{selected.profile}/subsystem=ejb3">
                     <h1>Container</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <form id="ejb-configuration-form" title="Container" auto-save="true" reset="true"/>
+                    <form id="ejb3-configuration-form" title="Container" auto-save="true" reset="true"/>
                 </metadata>
             </sub-item>
 
-            <sub-item id="ejb-thread-pool-item" title="Thread Pool">
+            <sub-item id="ejb3-thread-pool-item" title="Thread Pool">
                 <metadata address="/{selected.profile}/subsystem=ejb3/thread-pool=*">
                     <h1>Thread Pool</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="ejb-thread-pool-table" title="Thread Pool" form-ref="ejb-thread-pool-form">
+                    <table id="ejb3-thread-pool-table" title="Thread Pool" form-ref="ejb3-thread-pool-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -42,17 +42,17 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="ejb-thread-pool-form" title="Thread Pool" auto-save="true" reset="true"
+                    <form id="ejb3-thread-pool-form" title="Thread Pool" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
 
-            <sub-item id="ejb-remoting-profile-item" title="Remoting Profile">
+            <sub-item id="ejb3-remoting-profile-item" title="Remoting Profile">
                 <metadata address="/{selected.profile}/subsystem=ejb3/remoting-profile=*">
                     <h1>Remoting Profile</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="ejb-remoting-profile-table" title="Remoting Profile"
-                           form-ref="ejb-remoting-profile-form">
+                    <table id="ejb3-remoting-profile-table" title="Remoting Profile"
+                           form-ref="ejb3-remoting-profile-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -62,17 +62,17 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="ejb-remoting-profile-form" title="Remoting Profile" auto-save="true" reset="true"
+                    <form id="ejb3-remoting-profile-form" title="Remoting Profile" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
         </item>
 
-        <item id="ejb-bean-pool-item" title="Bean Pool" icon="pficon pficon-repository">
+        <item id="ejb3-bean-pool-item" title="Bean Pool" icon="pficon pficon-repository">
             <metadata address="/{selected.profile}/subsystem=ejb3/strict-max-bean-instance-pool=*">
                 <h1>Bean Pool</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
-                <table id="ejb-bean-pool-table" title="Bean Pool" form-ref="ejb-bean-pool-form">
+                <table id="ejb3-bean-pool-table" title="Bean Pool" form-ref="ejb3-bean-pool-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -82,18 +82,18 @@
                         <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
-                <form id="ejb-bean-pool-form" title="Bean Pool" auto-save="true" reset="true"
+                <form id="ejb3-bean-pool-form" title="Bean Pool" auto-save="true" reset="true"
                       name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>
 
-        <item id="ejb-state-item" title="State Management" icon="fa fa-list-ul">
+        <item id="ejb3-state-item" title="State Management" icon="fa fa-list-ul">
 
-            <sub-item id="ejb-cache-item" title="Cache">
+            <sub-item id="ejb3-cache-item" title="Cache">
                 <metadata address="/{selected.profile}/subsystem=ejb3/cache=*">
                     <h1>Cache</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="ejb-cache-table" title="Cache" form-ref="ejb-cache-form">
+                    <table id="ejb3-cache-table" title="Cache" form-ref="ejb3-cache-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -103,16 +103,16 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="ejb-cache-form" title="Cache" auto-save="true" reset="true"
+                    <form id="ejb3-cache-form" title="Cache" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
 
-            <sub-item id="ejb-passivation-item" title="Passivation">
+            <sub-item id="ejb3-passivation-item" title="Passivation">
                 <metadata address="/{selected.profile}/subsystem=ejb3/passivation-store=*">
                     <h1>Passivation</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="ejb-passivation-table" title="Passivation" form-ref="ejb-passivation-form">
+                    <table id="ejb3-passivation-table" title="Passivation" form-ref="ejb3-passivation-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -135,19 +135,19 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="ejb-passivation-form" title="Passivation" auto-save="true" reset="true"
+                    <form id="ejb3-passivation-form" title="Passivation" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
         </item>
 
-        <item id="ejb-service-item" title="Services" icon="pficon pficon-service">
+        <item id="ejb3-service-item" title="Services" icon="pficon pficon-service">
 
-            <sub-item id="ejb-service-async-item" title="Async">
+            <sub-item id="ejb3-service-async-item" title="Async">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=async">
                     <h1>Async</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <form id="ejb-service-async-form" title="Async" auto-save="true" reset="true">
+                    <form id="ejb3-service-async-form" title="Async" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="thread-pool-name">
                                 <suggest-handler>
@@ -163,19 +163,27 @@
                 </metadata>
             </sub-item>
 
-            <sub-item id="ejb-service-iiop-item" title="IIOP">
-                <metadata address="/{selected.profile}/subsystem=ejb3/service=iiop">
-                    <h1>IIOP</h1>
+            <sub-item id="ejb3-service-identity-item" title="Identity">
+                <metadata address="/{selected.profile}/subsystem=ejb3/service=identity">
+                    <h1>Identity</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <form id="ejb-service-iiop-form" title="IIOP" auto-save="true" reset="true"/>
+                    <singleton-form id="ejb3-service-identity-form" title="Identity" auto-save="true" reset="true"/>
                 </metadata>
             </sub-item>
 
-            <sub-item id="ejb-service-remote-item" title="Remote">
+            <sub-item id="ejb3-service-iiop-item" title="IIOP">
+                <metadata address="/{selected.profile}/subsystem=ejb3/service=iiop">
+                    <h1>IIOP</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <singleton-form id="ejb3-service-iiop-form" title="IIOP" auto-save="true" reset="true"/>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="ejb3-service-remote-item" title="Remote">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=remote">
                     <h1>Remote</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <form id="ejb-service-remote-form" title="Remote" auto-save="true" reset="true">
+                    <form id="ejb3-service-remote-form" title="Remote" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="cluster">
                                 <suggest-handler>
@@ -204,11 +212,11 @@
                 </metadata>
             </sub-item>
 
-            <sub-item id="ejb-service-timer-item" title="Timer">
+            <sub-item id="ejb3-service-timer-item" title="Timer">
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=timer-service">
                     <h1>Timer</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <form id="ejb-service-timer-form" title="Timer" auto-save="true" reset="true">
+                    <form id="ejb3-service-timer-form" title="Timer" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="default-data-store">
                                 <suggest-handler>
@@ -233,12 +241,12 @@
             </sub-item>
         </item>
 
-        <item id="ejb-mdb-delivery-group-item" title="MDB Delivery" icon="fa fa-inbox">
+        <item id="ejb3-mdb-delivery-group-item" title="MDB Delivery" icon="fa fa-inbox">
             <metadata address="/{selected.profile}/subsystem=ejb3/mdb-delivery-group=*">
                 <h1>MDB Delivery Group</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
-                <table id="ejb-mdb-delivery-group-table" title="MDB Delivery Group"
-                       form-ref="ejb-mdb-delivery-group-form">
+                <table id="ejb3-mdb-delivery-group-table" title="MDB Delivery Group"
+                       form-ref="ejb3-mdb-delivery-group-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -248,7 +256,7 @@
                         <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
-                <form id="ejb-mdb-delivery-group-form" title="MDB Delivery Group" auto-save="true" reset="true"
+                <form id="ejb3-mdb-delivery-group-form" title="MDB Delivery Group" auto-save="true" reset="true"
                       name-resolver="${form.getModel().getName()}"/>
             </metadata>
         </item>

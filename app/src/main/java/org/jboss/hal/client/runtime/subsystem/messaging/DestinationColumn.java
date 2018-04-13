@@ -55,20 +55,24 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.DEPLOYMENT_RESOURCES;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.SUBSYSTEM_RESOURCES;
 import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 
-@AsyncColumn(Ids.MESSAGING_SERVER_DESTINATION)
+@AsyncColumn(Ids.MESSAGING_SERVER_DESTINATION_RUNTIME)
+@Requires({MESSAGING_CORE_QUEUE_ADDRESS,
+        MESSAGING_JMS_QUEUE_ADDRESS,
+        MESSAGING_JMS_TOPIC_ADDRESS,
+        MESSAGING_DEPLOYMENT_JMS_QUEUE_ADDRESS,
+        MESSAGING_DEPLOYMENT_JMS_TOPIC_ADDRESS})
 public class DestinationColumn extends FinderColumn<Destination> {
 
     private final Dispatcher dispatcher;
@@ -86,7 +90,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
             StatementContext statementContext,
             Resources resources) {
 
-        super(new Builder<Destination>(finder, Ids.MESSAGING_SERVER_DESTINATION, Names.DESTINATION)
+        super(new Builder<Destination>(finder, Ids.MESSAGING_SERVER_DESTINATION_RUNTIME, Names.DESTINATION)
                 .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_DESTINATION_REFRESH))
                 .onPreview(item -> new DestinationPreview(item, finderPathFactory, places, dispatcher, resources))
                 .useFirstActionAsBreadcrumbHandler()
@@ -107,8 +111,8 @@ public class DestinationColumn extends FinderColumn<Destination> {
                     .findAny()
                     .map(FinderSegment::getItemId);
             if (optional.isPresent()) {
-                // Extract the server name from the item id "msg-server-<server name>"
-                String server = substringAfterLast(optional.get(), Ids.MESSAGING_SERVER + "-");
+                // Extract the server name from the item id "msgs-<server name>"
+                String server = substringAfterLast(optional.get(), "msgs-");
                 List<Operation> operations = new ArrayList<>();
                 for (Type type : SUBSYSTEM_RESOURCES) {
                     ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
@@ -138,8 +142,6 @@ public class DestinationColumn extends FinderColumn<Destination> {
                     callback.onSuccess(destinations);
                 });
             }
-
-
         };
         setItemsProvider(itemsProvider);
         setBreadcrumbItemsProvider(
@@ -218,7 +220,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
                             builder.with(SUBDEPLOYMENT, item.getSubdeployment());
                         }
                     }
-                    builder.with(MESSAGING_SERVER, messageServer()).with(NAME, item.getName());
+                    builder.with(Ids.MESSAGING_SERVER, messageServer()).with(NAME, item.getName());
                     actions.add(itemActionFactory.view(builder.build()));
 
                     if (item.isPaused()) {
@@ -251,7 +253,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
         Optional<String> server = stream(getFinder().getContext().getPath().spliterator(), false)
                 .filter(segment -> Ids.MESSAGING_SERVER_RUNTIME.equals(segment.getColumnId()))
                 .findFirst()
-                .map(segment -> segment.getItemId().substring(MESSAGING_SERVER.length() + 1));
+                .map(segment -> segment.getItemId().substring("msgs-".length())); // decode Ids.messagingServer()
         return server.orElse(UNDEFINED);
     }
 

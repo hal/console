@@ -126,7 +126,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     // ------------------------------------------------------ ui
 
-    protected FinderColumn(final Builder<T> builder) {
+    protected FinderColumn(Builder<T> builder) {
         this.finder = builder.finder;
         this.id = builder.id;
         this.title = builder.title;
@@ -213,7 +213,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
     @SuppressWarnings("Duplicates")
-    private HTMLElement newColumnButton(final ColumnAction<T> action) {
+    private HTMLElement newColumnButton(ColumnAction<T> action) {
         HtmlContentBuilder builder;
         if (!action.actions.isEmpty()) {
             HTMLElement button;
@@ -422,13 +422,13 @@ public class FinderColumn<T> implements IsElement, Attachable {
                         finder.appendColumn(nextColumn,
                                 new AsyncCallback<FinderColumn>() {
                                     @Override
-                                    public void onFailure(final Throwable throwable) {
+                                    public void onFailure(Throwable throwable) {
                                         logger.error("Unable to append next column '{}' on keyboard right: {}",
                                                 nextColumn, throwable.getMessage());
                                     }
 
                                     @Override
-                                    public void onSuccess(final FinderColumn column) {
+                                    public void onSuccess(FinderColumn column) {
                                         if (column.activeElement() == null && column.hasVisibleElements()) {
                                             HTMLElement firstElement = column.nextVisibleElement(null);
                                             column.markSelected(firstElement.id);
@@ -547,7 +547,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         return pinnable;
     }
 
-    void unpin(final FinderRow<T> row) {
+    void unpin(FinderRow<T> row) {
         row.asElement().classList.remove(pinned);
         row.asElement().classList.add(unpinned);
 
@@ -569,7 +569,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         storage.unpinItem(row.getId());
     }
 
-    void pin(final FinderRow<T> row) {
+    void pin(FinderRow<T> row) {
         row.asElement().classList.remove(unpinned);
         row.asElement().classList.add(pinned);
 
@@ -627,14 +627,14 @@ public class FinderColumn<T> implements IsElement, Attachable {
         } else if (itemsProvider != null) {
             itemsProvider.get(finder.getContext(), new AsyncCallback<List<T>>() {
                 @Override
-                public void onFailure(final Throwable throwable) {
+                public void onFailure(Throwable throwable) {
                     if (callback != null) {
                         callback.onFailure(throwable);
                     }
                 }
 
                 @Override
-                public void onSuccess(final List<T> items) {
+                public void onSuccess(List<T> items) {
                     setItems(items, callback);
                 }
             });
@@ -740,7 +740,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
      * attached to the DOM!
      */
-    protected void setItemRenderer(final ItemRenderer<T> itemRenderer) {
+    protected void setItemRenderer(ItemRenderer<T> itemRenderer) {
         assertNotAsElement("setItemRenderer()");
         this.itemRenderer = itemRenderer;
     }
@@ -757,7 +757,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
      * attached to the DOM!
      */
-    protected void setItemsProvider(final ItemsProvider<T> itemsProvider) {
+    protected void setItemsProvider(ItemsProvider<T> itemsProvider) {
         assertNotAsElement("setItemsProvider()");
         this.itemsProvider = itemsProvider;
     }
@@ -778,7 +778,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
      * attached to the DOM!
      */
-    protected void setPreviewCallback(final PreviewCallback<T> previewCallback) {
+    protected void setPreviewCallback(PreviewCallback<T> previewCallback) {
         this.previewCallback = previewCallback;
     }
 
@@ -790,7 +790,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
      * attached to the DOM!
      */
-    protected void setBreadcrumbItemsProvider(final BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
+    protected void setBreadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
         assertNotAsElement("setBreadcrumbItemsProvider()");
         this.breadcrumbItemsProvider = breadcrumbItemsProvider;
     }
@@ -874,12 +874,12 @@ public class FinderColumn<T> implements IsElement, Attachable {
     public void refresh(Callback callback) {
         setItems(new AsyncCallback<FinderColumn>() {
             @Override
-            public void onFailure(final Throwable throwable) {
+            public void onFailure(Throwable throwable) {
                 logger.error("Unable to refresh column {}: {}", id, throwable.getMessage());
             }
 
             @Override
-            public void onSuccess(final FinderColumn column) {
+            public void onSuccess(FinderColumn column) {
                 finder.updateContext();
                 if (callback != null) {
                     callback.execute();
@@ -903,7 +903,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     // ------------------------------------------------------ rbac / security
 
-    private List<ColumnAction<T>> allowedActions(final List<ColumnAction<T>> actions) {
+    private List<ColumnAction<T>> allowedActions(List<ColumnAction<T>> actions) {
         return actions.stream()
                 .filter(action -> {
                     if (!action.actions.isEmpty()) {
@@ -966,7 +966,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         private ItemSelectionHandler<T> selectionHandler;
         private String filterDescription;
 
-        public Builder(final Finder finder, final String id, final String title) {
+        public Builder(Finder finder, String id, String title) {
             this.finder = finder;
             this.id = id;
             this.title = title;

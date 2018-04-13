@@ -38,6 +38,8 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CUSTOM_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JACC_POLICY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.formLinkLabel;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -106,6 +108,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         if (formLinks != null) {
             HTMLLIElement removeLink = li().add(a().css(clickable).on(click, event -> callback.execute())
                     .add(i().css(pfIcon("remove")))
+                    .data(OPERATION, REMOVE)
                     .add(span().css(formLinkLabel).textContent(resources.constants().remove())))
                     .asElement();
             formLinks.insertBefore(removeLink, formLinks.lastElementChild);

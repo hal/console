@@ -62,6 +62,7 @@ import rx.Completable;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SELECTED_SECURITY_DOMAIN_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.TRUST_MODULE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -135,14 +136,14 @@ public class SecurityDomainPresenter
     }
 
     void saveSecurityDomain(Map<String, Object> changedValues) {
-        crud.save(Names.SECURITY_DOMAIN, securityDomain, SELECTED_SECURITY_DOMAIN_TEMPLATE, changedValues,
-                this::reload);
+        crud.save(Names.SECURITY_DOMAIN, securityDomain, SECURITY_DOMAIN_TEMPLATE.replaceWildcards(securityDomain),
+                changedValues, this::reload);
     }
 
     void resetSecurityDomain(Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
-        crud.reset(Names.SECURITY_DOMAIN, securityDomain, SELECTED_SECURITY_DOMAIN_TEMPLATE, form, metadata,
-                new FinishReset<ModelNode>(form) {
+        crud.reset(Names.SECURITY_DOMAIN, securityDomain, SECURITY_DOMAIN_TEMPLATE.replaceWildcards(securityDomain),
+                form, metadata, new FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(Form<ModelNode> form) {
                         reload();
@@ -254,7 +255,7 @@ public class SecurityDomainPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(SECURITY_DOMAIN)
-    @Requires(SECURITY_DOMAIN_ADDRESS)
+    @Requires({SECURITY_DOMAIN_ADDRESS, TRUST_MODULE_ADDRESS})
     public interface MyProxy extends ProxyPlace<SecurityDomainPresenter> {
     }
 

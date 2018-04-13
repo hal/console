@@ -24,6 +24,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.client.bootstrap.tasks.VersionUpdateEvent;
+import org.jboss.hal.client.bootstrap.tasks.VersionUpdateEvent.VersionUpdateHandler;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroOptionsDialog;
 import org.jboss.hal.config.Endpoints;
@@ -46,7 +48,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
-        implements IsElement, MacroOperationHandler, MacroFinishedHandler {
+        implements IsElement, MacroOperationHandler, MacroFinishedHandler, VersionUpdateHandler {
 
     private final Environment environment;
     private final PlaceManager placeManager;
@@ -55,7 +57,6 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     private final ExpressionResolver expressionResolver;
     private final Resources resources;
     private final AboutDialog aboutDialog;
-    private final CheckForUpdate checkForUpdate;
     private boolean recording;
 
     @Inject
@@ -77,7 +78,6 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         this.expressionResolver = expressionResolver;
         this.resources = resources;
         this.aboutDialog = new AboutDialog(environment, endpoints, resources);
-        this.checkForUpdate = new CheckForUpdate(environment);
     }
 
     @Override
@@ -90,6 +90,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         super.onBind();
         registerHandler(getEventBus().addHandler(MacroFinishedEvent.getType(), this));
         registerHandler(getEventBus().addHandler(MacroOperationEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(VersionUpdateEvent.getType(), this));
         getView().setPresenter(this);
         getView().updateEnvironment(environment);
     }
@@ -98,7 +99,6 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     protected void onReveal() {
         super.onReveal();
         PatternFly.initComponents();
-        checkForUpdate.execute(version -> getView().updateVersion(version));
     }
 
     void onShowVersion() {
@@ -154,10 +154,14 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         }
     }
 
+    @Override
+    public void onVersionUpdate(VersionUpdateEvent event) {
+        getView().updateVersion(event.getVersion());
+    }
+
     void onSettings() {
         new SettingsDialog(environment, settings, resources).show();
     }
-
 
     // @formatter:off
     public interface MyView extends HalView, HasPresenter<FooterPresenter> {

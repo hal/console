@@ -30,8 +30,9 @@ public class ColumnBuilder<T> {
     private boolean searchable;
     private String type;
     private String width;
+    private String className;
 
-    public ColumnBuilder(final String name, final String title, Column.RenderCallback<T, ?> render) {
+    public ColumnBuilder(String name, String title, Column.RenderCallback<T, ?> render) {
         this.name = name;
         this.title = title;
         this.render = render;
@@ -59,6 +60,11 @@ public class ColumnBuilder<T> {
         return this;
     }
 
+    public ColumnBuilder<T> className(String className) {
+        this.className = className;
+        return this;
+    }
+
     public Column<T> build() {
         Column<T> column = new Column<>();
         column.name = name;
@@ -71,6 +77,9 @@ public class ColumnBuilder<T> {
         }
         if (width != null) {
             column.width = width;
+        }
+        if (className != null) {
+            column.className = className;
         }
         return column;
     }

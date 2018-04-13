@@ -33,7 +33,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_MECHANISM = "access-mechanism";
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
-    String ACTION = "action";
+    String ACTION = "actions";
     String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
     String ACTIVE_OPERATION = "active-operation";
@@ -45,6 +45,7 @@ public interface ModelDescriptionConstants {
     String ADDRESS = "address";
     String ADDRESS_SETTING = "address-setting";
     String ADMIN_OBJECTS = "admin-objects";
+    String ADMIN_ONLY = "admin-only";
     String AGEOUT_HISTORY_OPERATION = "ageout-history";
     String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "aggregate-http-server-mechanism-factory";
     String AGGREGATE_PRINCIPAL_DECODER = "aggregate-principal-decoder";
@@ -55,6 +56,7 @@ public interface ModelDescriptionConstants {
     String AGGREGATE_SASL_SERVER_FACTORY = "aggregate-sasl-server-factory";
     String AGGREGATE_SECURITY_EVENT_LISTENER = "aggregate-security-event-listener";
     String AJP_LISTENER = "ajp-listener";
+    String ALGORITHM = "algorithm";
     String ALIAS = "alias";
     String ALLOW_BLANK_PASSWORD = "allow-blank-password";
     String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
@@ -195,6 +197,10 @@ public interface ModelDescriptionConstants {
     String DEFAULT_INTERFACE = "default-interface";
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
     String DEFAULT_REALM = "default-realm";
+    String DEFAULT_SECURITY_DOMAIN = "default-security-domain";
+    String DEFAULT_SFSB_CACHE = "default-sfsb-cache";
+    String DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE = "default-sfsb-passivation-disabled-cache";
+    String DEFAULT_SLSB_INSTANCE_POOL = "default-slsb-instance-pool";
     String DEFAULT_THREAD_POOL = "default-thread-pool";
     String DEFAULT_WEB_MODULE = "default-web-module";
     String DELIVERING_COUNT = "delivering-count";
@@ -214,6 +220,7 @@ public interface ModelDescriptionConstants {
     String DISABLED_TIME = "disabled-time";
     String DISCONNECTED = "disconnected";
     String DISCOVERY_GROUP = "discovery-group";
+    String DISTINGUISHED_NAME = "distinguished-name";
     String DIVERT = "divert";
     String DOMAIN_UUID = "domain-uuid";
     String DOMAIN_ROLLOUT = "domain-rollout";
@@ -233,6 +240,7 @@ public interface ModelDescriptionConstants {
     String EE = "ee";
     String EJB3 = "ejb3";
     String ELYTRON = "elytron";
+    String ELYTRON_ENABLED = "elytron-enabled";
     String EMPTY = "empty";
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
@@ -286,6 +294,7 @@ public interface ModelDescriptionConstants {
     String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
+    String GENERATE_KEY_PAIR = "generate-key-pair";
     String GLOBAL_MODULES = "global-modules";
     String GROUP = "group";
     String GROUPS_ATTRIBUTE = "groups-attribute";
@@ -311,6 +320,7 @@ public interface ModelDescriptionConstants {
     String HTTP_ACCEPTOR = "http-acceptor";
     String HTTP_AUTHENTICATION_FACTORY = "http-authentication-factory";
     String HTTP_CONNECTOR = "http-connector";
+    String HTTP_INTERFACE = "http-interface";
     String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
     String HTTP_UPGRADE = "http-upgrade";
@@ -321,6 +331,7 @@ public interface ModelDescriptionConstants {
     String IDENTITY_MAPPING = "identity-mapping";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
+    String IMPORT_CERTIFICATE_OPERATION = "import-certificate";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
     String IN_VM_CONNECTOR = "in-vm-connector";
     String INCLUDE = "include";
@@ -338,6 +349,7 @@ public interface ModelDescriptionConstants {
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
+    String INTERNAL = "internal";
     String INVALIDATE_SESSION_OPERATION = "invalidate-session";
     String INVOCATIONS = "invocations";
     String IO = "io";
@@ -412,6 +424,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_ADDRESS = "management-address";
     String MANAGEMENT_HTTP = "management-http";
     String MANAGEMENT_HTTPS = "management-https";
+    String MANAGEMENT_INTERFACE = "management-interface";
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
@@ -451,7 +464,9 @@ public interface ModelDescriptionConstants {
     String MULTICAST_ADDRESS = "multicast-address";
     String MULTICAST_PORT = "multicast-port";
     String NAME = "name";
+    String NAMESPACES = "namespaces";
     String NAMING = "naming";
+    String NATIVE_INTERFACE = "native-interface";
     String NEW_IDENTITY_ATTRIBUTES = "new-identity-attributes";
     String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
     String NEW_ITEM_PATH = "new-item-path";
@@ -476,6 +491,7 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_SYSTEM_ROLLBACKS = "number-of-system-rollbacks";
     String NUMBER_OF_TIMEDOUT_TRANSACTIONS = "number-of-timed-out-transactions";
     String NUMBER_OF_TRANSACTIONS = "number-of-transactions";
+    String OOB = "oob";
     String OP = "operation";
     String OPERATION = "operation";
     String OPERATION_DATE = "operation-date";
@@ -491,6 +507,7 @@ public interface ModelDescriptionConstants {
     String PARTICIPANTS = "partitcipants";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
+    String PASSIVATION_STORE = "passivation-store";
     String PASSWORD = "password";
     String PATH = "path";
     String PATHS = "paths";
@@ -540,6 +557,7 @@ public interface ModelDescriptionConstants {
     String PROPERTIES_REALM = "properties-realm";
     String PROPERTY = "property";
     String PROTOCOL = "protocol";
+    String PROTOCOLS = "protocols";
     String PROVIDER = "provider";
     String PROVIDER_NAME = "provider-name";
     String PROVIDER_HTTP_SERVER_MECHANISM_FACTORY = "provider-http-server-mechanism-factory";
@@ -648,9 +666,12 @@ public interface ModelDescriptionConstants {
     String SASL_PROTOCOL = "sasl-protocol";
     String SCHEDULED_COUNT = "scheduled-count";
     String SCHEDULED_THREAD_POOL_MAX_SIZE = "scheduled-thread-pool-max-size";
+    String SCHEMA_LOCATIONS = "schema-locations";
     String SCRIPT = "script";
     String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";
+    String SECURE_INTERFACE = "secure-interface";
+    String SECURE_PORT = "secure-port";
     String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
@@ -720,6 +741,7 @@ public interface ModelDescriptionConstants {
     String START = "start";
     String START_DELIVERY = "start-delivery";
     String START_JOB = "start-job";
+    String START_MODE = "start-mode";
     String START_SERVERS = "start-servers";
     String START_TIME = "start-time";
     String STARTED = "started";
@@ -765,6 +787,7 @@ public interface ModelDescriptionConstants {
     String THROUGH = "through";
     String TIMEOUT = "timeout";
     String TIME_REMAINING = "time-remaining";
+    String TIMER = "timer";
     String TIMERS = "timers";
     String TIMESTAMP = "timestamp";
     String TIMESTAMP_COLUMN = "timestamp-column";
@@ -781,6 +804,7 @@ public interface ModelDescriptionConstants {
     String TRANSACTIONS = "transactions";
     String TRANSPORT = "transport";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
+    String TRUST_CACERTS = "trust-cacerts";
     String TRUST_MANAGER = "trust-manager";
     String TRUST_MODULE = "trust-module";
     String TYPE = "type";
@@ -799,6 +823,8 @@ public interface ModelDescriptionConstants {
     String USERS_PROPERTIES = "users-properties";
     String USERNAME = "username";
     String VALID_CONNECTION_CHECKER_CLASS_NAME = "valid-connection-checker-class-name";
+    String VALIDATE = "validate";
+    String VALIDITY = "validity";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
@@ -807,6 +833,7 @@ public interface ModelDescriptionConstants {
     String VM_NAME = "vm-name";
     String VM_VENDOR = "vm-vendor";
     String VM_VERSION = "vm-version";
+    String WANT_CLIENT_AUTH = "want-client-auth";
     String WEBSERVICES = "webservices";
     String WEBSOCKET = "websocket";
     String WEBSOCKETS = "websockets";

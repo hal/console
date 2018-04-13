@@ -94,10 +94,22 @@ class FinderRow<T> implements IsElement {
     }
 
     private List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
-        return actions.stream()
+        List<ItemAction<T>> allowed = actions.stream()
                 .filter(action -> AuthorisationDecision.from(finder.environment(),
                         finder.securityContextRegistry()).isAllowed(action.constraints))
                 .collect(toList());
+
+        // after filtering remove a starting separator
+        if (!allowed.isEmpty()) {
+            if (allowed.get(0) == ItemAction.SEPARATOR) {
+                if (allowed.size() == 1) {
+                    allowed.clear();
+                } else {
+                    allowed = allowed.subList(1, allowed.size());
+                }
+            }
+        }
+        return allowed;
     }
 
     private void updateItem(T item) {

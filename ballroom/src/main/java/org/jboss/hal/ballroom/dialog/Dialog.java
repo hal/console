@@ -123,24 +123,43 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog instance
 
-    private final boolean closeOnEsc;
-    private final Callback closed;
+    private final Builder builder;
     private final Map<Integer, HTMLButtonElement> buttons;
     private final List<Attachable> attachables;
 
-    Dialog(final Builder builder) {
-        reset();
-        this.closeOnEsc = builder.closeOnEsc;
-        this.closed = builder.closed;
+    Dialog(Builder builder) {
+        this.builder = builder;
         this.buttons = new HashMap<>();
         this.attachables = new ArrayList<>();
+        bind(closeIcon, click, event -> close());
+    }
 
+    @Override
+    @JsIgnore
+    public HTMLElement asElement() {
+        return root;
+    }
+
+    @JsIgnore
+    public void registerAttachable(Attachable first, Attachable... rest) {
+        attachables.add(first);
+        if (rest != null) {
+            Collections.addAll(attachables, rest);
+        }
+    }
+
+    public void show() {
+        if (Dialog.open) {
+            throw new IllegalStateException(
+                    "Another dialog is still open. Only one dialog can be open at a time. Please close the other dialog!");
+        }
+
+        reset();
         if (builder.fadeIn) {
             Dialog.root.classList.add(fade);
         }
         Dialog.dialog.classList.add(builder.size.css);
         Elements.setVisible(Dialog.closeIcon, builder.closeIcon);
-        bind(closeIcon, click, event -> close());
         setTitle(builder.title);
         for (HTMLElement element : builder.elements) {
             Dialog.body.appendChild(element);
@@ -175,41 +194,19 @@ public class Dialog implements IsElement {
             }
         }
         Elements.setVisible(Dialog.footer, !buttons.isEmpty());
-    }
 
-    @Override
-    @JsIgnore
-    public HTMLElement asElement() {
-        return root;
-    }
-
-    @JsIgnore
-    public void registerAttachable(Attachable first, Attachable... rest) {
-        attachables.add(first);
-        if (rest != null) {
-            Collections.addAll(attachables, rest);
-        }
-    }
-
-    public void show() {
-        if (Dialog.open) {
-            throw new IllegalStateException(
-                    "Another dialog is still open. Only one dialog can be open at a time. Please close the other dialog!");
-        }
-        $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
+        $(SELECTOR_ID).modal(ModalOptions.create(builder.closeOnEsc));
         $(SELECTOR_ID).modal("show");
         PatternFly.initComponents(SELECTOR_ID);
         attachables.forEach(Attachable::attach);
     }
 
-    /**
-     * Please call this method only if the dialog neither have a close icon, esc handler nor a close button.
-     */
+    /** Please call this method only if the dialog neither have a close icon, esc handler nor a close button. */
     void close() {
         attachables.forEach(Attachable::detach);
         $(SELECTOR_ID).modal("hide");
-        if (closed != null) {
-            closed.execute();
+        if (builder.closed != null) {
+            builder.closed.execute();
         }
     }
 
@@ -235,7 +232,7 @@ public class Dialog implements IsElement {
 
         final String css;
 
-        Size(final String css) {
+        Size(String css) {
             this.css = css;
         }
     }
@@ -262,7 +259,7 @@ public class Dialog implements IsElement {
         final Callback simpleCallback;
         final boolean primary;
 
-        private Button(final String label, final ResultCallback callback, final Callback simpleCallback,
+        private Button(String label, ResultCallback callback, Callback simpleCallback,
                 boolean primary) {
             this.label = label;
             this.resultCallback = callback;
@@ -291,7 +288,7 @@ public class Dialog implements IsElement {
         private Callback closed;
 
         @JsIgnore
-        public Builder(final String title) {
+        public Builder(String title) {
             this.title = title;
             this.elements = new ArrayList<>();
             this.buttons = new TreeMap<>();

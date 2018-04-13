@@ -89,7 +89,5 @@ public class ModclusterBalancerColumn extends FinderColumn<NamedNode> {
                 })
                 .onPreview(ModclusterBalancerPreview::new)
         );
-
-
     }
 }

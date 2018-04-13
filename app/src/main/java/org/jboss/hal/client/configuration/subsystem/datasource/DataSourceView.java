@@ -89,9 +89,9 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         // pool
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.pool(), asList(
-                new Attribute("min-pool-size"),
+                new Attribute(MIN_POOL_SIZE),
                 new Attribute("initial-pool-size"),
-                new Attribute("max-pool-size"),
+                new Attribute(MAX_POOL_SIZE),
                 new Attribute("pool-prefill"),
                 new Attribute("flush-strategy"),
                 new Attribute("pool-use-strict-min"),
@@ -110,6 +110,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         attributes.putAll(CONSTANTS.security(), asList(
                 new Attribute("user-name"),
                 new Attribute("password"),
+                new Attribute("authentication-context"),
                 new Attribute("security-domain"),
                 new Attribute("allow-multiple-users"),
                 new Attribute("reauth-plugin-class-name"),
@@ -199,7 +200,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
             String xaId = Ids.build(Ids.XA_DATA_SOURCE, group);
 
             if (CREDENTIAL_REFERENCE.equals(group)) {
-                nonXaCrForm = credentialReference.form(nonXaId, nonXaMeta, PASSWORD,
+                nonXaCrForm = credentialReference.form(Ids.DATA_SOURCE_CONFIGURATION, nonXaMeta, PASSWORD,
                         () -> nonXaForm.<String>getFormItem(PASSWORD).getValue(),
                         () -> presenter.resourceAddress(),
                         () -> presenter.reload());
@@ -237,7 +238,6 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 xaFormBuilder.customGroup(xaId, group)
                         .include(xaNames)
                         .end();
-
             }
         }
 
@@ -259,7 +259,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     @Override
-    public void setPresenter(final DataSourcePresenter presenter) {
+    public void setPresenter(DataSourcePresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -282,7 +282,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     @Override
-    public void update(final DataSource dataSource) {
+    public void update(DataSource dataSource) {
         // TODO Add a suggestion handler for the DRIVER_NAME field
         showHide(dataSource.isXa());
         //noinspection HardCodedStringLiteral

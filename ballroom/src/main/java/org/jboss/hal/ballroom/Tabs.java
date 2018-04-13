@@ -36,7 +36,7 @@ import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-public class Tabs implements IsElement {
+public class Tabs implements IsElement<HTMLElement> {
 
     private final HTMLElement root;
     private final HTMLElement tabs;
@@ -116,21 +116,21 @@ public class Tabs implements IsElement {
         }
     }
 
-    public void showTab(final int index) {
+    public void showTab(int index) {
         showTab(indexToId.get(index));
     }
 
-    public void showTab(final String id) {
+    public void showTab(String id) {
         if (id != null) {
             Api.select("a[href='#" + id + "']").tab("show"); //NON-NLS
         }
     }
 
-    public void setContent(final int index, HTMLElement first, HTMLElement... rest) {
+    public void setContent(int index, HTMLElement first, HTMLElement... rest) {
         setContent(indexToId.get(index), first, rest);
     }
 
-    public void setContent(final String id, HTMLElement first, HTMLElement... rest) {
+    public void setContent(String id, HTMLElement first, HTMLElement... rest) {
         if (id != null) {
             HTMLElement pane = paneElements.get(id);
             if (pane != null) {
@@ -140,7 +140,7 @@ public class Tabs implements IsElement {
         }
     }
 
-    public void onShow(final String id, final JsCallback callback) {
+    public void onShow(String id, JsCallback callback) {
         if (id != null) {
             Api.select("a[href='#" + id + "']").on("shown.bs.tab", callback); //NON-NLS
         }

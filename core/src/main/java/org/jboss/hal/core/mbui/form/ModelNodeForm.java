@@ -39,7 +39,7 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import jsinterop.base.JsPropertyMapOfAny;
+import jsinterop.base.JsPropertyMap;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.EmptyState;
@@ -320,11 +320,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
-    protected void prepareEditState() {
-        super.prepareEditState();
-    }
-
-    @Override
     public boolean isUndefined() {
         return getModel() == null || !getModel().isDefined();
     }
@@ -431,37 +426,37 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         @JsIgnore
-        public Builder<T> include(final String[] attributes) {
+        public Builder<T> include(String[] attributes) {
             includes.addAll(asList(attributes));
             return this;
         }
 
         @JsIgnore
-        public Builder<T> include(final Iterable<String> attributes) {
+        public Builder<T> include(Iterable<String> attributes) {
             Iterables.addAll(includes, attributes);
             return this;
         }
 
         @JsIgnore
-        public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
+        public Builder<T> include(@NonNls String first, @NonNls String... rest) {
             includes.addAll(Lists.asList(first, rest));
             return this;
         }
 
         @JsIgnore
-        public Builder<T> exclude(final String[] attributes) {
+        public Builder<T> exclude(String[] attributes) {
             excludes.addAll(asList(attributes));
             return this;
         }
 
         @JsIgnore
-        public Builder<T> exclude(final Iterable<String> attributes) {
+        public Builder<T> exclude(Iterable<String> attributes) {
             Iterables.addAll(excludes, attributes);
             return this;
         }
 
         @JsIgnore
-        public Builder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
+        public Builder<T> exclude(@NonNls String first, @NonNls String... rest) {
             excludes.addAll(Lists.asList(first, rest));
             return this;
         }
@@ -727,7 +722,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         @JsFunction
         interface JsSaveCallback<T> {
 
-            void onSave(Form<T> form, JsPropertyMapOfAny changedValues);
+            void onSave(Form<T> form, JsPropertyMap<Object> changedValues);
         }
     }
 }

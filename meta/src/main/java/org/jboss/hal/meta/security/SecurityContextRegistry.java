@@ -42,9 +42,10 @@ public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
         super(new SecurityContextStatementContext(statementContext, environment), SECURITY_CONTEXT_TYPE);
         this.cache = CacheBuilder.newBuilder()
                 .maximumSize(CACHE_SIZE)
-                .removalListener(notification -> {
-                    logger.debug("Remove {} from {} cache", notification.getKey(), type);
-                })
+                .recordStats()
+                .removalListener(
+                        notification -> logger.debug("Remove {} from {} cache: {}", notification.getKey(), type,
+                                notification.getCause()))
                 .build();
     }
 

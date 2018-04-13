@@ -69,9 +69,7 @@ class DeploymentTasks {
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
 
-    /**
-     * Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode.
-     */
+    /** Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode. */
     static <T> void upload(FinderColumn<T> column, Environment environment, Dispatcher dispatcher,
             EventBus eventBus, Provider<Progress> progress, FileList files,
             Resources resources) {
@@ -87,15 +85,13 @@ class DeploymentTasks {
                 tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
             }
 
-            logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
+            logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder);
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
     }
 
-    /**
-     * Uploads a content and deploys it to a server group.
-     */
+    /** Uploads a content and deploys it to a server group. */
     static <T> void uploadAndDeploy(FinderColumn<T> column, Environment environment,
             Dispatcher dispatcher, EventBus eventBus, Provider<Progress> progress,
             FileList files, String serverGroup, Resources resources) {
@@ -113,7 +109,7 @@ class DeploymentTasks {
             }
 
             logger.debug("About to upload and deploy {} file(s): {} to server group {}",
-                    files.getLength(), builder.toString(), serverGroup);
+                    files.getLength(), builder, serverGroup);
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }

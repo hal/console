@@ -60,7 +60,7 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
 
         Metadata metadata = metadataRegistry.lookup(JGROUPS_TEMPLATE);
         jgroupsForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_FORM, metadata)
-                .onSave((form, changedValues) -> presenter.saveSingleton(JGROUPS_TEMPLATE, changedValues,
+                .onSave((form, changedValues) -> presenter.saveSingleton(JGROUPS_TEMPLATE, metadata, changedValues,
                         resources.messages().modifySingleResourceSuccess(Names.JGROUPS)))
                 .prepareReset(form -> presenter.resetSingleton(JGROUPS_TEMPLATE, Names.JGROUPS, form, metadata))
                 .build();

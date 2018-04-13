@@ -31,6 +31,7 @@ import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -47,6 +48,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static elemental2.dom.DomGlobal.setTimeout;
+import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
@@ -107,10 +109,11 @@ public class CredentialReference {
     public Form<ModelNode> form(String baseId, Metadata metadata, String crName, String alternativeName,
             Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
 
-        final String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
+        String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
         Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
 
-        EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(Ids.build(baseId, Ids.EMPTY),
+        EmptyState.Builder emptyStateBuilder = new EmptyState.Builder(
+                Ids.build(baseId, credentialReferenceName, Ids.FORM, Ids.EMPTY),
                 resources.constants().noResource());
 
         if (crMetadata.getSecurityContext().isWritable()) {
@@ -140,6 +143,8 @@ public class CredentialReference {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
+                .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
+                .unsorted()
                 .singleton(
                         () -> {
                             ResourceAddress fqAddress = address.get();
@@ -203,16 +208,18 @@ public class CredentialReference {
     }
 
     private void addCredentialReference(String baseId, Metadata crMetadata,
-            final String credentialReferenceName, String alternativeName,
+            String credentialReferenceName, String alternativeName,
             Supplier<ResourceAddress> address, Callback callback) {
         ResourceAddress fqAddress = address.get();
         if (fqAddress != null) {
             String id = Ids.build(baseId, credentialReferenceName, Ids.ADD);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, crMetadata)
                     .addOnly()
-                    .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
+                    .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
                     .unsorted()
                     .build();
+            form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+
             new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
                     form, (name, model) -> {
                 if (alternativeName != null) {

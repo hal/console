@@ -33,7 +33,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.comparing;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_QUEUE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 
@@ -52,7 +52,7 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
         this.resources = resources;
 
         dataProvider = new DataProvider<>(JmsMessage::getName, true);
-        Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(MESSAGING_CORE_QUEUE_TEMPLATE);
         tooManyMessages = new EmptyState.Builder(Ids.JMS_MESSAGE_LIST_TOO_MANY, resources.constants().manyMessages())
                 .icon(Icons.WARNING)
                 .primaryAction(resources.constants().allMessagesAlways(), () -> presenter.readAllMessages(true))
@@ -85,21 +85,21 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
                         resources.constants().selectAll(), this::selectAll))
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_CHANGE_PRIORITY,
                         resources.constants().changePriority(),
-                        Constraint.executable(MESSAGING_QUEUE_TEMPLATE, CHANGE_MESSAGES_PRIORITY),
+                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, CHANGE_MESSAGES_PRIORITY),
                         this::changePriority))
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_EXPIRE,
                         resources.constants().expire(),
-                        Constraint.executable(MESSAGING_QUEUE_TEMPLATE, EXPIRE_MESSAGES),
+                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, EXPIRE_MESSAGES),
                         this::expire))
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_MOVE, resources.constants().move(),
-                        Constraint.executable(MESSAGING_QUEUE_TEMPLATE, MOVE_MESSAGES),
+                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, MOVE_MESSAGES),
                         this::move))
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_SEND_TO_DEAD_LETTER,
                         resources.constants().sendToDeadLetter(),
-                        Constraint.executable(MESSAGING_QUEUE_TEMPLATE, SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS),
+                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS),
                         this::sendToDeadLetter))
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_REMOVE, resources.constants().remove(),
-                        Constraint.executable(MESSAGING_QUEUE_TEMPLATE, REMOVE_MESSAGES),
+                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, REMOVE_MESSAGES),
                         this::remove))
 
                 .emptyState(TOO_MANY_MESSAGES, tooManyMessages)

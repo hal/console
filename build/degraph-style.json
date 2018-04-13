@@ -1,0 +1,98 @@
+{
+  "graph": {
+    "rankdir": "TB"
+  },
+  "node-styles": {
+    "com.google.elemental2": {
+      "type": "box",
+      "style": "rounded",
+      "color": "grey50",
+      "default-font": {
+        "size": 14,
+        "name": "Helvetica",
+        "color": "grey50"
+      },
+      "group-id-font": {
+        "size": 10
+      }
+    },
+    "com.google.gwt": {
+      "type": "box",
+      "style": "rounded",
+      "color": "grey50",
+      "default-font": {
+        "size": 14,
+        "name": "Helvetica",
+        "color": "grey50"
+      },
+      "group-id-font": {
+        "size": 10
+      }
+    },
+    "com.google.guava": {
+      "type": "box",
+      "style": "rounded",
+      "color": "grey50",
+      "default-font": {
+        "size": 14,
+        "name": "Helvetica",
+        "color": "grey50"
+      },
+      "group-id-font": {
+        "size": 10
+      }
+    },
+    "com.gwtplatform": {
+      "type": "box",
+      "style": "rounded",
+      "color": "grey50",
+      "default-font": {
+        "size": 14,
+        "name": "Helvetica",
+        "color": "grey50"
+      },
+      "group-id-font": {
+        "size": 10
+      }
+    },
+    "com.intendia.gwt.rxgwt": {
+      "type": "box",
+      "style": "rounded",
+      "color": "grey50",
+      "default-font": {
+        "size": 14,
+        "name": "Helvetica",
+        "color": "grey50"
+      },
+      "group-id-font": {
+        "size": 10
+      }
+    },
+    "org.jboss.gwt.elemento": {
+      "type": "box",
+      "style": "rounded",
+      "color": "grey50",
+      "default-font": {
+        "size": 14,
+        "name": "Helvetica",
+        "color": "grey50"
+      },
+      "group-id-font": {
+        "size": 10
+      }
+    },
+    "org.slf4j": {
+      "type": "box",
+      "style": "rounded",
+      "color": "grey50",
+      "default-font": {
+        "size": 14,
+        "name": "Helvetica",
+        "color": "grey50"
+      },
+      "group-id-font": {
+        "size": 10
+      }
+    }
+  }
+}

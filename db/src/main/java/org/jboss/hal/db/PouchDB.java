@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import elemental2.promise.Promise;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
@@ -47,7 +47,7 @@ public class PouchDB {
     public final Promise<List<Document>> getAll(Set<String> ids) {
         AllDocsOptions options = new AllDocsOptions();
         options.include_docs = true;
-        options.keys = new Array<>();
+        options.keys = new JsArray<>();
         for (String id : ids) {
             options.keys.push(id);
         }
@@ -75,7 +75,6 @@ public class PouchDB {
         return allDocs(options).then(response -> {
             List<Document> documents = new ArrayList<>();
             for (int i = 0; i < response.rows.getLength(); i++) {
-                Document document = null;
                 Row row = response.rows.getAt(i);
                 if (!"not_found".equals(row.error)) {
                     documents.add(row.doc);
@@ -97,7 +96,7 @@ public class PouchDB {
 
     @JsOverlay
     public final Promise<Set<String>> putAll(List<Document> documents) {
-        Array<Document> docs = new Array<>();
+        JsArray<Document> docs = new JsArray<>();
         for (Document document : documents) {
             docs.push(document);
         }
@@ -117,5 +116,5 @@ public class PouchDB {
     native Promise<PutResponse> internalPut(Document document);
 
     @JsMethod
-    native Promise<Array<BulkDocsSingleUnionType>> bulkDocs(Array<Document> documents);
+    native Promise<JsArray<BulkDocsSingleUnionType>> bulkDocs(JsArray<Document> documents);
 }

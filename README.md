@@ -1,146 +1,97 @@
-[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1) [![Known Vulnerabilities](https://snyk.io/test/github/hal/hal.next/badge.svg)](https://snyk.io/test/github/hal/hal.next) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/hal.next.svg)](https://gitter.im/hal/hal.next)  
-[![Issues in Ready](https://badge.waffle.io/hal/hal.next.svg?label=ready&title=Ready)](http://waffle.io/hal/hal.next) [![Issues in Progress](https://badge.waffle.io/hal/hal.next.svg?label=In%20Progress&title=In%20Progress)](http://waffle.io/hal/hal.next) 
+[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_ConsoleDevelopment)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_ConsoleDevelopment&guest=1) [![Known Vulnerabilities](https://snyk.io/test/github/hal/console/badge.svg)](https://snyk.io/test/github/hal/console) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/console.svg)](https://gitter.im/hal/console)
 
-# HAL.next
+HAL ist the project name for the WildFly and JBoss EAP management console. It's part of every WildFly and JBoss EAP installation. To get started simply fire up your browser and open http://localhost:9990. 
 
-Fresh start of the HAL management console using the latest frameworks / libraries. 
+
+# Technical Stack
+
+HAL is a client side RIA without server side dependencies. It is a GWT application - which means it's written almost completely in Java. GWT is used to transpile the Java code into a bunch of JavaScript, HTML and CSS files. HAL uses some external JavaScript libraries as well. These dependencies are managed using [bower](https://bower.io/) which is in turn integrated into the Maven build using the [`maven-frontend-plugin`](https://github.com/eirslett/frontend-maven-plugin). Take a look at the [`bower.json`](https://github.com/hal/console/blob/develop/app/bower.json) too see all JavaScript dependencies.
+
+In a nutshell the console uses the following technical stack:
 
 - Java 8
-- GWT 2.8.x (JsInterop, Elemental2)
-- Prepare for GWT 3.x / J2CL
-- Latest GWTP build
-- PatternFly
-- RxGWT
+- [GWT](http://www.gwtproject.org/) 
+- [GWTP](https://dev.arcbees.com/gwtp/)
+- [Elemento](https://github.com/hal/elemento)
+- [RxGWT](https://github.com/intendia-oss/rxgwt)
+- [PouchDB](https://pouchdb.com/)
+- [PatternFly](https://www.patternfly.org/)
 
-## Motivation
+# Build
 
-HAL.next is the codebase for the next major version of the HAL management console. It ships with new features and uses the latest frameworks. The upcoming GWT 3.0 release will introduce many breaking changes for GWT applications. The most important change will be the deprecation of `gwt-user.jar`. This includes features such as the GWT widgets, deferred binding and GWT RPC. 
+For a full build use 
 
-In order to make the console future proof, it's necessary to rewrite these parts. At the same time this is an opportunity to fix some weak points of the current version and add new features. Currently the following features and enhancements are implemented / planned:
+```bash
+mvn clean install
+``` 
 
-- General
+This includes the GWT compiler, which might take a while. If you just want to make sure that there are no compilation or test failures, you can skip the GWT compiler and use
 
-    - Place management for finder *and* applications. This enables features like
-        - Cross-links between different parts of HAL (configuration ⟷ runtime ⟷ deployment)
-        - Applications / finder selections can be bookmarked
-        - Search can be re-implemented
-    - Switch between applications using the breadcrumb
-    - Add deployments using drag & drop
-    - Topology overview
-    - Macro recording
-    - PatternFly compliance
-    - Enhanced form items for lists, properties and booleans
-    - Use capabilities & requirements to generate combo boxes with type-ahead support
-    - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
-    - [JavaScript API](https://cdn.rawgit.com/hal/hal.next/esdoc/index.html)
-    - [Extensions](Extensions.md)
-    - Remove deprecated APIs 
+```bash
+mvn clean install -Dgwt.skipCompilation
+``` 
 
-- Finder
+# Run
 
-    - Navigation using cursor keys. Open an application by pressing ↵ (`enter`) and go back with ⌫ (`backspace`)
-    - Pin frequently used subsystems to stay at the top
-    - Filter items by name *and* by properties like 'enabled' in the data sources column or 'stopped' in the servers column
+The GWT development mode starts a local Jetty server. As a one time prerequisite you need to add the URL of the local Jetty server as an allowed origin to your WildFly / JBoss EAP configuration: 
 
-## Running
+**Standalone Mode**
 
-HAL.next should be used with **WildFly 11.x** (it makes use of the new capabilities service). There are different ways to launch HAL.next. Most of them require to configure the allowed origins of the HTTP management endpoint and connect to a running WildFly instance.
+```bash
+/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:8888)
+reload
+```
+**Domain Mode**
+
+```bash
+/host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:8888)
+reload --host=master
+``` 
  
-- Standalone mode
+The main GWT application is located in the `app` folder. To run the console use
 
-        /core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
-        reload
+```bash
+cd app
+mvn gwt:devmode
+```
 
-- Domain mode
- 
-        /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
-        reload --host=master
-        
-### Standalone
+This will start the development mode. Wait until you see a message like 
 
-The module `hal-standalone` contains an executable jar which launches a [Undertow](http://undertow.io/) web server at http://localhost:9090.
-  
-1. Add http://localhost:9090 as allowed origin
-1. `mvn clean install -P prod,theme-hal`
-1. `java -jar standalone/target/hal-standalone-<version>.jar`
-1. Open http://localhost:9090
+```
+00:00:15,703 [INFO] Code server started in 15.12 s ms
+```
 
-If you don't want to or cannot build locally you can download `hal-standalone.jar` from https://repository.jboss.org/nexus/index.html#nexus-search;quick~hal-standalone. 
+Then open http://localhost:8888/dev.html in your browser and connect to your WildFly / JBoss EAP instance. 
 
-### YARN
+# Debug
 
-The module `hal-yarn` provides a yarn package which launches a local web server at http://localhost:3000.
-  
-1. Add http://localhost:3000 as allowed origin
-1. `mvn clean install -P prod,theme-hal`
-1. `cd yarn/target/hal-yarn-<version>-hal-console/`
-1. `yarn install`
-1. `node server.js`
-1. Open http://localhost:3000
+Start the console as described in the previous chapter. GWT uses the [SourceMaps standard](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?usp=sharing) to map the Java source code to the transpiled JavaScript code. This makes it possible to use the browser development tools for debugging.
 
-The yarn package is also available on yarn: https://yarnpkg.com/en/package/hal-console
- 
-1. `yarn install -g hal-console`
-1. `hal-console`
+In Chrome open the development tools and switch to the 'Sources' tab. Press <kbd>⌘ P</kbd> and type the name of the Java source file you want to open. 
 
-### WildFly Swarm Fraction
+Let's say we want to debug the enable / disable action in the data source column in configuration. Open the class `DataSourceColumn` and put a breakpoint on the first line of method `void setEnabled(ResourceAddress, boolean, SafeHtml)` (should be line 285). Now select a data source like the default 'ExampleDS' data source and press the enable / disable link in the preview. The browser should stop at the specified line and you can use the development tools to inspect and change variables. 
 
-The module `hal-fraction` contains the WildFly Swarm fraction `org.jboss.hal.fraction.HalFraction`.
- 
-1. Add the following dependencies to your POM:
+**Inspect Variables**
 
-    ```xml
-    <dependency>
-        <groupId>org.wildfly.swarm</groupId>
-        <artifactId>management</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.jboss.hal</groupId>
-        <artifactId>hal-fraction</artifactId>
-    </dependency>
-    ```
-        
-1. Build and start your WildFly Swarm application
-1. Add http://localhost:8080 as allowed origin
-1. Open http://localhost:8080/hal
+If you're used to debug Java applications in your favorite IDE, the debugging experience in the browser development tools might feel strange at first. You can inspect simple types like boolean, numbers and strings. Support for native JavaScript types like arrays and objects is also very good. On the other hand Java types like lists or maps are not very well supported. In addition most variable names are suffixed with something like `_0_g$`. We recommend to inspect these variables using the console and call the `toString()` method on the respective object.    
 
-### Docker 
+# Develop
 
-The `docker` module provides a docker image with WildFly 11.x and HAL.next.
+To apply changes made to Java code you just need to refresh the browser. GWT will detect the modifications and only transpile the changed sources. 
 
-1. `cd docker`
-1. `mvn install`
-1. `docker run -p 9990:9990 -it hpehl/hal-console /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0` or 
-1. `docker run -p 9990:9990 -it hpehl/hal-console /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
-1. Open http://localhost:9990 and log in with `admin:admin`
+Changes to other resources require a little bit more effort. To make it easier, you can use the script `app/refresh.sh`. Change to the `app` folder and call `refresh.sh` with one of the following parameters, depending what kind of resource you've modified:
 
-The docker image is also available in the public docker repository: https://hub.docker.com/r/hpehl/hal-console/
+- `less`: Compile LESS stylesheets
+- `html`: Update HTML snippets
+- `i18n`: Process i18n resource bundles
+- `mbui`: Regenerate MBUI resources
 
-`docker pull hpehl/hal-console`
+After calling the script, refresh the browser to see your changes. 
 
-### GitHub Pages
+# Replace Existing Console
 
-Finally HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
-
-1. Add https://hal.github.io/hal.next/ as allowed origin
-1. Open https://hal.github.io/hal.next/
-
-GitHub pages are served from **https** so you need to secure the management interface as well. Please note that if you're using a self signed key store you might need to open the local management endpoint in the browser and accept the unsafe certificate before you can use it with HAL.next.
-
-### SuperDevMode
-
-The SuperDevMode is intended for development as it provides browser refresh after code changes. 
-
-1. Add http://localhost:8888 as allowed origin
-1. `mvn install -Dgwt.skipCompilation` 
-1. `cd app`
-1. `mvn gwt:devmode`
-1. Open http://localhost:8888/hal/dev.html
-
-## Replace Existing Console
-
-If you want to replace the current console with HAL.next for an an existing WildFly installation use the following steps:
+If you want to replace the console of an existing WildFly installation use the following steps:
 
 1. `mvn clean install -P prod,theme-wildfly`
-1. `cp app/target/hal-console-<version>-resources.jar WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main`
-1. Edit `WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main/module.xml` and adjust the `<resources/>` config: `<resource-root path="hal-console-<version>-resources.jar"/>`
+1. `cp app/target/hal-console-<version>-resources.jar $WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main`
+1. Edit `$WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main/module.xml` and adjust the `<resources/>` config: `<resource-root path="hal-console-<version>-resources.jar"/>`

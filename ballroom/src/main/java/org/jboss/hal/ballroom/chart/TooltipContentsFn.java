@@ -16,11 +16,12 @@
 package org.jboss.hal.ballroom.chart;
 
 import jsinterop.annotations.JsFunction;
-import jsinterop.base.JsPropertyMapOfAny;
+import jsinterop.base.JsPropertyMap;
 
 @JsFunction
 @FunctionalInterface
 interface TooltipContentsFn {
 
-    String content(Options.Data data, String defaultTitleFormat, String defaultValueFormat, JsPropertyMapOfAny color);
+    String content(Options.Data data, String defaultTitleFormat, String defaultValueFormat,
+            JsPropertyMap<Object> color);
 }

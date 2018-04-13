@@ -86,8 +86,7 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     // @formatter:off
-    public static HeaderView create(final Places places, final AccessControl ac, final User user,
-            final Resources resources) {
+    public static HeaderView create(Places places, AccessControl ac, User user, Resources resources) {
         return new Templated_HeaderView(places, ac, user, resources);
     }
 
@@ -128,7 +127,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement HTMLElement connectedTo;
     @DataElement HTMLElement patching;
     @DataElement HTMLElement accessControl;
-    @DataElement HTMLElement management;
+    // @DataElement HTMLElement management;
     @DataElement HTMLElement topLevelCategories;
     @DataElement HTMLElement breadcrumb;
     @DataElement HTMLElement backItem;
@@ -156,7 +155,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         if (!su) {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
-            topLevelCategories.removeChild(management);
+            // topLevelCategories.removeChild(management);
         }
 
         // @formatter:off
@@ -167,7 +166,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         tlcPlaceRequests.put(NameTokens.RUNTIME,        new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
         tlcPlaceRequests.put(NameTokens.PATCHING,       new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
         tlcPlaceRequests.put(NameTokens.ACCESS_CONTROL, new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build());
-        tlcPlaceRequests.put(NameTokens.MANAGEMENT,     new PlaceRequest.Builder().nameToken(NameTokens.MANAGEMENT).build());
+        // tlcPlaceRequests.put(NameTokens.MANAGEMENT,     new PlaceRequest.Builder().nameToken(NameTokens.MANAGEMENT).build());
         // @formatter:on
 
         tlc = new HashMap<>();
@@ -179,7 +178,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         NameTokens.RUNTIME,
                         NameTokens.PATCHING,
                         NameTokens.ACCESS_CONTROL,
-                        NameTokens.MANAGEMENT,
+                        // NameTokens.MANAGEMENT,
                 },
                 new String[]{
                         Ids.TLC_HOMEPAGE,
@@ -188,7 +187,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         Ids.TLC_RUNTIME,
                         Ids.TLC_PATCHING,
                         Ids.TLC_ACCESS_CONTROL,
-                        Ids.TLC_MANAGEMENT
+                        // Ids.TLC_MANAGEMENT
                 });
 
         handlers = new ArrayList<>();
@@ -479,7 +478,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 String id = Ids.build(segment.getColumnId(), VALUE);
                 value.appendChild(a = a().css(clickable)
                         .id(id)
-                        .data(UIConstants.TARGET, HASH)
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)

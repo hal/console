@@ -33,21 +33,29 @@ import static org.jboss.gwt.elemento.core.InputType.password;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.MASK_CHARACTER;
 
 public class PasswordItem extends AbstractFormItem<String> {
 
     private static final String FA_EYE_SLASH = "fa-eye-slash";
     private static final String FA_EYE = "fa-eye";
 
-    public PasswordItem(final String name, final String label) {
+    private final HTMLInputElement inputElement;
+
+    public PasswordItem(String name, String label) {
         super(name, label, null);
 
         // read-only appearance
         addAppearance(Form.State.READONLY, new PasswordReadOnlyAppearance());
 
         // editing appearance
-        HTMLInputElement inputElement = input(password).css(formControl).asElement();
+        inputElement = input(password).css(formControl).asElement();
         addAppearance(EDITING, new PasswordEditingAppearance(inputElement));
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         remember(bind(inputElement, change, event -> modifyValue(inputElement.value)));
     }
 
@@ -81,7 +89,7 @@ public class PasswordItem extends AbstractFormItem<String> {
                             peekLink.classList.add(FA_EYE_SLASH);
                             peekLink.classList.remove(FA_EYE);
                         } else {
-                            valueElement.textContent = getValue().replaceAll(".", "\u25CF");
+                            valueElement.textContent = getValue().replaceAll(".", MASK_CHARACTER);
                             peekLink.title = CONSTANTS.showSensitive();
                             peekLink.classList.add(FA_EYE);
                             peekLink.classList.remove(FA_EYE_SLASH);
@@ -97,7 +105,7 @@ public class PasswordItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public void showValue(final String value) {
+        public void showValue(String value) {
             if (isEmpty()) {
                 Elements.failSafeRemove(valueContainer, peekLink);
             } else {
@@ -107,9 +115,9 @@ public class PasswordItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public String asString(final String value) {
+        public String asString(String value) {
             if (hidden) {
-                return value.replaceAll(".", "\u25CF");
+                return value.replaceAll(".", MASK_CHARACTER);
             } else {
                 return value;
             }
@@ -158,7 +166,7 @@ public class PasswordItem extends AbstractFormItem<String> {
         }
 
         @Override
-        public void showValue(final String value) {
+        public void showValue(String value) {
             inputElement.value = value;
         }
 

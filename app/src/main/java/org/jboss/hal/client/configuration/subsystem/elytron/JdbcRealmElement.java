@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -42,7 +43,6 @@ import org.jetbrains.annotations.NonNls;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
@@ -55,24 +55,20 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
     private final Table<ModelNode> pqTable; // pq = principal-query
     private final Form<ModelNode> pqForm;
     private final Map<String, Form<ModelNode>> keyMappers;
-    private final Table<ModelNode> amTable; // am = attribute-mapping
-    private final Form<ModelNode> amForm;
     private final Pages pages;
     private RealmsPresenter presenter;
     private String selectedJdbcRealm;
-    private String selectedPrincipalQuery;
     private int pqIndex = -1;
-    private int amIndex = -1;
 
-    JdbcRealmElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
+    JdbcRealmElement(Metadata metadata, TableButtonFactory tableButtonFactory, Resources resources) {
 
         // JDBC realm
         jdbcRealmTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addJdbcRealm()))
-                .button(tableButtonFactory.remove(Names.JDBC_REALM, AddressTemplates.JDBC_REALM_TEMPLATE,
-                        () -> presenter.reloadJdbcRealms()))
+                .button(tableButtonFactory.remove(Names.JDBC_REALM, metadata.getTemplate(),
+                        (table) -> table.selectedRow().getName(), () -> presenter.reloadJdbcRealms()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(Names.PRINCIPAL_QUERY, this::showPrincipalQuery)
+                .column(new InlineAction<>(Names.PRINCIPAL_QUERY, this::showPrincipalQuery))
                 .build();
         HTMLElement jdbcRealmSection = section()
                 .add(h(1).textContent(Names.JDBC_REALM))
@@ -88,13 +84,14 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .button(tableButtonFactory.remove(pqMetadata.getTemplate(),
                         table -> presenter.removePrincipalQuery(selectedJdbcRealm, pqIndex)))
                 .columns(SQL, DATA_SOURCE)
-                .column(Names.ATTRIBUTE_MAPPING, this::showAttributeMappings, "12em") //NON-NLS
                 .build();
 
         Tabs tabs = new Tabs(id(PRINCIPAL_QUERY, TAB_CONTAINER));
 
-        pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, TAB), pqMetadata)
+        pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, Ids.ATTRIBUTES, FORM), pqMetadata)
                 .include(SQL, DATA_SOURCE)
+                .customFormItem(ATTRIBUTE_MAPPING, (ad) -> new CustomListItem(ATTRIBUTE_MAPPING, TO, INDEX))
+                .unsorted()
                 .onSave((f, changedValues) -> presenter.savePrincipalQuery(selectedJdbcRealm, pqIndex, changedValues))
                 .build();
         tabs.add(id(PRINCIPAL_QUERY, TAB), resources.constants().attributes(), pqForm.asElement());
@@ -112,42 +109,18 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .addAll(pqTable, tabs)
                 .asElement();
 
-        // attribute mapping
-        Metadata amMetadata = pqMetadata.forComplexAttribute(ATTRIBUTE_MAPPING);
-        amTable = new ModelNodeTable.Builder<>(id(ATTRIBUTE_MAPPING, Ids.TABLE), amMetadata)
-                .button(tableButtonFactory.add(amMetadata.getTemplate(),
-                        table -> presenter.addAttributeMapping(selectedJdbcRealm, pqIndex)))
-                .button(tableButtonFactory.remove(amMetadata.getTemplate(),
-                        table -> presenter.removeAttributeMapping(selectedJdbcRealm, pqIndex, amIndex)))
-                .columns(TO, INDEX)
-                .build();
-        amForm = new ModelNodeForm.Builder<>(id(ATTRIBUTE_MAPPING, FORM), amMetadata)
-                .include(TO, INDEX)
-                .onSave((form, changedValues) -> presenter.saveAttributeMapping(selectedJdbcRealm, pqIndex, amIndex,
-                        changedValues))
-                .build();
-        HTMLElement amSection = section()
-                .add(h(1).textContent(Names.ATTRIBUTE_MAPPING))
-                .add(p().textContent(amMetadata.getDescription().getDescription()))
-                .addAll(amTable, amForm)
-                .asElement();
-
         pages = new Pages(id(PAGES), id(PAGE), jdbcRealmSection);
         pages.addPage(id(PAGE), id(PRINCIPAL_QUERY, PAGE),
                 () -> Names.JDBC_REALM + ": " + selectedJdbcRealm,
                 () -> Names.PRINCIPAL_QUERY,
                 pqSection);
-        pages.addPage(id(PRINCIPAL_QUERY, PAGE), id(ATTRIBUTE_MAPPING, PAGE),
-                () -> Names.PRINCIPAL_QUERY + ": " + abbreviateMiddle(selectedPrincipalQuery, 25),
-                () -> Names.ATTRIBUTE_MAPPING,
-                amSection);
     }
 
     private String id(@NonNls String... ids) {
         return Ids.build(Ids.ELYTRON_JDBC_REALM, ids);
     }
 
-    private Form<ModelNode> keyMapperForm(final Metadata metadata, @NonNls String keyMapper) {
+    private Form<ModelNode> keyMapperForm(Metadata metadata, @NonNls String keyMapper) {
         Metadata keyMapperMetadata = metadata.forComplexAttribute(keyMapper);
         return new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, keyMapper, FORM), keyMapperMetadata)
                 .singleton(
@@ -179,9 +152,9 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
             form.attach();
         }
         pqTable.onSelectionChange(table -> {
+            pqTable.enableButton(1, pqTable.hasSelection() && pqTable.getRows().size() > 1);
             if (table.hasSelection()) {
                 pqIndex = table.selectedRow().get(HAL_INDEX).asInt();
-                selectedPrincipalQuery = table.selectedRow().get(SQL).asString();
                 keyMappers.forEach((attribute, form) -> form.view(failSafeGet(table.selectedRow(), attribute)));
             } else {
                 pqIndex = -1;
@@ -190,21 +163,10 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 }
             }
         });
-
-        amTable.attach();
-        amForm.attach();
-        amTable.bindForm(amForm);
-        amTable.onSelectionChange(table -> {
-            if (table.hasSelection()) {
-                amIndex = table.selectedRow().get(HAL_INDEX).asInt();
-            } else {
-                amIndex = -1;
-            }
-        });
     }
 
     @Override
-    public void setPresenter(final RealmsPresenter presenter) {
+    public void setPresenter(RealmsPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -228,16 +190,11 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                         }
                         pqTable.update(pqNodes,
                                 node -> Ids.build(node.get(SQL).asString(), node.get(DATA_SOURCE).asString()));
-                        pqNodes.stream()
-                                // TODO Is it safe to assume that the SQL is unique across the principal queries?
-                                .filter(pq -> selectedPrincipalQuery.equals(pq.get(SQL).asString()))
-                                .findFirst()
-                                .ifPresent(this::showAttributeMappings);
                     });
         }
     }
 
-    private void showPrincipalQuery(final NamedNode jdbcRealm) {
+    private void showPrincipalQuery(NamedNode jdbcRealm) {
         selectedJdbcRealm = jdbcRealm.getName();
         List<ModelNode> pqNodes = failSafeList(jdbcRealm, PRINCIPAL_QUERY);
         storeIndex(pqNodes);
@@ -245,16 +202,8 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
             form.clear();
         }
         pqTable.update(pqNodes, node -> Ids.build(node.get(SQL).asString(), node.get(DATA_SOURCE).asString()));
+        // a minimum of one item is required
+        pqTable.enableButton(1, pqNodes.size() > 1);
         pages.showPage(id(PRINCIPAL_QUERY, PAGE));
-    }
-
-    private void showAttributeMappings(final ModelNode principalQuery) {
-        selectedPrincipalQuery = principalQuery.get(SQL).asString();
-        pqIndex = principalQuery.get(HAL_INDEX).asInt();
-        List<ModelNode> amNodes = failSafeList(principalQuery, ATTRIBUTE_MAPPING);
-        storeIndex(amNodes);
-        amForm.clear();
-        amTable.update(amNodes, node -> Ids.build(node.get(TO).asString(), String.valueOf(node.get(INDEX).asInt())));
-        pages.showPage(id(ATTRIBUTE_MAPPING, PAGE));
     }
 }

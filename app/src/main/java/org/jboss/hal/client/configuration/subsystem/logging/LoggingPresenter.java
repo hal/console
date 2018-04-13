@@ -30,7 +30,6 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -41,6 +40,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -79,8 +79,9 @@ public class LoggingPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.LOGGING)
-                .append(Ids.LOGGING, Ids.LOGGING_CONFIGURATION, Names.LOGGING, Names.CONFIGURATION);
+        return finderPathFactory.configurationSubsystemPath(LOGGING)
+                .append(Ids.LOGGING_CONFIG_AND_PROFILES, Ids.LOGGING_CONFIGURATION,
+                        Names.LOGGING, Names.CONFIGURATION);
     }
 
     @Override

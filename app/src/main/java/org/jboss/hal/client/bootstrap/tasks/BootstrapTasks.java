@@ -17,29 +17,33 @@ package org.jboss.hal.client.bootstrap.tasks;
 
 import javax.inject.Inject;
 
-/** Simple wrapper around an ordered array of HAL's bootstrap tasks. */
+/** Simple wrapper around an ordered array of bootstrap tasks. */
 public class BootstrapTasks {
 
-    private final BootstrapTask[] functions;
+    private final BootstrapTask[] tasks;
 
     @Inject
-    public BootstrapTasks(ReadEnvironment readEnvironment,
+    public BootstrapTasks(SetupLoggingTask setupLoggingTask,
+            ReadEnvironment readEnvironment,
             ReadAuthentication readAuthentication,
             FindDomainController findDomainController,
             RegisterStaticCapabilities registerStaticCapabilities,
+            ReadExtensions readExtensions,
             LoadSettings loadSettings,
-            ReadExtensions readExtensions) {
-        this.functions = new BootstrapTask[]{
+            StartAnalytics startAnalytics) {
+        this.tasks = new BootstrapTask[]{
+                setupLoggingTask,
                 readEnvironment,
                 readAuthentication,
                 findDomainController,
                 registerStaticCapabilities,
+                readExtensions,
                 loadSettings,
-                readExtensions
+                startAnalytics,
         };
     }
 
-    public BootstrapTask[] functions() {
-        return functions;
+    public BootstrapTask[] tasks() {
+        return tasks;
     }
 }

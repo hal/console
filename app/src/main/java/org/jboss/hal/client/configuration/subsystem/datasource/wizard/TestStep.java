@@ -38,6 +38,7 @@ import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import rx.Completable;
 
@@ -85,7 +86,9 @@ class TestStep extends WizardStep<Context, State> {
         root = div()
                 .add(div().innerHtml(description))
                 .add(div().css(blankSlatePf)
-                        .add(button(resources.constants().testConnection()).css(btn, btnLg, btnPrimary)
+                        .add(button(resources.constants().testConnection())
+                                .id(Ids.DATA_SOURCE_TEST_CONNECTION)
+                                .css(btn, btnLg, btnPrimary)
                                 .on(click, event -> testConnection())))
                 .asElement();
     }
@@ -144,8 +147,15 @@ class TestStep extends WizardStep<Context, State> {
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext flowContext, Throwable error) {
-                        String title = flowContext.get(WIZARD_TITLE);
-                        SafeHtml text = flowContext.get(WIZARD_TEXT);
+                        String title;
+                        SafeHtml text;
+                        if (flowContext == null) {
+                            title = resources.constants().unknownError();
+                            text = resources.messages().unknownError();
+                        } else {
+                            title = flowContext.get(WIZARD_TITLE);
+                            text = flowContext.get(WIZARD_TEXT);
+                        }
                         wizard().showError(title, text, error.getMessage(), false);
                     }
 

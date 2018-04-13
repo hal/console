@@ -17,7 +17,6 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -79,12 +78,11 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
  * Presenter which controls the header. The header is a central UI element in HAL showing global state such as
- * reload state, notifications or the current user. Additionally it contains the navigation which is either the top
- * level
- * categories (tlc) or the breadcrumb.
+ * reload state, notifications or the current user. Additionally it contains the navigation which is either the
+ * top level categories (tlc) or the breadcrumb.
  * <p>
  * The breadcrumb shows path like information such as the selected finder path or the selected address in the model
- * browser. More precisely the breadcrumb consists of these parts:
+ * browser. The breadcrumb consists of these parts:
  * <ol>
  * <li>The back link which <em>always</em> brings you back to the last finder selection (unlike the browser's back
  * button)</li>
@@ -263,7 +261,10 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void reconnect() {
-        String url = GWT.getModuleBaseURL() + "?" + EndpointManager.CONNECT_PARAMETER;
+        String url = window.location.getProtocol()
+                + "//" + window.location.getHost()
+                + window.location.getPathname()
+                + "?" + EndpointManager.CONNECT_PARAMETER;
         window.location.assign(url);
     }
 

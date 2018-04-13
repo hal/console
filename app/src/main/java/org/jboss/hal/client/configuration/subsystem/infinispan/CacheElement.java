@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.ColumnBuilder;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -47,7 +48,6 @@ import static org.jboss.hal.client.configuration.subsystem.infinispan.Cache.LOCA
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
-import static org.jboss.hal.resources.CSS.columnAction;
 
 /**
  * Element to manage the cache resources of a specific {@linkplain Cache cache type}. The element contains a table and
@@ -82,36 +82,23 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         }
         if (cache.backups) {
             // two action links: 1) store, 2) backups
-            builder.column(
-                    columnActions -> {
-                        String columnId = Ids.build(cache.baseId, STORE, "column");
-                        return new ColumnBuilder<NamedNode>(columnId, resources.constants().action(),
-                                (cell, t, row, meta) -> {
-                                    String id1 = Ids.uniqueId();
-                                    String id2 = Ids.uniqueId();
-                                    columnActions.add(id1, row1 -> {
-                                        presenter.selectCache(cache, row.getName());
-                                        presenter.showCacheStore();
-                                    });
-                                    columnActions.add(id2, row2 -> {
-                                        presenter.selectCache(cache, row.getName());
-                                        presenter.showCacheBackup();
-                                    });
-                                    //noinspection HardCodedStringLiteral
-                                    return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">" + Names.STORE + "</a> / " +
-                                            "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">" + Names.BACKUPS + "</a>";
-                                })
-                                .orderable(false)
-                                .searchable(false)
-                                .width("12em") //NON-NLS
-                                .build();
-                    });
-        } else {
-            // one action link: store
-            builder.column(Names.STORE, row -> {
+            List<InlineAction<NamedNode>> inlineActions = new ArrayList<>();
+            inlineActions.add(new InlineAction<>(Names.STORE, row -> {
                 presenter.selectCache(cache, row.getName());
                 presenter.showCacheStore();
-            });
+            }));
+            inlineActions.add(new InlineAction<>(Names.BACKUPS, row -> {
+                presenter.selectCache(cache, row.getName());
+                presenter.showCacheBackup();
+            }));
+            builder.column(inlineActions);
+
+        } else {
+            // one action link: store
+            builder.column(new InlineAction<>(Names.STORE, row -> {
+                presenter.selectCache(cache, row.getName());
+                presenter.showCacheStore();
+            }));
         }
         table = builder.build();
 
@@ -234,7 +221,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(final CacheContainerPresenter presenter) {
+    public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
         storeElement.setPresenter(presenter);
     }
@@ -247,13 +234,13 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         pages.showPage(Ids.build(cache.baseId, Ids.PAGE));
     }
 
-    void updateBackups(final List<NamedNode> backups) {
+    void updateBackups(List<NamedNode> backups) {
         pages.showPage(Ids.build(cache.baseId, BACKUPS, Ids.PAGE));
         backupForm.clear();
         backupTable.update(backups);
     }
 
-    void updateStore(final List<Property> stores) {
+    void updateStore(List<Property> stores) {
         pages.showPage(Ids.build(cache.baseId, STORE, Ids.PAGE));
         storeElement.update(stores);
     }

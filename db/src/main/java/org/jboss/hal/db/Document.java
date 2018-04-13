@@ -19,13 +19,12 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import jsinterop.base.JsPropertyMap;
-import jsinterop.base.JsPropertyMapOfAny;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public interface Document extends JsPropertyMapOfAny {
+public interface Document extends JsPropertyMap<Object> {
 
     @JsOverlay
     static Document of(String id) {

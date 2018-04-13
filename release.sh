@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to build, deploy and publish HAL.next to branch 'gh-pages'.
+# Script to build, deploy and publish HAL to branch 'gh-pages'.
 # Should be executed after a new version was tagged.
 #
 # Prerequisites
@@ -26,27 +26,27 @@ if ! docker info > /dev/null 2>&1; then
     exit -1
 fi
 
-# Deploying hal.next
+# Deploying
 mvn clean deploy -P release,prod,theme-hal,docker
 
 # Publishing to gh-pages
-rm -rf /tmp/hal.next
+rm -rf /tmp/console
 cd /tmp/
-git clone -b gh-pages --single-branch git@github.com:hal/hal.next.git
-cd hal.next
+git clone -b gh-pages --single-branch git@github.com:hal/console.git
+cd console
 rm -rf *.gif *.html *.ico *.js *.png *.txt css deferredjs fonts img js previews
 cp -R ${ROOT}/app/target/hal-console-*/hal/ .
 date > .build
 git add --all
-git commit -am "Update hal.next"
+git commit -am "Update console"
 git push -f origin gh-pages
 cd ${ROOT}
 
 echo
 echo
-echo "+----------------------------------+"
-echo "|                                  |"
-echo "|  HAL.next successfully released  |"
-echo "|                                  |"
-echo "+----------------------------------+"
+echo "+-----------------------------+"
+echo "|                             |"
+echo "|  HAL successfully released  |"
+echo "|                             |"
+echo "+-----------------------------+"
 echo

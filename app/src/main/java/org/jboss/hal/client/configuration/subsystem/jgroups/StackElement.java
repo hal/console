@@ -15,14 +15,17 @@
  */
 package org.jboss.hal.client.configuration.subsystem.jgroups;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
-import org.jboss.hal.ballroom.table.ColumnBuilder;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -38,7 +41,6 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.resources.CSS.columnAction;
 
 /** Element to configure the stack resource */
 class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
@@ -51,6 +53,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
 
     private final Pages innerPages;
     private final Table<NamedNode> table;
+    private final Form<NamedNode> form;
     private JGroupsPresenter presenter;
     private String selectedStack;
 
@@ -60,54 +63,49 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     private final TransportElement transportElement;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    StackElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    StackElement(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Resources resources) {
+
+        List<InlineAction<NamedNode>> inlineActions = new ArrayList<>();
+        inlineActions.add(new InlineAction<>(Names.RELAY, row -> {
+            selectedStack = row.getName();
+            presenter.showRelays(row);
+            presenter.showStackInnerPage(RELAY_ID);
+        }));
+        inlineActions.add(new InlineAction<>(Names.PROTOCOL, row -> {
+            selectedStack = row.getName();
+            presenter.showProtocols(row);
+            presenter.showStackInnerPage(PROTOCOL_ID);
+        }));
+        inlineActions.add(new InlineAction<>(Names.TRANSPORT, row -> {
+            selectedStack = row.getName();
+            presenter.showTransports(row);
+            presenter.showStackInnerPage(TRANSPORT_ID);
+        }));
 
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(STACK_TEMPLATE, table -> presenter.addStack()))
-                //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD),
-                //        Names.STACK))
                 .button(tableButtonFactory.remove(STACK_TEMPLATE,
                         table -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),
                                 Names.STACK)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.JGROUPS_STACK_COLUMN,
-                        "Action",
-                        (cell, t, row, meta) -> {
-                            String id1 = Ids.uniqueId();
-                            String id2 = Ids.uniqueId();
-                            String id3 = Ids.uniqueId();
-                            columnActions.add(id1, row1 -> {
-                                selectedStack = row1.getName();
-                                presenter.showRelays(row1);
-                                presenter.showStackInnerPage(RELAY_ID);
-                            });
-                            columnActions.add(id2, row2 -> {
-                                selectedStack = row2.getName();
-                                presenter.showProtocols(row2);
-                                presenter.showStackInnerPage(PROTOCOL_ID);
-                            });
-                            columnActions.add(id3, row3 -> {
-                                selectedStack = row3.getName();
-                                presenter.showTransports(row3);
-                                presenter.showStackInnerPage(TRANSPORT_ID);
-                            });
+                .column(inlineActions)
+                .build();
 
-                            return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">Relays</a> / " +
-                                    "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">Protocol</a> / " +
-                                    "<a id=\"" + id3 + "\" class=\"" + columnAction + "\">Transport</a>";
-                        })
-                        .orderable(false)
-                        .searchable(false)
-                        .width("18em")
-                        .build())
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.FORM), metadata)
+                .onSave((form, changedValues) -> presenter
+                        .saveResource(STACK_TEMPLATE, table.selectedRow().getName(), changedValues, metadata,
+                                resources.messages().modifySingleResourceSuccess(Names.STACK)))
+                .prepareReset(form -> presenter.resetResource(STACK_TEMPLATE, table.selectedRow().getName(),
+                        Names.STACK, form, metadata))
                 .build();
 
         HTMLElement section = section()
                 .add(h(1).textContent(Names.STACK))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
+                .add(form)
                 .asElement();
 
         relayElement = new RelayElement(metadataRegistry, tableButtonFactory, resources);
@@ -151,6 +149,8 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     @SuppressWarnings("ConstantConditions")
     public void attach() {
         table.attach();
+        form.attach();
+        table.bindForm(form);
         relayElement.attach();
         remoteSiteElement.attach();
         protocolElement.attach();
@@ -161,13 +161,14 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     public void detach() {
         relayElement.detach();
         table.detach();
+        form.detach();
         remoteSiteElement.detach();
         protocolElement.detach();
         transportElement.detach();
     }
 
     @Override
-    public void setPresenter(final JGroupsPresenter presenter) {
+    public void setPresenter(JGroupsPresenter presenter) {
         this.presenter = presenter;
         relayElement.setPresenter(presenter);
         remoteSiteElement.setPresenter(presenter);
@@ -177,6 +178,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
 
     void update(List<NamedNode> models) {
         table.update(models);
+        form.clear();
     }
 
     void updateRelays(List<NamedNode> node) {
@@ -187,15 +189,15 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
         protocolElement.update(node);
     }
 
-    void updateRemoteSite(final List<NamedNode> model) {
+    void updateRemoteSite(List<NamedNode> model) {
         remoteSiteElement.update(model);
     }
 
-    void updateTransport(final List<NamedNode> model) {
+    void updateTransport(List<NamedNode> model) {
         transportElement.update(model);
     }
 
-    void showInnerPage(final String id) {
+    void showInnerPage(String id) {
         innerPages.showPage(id);
     }
 }

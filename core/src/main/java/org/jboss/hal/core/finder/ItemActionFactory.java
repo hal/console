@@ -119,7 +119,6 @@ public class ItemActionFactory {
      */
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, FinderColumn<T> column) {
         return remove(type, name, template, template, column);
-
     }
 
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, AddressTemplate constraint,

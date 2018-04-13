@@ -32,7 +32,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Constants;
@@ -44,8 +43,6 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_CONFIGURATION_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_RUNTIME_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
@@ -62,33 +59,19 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
     private HTMLElement attributesElement;
     private PreviewAttributes<ModelNode> attributes;
 
-
     public TransactionsPreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
         super(Names.TRANSACTION);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-
         Constants cons = resources.constants();
-        ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                .param(ATTRIBUTES_ONLY, true)
+
+        noStatistics = new EmptyState.Builder(Ids.TRANSACTION_STATISTICS_DISABLED, cons.statisticsDisabledHeader())
+                .description(resources.messages().statisticsDisabled(Names.TRANSACTIONS))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(cons.enableStatistics(), this::enableStatistics,
+                        Constraint.writable(TRANSACTION_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
                 .build();
-        dispatcher.execute(operation, result -> {
-
-            String profile = result.get(PROFILE_NAME).asString();
-            noStatistics = new EmptyState.Builder(Ids.TRANSACTION_STATISTICS_DISABLED, cons.statisticsDisabledHeader())
-                    .description(resources.messages().statisticsDisabled(Names.TRANSACTIONS, profile))
-                    .icon(fontAwesome("line-chart"))
-                    .primaryAction(cons.enableStatistics(), () -> enableStatistics(profile),
-                            Constraint.writable(TRANSACTION_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
-                    .build();
-
-            // to prevent flickering we initially hide everything
-            Elements.setVisible(noStatistics.asElement(), false);
-
-            previewBuilder().add(noStatistics);
-        });
+        Elements.setVisible(noStatistics.asElement(), false);
 
         attributes = new PreviewAttributes<>(new ModelNode(), cons.attributes())
                 .append(model -> {
@@ -103,7 +86,6 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 })
                 .append(NUMBER_OF_INFLIGHT_TRANSACTIONS)
                 .append(NUMBER_OF_NESTED_TRANSACTIONS);
-
         attributesElement = section()
                 .addAll(attributes)
                 .asElement();
@@ -122,13 +104,13 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .responsive(true)
                 .build();
         registerAttachable(transactions);
+        Elements.setVisible(transactions.asElement(), false);
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()
+                .add(noStatistics)
                 .add(attributesElement)
                 .add(transactions);
-
-        Elements.setVisible(transactions.asElement(), false);
     }
 
     @Override
@@ -171,10 +153,8 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
         });
     }
 
-    private void enableStatistics(String profile) {
-        ResourceAddress address = new ResourceAddress()
-                .add(PROFILE, profile)
-                .add(SUBSYSTEM, TRANSACTIONS);
+    private void enableStatistics() {
+        ResourceAddress address = TRANSACTION_CONFIGURATION_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, STATISTICS_ENABLED)
                 .param(VALUE, true)

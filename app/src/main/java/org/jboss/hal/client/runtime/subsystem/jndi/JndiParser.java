@@ -18,7 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
@@ -33,12 +33,12 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 class JndiParser {
 
     @SuppressWarnings("unchecked")
-    void parse(Array<Node<JndiContext>> nodes, Node<JndiContext> root, List<Property> children) {
+    void parse(JsArray<Node<JndiContext>> nodes, Node<JndiContext> root, List<Property> children) {
         nodes.push(root);
         readChildren(nodes, root, children);
     }
 
-    private void readChildren(Array<Node<JndiContext>> nodes, Node<JndiContext> parent, List<Property> children) {
+    private void readChildren(JsArray<Node<JndiContext>> nodes, Node<JndiContext> parent, List<Property> children) {
 
         children.stream()
                 .filter(child -> child.getValue().isDefined())
@@ -61,7 +61,7 @@ class JndiParser {
                 });
     }
 
-    private JndiContext jndiContext(final Node<JndiContext> parent, final String name, final ModelNode modelNode) {
+    private JndiContext jndiContext(Node<JndiContext> parent, String name, ModelNode modelNode) {
         JndiContext jndiContext = new JndiContext();
         if (parent.id.equals(Ids.JNDI_TREE_APPLICATIONS_ROOT)) {
             jndiContext.uri = "";
@@ -84,7 +84,7 @@ class JndiParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Node<JndiContext> pushFolder(Array<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
+    private Node<JndiContext> pushFolder(JsArray<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
             JndiContext jndiContext) {
         Node<JndiContext> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), name, jndiContext)
                 .parent(parent.id)
@@ -95,7 +95,7 @@ class JndiParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Node<JndiContext> pushEntry(Array<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
+    private Node<JndiContext> pushEntry(JsArray<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
             JndiContext jndiContext) {
         Node<JndiContext> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), name, jndiContext)
                 .parent(parent.id)

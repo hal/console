@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +31,18 @@ import rx.Single;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
-public interface TimeoutHandler {
+public class TimeoutHandler {
 
-    int INTERVAL = 500;
-    Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
+    private static int INTERVAL = 500;
+    @NonNls private static Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
 
     /** Executes the operation until it successfully returns. */
-    static Completable repeatUntilTimeout(Dispatcher dispatcher, int timeout, Operation operation) {
+    public static Completable repeatUntilTimeout(Dispatcher dispatcher, int timeout, Operation operation) {
         return operation instanceof Composite
                 ? TimeoutHandler.repeatCompositeUntil(dispatcher, timeout, (Composite) operation, null)
                 : TimeoutHandler.repeatOperationUntil(dispatcher, timeout, operation, null);
@@ -50,28 +53,23 @@ public interface TimeoutHandler {
      * receives the result of the operation.
      */
     @SuppressWarnings("HardCodedStringLiteral")
-    static Completable repeatOperationUntil(Dispatcher dispatcher, int timeout, Operation operation,
+    public static Completable repeatOperationUntil(Dispatcher dispatcher, int timeout, Operation operation,
             @Nullable Predicate<ModelNode> until) {
+        logger.debug("Repeat {} using {} seconds timeout", operation.asCli(), timeout);
+
         Single<ModelNode> execution = Single.fromEmitter(em -> dispatcher.execute(operation, em::onSuccess,
-                (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
-                (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
+                (op, fail) -> em.onSuccess(operationFailure("Dispatcher failure: " + fail)),
+                (op, ex) -> em.onSuccess(operationFailure("Dispatcher exception: " + ex.getMessage()))));
         if (until == null) {
             until = r -> !r.isFailure(); // default: until success
         }
 
         return Observable
                 .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
+                .doOnEach(n -> logger.debug("#{}: execute {}", n.getValue(), operation.asCli()))
                 .flatMapSingle(n -> execution, false, 1)
                 .takeUntil(until::test) // until succeeded
-                .toCompletable().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
-                .doOnError(e -> {
-                    String msg = "Operation " + operation.asCli() + " ran into ";
-                    if (e instanceof TimeoutException) {
-                        logger.warn(msg + "a timeout after " + timeout + " seconds");
-                    } else {
-                        logger.error(msg + "an error", e);
-                    }
-                });
+                .toCompletable().timeout(timeout, SECONDS); // wait succeeded or stop after timeout seconds
     }
 
     /**
@@ -79,27 +77,39 @@ public interface TimeoutHandler {
      * The precondition receives the composite result of the operation.
      */
     @SuppressWarnings("HardCodedStringLiteral")
-    static Completable repeatCompositeUntil(Dispatcher dispatcher, int timeout, Composite composite,
+    public static Completable repeatCompositeUntil(Dispatcher dispatcher, int timeout, Composite composite,
             @Nullable Predicate<CompositeResult> until) {
+        logger.debug("Repeat {} using {} seconds as timeout", composite, timeout);
+
         Single<CompositeResult> execution = Single.fromEmitter(em -> dispatcher.execute(composite, em::onSuccess,
-                (op, fail) -> em.onError(new RuntimeException("Dispatcher failure: " + fail)),
-                (op, ex) -> em.onError(new RuntimeException("Dispatcher exception: " + ex, ex))));
+                (op, fail) -> em.onSuccess(compositeFailure("Dispatcher failure: " + fail)),
+                (op, ex) -> em.onSuccess(compositeFailure("Dispatcher exception: " + ex.getMessage()))));
         if (until == null) {
             until = r -> r.stream().noneMatch(ModelNode::isFailure); // default: until success
         }
 
         return Observable
                 .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
+                .doOnEach(n -> logger.debug("#{}: execute {}", n.getValue(), composite))
                 .flatMapSingle(n -> execution, false, 1)
                 .takeUntil(until::test) // until succeeded
-                .toCompletable().timeout(timeout, SECONDS) // wait succeeded or stop after timeout seconds
-                .doOnError(e -> {
-                    String msg = "Composite operation " + composite.asCli() + " ran into ";
-                    if (e instanceof TimeoutException) {
-                        logger.warn(msg + "a timeout after " + timeout + " seconds");
-                    } else {
-                        logger.error(msg + "an error", e);
-                    }
-                });
+                .toCompletable().timeout(timeout, SECONDS); // wait succeeded or stop after timeout seconds
+    }
+
+    private static ModelNode operationFailure(String reason) {
+        ModelNode node = new ModelNode();
+        node.get(OUTCOME).set(FAILED);
+        node.get(FAILURE_DESCRIPTION).set(reason);
+        return node;
+    }
+
+    private static CompositeResult compositeFailure(String reason) {
+        ModelNode node = new ModelNode();
+        node.get(OUTCOME).set(FAILED);
+        node.get(FAILURE_DESCRIPTION).set(reason);
+        return new CompositeResult(node);
+    }
+
+    private TimeoutHandler() {
     }
 }

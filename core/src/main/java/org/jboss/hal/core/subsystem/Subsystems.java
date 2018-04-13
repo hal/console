@@ -117,7 +117,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationJsr77())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(LOGGING, Names.LOGGING)
-                .nextColumn(Ids.LOGGING)
+                .nextColumn(Ids.LOGGING_CONFIG_AND_PROFILES)
                 .preview(resources.previews().configurationLogging())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(MAIL, "Mail")

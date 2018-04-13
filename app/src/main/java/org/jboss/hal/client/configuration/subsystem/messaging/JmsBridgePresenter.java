@@ -50,6 +50,7 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_JMS_BRIDGE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.resources.Ids.JMS_BRIDGE_ITEM;
 
 public class JmsBridgePresenter
         extends MbuiPresenter<JmsBridgePresenter.MyView, JmsBridgePresenter.MyProxy>
@@ -101,7 +102,7 @@ public class JmsBridgePresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
-                .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.JMS_BRIDGE),
+                .append(Ids.MESSAGING_CATEGORY, JMS_BRIDGE_ITEM,
                         resources.constants().category(), Names.JMS_BRIDGE)
                 .append(Ids.JMS_BRIDGE, Ids.jmsBridge(jmsBridgeName), Names.JMS_BRIDGE, jmsBridgeName);
     }

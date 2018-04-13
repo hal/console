@@ -31,16 +31,17 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.resources.Ids.JMS_BRIDGE_ITEM;
 
 @AsyncColumn(Ids.MESSAGING_CATEGORY)
 public class MessagingCategoryColumn extends StaticItemColumn {
 
     @Inject
-    public MessagingCategoryColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final Places places,
-            final Resources resources) {
+    public MessagingCategoryColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            Places places,
+            Resources resources) {
 
         super(finder, Ids.MESSAGING_CATEGORY, resources.constants().category(), asList(
                 new StaticItem.Builder(resources.constants().globalSettings())
@@ -50,12 +51,13 @@ public class MessagingCategoryColumn extends StaticItemColumn {
                         .build(),
                 new StaticItem.Builder(Names.SERVER)
                         .nextColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
-                        .onPreview(new PreviewContent(Names.SERVER,
+                        .onPreview(new PreviewContent<>(Names.SERVER,
                                 resources.previews().configurationMessagingServer()))
                         .build(),
                 new StaticItem.Builder(Names.JMS_BRIDGE)
+                        .id(JMS_BRIDGE_ITEM)
                         .nextColumn(Ids.JMS_BRIDGE)
-                        .onPreview(new PreviewContent(Names.JMS_BRIDGE,
+                        .onPreview(new PreviewContent<>(Names.JMS_BRIDGE,
                                 resources.previews().configurationMessagingJmsBridge()))
                         .build()
         ));

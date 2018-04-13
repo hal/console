@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.db;
 
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -27,5 +27,5 @@ class AllDocsOptions {
     boolean include_docs;
     String startkey;
     String endkey;
-    Array<String> keys;
+    JsArray<String> keys;
 }

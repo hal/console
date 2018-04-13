@@ -21,6 +21,7 @@ import com.google.gwt.resources.client.TextResource;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -53,9 +54,21 @@ public class Metadata {
         return Metadata.staticDescription(StaticResourceDescription.from(description));
     }
 
+    /**
+     * Constructs a Metadata with read-write-execution permissions and a non-working Capabilities object.
+     */
     @JsIgnore
     public static Metadata staticDescription(ResourceDescription description) {
         return new Metadata(ROOT, () -> RWX, new ResourceDescription(description), new Capabilities(null));
+    }
+
+    /**
+     * Constructs a Metadata with read-write-execution permissions and a working Capabilities object based on the
+     * environment object.
+     */
+    @JsIgnore
+    public static Metadata staticDescription(ResourceDescription description, Environment environment) {
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(description), new Capabilities(environment));
     }
 
     private final AddressTemplate template;
@@ -64,8 +77,8 @@ public class Metadata {
     private final Capabilities capabilities;
 
     @JsIgnore
-    public Metadata(final AddressTemplate template, final Supplier<SecurityContext> securityContext,
-            final ResourceDescription description, final Capabilities capabilities) {
+    public Metadata(AddressTemplate template, Supplier<SecurityContext> securityContext,
+            ResourceDescription description, Capabilities capabilities) {
         this.template = template;
         this.securityContext = securityContext;
         this.description = description;
@@ -153,17 +166,17 @@ public class Metadata {
             }
 
             @Override
-            public boolean isReadable(final String attribute) {
+            public boolean isReadable(String attribute) {
                 return isReadable(); // if the complex attribute is readable all nested attributes are readable as well
             }
 
             @Override
-            public boolean isWritable(final String attribute) {
+            public boolean isWritable(String attribute) {
                 return isWritable(); // if the complex attribute is writable all nested attributes are writable as well
             }
 
             @Override
-            public boolean isExecutable(final String operation) {
+            public boolean isExecutable(String operation) {
                 return parentContext.isExecutable(operation);
             }
         };
@@ -189,17 +202,17 @@ public class Metadata {
             }
 
             @Override
-            public boolean isReadable(final String attribute) {
+            public boolean isReadable(String attribute) {
                 return isReadable(); // if the operation is executable all of its request properties are readable as well
             }
 
             @Override
-            public boolean isWritable(final String attribute) {
+            public boolean isWritable(String attribute) {
                 return isWritable(); // if the operation is executable all of its request properties are writable as well
             }
 
             @Override
-            public boolean isExecutable(final String operation) {
+            public boolean isExecutable(String operation) {
                 return parentContext.isExecutable(operation);
             }
         };

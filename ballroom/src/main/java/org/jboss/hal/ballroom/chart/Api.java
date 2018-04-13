@@ -16,14 +16,14 @@
 package org.jboss.hal.ballroom.chart;
 
 import jsinterop.annotations.JsType;
-import jsinterop.base.JsPropertyMapOfAny;
+import jsinterop.base.JsPropertyMap;
 
 @JsType(isNative = true)
 class Api {
 
-    native void load(JsPropertyMapOfAny data);
+    native void load(JsPropertyMap<Object> data);
 
-    native void resize(JsPropertyMapOfAny dimension);
+    native void resize(JsPropertyMap<Object> dimension);
 
     native void destroy();
 }

@@ -23,6 +23,7 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -60,7 +61,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
     private String selectedLdapRealm;
     private int iamIndex;
 
-    LdapRealmElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
+    LdapRealmElement(Metadata metadata, TableButtonFactory tableButtonFactory, Resources resources) {
 
         // LDAP Realm
         ldapRealmTable = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
@@ -68,7 +69,8 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .button(tableButtonFactory.remove(Names.LDAP_REALM, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapRealms()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(Names.IDENTITY_ATTRIBUTE_MAPPING, this::showIdentityAttributeMapping, "15em") //NON-NLS
+                .column(new InlineAction<>(Names.IDENTITY_ATTRIBUTE_MAPPING, this::showIdentityAttributeMapping),
+                        "15em")
                 .build();
 
         ldapRealmForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
@@ -78,10 +80,8 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING);
         identityMappingForm = new ModelNodeForm.Builder<>(id(IDENTITY_MAPPING, FORM), imMetadata)
                 .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES))
-                .onSave((form, changedValues) -> presenter.saveIdentityMappingComplexAttribute(selectedLdapRealm,
-                        IDENTITY_MAPPING, Names.IDENTITY_MAPPING, changedValues))
-                .prepareReset(form -> presenter.resetIdentityMappingComplexAttribute(selectedLdapRealm,
-                        IDENTITY_MAPPING, Names.IDENTITY_MAPPING, form))
+                .onSave((form, changedValues) -> presenter.saveIdentityMapping(selectedLdapRealm, changedValues))
+                .prepareReset(form -> presenter.resetIdentityMapping(selectedLdapRealm, form))
                 .build();
 
         Metadata upMetadata = metadata
@@ -216,6 +216,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         iamTable.attach();
         iamTable.bindForm(iamForm);
         iamTable.onSelectionChange(table -> {
+            iamTable.enableButton(1, iamTable.hasSelection());
             if (table.hasSelection()) {
                 iamIndex = table.selectedRow().get(HAL_INDEX).asInt();
             } else {
@@ -225,7 +226,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
     }
 
     @Override
-    public void setPresenter(final RealmsPresenter presenter) {
+    public void setPresenter(RealmsPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -245,12 +246,13 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         }
     }
 
-    private void showIdentityAttributeMapping(final NamedNode ldapRealm) {
+    private void showIdentityAttributeMapping(NamedNode ldapRealm) {
         selectedLdapRealm = ldapRealm.getName();
         List<ModelNode> iamNodes = failSafeList(ldapRealm, IDENTITY_MAPPING + "/" + ATTRIBUTE_MAPPING);
         storeIndex(iamNodes);
         iamForm.clear();
         iamTable.update(iamNodes, modelNode -> Ids.build(modelNode.get(FROM).asString(), modelNode.get(TO).asString()));
+        iamTable.enableButton(1, iamTable.hasSelection());
         pages.showPage(id(ATTRIBUTE_MAPPING, PAGE));
     }
 }

@@ -29,6 +29,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
@@ -148,7 +149,7 @@ public class ServerGroupActions {
         if (!startedServers.isEmpty()) {
             metadataProcessor.lookup(serverGroupTemplate(serverGroup), progress.get(), new MetadataCallback() {
                 @Override
-                public void onMetadata(final Metadata metadata) {
+                public void onMetadata(Metadata metadata) {
                     String id = Ids.build(SUSPEND_SERVERS, serverGroup.getName(), Ids.FORM);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND_SERVERS).build();
 
@@ -186,7 +187,7 @@ public class ServerGroupActions {
                 }
 
                 @Override
-                public void onError(final Throwable error) {
+                public void onError(Throwable error) {
                     MessageEvent.fire(eventBus,
                             Message.error(resources.messages().metadataError(), error.getMessage()));
                 }
@@ -223,7 +224,7 @@ public class ServerGroupActions {
         if (!startedServers.isEmpty()) {
             metadataProcessor.lookup(serverGroupTemplate(serverGroup), progress.get(), new MetadataCallback() {
                 @Override
-                public void onMetadata(final Metadata metadata) {
+                public void onMetadata(Metadata metadata) {
                     String id = Ids.build(STOP_SERVERS, serverGroup.getName(), Ids.FORM);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP_SERVERS)
                             .include(TIMEOUT).build();
@@ -264,7 +265,7 @@ public class ServerGroupActions {
                 }
 
                 @Override
-                public void onError(final Throwable error) {
+                public void onError(Throwable error) {
                     MessageEvent
                             .fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
                 }
@@ -353,13 +354,13 @@ public class ServerGroupActions {
     }
 
     private void markAsPending(ServerGroup serverGroup) {
-        Dispatcher.setPendingLifecycleAction(true);
+        Core.setPendingLifecycleAction(true);
         pendingServerGroups.put(serverGroup.getName(), serverGroup);
         logger.debug("Mark server group {} as pending", serverGroup.getName());
     }
 
     private void clearPending(ServerGroup serverGroup) {
-        Dispatcher.setPendingLifecycleAction(false);
+        Core.setPendingLifecycleAction(false);
         pendingServerGroups.remove(serverGroup.getName());
         logger.debug("Clear pending state for server group {}", serverGroup.getName());
     }
@@ -412,8 +413,8 @@ public class ServerGroupActions {
         private final List<Server> servers;
         private final SafeHtml successMessage;
 
-        ServerGroupTimeoutCallback(final ServerGroup serverGroup, final List<Server> servers,
-                final SafeHtml successMessage) {
+        ServerGroupTimeoutCallback(ServerGroup serverGroup, List<Server> servers,
+                SafeHtml successMessage) {
             this.serverGroup = serverGroup;
             this.servers = servers;
             this.successMessage = successMessage;
@@ -442,15 +443,15 @@ public class ServerGroupActions {
         private final List<Server> servers;
         private final SafeHtml errorMessage;
 
-        ServerGroupFailedCallback(final ServerGroup serverGroup, final List<Server> servers,
-                final SafeHtml errorMessage) {
+        ServerGroupFailedCallback(ServerGroup serverGroup, List<Server> servers,
+                SafeHtml errorMessage) {
             this.serverGroup = serverGroup;
             this.servers = servers;
             this.errorMessage = errorMessage;
         }
 
         @Override
-        public void onFailed(final Operation operation, final String failure) {
+        public void onFailed(Operation operation, String failure) {
             finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, failure));
         }
     }
@@ -462,14 +463,14 @@ public class ServerGroupActions {
         private final List<Server> servers;
         private final SafeHtml errorMessage;
 
-        ServerGroupExceptionCallback(final ServerGroup serverGroup, final List<Server> servers, SafeHtml errorMessage) {
+        ServerGroupExceptionCallback(ServerGroup serverGroup, List<Server> servers, SafeHtml errorMessage) {
             this.serverGroup = serverGroup;
             this.servers = servers;
             this.errorMessage = errorMessage;
         }
 
         @Override
-        public void onException(final Operation operation, final Throwable exception) {
+        public void onException(Operation operation, Throwable exception) {
             finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
         }
     }

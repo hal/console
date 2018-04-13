@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental2.core.Array;
+import elemental2.core.JsArray;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -40,7 +40,7 @@ public class Tree<T> implements IsElement, Attachable {
      * Creates a tree with the specified root node. All other nodes are loaded on demand using the provided callback.
      */
     @SuppressWarnings("unchecked")
-    public Tree(final String id, final Node<T> root, final DataFunction<T> data) {
+    public Tree(String id, Node<T> root, DataFunction<T> data) {
         this.id = id;
         this.div = div().id(id).asElement();
         this.options = initOptions();
@@ -60,7 +60,7 @@ public class Tree<T> implements IsElement, Attachable {
      * <p>
      * If you use this constructor you must ensure that {@code T} can be turned into JSON.
      */
-    public Tree(final String id, final Array<Node<T>> nodes) {
+    public Tree(String id, JsArray<Node<T>> nodes) {
         this.id = id;
         this.div = div().id(id).asElement();
         this.options = initOptions();

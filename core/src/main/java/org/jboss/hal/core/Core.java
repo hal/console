@@ -58,6 +58,12 @@ public class Core {
     @JsIgnore
     public static Core INSTANCE;
 
+    @JsIgnore
+    public static void setPendingLifecycleAction(boolean value) {
+        Dispatcher.setPendingLifecycleAction(value);
+        ExceptionHandler.setPendingLifecycleAction(value);
+    }
+
     private final CrudOperations crud;
     private final Dispatcher dispatcher;
     private final Endpoints endpoints;
@@ -71,16 +77,16 @@ public class Core {
 
     @Inject
     @JsIgnore
-    public Core(final CrudOperations crud,
-            final Dispatcher dispatcher,
-            final Endpoints endpoints,
-            final Environment environment,
-            final EventBus eventBus,
-            final ExtensionRegistry extensionRegistry,
-            final MetadataProcessor metadataProcessor,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final TableButtonFactory tableButtonFactory) {
+    public Core(CrudOperations crud,
+            Dispatcher dispatcher,
+            Endpoints endpoints,
+            Environment environment,
+            EventBus eventBus,
+            ExtensionRegistry extensionRegistry,
+            MetadataProcessor metadataProcessor,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            TableButtonFactory tableButtonFactory) {
         this.crud = crud;
         this.dispatcher = dispatcher;
         this.endpoints = endpoints;
@@ -295,7 +301,7 @@ public class Core {
      */
     @JsMethod(name = "table")
     @EsReturn("TableBuilder")
-    public ModelNodeTable.Builder<ModelNode> jsTable(final Object meta) {
+    public ModelNodeTable.Builder<ModelNode> jsTable(Object meta) {
         return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.TAB), jsMetadata("table", meta));
     }
 

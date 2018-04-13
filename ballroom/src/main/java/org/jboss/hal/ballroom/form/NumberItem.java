@@ -23,6 +23,9 @@ import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.input;
@@ -46,6 +49,7 @@ public class NumberItem extends AbstractFormItem<Long> {
      */
     public static final long MAX_SAFE_LONG = 9007199254740991L;
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(NumberItem.class);
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
@@ -53,7 +57,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     private long min;
     private long max;
 
-    public NumberItem(final String name, final String label, final String unit, long min, long max) {
+    public NumberItem(String name, String label, String unit, long min, long max) {
         super(name, label, unit);
         setRange(min, max);
 
@@ -62,9 +66,15 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         // editing appearance - type="number" not possible because of expression support
         inputElement = input(text).css(formControl).asElement();
+        addAppearance(Form.State.EDITING, new NumberEditingAppearance(inputElement));
+    }
 
+    @Override
+    public void attach() {
+        super.attach();
         remember(bind(inputElement, change, event -> {
             String stringValue = inputElement.value;
+            logger.debug("value changed to {}", stringValue);
             if (isExpressionAllowed() && hasExpressionScheme(stringValue)) {
                 modifyExpressionValue(stringValue);
             } else {
@@ -72,7 +82,8 @@ public class NumberItem extends AbstractFormItem<Long> {
                     try {
                         Long value = Long.parseLong(stringValue);
                         modifyValue(value);
-                    } catch (NumberFormatException e) {
+                        logger.debug("modified value to {}", value);
+                    } catch (NumberFormatException ignored) {
                         // at least mark as modified and defined
                         setModified(true);
                         setUndefined(false);
@@ -86,8 +97,6 @@ public class NumberItem extends AbstractFormItem<Long> {
             toggleExpressionSupport(inputElement.value);
             inputElement.focus();
         }));
-
-        addAppearance(Form.State.EDITING, new NumberEditingAppearance(inputElement));
     }
 
     private void setRange(long min, long max) {
@@ -97,7 +106,8 @@ public class NumberItem extends AbstractFormItem<Long> {
 
     @Override
     public boolean isEmpty() {
-        return Strings.isNullOrEmpty(isExpressionValue() ? getExpressionValue() : String.valueOf(getValue()));
+        String numberValue = getValue() == null ? "" : getValue().toString();
+        return Strings.isNullOrEmpty(isExpressionValue() ? getExpressionValue() : numberValue);
     }
 
     @Override
@@ -112,7 +122,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void setExpressionAllowed(final boolean expressionAllowed) {
+    public void setExpressionAllowed(boolean expressionAllowed) {
         super.setExpressionAllowed(expressionAllowed);
         if (!expressionAllowed) {
             inputElement.type = number.name();
@@ -147,12 +157,12 @@ public class NumberItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        public void showValue(final Long value) {
+        public void showValue(Long value) {
             inputElement.value = String.valueOf(value);
         }
 
         @Override
-        public void showExpression(final String expression) {
+        public void showExpression(String expression) {
             inputElement.value = expression;
         }
 
@@ -166,7 +176,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     class NumberValidation implements FormItemValidation<Long> {
 
         @Override
-        public ValidationResult validate(final Long value) {
+        public ValidationResult validate(Long value) {
             if (!isExpressionValue() && !isEmpty()) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
@@ -184,7 +194,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     class RangeValidation implements FormItemValidation<Long> {
 
         @Override
-        public ValidationResult validate(final Long value) {
+        public ValidationResult validate(Long value) {
             if (!isExpressionValue() && !isEmpty()) {
                 if (value < min || value > max) {
                     return ValidationResult.invalid(MESSAGES.invalidRange(value, min, max));

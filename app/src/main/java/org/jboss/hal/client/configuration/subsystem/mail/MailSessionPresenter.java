@@ -122,7 +122,7 @@ public class MailSessionPresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(MAIL)
-                .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
+                .append(Ids.MAIL_SESSION, Ids.mailSession(mailSessionName), Names.MAIL_SESSION, mailSessionName);
     }
 
     @Override
@@ -180,15 +180,18 @@ public class MailSessionPresenter
                 }
                 Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MAIL_SERVER_DIALOG, metadata)
-                        .fromRequestProperties()
-                        .include(OUTBOUND_SOCKET_BINDING_REF, USERNAME, PASSWORD, "ssl", "tls")
-                        .requiredOnly()
                         .unboundFormItem(serverTypeItem, 0)
+                        .include(OUTBOUND_SOCKET_BINDING_REF, USERNAME, PASSWORD, "ssl", "tls")
+                        .fromRequestProperties()
+                        .requiredOnly()
+                        .unsorted()
                         .build();
+                form.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
+                        new ReadChildrenAutoComplete(dispatcher, statementContext,
+                                AddressTemplates.SOCKET_BINDING_TEMPLATE));
 
                 AddResourceDialog dialog = new AddResourceDialog(
-                        resources.messages().addResourceTitle(Names.SERVER),
-                        form,
+                        resources.messages().addResourceTitle(Names.SERVER), form,
                         (name, modelNode) -> {
                             String serverType = serverTypeItem.getValue().toLowerCase();
                             ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
@@ -196,7 +199,6 @@ public class MailSessionPresenter
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, ModelDescriptionConstants.ADD)
                                     .payload(modelNode)
-                                    .param(SERVER, name)
                                     .build();
                             dispatcher.execute(operation, result -> {
                                 MessageEvent.fire(getEventBus(),
@@ -205,9 +207,6 @@ public class MailSessionPresenter
                                 reload();
                             });
                         });
-                dialog.getForm().getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                        new ReadChildrenAutoComplete(dispatcher, statementContext,
-                                AddressTemplates.SOCKET_BINDING_TEMPLATE));
                 dialog.show();
             }
         });

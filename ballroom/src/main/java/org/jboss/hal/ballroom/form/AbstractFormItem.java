@@ -81,7 +81,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private final List<ResolveExpressionHandler> resolveExpressionHandlers;
     private final List<com.google.web.bindery.event.shared.HandlerRegistration> handlers;
 
-    AbstractFormItem(final String name, final String label, final String hint) {
+    AbstractFormItem(String name, String label, String hint) {
         this.name = name;
         this.label = label;
         this.hint = hint;
@@ -114,9 +114,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
-    /**
-     * Store the event handler registration to remove them in {@link #detach()}.
-     */
+    /** Store the event handler registration to remove them in {@link #detach()}. */
     protected void remember(com.google.web.bindery.event.shared.HandlerRegistration handler) {
         handlers.add(handler);
     }
@@ -654,7 +652,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         final String expression;
         final ExpressionCallback callback;
 
-        ExpressionContext(final String expression, final ExpressionCallback callback) {
+        ExpressionContext(String expression, ExpressionCallback callback) {
             this.expression = expression;
             this.callback = callback;
         }

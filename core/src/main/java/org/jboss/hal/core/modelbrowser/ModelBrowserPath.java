@@ -30,7 +30,7 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
     private final ModelBrowser modelBrowser;
     private final List<Segment[]> segments;
 
-    ModelBrowserPath(final ModelBrowser modelBrowser, final Node<Context> node) {
+    ModelBrowserPath(ModelBrowser modelBrowser, Node<Context> node) {
         this.modelBrowser = modelBrowser;
         this.segments = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
         public final String id;
         public final String text;
 
-        Segment(final String id, final String text) {
+        Segment(String id, String text) {
             this.id = id;
             this.text = text;
         }
