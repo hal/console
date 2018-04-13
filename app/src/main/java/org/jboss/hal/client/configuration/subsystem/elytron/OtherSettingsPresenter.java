@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -32,7 +33,9 @@ import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
@@ -70,6 +73,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.move;
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
         implements SupportsExpertMode {
 
+    private static final List<String> FILE_BASED_CS = asList("JCEKS", "JKS", "PKCS12");
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
@@ -197,19 +201,36 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     void addCredentialStore() {
         Metadata metadata = metadataRegistry.lookup(CREDENTIAL_STORE_TEMPLATE);
+        SafeHtml typeHelp = SafeHtmlUtils.fromString(
+                metadata.getDescription().get(ATTRIBUTES).get(TYPE).get(DESCRIPTION).asString());
         Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
         crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
+        TextBoxItem typeItem = new TextBoxItem("type-", resources.constants().type());
 
         String id = Ids.build(Ids.ELYTRON_CREDENTIAL_STORE, Ids.ADD);
         NameItem nameItem = new NameItem();
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(CREATE, RELATIVE_TO, STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .include(CREATE, LOCATION, RELATIVE_TO, STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .unboundFormItem(typeItem, 3, typeHelp)
                 .unsorted()
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+        form.addFormValidation(form1 -> {
+            ValidationResult result = ValidationResult.OK;
+            String typeValue = typeItem.getValue();
+            FormItem<String> locationAttr = form1.getFormItem(LOCATION);
+            boolean invalidLocation = locationAttr.isEmpty() &&
+                    (typeItem.isEmpty() || Collections.binarySearch(FILE_BASED_CS, typeValue) > -1);
+            if (invalidLocation) {
+                form1.getFormItem(LOCATION).showError(resources.constants().requiredField());
+                result = ValidationResult.invalid(resources.messages().locationRequired());
+            }
+            return result;
+        });
+
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_STORE), form, (name, model) -> {
             if (model != null) {
@@ -217,6 +238,9 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
                 move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
                 move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
+            }
+            if (!typeItem.isEmpty()) {
+                model.get(TYPE).set(typeItem.getValue());
             }
             ResourceAddress address = CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
             crud.add(Names.CREDENTIAL_STORE, name, address, model, (n, a) ->
