@@ -17,7 +17,7 @@ package org.jboss.hal.client.bootstrap.tasks;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
-import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.config.Version;
 
 @GenEvent
 public class VersionUpdate {

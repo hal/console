@@ -21,8 +21,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.XMLHttpRequest;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.semver.Version;
-import org.jboss.hal.config.semver.Versions;
+import org.jboss.hal.config.Version;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +50,12 @@ public class CheckForUpdate implements InitializedTask {
         } else {
             XMLHttpRequest xhr = new XMLHttpRequest();
             xhr.onload = event -> {
+                String versionText = xhr.responseText;
                 try {
-                    Version version = Versions.parseVersion(xhr.responseText);
+                    Version version = Version.parseVersion(versionText);
                     eventBus.fireEvent(new VersionUpdateEvent(version));
                 } catch (Throwable t) {
-                    logger.warn("Cannot parse version from {}: {}", xhr.responseText, t.getMessage());
+                    logger.warn("Cannot parse version from {}: {}", versionText, t.getMessage());
                 }
             };
             xhr.addEventListener("error", event -> logger.warn("Cannot read version from {}: Status {} {}",

@@ -18,19 +18,19 @@ package org.jboss.hal.config;
 import java.util.List;
 
 import org.jboss.hal.config.rebind.EnvironmentGenerator;
-import org.jboss.hal.config.semver.Version;
 
 import static org.jboss.hal.config.OperationMode.SELF_CONTAINED;
 import static org.jboss.hal.config.OperationMode.STANDALONE;
 
 /**
  * A base implementation for the environment.
+ *
  * @see EnvironmentGenerator
  */
 @SuppressWarnings("unused")
 public abstract class AbstractEnvironment implements Environment {
 
-    private final Version halVersion;
+    private final org.jboss.hal.config.Version halVersion;
     private final Build halBuild;
     private final List<String> locales;
     private final InstanceInfo instanceInfo;
@@ -40,15 +40,15 @@ public abstract class AbstractEnvironment implements Environment {
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
 
-    protected AbstractEnvironment(final String halVersion, final String halBuild, final List<String> locales) {
-        this.halVersion = Version.valueOf(halVersion);
+    protected AbstractEnvironment(String halVersion, String halBuild, List<String> locales) {
+        this.halVersion = org.jboss.hal.config.Version.parseVersion(halVersion);
         this.halBuild = Build.parse(halBuild);
         this.locales = locales;
         this.instanceInfo = new InstanceInfo();
         this.roles = new Roles();
         this.operationMode = STANDALONE;
         this.domainController = null;
-        this.managementVersion = Version.forIntegers(0, 0, 0);
+        this.managementVersion = Version.EMPTY_VERSION;
         this.accessControlProvider = AccessControlProvider.SIMPLE;
     }
 
@@ -73,9 +73,8 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
-    public void setInstanceInfo(final String productName, final String productVersion,
-            final String releaseName, final String releaseVersion,
-            final String serverName) {
+    public void setInstanceInfo(String productName, String productVersion, String releaseName, String releaseVersion,
+            String serverName) {
         instanceInfo.update(productName, productVersion, releaseName, releaseVersion, serverName);
     }
 
@@ -90,7 +89,7 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
-    public void setOperationMode(final OperationMode operationMode) {
+    public void setOperationMode(OperationMode operationMode) {
         this.operationMode = operationMode;
     }
 
@@ -100,7 +99,7 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
-    public void setDomainController(final String domainController) {
+    public void setDomainController(String domainController) {
         this.domainController = domainController;
     }
 
@@ -110,7 +109,7 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
-    public void setManagementVersion(final Version version) {
+    public void setManagementVersion(Version version) {
         managementVersion = version;
     }
 
@@ -120,7 +119,7 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
-    public void setAccessControlProvider(final AccessControlProvider accessControlProvider) {
+    public void setAccessControlProvider(AccessControlProvider accessControlProvider) {
         this.accessControlProvider = accessControlProvider;
     }
 

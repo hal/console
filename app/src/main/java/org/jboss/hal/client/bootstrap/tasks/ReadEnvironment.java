@@ -24,7 +24,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.OperationMode;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
-import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;

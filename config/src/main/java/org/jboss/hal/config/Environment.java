@@ -20,7 +20,6 @@ import java.util.List;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.config.semver.Version;
 
 /** Instance holding information about the console and its environment. */
 @JsType

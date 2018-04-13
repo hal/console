@@ -31,7 +31,7 @@ import org.jboss.hal.client.tools.MacroOptionsDialog;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
-import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.core.expression.ExpressionDialog;
 import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.mvp.HalView;

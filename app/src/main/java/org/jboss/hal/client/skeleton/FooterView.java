@@ -24,7 +24,7 @@ import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.ui.UIRegistry;
@@ -45,7 +45,7 @@ import static org.jboss.hal.resources.CSS.pulse;
 public abstract class FooterView extends HalViewImpl implements FooterPresenter.MyView {
 
     // @formatter:off
-    public static FooterView create(final Places places, final UIRegistry uiRegistry, final Resources resources) {
+    public static FooterView create(Places places, UIRegistry uiRegistry, Resources resources) {
         return new Templated_FooterView(places, uiRegistry, resources);
     }
 
@@ -88,7 +88,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
     }
 
     @Override
-    public void setPresenter(final FooterPresenter presenter) {
+    public void setPresenter(FooterPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -98,7 +98,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
     }
 
     @Override
-    public void updateVersion(final Version version) {
+    public void updateVersion(Version version) {
         if (version.greaterThan(environment.getHalVersion())) {
             logger.info("A new HAL version is available. Current version: {}, new version: {}",
                     environment.getHalVersion(), version);
@@ -121,7 +121,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
     }
 
     @Override
-    public void steps(final int size) {
+    public void steps(int size) {
         steps.textContent = resources().messages().recordedOperations(size);
     }
 
