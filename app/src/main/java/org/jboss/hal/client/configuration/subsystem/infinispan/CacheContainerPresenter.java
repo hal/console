@@ -69,8 +69,9 @@ public class CacheContainerPresenter
         extends ApplicationFinderPresenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    public static final String EQUALS = "=";
-    public static final String EQ_WILDCARD = "=*";
+    private static final String EQUALS = "=";
+    private static final String EQ_WILDCARD = "=*";
+
     private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
