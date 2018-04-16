@@ -268,6 +268,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .include(DEFAULT_REALM)
                 .unsorted()
                 .build();
+        form.getFormItem(DEFAULT_REALM).setRequired(true);
         form.getFormItem(DEFAULT_REALM)
                 .registerSuggestHandler(
                         new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, capabilityReference,

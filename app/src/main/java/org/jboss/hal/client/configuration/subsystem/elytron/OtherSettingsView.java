@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
@@ -36,6 +38,7 @@ import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_PROVIDERS;
@@ -62,6 +65,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
     private final Map<String, ResourceElement> elements;
     private LdapKeyStoreElement ldapKeyStoreElement;
+    private ResourceElement securityDomainElement;
     private PolicyElement policyElement;
     private VerticalNavigation navigation;
     private OtherSettingsPresenter presenter;
@@ -171,20 +175,20 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(SERVER_SSL_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(SERVER_SSL_CONTEXT.resource));
 
-        ResourceElement securityDomainElement = SECURITY_DOMAIN.resourceElementBuilder(mbuiContext,
+        securityDomainElement = SECURITY_DOMAIN.resourceElementBuilder(mbuiContext,
                 () -> presenter.reload(SECURITY_DOMAIN.resource,
                         nodes -> updateResourceElement(SECURITY_DOMAIN.resource, nodes)))
+                .customFormItem(DEFAULT_REALM,
+                        ad -> new SingleSelectBoxItem(DEFAULT_REALM, labelBuilder.label(DEFAULT_REALM),
+                                Collections.emptyList(), false))
                 .onAdd(() -> presenter.addSecurityDomain())
                 .setComplexListAttribute(REALMS, REALM)
                 .build();
-        // user cannot modify realm name if it is referenced in default-realm attribute
+        // user cannot modify realm name of the inner complext object list if it is referenced in default-realm attribute
         securityDomainElement.getFormComplexList().getFormItem(REALM).setEnabled(false);
         securityDomainElement.getFormComplexList().getFormItem(REALM).registerSuggestHandler(null);
-        addResourceElement(SECURITY_DOMAIN,
-                securityDomainElement,
-                Ids.ELYTRON_SSL_ITEM,
-                Ids.build(SECURITY_DOMAIN.baseId, Ids.ITEM),
-                labelBuilder.label(SECURITY_DOMAIN.resource));
+        addResourceElement(SECURITY_DOMAIN, securityDomainElement, Ids.ELYTRON_SSL_ITEM,
+                Ids.build(SECURITY_DOMAIN.baseId, Ids.ITEM), labelBuilder.label(SECURITY_DOMAIN.resource));
 
         addResourceElement(TRUST_MANAGER,
                 TRUST_MANAGER.resourceElementBuilder(mbuiContext,
@@ -315,6 +319,18 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     @Override
     public void attach() {
         super.attach();
+
+        securityDomainElement.getTable().onSelectionChange(table -> {
+            // update the list of realms for default-realm attribute
+            if (table.hasSelection()) {
+                List<String> realmList = table.selectedRow().get(REALMS).asList().stream()
+                        .map(modelNode -> modelNode.get(REALM).asString())
+                        .collect(toList());
+                SingleSelectBoxItem singleSelectBoxItem = (SingleSelectBoxItem) securityDomainElement.getForm().
+                        <String>getFormItem(DEFAULT_REALM);
+                singleSelectBoxItem.updateAllowedValues(realmList);
+            }
+        });
 
         ldapKeyStoreElement.attach();
         policyElement.attach();

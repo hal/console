@@ -95,6 +95,20 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
         return root;
     }
 
+    public void updateOptions(List<String> values) {
+        double childElementCount = this.selectElement.childElementCount;
+        for (int i = 0; i < childElementCount; i++) {
+            this.selectElement.removeChild(this.selectElement.firstElementChild);
+        }
+        for (String option : values) {
+            HTMLOptionElement optionElement = Elements.option(option).asElement();
+            if (emptyToNull(option) == null) {
+                optionElement.title = UNDEFINED;
+            }
+            this.selectElement.appendChild(optionElement);
+        }
+    }
+
     abstract void refresh();
 
 
