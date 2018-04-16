@@ -31,7 +31,7 @@ import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
 import org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPreview;
 import org.jboss.hal.client.runtime.subsystem.undertow.UndertowPreview;
 import org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPreview;
-import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;

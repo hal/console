@@ -233,6 +233,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml lastOperationFailed();
     SafeHtml listHint();
     SafeHtml loadContentError();
+    String locationRequired();
     SafeHtml logFileError(String name);
     String logfileColumnFilterDescription();
     String logFilePreview(int lines);

@@ -236,7 +236,7 @@ public class Wizard<C, S extends Enum<S>> {
 
     public void showSuccess(final String title, final SafeHtml text, final String successButton,
             SuccessAction<C> successAction, final boolean lastStep) {
-        showSuccess(title, text, successButton, successAction, null, true);
+        showSuccess(title, text, successButton, successAction, null, lastStep);
     }
 
     public void showSuccess(final String title, final SafeHtml text, final String successButton,

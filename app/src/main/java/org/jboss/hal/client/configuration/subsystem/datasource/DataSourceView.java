@@ -62,45 +62,49 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     static {
         // main attributes
         attributes.putAll(CONSTANTS.attributes(), asList(
-                new Attribute(JNDI_NAME),
+                new Attribute("datasource-class", NON_XA),
+                new Attribute("driver-class", NON_XA),
                 new Attribute(DRIVER_NAME),
                 new Attribute(ENABLED),
-                new Attribute(STATISTICS_ENABLED)
+                new Attribute(JNDI_NAME),
+                new Attribute(STATISTICS_ENABLED),
+                new Attribute("xa-datasource-class", XA)
         ));
 
         // connection
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.connection(), asList(
-                new Attribute(CONNECTION_URL, XA),
-                new Attribute("url-delimiter"),
-                new Attribute("url-selector-strategy-class-name"),
-                new Attribute("new-connection-sql"),
+                new Attribute(CONNECTION_URL, NON_XA),
                 new Attribute("connection-listener-class"),
                 new Attribute("connection-listener-property"),
-                new Attribute("transaction-isolation"),
-                new Attribute("jta", NON_XA),
-                new Attribute("use-ccm"),
-                new Attribute("same-rm-override", XA),
                 new Attribute("interleaving", XA),
+                new Attribute("jta", NON_XA),
+                new Attribute("new-connection-sql"),
                 new Attribute("pad-xid", XA),
+                new Attribute("same-rm-override", XA),
+                new Attribute("transaction-isolation"),
+                new Attribute("url-delimiter"),
+                new Attribute("url-property", XA),
+                new Attribute("url-selector-strategy-class-name"),
+                new Attribute("use-ccm"),
                 new Attribute("wrap-xa-resource", XA)
         ));
 
         // pool
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.pool(), asList(
-                new Attribute(MIN_POOL_SIZE),
                 new Attribute("initial-pool-size"),
+                new Attribute(MIN_POOL_SIZE),
                 new Attribute(MAX_POOL_SIZE),
-                new Attribute("pool-prefill"),
                 new Attribute("flush-strategy"),
-                new Attribute("pool-use-strict-min"),
                 new Attribute("pool-fair"),
+                new Attribute("pool-prefill"),
+                new Attribute("pool-use-strict-min"),
                 new Attribute("use-fast-fail"),
-                new Attribute("capacity-decrementer-class"),
-                new Attribute("capacity-decrementer-properties"),
                 new Attribute("capacity-incrementer-class"),
                 new Attribute("capacity-incrementer-properties"),
+                new Attribute("capacity-decrementer-class"),
+                new Attribute("capacity-decrementer-properties"),
                 new Attribute("no-recovery", XA),
                 new Attribute("tx-separate-pool", XA)
         ));
@@ -128,9 +132,9 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         // validation
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.validation(), asList(
+                new Attribute("check-valid-connection-sql"),
                 new Attribute("valid-connection-checker-class-name"),
                 new Attribute("valid-connection-checker-properties"),
-                new Attribute("check-valid-connection-sql"),
                 new Attribute("validate-on-match"),
                 new Attribute("background-validation"),
                 new Attribute("background-validation-millis"),

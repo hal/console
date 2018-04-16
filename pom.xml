@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.0.0.Alpha1</version>
+    <version>3.0.0-alpha.2</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -161,11 +161,6 @@
                     <version>${plugin.docker.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.googlecode.maven-download-plugin</groupId>
-                    <artifactId>download-maven-plugin</artifactId>
-                    <version>${plugin.download.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
                     <version>${plugin.frontend.version}</version>
@@ -175,16 +170,6 @@
                     <artifactId>gwt-maven-plugin</artifactId>
                     <version>${plugin.gwt.version}</version>
                     <extensions>true</extensions>
-                </plugin>
-                <plugin>
-                    <groupId>org.bsc.maven</groupId>
-                    <artifactId>maven-processor-plugin</artifactId>
-                    <version>${plugin.processor.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.github.github</groupId>
-                    <artifactId>site-maven-plugin</artifactId>
-                    <version>${plugin.github.site.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.swarm</groupId>

@@ -17,7 +17,7 @@ package org.jboss.hal.core.runtime.host;
 
 import java.util.Date;
 
-import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
@@ -48,7 +48,7 @@ public class Host extends HasServersNode {
     private final Date disconnected;
     private final Date lastConnected;
     private final String addressName;
-    private final Version managementVersion;
+    private final org.jboss.hal.config.Version managementVersion;
 
     private Host(String name, Date disconnected, Date lastConnected) {
         super(name, new ModelNode().setEmptyObject());
@@ -56,7 +56,7 @@ public class Host extends HasServersNode {
         this.disconnected = disconnected;
         this.lastConnected = lastConnected;
         this.addressName = name;
-        this.managementVersion = Version.UNDEFINED;
+        this.managementVersion = org.jboss.hal.config.Version.EMPTY_VERSION;
     }
 
     public Host(ModelNode node) {

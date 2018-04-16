@@ -189,6 +189,7 @@ public interface ModelDescriptionConstants {
     String DATA_COLUMN = "data-column";
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
+    String DATASOURCE_CLASS = "datasource-class";
     String DEAD_LETTER_ADDRESS = "dead-letter-address";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
@@ -850,6 +851,7 @@ public interface ModelDescriptionConstants {
     String WSDL_URL = "wsdl-url";
     String X500_ATTRIBUTE_PRINCIPAL_DECODER = "x500-attribute-principal-decoder";
     String XA_DATA_SOURCE = "xa-data-source";
+    String XA_DATASOURCE_CLASS = "xa-datasource-class";
     String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
 }
 
