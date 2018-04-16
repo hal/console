@@ -66,8 +66,8 @@ public class DataSourceWizard {
         if (context.isXa()) {
 
             // remove unsupported attributes
-            payload.remove(POOL_NAME);
             payload.remove(DRIVER_CLASS);
+            payload.remove(DATASOURCE_CLASS);
             operations.add(new Operation.Builder(address, ADD).payload(context.dataSource).build());
 
             // add an operation for each property
