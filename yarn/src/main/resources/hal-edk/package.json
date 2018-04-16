@@ -1,6 +1,6 @@
 {
   "name": "hal-edk",
-  "version": "${project.version}",
+  "version": "3.0.0-SNAPSHOT",
   "description": "HAL extension development kit",
   "keywords": [
     "hal",
@@ -17,12 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hal/hal.next.git"
+    "url": "git+https://github.com/hal/console.git"
   },
-  "author": "Harald Pehl <harald.pehl@gmail.com> (http://hpehl.info)",
+  "author": "Harald Pehl <hpehl@redhat.com> (http://hpehl.info)",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/hal/hal.next/issues"
+    "url": "https://issues.jboss.org/projects/HAL/issues"
   },
-  "homepage": "https://github.com/hal/hal.next/#readme"
+  "homepage": "https://hal.github.io/"
 }

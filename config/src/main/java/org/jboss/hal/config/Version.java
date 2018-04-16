@@ -197,19 +197,19 @@ public class Version implements Comparable {
      */
     private void validate() {
         if (major < 0) {
-            throw new IllegalArgumentException("negative major"); //$NON-NLS-1$
+            throw new IllegalArgumentException("negative major");
         }
         if (minor < 0) {
-            throw new IllegalArgumentException("negative minor"); //$NON-NLS-1$
+            throw new IllegalArgumentException("negative minor");
         }
         if (micro < 0) {
-            throw new IllegalArgumentException("negative micro"); //$NON-NLS-1$
+            throw new IllegalArgumentException("negative micro");
         }
         int length = qualifier.length();
         for (int i = 0; i < length; i++) {
             if ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-".indexOf(
-                    qualifier.charAt(i)) == -1) { //$NON-NLS-1$
-                throw new IllegalArgumentException("invalid qualifier"); //$NON-NLS-1$
+                    qualifier.charAt(i)) == -1) {
+                throw new IllegalArgumentException("invalid qualifier");
             }
         }
     }
@@ -263,7 +263,7 @@ public class Version implements Comparable {
     @JsIgnore
     public String toString() {
         String base = major + SEPARATOR + minor + SEPARATOR + micro;
-        if (qualifier.length() == 0) { //$NON-NLS-1$
+        if (qualifier.length() == 0) {
             return base;
         } else {
             return base + SEPARATOR + qualifier;
@@ -277,8 +277,7 @@ public class Version implements Comparable {
      */
     @JsIgnore
     public int hashCode() {
-        return (major << 24) + (minor << 16) + (micro << 8)
-                + qualifier.hashCode();
+        return (major << 24) + (minor << 16) + (micro << 8) + qualifier.hashCode();
     }
 
     /**
