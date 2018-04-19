@@ -312,6 +312,7 @@ class DeploymentTasks {
                             READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE_DEPTH, 1)
                             .build();
                     completable = dispatcher.execute(operation).doOnSuccess(result -> {
                         Map<String, Deployment> deploymentsByName = result.asPropertyList().stream()
