@@ -19,6 +19,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
@@ -31,6 +32,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -56,6 +58,7 @@ class ContentPreview extends PreviewContent<Content> {
     private final HTMLElement deploymentsDiv;
     private final HTMLElement deploymentsUl;
     private final HTMLElement undeployedContentDiv;
+    private final HTMLElement unmanagedViewDiv;
 
     ContentPreview(ContentColumn column, Content content, Environment environment, Places places,
             Metadata serverGroupMetadata, Resources resources) {
@@ -82,6 +85,8 @@ class ContentPreview extends PreviewContent<Content> {
 
         HTMLElement p;
         previewBuilder()
+                .add(unmanagedViewDiv = new Alert(Icons.WARNING,
+                        resources.messages().cannotBrowseUnmanaged()).asElement())
                 .add(h(2).textContent(resources.constants().deployments()))
                 .add(deploymentsDiv = div()
                         .add(p().innerHtml(resources.messages().deployedTo(content.getName())))
@@ -104,8 +109,10 @@ class ContentPreview extends PreviewContent<Content> {
         attributes.refresh(content);
 
         boolean undeployed = content.getServerGroupDeployments().isEmpty();
+        boolean unmanaged = !content.isManaged();
         Elements.setVisible(deploymentsDiv, !undeployed);
         Elements.setVisible(undeployedContentDiv, undeployed);
+        Elements.setVisible(unmanagedViewDiv, unmanaged);
         if (!undeployed) {
             Elements.removeChildrenFrom(deploymentsUl);
             content.getServerGroupDeployments().forEach(sgd -> {

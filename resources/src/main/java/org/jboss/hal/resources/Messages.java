@@ -49,6 +49,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml cancelActiveOperation(String operation);
     SafeHtml cancelledLabel(boolean name);
     SafeHtml cancelledOperation(String name);
+    SafeHtml cannotBrowseUnmanaged();
     SafeHtml changePrioritySuccess(int priority);
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
