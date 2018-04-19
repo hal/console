@@ -238,8 +238,11 @@ public class ContentColumn extends FinderColumn<Content> {
                 List<ItemAction<Content>> actions = new ArrayList<>();
 
                 // order is: view, (explode), deploy, replace, download, undeploy / remove
-                actions.add(itemActionFactory.view(new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
-                        .with(CONTENT, item.getName()).build()));
+                // only managed deployments can read-content
+                if (item.isManaged()) {
+                    actions.add(itemActionFactory.view(new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
+                            .with(CONTENT, item.getName()).build()));
+                }
                 if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
                         && item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction.Builder<Content>()
