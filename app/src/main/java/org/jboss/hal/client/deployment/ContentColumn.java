@@ -264,7 +264,8 @@ public class ContentColumn extends FinderColumn<Content> {
                             .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
                             .build());
                 }
-                if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
+                if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())
+                        && item.isManaged() && !item.isExploded()) {
                     ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
                     Operation operation = new Operation.Builder(address, READ_CONTENT).build();
                     actions.add(new ItemAction.Builder<Content>()
