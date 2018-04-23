@@ -58,7 +58,7 @@ class ContentPreview extends PreviewContent<Content> {
     private final HTMLElement deploymentsDiv;
     private final HTMLElement deploymentsUl;
     private final HTMLElement undeployedContentDiv;
-    private final HTMLElement unmanagedViewDiv;
+    private final HTMLElement infoExplodedDiv;
 
     ContentPreview(ContentColumn column, Content content, Environment environment, Places places,
             Metadata serverGroupMetadata, Resources resources) {
@@ -67,6 +67,12 @@ class ContentPreview extends PreviewContent<Content> {
         this.places = places;
         this.resources = resources;
         this.authorisationDecision = AuthorisationDecision.from(environment, serverGroupMetadata.getSecurityContext());
+
+        if (!content.isManaged()) {
+            previewBuilder().add(new Alert(Icons.INFO, resources.messages().cannotBrowseUnmanaged()).asElement());
+        }
+        previewBuilder().add(
+                infoExplodedDiv = new Alert(Icons.INFO, resources.messages().cannotDownloadExploded()).asElement());
 
         LabelBuilder labelBuilder = new LabelBuilder();
         attributes = new PreviewAttributes<>(content, asList(NAME, RUNTIME_NAME));
@@ -81,12 +87,16 @@ class ContentPreview extends PreviewContent<Content> {
                             .css(flag(failSafeBoolean(model, EXPLODED))));
             return new PreviewAttribute(label, elements.asElements());
         });
+        if (!content.isManaged()) {
+            attributes.append(model -> {
+                String pathValue = model.get(CONTENT).asList().get(0).get(PATH).asString();
+                return new PreviewAttributes.PreviewAttribute(labelBuilder.label(PATH), pathValue);
+            });
+        }
         previewBuilder().addAll(attributes);
 
         HTMLElement p;
         previewBuilder()
-                .add(unmanagedViewDiv = new Alert(Icons.WARNING,
-                        resources.messages().cannotBrowseUnmanaged()).asElement())
                 .add(h(2).textContent(resources.constants().deployments()))
                 .add(deploymentsDiv = div()
                         .add(p().innerHtml(resources.messages().deployedTo(content.getName())))
@@ -110,9 +120,10 @@ class ContentPreview extends PreviewContent<Content> {
 
         boolean undeployed = content.getServerGroupDeployments().isEmpty();
         boolean unmanaged = !content.isManaged();
+        boolean exploded = content.isExploded();
         Elements.setVisible(deploymentsDiv, !undeployed);
         Elements.setVisible(undeployedContentDiv, undeployed);
-        Elements.setVisible(unmanagedViewDiv, unmanaged);
+        Elements.setVisible(infoExplodedDiv, !unmanaged && exploded);
         if (!undeployed) {
             Elements.removeChildrenFrom(deploymentsUl);
             content.getServerGroupDeployments().forEach(sgd -> {
