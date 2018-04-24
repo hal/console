@@ -480,7 +480,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     boolean hasExpressionScheme(String value) {
-        return value != null && value.startsWith("${") && value.endsWith("}");
+        return value != null && value.contains("${") && value.indexOf("}") > 1;
     }
 
     boolean isModal() {

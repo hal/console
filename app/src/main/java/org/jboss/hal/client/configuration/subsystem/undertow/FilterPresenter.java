@@ -36,6 +36,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
@@ -120,6 +121,7 @@ public class FilterPresenter
     void addResponseHeader() {
         Metadata metadata = metadataRegistry.lookup(RESPONSE_HEADER_TEMPLATE);
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_RESPONSE_HEADER_ADD, metadata)
+                .unboundFormItem(new NameItem(), 0)
                 .fromRequestProperties()
                 .build();
 

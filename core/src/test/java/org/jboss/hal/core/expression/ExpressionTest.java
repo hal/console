@@ -32,39 +32,73 @@ public class ExpressionTest {
         assertFalse(Expression.isExpression("   "));
         assertFalse(Expression.isExpression("foo"));
         assertTrue(Expression.isExpression("${foo}"));
+        assertTrue(Expression.isExpression("${foo}/bar"));
+        assertTrue(Expression.isExpression("my/${foo}/bar"));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void nil() throws Exception {
+    public void nil() {
         Expression.of(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void empty() throws Exception {
+    public void empty() {
         Expression.of("");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void blank() throws Exception {
+    public void blank() {
         Expression.of("   ");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void illegal() throws Exception {
+    public void illegal() {
         Expression.of("foo");
     }
 
     @Test
-    public void keyOnly() throws Exception {
+    public void keyOnly() {
         Expression expression = Expression.of("${foo}");
         assertEquals("foo", expression.getKey());
         assertNull(expression.getDefaultValue());
     }
 
     @Test
-    public void keyAndDefault() throws Exception {
+    public void keyAndDefault() {
         Expression expression = Expression.of("${foo:bar}");
         assertEquals("foo", expression.getKey());
         assertEquals("bar", expression.getDefaultValue());
+    }
+
+    @Test
+    public void prefixAndkey() {
+        Expression expression = Expression.of("prefix/${foo}");
+        assertEquals("foo", expression.getKey());
+        assertEquals("prefix/", expression.getPrefix());
+    }
+
+    @Test
+    public void prefixAndkeyAndDefault() {
+        Expression expression = Expression.of("prefix/${foo:bar}");
+        assertEquals("foo", expression.getKey());
+        assertEquals("bar", expression.getDefaultValue());
+        assertEquals("prefix/", expression.getPrefix());
+    }
+
+    @Test
+    public void keyAndDefaultAndSuffix() {
+        Expression expression = Expression.of("${foo:bar}/suffix");
+        assertEquals("foo", expression.getKey());
+        assertEquals("bar", expression.getDefaultValue());
+        assertEquals("/suffix", expression.getSuffix());
+    }
+
+    @Test
+    public void prefixAndkeyAndDefaultAndSuffix() {
+        Expression expression = Expression.of("prefix/${foo:bar}/suffix");
+        assertEquals("foo", expression.getKey());
+        assertEquals("bar", expression.getDefaultValue());
+        assertEquals("prefix/", expression.getPrefix());
+        assertEquals("/suffix", expression.getSuffix());
     }
 }

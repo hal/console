@@ -15,25 +15,38 @@
  */
 package org.jboss.hal.core.expression;
 
+import java.util.Objects;
+
 import com.google.common.base.Strings;
 
 public class Expression {
 
     public static boolean isExpression(String value) {
         return !Strings.isNullOrEmpty(value) && value.trim().length() != 0 &&
-                value.startsWith("${") && value.endsWith("}");
+                value.contains("${") && value.indexOf("}") > 1;
     }
 
     public static Expression of(String value) {
         if (!Strings.isNullOrEmpty(value) && value.trim().length() != 0) {
-            if (value.startsWith("${") && value.endsWith("}")) {
-                String token = value.substring(2, value.length() - 1);
-                int idx = token.indexOf(":");
-                if (idx != -1) {
-                    return new Expression(token.substring(0, idx), token.substring(idx + 1, token.length()));
-                } else {
-                    return new Expression(token, null);
+            if (value.contains("${") && value.indexOf("}") > 1) {
+                int init = value.indexOf("${");
+                int end = value.indexOf("}");
+                String token = value.substring(init + 2, end);
+                String prefix = null;
+                String suffix = null;
+                if (init > 0) {
+                    prefix = value.substring(0, init);
                 }
+                if (end < value.length() - 1) {
+                    suffix = value.substring(end + 1);
+                }
+                int idx = token.indexOf(":");
+                String defaultValue = null;
+                if (idx != -1) {
+                    defaultValue = token.substring(idx + 1, token.length());
+                    token = token.substring(0, idx);
+                }
+                return new Expression(prefix, token, defaultValue, suffix);
             } else {
                 throw new IllegalArgumentException(
                         "Illegal expression \"" + value + "\": Please use the pattern ${key[:default-value]}");
@@ -43,12 +56,16 @@ public class Expression {
     }
 
 
+    private final String prefix;
+    private final String suffix;
     private final String key;
     private final String defaultValue;
 
-    private Expression(String key, String defaultValue) {
+    private Expression(String prefix, String key, String defaultValue, String suffix) {
         this.key = key;
         this.defaultValue = defaultValue;
+        this.prefix = prefix;
+        this.suffix = suffix;
     }
 
     public String getKey() {
@@ -59,27 +76,28 @@ public class Expression {
         return defaultValue;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Expression)) {
-            return false;
-        }
+    public String getPrefix() {
+        return prefix;
+    }
 
+    public String getSuffix() {
+        return suffix;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         Expression that = (Expression) o;
-        if (!key.equals(that.key)) {
-            return false;
-        }
-        return defaultValue != null ? defaultValue.equals(that.defaultValue) : that.defaultValue == null;
+        return Objects.equals(prefix, that.prefix) &&
+                Objects.equals(suffix, that.suffix) &&
+                Objects.equals(key, that.key) &&
+                Objects.equals(defaultValue, that.defaultValue);
     }
 
     @Override
     public int hashCode() {
-        int result = key.hashCode();
-        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
-        return result;
+        return Objects.hash(prefix, suffix, key, defaultValue);
     }
 
     /**
@@ -89,11 +107,17 @@ public class Expression {
     public String toString() {
         // Do not change implementation!
         StringBuilder builder = new StringBuilder();
+        if (prefix != null) {
+            builder.append(prefix);
+        }
         builder.append("${").append(key);
         if (defaultValue != null) {
             builder.append(':').append(defaultValue);
         }
         builder.append('}');
+        if (suffix != null) {
+            builder.append(suffix);
+        }
         return builder.toString();
     }
 }
