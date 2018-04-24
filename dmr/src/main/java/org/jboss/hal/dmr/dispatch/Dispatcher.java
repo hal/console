@@ -178,6 +178,16 @@ public class Dispatcher implements RecordingHandler {
         dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, error);
     }
 
+    /**
+     * Executes the operation and upon sucessfull result calls the success function with the response results,
+     * but doesn't retrieve the "result" payload as the other execute methods does. You should use this execute
+     * method if the response node you want is not in the "result" attribute.
+     */
+    @JsIgnore
+    public void executeDMR(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
+        dmr(operation, success::accept, fail, error);
+    }
+
     @JsIgnore
     public Single<ModelNode> execute(Operation operation) {
         return dmr(operation).map(payload -> payload.get(RESULT));
