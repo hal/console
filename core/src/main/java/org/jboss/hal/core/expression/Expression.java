@@ -21,15 +21,17 @@ import com.google.common.base.Strings;
 
 public class Expression {
 
+    private static final String START_BRACKET = "${";
+
     public static boolean isExpression(String value) {
         return !Strings.isNullOrEmpty(value) && value.trim().length() != 0 &&
-                value.contains("${") && value.indexOf("}") > 1;
+                value.contains(START_BRACKET) && value.indexOf("}") > 1;
     }
 
     public static Expression of(String value) {
         if (!Strings.isNullOrEmpty(value) && value.trim().length() != 0) {
-            if (value.contains("${") && value.indexOf("}") > 1) {
-                int init = value.indexOf("${");
+            if (value.contains(START_BRACKET) && value.indexOf("}") > 1) {
+                int init = value.indexOf(START_BRACKET);
                 int end = value.indexOf("}");
                 String token = value.substring(init + 2, end);
                 String prefix = null;
@@ -86,8 +88,12 @@ public class Expression {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Expression that = (Expression) o;
         return Objects.equals(prefix, that.prefix) &&
                 Objects.equals(suffix, that.suffix) &&
@@ -110,7 +116,7 @@ public class Expression {
         if (prefix != null) {
             builder.append(prefix);
         }
-        builder.append("${").append(key);
+        builder.append(START_BRACKET).append(key);
         if (defaultValue != null) {
             builder.append(':').append(defaultValue);
         }
