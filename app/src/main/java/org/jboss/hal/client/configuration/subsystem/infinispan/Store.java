@@ -22,6 +22,7 @@ import org.jboss.hal.resources.Names;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.BINARY;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.STRING;
 
+/** Represents the different store singletons of a specific cache resource. */
 public enum Store {
 
     BINARY_JDBC(Ids.CACHE_STORE_BINARY_JDBC, Names.BINARY_JDBC, ModelDescriptionConstants.BINARY_JDBC, true, BINARY),
@@ -43,7 +44,6 @@ public enum Store {
                         return store;
                     }
                 }
-
             }
         }
         return null;

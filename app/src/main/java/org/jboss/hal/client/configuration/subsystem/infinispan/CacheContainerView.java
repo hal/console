@@ -65,8 +65,8 @@ public class CacheContainerView extends HalViewImpl
     private CacheContainerPresenter presenter;
 
     @Inject
-    public CacheContainerView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    public CacheContainerView(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Resources resources) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.saveCacheContainer(changedValues))
@@ -118,7 +118,7 @@ public class CacheContainerView extends HalViewImpl
     }
 
     @Override
-    public void setPresenter(final CacheContainerPresenter presenter) {
+    public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
         caches.values().forEach(cacheElement -> cacheElement.setPresenter(presenter));
         threadPools.values().forEach(threadPoolElement -> threadPoolElement.setPresenter(presenter));
@@ -126,7 +126,7 @@ public class CacheContainerView extends HalViewImpl
     }
 
     @Override
-    public void update(final CacheContainer cacheContainer, boolean jgroups) {
+    public void update(CacheContainer cacheContainer, boolean jgroups) {
         configurationForm.view(cacheContainer);
         caches.forEach((cache, cacheElement) -> {
             List<NamedNode> caches = asNamedNodes(failSafePropertyList(cacheContainer, cache.resource()));
@@ -145,12 +145,17 @@ public class CacheContainerView extends HalViewImpl
     }
 
     @Override
-    public void updateCacheBackups(final Cache cache, final List<NamedNode> backups) {
+    public void updateCacheBackups(Cache cache, List<NamedNode> backups) {
         caches.get(cache).updateBackups(backups);
     }
 
     @Override
-    public void updateCacheStore(final Cache cache, final List<Property> stores) {
+    public void updateCacheMemory(Cache cache, List<Property> memories) {
+        caches.get(cache).updateMemory(memories);
+    }
+
+    @Override
+    public void updateCacheStore(Cache cache, List<Property> stores) {
         caches.get(cache).updateStore(stores);
     }
 }

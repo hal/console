@@ -41,7 +41,7 @@ enum ThreadPool {
     final String type;
     final String resource;
 
-    ThreadPool(final String baseId, final String type, final String resource) {
+    ThreadPool(String baseId, String type, String resource) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;
