@@ -60,8 +60,7 @@ public interface Ids {
     String BROWSE_CONTENT_DEPLOYMENT_EMPTY = "browse-content-deployment-empty";
     String BROWSE_CONTENT_EXPLODED_EMPTY = "browse-content-exploded-empty";
     String BROWSE_CONTENT_UNSUPPORTED_EMPTY = "browse-content-unsupported-empty";
-    String CACHE_COMPONENT_BACKUP_FOR = "cache-component-backup-for";
-    String CACHE_COMPONENT_EVICTION = "cache-component-eviction";
+    String CACHE_COMPONENT_BACKUPS = "cache-component-backups";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
     String CACHE_COMPONENT_LOCKING = "cache-component-locking";
     String CACHE_COMPONENT_PARTITION_HANDLING = "cache-component-partition-handling";
@@ -83,6 +82,9 @@ public interface Ids {
     String CACHE_CONTAINER_TRANSPORT_EMPTY = "cc-transport-empty";
     String CACHE_CONTAINER_TRANSPORT_FORM = "cc-transport-form";
     String CACHE_CONTAINER_TRANSPORT_ITEM = "cc-transport-item";
+    String CACHE_MEMORY_BINARY = "cache-memory-binary";
+    String CACHE_MEMORY_OBJECT = "cache-memory-object";
+    String CACHE_MEMORY_OFF_HEAP = "cache-memory-off-heap";
     String CACHE_STORE_BINARY_JDBC = "cache-store-binary-jdbc";
     String CACHE_STORE_BINARY_TABLE = "binary-table";
     String CACHE_STORE_CUSTOM = "cache-store-custom";

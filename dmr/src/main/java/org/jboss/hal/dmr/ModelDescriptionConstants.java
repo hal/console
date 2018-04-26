@@ -82,7 +82,6 @@ public interface ModelDescriptionConstants {
     String AVERAGE_PROCESSING_TIME = "average-processing-time";
     String BACKGROUND_VALIDATION = "background-validation";
     String BACKUP = "backup";
-    String BACKUP_FOR = "backup-for";
     String BACKUPS = "backups";
     String BALANCER = "balancer";
     String BASE_ROLE = "base-role";
@@ -251,7 +250,6 @@ public interface ModelDescriptionConstants {
     String ENTRIES = "entries";
     String ERROR_COUNT = "error-count";
     String EVENTS = "events";
-    String EVICTION = "eviction";
     String EXCEPTION_SORTER_CLASS_NAME = "exception-sorter-class-name";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
@@ -445,6 +443,7 @@ public interface ModelDescriptionConstants {
     String MECHANISM_NAME = "mechanism-name";
     String MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "mechanism-provider-filtering-sasl-server-factory";
     String MECHANISM_REALM_CONFIGURATIONS = "mechanism-realm-configurations";
+    String MEMORY = "memory";
     String MESSAGE_COUNT = "message-count";
     String MESSAGE_ID = "message-id";
     String MESSAGES_ADDED = "messages-added";
@@ -492,6 +491,8 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_SYSTEM_ROLLBACKS = "number-of-system-rollbacks";
     String NUMBER_OF_TIMEDOUT_TRANSACTIONS = "number-of-timed-out-transactions";
     String NUMBER_OF_TRANSACTIONS = "number-of-transactions";
+    String OBJECT = "object";
+    String OFF_HEAP = "off-heap";
     String OOB = "oob";
     String OP = "operation";
     String OPERATION = "operation";

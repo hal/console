@@ -21,18 +21,19 @@ import com.google.common.base.Strings;
 
 public class Expression {
 
-    private static final String START_BRACKET = "${";
+    private static final String EXPRESSION_START = "${";
+    private static final String EXPRESSION_END = "}";
 
     public static boolean isExpression(String value) {
         return !Strings.isNullOrEmpty(value) && value.trim().length() != 0 &&
-                value.contains(START_BRACKET) && value.indexOf("}") > 1;
+                value.contains(EXPRESSION_START) && value.indexOf(EXPRESSION_END) > 1;
     }
 
     public static Expression of(String value) {
         if (!Strings.isNullOrEmpty(value) && value.trim().length() != 0) {
-            if (value.contains(START_BRACKET) && value.indexOf("}") > 1) {
-                int init = value.indexOf(START_BRACKET);
-                int end = value.indexOf("}");
+            if (value.contains(EXPRESSION_START) && value.indexOf(EXPRESSION_END) > 1) {
+                int init = value.indexOf(EXPRESSION_START);
+                int end = value.indexOf(EXPRESSION_END);
                 String token = value.substring(init + 2, end);
                 String prefix = null;
                 String suffix = null;
@@ -58,10 +59,10 @@ public class Expression {
     }
 
 
-    private final String prefix;
-    private final String suffix;
-    private final String key;
-    private final String defaultValue;
+    private String prefix;
+    private String suffix;
+    private String key;
+    private String defaultValue;
 
     private Expression(String prefix, String key, String defaultValue, String suffix) {
         this.key = key;
@@ -116,11 +117,11 @@ public class Expression {
         if (prefix != null) {
             builder.append(prefix);
         }
-        builder.append(START_BRACKET).append(key);
+        builder.append(EXPRESSION_START).append(key);
         if (defaultValue != null) {
             builder.append(':').append(defaultValue);
         }
-        builder.append('}');
+        builder.append(EXPRESSION_END);
         if (suffix != null) {
             builder.append(suffix);
         }

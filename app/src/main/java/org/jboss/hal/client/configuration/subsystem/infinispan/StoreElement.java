@@ -42,13 +42,11 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.CSS.bootstrapSelect;
-import static org.jboss.hal.resources.CSS.btnGroup;
-import static org.jboss.hal.resources.CSS.selectpicker;
-import static org.jboss.hal.resources.CSS.width;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
@@ -124,7 +122,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .add(selectStore)
                         .asElement())
                 .add(h(1).textContent(Names.STORE))
-                .add(p().textContent(resources.messages().cacheStore()))
+                .add(p().textContent(resources.constants().cacheStore()))
                 .add(emptyState)
                 .addAll(tabs.values().stream().map(Tabs::asElement).collect(toList()))
                 .asElement();
@@ -139,7 +137,6 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .apply(s -> {
                     s.multiple = false;
                     s.size = 1;
-
                 })
                 .asElement();
 
@@ -187,6 +184,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             Store store = Store.fromResource(value);
             presenter.switchStore(store);
         });
+        selectStore.previousElementSibling.classList.add(dropdownMenuRight);
         autoWidth(emptyState.asElement());
         autoWidth(headerForm);
         storeForms.values().forEach(Attachable::attach);
@@ -262,13 +260,13 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         final Store store;
         final Table table;
 
-        private StoreTable(final Store store, final Table table) {
+        private StoreTable(Store store, Table table) {
             this.store = store;
             this.table = table;
         }
 
         @Override
-        public boolean equals(final Object o) {
+        public boolean equals(Object o) {
             if (this == o) {
                 return true;
             }

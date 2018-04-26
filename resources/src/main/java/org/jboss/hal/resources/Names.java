@@ -36,12 +36,12 @@ public interface Names {
     String AUTHENTICATION_MODULE = "Authentication Module";
     String AUTHORIZATION_MODULE = "Authorization Module";
 
-    String BACKUP_FOR = "Backup For";
     String BACKUP = "Backup";
     String BACKUPS = "Backups";
     String BALANCER = "Balancer";
     String BATCH = "Batch";
     String BATCH_STATUS = "Batch Status";
+    String BINARY = "Binary";
     String BINARY_JDBC = "Binary JDBC";
     String BINARY_TABLE = "Binary Table";
     String BINDINGS_DIRECTORY = "Bindings Directory";
@@ -103,7 +103,6 @@ public interface Names {
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
-    String EVICTION = "Eviction";
     String EXECUTION_ID = "Execution ID";
     String EXECUTIONS = "Executions";
     String EXPIRATION = "Expiration";
@@ -203,6 +202,7 @@ public interface Names {
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
     String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
     String MECHANISM_REALM_CONFIGURATIONS = "Mechanism Realm Configurations";
+    String MEMORY = "Memory";
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MESSAGING = "Messaging";
     String MIME_MAPPING = "Mime Mapping";
@@ -218,6 +218,8 @@ public interface Names {
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 
+    String OBJECT = "Object";
+    String OFF_HEAP = "Off Heap";
     String OUTBOUND_CONNECTION = "Outbound Connection";
     String OTHER_SETTINGS = "Other Settings";
     String OUTBOUND_LOCAL = "Outbound Local";

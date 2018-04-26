@@ -59,6 +59,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final org.jboss.hal.ballroom.table.Table<NamedNode> table;
     private final Form<NamedNode> form;
     private final Map<Component, Form<ModelNode>> components;
+    private final MemoryElement memoryElement;
     private final StoreElement storeElement;
     private final Pages pages;
     private org.jboss.hal.ballroom.table.Table<NamedNode> backupTable;
@@ -80,26 +81,22 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         if (cache != LOCAL) {
             builder.column(MODE);
         }
+        List<InlineAction<NamedNode>> inlineActions = new ArrayList<>();
+        inlineActions.add(new InlineAction<>(Names.MEMORY, row -> {
+            presenter.selectCache(cache, row.getName());
+            presenter.showCacheMemory();
+        }));
+        inlineActions.add(new InlineAction<>(Names.STORE, row -> {
+            presenter.selectCache(cache, row.getName());
+            presenter.showCacheStore();
+        }));
         if (cache.backups) {
-            // two action links: 1) store, 2) backups
-            List<InlineAction<NamedNode>> inlineActions = new ArrayList<>();
-            inlineActions.add(new InlineAction<>(Names.STORE, row -> {
-                presenter.selectCache(cache, row.getName());
-                presenter.showCacheStore();
-            }));
             inlineActions.add(new InlineAction<>(Names.BACKUPS, row -> {
                 presenter.selectCache(cache, row.getName());
                 presenter.showCacheBackup();
             }));
-            builder.column(inlineActions);
-
-        } else {
-            // one action link: store
-            builder.column(new InlineAction<>(Names.STORE, row -> {
-                presenter.selectCache(cache, row.getName());
-                presenter.showCacheStore();
-            }));
         }
+        builder.column(inlineActions);
         table = builder.build();
 
         Tabs tabs = new Tabs(Ids.build(cache.baseId, Ids.TAB_CONTAINER));
@@ -125,6 +122,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             components.put(component, cf);
         }
 
+        memoryElement = new MemoryElement(cache, metadataRegistry, resources);
         storeElement = new StoreElement(cache, metadataRegistry, resources);
 
         HTMLElement root = section()
@@ -137,6 +135,8 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         String id = Ids.build(cache.baseId, Ids.PAGES);
         String mainId = Ids.build(cache.baseId, Ids.PAGE);
         pages = new Pages(id, mainId, root);
+        pages.addPage(mainId, Ids.build(cache.baseId, MEMORY, Ids.PAGE),
+                () -> presenter.cacheSegment(), () -> presenter.memorySegment(), memoryElement);
         pages.addPage(mainId, Ids.build(cache.baseId, STORE, Ids.PAGE),
                 () -> presenter.cacheSegment(), () -> presenter.storeSegment(), storeElement);
 
@@ -182,6 +182,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         table.attach();
         form.attach();
         components.values().forEach(Attachable::attach);
+        memoryElement.attach();
         storeElement.attach();
         if (cache.backups) {
             backupTable.attach();
@@ -198,6 +199,8 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     ModelNode modelNode = failSafeGet(selectedCache, component.path());
                     form.view(modelNode);
                 });
+                List<Property> memories = failSafePropertyList(selectedCache, MEMORY);
+                storeElement.update(memories);
                 List<Property> stores = failSafePropertyList(selectedCache, STORE);
                 storeElement.update(stores);
             } else {
@@ -215,6 +218,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             backupForm.detach();
         }
         storeElement.detach();
+        memoryElement.detach();
         components.values().forEach(Attachable::detach);
         form.detach();
         table.detach();
@@ -223,6 +227,7 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     @Override
     public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
+        memoryElement.setPresenter(presenter);
         storeElement.setPresenter(presenter);
     }
 
@@ -238,6 +243,11 @@ class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         pages.showPage(Ids.build(cache.baseId, BACKUPS, Ids.PAGE));
         backupForm.clear();
         backupTable.update(backups);
+    }
+
+    void updateMemory(List<Property> memories) {
+        pages.showPage(Ids.build(cache.baseId, MEMORY, Ids.PAGE));
+        memoryElement.update(memories);
     }
 
     void updateStore(List<Property> stores) {

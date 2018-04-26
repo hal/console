@@ -20,16 +20,15 @@ import org.jboss.hal.core.finder.PreviewContent;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
 class CacheContainerPreview extends PreviewContent<CacheContainer> {
 
-    CacheContainerPreview(final CacheContainer cc) {
+    CacheContainerPreview(CacheContainer cc) {
         super(cc.getName());
 
         PreviewAttributes<CacheContainer> previewAttributes = new PreviewAttributes<>(cc,
-                asList(DEFAULT_CACHE, JNDI_NAME, STATISTICS_ENABLED));
+                asList(DEFAULT_CACHE, STATISTICS_ENABLED));
         previewBuilder().addAll(previewAttributes);
     }
 }
