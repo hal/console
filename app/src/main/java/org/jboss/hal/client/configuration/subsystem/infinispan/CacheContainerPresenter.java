@@ -69,8 +69,9 @@ public class CacheContainerPresenter
         extends ApplicationFinderPresenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    public static final String EQUALS = "=";
-    public static final String EQ_WILDCARD = "=*";
+    private static final String EQUALS = "=";
+    private static final String EQ_WILDCARD = "=*";
+
     private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
@@ -80,6 +81,7 @@ public class CacheContainerPresenter
     private String cacheContainer;
     private Cache cacheType;
     private String cacheName;
+    private Memory memory;
     private Store store;
 
     @Inject
@@ -322,6 +324,78 @@ public class CacheContainerPresenter
                 .append(cacheType.resource() + EQUALS + cacheName)
                 .append(COMPONENT + EQUALS + BACKUPS)
                 .append(BACKUP + EQUALS + name)
+                .resolve(statementContext);
+    }
+
+
+    // ------------------------------------------------------ cache memory
+
+    void showCacheMemory() {
+        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + EQUALS + cacheName)
+                .resolve(statementContext);
+        crud.readChildren(address, MEMORY, 2, children -> {
+            if (children.isEmpty()) {
+                memory = null;
+            } else {
+                if (children.size() > 1) {
+                    MessageEvent.fire(getEventBus(), Message.warning(resources.messages().moreThanOneCacheMemory()));
+                }
+                memory = Memory.fromResource(children.get(0).getName());
+            }
+            getView().updateCacheMemory(cacheType, children);
+        });
+    }
+
+    void saveCacheMemory(Memory memory, Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(MEMORY + EQUALS + memory.resource));
+        crud.saveSingleton(memory.type, cacheMemoryAddress(memory), changedValues, metadata, this::showCacheMemory);
+    }
+
+    void resetCacheMemory(Memory memory, Form<ModelNode> form) {
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(MEMORY + EQUALS + memory.resource));
+        crud.resetSingleton(memory.type, cacheMemoryAddress(memory), form, metadata,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(Form<ModelNode> form) {
+                        showCacheMemory();
+                    }
+                });
+    }
+
+    void switchMemory(Memory newMemory) {
+        if (newMemory != null && newMemory != this.memory) {
+            List<Operation> operations = new ArrayList<>();
+            if (this.memory != null) {
+                operations.add(new Operation.Builder(cacheMemoryAddress(this.memory), REMOVE).build());
+            }
+            operations.add(new Operation.Builder(cacheMemoryAddress(newMemory), ADD).build());
+            Composite composite = new Composite(operations)
+                    .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
+            dispatcher.execute(composite, (CompositeResult result) -> {
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().addSingleResourceSuccess(newMemory.type)));
+                showCacheMemory();
+            });
+        }
+    }
+
+    String memorySegment() {
+        StringBuilder builder = new StringBuilder().append(Names.MEMORY);
+        if (memory != null) {
+            builder.append(": ").append(memory.type);
+        }
+        return builder.toString();
+    }
+
+    private ResourceAddress cacheMemoryAddress(Memory memory) {
+        return SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(MEMORY + EQUALS + memory.resource)
                 .resolve(statementContext);
     }
 
@@ -611,6 +685,7 @@ public class CacheContainerPresenter
     public interface MyView extends HalView, HasPresenter<CacheContainerPresenter> {
         void update(CacheContainer cacheContainer, boolean jgroups);
         void updateCacheBackups(Cache cache, List<NamedNode> backups);
+        void updateCacheMemory(Cache cache, List<Property> memories);
         void updateCacheStore(Cache cache, List<Property> stores);
     }
     // @formatter:on
