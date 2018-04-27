@@ -28,7 +28,7 @@ enum Write {
     final String type;
     final String resource;
 
-    Write(final String baseId, final String type, final String resource) {
+    Write(String baseId, String type, String resource) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;

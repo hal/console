@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.0.0.Alpha3</version>
+    <version>3.0.0.Beta1</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -330,16 +330,18 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
+                    <!--
+                                        <plugin>
+                                            <groupId>org.sonatype.plugins</groupId>
+                                            <artifactId>nexus-staging-maven-plugin</artifactId>
+                                            <extensions>true</extensions>
+                                            <configuration>
+                                                <serverId>ossrh</serverId>
+                                                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                                                <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                                            </configuration>
+                                        </plugin>
+                    -->
                 </plugins>
             </build>
         </profile>

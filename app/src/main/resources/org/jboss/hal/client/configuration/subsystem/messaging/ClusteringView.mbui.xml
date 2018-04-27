@@ -40,6 +40,7 @@
                     <attributes>
                         <attribute name="broadcast-period"/>
                         <attribute name="connectors"/>
+                        <attribute name="jgroups-cluster"/>
                         <attribute name="jgroups-channel"/>
                         <attribute name="jgroups-stack"/>
                         <attribute name="socket-binding">
@@ -77,6 +78,7 @@
                     <attributes>
                         <attribute name="initial-wait-timeout"/>
                         <attribute name="refresh-timeout"/>
+                        <attribute name="jgroups-cluster"/>
                         <attribute name="jgroups-channel"/>
                         <attribute name="jgroups-stack"/>
                         <attribute name="socket-binding">

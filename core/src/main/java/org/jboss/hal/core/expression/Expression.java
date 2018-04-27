@@ -15,25 +15,41 @@
  */
 package org.jboss.hal.core.expression;
 
+import java.util.Objects;
+
 import com.google.common.base.Strings;
 
 public class Expression {
 
+    private static final String EXPRESSION_START = "${";
+    private static final String EXPRESSION_END = "}";
+
     public static boolean isExpression(String value) {
         return !Strings.isNullOrEmpty(value) && value.trim().length() != 0 &&
-                value.startsWith("${") && value.endsWith("}");
+                value.contains(EXPRESSION_START) && value.indexOf(EXPRESSION_END) > 1;
     }
 
     public static Expression of(String value) {
         if (!Strings.isNullOrEmpty(value) && value.trim().length() != 0) {
-            if (value.startsWith("${") && value.endsWith("}")) {
-                String token = value.substring(2, value.length() - 1);
-                int idx = token.indexOf(":");
-                if (idx != -1) {
-                    return new Expression(token.substring(0, idx), token.substring(idx + 1, token.length()));
-                } else {
-                    return new Expression(token, null);
+            if (value.contains(EXPRESSION_START) && value.indexOf(EXPRESSION_END) > 1) {
+                int init = value.indexOf(EXPRESSION_START);
+                int end = value.indexOf(EXPRESSION_END);
+                String token = value.substring(init + 2, end);
+                String prefix = null;
+                String suffix = null;
+                if (init > 0) {
+                    prefix = value.substring(0, init);
                 }
+                if (end < value.length() - 1) {
+                    suffix = value.substring(end + 1);
+                }
+                int idx = token.indexOf(":");
+                String defaultValue = null;
+                if (idx != -1) {
+                    defaultValue = token.substring(idx + 1, token.length());
+                    token = token.substring(0, idx);
+                }
+                return new Expression(prefix, token, defaultValue, suffix);
             } else {
                 throw new IllegalArgumentException(
                         "Illegal expression \"" + value + "\": Please use the pattern ${key[:default-value]}");
@@ -43,12 +59,16 @@ public class Expression {
     }
 
 
-    private final String key;
-    private final String defaultValue;
+    private String prefix;
+    private String suffix;
+    private String key;
+    private String defaultValue;
 
-    private Expression(String key, String defaultValue) {
+    private Expression(String prefix, String key, String defaultValue, String suffix) {
         this.key = key;
         this.defaultValue = defaultValue;
+        this.prefix = prefix;
+        this.suffix = suffix;
     }
 
     public String getKey() {
@@ -59,27 +79,32 @@ public class Expression {
         return defaultValue;
     }
 
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Expression)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Expression that = (Expression) o;
-        if (!key.equals(that.key)) {
-            return false;
-        }
-        return defaultValue != null ? defaultValue.equals(that.defaultValue) : that.defaultValue == null;
+        return Objects.equals(prefix, that.prefix) &&
+                Objects.equals(suffix, that.suffix) &&
+                Objects.equals(key, that.key) &&
+                Objects.equals(defaultValue, that.defaultValue);
     }
 
     @Override
     public int hashCode() {
-        int result = key.hashCode();
-        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
-        return result;
+        return Objects.hash(prefix, suffix, key, defaultValue);
     }
 
     /**
@@ -89,11 +114,17 @@ public class Expression {
     public String toString() {
         // Do not change implementation!
         StringBuilder builder = new StringBuilder();
-        builder.append("${").append(key);
+        if (prefix != null) {
+            builder.append(prefix);
+        }
+        builder.append(EXPRESSION_START).append(key);
         if (defaultValue != null) {
             builder.append(':').append(defaultValue);
         }
-        builder.append('}');
+        builder.append(EXPRESSION_END);
+        if (suffix != null) {
+            builder.append(suffix);
+        }
         return builder.toString();
     }
 }

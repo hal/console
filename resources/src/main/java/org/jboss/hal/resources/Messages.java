@@ -44,11 +44,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String bootErrors();
     String blacklist(String blacklist);
 
-    String cacheStore();
     SafeHtml callerThreadLabel(String name);
     SafeHtml cancelActiveOperation(String operation);
     SafeHtml cancelledLabel(boolean name);
     SafeHtml cancelledOperation(String name);
+    SafeHtml cannotBrowseUnmanaged();
+    SafeHtml cannotDownloadExploded();
     SafeHtml changePrioritySuccess(int priority);
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
@@ -253,6 +254,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String modifyResourceTitle(String type);
     SafeHtml modifyResourceSuccess(String type, String name);
     SafeHtml modifySingleResourceSuccess(String type);
+
+    SafeHtml moreThanOneCacheMemory();
     SafeHtml moreThanOneCacheStore();
     String moreThanOneCacheStoreDetails();
     SafeHtml moreThanOneKeyMapperForPrincipalQuery();

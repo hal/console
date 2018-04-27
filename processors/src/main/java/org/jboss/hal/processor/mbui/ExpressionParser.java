@@ -54,7 +54,7 @@ final class ExpressionParser {
 
 
     static boolean isExpression(String value) {
-        return value != null && value.startsWith("${") && value.endsWith("}");
+        return value != null && value.contains("${") && value.indexOf("}") > 1;
     }
 
     static String stripExpression(String pattern) {

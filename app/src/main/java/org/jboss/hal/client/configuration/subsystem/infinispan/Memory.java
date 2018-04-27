@@ -19,30 +19,37 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MEMORY;
 
-/** Represents the different component singletons of a specific cache resource. */
-enum Component {
+/** Represents the different memory singletons of a specific cache resource. */
+enum Memory {
 
-    BACKUPS(Ids.CACHE_COMPONENT_BACKUPS, Names.BACKUPS, ModelDescriptionConstants.BACKUPS),
-    EXPIRATION(Ids.CACHE_COMPONENT_EXPIRATION, Names.EXPIRATION, ModelDescriptionConstants.EXPIRATION),
-    LOCKING(Ids.CACHE_COMPONENT_LOCKING, Names.LOCKING, ModelDescriptionConstants.LOCKING),
-    PARTITION_HANDLING(Ids.CACHE_COMPONENT_PARTITION_HANDLING, Names.PARTITION_HANDLING,
-            ModelDescriptionConstants.PARTITION_HANDLING),
-    STATE_TRANSFER(Ids.CACHE_COMPONENT_STATE_TRANSFER, Names.STATE_TRANSFER, ModelDescriptionConstants.STATE_TRANSFER),
-    TRANSACTION(Ids.CACHE_COMPONENT_TRANSACTION, Names.TRANSACTION, ModelDescriptionConstants.TRANSACTION);
+    BINARY(Ids.CACHE_MEMORY_BINARY, Names.BINARY, ModelDescriptionConstants.BINARY),
+    OBJECT(Ids.CACHE_MEMORY_OBJECT, Names.OBJECT, ModelDescriptionConstants.OBJECT),
+    OFF_HEAP(Ids.CACHE_MEMORY_OFF_HEAP, Names.OFF_HEAP, ModelDescriptionConstants.OFF_HEAP);
+
+    static Memory fromResource(String resource) {
+        if (resource != null) {
+            for (Memory memory : Memory.values()) {
+                if (memory.resource.equals(resource)) {
+                    return memory;
+                }
+            }
+        }
+        return null;
+    }
 
     final String baseId;
     final String type;
     final String resource;
 
-    Component(String baseId, String type, String resource) {
+    Memory(String baseId, String type, String resource) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;
     }
 
     String path() {
-        return COMPONENT + "/" + resource;
+        return MEMORY + "/" + resource;
     }
 }

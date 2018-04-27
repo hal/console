@@ -30,6 +30,7 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
     private final boolean allowEmpty;
+    private SingleSelectBoxEditingAppearance singleSelectBoxEditingAppearance;
 
     public SingleSelectBoxItem(String name, String label, List<String> options, boolean allowEmpty) {
         super(name, label, null);
@@ -53,7 +54,8 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
                     select.multiple = false;
                 })
                 .asElement();
-        addAppearance(Form.State.EDITING, new SingleSelectBoxEditingAppearance(selectElement, options, allowEmpty));
+        singleSelectBoxEditingAppearance = new SingleSelectBoxEditingAppearance(selectElement, options, allowEmpty);
+        addAppearance(Form.State.EDITING, singleSelectBoxEditingAppearance);
     }
 
     @Override
@@ -61,6 +63,11 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         if (allowEmpty) {
             super.clearValue();
         }
+    }
+
+    public void updateAllowedValues(List<String> values) {
+        singleSelectBoxEditingAppearance.updateOptions(values);
+        singleSelectBoxEditingAppearance.refresh();
     }
 
     @Override

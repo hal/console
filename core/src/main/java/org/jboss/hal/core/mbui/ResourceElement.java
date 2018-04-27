@@ -32,6 +32,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.InlineAction;
@@ -122,10 +123,12 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
         table = builder.tableBuilder.build();
 
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM), builder.metadata)
+        ModelNodeForm.Builder formBuilder = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM), builder.metadata)
                 .onSave((f, changedValues) -> builder.mbuiContext.crud().save(builder.type, f.getModel().getName(),
-                        builder.metadata.getTemplate(), changedValues, builder.crudCallback))
-                .build();
+                        builder.metadata.getTemplate(), changedValues, builder.crudCallback));
+        builder.customFormItems.forEach((_attribute, _formItemProvider) -> formBuilder.customFormItem(_attribute, _formItemProvider));
+
+        form = formBuilder.build();
 
         // complex attributes of type OBJECT
         coForms = new HashMap<>();
@@ -169,7 +172,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     }
                     return op;
                 };
-                ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
+                ModelNodeForm.Builder<ModelNode> coFormBuilder = new ModelNodeForm.Builder<>(
                         Ids.build(builder.baseId, complexAttribute, Ids.FORM), metadata)
                         .singleton(ping, callback)
                         .onSave((f, changedValues) -> {
@@ -184,7 +187,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                                     }
                                 }));
                 if (!requiredComplexAttribute) {
-                    formBuilder.prepareRemove(
+                    coFormBuilder.prepareRemove(
                             f -> builder.mbuiContext.ca().remove(selectedResource, complexAttribute, type,
                                     metadata.getTemplate(), new Form.FinishRemove<ModelNode>(f) {
                                         @Override
@@ -193,7 +196,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                                         }
                                     }));
                 }
-                Form<ModelNode> form = formBuilder.build();
+                Form<ModelNode> form = coFormBuilder.build();
                 FormValidation<ModelNode> coFormValidation = builder.coAttributes.get(complexAttribute);
                 if (coFormValidation != null) {
                     form.addFormValidation(coFormValidation);
@@ -348,6 +351,10 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         return form;
     }
 
+    public Table<NamedNode> getTable() {
+        return table;
+    }
+
     /** @return The form that represents the complex attribute of type LIST */
     public Form<ModelNode> getFormComplexList() {
         return clForm;
@@ -362,6 +369,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         private final MbuiContext mbuiContext;
         private final ModelNodeTable.Builder<NamedNode> tableBuilder;
         private String type;
+        private Map<String, FormItemProvider> customFormItems = new HashMap<>();
         private Map<String, FormValidation> coAttributes; // co = complex object
         private String clAttribute; // cl = complex list
         private final List<String> clColumns;
@@ -413,6 +421,14 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
          */
         public Builder addComplexObjectAttribute(String name) {
             coAttributes.put(name, null);
+            return this;
+        }
+
+        /**
+         * Sets a custom form item
+         */
+        public Builder customFormItem(String attribute, FormItemProvider formItemProvider) {
+            customFormItems.put(attribute, formItemProvider);
             return this;
         }
 

@@ -238,8 +238,11 @@ public class ContentColumn extends FinderColumn<Content> {
                 List<ItemAction<Content>> actions = new ArrayList<>();
 
                 // order is: view, (explode), deploy, replace, download, undeploy / remove
-                actions.add(itemActionFactory.view(new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
-                        .with(CONTENT, item.getName()).build()));
+                // only managed deployments can read-content
+                if (item.isManaged()) {
+                    actions.add(itemActionFactory.view(new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
+                            .with(CONTENT, item.getName()).build()));
+                }
                 if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
                         && item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction.Builder<Content>()
@@ -261,7 +264,8 @@ public class ContentColumn extends FinderColumn<Content> {
                             .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
                             .build());
                 }
-                if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
+                if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())
+                        && item.isManaged() && !item.isExploded()) {
                     ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
                     Operation operation = new Operation.Builder(address, READ_CONTENT).build();
                     actions.add(new ItemAction.Builder<Content>()

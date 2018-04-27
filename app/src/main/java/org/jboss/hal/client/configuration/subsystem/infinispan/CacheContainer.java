@@ -21,11 +21,11 @@ import org.jboss.hal.dmr.Property;
 
 class CacheContainer extends NamedNode {
 
-    CacheContainer(final Property property) {
+    CacheContainer(Property property) {
         super(property);
     }
 
-    CacheContainer(final String name, final ModelNode node) {
+    CacheContainer(String name, ModelNode node) {
         super(name, node);
     }
 }

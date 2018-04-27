@@ -19,6 +19,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
@@ -31,6 +32,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -56,6 +58,7 @@ class ContentPreview extends PreviewContent<Content> {
     private final HTMLElement deploymentsDiv;
     private final HTMLElement deploymentsUl;
     private final HTMLElement undeployedContentDiv;
+    private final HTMLElement infoExplodedDiv;
 
     ContentPreview(ContentColumn column, Content content, Environment environment, Places places,
             Metadata serverGroupMetadata, Resources resources) {
@@ -64,6 +67,12 @@ class ContentPreview extends PreviewContent<Content> {
         this.places = places;
         this.resources = resources;
         this.authorisationDecision = AuthorisationDecision.from(environment, serverGroupMetadata.getSecurityContext());
+
+        if (!content.isManaged()) {
+            previewBuilder().add(new Alert(Icons.INFO, resources.messages().cannotBrowseUnmanaged()).asElement());
+        }
+        previewBuilder().add(
+                infoExplodedDiv = new Alert(Icons.INFO, resources.messages().cannotDownloadExploded()).asElement());
 
         LabelBuilder labelBuilder = new LabelBuilder();
         attributes = new PreviewAttributes<>(content, asList(NAME, RUNTIME_NAME));
@@ -78,6 +87,12 @@ class ContentPreview extends PreviewContent<Content> {
                             .css(flag(failSafeBoolean(model, EXPLODED))));
             return new PreviewAttribute(label, elements.asElements());
         });
+        if (!content.isManaged()) {
+            attributes.append(model -> {
+                String pathValue = model.get(CONTENT).asList().get(0).get(PATH).asString();
+                return new PreviewAttributes.PreviewAttribute(labelBuilder.label(PATH), pathValue);
+            });
+        }
         previewBuilder().addAll(attributes);
 
         HTMLElement p;
@@ -104,8 +119,11 @@ class ContentPreview extends PreviewContent<Content> {
         attributes.refresh(content);
 
         boolean undeployed = content.getServerGroupDeployments().isEmpty();
+        boolean unmanaged = !content.isManaged();
+        boolean exploded = content.isExploded();
         Elements.setVisible(deploymentsDiv, !undeployed);
         Elements.setVisible(undeployedContentDiv, undeployed);
+        Elements.setVisible(infoExplodedDiv, !unmanaged && exploded);
         if (!undeployed) {
             Elements.removeChildrenFrom(deploymentsUl);
             content.getServerGroupDeployments().forEach(sgd -> {

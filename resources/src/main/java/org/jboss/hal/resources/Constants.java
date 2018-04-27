@@ -48,6 +48,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String browse();
     String browseBy();
 
+    String cacheMemory();
+
+    String cacheStore();
     String callerThread();
     String cancel();
     String cancelActiveOperation();
@@ -504,6 +507,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String suspended();
     String systemRollback();
     String switchBehaviour();
+
+    String switchMemory();
     String switchProvider();
     String switchStore();
     String switchToExpressionMode();
