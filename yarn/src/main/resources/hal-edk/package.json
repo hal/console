@@ -1,6 +1,6 @@
 {
   "name": "hal-edk",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-beta.1",
   "description": "HAL extension development kit",
   "keywords": [
     "hal",
