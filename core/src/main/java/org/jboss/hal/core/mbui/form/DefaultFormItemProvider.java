@@ -220,7 +220,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                         Core.INSTANCE.eventBus().fireEvent(event);
                     });
                 }
-                if (readOnly || runtime) {
+                if (readOnly) {
                     formItem.setEnabled(false);
                 }
             }
