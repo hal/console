@@ -615,6 +615,7 @@
             "required" => false,
             "nillable" => true,
             "default" => true,
+            "requires" => ["xa-resource-timeout"],
             "access-type" => "read-write",
             "storage" => "configuration",
             "restart-required" => "no-services"
