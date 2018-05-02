@@ -77,7 +77,8 @@ class DefaultFormItemProvider implements FormItemProvider {
         boolean expressionAllowed = attributeDescription.hasDefined(EXPRESSIONS_ALLOWED) &&
                 attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean();
         boolean readOnly = attributeDescription.hasDefined(ACCESS_TYPE) &&
-                READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
+                (READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString())
+                        || METRIC.equals(attributeDescription.get(ACCESS_TYPE).asString()));
         String unit = attributeDescription.hasDefined(UNIT) ? attributeDescription.get(UNIT).asString() : null;
         Deprecation deprecation = attributeDescription.hasDefined(DEPRECATED) ? new Deprecation(
                 attributeDescription.get(DEPRECATED)) : null;
