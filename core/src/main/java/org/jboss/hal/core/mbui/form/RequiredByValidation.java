@@ -70,11 +70,11 @@ public class RequiredByValidation<T> implements FormItemValidation<T> {
             // there is a special case for SwitchItem of Boolean type, the SwitchItem.isEmpty() tests if the value is
             // null, but for this validation case we must ensure the value is false
             boolean switchItemFalse = false;
-            if (formItem instanceof SwitchItem) {
+            if (formItem != null && formItem instanceof SwitchItem && formItem.getValue() != null) {
                 switchItemFalse = !((SwitchItem) formItem).getValue();
             }
             // but as soon as there's one non-empty required-by field, this form item must be non-empty as well!
-            if (formItem.isEmpty() || switchItemFalse) {
+            if (formItem != null && formItem.isEmpty() || switchItemFalse) {
                 return ValidationResult.invalid(
                         messages.nonEmptyRequires(labelBuilder.enumeration(nonEmptyRequiredBy, constants.or())));
             } else {
