@@ -15,13 +15,21 @@
  */
 package org.jboss.hal.client.configuration.subsystem.transaction;
 
+import java.util.Collections;
+
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.RequiredByValidation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROCESS_ID_SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROCESS_ID_SOCKET_MAX_PORTS;
 
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
@@ -49,17 +57,14 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
     public void setPresenter(final TransactionPresenter presenter) {
         super.setPresenter(presenter);
 
-        // set the process fields as not required, because uuid and socket-binding are mutually exclusive.
-        processForm.getBoundFormItems().forEach(formItem -> formItem.setRequired(false));
-
-        // --------------- form validation for the general attributes
-        attributesForm.addFormValidation(presenter.getAttributesFormValidation());
-
-        // --------------- form validation for the process attributes
-        processForm.addFormValidation(presenter.getProcessFormValidation());
-
-        // --------------- form validation for the jdbc attributes
-        jdbcForm.addFormValidation(presenter.getJdbcFormValidation());
+        // process-id-socket-max-ports requires process-id-socket-binding, but as process-id-socket-binding is a required
+        // attribute, the "requires" validation handler in ModelNodeForm only elects them for validation if it is
+        // a non-required attribute
+        FormItem<String> socketBindingItem = processForm.getFormItem(PROCESS_ID_SOCKET_BINDING);
+        socketBindingItem.addValidationHandler(
+                new RequiredByValidation<>(socketBindingItem, Collections.singletonList(PROCESS_ID_SOCKET_MAX_PORTS),
+                        ((ModelNodeForm) processForm), mbuiContext.resources().constants(),
+                        mbuiContext.resources().messages()));
     }
 
     @Override

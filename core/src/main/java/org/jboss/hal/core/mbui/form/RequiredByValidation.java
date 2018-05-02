@@ -21,6 +21,7 @@ import java.util.List;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemValidation;
+import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
@@ -28,7 +29,7 @@ import org.jboss.hal.resources.Messages;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWAYS;
 
-class RequiredByValidation<T> implements FormItemValidation<T> {
+public class RequiredByValidation<T> implements FormItemValidation<T> {
 
     private final FormItem<T> formItem;
     private final Collection<String> requiredBy;
@@ -37,7 +38,7 @@ class RequiredByValidation<T> implements FormItemValidation<T> {
     private final Messages messages;
     private final LabelBuilder labelBuilder;
 
-    RequiredByValidation(final FormItem<T> formItem, final Collection<String> requiredBy, final ModelNodeForm form,
+    public RequiredByValidation(final FormItem<T> formItem, final Collection<String> requiredBy, final ModelNodeForm form,
             final Constants constants, final Messages messages) {
         this.formItem = formItem;
         this.requiredBy = requiredBy;
@@ -66,8 +67,14 @@ class RequiredByValidation<T> implements FormItemValidation<T> {
             // if all required-by fields are empty, everything is fine
             return ValidationResult.OK;
         } else {
+            // there is a special case for SwitchItem of Boolean type, the SwitchItem.isEmpty() tests if the value is
+            // null, but for this validation case we must ensure the value is false
+            boolean switchItemFalse = false;
+            if (formItem instanceof SwitchItem) {
+                switchItemFalse = !((SwitchItem) formItem).getValue();
+            }
             // but as soon as there's one non-empty required-by field, this form item must be non-empty as well!
-            if (formItem.isEmpty()) {
+            if (formItem.isEmpty() || switchItemFalse) {
                 return ValidationResult.invalid(
                         messages.nonEmptyRequires(labelBuilder.enumeration(nonEmptyRequiredBy, constants.or())));
             } else {

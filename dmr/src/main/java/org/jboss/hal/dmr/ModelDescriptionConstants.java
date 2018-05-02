@@ -549,6 +549,9 @@ public interface ModelDescriptionConstants {
     String PRIORITY = "priority";
     String PROBE_OPERATION = "probe";
     String PROCESSING_TIME = "processing-time";
+    String PROCESS_ID_SOCKET_BINDING = "process-id-socket-binding";
+    String PROCESS_ID_SOCKET_MAX_PORTS = "process-id-socket-max-ports";
+    String PROCESS_ID_UUID = "process-id-uuid";
     String PROCESS_STATE = "process-state";
     String PRODUCES = "produces";
     String PRODUCT_NAME = "product-name";
