@@ -38,6 +38,9 @@ public class AddUnmanagedDialog {
         ModelNode rp = ModelNodeHelper.failSafeGet(metadata.getDescription(),
                 String.join("/", OPERATIONS, ADD, REQUEST_PROPERTIES));
         ModelNode vt = ModelNodeHelper.failSafeGet(rp, CONTENT + "/" + VALUE_TYPE);
+        // the "path" attribute requires "archive", but archive may be false, that is a directory deployment
+        // but the validation will not let pass, so remove the "requires" and manually set the value if user sets it
+        vt.get(PATH).remove(REQUIRES);
         ModelNode attributes = new ModelNode();
         attributes.get(RUNTIME_NAME).set(rp.get(RUNTIME_NAME));
         attributes.get(PATH).set(vt.get(PATH));
@@ -63,6 +66,9 @@ public class AddUnmanagedDialog {
                         ModelNode payload = new ModelNode();
                         payload.get(RUNTIME_NAME).set(model.get(RUNTIME_NAME));
                         model.remove(RUNTIME_NAME);
+                        if (!model.hasDefined(ARCHIVE)) {
+                            model.get(ARCHIVE).set(false);
+                        }
                         payload.get(CONTENT).set(model);
                         callback.onAdd(name, payload);
                     }
