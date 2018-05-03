@@ -146,6 +146,14 @@ public class Tabs implements IsElement<HTMLElement> {
         }
     }
 
+    public HTMLElement tabElement(String id) {
+        HTMLElement selectedTab = null;
+        if (id != null) {
+            selectedTab = (HTMLElement) tabs.querySelector("li > a[href='#" + id + "']"); //NON-NLS
+        }
+        return selectedTab;
+    }
+
 
     @JsType(isNative = true)
     static class Api {

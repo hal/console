@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Deployment;
@@ -106,8 +107,14 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     @Override
     public void update(Deployment deployment, int tab) {
         if (supportsReadContent) {
-            browseContent.setContent(deployment);
-            tabs.showTab(tab);
+            HTMLElement contentElement = tabs.tabElement(Ids.CONTENT_TAB);
+            if (deployment.isManaged()) {
+                browseContent.setContent(deployment);
+                tabs.showTab(tab);
+            } else {
+                tabs.showTab(1);
+            }
+            Elements.setVisible(contentElement, deployment.isManaged());
         }
         deploymentModel.update(deployment, () -> presenter.enable(deployment.getName()));
     }

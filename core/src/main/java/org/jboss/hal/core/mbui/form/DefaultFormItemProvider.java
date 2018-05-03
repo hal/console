@@ -221,6 +221,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                 }
                 if (readOnly) {
                     formItem.setEnabled(false);
+                    formItem.setExpressionAllowed(false);
                 }
             }
         }
