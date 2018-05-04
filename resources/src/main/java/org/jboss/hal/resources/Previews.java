@@ -220,6 +220,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/undertow-buffer-caches.html")
     ExternalTextResource configurationUndertowBufferCaches();
 
+    @Source("previews/configuration/undertow-byte-buffer-pool.html")
+    ExternalTextResource configurationUndertowByteBufferPool();
+
     @Source("previews/configuration/undertow-filters.html")
     ExternalTextResource configurationUndertowFilters();
 

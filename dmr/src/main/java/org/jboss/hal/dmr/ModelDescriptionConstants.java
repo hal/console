@@ -104,6 +104,7 @@ public interface ModelDescriptionConstants {
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
     String BUNDLED = "bundled";
+    String BYTE_BUFFER_POOL = "byte-buffer-pool";
     String BYTES = "bytes";
     String CACHE_CONTAINER = "cache-container";
     String CACHE_SIZE = "cache-size";

@@ -98,9 +98,11 @@ import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainView;
 import org.jboss.hal.client.configuration.subsystem.undertow.BufferCachePresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.ByteBufferPoolPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.FilterPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.HandlerPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_BufferCacheView;
+import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_ByteBufferPoolView;
 import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_FilterView;
 import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_HandlerView;
 import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowSubsystemView;
@@ -233,6 +235,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 BufferCachePresenter.MyView.class,
                 Mbui_BufferCacheView.class,
                 BufferCachePresenter.MyProxy.class);
+
+        bindPresenter(ByteBufferPoolPresenter.class,
+                ByteBufferPoolPresenter.MyView.class,
+                Mbui_ByteBufferPoolView.class,
+                ByteBufferPoolPresenter.MyProxy.class);
 
         bindPresenter(CacheContainerPresenter.class,
                 CacheContainerPresenter.MyView.class,

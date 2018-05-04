@@ -70,6 +70,12 @@ public class UndertowSettingsColumn
                         .onPreview(new PreviewContent<>(Names.BUFFER_CACHES,
                                 resources.previews().configurationUndertowBufferCaches()))
                         .build(),
+                new StaticItem.Builder(Names.BYTE_BUFFER_POOL)
+                        .action(itemActionFactory.view(
+                                places.selectedProfile(NameTokens.UNDERTOW_BYTE_BUFFER_POOL).build()))
+                        .onPreview(new PreviewContent<>(Names.BYTE_BUFFER_POOL,
+                                resources.previews().configurationUndertowByteBufferPool()))
+                        .build(),
                 new StaticItem.Builder(Names.SERVER)
                         .nextColumn(Ids.UNDERTOW_SERVER)
                         .onPreview(
