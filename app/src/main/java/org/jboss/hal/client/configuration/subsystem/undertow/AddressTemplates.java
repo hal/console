@@ -30,6 +30,7 @@ interface AddressTemplates {
     String APPLICATION_SECURITY_DOMAIN_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/application-security-domain=*";
     String SINGLE_SIGN_ON_ADDRESS = APPLICATION_SECURITY_DOMAIN_ADDRESS + "/setting=single-sign-on";
     String BUFFER_CACHE_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/buffer-cache=*";
+    String BYTE_BUFFER_POOL_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/byte-buffer-pool=*";
     String FILTER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=filter";
     String RESPONSE_HEADER_ADDRESS = FILTER_ADDRESS + "/response-header=*";
     String HANDLER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=handler";

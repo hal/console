@@ -51,6 +51,7 @@ public interface Names {
     String BROADCAST_GROUP = "Broadcast Group";
     String BUFFER_CACHES = "Buffer Caches";
     String BUNDLED_EXTENSION = "Bundled Extension";
+    String BYTE_BUFFER_POOL = "Byte Buffer Pool";
 
     String CACHE_CONTAINER = "Cache Container";
     String CATEGORY = "Category";
