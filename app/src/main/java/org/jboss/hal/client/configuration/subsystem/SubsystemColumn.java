@@ -46,6 +46,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -59,6 +60,9 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=*");
+    private static final boolean DISABLE_EMPTY_SUBSYSTEM = true;
+    private static final List<String> EMPTY_SUBSYSTEMS = asList("bean-validation", "core-management", "ee-security",
+            "jaxrs", "jdr", "jsr77", "pojo", "sar");
 
     @Inject
     public SubsystemColumn(Finder finder,
@@ -140,13 +144,15 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, SUBSYSTEM).build();
             dispatcher.execute(operation, result -> {
-
                 List<SubsystemMetadata> combined = new ArrayList<>();
                 for (ModelNode modelNode : result.asList()) {
                     String name = modelNode.asString();
+                    boolean emptySubsystem = DISABLE_EMPTY_SUBSYSTEM && EMPTY_SUBSYSTEMS.indexOf(name) > -1;
+                    if (emptySubsystem) {
+                        continue;
+                    }
                     if (subsystems.containsConfiguration(name)) {
                         combined.add(subsystems.getConfiguration(name));
-
                     } else {
                         String title = new LabelBuilder().label(name);
                         combined.add(new SubsystemMetadata.Builder(name, title).generic().build());
