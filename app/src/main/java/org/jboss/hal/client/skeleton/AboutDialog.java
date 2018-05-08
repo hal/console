@@ -78,8 +78,6 @@ class AboutDialog {
                                             .add(h(1).textContent(resources.theme().getFullName()))
                                             .add(div().css(productVersionsPf)
                                                     .add(dl().css(dlHorizontal)
-                                                            .addAll(line(resources.constants().productName(),
-                                                                    environment.getInstanceInfo().productName()))
                                                             .addAll(elements))))
                                     .add(div().css(modalFooter)
                                             .add(img(resources.theme().logos().about().getSafeUri().asString())))))
