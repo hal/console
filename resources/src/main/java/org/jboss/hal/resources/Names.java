@@ -169,10 +169,12 @@ public interface Names {
     String JPA = "JPA";
     String JMS_QUEUE = "JMS Queue";
     String JMS_TOPIC = "JMS Topic";
+    String JSON_FORMATTER = "JSON Formatter";
     String JSP = "JSP";
     String JVM_ATTRIBUTES = "JVM Attributes";
 
     String KEY_MANAGER = "Key Manager";
+    String KEY_OVERRIDES = "Key Overrides";
     String KEY_STORE = "Key Store";
 
     String LARGE_MESSAGES_DIRECTORY = "Large Messages Directory";
@@ -354,6 +356,7 @@ public interface Names {
     String WRITE_BEHIND = "Write Behind";
     String WRITE_THROUGH = "Write Through";
 
-    String XA_DATASOURCE = "XA Datasource";
     String X509_CREDENTIAL_MAPPER = "X509 Credential Mapper";
+    String XA_DATASOURCE = "XA Datasource";
+    String XML_FORMATTER = "XML Formatter";
 }

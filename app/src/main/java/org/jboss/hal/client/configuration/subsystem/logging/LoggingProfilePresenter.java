@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -24,6 +25,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -34,6 +37,8 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -42,10 +47,13 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FORMATTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.resources.Ids.ADD;
+import static org.jboss.hal.resources.Ids.asId;
 
 public class LoggingProfilePresenter
         extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy>
@@ -54,6 +62,7 @@ public class LoggingProfilePresenter
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
+    private ComplexAttributeOperations ca;
     private String loggingProfile;
 
     @Inject
@@ -63,11 +72,13 @@ public class LoggingProfilePresenter
             Finder finder,
             CrudOperations crud,
             FinderPathFactory finderPathFactory,
-            StatementContext statementContext) {
+            StatementContext statementContext,
+            ComplexAttributeOperations ca) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> loggingProfile);
+        this.ca = ca;
     }
 
     @Override
@@ -123,8 +134,32 @@ public class LoggingProfilePresenter
 
             getView().updateCustomFormatter(asNamedNodes(failSafePropertyList(result, CUSTOM_FORMATTER_TEMPLATE.lastName())));
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastName())));
+            getView().updateJsonFormatter(asNamedNodes(failSafePropertyList(result, JSON_FORMATTER_TEMPLATE.lastName())));
+            getView().updateXmlFormatter(asNamedNodes(failSafePropertyList(result, XML_FORMATTER_TEMPLATE.lastName())));
             // @formatter:on
         });
+    }
+
+    void saveComplexObject(String type, String name, String complexAttribute, AddressTemplate template,
+            Map<String, Object> changedValues) {
+        ca.save(name, complexAttribute, type, template, changedValues, this::reload);
+    }
+
+    void resetComplexObject(String type, String name, String complexAttribute, AddressTemplate template,
+            Metadata metadata, Form<ModelNode> form) {
+        ca.reset(name, complexAttribute, type, template, metadata, form, this::reload);
+    }
+
+    void removeComplexObject(String type, String name, String complexAttribute, AddressTemplate template) {
+        ca.remove(name, complexAttribute, type, template, this::reload);
+    }
+
+    void addComplexObject(String type, String name, String complexAttribute, AddressTemplate template) {
+        ca.add(Ids.build(LOGGING, FORMATTER, asId(type), ADD), name, complexAttribute, type, template, this::reload);
+    }
+
+    public StatementContext getStatementContext() {
+        return statementContext;
     }
 
 
@@ -151,6 +186,7 @@ public class LoggingProfilePresenter
 
         void updateCustomFormatter(List<NamedNode> items);
         void updatePatternFormatter(List<NamedNode> items);
-    }
+        void updateJsonFormatter(List<NamedNode> items);
+        void updateXmlFormatter(List<NamedNode> items);    }
     // @formatter:on
 }

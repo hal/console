@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -33,6 +36,8 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -40,9 +45,12 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FORMATTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.resources.Ids.ADD;
+import static org.jboss.hal.resources.Ids.asId;
 
 public class LoggingPresenter
         extends MbuiPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy>
@@ -51,6 +59,7 @@ public class LoggingPresenter
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
+    private ComplexAttributeOperations ca;
 
     @Inject
     public LoggingPresenter(EventBus eventBus,
@@ -59,11 +68,13 @@ public class LoggingPresenter
             Finder finder,
             CrudOperations crud,
             FinderPathFactory finderPathFactory,
-            StatementContext statementContext) {
+            StatementContext statementContext,
+            ComplexAttributeOperations ca) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
+        this.ca = ca;
     }
 
     @Override
@@ -108,10 +119,33 @@ public class LoggingPresenter
 
             getView().updateCustomFormatter(asNamedNodes(failSafePropertyList(result, CUSTOM_FORMATTER_TEMPLATE.lastName())));
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastName())));
+            getView().updateJsonFormatter(asNamedNodes(failSafePropertyList(result, JSON_FORMATTER_TEMPLATE.lastName())));
+            getView().updateXmlFormatter(asNamedNodes(failSafePropertyList(result, XML_FORMATTER_TEMPLATE.lastName())));
             // @formatter:on
         });
     }
 
+    void saveComplexObject(String type, String name, String complexAttribute, AddressTemplate template,
+            Map<String, Object> changedValues) {
+        ca.save(name, complexAttribute, type, template, changedValues, this::reload);
+    }
+
+    void resetComplexObject(String type, String name, String complexAttribute, AddressTemplate template,
+            Metadata metadata, Form<ModelNode> form) {
+        ca.reset(name, complexAttribute, type, template, metadata, form, this::reload);
+    }
+
+    void removeComplexObject(String type, String name, String complexAttribute, AddressTemplate template) {
+        ca.remove(name, complexAttribute, type, template, this::reload);
+    }
+
+    void addComplexObject(String type, String name, String complexAttribute, AddressTemplate template) {
+        ca.add(Ids.build(LOGGING, FORMATTER, asId(type), ADD), name, complexAttribute, type, template, this::reload);
+    }
+
+    public StatementContext getStatementContext() {
+        return statementContext;
+    }
 
     // @formatter:off
     @ProxyCodeSplit
@@ -120,7 +154,7 @@ public class LoggingPresenter
             ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
             PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
             SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
-            CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
+            CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS, JSON_FORMATTER_ADDRESS, XML_FORMATTER_ADDRESS})
     public interface MyProxy extends ProxyPlace<LoggingPresenter> {
     }
 
@@ -142,6 +176,8 @@ public class LoggingPresenter
 
         void updateCustomFormatter(List<NamedNode> items);
         void updatePatternFormatter(List<NamedNode> items);
+        void updateJsonFormatter(List<NamedNode> items);
+        void updateXmlFormatter(List<NamedNode> items);
     }
     // @formatter:on
 }

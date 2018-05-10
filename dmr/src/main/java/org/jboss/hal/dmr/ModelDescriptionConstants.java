@@ -379,12 +379,14 @@ public interface ModelDescriptionConstants {
     String JOB_XML_NAMES = "job-xml-names";
     String JPA = "jpa";
     String JSF = "jsf";
+    String JSON = "json";
     String JSP = "jsp";
     String JSR77 = "jsr77";
     String JVM = "jvm";
     String KERBEROS_SECURITY_FACTORY = "kerberos-security-factory";
     String KEY_ALIAS = "key-alias";
     String KEY_MANAGER = "key-manager";
+    String KEY_OVERRIDES = "key-overrides";
     String KEY_STORE = "key-store";
     String KEY_STORE_REALM = "key-store-realm";
     String KILL = "kill";
@@ -855,8 +857,9 @@ public interface ModelDescriptionConstants {
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
     String WSDL_URL = "wsdl-url";
     String X500_ATTRIBUTE_PRINCIPAL_DECODER = "x500-attribute-principal-decoder";
+    String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATASOURCE_CLASS = "xa-datasource-class";
-    String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
+    String XML = "xml";
 }
 

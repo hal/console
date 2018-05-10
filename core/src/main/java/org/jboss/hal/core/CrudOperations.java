@@ -868,7 +868,7 @@ public class CrudOperations {
         Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
                 .map(FormItem::getName)
                 .collect(toSet());
-        reset(type, name, template.resolve(statementContext), attributes, metadata,
+        reset(type, name, template.resolve(statementContext, name), attributes, metadata,
                 resources.messages().resetResourceSuccess(type, name), callback);
     }
 

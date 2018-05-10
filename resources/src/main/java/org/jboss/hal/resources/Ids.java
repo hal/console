@@ -433,6 +433,7 @@ public interface Ids {
     String LOG_FILE_SEARCH = "lf-search";
     String LOGGING_CONFIG_AND_PROFILES = "lcap";
     String LOGGING_CONFIGURATION = "logging-configuration";
+    String LOGGING_FORMATTER_ITEM = "logging-formatter-item";
     String LOGGING_PROFILE = "logging-profile";
     String LOGGING_PROFILE_ADD = "logging-profile-add";
     String MACRO_EDITOR = "macro-editor";
