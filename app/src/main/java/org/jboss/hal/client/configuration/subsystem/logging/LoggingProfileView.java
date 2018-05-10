@@ -23,6 +23,8 @@ import javax.annotation.PostConstruct;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -35,12 +37,17 @@ import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
@@ -49,11 +56,20 @@ import org.jboss.hal.spi.MbuiView;
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.JSON_FORMATTER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SELECTED_LOGGING_PROFILE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.XML_FORMATTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.TAB;
+import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 import static org.jboss.hal.resources.Names.CATEGORY;
 
 @MbuiView
@@ -96,6 +112,12 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     @MbuiElement(Ids.LOGGING_PROFILE + "-formatter-custom-form") Form<NamedNode> customFormatterForm;
     @MbuiElement(Ids.LOGGING_PROFILE + "-formatter-pattern-table") Table<NamedNode> patternFormatterTable;
     @MbuiElement(Ids.LOGGING_PROFILE + "-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
+    private Table<NamedNode> jsonFormatterTable;
+    private Form<NamedNode> jsonFormatterForm;
+    private Form<ModelNode> jsonKeyOverridesForm;
+    private Table<NamedNode> xmlFormatterTable;
+    private Form<NamedNode> xmlFormatterForm;
+    private Form<ModelNode> xmlKeyOverridesForm;
 
     final SelectionAwareStatementContext selectionAwareStatementContext;
     final SuggestHandler suggestHandlers;
@@ -120,11 +142,12 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     @PostConstruct
     void init() {
+        Constants constants = mbuiContext.resources().constants();
         noRootLogger = new EmptyState.Builder(Ids.LOGGING_PROFILE + "-root-logger-empty",
-                mbuiContext.resources().constants().noRootLogger())
-                .description(mbuiContext.resources().constants().noRootLoggerDescription())
+                constants.noRootLogger())
+                .description(constants.noRootLoggerDescription())
                 .icon(fontAwesome("sitemap"))
-                .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
+                .primaryAction(constants.add(), this::addRootLogger)
                 .build();
         noRootLogger.asElement().classList.add(marginTopLarge);
 
@@ -135,6 +158,151 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         // add suggest handler
         rootLoggerForm.getFormItem(HANDLERS).registerSuggestHandler(suggestHandlers);
         loggerForm.getFormItem(HANDLERS).registerSuggestHandler(suggestHandlers);
+
+        // --------------------------- json formatter
+        AddressTemplate jsonTemplate = LOGGING_PROFILE_TEMPLATE.append(JSON_FORMATTER_TEMPLATE.lastName() + EQ_WILDCARD);
+        LabelBuilder labelBuilder = new LabelBuilder();
+        Metadata jsonMetadata = mbuiContext.metadataRegistry().lookup(jsonTemplate);
+        Metadata jsonKeyOverridesMetadata = jsonMetadata.forComplexAttribute(KEY_OVERRIDES);
+        String jsonLabel = labelBuilder.label(jsonTemplate.lastName());
+        jsonFormatterTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, JSON, FORMATTER, TABLE), jsonMetadata)
+                .button(constants.add(), table -> crud().add(Ids.build(LOGGING_PROFILE, JSON, FORMATTER, ADD),
+                        Names.JSON_FORMATTER, jsonTemplate.replaceWildcards(presenter.getLoggingProfile()),
+                        (name, address) -> presenter.reload()), Constraint.executable(jsonTemplate, ADD))
+                .button(constants.remove(), table -> crud().remove(Names.JSON_FORMATTER, table.selectedRow().getName(),
+                        jsonTemplate.replaceWildcards(presenter.getLoggingProfile()), () -> presenter.reload()),
+                        Constraint.executable(jsonTemplate, REMOVE))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
+
+        jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, JSON, FORMATTER, FORM), jsonMetadata)
+                .onSave((form, changedValues) -> mbuiContext.crud().save(jsonLabel, form.getModel().getName(),
+                        jsonTemplate.replaceWildcards(presenter.getLoggingProfile()), changedValues, () -> presenter.reload()))
+                .prepareReset(form -> mbuiContext.crud().reset(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                        jsonTemplate.replaceWildcards(presenter.getLoggingProfile()), form, jsonMetadata, () -> presenter.reload()))
+                .build();
+
+        jsonKeyOverridesForm = new ModelNodeForm.Builder<>(Ids.build(LOGGING_PROFILE, FORMATTER, JSON, KEY_OVERRIDES, FORM),
+                jsonKeyOverridesMetadata)
+                .singleton(() -> {
+                            StatementContext jsonStatementContext = new SelectionAwareStatementContext(
+                                    mbuiContext.statementContext(), () -> jsonFormatterTable.hasSelection() ?
+                                        jsonFormatterTable.selectedRow().getName() : null);
+                            ResourceAddress address = jsonTemplate.resolve(jsonStatementContext, presenter.getLoggingProfile());
+                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, KEY_OVERRIDES)
+                                    .build();
+                        },
+                        () -> presenter.addComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                                KEY_OVERRIDES, jsonTemplate.replaceWildcards(presenter.getLoggingProfile())))
+                .onSave((form, changedValues) -> presenter.saveComplexObject(jsonLabel,
+                        jsonFormatterTable.selectedRow().getName(), KEY_OVERRIDES, jsonTemplate.replaceWildcards(presenter.getLoggingProfile()), changedValues))
+                .prepareReset(form -> presenter.resetComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, jsonTemplate.replaceWildcards(presenter.getLoggingProfile()), jsonKeyOverridesMetadata, form))
+                .prepareRemove(form -> presenter.removeComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, jsonTemplate.replaceWildcards(presenter.getLoggingProfile())))
+                .build();
+
+        Tabs jsonTabs = new Tabs(Ids.build(LOGGING_PROFILE, FORMATTER, JSON, TAB_CONTAINER));
+        jsonTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, JSON, ATTRIBUTES, TAB), constants.attributes(),
+                jsonFormatterForm.asElement());
+        jsonTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, JSON, KEY_OVERRIDES, TAB), Names.KEY_OVERRIDES,
+                jsonKeyOverridesForm.asElement());
+
+        HTMLElement jsonSection = section()
+                .add(h(1).textContent(Names.JSON_FORMATTER))
+                .add(p().textContent(jsonMetadata.getDescription().getDescription()))
+                .add(jsonFormatterTable)
+                .add(jsonTabs)
+                .asElement();
+
+        registerAttachable(jsonFormatterTable, jsonFormatterForm, jsonKeyOverridesForm);
+
+        navigation.insertSecondary("logging-profile-formatter-item", Ids.build(LOGGING_PROFILE, FORMATTER, JSON, Ids.ITEM), null,
+                Names.JSON_FORMATTER, jsonSection);
+
+        // --------------------------- xml formatter
+        AddressTemplate xmlTemplate = LOGGING_PROFILE_TEMPLATE.append(XML_FORMATTER_TEMPLATE.lastName() + EQ_WILDCARD);
+        Metadata xmlMetadata = mbuiContext.metadataRegistry().lookup(xmlTemplate);
+        Metadata xmlKeyOverridesMetadata = xmlMetadata.forComplexAttribute(KEY_OVERRIDES);
+        String xmlLabel = labelBuilder.label(xmlTemplate.lastName());
+        xmlFormatterTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, XML, FORMATTER, TABLE), xmlMetadata)
+                .button(constants.add(), table -> crud().add(Ids.build(LOGGING_PROFILE, XML, FORMATTER, ADD),
+                        Names.XML_FORMATTER, xmlTemplate.replaceWildcards(presenter.getLoggingProfile()),
+                        (name, address) -> presenter.reload()), Constraint.executable(xmlTemplate, ADD))
+                .button(constants.remove(), table -> crud().remove(Names.XML_FORMATTER, table.selectedRow().getName(),
+                        xmlTemplate.replaceWildcards(presenter.getLoggingProfile()), () -> presenter.reload()),
+                        Constraint.executable(xmlTemplate, REMOVE))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
+
+        xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, XML, FORMATTER, FORM), xmlMetadata)
+                .onSave((form, changedValues) -> mbuiContext.crud().save(xmlLabel, form.getModel().getName(),
+                        xmlTemplate.replaceWildcards(presenter.getLoggingProfile()), changedValues, () -> presenter.reload()))
+                .prepareReset(form -> mbuiContext.crud().reset(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                        xmlTemplate.replaceWildcards(presenter.getLoggingProfile()), form, xmlMetadata, () -> presenter.reload()))
+                .build();
+
+        xmlKeyOverridesForm = new ModelNodeForm.Builder<>(Ids.build(LOGGING_PROFILE, FORMATTER, XML, KEY_OVERRIDES, FORM),
+                xmlKeyOverridesMetadata)
+                .singleton(() -> {
+                            StatementContext xmlStatementContext = new SelectionAwareStatementContext(
+                                    mbuiContext.statementContext(), () -> xmlFormatterTable.hasSelection() ?
+                                    xmlFormatterTable.selectedRow().getName() : null);
+                            ResourceAddress address = xmlTemplate.resolve(xmlStatementContext, presenter.getLoggingProfile());
+                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, KEY_OVERRIDES)
+                                    .build();
+                        },
+                        () -> presenter.addComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                                KEY_OVERRIDES, xmlTemplate.replaceWildcards(presenter.getLoggingProfile())))
+                .onSave((form, changedValues) -> presenter.saveComplexObject(xmlLabel,
+                        xmlFormatterTable.selectedRow().getName(), KEY_OVERRIDES, xmlTemplate.replaceWildcards(presenter.getLoggingProfile()), changedValues))
+                .prepareReset(form -> presenter.resetComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, xmlTemplate.replaceWildcards(presenter.getLoggingProfile()), xmlKeyOverridesMetadata, form))
+                .prepareRemove(form -> presenter.removeComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, xmlTemplate.replaceWildcards(presenter.getLoggingProfile())))
+                .build();
+
+        Tabs xmlTabs = new Tabs(Ids.build(LOGGING_PROFILE, FORMATTER, XML, TAB_CONTAINER));
+        xmlTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, XML, ATTRIBUTES, TAB), constants.attributes(),
+                xmlFormatterForm.asElement());
+        xmlTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, XML, KEY_OVERRIDES, TAB), Names.KEY_OVERRIDES,
+                xmlKeyOverridesForm.asElement());
+
+        HTMLElement xmlSection = section()
+                .add(h(1).textContent(Names.XML_FORMATTER))
+                .add(p().textContent(xmlMetadata.getDescription().getDescription()))
+                .add(xmlFormatterTable)
+                .add(xmlTabs)
+                .asElement();
+
+        registerAttachable(xmlFormatterTable, xmlFormatterForm, xmlKeyOverridesForm);
+
+        navigation.insertSecondary("logging-profile-formatter-item", Ids.build(LOGGING_PROFILE, FORMATTER, XML, Ids.ITEM), null,
+                Names.XML_FORMATTER, xmlSection);
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        jsonFormatterTable.bindForm(jsonFormatterForm);
+        jsonFormatterTable.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                jsonKeyOverridesForm.view(failSafeGet(t.selectedRow().asModelNode(), KEY_OVERRIDES));
+            } else {
+                jsonKeyOverridesForm.clear();
+            }
+        });
+
+        xmlFormatterTable.bindForm(xmlFormatterForm);
+        xmlFormatterTable.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                xmlKeyOverridesForm.view(failSafeGet(t.selectedRow().asModelNode(), KEY_OVERRIDES));
+            } else {
+                xmlKeyOverridesForm.clear();
+            }
+        });
     }
 
 
@@ -185,7 +353,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 mbuiContext.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_LOGGING_PROFILE_TEMPLATE.append(ROOT_LOGGER_EQ_ROOT)
-                            .resolve(selectionAwareStatementContext);
+                            .resolve(presenter.getStatementContext(), presenter.getLoggingProfile());
                     crud().addSingleton(Names.ROOT_LOGGER, address, model, a -> presenter.reload());
                 });
 
@@ -391,7 +559,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addSizeHandler() {
         addFileHandlerResource(SIZE_ROTATING_FILE_HANDLER + EQ_WILDCARD,
-                Ids.build(Ids.LOGGING_PROFILE, "handler-file-size-rotating-file", Ids.TABLE, Ids.ADD),
+                Ids.build(Ids.LOGGING_PROFILE, "handler-size-rotating-file", Ids.TABLE, Ids.ADD),
                 Names.SIZE_ACTION_HANDLER, "suffix", LEVEL, FORMATTER, "rotate-size", "max-backup-index");
     }
 
@@ -419,7 +587,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     @Override
     public void updateSizeHandler(List<NamedNode> items) {
-        navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-file-size-rotating-file", Ids.ITEM),
+        navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-size-rotating-file", Ids.ITEM),
                 items.size());
         sizeHandlerForm.clear();
         sizeHandlerTable.update(items);
@@ -686,5 +854,21 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
         ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
         crud().remove(type, name, address, () -> presenter.reload());
+    }
+
+    @Override
+    public void updateJsonFormatter(List<NamedNode> items) {
+        navigation.updateBadge("logging-profile-formatter-json-item", items.size());
+        jsonFormatterForm.clear();
+        jsonKeyOverridesForm.clear();
+        jsonFormatterTable.update(items);
+    }
+
+    @Override
+    public void updateXmlFormatter(List<NamedNode> items) {
+        navigation.updateBadge("logging-profile-formatter-xml-item", items.size());
+        xmlFormatterForm.clear();
+        xmlKeyOverridesForm.clear();
+        xmlFormatterTable.update(items);
     }
 }

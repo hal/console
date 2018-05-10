@@ -36,6 +36,8 @@ interface AddressTemplates {
 
     String CUSTOM_FORMATTER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/custom-formatter=*";
     String PATTERN_FORMATTER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/pattern-formatter=*";
+    String JSON_FORMATTER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/json-formatter=*";
+    String XML_FORMATTER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/xml-formatter=*";
 
     String LOGGING_PROFILE_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/logging-profile=*";
     String SELECTED_LOGGING_PROFILE_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/logging-profile=" + SELECTION_EXPRESSION;
@@ -57,6 +59,8 @@ interface AddressTemplates {
 
     AddressTemplate CUSTOM_FORMATTER_TEMPLATE = AddressTemplate.of(CUSTOM_FORMATTER_ADDRESS);
     AddressTemplate PATTERN_FORMATTER_TEMPLATE = AddressTemplate.of(PATTERN_FORMATTER_ADDRESS);
+    AddressTemplate JSON_FORMATTER_TEMPLATE = AddressTemplate.of(JSON_FORMATTER_ADDRESS);
+    AddressTemplate XML_FORMATTER_TEMPLATE = AddressTemplate.of(XML_FORMATTER_ADDRESS);
 
     AddressTemplate LOGGING_PROFILE_TEMPLATE = AddressTemplate.of(LOGGING_PROFILE_ADDRESS);
     AddressTemplate SELECTED_LOGGING_PROFILE_TEMPLATE = AddressTemplate.of(SELECTED_LOGGING_PROFILE_ADDRESS);

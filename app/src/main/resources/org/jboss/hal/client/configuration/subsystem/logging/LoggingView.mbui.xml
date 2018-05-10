@@ -132,274 +132,6 @@
 
         <item id="logging-handler-item" title="Handler" icon="fa fa-cogs">
             <!--
-                Console Handler
-            -->
-            <sub-item id="logging-handler-console-item" title="Console Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/console-handler=*">
-                    <h1>Console Handler</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-handler-console-table" form-ref="logging-handler-console-form">
-                        <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="level"/>
-                                    <attribute name="target"/>
-                                    <attribute name="formatter"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="${table.selectedRow().getName()}"/>
-                        </actions>
-                        <columns>
-                            <column name="name"/>
-                            <column name="level"/>
-                            <column name="target"/>
-                        </columns>
-                    </table>
-                    <form id="logging-handler-console-form" auto-save="true" reset="true"
-                          name-resolver="${form.getModel().getName()}">
-                        <attributes>
-                            <attribute name="level"/>
-                            <attribute name="target"/>
-                            <attribute name="autoflush"/>
-                            <attribute name="formatter"/>
-                            <attribute name="named-formatter">
-                                <suggest-handler>
-                                    <templates>
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
-
-
-            <!--
-                File Handler
-            -->
-            <sub-item id="logging-handler-file-item" title="File Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/file-handler=*">
-                    <h1>File Handler</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-handler-file-table" form-ref="logging-handler-file-form">
-                        <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="${table.selectedRow().getName()}"/>
-                        </actions>
-                        <columns>
-                            <column name="name"/>
-                            <column name="level"/>
-                            <column name="file" value="${Logging.getFilename(row)}"/>
-                        </columns>
-                    </table>
-                    <form id="logging-handler-file-form" auto-save="true" reset="true"
-                          name-resolver="${form.getModel().getName()}">
-                        <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="level"/>
-                            <attribute name="append"/>
-                            <attribute name="autoflush"/>
-                            <attribute name="formatter"/>
-                            <attribute name="named-formatter">
-                                <suggest-handler>
-                                    <templates>
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
-
-
-            <!--
-                Periodic Rotating Handler
-            -->
-            <sub-item id="logging-handler-periodic-rotating-file-item" title="Periodic Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*">
-                    <h1>Periodic Handler</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-handler-periodic-rotating-file-table"
-                           form-ref="logging-handler-periodic-rotating-file-form">
-                        <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="${table.selectedRow().getName()}"/>
-                        </actions>
-                        <columns>
-                            <column name="name"/>
-                            <column name="level"/>
-                            <column name="file" value="${Logging.getFilename(row)}"/>
-                        </columns>
-                    </table>
-                    <form id="logging-handler-periodic-rotating-file-form" auto-save="true" reset="true"
-                          name-resolver="${form.getModel().getName()}">
-                        <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
-                            <attribute name="append"/>
-                            <attribute name="autoflush"/>
-                            <attribute name="formatter"/>
-                            <attribute name="named-formatter">
-                                <suggest-handler>
-                                    <templates>
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
-
-
-            <!--
-                Periodic Size Rotating Handler
-            -->
-            <sub-item id="logging-handler-periodic-size-rotating-file-item" title="Periodic Size Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*">
-                    <h1>Periodic Size Handler</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-handler-periodic-size-rotating-file-table"
-                           form-ref="logging-handler-periodic-size-rotating-file-form">
-                        <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                    <attribute name="rotate-size"/>
-                                    <attribute name="max-backup-index"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="${table.selectedRow().getName()}"/>
-                        </actions>
-                        <columns>
-                            <column name="name"/>
-                            <column name="level"/>
-                            <column name="file" value="${Logging.getFilename(row)}"/>
-                        </columns>
-                    </table>
-                    <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true" reset="true"
-                          name-resolver="${form.getModel().getName()}">
-                        <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
-                            <attribute name="rotate-size"/>
-                            <attribute name="rotate-on-boot"/>
-                            <attribute name="max-backup-index"/>
-                            <attribute name="append"/>
-                            <attribute name="autoflush"/>
-                            <attribute name="formatter"/>
-                            <attribute name="named-formatter">
-                                <suggest-handler>
-                                    <templates>
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
-
-
-            <!--
-                Size Rotating Handler
-            -->
-            <sub-item id="logging-handler-size-rotating-file-item" title="Size Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*">
-                    <h1>Size Handler</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-handler-size-rotating-file-table"
-                           form-ref="logging-handler-size-rotating-file-form">
-                        <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                    <attribute name="rotate-size"/>
-                                    <attribute name="max-backup-index"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="${table.selectedRow().getName()}"/>
-                        </actions>
-                        <columns>
-                            <column name="name"/>
-                            <column name="level"/>
-                            <column name="file" value="${Logging.getFilename(row)}"/>
-                        </columns>
-                    </table>
-                    <form id="logging-handler-size-rotating-file-form" auto-save="true" reset="true"
-                          name-resolver="${form.getModel().getName()}">
-                        <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
-                            <attribute name="rotate-size"/>
-                            <attribute name="rotate-on-boot"/>
-                            <attribute name="max-backup-index"/>
-                            <attribute name="append"/>
-                            <attribute name="autoflush"/>
-                            <attribute name="formatter"/>
-                            <attribute name="named-formatter">
-                                <suggest-handler>
-                                    <templates>
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
-
-
-            <!--
                 Async Handler
             -->
             <sub-item id="logging-handler-async-item" title="Async Handler">
@@ -465,6 +197,55 @@
                 </metadata>
             </sub-item>
 
+            <!--
+                Console Handler
+            -->
+            <sub-item id="logging-handler-console-item" title="Console Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/console-handler=*">
+                    <h1>Console Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-handler-console-table" form-ref="logging-handler-console-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="level"/>
+                                    <attribute name="target"/>
+                                    <attribute name="formatter"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="target"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-console-form" auto-save="true" reset="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                            <attribute name="level"/>
+                            <attribute name="target"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
 
             <!--
                 Custom Handler
@@ -504,6 +285,8 @@
                                     <templates>
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -515,6 +298,231 @@
                 </metadata>
             </sub-item>
 
+            <!--
+                File Handler
+            -->
+            <sub-item id="logging-handler-file-item" title="File Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/file-handler=*">
+                    <h1>File Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-handler-file-table" form-ref="logging-handler-file-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="${new FileFormItem()}"/>
+                                    <attribute name="level"/>
+                                    <attribute name="formatter"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-file-form" auto-save="true" reset="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="level"/>
+                            <attribute name="append"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
+                Periodic Rotating Handler
+            -->
+            <sub-item id="logging-handler-periodic-rotating-file-item" title="Periodic Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*">
+                    <h1>Periodic Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-handler-periodic-rotating-file-table"
+                           form-ref="logging-handler-periodic-rotating-file-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="${new FileFormItem()}"/>
+                                    <attribute name="suffix"/>
+                                    <attribute name="level"/>
+                                    <attribute name="formatter"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-periodic-rotating-file-form" auto-save="true" reset="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="suffix"/>
+                            <attribute name="level"/>
+                            <attribute name="append"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
+                Periodic Size Rotating Handler
+            -->
+            <sub-item id="logging-handler-periodic-size-rotating-file-item" title="Periodic Size Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*">
+                    <h1>Periodic Size Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-handler-periodic-size-rotating-file-table"
+                           form-ref="logging-handler-periodic-size-rotating-file-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="${new FileFormItem()}"/>
+                                    <attribute name="suffix"/>
+                                    <attribute name="level"/>
+                                    <attribute name="formatter"/>
+                                    <attribute name="rotate-size"/>
+                                    <attribute name="max-backup-index"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true" reset="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="suffix"/>
+                            <attribute name="level"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="max-backup-index"/>
+                            <attribute name="append"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
+                Size Rotating Handler
+            -->
+            <sub-item id="logging-handler-size-rotating-file-item" title="Size Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*">
+                    <h1>Size Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-handler-size-rotating-file-table"
+                           form-ref="logging-handler-size-rotating-file-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="${new FileFormItem()}"/>
+                                    <attribute name="suffix"/>
+                                    <attribute name="level"/>
+                                    <attribute name="formatter"/>
+                                    <attribute name="rotate-size"/>
+                                    <attribute name="max-backup-index"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="file" value="${Logging.getFilename(row)}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-size-rotating-file-form" auto-save="true" reset="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="suffix"/>
+                            <attribute name="level"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="max-backup-index"/>
+                            <attribute name="append"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
 
             <!--
                 Syslog Handler
@@ -566,6 +574,36 @@
 
         <item id="logging-formatter-item" title="Formatter" icon="fa fa-paint-brush">
             <!--
+                Custom Formatter
+            -->
+            <sub-item id="logging-formatter-custom-item" title="Custom Formatter">
+                <metadata address="/{selected.profile}/subsystem=logging/custom-formatter=*">
+                    <h1>Custom Formatter</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-formatter-custom-table" form-ref="logging-formatter-custom-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <!-- custom formatter do not have a name attribute,
+                            so we need to provide a value using NamedNode.getName() -->
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-formatter-custom-form" auto-save="true" reset="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                            <attribute name="class"/>
+                            <attribute name="module"/>
+                            <attribute name="properties"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <!--
                 Pattern Formatter
             -->
             <sub-item id="logging-formatter-pattern-item" title="Pattern Formatter">
@@ -595,36 +633,6 @@
                 </metadata>
             </sub-item>
 
-
-            <!--
-                Custom Formatter
-            -->
-            <sub-item id="logging-formatter-custom-item" title="Custom Formatter">
-                <metadata address="/{selected.profile}/subsystem=logging/custom-formatter=*">
-                    <h1>Custom Formatter</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-formatter-custom-table" form-ref="logging-formatter-custom-form">
-                        <actions>
-                            <action handler-ref="add-resource"/>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="${table.selectedRow().getName()}"/>
-                        </actions>
-                        <columns>
-                            <!-- custom formatter do not have a name attribute,
-                            so we need to provide a value using NamedNode.getName() -->
-                            <column name="name" value="${row.getName()}"/>
-                        </columns>
-                    </table>
-                    <form id="logging-formatter-custom-form" auto-save="true" reset="true"
-                          name-resolver="${form.getModel().getName()}">
-                        <attributes>
-                            <attribute name="class"/>
-                            <attribute name="module"/>
-                            <attribute name="properties"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
         </item>
     </vertical-navigation>
 </view>

@@ -72,6 +72,53 @@
 
         <item id="logging-profile-handler-item" title="Handler" icon="fa fa-cogs">
             <!--
+                Async Handler
+            -->
+            <sub-item id="logging-profile-handler-async-item" title="Async Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*">
+                    <h1>Async Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-profile-handler-async-table" form-ref="logging-profile-handler-async-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addAsyncHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeAsyncHandler(table)}" scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                        </columns>
+                    </table>
+                    <form id="logging-profile-handler-async-form" on-save="${saveAsyncHandler(form, changedValues)}"
+                          prepare-reset="${resetAsyncHandler(form)}">
+                        <attributes>
+                            <attribute name="level"/>
+                            <attribute name="subhandlers">
+                                <suggest-handler>
+                                    <templates>
+                                        <!-- @formatter:off -->
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/console-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/syslog-handler=*"/>
+                                        <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="queue-length"/>
+                            <attribute name="overflow-action"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
                 Console Handler
             -->
             <sub-item id="logging-profile-handler-console-item" title="Console Handler">
@@ -105,6 +152,8 @@
                                         <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -117,6 +166,52 @@
                 </metadata>
             </sub-item>
 
+            <!--
+                Custom Handler
+            -->
+            <sub-item id="logging-profile-handler-custom-item" title="Custom Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*">
+                    <h1>Custom Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-profile-handler-custom-table" form-ref="logging-profile-handler-custom-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addCustomHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeCustomHandler(table)}" scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                        </columns>
+                    </table>
+                    <form id="logging-profile-handler-custom-form" on-save="${saveCustomHandler(form, changedValues)}"
+                          prepare-reset="${resetCustomHandler(form)}">
+                        <attributes>
+                            <attribute name="level"/>
+                            <attribute name="module"/>
+                            <attribute name="class"/>
+                            <attribute name="properties"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <!-- @formatter:off -->
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
+                                        <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
 
             <!--
                 File Handler
@@ -152,6 +247,8 @@
                                         <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -203,6 +300,8 @@
                                         <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -257,6 +356,8 @@
                                         <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -310,6 +411,8 @@
                                         <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -321,100 +424,6 @@
                     </form>
                 </metadata>
             </sub-item>
-
-
-            <!--
-                Async Handler
-            -->
-            <sub-item id="logging-profile-handler-async-item" title="Async Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*">
-                    <h1>Async Handler</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-profile-handler-async-table" form-ref="logging-profile-handler-async-form">
-                        <actions>
-                            <action title="${mbuiContext.resources().constants().add()}"
-                                    handler="${addAsyncHandler()}" constraint="add"/>
-                            <action title="${mbuiContext.resources().constants().remove()}"
-                                    handler="${removeAsyncHandler(table)}" scope="selected" constraint="remove"/>
-                        </actions>
-                        <columns>
-                            <column name="name"/>
-                            <column name="level"/>
-                        </columns>
-                    </table>
-                    <form id="logging-profile-handler-async-form" on-save="${saveAsyncHandler(form, changedValues)}"
-                          prepare-reset="${resetAsyncHandler(form)}">
-                        <attributes>
-                            <attribute name="level"/>
-                            <attribute name="subhandlers">
-                                <suggest-handler>
-                                    <templates>
-                                        <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/console-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/syslog-handler=*"/>
-                                        <!-- @formatter:on -->
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="queue-length"/>
-                            <attribute name="overflow-action"/>
-                            <attribute name="filter-spec"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
-
-
-            <!--
-                Custom Handler
-            -->
-            <sub-item id="logging-profile-handler-custom-item" title="Custom Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*">
-                    <h1>Custom Handler</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-profile-handler-custom-table" form-ref="logging-profile-handler-custom-form">
-                        <actions>
-                            <action title="${mbuiContext.resources().constants().add()}"
-                                    handler="${addCustomHandler()}" constraint="add"/>
-                            <action title="${mbuiContext.resources().constants().remove()}"
-                                    handler="${removeCustomHandler(table)}" scope="selected" constraint="remove"/>
-                        </actions>
-                        <columns>
-                            <column name="name"/>
-                            <column name="level"/>
-                        </columns>
-                    </table>
-                    <form id="logging-profile-handler-custom-form" on-save="${saveCustomHandler(form, changedValues)}"
-                          prepare-reset="${resetCustomHandler(form)}">
-                        <attributes>
-                            <attribute name="level"/>
-                            <attribute name="module"/>
-                            <attribute name="class"/>
-                            <attribute name="properties"/>
-                            <attribute name="formatter"/>
-                            <attribute name="named-formatter">
-                                <suggest-handler>
-                                    <templates>
-                                        <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
-                                        <!-- @formatter:on -->
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
-
 
             <!--
                 Syslog Handler
@@ -457,6 +466,38 @@
 
         <item id="logging-profile-formatter-item" title="Formatter" icon="fa fa-paint-brush">
             <!--
+                Custom Formatter
+            -->
+            <sub-item id="logging-profile-formatter-custom-item" title="Custom Formatter">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*">
+                    <h1>Custom Formatter</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-profile-formatter-custom-table" form-ref="logging-profile-formatter-custom-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addCustomFormatter()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeCustomFormatter(table)}" scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <!-- custom formatter don't have a name attribute,
+                            so we need to provide a value using NamedNode.getName() -->
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-profile-formatter-custom-form"
+                          on-save="${saveCustomFormatter(form, changedValues)}"
+                          prepare-reset="${resetCustomFormatter(form)}">
+                        <attributes>
+                            <attribute name="class"/>
+                            <attribute name="module"/>
+                            <attribute name="properties"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <!--
                 Pattern Formatter
             -->
             <sub-item id="logging-profile-formatter-pattern-item" title="Pattern Formatter">
@@ -489,38 +530,6 @@
                 </metadata>
             </sub-item>
 
-
-            <!--
-                Custom Formatter
-            -->
-            <sub-item id="logging-profile-formatter-custom-item" title="Custom Formatter">
-                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*">
-                    <h1>Custom Formatter</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="logging-profile-formatter-custom-table" form-ref="logging-profile-formatter-custom-form">
-                        <actions>
-                            <action title="${mbuiContext.resources().constants().add()}"
-                                    handler="${addCustomFormatter()}" constraint="add"/>
-                            <action title="${mbuiContext.resources().constants().remove()}"
-                                    handler="${removeCustomFormatter(table)}" scope="selected" constraint="remove"/>
-                        </actions>
-                        <columns>
-                            <!-- custom formatter don't have a name attribute,
-                            so we need to provide a value using NamedNode.getName() -->
-                            <column name="name" value="${row.getName()}"/>
-                        </columns>
-                    </table>
-                    <form id="logging-profile-formatter-custom-form"
-                          on-save="${saveCustomFormatter(form, changedValues)}"
-                          prepare-reset="${resetCustomFormatter(form)}">
-                        <attributes>
-                            <attribute name="class"/>
-                            <attribute name="module"/>
-                            <attribute name="properties"/>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
         </item>
     </vertical-navigation>
 </view>

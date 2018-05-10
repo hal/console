@@ -22,6 +22,8 @@ import javax.annotation.PostConstruct;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -31,23 +33,35 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.SelectionAwareStatementContext;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.LOGGING_FORMATTER_ITEM;
+import static org.jboss.hal.resources.Ids.TAB;
+import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
@@ -84,8 +98,15 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @MbuiElement("logging-formatter-custom-form") Form<NamedNode> customFormatterForm;
     @MbuiElement("logging-formatter-pattern-table") Table<NamedNode> patternFormatterTable;
     @MbuiElement("logging-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
+    private Table<NamedNode> jsonFormatterTable;
+    private Form<NamedNode> jsonFormatterForm;
+    private Form<ModelNode> jsonKeyOverridesForm;
+    private Table<NamedNode> xmlFormatterTable;
+    private Form<NamedNode> xmlFormatterForm;
+    private Form<ModelNode> xmlKeyOverridesForm;
 
     EmptyState noRootLogger;
+static Logger _log = LoggerFactory.getLogger("org.jboss");
 
     LoggingView(MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -104,16 +125,148 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
         rootLoggerForm.asElement().parentNode.appendChild(noRootLogger.asElement());
         rootLoggerVisibility(true);
+
+        // --------------------------- json formatter
+        LabelBuilder labelBuilder = new LabelBuilder();
+        Metadata jsonMetadata = mbuiContext.metadataRegistry().lookup(JSON_FORMATTER_TEMPLATE);
+        Metadata jsonKeyOverridesMetadata = jsonMetadata.forComplexAttribute(KEY_OVERRIDES);
+        String jsonLabel = labelBuilder.label(JSON_FORMATTER_TEMPLATE.lastName());
+        jsonFormatterTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(LOGGING, JSON, FORMATTER, TABLE), jsonMetadata)
+                .button(mbuiContext.tableButtonFactory().add(Ids.build(LOGGING, JSON, FORMATTER, Ids.ADD), jsonLabel,
+                        JSON_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
+                .button(mbuiContext.tableButtonFactory().remove(jsonLabel, JSON_FORMATTER_TEMPLATE,
+                        table -> table.selectedRow().getName(), () -> presenter.reload()))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
+
+        jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, JSON, FORMATTER, FORM), jsonMetadata)
+                .onSave((form, changedValues) -> mbuiContext.crud().save(jsonLabel, form.getModel().getName(),
+                        JSON_FORMATTER_TEMPLATE, changedValues, () -> presenter.reload()))
+                .prepareReset(form -> mbuiContext.crud().reset(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                        JSON_FORMATTER_TEMPLATE, form, jsonMetadata, () -> presenter.reload()))
+                .build();
+
+        jsonKeyOverridesForm = new ModelNodeForm.Builder<>(Ids.build(LOGGING, FORMATTER, JSON, KEY_OVERRIDES, FORM), jsonKeyOverridesMetadata)
+                .singleton(() -> {
+                            StatementContext jsonStatementContext = new SelectionAwareStatementContext(
+                                    presenter.getStatementContext(), () -> jsonFormatterTable.selectedRow().getName());
+                            return new Operation.Builder(JSON_FORMATTER_TEMPLATE.resolve(jsonStatementContext),
+                                        READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, KEY_OVERRIDES)
+                                    .build();
+                        },
+                        () -> presenter.addComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                                KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE))
+                .onSave((form, changedValues) -> presenter.saveComplexObject(jsonLabel,
+                        jsonFormatterTable.selectedRow().getName(), KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE, changedValues))
+                .prepareReset(form -> presenter.resetComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE, jsonKeyOverridesMetadata, form))
+                .prepareRemove(form -> presenter.removeComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE))
+                .build();
+
+        Tabs jsonTabs = new Tabs(Ids.build(LOGGING, FORMATTER, JSON, TAB_CONTAINER));
+        jsonTabs.add(Ids.build(LOGGING, FORMATTER, JSON, ATTRIBUTES, TAB),
+                mbuiContext.resources().constants().attributes(), jsonFormatterForm.asElement());
+        jsonTabs.add(Ids.build(LOGGING, FORMATTER, JSON, KEY_OVERRIDES, TAB),
+                Names.KEY_OVERRIDES, jsonKeyOverridesForm.asElement());
+
+        HTMLElement jsonSection = section()
+                .add(h(1).textContent(Names.JSON_FORMATTER))
+                .add(p().textContent(jsonMetadata.getDescription().getDescription()))
+                .add(jsonFormatterTable)
+                .add(jsonTabs)
+                .asElement();
+
+        registerAttachable(jsonFormatterTable, jsonFormatterForm, jsonKeyOverridesForm);
+
+        navigation.insertSecondary(LOGGING_FORMATTER_ITEM, Ids.build(LOGGING, FORMATTER, JSON, Ids.ITEM), null,
+                Names.JSON_FORMATTER, jsonSection);
+
+        // --------------------------- xml formatter
+        Metadata xmlMetadata = mbuiContext.metadataRegistry().lookup(XML_FORMATTER_TEMPLATE);
+        Metadata xmlKeyOverridesMetadata = xmlMetadata.forComplexAttribute(KEY_OVERRIDES);
+        String xmlLabel = labelBuilder.label(XML_FORMATTER_TEMPLATE.lastName());
+        xmlFormatterTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(LOGGING, XML, FORMATTER, TABLE), xmlMetadata)
+                .button(mbuiContext.tableButtonFactory().add(Ids.build(LOGGING, XML, FORMATTER, Ids.ADD), xmlLabel,
+                        XML_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
+                .button(mbuiContext.tableButtonFactory().remove(xmlLabel, XML_FORMATTER_TEMPLATE,
+                        table -> table.selectedRow().getName(), () -> presenter.reload()))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
+
+        xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, XML, FORMATTER, FORM), xmlMetadata)
+                .onSave((form, changedValues) -> mbuiContext.crud().save(xmlLabel, form.getModel().getName(),
+                        XML_FORMATTER_TEMPLATE, changedValues, () -> presenter.reload()))
+                .prepareReset(form -> mbuiContext.crud().reset(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                        XML_FORMATTER_TEMPLATE, form, xmlMetadata, () -> presenter.reload()))
+                .build();
+
+        xmlKeyOverridesForm = new ModelNodeForm.Builder<>(Ids.build(LOGGING, FORMATTER, XML, KEY_OVERRIDES, FORM), xmlKeyOverridesMetadata)
+                .singleton(() -> {
+                            StatementContext xmlStatementContext = new SelectionAwareStatementContext(
+                                    presenter.getStatementContext(), () -> xmlFormatterTable.selectedRow().getName());
+                            return new Operation.Builder(XML_FORMATTER_TEMPLATE.resolve(xmlStatementContext),
+                                        READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, KEY_OVERRIDES)
+                                    .build();
+                        },
+                        () -> presenter.addComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                                KEY_OVERRIDES, XML_FORMATTER_TEMPLATE))
+                .onSave((form, changedValues) -> presenter.saveComplexObject(xmlLabel,
+                        xmlFormatterTable.selectedRow().getName(), KEY_OVERRIDES, XML_FORMATTER_TEMPLATE, changedValues))
+                .prepareReset(form -> presenter.resetComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, XML_FORMATTER_TEMPLATE, xmlKeyOverridesMetadata, form))
+                .prepareRemove(form -> presenter.removeComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                        KEY_OVERRIDES, XML_FORMATTER_TEMPLATE))
+                .build();
+
+        Tabs xmlTabs = new Tabs(Ids.build(LOGGING, FORMATTER, XML, TAB_CONTAINER));
+        xmlTabs.add(Ids.build(LOGGING, FORMATTER, XML, ATTRIBUTES, TAB),
+                mbuiContext.resources().constants().attributes(), xmlFormatterForm.asElement());
+        xmlTabs.add(Ids.build(LOGGING, FORMATTER, XML, KEY_OVERRIDES, TAB),
+                Names.KEY_OVERRIDES, xmlKeyOverridesForm.asElement());
+
+        HTMLElement xmlSection = section()
+                .add(h(1).textContent(Names.XML_FORMATTER))
+                .add(p().textContent(xmlMetadata.getDescription().getDescription()))
+                .add(xmlFormatterTable)
+                .add(xmlTabs)
+                .asElement();
+
+        registerAttachable(xmlFormatterTable, xmlFormatterForm, xmlKeyOverridesForm);
+
+        navigation.insertSecondary(LOGGING_FORMATTER_ITEM, Ids.build(LOGGING, FORMATTER, XML, Ids.ITEM), null,
+                Names.XML_FORMATTER, xmlSection);
     }
 
+    @Override
+    public void attach() {
+        super.attach();
+        jsonFormatterTable.bindForm(jsonFormatterForm);
+        jsonFormatterTable.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                jsonKeyOverridesForm.view(failSafeGet(t.selectedRow().asModelNode(), KEY_OVERRIDES));
+            } else {
+                jsonKeyOverridesForm.clear();
+            }
+        });
 
+        xmlFormatterTable.bindForm(xmlFormatterForm);
+        xmlFormatterTable.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                xmlKeyOverridesForm.view(failSafeGet(t.selectedRow().asModelNode(), KEY_OVERRIDES));
+            } else {
+                xmlKeyOverridesForm.clear();
+            }
+        });
+    }
     // ------------------------------------------------------ logging configuration
 
     @Override
     public void updateLoggingConfig(ModelNode modelNode) {
         loggingConfigForm.view(modelNode);
     }
-
 
     // ------------------------------------------------------ root logger
 
@@ -177,7 +330,6 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         loggerForm.clear();
         loggerTable.update(items);
     }
-
 
     // ------------------------------------------------------ handler
 
@@ -252,5 +404,21 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         navigation.updateBadge("logging-formatter-pattern-item", items.size());
         patternFormatterForm.clear();
         patternFormatterTable.update(items);
+    }
+
+    @Override
+    public void updateJsonFormatter(List<NamedNode> items) {
+        navigation.updateBadge("logging-formatter-json-item", items.size());
+        jsonFormatterForm.clear();
+        jsonKeyOverridesForm.clear();
+        jsonFormatterTable.update(items);
+    }
+
+    @Override
+    public void updateXmlFormatter(List<NamedNode> items) {
+        navigation.updateBadge("logging-formatter-xml-item", items.size());
+        xmlFormatterForm.clear();
+        xmlKeyOverridesForm.clear();
+        xmlFormatterTable.update(items);
     }
 }
