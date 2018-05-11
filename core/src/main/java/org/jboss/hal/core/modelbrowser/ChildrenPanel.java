@@ -130,26 +130,27 @@ class ChildrenPanel implements HasElements, Attachable {
             table.update(names);
             if (node.data.hasSingletons()) {
                 logger.debug("Read {} / {} singletons", names.size(), node.data.getSingletons().size());
+            } else {
+                // enable / disable buttons makes only sense for none-singleton resources!
+                AddressTemplate template = asGenericTemplate(node, address);
+                metadataProcessor.lookup(template, Progress.NOOP,
+                        new MetadataProcessor.MetadataCallback() {
+                            @Override
+                            public void onMetadata(Metadata metadata) {
+                                table.enableButton(0, AuthorisationDecision.from(environment,
+                                        constraint -> Optional.of(metadata.getSecurityContext()))
+                                        .isAllowed(Constraint.executable(template, ADD)));
+                                table.enableButton(1, AuthorisationDecision.from(environment,
+                                        constraint -> Optional.of(metadata.getSecurityContext()))
+                                        .isAllowed(Constraint.executable(template, REMOVE)));
+                            }
+
+                            @Override
+                            public void onError(Throwable error) {
+                                logger.warn("Unable to enable / disable table buttons for {}", address);
+                            }
+                        });
             }
-
-            AddressTemplate template = asGenericTemplate(node, address);
-            metadataProcessor.lookup(template, Progress.NOOP,
-                    new MetadataProcessor.MetadataCallback() {
-                        @Override
-                        public void onMetadata(Metadata metadata) {
-                            table.enableButton(0, AuthorisationDecision.from(environment,
-                                    constraint -> Optional.of(metadata.getSecurityContext()))
-                                    .isAllowed(Constraint.executable(template, ADD)));
-                            table.enableButton(1, AuthorisationDecision.from(environment,
-                                    constraint -> Optional.of(metadata.getSecurityContext()))
-                                    .isAllowed(Constraint.executable(template, REMOVE)));
-                        }
-
-                        @Override
-                        public void onError(Throwable error) {
-                            logger.warn("Unable to enable / disable table buttons for {}", address);
-                        }
-                    });
         });
     }
 
