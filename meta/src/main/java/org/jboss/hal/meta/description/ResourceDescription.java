@@ -40,9 +40,7 @@ public class ResourceDescription extends ModelNode {
         set(payload);
     }
 
-    /**
-     * @return the resource description
-     */
+    /** @return the resource description */
     @JsProperty
     public String getDescription() {
         return get(DESCRIPTION).asString();
@@ -167,12 +165,20 @@ public class ResourceDescription extends ModelNode {
         return false;
     }
 
+    @JsIgnore
+    public boolean isDeprecated(String path, String name) {
+        Property property = findAttribute(path, name);
+        if (property != null) {
+            ModelNode attribute = property.getValue();
+            return ModelNodeHelper.failSafeBoolean(attribute, DEPRECATED);
+        }
+        return false;
+    }
+
 
     // ------------------------------------------------------ JS methods
 
-    /**
-     * @return the attribute descriptions
-     */
+    /** @return the attribute descriptions */
     @JsMethod(name = "getAttributes")
     @EsReturn("Property[]")
     public Property[] jsGetAttributes() {
@@ -180,9 +186,7 @@ public class ResourceDescription extends ModelNode {
         return attributes.toArray(new Property[attributes.size()]);
     }
 
-    /**
-     * @return the request properties of the add operation
-     */
+    /** @return the request properties of the add operation */
     @JsMethod(name = "getRequestProperties")
     @EsReturn("Property[]")
     public Property[] jsGetRequestProperties() {
@@ -190,9 +194,7 @@ public class ResourceDescription extends ModelNode {
         return attributes.toArray(new Property[attributes.size()]);
     }
 
-    /**
-     * @return the operation descriptions
-     */
+    /** @return the operation descriptions */
     @JsProperty(name = "operations")
     @EsReturn("Property[]")
     public Property[] jsOperations() {

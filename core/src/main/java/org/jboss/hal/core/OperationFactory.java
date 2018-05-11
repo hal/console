@@ -108,9 +108,11 @@ public class OperationFactory {
             if (intersection.isEmpty()) {
 
                 // the easy part: no conflicts
-                if (!alternatives.isEmpty()) {
-                    logger.debug("Add undefine operations for alternatives [{}]", String.join(", ", alternatives));
-                    alternatives.forEach(alternative -> {
+                alternatives.forEach(alternative -> {
+                    if (resourceDescription.isDeprecated(ATTRIBUTES, alternative)) {
+                        logger.debug("Skip undefine operations for deprecated alternative {}", alternative);
+                    } else {
+                        logger.debug("Add undefine operations for alternative {}", alternative);
                         operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
                         List<String> requires = resourceDescription.findRequires(ATTRIBUTES, alternative);
                         if (!requires.isEmpty()) {
@@ -118,8 +120,8 @@ public class OperationFactory {
                                     String.join(", ", requires));
                             requires.forEach(r -> operations.putIfAbsent(r, undefineAttribute(address, r)));
                         }
-                    });
-                }
+                    }
+                });
 
             } else {
                 // possible conflicts: one or more alternatives are also in the change-set
@@ -202,7 +204,7 @@ public class OperationFactory {
 
         // collect all attributes from the 'requires' list of this attribute
         // HashMultimap<String, String> requires = HashMultimap.create();
-        final TreeSet<String> requires = new TreeSet<>();
+        TreeSet<String> requires = new TreeSet<>();
         ModelNode attributesDescription = description.get(ATTRIBUTES);
         attributes.forEach(attribute -> {
             ModelNode attributeDescription = attributesDescription.get(attribute);
