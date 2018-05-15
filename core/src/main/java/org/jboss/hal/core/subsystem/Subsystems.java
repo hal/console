@@ -165,7 +165,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationSecurityDomains())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(SECURITY_MANAGER, "Security Manager")
-                .generic()
+                .token(NameTokens.SECURITY_MANAGER)
                 .preview(resources.previews().configurationSecurityManager())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(SINGLETON, "Singleton")

@@ -95,7 +95,7 @@ public class AddResourceDialog {
     }
 
     public void show() {
-        // First call dialog.show() (which attaches everything), then call form.add()
+        // First call dialog.show() (which attaches everything), then call form.edit()
         dialog.show();
         form.edit(new ModelNode());
     }

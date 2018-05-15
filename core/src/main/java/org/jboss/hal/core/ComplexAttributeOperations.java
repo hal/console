@@ -525,6 +525,24 @@ public class ComplexAttributeOperations {
     public void remove(String resource, String complexAttribute, String type, int index, AddressTemplate template,
             Callback callback) {
         ResourceAddress address = template.resolve(statementContext, resource);
+        remove(complexAttribute, type, index, address, callback);
+    }
+
+
+    // ------------------------------------------------------ (d)elete using address
+
+    /**
+     * Undefines the complex attribute at the specified index. After the attribute has been undefined a standard success
+     * message is fired and the specified callback is executed.
+     *
+     * @param complexAttribute the name of the complex attribute
+     * @param type             the human readable name of the complex attribute
+     * @param index            the index for the list-type complex attribute
+     * @param address          the fq address for the operation
+     * @param callback         the callback executed after the complex attribute has been undefined
+     */
+    @JsIgnore
+    public void remove(String complexAttribute, String type, int index, ResourceAddress address, Callback callback) {
         Operation operation = new Operation.Builder(address, LIST_REMOVE_OPERATION)
                 .param(NAME, complexAttribute)
                 .param(INDEX, index)
