@@ -27,7 +27,7 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # Deploying
-mvn clean deploy -P release,prod,theme-hal,docker
+mvn clean deploy -P release,prod,theme-wildfly,docker
 
 # Publishing to gh-pages
 rm -rf /tmp/console
