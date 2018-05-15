@@ -140,6 +140,7 @@ public interface Ids {
     String DEPLOYMENT_EMPTY_CREATE = "deployment-empty-create";
     String DEPLOYMENT_EMPTY_FORM = "deployment-empty-form";
     String DEPLOYMENT_NOT_ENABLED_EMPTY = "deployment-not-enabled-empty";
+    String DEPLOYMENT_PERMISSIONS_EMPTY = "deployment-permissions-empty";
     String DEPLOYMENT_REFRESH = "deployment-refresh";
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_TAB = "deployment-tab";
@@ -433,6 +434,7 @@ public interface Ids {
     String LOG_FILE_SEARCH = "lf-search";
     String LOGGING_CONFIG_AND_PROFILES = "lcap";
     String LOGGING_CONFIGURATION = "logging-configuration";
+    String LOGGING_FORMATTER_ITEM = "logging-formatter-item";
     String LOGGING_PROFILE = "logging-profile";
     String LOGGING_PROFILE_ADD = "logging-profile-add";
     String MACRO_EDITOR = "macro-editor";
@@ -586,6 +588,8 @@ public interface Ids {
     String SECURITY_DOMAIN_AUTHORIZATION_ADD = "security-domain-authorization-add";
     String SECURITY_DOMAIN_MAPPING_ADD = "security-domain-mapping-add";
     String SECURITY_DOMAIN_TRUST_MODULE_ADD = "security-domain-identity-trust-add";
+    String SECURITY_MANAGER_MAXIMUM_PERMISSIONS = "sm-max-permissions";
+    String SECURITY_MANAGER_MINIMUM_PERMISSIONS = "sm-min-permissions";
     String SERVER = "server";
     String SERVER_ADD = "server-add";
     String SERVER_GROUP = "server-group";

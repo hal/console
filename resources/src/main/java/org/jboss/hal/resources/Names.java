@@ -51,6 +51,7 @@ public interface Names {
     String BROADCAST_GROUP = "Broadcast Group";
     String BUFFER_CACHES = "Buffer Caches";
     String BUNDLED_EXTENSION = "Bundled Extension";
+    String BYTE_BUFFER_POOL = "Byte Buffer Pool";
 
     String CACHE_CONTAINER = "Cache Container";
     String CATEGORY = "Category";
@@ -88,6 +89,7 @@ public interface Names {
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
     String DEFAULT_INTERFACE = "Default Interface";
     String DEPLOYMENT = "Deployment";
+    String DEPLOYMENT_PERMISSIONS = "Deployment Permissions";
     String DEPLOYMENTS = "Deployments";
     String DESTINATION = "Destination";
     String DESTINATIONS = "Destinations";
@@ -168,10 +170,12 @@ public interface Names {
     String JPA = "JPA";
     String JMS_QUEUE = "JMS Queue";
     String JMS_TOPIC = "JMS Topic";
+    String JSON_FORMATTER = "JSON Formatter";
     String JSP = "JSP";
     String JVM_ATTRIBUTES = "JVM Attributes";
 
     String KEY_MANAGER = "Key Manager";
+    String KEY_OVERRIDES = "Key Overrides";
     String KEY_STORE = "Key Store";
 
     String LARGE_MESSAGES_DIRECTORY = "Large Messages Directory";
@@ -197,6 +201,7 @@ public interface Names {
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";
+    String MAXIMUM_PERMISSIONS = "Maximum Permissions";
     String MB = "MB";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
@@ -206,6 +211,7 @@ public interface Names {
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MESSAGING = "Messaging";
     String MIME_MAPPING = "Mime Mapping";
+    String MINIMUM_PERMISSIONS = "Minimum Permissions";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
     String MIXED_JDBC = "Mixed JDBC";
@@ -353,6 +359,7 @@ public interface Names {
     String WRITE_BEHIND = "Write Behind";
     String WRITE_THROUGH = "Write Through";
 
-    String XA_DATASOURCE = "XA Datasource";
     String X509_CREDENTIAL_MAPPER = "X509 Credential Mapper";
+    String XA_DATASOURCE = "XA Datasource";
+    String XML_FORMATTER = "XML Formatter";
 }

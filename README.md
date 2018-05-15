@@ -1,4 +1,4 @@
-[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_ConsoleDevelopment)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_ConsoleDevelopment&guest=1) [![Known Vulnerabilities](https://snyk.io/test/github/hal/console/badge.svg)](https://snyk.io/test/github/hal/console) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/console.svg)](https://gitter.im/hal/console)
+[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_ConsoleDevelopment)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_ConsoleDevelopment&guest=1) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/console.svg)](https://gitter.im/hal/console)
 
 HAL ist the project name for the WildFly and JBoss EAP management console. It's part of every WildFly and JBoss EAP installation. To get started simply fire up your browser and open http://localhost:9990. 
 

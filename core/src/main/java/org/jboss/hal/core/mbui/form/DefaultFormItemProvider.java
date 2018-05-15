@@ -60,13 +60,13 @@ class DefaultFormItemProvider implements FormItemProvider {
     private final Metadata metadata;
     private final LabelBuilder labelBuilder;
 
-    DefaultFormItemProvider(final Metadata metadata) {
+    DefaultFormItemProvider(Metadata metadata) {
         this.metadata = metadata;
         this.labelBuilder = new LabelBuilder();
     }
 
     @Override
-    public FormItem<?> createFrom(final Property property) {
+    public FormItem<?> createFrom(Property property) {
         FormItem<?> formItem = null;
 
         String name = property.getName();
@@ -76,10 +76,9 @@ class DefaultFormItemProvider implements FormItemProvider {
         boolean required = attributeDescription.hasDefined(NILLABLE) && !attributeDescription.get(NILLABLE).asBoolean();
         boolean expressionAllowed = attributeDescription.hasDefined(EXPRESSIONS_ALLOWED) &&
                 attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean();
-        boolean runtime = attributeDescription.hasDefined(STORAGE) &&
-                RUNTIME.equals(attributeDescription.get(STORAGE).asString());
         boolean readOnly = attributeDescription.hasDefined(ACCESS_TYPE) &&
-                READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
+                (READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString())
+                        || METRIC.equals(attributeDescription.get(ACCESS_TYPE).asString()));
         String unit = attributeDescription.hasDefined(UNIT) ? attributeDescription.get(UNIT).asString() : null;
         Deprecation deprecation = attributeDescription.hasDefined(DEPRECATED) ? new Deprecation(
                 attributeDescription.get(DEPRECATED)) : null;
@@ -220,8 +219,9 @@ class DefaultFormItemProvider implements FormItemProvider {
                         Core.INSTANCE.eventBus().fireEvent(event);
                     });
                 }
-                if (readOnly || runtime) {
+                if (readOnly) {
                     formItem.setEnabled(false);
+                    formItem.setExpressionAllowed(false);
                 }
             }
         }
@@ -229,7 +229,7 @@ class DefaultFormItemProvider implements FormItemProvider {
         return formItem;
     }
 
-    private void checkCapabilityReference(final ModelNode attributeDescription, final FormItem<?> formItem) {
+    private void checkCapabilityReference(ModelNode attributeDescription, FormItem<?> formItem) {
         SuggestHandler suggestHandler = null;
 
         if (attributeDescription.hasDefined(CAPABILITY_REFERENCE)) {

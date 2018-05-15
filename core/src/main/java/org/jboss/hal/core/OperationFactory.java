@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 
 import com.google.common.base.Strings;
@@ -46,6 +47,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 public class OperationFactory {
 
@@ -106,9 +108,11 @@ public class OperationFactory {
             if (intersection.isEmpty()) {
 
                 // the easy part: no conflicts
-                if (!alternatives.isEmpty()) {
-                    logger.debug("Add undefine operations for alternatives [{}]", String.join(", ", alternatives));
-                    alternatives.forEach(alternative -> {
+                alternatives.forEach(alternative -> {
+                    if (resourceDescription.isDeprecated(ATTRIBUTES, alternative)) {
+                        logger.debug("Skip undefine operations for deprecated alternative {}", alternative);
+                    } else {
+                        logger.debug("Add undefine operations for alternative {}", alternative);
                         operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
                         List<String> requires = resourceDescription.findRequires(ATTRIBUTES, alternative);
                         if (!requires.isEmpty()) {
@@ -116,8 +120,8 @@ public class OperationFactory {
                                     String.join(", ", requires));
                             requires.forEach(r -> operations.putIfAbsent(r, undefineAttribute(address, r)));
                         }
-                    });
-                }
+                    }
+                });
 
             } else {
                 // possible conflicts: one or more alternatives are also in the change-set
@@ -198,6 +202,21 @@ public class OperationFactory {
         List<Operation> operations = new ArrayList<>();
         ResourceDescription description = metadata.getDescription();
 
+        // collect all attributes from the 'requires' list of this attribute
+        // HashMultimap<String, String> requires = HashMultimap.create();
+        TreeSet<String> requires = new TreeSet<>();
+        ModelNode attributesDescription = description.get(ATTRIBUTES);
+        attributes.forEach(attribute -> {
+            ModelNode attributeDescription = attributesDescription.get(attribute);
+            if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
+                failSafeList(attributeDescription, REQUIRES).forEach(node -> requires.add(node.asString()));
+                        /*.map(ModelNode::asString)
+                        .forEach(requiresName -> {
+                            requires.add(requiresName);
+                        });*/
+            }
+        });
+
         attributes.stream()
                 .map(attribute -> description.findAttribute(ATTRIBUTES, attribute))
                 .filter(Objects::nonNull)
@@ -209,8 +228,9 @@ public class OperationFactory {
                             READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
                     boolean alternatives = attributeDescription.hasDefined(ALTERNATIVES) &&
                             !attributeDescription.get(ALTERNATIVES).asList().isEmpty();
+                    boolean requiredBy = requires.contains(property.getName());
 
-                    if (nillable && !readOnly && !alternatives) {
+                    if (nillable && !readOnly && !alternatives && !requiredBy) {
                         boolean hasDefault = attributeDescription.hasDefined(DEFAULT);
                         ModelType type = attributeDescription.get(TYPE).asType();
                         switch (type) {
@@ -222,10 +242,7 @@ public class OperationFactory {
                             case INT:
                             case LONG:
                                 if (hasDefault) {
-                                    operations.add(new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
-                                            .param(NAME, attributeName(property.getName()))
-                                            .param(VALUE, attributeDescription.get(DEFAULT))
-                                            .build());
+                                    operations.add(undefineAttribute(address, attributeName(property.getName())));
                                 }
                                 break;
                             case EXPRESSION:
@@ -233,9 +250,7 @@ public class OperationFactory {
                             case OBJECT:
                             case PROPERTY:
                             case STRING:
-                                operations.add(new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
-                                        .param(NAME, attributeName(property.getName()))
-                                        .build());
+                                operations.add(undefineAttribute(address, attributeName(property.getName())));
                                 break;
                             case TYPE:
                             case UNDEFINED:

@@ -86,6 +86,7 @@ public interface NameTokens {
     String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;
     String RUNTIME = "runtime";
     String SECURITY_CONFIGURATION = "security";
+    String SECURITY_MANAGER = "security-manager";
     String SECURITY_DOMAIN = ModelDescriptionConstants.SECURITY_DOMAIN;
     String SERVER_BOOT_ERRORS = "server-boot-errors";
     String SERVER_CONFIGURATION = "server-configuration";
@@ -100,6 +101,7 @@ public interface NameTokens {
     String UNDERTOW = "undertow";
     String UNDERTOW_APPLICATION_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";
+    String UNDERTOW_BYTE_BUFFER_POOL = "undertow-byte-buffer-pool";
     String UNDERTOW_FILTER = "undertow-filter";
     String UNDERTOW_HANDLER = "undertow-handler";
     String UNDERTOW_RUNTIME_DEPLOYMENT_VIEW = "undertow-runtime-deployment";

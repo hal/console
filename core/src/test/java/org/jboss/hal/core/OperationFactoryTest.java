@@ -20,9 +20,9 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -50,7 +50,7 @@ public class OperationFactoryTest {
     private OperationFactory operationFactory;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         AddressTemplate template = AddressTemplate.of(
                 "/{selected.profile}/subsystem=resource-adapters/resource-adapter=*/connection-definitions=*");
         ModelNode rrd = ExternalModelNode.read(
@@ -62,13 +62,13 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void empty() throws Exception {
+    public void empty() {
         Composite composite = operationFactory.fromChangeSet(address, Collections.emptyMap(), metadata);
         assertTrue(composite.isEmpty());
     }
 
     @Test
-    public void notInMetadata() throws Exception {
+    public void notInMetadata() {
         Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("foo", "bar"), metadata);
 
         assertEquals(1, composite.size());
@@ -76,7 +76,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void write() throws Exception {
+    public void write() {
         Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("allocation-retry", 23L),
                 metadata);
 
@@ -85,7 +85,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void undefine() throws Exception {
+    public void undefine() {
         Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("class-name", ""), metadata);
 
         assertEquals(1, composite.size());
@@ -93,7 +93,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void defaultValue() throws Exception {
+    public void defaultValue() {
         Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("enlistment", true), metadata);
 
         assertEquals(1, composite.size());
@@ -101,7 +101,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void expression() throws Exception {
+    public void expression() {
         Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("expression", "${foo:bar}"),
                 metadata);
 
@@ -110,7 +110,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void mixed() throws Exception {
+    public void mixed() {
         Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("class-name", "", "jndi-name", "java:/foo"), metadata);
 
@@ -120,7 +120,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void alternativesNoConflicts() throws Exception {
+    public void alternativesNoConflicts() {
         Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("authentication-context", "foo"), metadata);
 
@@ -130,7 +130,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void alternativesNoConflictsWithRequires() throws Exception {
+    public void alternativesNoConflictsWithRequires() {
         Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("security-domain", "foo"), metadata);
 
@@ -144,7 +144,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void alternativesWithConflicts1() throws Exception {
+    public void alternativesWithConflicts1() {
         // Turn elytron 'on'
         Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("elytron-enabled", true, "authentication-context", "foo"), metadata);
@@ -159,7 +159,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void alternativesWithConflicts2() throws Exception {
+    public void alternativesWithConflicts2() {
         // Turn elytron 'off'
         Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("elytron-enabled", false, "security-domain", "foo"), metadata);
@@ -174,7 +174,7 @@ public class OperationFactoryTest {
     }
 
     @Test
-    public void reset() throws Exception {
+    public void reset() {
         Composite composite = operationFactory.resetResource(address,
                 Sets.newHashSet("authentication-context", // string w/ alternative
                         "capacity-decrementer-class", // string
@@ -182,17 +182,26 @@ public class OperationFactoryTest {
                         "class-name", // string(required)
                         "connectable", // boolean(false)
                         "initial-pool-size", // int
-                        "max-pool-size"), // int(20)
+                        "max-pool-size", // int(20)
+                        "xa-resource-timeout"), // is required by wrap-xa-resource
                 metadata);
         assertUndefine(composite, "capacity-decrementer-class");
         assertUndefine(composite, "capacity-incrementer-properties");
-        assertWrite(composite, "connectable", false);
-        assertWrite(composite, "max-pool-size", 20);
+        assertUndefine(composite, "connectable");
+        assertUndefine(composite, "max-pool-size");
+        assertUndefineNotPresent(composite, "xa-resource-timeout");
     }
 
     private void assertUndefine(Composite composite, String name) {
         assertTrue(stream(composite.spliterator(), false)
                 .anyMatch(operation -> UNDEFINE_ATTRIBUTE_OPERATION.equals(operation.getName()) &&
+                        operation.hasDefined(NAME) &&
+                        operation.get(NAME).asString().equals(name)));
+    }
+
+    private void assertUndefineNotPresent(Composite composite, String name) {
+        assertTrue(stream(composite.spliterator(), false)
+                .noneMatch(operation -> UNDEFINE_ATTRIBUTE_OPERATION.equals(operation.getName()) &&
                         operation.hasDefined(NAME) &&
                         operation.get(NAME).asString().equals(name)));
     }

@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormValidation;
+import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
@@ -49,9 +50,19 @@ class ExactlyOneAlternativeValidation<T extends ModelNode> implements FormValida
     public ValidationResult validate(final Form<T> form) {
         LabelBuilder labelBuilder = new LabelBuilder();
         Set<String> emptyItems = requiredAlternatives.stream()
-                .map(form::getFormItem)
-                .filter(formItem -> formItem != null && formItem.isEmpty())
-                .map(FormItem::getName)
+                .filter(name -> {
+                    FormItem formItem = form.getFormItem(name);
+                    boolean empty = formItem != null && formItem.isEmpty();
+                    // there is a special case for SwitchItem of Boolean type, the SwitchItem.isEmpty() tests if the value is
+                    // null, but for this validation case we must ensure the value is set to false to allow the validation
+                    // to work
+                    boolean switchItemFalse = false;
+                    if (formItem != null && formItem.getClass().equals(SwitchItem.class)) {
+                        Object value = formItem.getValue();
+                        switchItemFalse = value != null && !Boolean.parseBoolean(value.toString());
+                    }
+                    return empty || switchItemFalse;
+                })
                 .collect(toSet());
 
         if (requiredAlternatives.size() == emptyItems.size()) {
