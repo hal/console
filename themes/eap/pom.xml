@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-theme-parent</artifactId>
-        <version>3.0.0.Final</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>hal-theme-eap</artifactId>
