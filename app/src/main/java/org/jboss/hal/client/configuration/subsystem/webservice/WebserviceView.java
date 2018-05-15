@@ -54,7 +54,7 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
     private WebservicePresenter presenter;
 
     @Inject
-    public WebserviceView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory) {
+    public WebserviceView(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory) {
 
         Metadata metadata = metadataRegistry.lookup(WEBSERVICES_TEMPLATE);
         webservicesForm = new ModelNodeForm.Builder<>(Ids.WEBSERVICES_FORM, metadata)
@@ -88,22 +88,22 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
     }
 
     @Override
-    public void setPresenter(final WebservicePresenter presenter) {
+    public void setPresenter(WebservicePresenter presenter) {
         this.presenter = presenter;
         clientConfig.setPresenter(presenter);
         endpointConfig.setPresenter(presenter);
     }
 
     @Override
-    public void update(final ModelNode payload) {
+    public void update(ModelNode payload) {
         webservicesForm.view(payload);
         clientConfig.update(asNamedNodes(failSafePropertyList(payload, CLIENT_CONFIG.resource)));
         endpointConfig.update(asNamedNodes(failSafePropertyList(payload, ENDPOINT_CONFIG.resource)));
     }
 
     @Override
-    public void updateHandlerChains(final Config configType, final HandlerChain handlerChainType,
-            final List<NamedNode> handlerChains) {
+    public void updateHandlerChains(Config configType, HandlerChain handlerChainType,
+            List<NamedNode> handlerChains) {
         if (configType == CLIENT_CONFIG) {
             clientConfig.updateHandlerChains(configType, handlerChainType, handlerChains);
         } else {
@@ -112,8 +112,8 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
     }
 
     @Override
-    public void updateHandlers(final Config configType, final HandlerChain handlerChainType,
-            final List<NamedNode> handlers) {
+    public void updateHandlers(Config configType, HandlerChain handlerChainType,
+            List<NamedNode> handlers) {
         if (configType == CLIENT_CONFIG) {
             clientConfig.updateHandlers(configType, handlers);
         } else {

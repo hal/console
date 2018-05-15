@@ -89,6 +89,7 @@ public interface Names {
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
     String DEFAULT_INTERFACE = "Default Interface";
     String DEPLOYMENT = "Deployment";
+    String DEPLOYMENT_PERMISSIONS = "Deployment Permissions";
     String DEPLOYMENTS = "Deployments";
     String DESTINATION = "Destination";
     String DESTINATIONS = "Destinations";
@@ -200,6 +201,7 @@ public interface Names {
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";
+    String MAXIMUM_PERMISSIONS = "Maximum Permissions";
     String MB = "MB";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
@@ -209,6 +211,7 @@ public interface Names {
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MESSAGING = "Messaging";
     String MIME_MAPPING = "Mime Mapping";
+    String MINIMUM_PERMISSIONS = "Minimum Permissions";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
     String MIXED_JDBC = "Mixed JDBC";

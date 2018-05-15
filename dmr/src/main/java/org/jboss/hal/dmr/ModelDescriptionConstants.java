@@ -34,6 +34,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
     String ACTION = "actions";
+    String ACTIONS = "actions";
     String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
     String ACTIVE_OPERATION = "active-operation";
@@ -210,6 +211,7 @@ public interface ModelDescriptionConstants {
     String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_NAME = "deployment-name";
+    String DEPLOYMENT_PERMISSIONS = "deployment-permissions";
     String DEPLOYMENT_SCANNER = "deployment-scanner";
     String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
@@ -442,6 +444,7 @@ public interface ModelDescriptionConstants {
     String MAX_PROCESSING_TIME = "max-processing-time";
     String MAX_POOL_SIZE = "max-pool-size";
     String MAX_THREADS = "max-threads";
+    String MAXIMUM_PERMISSIONS = "maximum-permissions";
     String MECHANISM_CONFIGURATIONS = "mechanism-configurations";
     String MECHANISM_NAME = "mechanism-name";
     String MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "mechanism-provider-filtering-sasl-server-factory";
@@ -456,6 +459,7 @@ public interface ModelDescriptionConstants {
     String MIN = "min";
     String MIN_POOL_SIZE = "min-pool-size";
     String MIN_PROCESSING_TIME = "min-processing-time";
+    String MINIMUM_PERMISSIONS = "minimum-permissions";
     String MISSING_TRANSITIVE_DEPENDENCY_PROBLEMS = "missing-transitive-dependency-problems";
     String MIXED_JDBC = "mixed-jdbc";
     String MODCLUSTER = "modcluster";

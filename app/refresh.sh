@@ -25,6 +25,9 @@ function html {
 }
 
 function i18n {
+    cd ../resources
+    mvn package
+    cd -
     mvn generate-resources -Dcheckstyle.skip=true
 }
 
