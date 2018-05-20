@@ -103,8 +103,8 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.ELYTRON_RUNTIME, Ids.ELYTRON_SECURITY_REALMS,
-                        Names.ELYTRON, Names.SECURITY_REALMS);
+                .append(Ids.RUNTIME_SUBSYSTEM, SECURITY, resources.constants().monitor(), Names.SECURITY)
+                .append(Ids.ELYTRON_RUNTIME, Ids.ELYTRON_SECURITY_REALMS, Names.SECURITY, Names.SECURITY_REALMS);
     }
 
     @Override

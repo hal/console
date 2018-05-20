@@ -41,10 +41,10 @@ public class ElytronColumn extends FinderColumn<StaticItem> {
     @Inject
     public ElytronColumn(Finder finder, Resources resources, ItemActionFactory itemActionFactory, Places places) {
 
-        super(new Builder<StaticItem>(finder, Ids.ELYTRON_RUNTIME, Names.ELYTRON)
+        super(new Builder<StaticItem>(finder, Ids.ELYTRON_RUNTIME, Names.SECURITY)
 
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
-                .onPreview(staticItem -> staticItem.getPreviewContent())
+                .onPreview(StaticItem::getPreviewContent)
                 .useFirstActionAsBreadcrumbHandler());
 
         List<StaticItem> items = asList(

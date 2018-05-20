@@ -103,8 +103,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.ELYTRON_RUNTIME, Ids.ELYTRON_SECURITY_REALMS,
-                        Names.ELYTRON, Names.STORES);
+                .append(Ids.RUNTIME_SUBSYSTEM, SECURITY, resources.constants().monitor(), Names.SECURITY)
+                .append(Ids.ELYTRON_RUNTIME, Ids.ELYTRON_STORES, Names.SECURITY, Names.STORES);
     }
 
     @Override
