@@ -235,7 +235,7 @@ public class EnableSSLWizard {
 
                         tasks.add(flowContext -> {
                             Composite composite = new Composite();
-                            Operation importCertOp = new Operation.Builder(tsAddress, IMPORT_CERTIFICATE_OPERATION)
+                            Operation importCertOp = new Operation.Builder(tsAddress, IMPORT_CERTIFICATE)
                                     .param(ALIAS, asString(model, AbstractConfiguration.CLIENT_CERTIFICATE_ALIAS))
                                     .param(PATH, asString(model, AbstractConfiguration.CLIENT_CERTIFICATE_PATH))
                                     .param(CREDENTIAL_REFERENCE, tsCredRef)

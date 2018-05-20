@@ -20,24 +20,30 @@ import org.jboss.hal.meta.security.Constraint;
 /** A table button */
 public class Button<T> {
 
+    final String name;
     final String title;
     final ButtonHandler<T> handler;
     final Scope scope;
     final Constraint constraint;
 
-    public Button(String title, ButtonHandler<T> handler) {
-        this(title, handler, null, null);
+    public Button(String name, ButtonHandler<T> handler) {
+        this(name, null, handler, null, null);
     }
 
-    public Button(String title, ButtonHandler<T> handler, Scope scope) {
-        this(title, handler, scope, null);
+    public Button(String name, ButtonHandler<T> handler, Scope scope) {
+        this(name, null, handler, scope, null);
     }
 
-    public Button(String title, ButtonHandler<T> handler, Constraint constraint) {
-        this(title, handler, null, constraint);
+    public Button(String name, ButtonHandler<T> handler, Constraint constraint) {
+        this(name, null, handler, null, constraint);
     }
 
-    public Button(String title, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
+    public Button(String name, String title, ButtonHandler<T> handler, Constraint constraint) {
+        this(name, title, handler, null, constraint);
+    }
+
+    public Button(String name, String title, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
+        this.name = name;
         this.title = title;
         this.scope = scope;
         this.handler = handler;

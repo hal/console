@@ -288,6 +288,15 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/domain.html")
     ExternalTextResource runtimeDomain();
 
+    @Source("previews/runtime/elytron-security-realms.html")
+    ExternalTextResource runtimeElytronSecurityRealms();
+
+    @Source("previews/runtime/elytron-stores.html")
+    ExternalTextResource runtimeElytronStores();
+
+    @Source("previews/runtime/elytron-ssl.html")
+    ExternalTextResource runtimeElytronSSL();
+
     @Source("previews/runtime/hosts.html")
     ExternalTextResource runtimeHosts();
 
@@ -308,6 +317,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/runtime/mod-cluster.html")
     ExternalTextResource runtimeModCluster();
+
+    @Source("previews/runtime/security-elytron.html")
+    ExternalTextResource runtimeSecurityElytron();
 
     @Source("previews/runtime/server-groups.html")
     ExternalTextResource runtimeServerGroups();

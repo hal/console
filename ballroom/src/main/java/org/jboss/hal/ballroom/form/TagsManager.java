@@ -78,7 +78,10 @@ public class TagsManager {
 
         public static Options get() {
             Options options = new Options();
-            options.delimiters = new int[]{13}; // enter
+            // use the first delimiter character instead of comma, there are some multivalues that are separated by comma
+            // then, use an alternative delimiter to separate the tags
+            // https://github.com/max-favilli/tagmanager/blob/v3.0.2/tagmanager.js#L369
+            options.delimiters = new int[]{59, 13}; // semicolon, enter
             options.tagClass = tagManagerTag;
             options.validator = null;
             return options;

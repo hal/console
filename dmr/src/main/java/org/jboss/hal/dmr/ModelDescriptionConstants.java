@@ -25,6 +25,9 @@ package org.jboss.hal.dmr;
 public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
+    String ADD_ALIAS = "add-alias";
+    String ADD_IDENTITY = "add-identity";
+    String ADD_IDENTITY_ATTRIBUTE = "add-identity-attribute";
     String ACCEPTOR = "acceptor";
     String ACCESS = "access";
     String ACCESS_CONSTRAINTS = "access-constraints";
@@ -33,7 +36,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_MECHANISM = "access-mechanism";
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
-    String ACTION = "actions";
+    String ACTION = "action";
     String ACTIONS = "actions";
     String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
@@ -117,6 +120,7 @@ public interface ModelDescriptionConstants {
     String CANCELLED = "cancelled";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
+    String CHANGE_ALIAS = "change-alias";
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
     String CHANGE_MESSAGES_PRIORITY = "change-messages-priority";
     String CHANNEL = "channel";
@@ -125,6 +129,7 @@ public interface ModelDescriptionConstants {
     String CLASS = "class";
     String CLASS_NAME = "class-name";
     String CLASS_PATH = "class-path";
+    String CLEAR_CACHE = "clear-cache";
     String CLEAR_TEXT = "clear-text";
     String CLIENT_CONFIG = "client-config";
     String CLIENT_MAPPINGS = "client-mappings";
@@ -269,6 +274,7 @@ public interface ModelDescriptionConstants {
     String EXPIRY_ADDRESS = "expiry-address";
     String EXPLODE = "explode";
     String EXPLODED = "exploded";
+    String EXPORT_CERTIFICATE = "export-certificate";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
     String EXTENSION_POINT = "extension-point";
@@ -296,6 +302,7 @@ public interface ModelDescriptionConstants {
     String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
+    String GENERATE_CERTIFICATE_SIGNING_REQUEST = "generate-certificate-signing-request";
     String GENERATE_KEY_PAIR = "generate-key-pair";
     String GLOBAL_MODULES = "global-modules";
     String GROUP = "group";
@@ -329,11 +336,13 @@ public interface ModelDescriptionConstants {
     String HTTPS = "https";
     String HTTPS_LISTENER = "https-listener";
     String ID_COLUMN = "id-column";
+    String IDENTITY = "identity";
+    String IDENTITY_ATTRIBUTES = "identity-attributes";
     String IDENTITY_REALM = "identity-realm";
     String IDENTITY_MAPPING = "identity-mapping";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
-    String IMPORT_CERTIFICATE_OPERATION = "import-certificate";
+    String IMPORT_CERTIFICATE = "import-certificate";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
     String IN_VM_CONNECTOR = "in-vm-connector";
     String INCLUDE = "include";
@@ -346,6 +355,7 @@ public interface ModelDescriptionConstants {
     String INDEX = "index";
     String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
+    String INIT = "init";
     String INPUT_ARGUMENTS = "input-arguments";
     String INPUT_STREAM_INDEX = "input-stream-index";
     String INSTANCE_COUNT = "instance-count";
@@ -409,6 +419,7 @@ public interface ModelDescriptionConstants {
     String LIST_REMOVE_OPERATION = "list-remove";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
+    String LOAD = "load";
     String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
     String LOCATION = "location";
     String LOCKING = "locking";
@@ -587,12 +598,15 @@ public interface ModelDescriptionConstants {
     String QUEUE_SIZE = "queue-size";
     String RDN_IDENTIFIER = "rdn-identifier";
     String READ = "read";
+    String READ_ALIAS = "read-alias";
+    String READ_ALIASES_OPERATION = "read-aliases";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_BOOT_ERRORS = "read-boot-errors";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
     String READ_CHILDREN_RESOURCES_OPERATION = "read-children-resources";
     String READ_CHILDREN_TYPES_OPERATION = "read-children-types";
     String READ_CONTENT = "read-content";
+    String READ_IDENTITY = "read-identity";
     String READ_LOG_FILE = "read-log-file";
     String READ_ONLY = "read-only";
     String READ_RESOURCE_DESCRIPTION_OPERATION = "read-resource-description";
@@ -617,6 +631,7 @@ public interface ModelDescriptionConstants {
     String RELEASE_CODENAME = "release-codename";
     String RELEASE_VERSION = "release-version";
     String RELOAD = "reload";
+    String RELOAD_CERTIFICATE_REVOCATION_LIST = "reload-certificate-revocation-list";
     String RELOAD_HOST = "reload-host";
     String RELOAD_REQUIRED = "reload-required";
     String RELOAD_SERVERS = "reload-servers";
@@ -629,6 +644,9 @@ public interface ModelDescriptionConstants {
     String REMOTE_DESTINATION_OUTBOUND_SOCKET_BINDING = "remote-destination-outbound-socket-binding";
     String REMOTING = "remoting";
     String REMOVE = "remove";
+    String REMOVE_ALIAS = "remove-alias";
+    String REMOVE_IDENTITY = "remove-identity";
+    String REMOVE_IDENTITY_ATTRIBUTE = "remove-identity-attribute";
     String REMOVE_MESSAGE = "remove-message";
     String REMOVE_MESSAGES = "remove-messages";
     String REPLICATION_COLOCATED = "replication-colocated";
@@ -674,6 +692,7 @@ public interface ModelDescriptionConstants {
     String RUNTIME_NAME = "runtime-name";
     String SAME_RM_OVERRIDE = "same-rm-override";
     String SAR = "sar";
+    String SALT = "salt";
     String SASL_AUTHENTICATION_FACTORY = "sasl-authentication-factory";
     String SASL_PROTOCOL = "sasl-protocol";
     String SCHEDULED_COUNT = "scheduled-count";
@@ -716,6 +735,8 @@ public interface ModelDescriptionConstants {
     String SESSION_ID = "session-id";
     String SESSION_MAX_ALIVE_TIME = "session-max-alive-time";
     String SESSIONS_CREATED = "sessions-created";
+    String SET_PASSWORD = "set-password";
+    String SET_SECRET = "set-secret";
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
     String SHARED_STORE_SLAVE = "shared-store-slave";
