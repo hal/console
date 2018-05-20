@@ -28,6 +28,8 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SALT;
@@ -40,12 +42,16 @@ public class ReviewPasswordStep extends WizardStep<PasswordContext, PasswordStat
     private HTMLElement section;
     private Metadata metadata;
     private Form<ModelNode> form;
+    private HTMLElement header;
+    private HTMLElement description;
 
     public ReviewPasswordStep(final Resources resources, Metadata metadata) {
         super(resources.constants().review());
         this.metadata = metadata;
 
         section = section()
+                .add(header = h(1).asElement())
+                .add(description = p().asElement())
                 .asElement();
     }
 
@@ -58,8 +64,9 @@ public class ReviewPasswordStep extends WizardStep<PasswordContext, PasswordStat
     protected void onShow(PasswordContext context) {
         AddressTemplate template = metadata.getTemplate();
         Metadata passwordMetadata = metadata.forOperation(SET_PASSWORD).forComplexAttribute(context.type.name);
-
         LabelBuilder labelBuilder = new LabelBuilder();
+        header.textContent = labelBuilder.label(context.type.name);
+        description.textContent = passwordMetadata.getDescription().getDescription();
         String id = Ids.build(template.lastName(), SET_PASSWORD, "review", FORM);
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, passwordMetadata)
                 .readOnly();

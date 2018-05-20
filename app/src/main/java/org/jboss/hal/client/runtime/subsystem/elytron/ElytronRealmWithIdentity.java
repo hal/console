@@ -129,10 +129,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
                 .add(div()
                         .add(h(1).textContent(labelBuilder.label(IDENTITY)))
                         .add(p().textContent(resources.messages().identityDescription()))
-                        // TODO: there is a bug to set a BYTES ModelNodeType and there is an attribute "salt" of type BYTES
-                        // the server throws an OOME when HAL submits it
-                        // disable the set-password until it is fixed. Claudio is investigating this
-                        // .add(setPasswordBtn)
+                        .add(setPasswordBtn)
                         .add(removeIdentityBtn))
                 .add(identityForm)
                 .asElement();

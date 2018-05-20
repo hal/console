@@ -95,7 +95,6 @@ public class PasswordWizard {
                     }
                     return next;
                 })
-                .stayOpenAfterFinish()
                 .onFinish((wizard, context) -> {
 
                     ResourceAddress address = metadata.getTemplate().resolve(statementContext, selectedRealm);

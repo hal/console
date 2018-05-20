@@ -31,6 +31,8 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Ids.FORM;
@@ -42,6 +44,8 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
     private Metadata metadata;
     private Form<ModelNode> form;
     private Map<String, Object> changedValues;
+    private HTMLElement header;
+    private HTMLElement description;
 
     public ConfigurePasswordStep(final Resources resources, Metadata metadata) {
         super(resources.constants().configuration());
@@ -49,6 +53,8 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
         this.metadata = metadata;
 
         section = section()
+                .add(header = h(1).asElement())
+                .add(description = p().asElement())
                 .asElement();
     }
 
@@ -61,8 +67,10 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
     protected void onShow(PasswordContext context) {
         AddressTemplate template = metadata.getTemplate();
         Metadata passwordMetadata = metadata.forOperation(SET_PASSWORD).forComplexAttribute(context.type.name);
-
         LabelBuilder labelBuilder = new LabelBuilder();
+        header.textContent = labelBuilder.label(context.type.name);
+        description.textContent = passwordMetadata.getDescription().getDescription();
+
         String id = Ids.build(template.lastName(), SET_PASSWORD, FORM);
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, passwordMetadata)
                 .onSave((form1, changedValues) -> this.changedValues = changedValues);
@@ -89,7 +97,7 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
         form.edit(new ModelNode());
 
         // as the form is dynamically added to the section, we must remove the previous form element
-        if (section.childElementCount > 0) {
+        if (section.childElementCount > 2) {
             section.removeChild(section.lastChild);
         }
         section.appendChild(formElement);
