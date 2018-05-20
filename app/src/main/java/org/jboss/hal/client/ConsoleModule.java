@@ -508,6 +508,21 @@ public class ConsoleModule extends AbstractPresenterModule {
                 RealmsView.class,
                 RealmsPresenter.MyProxy.class);
 
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.RealmsView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.elytron.StoresPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.StoresPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.StoresView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.StoresPresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.SSLView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter.MyProxy.class);
+
         bindPresenter(RhcpPresenter.class,
                 RhcpPresenter.MyView.class,
                 RhcpView.class,

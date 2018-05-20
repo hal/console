@@ -94,14 +94,15 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B button(String text, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
-        return button(new Button<>(text, handler, scope, constraint));
+        return button(new Button<>(text, null, handler, scope, constraint));
     }
 
     public B button(Button<T> button) {
         assertNoOptions();
 
         Api.Button<T> apiButton = new Api.Button<>();
-        apiButton.text = button.title;
+        apiButton.text = button.name;
+        apiButton.titleAttr = button.title;
         apiButton.action = (event, api, node, btn) -> button.handler.execute(btn.table);
         if (button.scope != null) {
             apiButton.extend = button.scope.selector();

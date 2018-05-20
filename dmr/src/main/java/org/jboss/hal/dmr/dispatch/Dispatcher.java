@@ -188,6 +188,16 @@ public class Dispatcher implements RecordingHandler {
         dmr(operation, success::accept, fail, error);
     }
 
+    /**
+     * Executes the composite operation and upon sucessfull result calls the success function with the response results,
+     * but doesn't retrieve the "result" payload as the other execute methods does. You should use this execute
+     * method if the response node you want is not in the "result" attribute.
+     */
+    @JsIgnore
+    public void executeDMR(Composite composite, Consumer<CompositeResult> success, OnFail fail, OnError error) {
+        dmr(composite, payload -> success.accept(new CompositeResult(payload)), fail, error);
+    }
+
     @JsIgnore
     public Single<ModelNode> execute(Operation operation) {
         return dmr(operation).map(payload -> payload.get(RESULT));

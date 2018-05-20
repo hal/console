@@ -70,7 +70,7 @@ public class TableButtonFactory {
 
     public <T> Button<T> remove(String type, AddressTemplate template, Function<Table<T>, String> nameFunction,
             Callback callback) {
-        return new Button<>(resources.constants().remove(),
+        return new Button<>(resources.constants().remove(), null,
                 table -> crud.remove(type, nameFunction != null ? nameFunction.apply(table) : null, template, callback),
                 Scope.SELECTED_SINGLE,
                 Constraint.executable(template, REMOVE));

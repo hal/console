@@ -203,6 +203,11 @@ public class Subsystems {
         addRuntime(new SubsystemMetadata.Builder(EJB3, Names.EJB3)
                 .nextColumn(Ids.EJB3)
                 .build());
+        addRuntime(new SubsystemMetadata.Builder(SECURITY, Names.SECURITY)
+                .subtitle(Names.ELYTRON)
+                .nextColumn(Ids.ELYTRON_RUNTIME)
+                .preview(resources.previews().runtimeSecurityElytron())
+                .build());
         addRuntime(new SubsystemMetadata.Builder(IO, Names.IO)
                 .nextColumn(Ids.WORKER)
                 .preview(resources.previews().runtimeWorker())
