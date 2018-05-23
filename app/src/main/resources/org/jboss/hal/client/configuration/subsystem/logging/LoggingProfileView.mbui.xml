@@ -44,7 +44,7 @@
                 <h1>Categories</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
                 <table id="logging-profile-category-table" title="Category"
-                       form-ref="logging-profile-categories-form">
+                       form-ref="logging-profile-category-form">
                     <actions>
                         <action title="${mbuiContext.resources().constants().add()}" handler="${addLogger()}"
                                 constraint="add"/>

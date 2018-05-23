@@ -344,21 +344,25 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     boolean isEmptyOrDefault(FormItem formItem) {
-        String name = formItem.getName();
-        Object value = formItem.getValue();
-        ModelNode attributeDescription = attributeDescriptions.get(name);
-        if (attributeDescription != null) {
-            if (attributeDescription.hasDefined(DEFAULT)) {
-                return resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
-            } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
-                return value == null || !(Boolean) value;
+        boolean emptyOrDefault = formItem == null;
+        if (formItem != null) {
+            String name = formItem.getName();
+            Object value = formItem.getValue();
+            ModelNode attributeDescription = attributeDescriptions.get(name);
+            if (attributeDescription != null) {
+                if (attributeDescription.hasDefined(DEFAULT)) {
+                    emptyOrDefault = resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
+                } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
+                    emptyOrDefault = value == null || !(Boolean) value;
+                } else {
+                    emptyOrDefault = formItem.isEmpty();
+                }
             } else {
-                return formItem.isEmpty();
+                emptyOrDefault = formItem.isEmpty();
             }
         }
-        return formItem.isEmpty();
+        return emptyOrDefault;
     }
-
 
     // ------------------------------------------------------ JS methods
 
