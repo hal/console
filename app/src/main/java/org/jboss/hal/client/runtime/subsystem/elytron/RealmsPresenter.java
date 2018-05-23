@@ -15,11 +15,13 @@
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
@@ -31,6 +33,7 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.runtime.subsystem.elytron.wizardpassword.PasswordWizard;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -47,6 +50,9 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -54,6 +60,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
@@ -61,6 +68,7 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Names.IDENTITY_ATTRIBUTE_MAPPING;
 
 public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
@@ -71,6 +79,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private Resources resources;
+    private Provider<Progress> progress;
     private Dispatcher dispatcher;
 
     @Inject
@@ -79,11 +88,13 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
             MyProxy proxy,
             Resources resources,
             Finder finder,
+            @Footer Provider<Progress> progress,
             Dispatcher dispatcher,
             FinderPathFactory finderPathFactory,
             StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.resources = resources;
+        this.progress = progress;
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
@@ -169,40 +180,72 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                 .build();
         form.attach();
         AddResourceDialog dialog = new AddResourceDialog(resources.constants().addIdentity(), form, (name1, model) -> {
-            Composite composite = new Composite();
-            ResourceAddress address = template.resolve(statementContext, name);
+
+            LabelBuilder labelBuilder = new LabelBuilder();
+            String resourceName = labelBuilder.label(template.lastName()) + SPACE + name;
             String identity = model.get(IDENTITY).asString();
-            Operation addOp = new Operation.Builder(address, ADD_IDENTITY)
-                    .param(IDENTITY, identity)
-                    .build();
-            composite.add(addOp);
+            ResourceAddress address = template.resolve(statementContext, name);
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            Task<FlowContext> addTask = flowContext -> {
+                Operation addOp = new Operation.Builder(address, ADD_IDENTITY)
+                        .param(IDENTITY, identity)
+                        .build();
+
+                return dispatcher.execute(addOp)
+                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages()
+                                        .addError(resources.constants().identity(), identity, resourceName,
+                                                ex.getMessage()))))
+                        .toCompletable();
+            };
+            tasks.add(addTask);
 
             if (identityAttribute.getValue() != null) {
                 identityAttribute.getValue().forEach((key, values) -> {
-                    ModelNode modelValues = new ModelNode();
-                    values.forEach(modelValues::add);
-                    Operation addIdentAttributeOp = new Operation.Builder(address, ADD_IDENTITY_ATTRIBUTE)
-                            .param(IDENTITY, identity)
-                            .param(NAME, key)
-                            .param(VALUE, modelValues)
-                            .build();
-                    composite.add(addIdentAttributeOp);
+                    Task<FlowContext> addAttribute = flowContext -> {
+                        ModelNode modelValues = new ModelNode();
+                        values.forEach(modelValues::add);
+                        Operation addIdentAttributeOp = new Operation.Builder(address, ADD_IDENTITY_ATTRIBUTE)
+                                .param(IDENTITY, identity)
+                                .param(NAME, key)
+                                .param(VALUE, modelValues)
+                                .build();
+
+                        return dispatcher.execute(addIdentAttributeOp)
+                                .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                        Message.error(resources.messages()
+                                                .addError(resources.constants().identity(), identity, resourceName,
+                                                        ex.getMessage()))))
+                                .toCompletable();
+
+
+                    };
+                    tasks.add(addAttribute);
                 });
             }
-            LabelBuilder labelBuilder = new LabelBuilder();
-            String resourceName = labelBuilder.label(template.lastName()) + SPACE + name;
-            dispatcher.execute(composite, (CompositeResult compositeResult) -> MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages().addSuccess(resources.constants().identity(), identity, resourceName))),
-                    (operation, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().addError(resources.constants().identity(), identity, resourceName, failure))),
-                    (operation, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().addError(resources.constants().identity(), identity, resourceName, exception.getMessage()))));
 
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(FlowContext flowContext) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.success(resources.messages()
+                                            .addSuccess(resources.constants().identity(), identity, resourceName)));
+                        }
+
+                        @Override
+                        public void onError(FlowContext context, Throwable throwable) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages()
+                                            .addError(resources.constants().identity(), identity, resourceName,
+                                                    throwable.getMessage())));
+                        }
+                    });
         });
         dialog.show();
     }
 
-    void editIdentity(Metadata metadata, String resource, String title, Consumer<ModelNode> viewCallback) {
+    void editIdentity(Metadata metadata, String resource, String title, Consumer<ModelNode> callback) {
         AddressTemplate template = metadata.getTemplate();
         Metadata opMetadata = metadata.forOperation(READ_IDENTITY);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), READ_IDENTITY), opMetadata)
@@ -224,7 +267,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                     .build();
             LabelBuilder labelBuilder = new LabelBuilder();
             String resourceName = labelBuilder.label(template.lastName()) + SPACE + resource;
-            dispatcher.execute(operation, viewCallback::accept,
+            dispatcher.execute(operation,  callback::accept,
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
                             Message.error(resources.messages().readIdentityError(identity, resourceName, failure))),
                     (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -236,49 +279,72 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
 
     void saveIdentity(Metadata metadata, String resource, String identity, Map<String, List<String>> originalAttributes,
             Map<String, List<String>> attributes, Consumer<Boolean> viewCallback) {
+        LabelBuilder labelBuilder = new LabelBuilder();
+        String resourceName = labelBuilder.label(metadata.getTemplate().lastName()) + SPACE + resource;
         ResourceAddress address = metadata.getTemplate().resolve(statementContext, resource);
         // remove the old attributes and add the attribute list
-        Composite composite = new Composite();
+        List<Task<FlowContext>> tasks = new ArrayList<>();
         // compare the original values to the new values, to see which one to remove or add
         originalAttributes.forEach((key, originalValues) -> {
             List<String> newValues = attributes.get(key);
             if (!originalValues.equals(newValues)) {
                 // remove the key tag if it is not present, the user deleted it
-                Operation operation = new Operation.Builder(address, REMOVE_IDENTITY_ATTRIBUTE)
-                        .param(IDENTITY, identity)
-                        .param(NAME, key)
-                        .build();
-                composite.add(operation);
+
+                Task<FlowContext> addTask = flowContext -> {
+                    Operation operation = new Operation.Builder(address, REMOVE_IDENTITY_ATTRIBUTE)
+                            .param(IDENTITY, identity)
+                            .param(NAME, key)
+                            .build();
+
+                    return dispatcher.execute(operation)
+                            .doOnError(ex -> MessageEvent.fire(getEventBus(), Message.error(
+                                    resources.messages().saveIdentityError(identity, resourceName, ex.getMessage()))))
+                            .toCompletable();
+                };
+                tasks.add(addTask);
             }
         });
         attributes.forEach((name, newValues) -> {
             List<String> originalValues = originalAttributes.get(name);
             if (!newValues.equals(originalValues)) {
-                ModelNode modelValues = new ModelNode();
-                newValues.forEach(modelValues::add);
-                Operation addIdentAttributeOp = new Operation.Builder(address, ADD_IDENTITY_ATTRIBUTE)
-                        .param(IDENTITY, identity)
-                        .param(NAME, name)
-                        .param(VALUE, modelValues)
-                        .build();
-                composite.add(addIdentAttributeOp);
+
+                Task<FlowContext> addTask = flowContext -> {
+                    ModelNode modelValues = new ModelNode();
+                    newValues.forEach(modelValues::add);
+                    Operation operation = new Operation.Builder(address, ADD_IDENTITY_ATTRIBUTE)
+                            .param(IDENTITY, identity)
+                            .param(NAME, name)
+                            .param(VALUE, modelValues)
+                            .build();
+
+                    return dispatcher.execute(operation)
+                            .doOnError(ex -> MessageEvent.fire(getEventBus(), Message.error(
+                                    resources.messages().saveIdentityError(identity, resourceName, ex.getMessage()))))
+                            .toCompletable();
+                };
+                tasks.add(addTask);
             }
         });
-        if (composite.isEmpty()) {
+        if (tasks.isEmpty()) {
             MessageEvent.fire(getEventBus(), Message.warning(resources.messages().noChanges()));
         } else {
-            LabelBuilder labelBuilder = new LabelBuilder();
-            String resourceName = labelBuilder.label(metadata.getTemplate().lastName()) + SPACE + resource;
-            dispatcher.execute(composite, (CompositeResult compositeResult) -> {
-                    viewCallback.accept(true);
-                    MessageEvent.fire(getEventBus(),
-                            Message.success(resources.messages().saveIdentitySuccess(identity, resourceName)));
-                },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().saveIdentityError(identity, resourceName, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().saveIdentityError(identity, resourceName, exception.getMessage()))));
 
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(FlowContext flowContext) {
+                            viewCallback.accept(true);
+                            MessageEvent.fire(getEventBus(),
+                                    Message.success(resources.messages().saveIdentitySuccess(identity, resourceName)));
+                        }
+
+                        @Override
+                        public void onError(FlowContext context, Throwable throwable) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages()
+                                            .saveIdentityError(identity, resourceName, throwable.getMessage())));
+                        }
+                    });
         }
     }
 

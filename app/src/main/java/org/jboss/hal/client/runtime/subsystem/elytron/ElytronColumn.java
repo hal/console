@@ -51,17 +51,17 @@ public class ElytronColumn extends FinderColumn<StaticItem> {
                 new StaticItem.Builder(Names.SECURITY_REALMS)
                         .onPreview(new PreviewContent<>(Names.SECURITY_REALMS, resources.previews().runtimeElytronSecurityRealms()))
                         .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_SECURITY_REALMS,
-                                places.selectedProfile(NameTokens.ELYTRON_RUNTIME_SECURITY_REALMS).build()))
+                                places.selectedServer(NameTokens.ELYTRON_RUNTIME_SECURITY_REALMS).build()))
                         .build(),
                 new StaticItem.Builder(Names.STORES)
                         .onPreview(new PreviewContent<>(Names.STORES, resources.previews().runtimeElytronStores()))
                         .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_STORES,
-                                places.selectedProfile(NameTokens.ELYTRON_RUNTIME_STORES).build()))
+                                places.selectedServer(NameTokens.ELYTRON_RUNTIME_STORES).build()))
                         .build(),
                 new StaticItem.Builder(Names.SSL)
                         .onPreview(new PreviewContent<>(Names.SSL, resources.previews().runtimeElytronSSL()))
                         .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_SSL,
-                                places.selectedProfile(NameTokens.ELYTRON_RUNTIME_SSL).build()))
+                                places.selectedServer(NameTokens.ELYTRON_RUNTIME_SSL).build()))
                         .build()
 
         );
