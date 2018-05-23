@@ -364,7 +364,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         return emptyOrDefault;
     }
 
-
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "element")
