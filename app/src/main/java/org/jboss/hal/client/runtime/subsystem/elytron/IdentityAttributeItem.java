@@ -52,7 +52,7 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
     private static class MapMapping implements TagsMapping<Map<String, List<String>>> {
 
         private static final String VALUE_SEPARATOR = ";";
-        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\,]+)$"); //NON-NLS
+        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\;]+)$"); //NON-NLS
 
         @Override
         public TagsManager.Validator validator() {
@@ -63,7 +63,7 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
         public Map<String, List<String>> parse(final String cst) {
             Map<String, List<String>> result = new HashMap<>();
             if (cst != null) {
-                Splitter.on(VALUE_SEPARATOR)
+                Splitter.on(",")
                         .trimResults()
                         .omitEmptyStrings()
                         .withKeyValueSeparator('=')
@@ -82,7 +82,7 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
             }
             List<String> tags = new ArrayList<>();
             sourceValue.forEach((key, values) -> {
-                String tag = key + "=" + Joiner.on(",").join(values) + VALUE_SEPARATOR;
+                String tag = key + "=" + Joiner.on(VALUE_SEPARATOR).join(values);
                 tags.add(tag);
             });
             return tags;
@@ -95,10 +95,9 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
             }
             StringBuilder result = new StringBuilder();
             sourceValue.forEach((key, values) -> {
-                String tag = key + " \u21D2 " + Joiner.on(",").join(values) + " \n ";
+                String tag = key + " \u21D2 " + Joiner.on(VALUE_SEPARATOR).join(values) + " \n ";
                 result.append(tag);
             });
-            result.append("\n");
             return result.toString();
         }
     }

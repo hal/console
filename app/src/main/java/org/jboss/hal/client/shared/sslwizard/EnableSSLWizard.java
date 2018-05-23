@@ -39,6 +39,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
@@ -68,7 +69,7 @@ public class EnableSSLWizard {
 
     private EnableSSLWizard(Map<String, List<String>> existingResources, Resources resources, Environment environment,
             StatementContext statementContext, Dispatcher dispatcher, Host host, EnableSSLPresenter presenter,
-            Provider<Progress> progress, EventBus eventBus) {
+            @Footer Provider<Progress> progress, EventBus eventBus) {
         this.existingResources = existingResources;
         this.resources = resources;
         this.environment = environment;
