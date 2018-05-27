@@ -167,8 +167,13 @@ public class Version implements Comparable {
                 minor = Integer.parseInt(iterator.next());
 
                 if (iterator.hasNext()) {
-                    micro = Integer.parseInt(iterator.next());
-
+                    String rest = iterator.next();
+                    if (rest.contains("-")) {
+                        micro = Integer.parseInt(rest.substring(0, rest.indexOf("-")));
+                        qualifier = rest.substring(rest.indexOf("-") + 1);
+                    } else {
+                        micro = Integer.parseInt(rest);
+                    }
                     if (iterator.hasNext()) {
                         qualifier = iterator.next();
 
