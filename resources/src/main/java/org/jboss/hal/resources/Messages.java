@@ -37,7 +37,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
     SafeHtml allThreadPoolsExist();
-    String alternativesHelp(String alternatives);
+
+    SafeHtml alternativesHelp(String alternatives);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String atLeastOneIsRequired(String attributes);
@@ -52,6 +53,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml cancelledOperation(String name);
     SafeHtml cannotBrowseUnmanaged();
     SafeHtml cannotDownloadExploded();
+
+    SafeHtml capabilityReference(String capability);
     SafeHtml changeAliasError(String alias, String newAlias, String resource, String error);
     SafeHtml changeAliasSuccess(String alias, String newAlias, String resource);
     SafeHtml changePrioritySuccess(int priority);
@@ -415,7 +418,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml replicationStrategy();
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
-    String requires(String requires);
+
+    SafeHtml requires(String requires);
     String resetConfirmationTitle(String type);
     SafeHtml resetConfirmationQuestion(String name);
     String resetStatisticsTitle();
@@ -562,7 +566,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml uploadError(String name);
     SafeHtml uploadInProgress(String name);
     SafeHtml uploadSuccessful(String name);
-    String unit(String unit);
+
+    SafeHtml unit(String unit);
     SafeHtml unknownError();
     SafeHtml unknownResource();
     String unknownResourceDetails(String address, String reason);
