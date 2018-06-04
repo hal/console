@@ -39,8 +39,9 @@ class CreateRrdOperations {
 
     CreateRrdOperations(Environment environment, StatementContext statementContext, int depth) {
         this.depth = depth;
-        securityContextStatementContext = new SecurityContextStatementContext(statementContext, environment);
-        resourceDescriptionStatementContext = new ResourceDescriptionStatementContext(statementContext, environment);
+        this.securityContextStatementContext = new SecurityContextStatementContext(statementContext, environment);
+        this.resourceDescriptionStatementContext = new ResourceDescriptionStatementContext(statementContext,
+                environment);
     }
 
     public List<Operation> create(LookupContext context, boolean recursive, boolean optional) {
