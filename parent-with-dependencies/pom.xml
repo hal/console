@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.0.1.Final</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -38,7 +38,7 @@
         <auto-service.version>1.0-rc4</auto-service.version>
         <compile-testing.version>0.15</compile-testing.version>
         <elemental.version>1.0.0-RC1</elemental.version>
-        <elemento.version>GWT2-SNAPSHOT</elemento.version>
+        <elemento.version>0.8.2-gwt2</elemento.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>25.0-jre</guava.version>
         <gwt.version>2.8.2</gwt.version>
@@ -51,7 +51,7 @@
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
         <node.version>v8.11.1</node.version>
-        <rx.gwt>HEAD-SNAPSHOT</rx.gwt>
+        <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <undertow.version>2.0.7.Final</undertow.version>

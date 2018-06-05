@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.1.Final</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -269,29 +269,26 @@
             <id>release</id>
             <build>
                 <plugins>
-                    <!-- Enable when there's a stable RxGWT version which is compatible with Elemento -->
-                    <!--
-                                        <plugin>
-                                            <groupId>org.apache.maven.plugins</groupId>
-                                            <artifactId>maven-enforcer-plugin</artifactId>
-                                            <executions>
-                                                <execution>
-                                                    <id>enforce-no-snapshots</id>
-                                                    <goals>
-                                                        <goal>enforce</goal>
-                                                    </goals>
-                                                    <configuration>
-                                                        <rules>
-                                                            <requireReleaseDeps>
-                                                                <message>No Snapshots Allowed!</message>
-                                                            </requireReleaseDeps>
-                                                        </rules>
-                                                        <fail>true</fail>
-                                                    </configuration>
-                                                </execution>
-                                            </executions>
-                                        </plugin>
-                    -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-no-snapshots</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireReleaseDeps>
+                                            <message>No Snapshots Allowed!</message>
+                                        </requireReleaseDeps>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
