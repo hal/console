@@ -138,7 +138,6 @@
         <module>standalone</module>
         <module>themes</module>
         <module>testsuite</module>
-        <module>yarn</module>
     </modules>
 
     <build>
@@ -367,6 +366,12 @@
             <properties>
                 <theme.name>wildfly</theme.name>
             </properties>
+        </profile>
+        <profile>
+            <id>yarn</id>
+            <modules>
+                <module>yarn</module>
+            </modules>
         </profile>
     </profiles>
 

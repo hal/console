@@ -8,7 +8,7 @@
 #   - Docker is up and running
 #
 # What it does
-#   1. Build and deploy w/ profiles prod, theme-hal and docker
+#   1. Build and deploy w/ profiles docker, prod, release, theme-hal and yarn
 #   2. Publish the compiled GWT app to branch 'gh-pages'
 
 ROOT=$PWD
@@ -27,7 +27,7 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # Deploying
-mvn clean deploy -P release,prod,theme-wildfly,docker
+mvn clean deploy -P docker,prod,release,theme-hal,yarn
 
 # Publishing to gh-pages
 rm -rf /tmp/console

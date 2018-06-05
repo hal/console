@@ -31,6 +31,14 @@ This includes the GWT compiler, which might take a while. If you just want to ma
 mvn clean install -Dgwt.skipCompilation
 ``` 
 
+## Production Builds
+
+To build a HAL release ready to be used as standalone console, for WildFly or JBoss EAP use one of the following commands:
+
+- Standalone: `mvn clean install -P prod,theme-hal`
+- WildFly: `mvn clean install -P prod,theme-wildfly`
+- JBoss EAP: `mvn clean install -P prod,theme-eap`
+
 # Run
 
 The GWT development mode starts a local Jetty server. As a one time prerequisite you need to add the URL of the local Jetty server as an allowed origin to your WildFly / JBoss EAP configuration: 
