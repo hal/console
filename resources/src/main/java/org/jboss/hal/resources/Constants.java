@@ -28,9 +28,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String activeLower();
     String activeSessions();
     String add();
+    String addAlias();
+    String addIdentity();
     String addContent();
     String address();
     String adminOnly();
+    String aliases();
     String allMessagesAlways();
     String allMessagesOnce();
     String and();
@@ -56,8 +59,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String cancelActiveOperation();
     String cancelNonProgressingOperation();
     String category();
+    String changeAlias();
     String changePriority();
     String chooseFile();
+    String chooseIdentityPasswordTitle();
     String choosePolicy();
     String chooseSingleton();
     String chooseStrategy();
@@ -65,6 +70,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clear();
     String clearAll();
     String clearAllFilters();
+    String clearCache();
     String clearRunAs();
     String clearRunAsTitle();
     String clearSelection();
@@ -129,6 +135,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String duration();
 
     String edit();
+    String editIdentity();
     String editURL();
     String enable();
     String enableConfigurationChanges();
@@ -157,6 +164,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String expiredSessions();
     String explode();
     String exploded();
+    String exportCertificate();
     String expression();
     String expressionResolver();
     String extensionError();
@@ -178,6 +186,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
     String fromDeployment();
 
+    String generateCSR();
+    String generateKeyPair();
     String globalSettings();
     String gotoDeployment();
     String group();
@@ -269,6 +279,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String hours();
     String httpManagementInterface();
 
+    String identity();
+    String importCertificate();
     String inactive();
     String includeRole();
     String includeUserGroup();
@@ -276,6 +288,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includesAll();
     String includesAllDescription();
     String includesAllHeader();
+    String initialize();
     String input();
     String instances();
     String invalidExpression();
@@ -295,6 +308,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String largest();
     String lastPage();
     String lastModified();
+    String load();
     String loading();
     String loadingPleaseWait();
     String logFile();
@@ -411,6 +425,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String queue();
 
+    String readIdentity();
     String recovery();
     String rejected();
     String references();
@@ -419,10 +434,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String releaseName();
     String releaseVersion();
     String reload();
+    String reloadCRL();
     String reloadRequired();
     String reloadStandaloneTooltip();
     String remoteAddress();
     String remove();
+    String removeAlias();
+    String removeIdentity();
     String removeContent();
     String rename();
     String replace();
@@ -476,6 +494,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sessionsCreated();
     String sessionsAvgAliveTime();
     String sessionsMaxAliveTime();
+    String setIdentityPasswordTitle();
+    String setSecret();
+    String setPassword();
     String settings();
     String showAll();
     String showSensitive();
@@ -500,6 +521,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String stopped();
     String stoppedExecution();
     String storage();
+    String store();
     String subscriptions();
     String success();
     String supportsExpressions();
@@ -554,6 +576,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String validation();
     String view();
+    String viewDetailsAlias();
     String viewInEditor();
 
     String xaProperties();

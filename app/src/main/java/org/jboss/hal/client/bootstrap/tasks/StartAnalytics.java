@@ -91,12 +91,12 @@ public class StartAnalytics implements BootstrapTask {
             ga.customDimension(4, environment.getManagementVersion().toString());
             ga.customDimension(5, environment.getOperationMode().name().toLowerCase());
             ga.customDimension(6, environment.getInstanceInfo().productName());
-            ga.customDimension(7, environment.getInstanceInfo().productVersion().toString());
+            ga.customDimension(7, environment.getInstanceInfo().productVersion());
             ga.customDimension(8, environment.getInstanceInfo().releaseName());
-            ga.customDimension(9, environment.getInstanceInfo().releaseVersion().toString());
+            ga.customDimension(9, environment.getInstanceInfo().releaseVersion());
             ga.customDimension(10, endpoints.isSameOrigin());
             ga.customDimension(11, environment.isSingleSignOn());
-            ga.customDimension(12, settings.get(LOCALE));
+            ga.customDimension(12, settings.get(LOCALE).value());
 
             Tracker tracker = new Tracker(ga);
             eventBus.addHandler(NavigationEvent.getType(), tracker);

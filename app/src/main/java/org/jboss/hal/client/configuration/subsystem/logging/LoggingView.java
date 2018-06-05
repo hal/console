@@ -46,8 +46,6 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
@@ -106,7 +104,6 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     private Form<ModelNode> xmlKeyOverridesForm;
 
     EmptyState noRootLogger;
-static Logger _log = LoggerFactory.getLogger("org.jboss");
 
     LoggingView(MbuiContext mbuiContext) {
         super(mbuiContext);

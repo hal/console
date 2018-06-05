@@ -7,7 +7,7 @@
 #   - Docker is up and running
 #
 # What it does
-#   - Build and deploy w/ profiles prod, theme-hal and docker
+#   1. Build and deploy w/ profiles docker, prod, and theme-hal
 
 ROOT=$PWD
 BRANCH=$(git symbolic-ref -q HEAD)
@@ -25,7 +25,7 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # Deploying console
-mvn clean deploy -pl \!yarn -P prod,theme-hal,docker
+mvn clean deploy -P docker,prod,theme-hal
 
 echo
 echo

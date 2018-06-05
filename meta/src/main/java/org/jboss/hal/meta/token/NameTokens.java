@@ -43,6 +43,9 @@ public interface NameTokens {
     String ELYTRON_MAPPERS_DECODERS = "elytron-mappers";
     String ELYTRON_SECURITY_REALMS = "elytron-security-realms";
     String ELYTRON_OTHER = "elytron-other";
+    String ELYTRON_RUNTIME_SECURITY_REALMS = "elytron-runtime-security-realms";
+    String ELYTRON_RUNTIME_STORES = "elytron-runtime-stores";
+    String ELYTRON_RUNTIME_SSL = "elytron-runtime-ssl";
     String EJB3_CONFIGURATION = ModelDescriptionConstants.EJB3 + CONFIGURATION_SUFFIX;
     String EJB3_RUNTIME = ModelDescriptionConstants.EJB3 + RUNTIME_SUFFIX;
     String EXPERT_MODE = "expert-mode";

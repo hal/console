@@ -78,7 +78,7 @@ public class TagsManager {
 
         public static Options get() {
             Options options = new Options();
-            options.delimiters = new int[]{13}; // enter
+            options.delimiters = new int[]{13}; // 13=enter
             options.tagClass = tagManagerTag;
             options.validator = null;
             return options;

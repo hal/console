@@ -245,8 +245,10 @@ public interface Ids {
     String ELYTRON_PROVIDER_SASL_SERVER_FACTORY = "elytron-provider-sasl-server-factory";
     String ELYTRON_REGEX_PRINCIPAL_TRANSFORMER = "elytron-regex-principal-transformer";
     String ELYTRON_REGEX_VALIDATING_PRINCIPAL_TRANSFORMER = "elytron-regex-validating-principal-transformer";
+    String ELYTRON_RUNTIME = "elytron-runtime";
     String ELYTRON_SASL_AUTHENTICATION_FACTORY = "elytron-sasl-authentication-factory";
     String ELYTRON_SECURITY_DOMAIN = "elytron-security-domain";
+    String ELYTRON_SECURITY_REALMS = "elytron-security-realms";
     String ELYTRON_SERVER_SSL_CONTEXT = "elytron-server-ssl-context";
     String ELYTRON_SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY = "elytron-service-loader-http-server-mechanism-factory";
     String ELYTRON_SERVICE_LOADER_SASL_SERVER_FACTORY = "elytron-service-loader-sasl-server-factory";
@@ -259,8 +261,10 @@ public interface Ids {
     String ELYTRON_SIMPLE_REGEX_REALM_MAPPER = "elytron-simple-regex-realm-mapper";
     String ELYTRON_SIMPLE_ROLE_DECODER = "elytron-simple-role-decoder";
     String ELYTRON_SIZE_ROTATING_FILE_AUDIT_LOG = "elytron-size-rotating-file-audit-log";
+    String ELYTRON_SSL = "ssl";
     String ELYTRON_SSL_ITEM = "ssl-item";
     String ELYTRON_STORE_ITEM = "stores-item";
+    String ELYTRON_STORES = "stores";
     String ELYTRON_SYSLOG_AUDIT_LOG = "elytron-syslog-audit-log";
     String ELYTRON_TOKEN_REALM = "elytron-token-realm";
     String ELYTRON_TRUST_MANAGER = "elytron-trust-manager";

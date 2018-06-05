@@ -54,6 +54,7 @@ public interface Names {
     String BYTE_BUFFER_POOL = "Byte Buffer Pool";
 
     String CACHE_CONTAINER = "Cache Container";
+    String CACHING_REALM = "Caching Realm";
     String CATEGORY = "Category";
     String CHANNEL = "Channel";
     String CLIENT_CONFIGURATION = "Client Configuration";
@@ -82,6 +83,7 @@ public interface Names {
     String CUSTOM = "Custom";
     String CUSTOM_ACTION_HANDLER = "Custom ActionHandler";
     String CUSTOM_FORMATTER = "Custom Formatter";
+    String CUSTOM_MODIFIABLE_REALM = "Custom Modifiable Realm";
     String CUSTOM_POLICY = "Custom Policy";
 
     String DATASOURCE = "Datasource";
@@ -114,7 +116,9 @@ public interface Names {
     String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";
     String FILE_ACTION_HANDLER = "File ActionHandler";
+    String FILESYSTEM_REALM = "Filesystem Realm";
     String FILTER = "Filter";
+    String FILTERING_KEY_STORE = "Filtering Key Store";
     String FILTERS = "Filters";
     String FORK = "Fork";
 
@@ -312,10 +316,12 @@ public interface Names {
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
     String SOCKET_BINDINGS = "Socket Bindings";
     String SOURCE = "Source";
+    String SSL = "SSL";
     String STANDALONE_EXTENSION = "Standalone Extension";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
     String STORE = "Store";
+    String STORES = "Stores";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
     String STATEFUL_SESSION_BEAN = "Stateful Session Bean";
@@ -338,6 +344,7 @@ public interface Names {
     String TRANSPORT = "Transport";
     String TRANSACTION = "Transaction";
     String TRANSACTIONS = "Transactions";
+    String TRUST_MANAGER = "Trust Manager";
     String TRUST_MODULE = "Trust Module";
 
     String UNKNOWN = "unknown";

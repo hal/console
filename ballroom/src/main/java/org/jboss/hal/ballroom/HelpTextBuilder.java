@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -42,9 +41,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Class to build a help text from an attribute description. Besides the description itself includes information about
- * whether a attribute is required, supports expressions or needs some kind of restart after modification.
- * <p>
- * TODO Add info about capabilities & requirements
+ * an optional capability reference, whether an attribute is required, supports expressions or needs some kind of
+ * restart after modification.
  */
 public class HelpTextBuilder {
 
@@ -57,7 +55,7 @@ public class HelpTextBuilder {
 
         private final String description;
 
-        RestartMode(final String description) {
+        RestartMode(String description) {
             this.description = description;
         }
 
@@ -83,10 +81,6 @@ public class HelpTextBuilder {
         List<String> alternatives = attribute.hasDefined(ALTERNATIVES)
                 ? attribute.get(ALTERNATIVES).asList().stream().map(ModelNode::asString).collect(toList())
                 : Collections.emptyList();
-
-        SafeHtml desc = SafeHtmlUtils.fromSafeConstant(attribute.get(DESCRIPTION).asString());
-        help.append(desc);
-
         RestartMode restartMode = restartRequired(attribute);
         if (restartMode == UNKNOWN) {
             logger.warn("Unknown restart mode in attribute description for '{}': '{}'", property.getName(),
@@ -94,13 +88,19 @@ public class HelpTextBuilder {
         }
         boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == RestartMode.JVM || restartMode == RESOURCE_SERVICES);
 
+        SafeHtml desc = SafeHtmlUtils.fromSafeConstant(attribute.get(DESCRIPTION).asString());
+        help.append(desc);
+
         LabelBuilder labelBuilder = new LabelBuilder();
-        List<String> textModules = new ArrayList<>();
+        List<SafeHtml> textModules = new ArrayList<>();
         if (required) {
-            textModules.add(CONSTANTS.requiredField());
+            textModules.add(SafeHtmlUtils.fromString(CONSTANTS.requiredField()));
+        }
+        if (attribute.hasDefined(CAPABILITY_REFERENCE)) {
+            textModules.add(MESSAGES.capabilityReference(attribute.get(CAPABILITY_REFERENCE).asString()));
         }
         if (supportsExpression) {
-            textModules.add(CONSTANTS.supportsExpressions());
+            textModules.add(SafeHtmlUtils.fromString(CONSTANTS.supportsExpressions()));
         }
         if (attribute.hasDefined(UNIT)) {
             textModules.add(MESSAGES.unit(attribute.get(UNIT).asString().toLowerCase()));
@@ -112,10 +112,14 @@ public class HelpTextBuilder {
             textModules.add(MESSAGES.alternativesHelp(labelBuilder.enumeration(alternatives, CONSTANTS.and())));
         }
         if (showRestartHelp) {
-            textModules.add(restartMode.description());
+            textModules.add(SafeHtmlUtils.fromString(restartMode.description()));
         }
         if (!textModules.isEmpty()) {
-            help.appendHtmlConstant("<br/>").appendEscaped(Joiner.on(". ").join(textModules)).append('.'); //NON-NLS
+            help.appendHtmlConstant("<br/>");
+            for (SafeHtml html : textModules) {
+                help.append(html);
+                help.append(SafeHtmlUtils.fromString(". "));
+            }
         }
 
         return help.toSafeHtml();

@@ -23,6 +23,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml accessMechanismLabel(String name);
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
+    SafeHtml addError(String type, String identity, String resource, String error);
+    SafeHtml addSuccess(String type, String identity, String resource);
     SafeHtml addKeyStoreError(String name);
     SafeHtml addResourceError(String name, String cause);
     SafeHtml addResourceSuccess(String type, String name);
@@ -35,7 +37,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
     SafeHtml allThreadPoolsExist();
-    String alternativesHelp(String alternatives);
+
+    SafeHtml alternativesHelp(String alternatives);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String atLeastOneIsRequired(String attributes);
@@ -50,6 +53,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml cancelledOperation(String name);
     SafeHtml cannotBrowseUnmanaged();
     SafeHtml cannotDownloadExploded();
+
+    SafeHtml capabilityReference(String capability);
+    SafeHtml changeAliasError(String alias, String newAlias, String resource, String error);
+    SafeHtml changeAliasSuccess(String alias, String newAlias, String resource);
     SafeHtml changePrioritySuccess(int priority);
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
@@ -62,6 +69,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml cleanPatchHistoryQuestion(String prependMessage);
     SafeHtml cleanPatchHistorySuccess();
     SafeHtml cleanPatchHistoryFailure(String error);
+    SafeHtml clearCacheError(String name, String error);
+    SafeHtml clearCacheSuccess(String name);
     SafeHtml cloneProfileSuccess(String from, String to);
     SafeHtml closeToLogout();
     String configurationChangesDescription();
@@ -165,6 +174,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml expireMessagesQuestion();
     SafeHtml expireMessageSuccess();
     SafeHtml explodedPreview();
+    SafeHtml exportCertificateError(String alias, String path, String resource, String error);
+    SafeHtml exportCertificateSuccess(String alias, String path, String resource);
     SafeHtml expressionError(String expression);
     SafeHtml expressionWarning(String expression);
     String extensionColumnFilterDescription();
@@ -181,6 +192,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String filterBy(String name);
     SafeHtml flushConnectionSuccess();
 
+    SafeHtml generateCSRError(String alias, String path, String resource, String error);
+    SafeHtml generateCSRSuccess(String alias, String path, String resource);
+    SafeHtml generateKeyPairError(String alias, String resource, String error);
+    SafeHtml generateKeyPairSuccess(String alias, String resource);
     String goTo(String name);
 
     String homepagePatchingSubHeader(String name);
@@ -201,12 +216,26 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml hostStarting(String name);
     SafeHtml hostUndefined(String name);
 
+    String identityPasswordBcrypt();
+    String identityPasswordClear();
+    String identityPasswordDigest();
+    String identityPasswordOtp();
+    String identityPasswordSaltedSimpleDigest();
+    String identityPasswordScramDigest();
+    String identityPasswordSimpleDigest();
     SafeHtml includeAllHelpText();
-
+    String identityDescription();
+    SafeHtml identityAttributeHelp();
+    SafeHtml identityAttributeHint();
+    SafeHtml importCertificateError(String alias, String path, String resource, String error);
+    SafeHtml importCertificateSuccess(String alias, String path, String resource);
+    SafeHtml initError(String name, String error);
+    SafeHtml initSuccess(String name);
     SafeHtml invalidExtensionJson();
     SafeHtml invalidExtensionMetadata(String extensionDocumentation);
     String invalidFormat();
     String invalidJNDIName();
+    String invalidLength();
     String invalidRange(long value, long min, long max);
     String invalidateSessionTitle();
     SafeHtml invalidateSessionQuestion();
@@ -233,6 +262,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml lastOperationException();
     SafeHtml lastOperationFailed();
     SafeHtml listHint();
+    SafeHtml loadPropertiesRealmError(String name, String error);
+    SafeHtml loadPropertiesRealmSuccess(String name);
     SafeHtml loadContentError();
     String locationRequired();
     SafeHtml logFileError(String name);
@@ -316,8 +347,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml patchAddError(String patchId, String error);
     SafeHtml rollbackSucessful(String patchId);
     SafeHtml pauseQueueSuccess(String name);
-    SafeHtml rollbackError(String failure);
-    SafeHtml rollbackInProgress(String patchid);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
@@ -326,6 +355,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml pruneExpiredQuestion();
     SafeHtml pruneSuccessful();
 
+    SafeHtml readAliasError(String alias, String resource, String error);
+    SafeHtml readAliasesError(String resource, String error);
+    SafeHtml readAliasesSuccess(String resource);
+    SafeHtml readIdentityError(String identity, String realm, String error);
     String recordedOperations(@PluralCount int count);
     SafeHtml recordingStarted();
     SafeHtml recordingStopped();
@@ -335,6 +368,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml reloadConsoleRedirect(String url);
     SafeHtml reloadConsoleTimeout(String type, String url);
+    SafeHtml reloadCRLError(String name, String error);
+    SafeHtml reloadCRLSuccess(String name);
+    SafeHtml reloadError(String resource, String error);
+    SafeHtml reloadSuccess(String resource);
     SafeHtml reloadDomainControllerPending(String name);
     SafeHtml reloadDomainControllerQuestion(String name);
     SafeHtml reloadHostControllerQuestion(String name);
@@ -349,6 +386,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml reloadServerSuccess(String name);
     SafeHtml reloadSettings();
 
+    SafeHtml removeAliasQuestion(String alias, String resource);
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
     SafeHtml removeConfigurationChangesQuestion(String type, String name);
@@ -359,6 +397,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeExtensionSuccess();
     SafeHtml removeGroupQuestion(String name);
     SafeHtml removeGroupSuccess(String name);
+    SafeHtml removeIdentityQuestion(String identity, String realm);
+    SafeHtml removeIdentityError(String identity, String realm, String error);
+    SafeHtml removeIdentitySuccess(String identity, String realm);
     SafeHtml removeMessageQuestion();
     SafeHtml removeMessagesQuestion();
     SafeHtml removeMessageSuccess();
@@ -377,7 +418,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml replicationStrategy();
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
-    String requires(String requires);
+
+    SafeHtml requires(String requires);
     String resetConfirmationTitle(String type);
     SafeHtml resetConfirmationQuestion(String name);
     String resetStatisticsTitle();
@@ -417,9 +459,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
     String roleColumnFilterDescription();
+    SafeHtml rollbackError(String failure);
+    SafeHtml rollbackInProgress(String patchid);
     SafeHtml runningTimeLabel(String name);
 
     SafeHtml saveContentSuccess(String deployment, String file);
+    SafeHtml saveIdentityError(String identity, String realm, String error);
+    SafeHtml saveIdentitySuccess(String identity, String realm);
     String securityDomainColumnFilterDescription();
     SafeHtml selected(int selected, int total);
     SafeHtml sendMessageToDeadLetterQuestion();
@@ -450,6 +496,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverUrlCustom();
     SafeHtml serverUrlError();
     SafeHtml serverUrlManagementModel();
+    SafeHtml setIdentityPasswordError(String identity, String realm, String error);
+    SafeHtml setIdentityPasswordSuccess(String identity, String realm);
+    SafeHtml setIdentityPasswordQuestion();
+    SafeHtml setSecretPasswordError(String alias, String resource, String error);
+    SafeHtml setSecretPasswordSuccess(String alias, String resource);
 
     SafeHtml sharedStoreColocated();
     SafeHtml sharedStoreMaster();
@@ -478,6 +529,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml stopServerError(String name);
     SafeHtml stopServerQuestion(String name);
     SafeHtml stopServerSuccess(String name);
+    SafeHtml storeError(String resource, String error);
+    SafeHtml storeSuccess(String resource);
 
     String susbsystemFilterDescription();
     String suspend(String name);
@@ -513,7 +566,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml uploadError(String name);
     SafeHtml uploadInProgress(String name);
     SafeHtml uploadSuccessful(String name);
-    String unit(String unit);
+
+    SafeHtml unit(String unit);
     SafeHtml unknownError();
     SafeHtml unknownResource();
     String unknownResourceDetails(String address, String reason);

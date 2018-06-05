@@ -161,6 +161,7 @@ class Api<T> {
         String text;
         ActionHandler<T> action;
         String extend;
+        String titleAttr;
         String constraint;
         // not part of the DataTables API, but used to have a reference back to the table in ActionHandler
         Table<T> table;
