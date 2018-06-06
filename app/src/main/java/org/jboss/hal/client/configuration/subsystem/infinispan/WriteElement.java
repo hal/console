@@ -83,6 +83,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     presenter.addWrite(write);
                 })
                 .build();
+        emptyState.asElement().classList.add(marginTopLarge);
 
         throughElement = div()
                 .add(p().css(marginTopLarge)

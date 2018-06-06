@@ -554,6 +554,20 @@ public class CrudOperations {
      * Read multiple different child resources using a composite operation. The steps in the composite result map to the
      * position of the resource in the {@code resources} collection.
      *
+     * @param template  the address template which is resolved against the current statement context to get the
+     *                  resource address for the {@code read-children-resource} operation
+     * @param resources the child resources (not human readable, but the actual child resource name!)
+     * @param callback  the callback which gets the composite result
+     */
+    @JsIgnore
+    public void readChildren(AddressTemplate template, Iterable<String> resources, ReadCompositeCallback callback) {
+        readChildren(template.resolve(statementContext), resources, callback);
+    }
+
+    /**
+     * Read multiple different child resources using a composite operation. The steps in the composite result map to the
+     * position of the resource in the {@code resources} collection.
+     *
      * @param address   the fq address for the {@code read-children-resource} operation
      * @param resources the child resources (not human readable, but the actual child resource name!)
      * @param callback  the callback which gets the composite result

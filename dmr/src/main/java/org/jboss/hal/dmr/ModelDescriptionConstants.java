@@ -152,6 +152,7 @@ public interface ModelDescriptionConstants {
     String CONNECTION_LIMIT_LOW_WATER_MARK = "connection-limit-low-water-mark";
     String CONNECTION_DEFINITIONS = "connection-definitions";
     String CONNECTION_FACTORY = "connection-factory";
+    String CONNECTION_TIMEOUT = "connection-timeout";
     String CONNECTION_URL = "connection-url";
     String CONNECTOR = "connector";
     String CONNECTOR_NAME = "connector-name";
@@ -204,6 +205,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT_INTERFACE = "default-interface";
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
     String DEFAULT_REALM = "default-realm";
+    String DEFAULT_REMOTE_CLUSTER = "default-remote-cluster";
     String DEFAULT_SECURITY_DOMAIN = "default-security-domain";
     String DEFAULT_SFSB_CACHE = "default-sfsb-cache";
     String DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE = "default-sfsb-passivation-disabled-cache";
@@ -363,6 +365,7 @@ public interface ModelDescriptionConstants {
     String INTERFACE = "interface";
     String INTERNAL = "internal";
     String INVALIDATE_SESSION_OPERATION = "invalidate-session";
+    String INVALIDATION = "invalidation";
     String INVOCATIONS = "invocations";
     String IO = "io";
     String IO_THREAD_COUNT = "io-thread-count";
@@ -399,6 +402,7 @@ public interface ModelDescriptionConstants {
     String KEY_ALIAS = "key-alias";
     String KEY_MANAGER = "key-manager";
     String KEY_OVERRIDES = "key-overrides";
+    String KEY_SIZE_ESTIMATE = "key-size-estimate";
     String KEY_STORE = "key-store";
     String KEY_STORE_REALM = "key-store-realm";
     String KILL = "kill";
@@ -454,6 +458,7 @@ public interface ModelDescriptionConstants {
     String MAX_ACTIVE_SESSIONS = "max-active-sessions";
     String MAX_PROCESSING_TIME = "max-processing-time";
     String MAX_POOL_SIZE = "max-pool-size";
+    String MAX_RETRIES = "max-retries";
     String MAX_THREADS = "max-threads";
     String MAXIMUM_PERMISSIONS = "maximum-permissions";
     String MECHANISM_CONFIGURATIONS = "mechanism-configurations";
@@ -485,6 +490,7 @@ public interface ModelDescriptionConstants {
     String NAMESPACES = "namespaces";
     String NAMING = "naming";
     String NATIVE_INTERFACE = "native-interface";
+    String NEAR_CACHE = "near-cache";
     String NEW_IDENTITY_ATTRIBUTES = "new-identity-attributes";
     String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
     String NEW_ITEM_PATH = "new-item-path";
@@ -638,6 +644,8 @@ public interface ModelDescriptionConstants {
     String REMOTE = "remote";
     String REMOTE_ADDRESS = "remote-address";
     String REMOTE_ACCEPTOR = "remote-acceptor";
+    String REMOTE_CACHE_CONTAINER = "remote-cache-container";
+    String REMOTE_CLUSTER = "remote-cluster";
     String REMOTE_COMMAND = "remote-command";
     String REMOTE_CONNECTOR = "remote-connector";
     String REMOVE_CONTENT = "remove-content";
@@ -757,6 +765,8 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SOCKET_BINDING_REF = "socket-binding-ref";
+    String SOCKET_BINDINGS = "socket-bindings";
+    String SOCKET_TIMEOUT = "socket-timeout";
     String SOURCE = "source";
     String SOURCE_CREDENTIAL_REFERENCE = "source-credential-reference";
     String SOURCE_NETWORK = "source-network";
@@ -812,6 +822,8 @@ public interface ModelDescriptionConstants {
     String TARGET_PASSWORD = "target-password";
     String TARGET_PATH = "target-path";
     String TASK_MAX_THREADS = "task-max-threads";
+    String TCP_KEEP_ALIVE = "tcp-keep-alive";
+    String TCP_NO_DELAY = "tcp-no-delay";
     String TEMPORARY = "temporary";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";

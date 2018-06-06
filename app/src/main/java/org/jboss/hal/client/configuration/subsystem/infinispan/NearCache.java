@@ -15,19 +15,26 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 
-class CacheContainer extends NamedNode {
+enum NearCache {
 
-    private boolean remote;
+    NONE(Ids.NEAR_CACHE_NONE, Names.NONE, ModelDescriptionConstants.NONE),
+    INVALIDATION(Ids.NEAR_CACHE_INVALIDATION, Names.INVALIDATION, ModelDescriptionConstants.INVALIDATION);
 
-    CacheContainer(String name, boolean remote, ModelNode node) {
-        super(name, node);
-        this.remote = remote;
+    final String baseId;
+    final String type;
+    final String resource;
+
+    NearCache(String baseId, String type, String resource) {
+        this.baseId = baseId;
+        this.type = type;
+        this.resource = resource;
     }
 
-    boolean isRemote() {
-        return remote;
+    String path() {
+        return ModelDescriptionConstants.NEAR_CACHE + "/" + resource;
     }
 }

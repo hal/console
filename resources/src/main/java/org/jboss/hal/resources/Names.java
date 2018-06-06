@@ -67,6 +67,7 @@ public interface Names {
     String CONFIGURATION_CHANGES = "Configuration Changes";
     String CONNECTION = "Connection";
     String CONNECTION_FACTORY = "Connection Factory";
+    String CONNECTION_POOL = "Connection Pool";
     String CONNECTION_DEFINITION = "Connection Definition";
     String CONNECTIONS = "Connections";
     String CONNECTOR_SERVICE = "Connector Service";
@@ -156,6 +157,7 @@ public interface Names {
     String INSTANCE_ID = "Instance ID";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
+    String INVALIDATION = "Invalidation";
     String INVALIDATION_CACHE = "Invalidation Cache";
     String IO = "IO";
 
@@ -223,8 +225,10 @@ public interface Names {
     String MODULE = "Module";
 
     String NAME = "Name";
+    String NEAR_CACHE = "Near Cache";
     String NEW_ITEM_TEMPLATE = "New Item Template";
     String NODE = "Node";
+    String NONE = "None";
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 
@@ -270,6 +274,8 @@ public interface Names {
     String RELAY = "Relay";
     String REMOTE = "Remote";
     String REMOTE_ACCEPTOR = "Remote Acceptor";
+    String REMOTE_CACHE_CONTAINER = "Remote Cache Container";
+    String REMOTE_CLUSTER = "Remote Cluster";
     String REMOTE_COMMAND = "Remote Command";
     String REMOTE_CONNECTOR = "Remote Connector";
     String REMOTE_CONNECTOR_SECURITY = "Remote Connector Security";

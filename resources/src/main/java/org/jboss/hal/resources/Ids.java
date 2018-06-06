@@ -60,7 +60,6 @@ public interface Ids {
     String BROWSE_CONTENT_DEPLOYMENT_EMPTY = "browse-content-deployment-empty";
     String BROWSE_CONTENT_EXPLODED_EMPTY = "browse-content-exploded-empty";
     String BROWSE_CONTENT_UNSUPPORTED_EMPTY = "browse-content-unsupported-empty";
-    String CACHE_COMPONENT_BACKUPS = "cache-component-backups";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
     String CACHE_COMPONENT_LOCKING = "cache-component-locking";
     String CACHE_COMPONENT_PARTITION_HANDLING = "cache-component-partition-handling";
@@ -68,6 +67,7 @@ public interface Ids {
     String CACHE_COMPONENT_TRANSACTION = "cache-component-transaction";
     String CACHE_CONTAINER = "cc";
     String CACHE_CONTAINER_ADD = "cc-add";
+    String CACHE_CONTAINER_ADD_ACTIONS = "cc-add-actions";
     String CACHE_CONTAINER_FORM = "cc-form";
     String CACHE_CONTAINER_ITEM = "cc-item";
     String CACHE_CONTAINER_REFRESH = "cc-refresh";
@@ -101,6 +101,8 @@ public interface Ids {
     String CONFIGURATION_CHANGES_EMPTY = "configuration-changes-empty";
     String CONFIGURATION_CHANGES_NOT_ENABLED = "configuration-changes-not-enabled";
     String CONFIGURATION_SUBSYSTEM = "css";
+    String CONNECTION_POOL_ITEM = "connection-pool-item";
+    String CONNECTION_POOL_FORM = "connection-pool-form";
     String CONTENT = "content";
     String CONTENT_ADD = "content-add";
     String CONTENT_ADD_ACTIONS = "content-add-actions";
@@ -531,6 +533,8 @@ public interface Ids {
     String MODEL_BROWSER_ROOT = "model-browser-root";
     String NO_MATCH = "no-match";
     String NATIVE_INTERFACE_ITEM = "native-interface-item";
+    String NEAR_CACHE_NONE = "near-cache-none";
+    String NEAR_CACHE_INVALIDATION = "near-cache-invalidation";
     String NOTIFICATION_DRAWER_CLEAR_ALL = "notification-drawer-clear-all";
     String NOTIFICATION_DRAWER_CLOSE = "notification-drawer-close";
     String NOTIFICATION_DRAWER_MARK_ALL_READ = "notification-drawer-mark-all-read";
@@ -549,6 +553,17 @@ public interface Ids {
     String PROFILE_REFRESH = "profile-refresh";
     String REFERENCE_SERVER_EMPTY = "reference-server-empty";
     String REFRESH = "refresh";
+    String REMOTE_CACHE_CONTAINER_ADD = "rcc-add";
+    String REMOTE_CACHE_CONTAINER_CONFIGURATION_FORM = "rcc-configuration-form";
+    String REMOTE_CACHE_CONTAINER_CONFIGURATION_TAB = "rcc-configuration-tab";
+    String REMOTE_CACHE_CONTAINER_ITEM = "rcc-item";
+    String REMOTE_CACHE_CONTAINER_FORM = "rcc-form";
+    String REMOTE_CACHE_CONTAINER_NEAR_CACHE_TAB = "rcc-near-cache-tab";
+    String REMOTE_CACHE_CONTAINER_TABS = "rcc-tabs";
+    String REMOTE_CLUSTER_ADD = "rc-add";
+    String REMOTE_CLUSTER_ITEM = "rc-item";
+    String REMOTE_CLUSTER_FORM = "rc-form";
+    String REMOTE_CLUSTER_TABLE = "rc-table";
     String REMOTING_CONNECTOR_FORM = "remoting-connector-form";
     String REMOTING_CONNECTOR_SECURITY_FORM = "remoting-connector-security-form";
     String REMOTING_CONNECTOR_SECURITY_POLICY_FORM = "remoting-connector-security-policy-form";
@@ -584,6 +599,8 @@ public interface Ids {
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEM = "rss";
     String SEARCH = "search";
+    String SECURITY_ITEM = "security-item";
+    String SECURITY_FORM = "security-form";
     String SECURITY_DOMAIN = "sd";
     String SECURITY_DOMAIN_ACL_MODULE_ADD = "security-domain-acl-add";
     String SECURITY_DOMAIN_ADD = "sd-add";
@@ -642,6 +659,8 @@ public interface Ids {
     String TASKS_COMPLETED = "tasks-completed";
     String TASKS_QUEUE = "tasks-queue";
     String TASKS_REJECTED = "tasks-rejected";
+    String THREAD_POOL_ITEM = "thread-pool-item";
+    String THREAD_POOL_FORM = "thread-pool-form";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
@@ -837,6 +856,10 @@ public interface Ids {
      */
     static String principal(String type, String name) {
         return build(type, name);
+    }
+
+    static String remoteCacheContainer(String name) {
+        return Ids.build("rcc", name);
     }
 
     static String resourceAdapter(String name) {

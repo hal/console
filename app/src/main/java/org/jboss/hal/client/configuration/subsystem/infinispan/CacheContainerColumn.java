@@ -15,68 +15,123 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.INFINISPAN_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static java.util.Comparator.comparing;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.CACHE_CONTAINER)
-@Requires(value = {CACHE_CONTAINER_ADDRESS}, recursive = false)
+@Requires(value = {CACHE_CONTAINER_ADDRESS, REMOTE_CACHE_CONTAINER_ADDRESS, REMOTE_CLUSTER_ADDRESS}, recursive = false)
 public class CacheContainerColumn extends FinderColumn<CacheContainer> {
 
+    private final Dispatcher dispatcher;
+    private final CrudOperations crud;
+    private final EventBus eventBus;
+    private final MetadataRegistry metadataRegistry;
+    private final StatementContext statementContext;
+    private final Resources resources;
+
     @Inject
-    public CacheContainerColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final Places places) {
+    public CacheContainerColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            Places places,
+            EventBus eventBus,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
 
         super(new Builder<CacheContainer>(finder, Ids.CACHE_CONTAINER, Names.CACHE_CONTAINER)
 
-                .columnAction(columnActionFactory.add(Ids.CACHE_CONTAINER_ADD, Names.CACHE_CONTAINER,
-                        CACHE_CONTAINER_TEMPLATE, name -> {
-                            //noinspection Convert2MethodRef
-                            return Ids.cacheContainer(name);
+                .itemsProvider((context, callback) -> crud.readChildren(INFINISPAN_SUBSYSTEM_TEMPLATE,
+                        asList(CACHE_CONTAINER, REMOTE_CACHE_CONTAINER),
+                        result -> {
+                            List<CacheContainer> cc = new ArrayList<>();
+                            for (Property property : result.step(0).get(RESULT).asPropertyList()) {
+                                cc.add(new CacheContainer(property.getName(), false, property.getValue()));
+                            }
+                            for (Property property : result.step(1).get(RESULT).asPropertyList()) {
+                                cc.add(new CacheContainer(property.getName(), true, property.getValue()));
+                            }
+                            cc.sort(comparing(NamedNode::getName));
+                            callback.onSuccess(cc);
                         }))
-                .columnAction(columnActionFactory.refresh(Ids.CACHE_CONTAINER_REFRESH))
-
-                .itemsProvider((context, callback) ->
-                        crud.readChildren(INFINISPAN_SUBSYSTEM_TEMPLATE, CACHE_CONTAINER, children ->
-                                callback.onSuccess(children.stream().map(CacheContainer::new).collect(toList()))))
 
                 .onPreview(CacheContainerPreview::new)
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount()
         );
+        this.dispatcher = dispatcher;
+        this.crud = crud;
+        this.eventBus = eventBus;
+        this.metadataRegistry = metadataRegistry;
+        this.statementContext = statementContext;
+        this.resources = resources;
+
+        List<ColumnAction<CacheContainer>> addActions = new ArrayList<>();
+        addActions.add(new ColumnAction.Builder<CacheContainer>(Ids.CACHE_CONTAINER_ADD)
+                .title(resources.messages().addResourceTitle(Names.CACHE_CONTAINER))
+                .handler(column -> addCacheContainer())
+                .constraint(Constraint.executable(CACHE_CONTAINER_TEMPLATE, ADD))
+                .build());
+        addActions.add(new ColumnAction.Builder<CacheContainer>(Ids.REMOTE_CACHE_CONTAINER_ADD)
+                .title(resources.messages().addResourceTitle(Names.REMOTE_CACHE_CONTAINER))
+                .handler(column -> addRemoteCacheContainer())
+                .constraint(Constraint.executable(REMOTE_CACHE_CONTAINER_TEMPLATE, ADD))
+                .build());
+        addColumnActions(Ids.CACHE_CONTAINER_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(),
+                addActions);
+        addColumnAction(columnActionFactory.refresh(Ids.CACHE_CONTAINER_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<CacheContainer>() {
             @Override
             public String getId() {
-                return Ids.cacheContainer(item.getName());
+                return item.isRemote() ? Ids.remoteCacheContainer(item.getName()) : Ids.cacheContainer(item.getName());
             }
 
             @Override
@@ -85,20 +140,91 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
             }
 
             @Override
+            public HTMLElement getIcon() {
+                return item.isRemote() ? Icons.custom(fontAwesome("cloud")) : Icons.custom(pfIcon("memory"));
+            }
+
+            @Override
+            public String getTooltip() {
+                return item.isRemote() ? Names.REMOTE_CACHE_CONTAINER : Names.CACHE_CONTAINER;
+            }
+
+            @Override
+            public String getFilterData() {
+                String name = item.getName();
+                return item.isRemote() ? name + " remote" : name;
+            }
+
+            @Override
             public HTMLElement asElement() {
-                return item.hasDefined(DEFAULT_CACHE) ? ItemDisplay.withSubtitle(item.getName(),
-                        item.get(DEFAULT_CACHE).asString()) : null;
+                if (item.isRemote()) {
+                    return item.hasDefined(DEFAULT_REMOTE_CLUSTER) ? ItemDisplay.withSubtitle(item.getName(),
+                            item.get(DEFAULT_REMOTE_CLUSTER).asString()) : null;
+                } else {
+                    return item.hasDefined(DEFAULT_CACHE) ? ItemDisplay.withSubtitle(item.getName(),
+                            item.get(DEFAULT_CACHE).asString()) : null;
+                }
             }
 
             @Override
             public List<ItemAction<CacheContainer>> actions() {
-                return asList(
-                        itemActionFactory.viewAndMonitor(Ids.cacheContainer(item.getName()),
-                                places.selectedProfile(NameTokens.CACHE_CONTAINER).with(NAME, item.getName()).build()),
-                        itemActionFactory.remove(Names.CACHE_CONTAINER, item.getName(),
-                                CACHE_CONTAINER_TEMPLATE, CacheContainerColumn.this)
-                );
+                if (item.isRemote()) {
+                    return asList(itemActionFactory.viewAndMonitor(Ids.remoteCacheContainer(item.getName()),
+                            places.selectedProfile(NameTokens.REMOTE_CACHE_CONTAINER)
+                                    .with(NAME, item.getName())
+                                    .build()),
+                            itemActionFactory.remove(Names.REMOTE_CACHE_CONTAINER, item.getName(),
+                                    REMOTE_CACHE_CONTAINER_TEMPLATE, CacheContainerColumn.this));
+                } else {
+                    return asList(
+                            itemActionFactory.viewAndMonitor(Ids.cacheContainer(item.getName()),
+                                    places.selectedProfile(NameTokens.CACHE_CONTAINER)
+                                            .with(NAME, item.getName())
+                                            .build()),
+                            itemActionFactory.remove(Names.CACHE_CONTAINER, item.getName(),
+                                    CACHE_CONTAINER_TEMPLATE, CacheContainerColumn.this)
+                    );
+                }
             }
         });
+    }
+
+    private void addCacheContainer() {
+        crud.add(Ids.CACHE_CONTAINER_ADD, Names.CACHE_CONTAINER, CACHE_CONTAINER_TEMPLATE,
+                (name, address) -> refresh(Ids.cacheContainer(name)));
+    }
+
+    private void addRemoteCacheContainer() {
+        Metadata rccMetadata = metadataRegistry.lookup(REMOTE_CACHE_CONTAINER_TEMPLATE);
+        Metadata rcMetadata = metadataRegistry.lookup(REMOTE_CLUSTER_TEMPLATE);
+
+        // add nested 'socket-bindings' attribute from 'remote-cluster' resource to top level metadata
+        String path = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
+        Property socketBindingsDescription = rcMetadata.getDescription().findAttribute(path, SOCKET_BINDINGS);
+        failSafeGet(rccMetadata.getDescription(), path)
+                .get(SOCKET_BINDINGS)
+                .set(socketBindingsDescription.getValue());
+        ModelNode socketBindingsPermissions = failSafeGet(rcMetadata.getSecurityContext(),
+                ATTRIBUTES + "/" + SOCKET_BINDINGS);
+        failSafeGet(rccMetadata.getSecurityContext(), ATTRIBUTES)
+                .get(SOCKET_BINDINGS)
+                .set(socketBindingsPermissions);
+
+        AddResourceDialog dialog = new AddResourceDialog(Ids.REMOTE_CACHE_CONTAINER_FORM,
+                resources.messages().addResourceTitle(Names.REMOTE_CACHE_CONTAINER), rccMetadata,
+                asList(DEFAULT_REMOTE_CLUSTER, SOCKET_BINDINGS), (name, model) -> {
+            String rcName = model.get(DEFAULT_REMOTE_CLUSTER).asString();
+            ModelNode socketBindings = model.remove(SOCKET_BINDINGS);
+            ResourceAddress rccAddress = REMOTE_CACHE_CONTAINER_TEMPLATE.resolve(statementContext, name);
+            ResourceAddress rcAddress = REMOTE_CLUSTER_TEMPLATE.resolve(statementContext, name, rcName);
+            List<Operation> operations = asList(new Operation.Builder(rccAddress, ADD).payload(model).build(),
+                    new Operation.Builder(rcAddress, ADD).param(SOCKET_BINDINGS, socketBindings).build());
+            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                MessageEvent.fire(eventBus,
+                        Message.success(resources.messages().addResourceSuccess(Names.REMOTE_CACHE_CONTAINER, name)));
+                refresh(Ids.remoteCacheContainer(name));
+            });
+        });
+        dialog.show();
     }
 }

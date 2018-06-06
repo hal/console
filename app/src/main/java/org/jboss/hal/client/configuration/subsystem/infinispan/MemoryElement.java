@@ -77,7 +77,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .add(headerForm = div().css(CSS.headerForm)
                         .add(label()
                                 .apply(l -> l.htmlFor = selectMemoryId)
-                                .textContent(resources.constants().switchStore()))
+                                .textContent(resources.constants().switchMemory()))
                         .add(selectMemory)
                         .asElement())
                 .add(h(1).textContent(Names.MEMORY))
