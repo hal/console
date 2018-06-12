@@ -17,18 +17,25 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.resources.Names;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class CacheContainerPreview extends PreviewContent<CacheContainer> {
 
     CacheContainerPreview(CacheContainer cc) {
-        super(cc.getName());
+        super(cc.getName(), cc.isRemote() ? Names.REMOTE_CACHE_CONTAINER : Names.CACHE_CONTAINER);
 
-        PreviewAttributes<CacheContainer> previewAttributes = new PreviewAttributes<>(cc,
-                asList(DEFAULT_CACHE, STATISTICS_ENABLED));
-        previewBuilder().addAll(previewAttributes);
+        if (cc.isRemote()) {
+            PreviewAttributes<CacheContainer> previewAttributes = new PreviewAttributes<>(cc,
+                    asList(CONNECTION_TIMEOUT, DEFAULT_REMOTE_CLUSTER, KEY_SIZE_ESTIMATE, MAX_RETRIES,
+                            SOCKET_TIMEOUT, TCP_KEEP_ALIVE, TCP_NO_DELAY));
+            previewBuilder().addAll(previewAttributes);
+        } else {
+            PreviewAttributes<CacheContainer> previewAttributes = new PreviewAttributes<>(cc,
+                    asList(DEFAULT_CACHE, STATISTICS_ENABLED));
+            previewBuilder().addAll(previewAttributes);
+        }
     }
 }

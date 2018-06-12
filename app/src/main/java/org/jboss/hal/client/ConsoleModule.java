@@ -51,12 +51,12 @@ import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_ElytronSubsyste
 import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_MapperDecoderView;
 import org.jboss.hal.client.configuration.subsystem.elytron.OtherSettingsPresenter;
 import org.jboss.hal.client.configuration.subsystem.elytron.OtherSettingsView;
-import org.jboss.hal.client.configuration.subsystem.elytron.RealmsPresenter;
-import org.jboss.hal.client.configuration.subsystem.elytron.RealmsView;
 import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView;
 import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerPresenter;
 import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerView;
+import org.jboss.hal.client.configuration.subsystem.infinispan.RemoteCacheContainerPresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.RemoteCacheContainerView;
 import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
@@ -148,6 +148,10 @@ import org.jboss.hal.client.runtime.server.StandaloneServerPresenter;
 import org.jboss.hal.client.runtime.server.StandaloneServerView;
 import org.jboss.hal.client.runtime.subsystem.batch.JobPresenter;
 import org.jboss.hal.client.runtime.subsystem.batch.JobView;
+import org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter;
+import org.jboss.hal.client.runtime.subsystem.elytron.SSLView;
+import org.jboss.hal.client.runtime.subsystem.elytron.StoresPresenter;
+import org.jboss.hal.client.runtime.subsystem.elytron.StoresView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiView;
 import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
@@ -488,6 +492,21 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_PathsView.class,
                 PathsPresenter.MyProxy.class);
 
+        bindPresenter(org.jboss.hal.client.configuration.subsystem.elytron.RealmsPresenter.class,
+                org.jboss.hal.client.configuration.subsystem.elytron.RealmsPresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.elytron.RealmsView.class,
+                org.jboss.hal.client.configuration.subsystem.elytron.RealmsPresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.RealmsView.class,
+                org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.MyProxy.class);
+
+        bindPresenter(RemoteCacheContainerPresenter.class,
+                RemoteCacheContainerPresenter.MyView.class,
+                RemoteCacheContainerView.class,
+                RemoteCacheContainerPresenter.MyProxy.class);
+
         bindPresenter(RemotingPresenter.class,
                 RemotingPresenter.MyView.class,
                 Mbui_RemotingView.class,
@@ -502,26 +521,6 @@ public class ConsoleModule extends AbstractPresenterModule {
                 ResourceAdapterPresenter.MyView.class,
                 Mbui_ResourceAdapterView.class,
                 ResourceAdapterPresenter.MyProxy.class);
-
-        bindPresenter(RealmsPresenter.class,
-                RealmsPresenter.MyView.class,
-                RealmsView.class,
-                RealmsPresenter.MyProxy.class);
-
-        bindPresenter(org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.MyView.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.RealmsView.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.RealmsPresenter.MyProxy.class);
-
-        bindPresenter(org.jboss.hal.client.runtime.subsystem.elytron.StoresPresenter.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.StoresPresenter.MyView.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.StoresView.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.StoresPresenter.MyProxy.class);
-
-        bindPresenter(org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter.MyView.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.SSLView.class,
-                org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter.MyProxy.class);
 
         bindPresenter(RhcpPresenter.class,
                 RhcpPresenter.MyView.class,
@@ -602,6 +601,16 @@ public class ConsoleModule extends AbstractPresenterModule {
                 StandaloneServerPresenter.MyView.class,
                 StandaloneServerView.class,
                 StandaloneServerPresenter.MyProxy.class);
+
+        bindPresenter(StoresPresenter.class,
+                StoresPresenter.MyView.class,
+                StoresView.class,
+                StoresPresenter.MyProxy.class);
+
+        bindPresenter(SSLPresenter.class,
+                SSLPresenter.MyView.class,
+                SSLView.class,
+                SSLPresenter.MyProxy.class);
 
         bindPresenter(SystemPropertiesPresenter.class,
                 SystemPropertiesPresenter.MyView.class,

@@ -28,7 +28,7 @@ enum Table {
     final String type;
     final String resource;
 
-    Table(final String baseId, final String type, final String resource) {
+    Table(String baseId, String type, String resource) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;

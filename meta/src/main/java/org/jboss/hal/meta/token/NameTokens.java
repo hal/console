@@ -85,6 +85,7 @@ public interface NameTokens {
     String PATH = "path";
     String QUEUE = "queue";
     String REMOTING = ModelDescriptionConstants.REMOTING;
+    String REMOTE_CACHE_CONTAINER = ModelDescriptionConstants.REMOTE_CACHE_CONTAINER;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;
     String RUNTIME = "runtime";

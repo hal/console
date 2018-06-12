@@ -149,7 +149,7 @@ public class CacheContainerPresenter
                     .map(ModelNode::asString)
                     .anyMatch(JGROUPS::equals);
 
-            CacheContainer cc = new CacheContainer(this.cacheContainer, result.step(1).get(RESULT));
+            CacheContainer cc = new CacheContainer(this.cacheContainer, false, result.step(1).get(RESULT));
             getView().update(cc, jgroups);
         });
     }

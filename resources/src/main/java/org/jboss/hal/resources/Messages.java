@@ -293,6 +293,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml moveMessageSuccess(String queue);
     SafeHtml multiValueListHint();
 
+    SafeHtml nearCacheInvalidation();
+
+    SafeHtml nearCacheNone();
+
+    SafeHtml nearCacheUndefined();
     SafeHtml newContentSuccess(String deployment, String file);
     String noBootErrors();
     SafeHtml noChanges();
