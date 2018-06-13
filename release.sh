@@ -26,10 +26,10 @@ if ! docker info > /dev/null 2>&1; then
     exit -1
 fi
 
-# Deploying
+# 1. Deploy using HAL theme to be included in docker and yarn
 mvn clean deploy -P docker,prod,release,theme-hal,yarn
 
-# Publishing to gh-pages
+# 2. Publishing to gh-pages
 rm -rf /tmp/console
 cd /tmp/
 git clone -b gh-pages --single-branch git@github.com:hal/console.git
@@ -41,6 +41,10 @@ git add --all
 git commit -am "Update console"
 git push -f origin gh-pages
 cd ${ROOT}
+
+# 3. Deploy again using WildFly theme to override 'hal-console-resources.jar'
+# and to be picked up by WildFly
+mvn deploy -P prod,release,theme-wildfly
 
 echo
 echo
