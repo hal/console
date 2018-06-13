@@ -24,7 +24,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT;
 /** Represents the different component singletons of a specific cache resource. */
 enum Component {
 
-    BACKUPS(Ids.CACHE_COMPONENT_BACKUPS, Names.BACKUPS, ModelDescriptionConstants.BACKUPS),
     EXPIRATION(Ids.CACHE_COMPONENT_EXPIRATION, Names.EXPIRATION, ModelDescriptionConstants.EXPIRATION),
     LOCKING(Ids.CACHE_COMPONENT_LOCKING, Names.LOCKING, ModelDescriptionConstants.LOCKING),
     PARTITION_HANDLING(Ids.CACHE_COMPONENT_PARTITION_HANDLING, Names.PARTITION_HANDLING,

@@ -34,7 +34,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 enum Cache {
 
     DISTRIBUTED(Ids.DISTRIBUTED_CACHE, Names.DISTRIBUTED_CACHE, DISTRIBUTED_CACHE_TEMPLATE, pfIcon("cluster"),
-            true, new Component[]{BACKUPS, EXPIRATION, LOCKING, PARTITION_HANDLING, STATE_TRANSFER, TRANSACTION},
+            true, new Component[]{EXPIRATION, LOCKING, PARTITION_HANDLING, STATE_TRANSFER, TRANSACTION},
             new Memory[]{BINARY, OBJECT, OFF_HEAP}),
 
     INVALIDATION(Ids.INVALIDATION_CACHE, Names.INVALIDATION_CACHE, INVALIDATION_CACHE_TEMPLATE, fontAwesome("ban"),
@@ -44,7 +44,7 @@ enum Cache {
             false, new Component[]{EXPIRATION, LOCKING, TRANSACTION}, new Memory[]{BINARY, OBJECT, OFF_HEAP}),
 
     REPLICATED(Ids.REPLICATED_CACHE, Names.REPLICATED_CACHE, REPLICATED_CACHE_TEMPLATE, pfIcon("replicator"),
-            true, new Component[]{BACKUPS, EXPIRATION, LOCKING, PARTITION_HANDLING, STATE_TRANSFER, TRANSACTION},
+            true, new Component[]{EXPIRATION, LOCKING, PARTITION_HANDLING, STATE_TRANSFER, TRANSACTION},
             new Memory[]{BINARY, OBJECT, OFF_HEAP});
 
     final String baseId;

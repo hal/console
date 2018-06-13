@@ -1,4 +1,4 @@
-[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_ConsoleDevelopment)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_ConsoleDevelopment&guest=1) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/console.svg)](https://gitter.im/hal/console)
+[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_ConsoleDevelopment)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_ConsoleDevelopment&guest=1) [![Chat on Gitter](https://badges.gitter.im/hal/console.svg)](https://gitter.im/hal/console)
 
 HAL ist the project name for the WildFly and JBoss EAP management console. It's part of every WildFly and JBoss EAP installation. To get started simply fire up your browser and open http://localhost:9990. 
 
@@ -103,3 +103,9 @@ If you want to replace the console of an existing WildFly installation use the f
 1. `mvn clean install -P prod,theme-wildfly`
 1. `cp app/target/hal-console-<version>-resources.jar $WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main`
 1. Edit `$WILDFLY_HOME/modules/system/layers/base/org/jboss/as/console/main/module.xml` and adjust the `<resources/>` config: `<resource-root path="hal-console-<version>-resources.jar"/>`
+
+# Licenses
+
+* [Apache License 2.0](http://repository.jboss.org/licenses/apache-2.0.txt)
+* [MIT License](http://repository.jboss.org/licenses/mit.txt)
+

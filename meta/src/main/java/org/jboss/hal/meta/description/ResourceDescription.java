@@ -32,6 +32,20 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** Contains the resource and attribute descriptions from the read-resource-description operation. */
+/* TODO Refactor methods which use the 'path' parameter (too error prone). Instead use a fluent API:
+ *
+ * ResourceDescription description = ...;
+ *
+ * // attributes from the resource description
+ * Property attribute = description.atrributes().get("foo");
+ * List<Property> attributes = description.atrributes().group("bar");
+ * List<Property> attributes = description.atrributes().required();
+ *
+ * // request properties of the ADD operation
+ * Property attribute = description.requestProperties().get("foo");
+ * List<Property> attributes = description.requestProperties().group("bar");
+ * List<Property> attributes = description.requestProperties().required();
+ */
 @JsType(namespace = "hal.meta")
 public class ResourceDescription extends ModelNode {
 

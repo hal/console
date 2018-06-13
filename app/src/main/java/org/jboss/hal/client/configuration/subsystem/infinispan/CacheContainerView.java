@@ -54,8 +54,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  *
  * TODO This view generates a huge DOM tree (about 14k lines of HTML). Think about ways to optimize this.
  */
-public class CacheContainerView extends HalViewImpl
-        implements CacheContainerPresenter.MyView {
+public class CacheContainerView extends HalViewImpl implements CacheContainerPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;
     private final Map<Cache, CacheElement> caches;

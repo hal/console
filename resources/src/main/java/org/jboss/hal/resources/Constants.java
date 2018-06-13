@@ -530,6 +530,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String systemRollback();
     String switchBehaviour();
 
+    String switchNearCache();
     String switchMemory();
     String switchProvider();
     String switchStore();
