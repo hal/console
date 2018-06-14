@@ -23,7 +23,6 @@ module.exports = function (grunt) {
     grunt.initConfig({
         theme: grunt.option('theme') || 'hal',
         config: {
-            bower: 'bower_components',
             devmodeTarget: 'target/gwt/devmode/war/hal',
             esdoc: {
                 source: 'target/generated-resources/esdoc',
@@ -32,6 +31,7 @@ module.exports = function (grunt) {
             },
             js: 'src/js',
             less: 'src/less',
+            node: 'node_modules',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
             version: '3.0.3',
@@ -51,32 +51,32 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= config.bower %>/ace-builds/src-min-noconflict',
+                        cwd: '<%= config.node %>/ace-builds/src-min-noconflict',
                         src: ['mode-*.js', 'theme-*.js', 'worker-*.js'],
                         dest: '<%= config.public %>/js'
                     },
                     {
                         expand: true,
-                        cwd: '<%= config.bower %>/patternfly/dist/fonts',
-                        src: '*',
-                        dest: '<%= config.public %>/fonts'
-                    },
-                    {
-                        expand: true,
-                        cwd: '<%= config.bower %>/jstree/dist/themes/default',
+                        cwd: '<%= config.node %>/jstree/dist/themes/default',
                         src: ['*.gif', '*.png'],
                         dest: '<%= config.public %>/img'
                     },
                     {
                         expand: true,
-                        cwd: '<%= config.bower %>/zeroclipboard/dist',
-                        src: 'ZeroClipboard.swf',
+                        cwd: '<%= config.node %>/patternfly/dist/fonts',
+                        src: '*',
+                        dest: '<%= config.public %>/fonts'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= config.node %>/pouchdb/dist',
+                        src: ['pouchdb.js', 'pouchdb.min.js'],
                         dest: '<%= config.public %>/js'
                     },
                     {
                         expand: true,
-                        cwd: '<%= config.bower %>/pouchdb/dist',
-                        src: ['pouchdb.js', 'pouchdb.min.js'],
+                        cwd: '<%= config.node %>/zeroclipboard/dist',
+                        src: 'ZeroClipboard.swf',
                         dest: '<%= config.public %>/js'
                     },
                     {
@@ -117,27 +117,26 @@ module.exports = function (grunt) {
              */
             dev: {
                 src: [
-                    '<%= config.bower %>/jquery/dist/jquery.js',
-                    '<%= config.bower %>/bootstrap/dist/js/bootstrap.js',
-                    '<%= config.bower %>/bootstrap-select/dist/js/bootstrap-select.js',
-                    '<%= config.bower %>/bootstrap-switch/dist/js/bootstrap-switch.js',
-                    '<%= config.bower %>/c3/c3.js',
-                    '<%= config.bower %>/d3/d3.js',
-                    '<%= config.bower %>/datatables.net/js/jquery.dataTables.js',
-                    '<%= config.bower %>/datatables.net-buttons/js/dataTables.buttons.js',
-                    '<%= config.bower %>/datatables.net-keytable/js/dataTables.keyTable.js',
-                    '<%= config.bower %>/datatables.net-select/js/dataTables.select.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/ace.js',
-                    '<%= config.bower %>/ace-builds/src-noconflict/ext-modelist.js',
-                    '<%= config.bower %>/google-code-prettify/src/prettify.js',
-                    '<%= config.bower %>/javascript-auto-complete/auto-complete.js',
-                    '<%= config.bower %>/js-cookie/src/js.cookie.js',
-                    '<%= config.bower %>/jstree/dist/jstree.js',
-                    '<%= config.bower %>/pouchdb/dist/pouchdb.js',
-                    '<%= config.bower %>/tagmanager/tagmanager.js',
-                    '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.js',
-                    '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.js',
-                    '<%= config.bower %>/patternfly/dist/js/patternfly.js'
+                    '<%= config.node %>/jquery/dist/jquery.js',
+                    '<%= config.node %>/bootstrap/dist/js/bootstrap.js',
+                    '<%= config.node %>/bootstrap-select/dist/js/bootstrap-select.js',
+                    '<%= config.node %>/bootstrap-switch/dist/js/bootstrap-switch.js',
+                    '<%= config.node %>/c3/c3.js',
+                    '<%= config.node %>/d3/d3.js',
+                    '<%= config.node %>/datatables.net/js/jquery.dataTables.js',
+                    '<%= config.node %>/datatables.net-buttons/js/dataTables.buttons.js',
+                    '<%= config.node %>/datatables.net-keytable/js/dataTables.keyTable.js',
+                    '<%= config.node %>/datatables.net-select/js/dataTables.select.js',
+                    '<%= config.node %>/ace-builds/src-noconflict/ace.js',
+                    '<%= config.node %>/ace-builds/src-noconflict/ext-modelist.js',
+                    '<%= config.node %>/google-code-prettify/src/prettify.js',
+                    '<%= config.js %>/auto-complete.js',
+                    '<%= config.node %>/js-cookie/src/js.cookie.js',
+                    '<%= config.node %>/jstree/dist/jstree.js',
+                    '<%= config.node %>/pouchdb/dist/pouchdb.js',
+                    '<%= config.js %>/tagmanager.js',
+                    '<%= config.node %>/zeroclipboard/dist/ZeroClipboard.js',
+                    '<%= config.node %>/patternfly/dist/js/patternfly.js'
                 ],
                 dest: '<%= config.public %>/js/external.js'
             },
@@ -150,27 +149,26 @@ module.exports = function (grunt) {
                     stripBanners: true
                 },
                 src: [
-                    '<%= config.bower %>/jquery/dist/jquery.min.js',
-                    '<%= config.bower %>/bootstrap/dist/js/bootstrap.min.js',
-                    '<%= config.bower %>/bootstrap-select/dist/js/bootstrap-select.min.js',
-                    '<%= config.bower %>/bootstrap-switch/dist/js/bootstrap-switch.min.js',
-                    '<%= config.bower %>/c3/c3.min.js',
-                    '<%= config.bower %>/d3/d3.min.js',
-                    '<%= config.bower %>/datatables.net/js/jquery.dataTables.min.js',
-                    '<%= config.bower %>/datatables.net-buttons/js/dataTables.buttons.min.js',
-                    '<%= config.bower %>/datatables.net-keytable/js/dataTables.keyTable.min.js',
-                    '<%= config.bower %>/datatables.net-select/js/dataTables.select.min.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/ace.js',
-                    '<%= config.bower %>/ace-builds/src-min-noconflict/ext-modelist.js',
-                    '<%= config.bower %>/google-code-prettify/bin/prettify.min.js',
-                    '<%= config.bower %>/javascript-auto-complete/auto-complete.min.js',
-                    '<%= config.bower %>/js-cookie/src/js.cookie.js',
-                    '<%= config.bower %>/jstree/dist/jstree.min.js',
-                    '<%= config.bower %>/pouchdb/dist/pouchdb.min.js',
-                    '<%= config.bower %>/tagmanager/tagmanager.js',
-                    '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.min.js',
-                    '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.min.js',
-                    '<%= config.bower %>/patternfly/dist/js/patternfly.min.js'
+                    '<%= config.node %>/jquery/dist/jquery.min.js',
+                    '<%= config.node %>/bootstrap/dist/js/bootstrap.min.js',
+                    '<%= config.node %>/bootstrap-select/dist/js/bootstrap-select.min.js',
+                    '<%= config.node %>/bootstrap-switch/dist/js/bootstrap-switch.min.js',
+                    '<%= config.node %>/c3/c3.min.js',
+                    '<%= config.node %>/d3/d3.min.js',
+                    '<%= config.node %>/datatables.net/js/jquery.dataTables.min.js',
+                    '<%= config.node %>/datatables.net-buttons/js/dataTables.buttons.min.js',
+                    '<%= config.node %>/datatables.net-keytable/js/dataTables.keyTable.min.js',
+                    '<%= config.node %>/datatables.net-select/js/dataTables.select.min.js',
+                    '<%= config.node %>/ace-builds/src-min-noconflict/ace.js',
+                    '<%= config.node %>/ace-builds/src-min-noconflict/ext-modelist.js',
+                    '<%= config.node %>/google-code-prettify/bin/prettify.min.js',
+                    '<%= config.js %>/auto-complete.min.js',
+                    '<%= config.node %>/js-cookie/src/js.cookie.js',
+                    '<%= config.node %>/jstree/dist/jstree.min.js',
+                    '<%= config.node %>/pouchdb/dist/pouchdb.min.js',
+                    '<%= config.js %>/tagmanager.js',
+                    '<%= config.node %>/zeroclipboard/dist/ZeroClipboard.min.js',
+                    '<%= config.node %>/patternfly/dist/js/patternfly.min.js'
                 ],
                 dest: '<%= config.public %>/js/external.min.js'
             }

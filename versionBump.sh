@@ -10,7 +10,6 @@ else
     mvn versions:set -Pdocker -DnewVersion=$1
     sed -i.versionsBackup "s/.*/$1/" version.txt
     sed -i.versionsBackup "s/version: '.*',$/version: '$2',/" app/Gruntfile.js
-    sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$2\",/" app/bower.json
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$2\",/" app/package.json
     sed -i.versionsBackup "s/name=\"hal\.version\" value=\".*\"/name=\"hal.version\" value=\"$1\"/" app/src/main/module.gwt.xml
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$2\",/" yarn/src/main/resources/hal-console/package.json
