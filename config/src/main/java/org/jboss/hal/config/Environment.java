@@ -84,6 +84,9 @@ public interface Environment {
     @JsIgnore
     void setAccessControlProvider(AccessControlProvider accessControlProvider);
 
+    @JsIgnore
+    void setSingleSignOn(boolean sso);
+
     /**
      * @return true if SSO is used, false otherwise.
      */

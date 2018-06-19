@@ -23,6 +23,8 @@ import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import org.jboss.hal.client.accesscontrol.AccessControl;
 import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
+import org.jboss.hal.client.accesscontrol.AccessControlSsoPresenter;
+import org.jboss.hal.client.accesscontrol.AccessControlSsoView;
 import org.jboss.hal.client.accesscontrol.AccessControlTokens;
 import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
@@ -221,6 +223,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 AccessControlPresenter.MyView.class,
                 AccessControlView.class,
                 AccessControlPresenter.MyProxy.class);
+
+        bindPresenter(AccessControlSsoPresenter.class,
+                AccessControlSsoPresenter.MyView.class,
+                AccessControlSsoView.class,
+                AccessControlSsoPresenter.MyProxy.class);
 
         bindPresenter(ApplicationSecurityDomainPresenter.class,
                 ApplicationSecurityDomainPresenter.MyView.class,

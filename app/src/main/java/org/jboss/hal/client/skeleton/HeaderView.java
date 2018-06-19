@@ -157,6 +157,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             topLevelCategories.removeChild(accessControl);
             // topLevelCategories.removeChild(management);
         }
+        String accessControlNameToken = ac().isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
 
         // @formatter:off
         tlcPlaceRequests = new HashMap<>();
@@ -165,7 +166,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         tlcPlaceRequests.put(NameTokens.CONFIGURATION,  new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
         tlcPlaceRequests.put(NameTokens.RUNTIME,        new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
         tlcPlaceRequests.put(NameTokens.PATCHING,       new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
-        tlcPlaceRequests.put(NameTokens.ACCESS_CONTROL, new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build());
+        tlcPlaceRequests.put(accessControlNameToken,    new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
         // tlcPlaceRequests.put(NameTokens.MANAGEMENT,     new PlaceRequest.Builder().nameToken(NameTokens.MANAGEMENT).build());
         // @formatter:on
 
@@ -177,7 +178,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         NameTokens.CONFIGURATION,
                         NameTokens.RUNTIME,
                         NameTokens.PATCHING,
-                        NameTokens.ACCESS_CONTROL,
+                        accessControlNameToken,
                         // NameTokens.MANAGEMENT,
                 },
                 new String[]{

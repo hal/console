@@ -53,7 +53,11 @@ public class AccessControlPresenter extends
 
     @Override
     protected void onReset() {
-        accessControl.reload(() -> super.onReset());
+        if (environment.isSingleSignOn()) {
+            super.onReset();
+        } else {
+            accessControl.reload(() -> super.onReset());
+        }
     }
 
     @Override

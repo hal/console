@@ -39,6 +39,7 @@ public abstract class AbstractEnvironment implements Environment {
     private String domainController;
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
+    private boolean sso;
 
     protected AbstractEnvironment(String halVersion, String halBuild, List<String> locales) {
         this.halVersion = org.jboss.hal.config.Version.parseVersion(halVersion);
@@ -130,7 +131,12 @@ public abstract class AbstractEnvironment implements Environment {
 
     @Override
     public boolean isSingleSignOn() {
-        return false; // not yet implemented
+        return sso;
+    }
+
+    @Override
+    public void setSingleSignOn(boolean sso) {
+        this.sso = sso;
     }
 
     @Override

@@ -237,6 +237,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageAccessControlStepIntro();
     String homepageAccessControlStep1();
     String homepageAccessControlStep2();
+    String homepageAccessControlSsoSubHeader();
     String homepagePatchingSection();
     String homepagePatchingStep1();
     String homepagePatchingDomainStep2();

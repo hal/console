@@ -16,6 +16,7 @@
 package org.jboss.hal.client.accesscontrol;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -71,24 +72,32 @@ public class BrowseByColumn extends StaticItemColumn {
     public BrowseByColumn(final Finder finder, final AccessControl accessControl, final Environment environment,
             final Resources resources) {
         super(finder, Ids.ACCESS_CONTROL_BROWSE_BY, resources.constants().browseBy(),
-                Arrays.asList(
-                        new StaticItem.Builder(resources.constants().users())
-                                .onPreview(new TopLevelPreview(resources.constants().users(),
-                                        resources.previews().rbacUsers(), accessControl, environment, resources))
-                                .nextColumn(Ids.USER)
-                                .build(),
-                        new StaticItem.Builder(resources.constants().groups())
-                                .onPreview(new TopLevelPreview(resources.constants().groups(),
-                                        resources.previews().rbacGroups(), accessControl, environment, resources))
-                                .nextColumn(Ids.GROUP)
-                                .build(),
-                        new StaticItem.Builder(resources.constants().roles())
-                                .onPreview(new TopLevelPreview(resources.constants().roles(),
-                                        environment.isStandalone() ? resources.previews()
-                                                .rbacRolesStandalone() : resources.previews().rbacRolesDomain(),
-                                        accessControl, environment, resources))
-                                .nextColumn(Ids.ROLE)
-                                .build()
-                ));
+
+                // if Keycloak-SSO is enabled, the user management is performed in keycloak server,
+                // so we need to disable it in widfly
+                // this view is not displayed when user clicks on "access contol" top level menu
+                // but is accessible if user types the named token in the url
+                environment.isSingleSignOn() ? Collections.emptyList() :
+                        Arrays.asList(
+                                new StaticItem.Builder(resources.constants().users())
+                                        .onPreview(new TopLevelPreview(resources.constants().users(),
+                                                resources.previews().rbacUsers(), accessControl, environment,
+                                                resources))
+                                        .nextColumn(Ids.USER)
+                                        .build(),
+                                new StaticItem.Builder(resources.constants().groups())
+                                        .onPreview(new TopLevelPreview(resources.constants().groups(),
+                                                resources.previews().rbacGroups(), accessControl, environment,
+                                                resources))
+                                        .nextColumn(Ids.GROUP)
+                                        .build(),
+                                new StaticItem.Builder(resources.constants().roles())
+                                        .onPreview(new TopLevelPreview(resources.constants().roles(),
+                                                environment.isStandalone() ? resources.previews()
+                                                        .rbacRolesStandalone() : resources.previews().rbacRolesDomain(),
+                                                accessControl, environment, resources))
+                                        .nextColumn(Ids.ROLE)
+                                        .build()
+                        ));
     }
 }

@@ -21,6 +21,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     SafeHtml accessMechanismLabel(String name);
+    String accessControlSsoDescription();
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
     SafeHtml addError(String type, String identity, String resource, String error);
@@ -188,6 +189,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml extensionScriptError();
     SafeHtml extensionUrl();
 
+    SafeHtml failedReadKeycloak(String address, String errorMessage);
     SafeHtml failedRedirectConsole(String url, String message);
     String filterBy(String name);
     SafeHtml flushConnectionSuccess();
@@ -512,6 +514,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml sharedStoreSlave();
     SafeHtml sharedStoreStrategy();
     SafeHtml simpleProviderWarning();
+    SafeHtml ssoAccessControlWarning();
     SafeHtml specifyParameters(String link);
     SafeHtml staleStatistics();
 
@@ -546,7 +549,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml suspendServerQuestion(String name);
     SafeHtml suspendServerSuccess(String name);
 
-    SafeHtml switchProviderSuccess();
+    SafeHtml switchProviderSuccess(String from, String to);
     SafeHtml switchToRbacProvider();
     SafeHtml switchToSimpleProvider();
 
