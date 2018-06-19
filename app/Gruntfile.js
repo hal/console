@@ -148,6 +148,14 @@ module.exports = function (grunt) {
                     ' */\n\n',
                     stripBanners: true
                 },
+                nonull: true,
+                filter: function (filepath) {
+                    if (!grunt.file.exists(filepath)) {
+                        grunt.fail.fatal('Grunt error. Could not find: ' + filepath);
+                    } else {
+                        return true;
+                    }
+                },
                 src: [
                     '<%= config.node %>/jquery/dist/jquery.min.js',
                     '<%= config.node %>/bootstrap/dist/js/bootstrap.min.js',
@@ -155,7 +163,7 @@ module.exports = function (grunt) {
                     '<%= config.node %>/bootstrap-switch/dist/js/bootstrap-switch.min.js',
                     '<%= config.node %>/c3/c3.min.js',
                     '<%= config.node %>/d3/d3.min.js',
-                    '<%= config.node %>/datatables.net/js/jquery.dataTables.min.js',
+                    '<%= config.node %>/datatables.net/js/jquery.dataTables.js',
                     '<%= config.node %>/datatables.net-buttons/js/dataTables.buttons.min.js',
                     '<%= config.node %>/datatables.net-keytable/js/dataTables.keyTable.min.js',
                     '<%= config.node %>/datatables.net-select/js/dataTables.select.min.js',

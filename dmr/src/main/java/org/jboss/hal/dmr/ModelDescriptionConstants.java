@@ -79,6 +79,7 @@ public interface ModelDescriptionConstants {
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTHENTICATION_CONFIGURATION = "authentication-configuration";
     String AUTHENTICATION_CONTEXT = "authentication-context";
+    String AUTH_SERVER_URL = "auth-server-url";
     String AUTHOR = "author";
     String AUTHORIZATION = "authorization";
     String AUTO_START = "auto-start";
@@ -405,6 +406,8 @@ public interface ModelDescriptionConstants {
     String KEY_SIZE_ESTIMATE = "key-size-estimate";
     String KEY_STORE = "key-store";
     String KEY_STORE_REALM = "key-store-realm";
+    String KEYCLOAK = "keycloak";
+    String KEYCLOAK_SERVER_URL = "keycloak-server-url";
     String KILL = "kill";
     String LARGEST_THREAD_COUNT = "largest-thread-count";
     String LAST_CONNECTED = "last-connected";
@@ -621,6 +624,7 @@ public interface ModelDescriptionConstants {
     String REALM = "realm";
     String REALMS = "realms";
     String REALM_NAME = "realm-name";
+    String REALM_PUBLIC_KEY = "realm-public-key";
     String REASON = "reason";
     String RECORD_REQUEST_START_TIME = "record-request-start-time";
     String RECOVERY_PLUGIN_CLASS_NAME = "recovery-plugin-class-name";

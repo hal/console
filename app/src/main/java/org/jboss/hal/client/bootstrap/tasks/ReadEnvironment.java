@@ -25,6 +25,8 @@ import org.jboss.hal.config.OperationMode;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.Version;
+import org.jboss.hal.config.keycloak.Keycloak;
+import org.jboss.hal.config.keycloak.KeycloakHolder;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
@@ -48,16 +50,20 @@ public class ReadEnvironment implements BootstrapTask {
     private final Dispatcher dispatcher;
     private final Environment environment;
     private final User user;
+    private KeycloakHolder keycloakHolder;
 
     @Inject
-    public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user) {
+    public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user, KeycloakHolder keycloakHolder) {
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.user = user;
+        this.keycloakHolder = keycloakHolder;
     }
 
     @Override
     public Completable call() {
+        Keycloak keycloak = keycloakHolder.getKeycloak();
+        environment.setSingleSignOn(keycloak != null);
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
@@ -89,14 +95,26 @@ public class ReadEnvironment implements BootstrapTask {
                     }
 
                     // user info
-                    ModelNode whoami = result.step(1).get(RESULT);
-                    String username = whoami.get("identity").get("username").asString();
-                    user.setName(username);
-                    if (whoami.hasDefined("mapped-roles")) {
-                        List<ModelNode> roles = whoami.get("mapped-roles").asList();
-                        for (ModelNode role : roles) {
-                            String roleName = role.asString();
-                            user.addRole(new Role(roleName));
+                    if (environment.isSingleSignOn()) {
+                        user.setName(keycloak.userProfile.username);
+                        // as Keycloak is a native js object, the Java 8 collection methods as: stream, foreach, iterator
+                        // are not supported on the javascript side when run in the browser.
+                        if (keycloak.realmAccess != null && keycloak.realmAccess.roles != null) {
+                            for (int i = 0; i < keycloak.realmAccess.roles.length; i++) {
+                                String role = keycloak.realmAccess.roles[i];
+                                user.addRole(new Role(role));
+                        }
+                        }
+                    } else {
+                        ModelNode whoami = result.step(1).get(RESULT);
+                        String username = whoami.get("identity").get("username").asString();
+                        user.setName(username);
+                        if (whoami.hasDefined("mapped-roles")) {
+                            List<ModelNode> roles = whoami.get("mapped-roles").asList();
+                            for (ModelNode role : roles) {
+                                String roleName = role.asString();
+                                user.addRole(new Role(roleName));
+                            }
                         }
                     }
                 })
