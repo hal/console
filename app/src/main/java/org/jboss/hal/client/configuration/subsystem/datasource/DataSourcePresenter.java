@@ -26,6 +26,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -34,21 +35,27 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** Presenter which is used for both XA and normal data sources. */
 public class DataSourcePresenter
@@ -57,8 +64,11 @@ public class DataSourcePresenter
 
     static final String XA_PARAM = "xa";
 
+    private Dispatcher dispatcher;
     private final CrudOperations crud;
+    private OperationFactory operationFactory;
     private final FinderPathFactory finderPathFactory;
+    private Resources resources;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private String name;
@@ -69,13 +79,19 @@ public class DataSourcePresenter
             MyView view,
             MyProxy proxy,
             Finder finder,
+            Dispatcher dispatcher,
             CrudOperations crud,
+            OperationFactory operationFactory,
             FinderPathFactory finderPathFactory,
+            Resources resources,
             MetadataRegistry metadataRegistry,
             StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
+        this.dispatcher = dispatcher;
         this.crud = crud;
+        this.operationFactory = operationFactory;
         this.finderPathFactory = finderPathFactory;
+        this.resources = resources;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
     }
@@ -115,11 +131,39 @@ public class DataSourcePresenter
 
     @Override
     protected void reload() {
-        crud.read(resourceAddress(), result -> getView().update(new DataSource(name, result, xa)));
+        crud.read(resourceAddress(), 1, result -> getView().update(new DataSource(name, result, xa)));
     }
 
-    void saveDataSource(Map<String, Object> changedValues) {
-        crud.save(type(), name, resourceAddress(), changedValues, metadata(), this::reload);
+    void saveDataSource(Form<DataSource> form, Map<String, Object> changedValues, Map<String, String> existing) {
+        Map<String, String> properties = form.<Map<String, String>>getFormItem(propertiesName()).getValue();
+        Composite operations = operationFactory.fromChangeSet(resourceAddress(), changedValues, metadata());
+
+        // remove properties
+        existing.forEach((existingName, existingValue) -> {
+            String newValue = properties.get(existingName);
+            if (!existingValue.equals(newValue)) {
+                ResourceAddress propAddress = new ResourceAddress(resourceAddress()).add(propertiesName(), existingName);
+                Operation operation = new Operation.Builder(propAddress, REMOVE)
+                        .build();
+                operations.add(operation);
+            }
+        });
+
+        // add properties
+        properties.forEach((name, newValue) -> {
+            String existingValue = existing.get(name);
+            if (!newValue.equals(existingValue)) {
+                ResourceAddress propAddress = new ResourceAddress(resourceAddress()).add(propertiesName(), name);
+                Operation operation = new Operation.Builder(propAddress, ADD)
+                        .param(VALUE, newValue)
+                        .build();
+                operations.add(operation);
+            }
+        });
+        dispatcher.execute(operations, (CompositeResult compositeResult) -> {
+            reload();
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().modifyResourceSuccess(type(), name)));
+        });
     }
 
     void resetDataSource(Form<DataSource> form) {
@@ -128,6 +172,10 @@ public class DataSourcePresenter
 
     private String type() {
         return xa ? Names.DATASOURCE : Names.XA_DATASOURCE;
+    }
+
+    private String propertiesName() {
+        return xa ? XA_DATASOURCE_PROPERTIES : CONNECTION_PROPERTIES;
     }
 
     private Metadata metadata() {
