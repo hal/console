@@ -129,6 +129,11 @@ public class Subsystems {
                 .nextColumn(Ids.MESSAGING_CATEGORY)
                 .preview(resources.previews().configurationMessaging())
                 .build());
+        addConfiguration(new SubsystemMetadata.Builder(MICROPROFILE_CONFIG_SMALLRYE, Names.MICROPROFILE_CONFIG)
+                .subtitle(Names.SMALLRYE)
+                .token(NameTokens.MICROPROFILE_CONFIG)
+                .preview(resources.previews().configurationMicroprofileConfig())
+                .build());
         addConfiguration(new SubsystemMetadata.Builder(MODCLUSTER, Names.MODCLUSTER)
                 .token(NameTokens.MODCLUSTER)
                 .preview(resources.previews().configurationModcluster())

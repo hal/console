@@ -63,7 +63,7 @@ class FileFormItem extends CompositeFormItem {
     }
 
     @Override
-    protected void populateFormItems(final ModelNode modelNode) {
+    protected void populateFormItems(ModelNode modelNode) {
         path.setValue(modelNode.get(PATH).asString());
         if (modelNode.hasDefined(RELATIVE_TO)) {
             relativeTo.setValue(modelNode.get(RELATIVE_TO).asString());
@@ -71,7 +71,7 @@ class FileFormItem extends CompositeFormItem {
     }
 
     @Override
-    protected void persistModel(final ModelNode modelNode) {
+    protected void persistModel(ModelNode modelNode) {
         modelNode.get(PATH).set(path.getValue());
         if (relativeTo.isUndefined()) {
             modelNode.get(RELATIVE_TO).set(new ModelNode());

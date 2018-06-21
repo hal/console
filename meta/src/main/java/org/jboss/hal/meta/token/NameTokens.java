@@ -79,6 +79,7 @@ public interface NameTokens {
     String MESSAGING_SERVER_CLUSTERING = "messaging-server-clustering";
     String MESSAGING_SERVER_DESTINATION = "messaging-server-destination";
     String MESSAGING_SERVER_HA_POLICY = "messaging-server-ha-policy";
+    String MICROPROFILE_CONFIG = "micro-profile-config";
     String MODCLUSTER = ModelDescriptionConstants.MODCLUSTER;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";

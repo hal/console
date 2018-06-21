@@ -21,7 +21,6 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
 import com.google.auto.common.MoreTypes;
 import org.jdom2.Element;
@@ -36,14 +35,11 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     @NonNls final MbuiViewProcessor processor;
-    private final Types typeUtils;
     private final Elements elementUtils;
     final XPathFactory xPathFactory;
 
-    AbstractMbuiElementProcessor(MbuiViewProcessor processor, Types typeUtils,
-            Elements elementUtils, XPathFactory xPathFactory) {
+    AbstractMbuiElementProcessor(MbuiViewProcessor processor, Elements elementUtils, XPathFactory xPathFactory) {
         this.processor = processor;
-        this.typeUtils = typeUtils;
         this.elementUtils = elementUtils;
         this.xPathFactory = xPathFactory;
     }

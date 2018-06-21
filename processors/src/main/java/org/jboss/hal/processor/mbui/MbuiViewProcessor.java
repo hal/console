@@ -93,12 +93,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
         this(MbuiViewProcessor.class, TemplateNames.TEMPLATES);
     }
 
-    protected MbuiViewProcessor(final Class resourceLoaderClass, final String templates) {
+    protected MbuiViewProcessor(Class resourceLoaderClass, String templates) {
         super(resourceLoaderClass, templates);
     }
 
     @Override
-    protected boolean onProcess(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+    protected boolean onProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element e : roundEnv.getElementsAnnotatedWith(MbuiView.class)) {
             TypeElement type = (TypeElement) e;
             MbuiView mbuiView = type.getAnnotation(MbuiView.class);
@@ -112,7 +112,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     // ------------------------------------------------------ general validation
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void validateType(final TypeElement type, final MbuiView mbuiView) {
+    private void validateType(TypeElement type, MbuiView mbuiView) {
         if (mbuiView == null) {
             // This shouldn't happen unless the compilation environment is buggy,
             // but it has happened in the past and can crash the compiler.
@@ -166,7 +166,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ processing
 
-    protected void processType(final TypeElement type, final MbuiView mbuiView) {
+    protected void processType(TypeElement type, MbuiView mbuiView) {
         String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "")); //NON-NLS
         String createMethod = verifyCreateMethod(type);
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
@@ -230,7 +230,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     // ------------------------------------------------------ XML processing
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private Document parseXml(final TypeElement type, final MbuiView mbuiView) {
+    private Document parseXml(TypeElement type, MbuiView mbuiView) {
         String mbuiXml = Strings.isNullOrEmpty(mbuiView.value())
                 ? type.getSimpleName().toString() + ".mbui.xml"
                 : mbuiView.value();
@@ -250,7 +250,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void validateDocument(final TypeElement type, final Document document) {
+    private void validateDocument(TypeElement type, Document document) {
         // verify root element
         org.jdom2.Element root = document.getRootElement();
         if (!root.getName().equals(XmlTags.VIEW)) {
@@ -275,7 +275,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     /**
      * Lookup all //metadata elements, verify the address attribute and store them in the context.
      */
-    private void processMetadata(final TypeElement type, final Document document, final MbuiViewContext context) {
+    private void processMetadata(TypeElement type, Document document, MbuiViewContext context) {
         XPathExpression<org.jdom2.Element> expression = xPathFactory
                 .compile(SLASH_SLASH + XmlTags.METADATA, Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
@@ -292,7 +292,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     // ------------------------------------------------------ process @MbuiElement
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void processMbuiElements(final TypeElement type, final Document document, final MbuiViewContext context) {
+    private void processMbuiElements(TypeElement type, Document document, MbuiViewContext context) {
         ElementFilter.fieldsIn(type.getEnclosedElements()).stream()
                 .filter(field -> MoreElements.isAnnotationPresent(field, MbuiElement.class))
                 .forEach(field -> {
@@ -318,14 +318,14 @@ public class MbuiViewProcessor extends AbstractProcessor {
                         MbuiElementProcessor elementProcessor = null;
                         switch (elementType) {
                             case VerticalNavigation:
-                                elementProcessor = new VerticalNavigationProcessor(this, typeUtils, elementUtils,
+                                elementProcessor = new VerticalNavigationProcessor(this, elementUtils,
                                         xPathFactory);
                                 break;
                             case Table:
-                                elementProcessor = new DataTableProcessor(this, typeUtils, elementUtils, xPathFactory);
+                                elementProcessor = new DataTableProcessor(this, elementUtils, xPathFactory);
                                 break;
                             case Form:
-                                elementProcessor = new FormProcessor(this, typeUtils, elementUtils, xPathFactory);
+                                elementProcessor = new FormProcessor(this, elementUtils, xPathFactory);
                                 break;
                             default:
                                 break;
@@ -381,7 +381,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ process root
 
-    private void processRoot(final Document document, final MbuiViewContext context) {
+    private void processRoot(Document document, MbuiViewContext context) {
         // if the root is not a vertical navigation we need to parse its content.
         if (!XmlTags.VERTICAL_NAVIGATION.equals(document.getRootElement().getName())) {
             Content.parse(document.getRootElement(), context).forEach(context::addContent);
@@ -391,7 +391,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ process references
 
-    private void processCrossReferences(final Document document, final MbuiViewContext context) {
+    private void processCrossReferences(Document document, MbuiViewContext context) {
         // table-form bindings
         XPathExpression<org.jdom2.Element> expression = xPathFactory
                 .compile(SLASH_SLASH + XmlTags.TABLE + "[@" + XmlTags.FORM_REF + "]", Filters.element());
@@ -423,8 +423,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
     }
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private void resolveItemReferences(final VerticalNavigationInfo navigation, final String xpath,
-            final Document document, final MbuiViewContext context) {
+    private void resolveItemReferences(VerticalNavigationInfo navigation, String xpath,
+            Document document, MbuiViewContext context) {
 
         XPathExpression<org.jdom2.Element> expression = xPathFactory.compile(xpath, Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
@@ -453,7 +453,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ abstract properties
 
-    void processAbstractProperties(final TypeElement type, final MbuiViewContext context) {
+    void processAbstractProperties(TypeElement type, MbuiViewContext context) {
         ElementFilter.methodsIn(type.getEnclosedElements()).stream()
                 .filter(method -> method.getModifiers().contains(Modifier.ABSTRACT))
                 .forEach(method -> {
@@ -495,7 +495,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         return Introspector.decapitalize(withoutPrefix);
     }
 
-    private String getModifier(final ExecutableElement method) {
+    private String getModifier(ExecutableElement method) {
         String modifier = null;
         Set<Modifier> modifiers = method.getModifiers();
         if (modifiers.contains(Modifier.PUBLIC)) {
@@ -510,7 +510,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     // ------------------------------------------------------ process @PostConstruct
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void processPostConstruct(TypeElement type, final MbuiViewContext context) {
+    private void processPostConstruct(TypeElement type, MbuiViewContext context) {
         ElementFilter.methodsIn(type.getEnclosedElements()).stream()
                 .filter(method -> MoreElements.isAnnotationPresent(method, PostConstruct.class))
                 .forEach(method -> {

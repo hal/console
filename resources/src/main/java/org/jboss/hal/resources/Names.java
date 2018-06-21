@@ -209,6 +209,7 @@ public interface Names {
     String MASTER = "Master";
     String MAXIMUM_PERMISSIONS = "Maximum Permissions";
     String MB = "MB";
+    String MICROPROFILE_CONFIG = "Microprofile Config";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
     String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
@@ -317,6 +318,7 @@ public interface Names {
     String SIZE_ACTION_HANDLER = "Size ActionHandler";
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
+    String SMALLRYE = "Smallrye";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
