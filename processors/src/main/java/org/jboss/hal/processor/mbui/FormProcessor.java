@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
 import com.google.common.base.Strings;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -31,14 +30,12 @@ import org.jdom2.xpath.XPathFactory;
 
 class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    FormProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,
-            final XPathFactory xPathFactory) {
-        super(processor, typeUtils, elementUtils, xPathFactory);
+    FormProcessor(MbuiViewProcessor processor, Elements elementUtils, XPathFactory xPathFactory) {
+        super(processor, elementUtils, xPathFactory);
     }
 
     @Override
-    public void process(final VariableElement field, final Element element, final String selector,
-            final MbuiViewContext context) {
+    public void process(VariableElement field, Element element, String selector, MbuiViewContext context) {
         String title = element.getAttributeValue(XmlTags.TITLE);
         boolean autoSave = Boolean.parseBoolean(element.getAttributeValue(XmlTags.AUTO_SAVE));
         boolean reset = Boolean.parseBoolean(element.getAttributeValue(XmlTags.RESET));

@@ -86,7 +86,7 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
         // then, even as the metadata has RWX permission, it can only be created when he has permission to the above constraint
         Metadata metadata = new Metadata(template, () -> RWX, new ResourceDescription(description),
                 new Capabilities(environment));
-        ModelNodeForm.Builder builder = new ModelNodeForm.Builder<>(id, metadata)
+        ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
                 .unsorted();
 
         if (!undertowHttps) {
@@ -110,7 +110,7 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
     }
 
     @Override
-    protected void onShow(final EnableSSLContext context) {
+    protected void onShow(EnableSSLContext context) {
         if (context.strategy == EnableSSLContext.Strategy.KEYSTORE_RESOURCE_EXISTS) {
             show(KEY_STORE);
             show(KEY_STORE_PASSWORD);

@@ -67,7 +67,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     private HTMLElement editingContainer;
     private final List<HandlerRegistration> handlers;
 
-    public CompositeFormItem(final String name, final String label) {
+    public CompositeFormItem(String name, String label) {
         super(name, label, null);
         this.handlers = new ArrayList<>();
     }
@@ -90,18 +90,14 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
         }
     }
 
-    /**
-     * Called during {@link #setValue(Object)} to set the form items using the provided model.
-     */
+    /** Called during {@link #setValue(Object)} to set the form items using the provided model. */
     protected abstract void populateFormItems(ModelNode modelNode);
 
-    /**
-     * Called during {@link #getValue()} to persist the form items into the provided model.
-     */
+    /** Called during {@link #getValue()} to persist the form items into the provided model. */
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    public HTMLElement asElement(final Form.State state) {
+    public HTMLElement asElement(Form.State state) {
         if (state == EDITING) {
             return editingContainer;
         } else if (state == READONLY) {
@@ -136,12 +132,12 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void setValue(final ModelNode value, final boolean fireEvent) {
+    public void setValue(ModelNode value, boolean fireEvent) {
         populateFormItems(value);
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ModelNode> valueChangeHandler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ModelNode> valueChangeHandler) {
         return null; // not supported
     }
 
@@ -161,7 +157,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public String getId(final Form.State state) {
+    public String getId(Form.State state) {
         if (state == EDITING) {
             return editingContainer.id;
         } else if (state == READONLY) {
@@ -171,7 +167,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void setId(final String id) {
+    public void setId(String id) {
         String editId = Ids.build(id, EDITING.name().toLowerCase());
         String readonlyId = Ids.build(id, READONLY.name().toLowerCase());
         editingContainer.id = editId;
@@ -184,7 +180,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void addValidationHandler(final FormItemValidation<ModelNode> validationHandler) {
+    public void addValidationHandler(FormItemValidation<ModelNode> validationHandler) {
         // not supported
     }
 
@@ -198,7 +194,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
+    public void registerSuggestHandler(SuggestHandler suggestHandler) {
         // not supported
     }
 
@@ -213,7 +209,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void setRestricted(final boolean restricted) {
+    public void setRestricted(boolean restricted) {
         formItems.forEach(formItem -> formItem.setRestricted(restricted));
     }
 
@@ -228,7 +224,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void setEnabled(final boolean enabled) {
+    public void setEnabled(boolean enabled) {
         formItems.forEach(formItem -> formItem.setEnabled(enabled));
     }
 
@@ -238,7 +234,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void setTabIndex(final int index) {
+    public void setTabIndex(int index) {
         int i = index;
         for (FormItem formItem : formItems) {
             formItem.setTabIndex(i);
@@ -247,7 +243,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void setFocus(final boolean focus) {
+    public void setFocus(boolean focus) {
         if (!formItems.isEmpty()) {
             formItems.get(0).setFocus(focus);
         }
@@ -264,12 +260,12 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public void setRequired(final boolean required) {
+    public void setRequired(boolean required) {
         // not supported;
     }
 
     @Override
-    public void setUndefined(final boolean undefined) {
+    public void setUndefined(boolean undefined) {
         formItems.forEach(formItem -> formItem.setUndefined(undefined));
     }
 
@@ -278,12 +274,12 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
 
         private final FormItem formItem;
 
-        private FormItemChangeHandler(final FormItem formItem) {
+        private FormItemChangeHandler(FormItem formItem) {
             this.formItem = formItem;
         }
 
         @Override
-        public void onValueChange(final ValueChangeEvent event) {
+        public void onValueChange(ValueChangeEvent event) {
             formItem.setModified(true);
             formItem.setUndefined(Strings.isNullOrEmpty(String.valueOf(event.getValue())));
             setModified(true);

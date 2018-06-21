@@ -474,6 +474,7 @@ public interface ModelDescriptionConstants {
     String MESSAGES_ADDED = "messages-added";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
+    String MICROPROFILE_CONFIG_SMALLRYE = "microprofile-config-smallrye";
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
     String MIN_POOL_SIZE = "min-pool-size";

@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.meta.AddressTemplate;
@@ -35,14 +34,12 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    DataTableProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,
-            final XPathFactory xPathFactory) {
-        super(processor, typeUtils, elementUtils, xPathFactory);
+    DataTableProcessor(MbuiViewProcessor processor, Elements elementUtils, XPathFactory xPathFactory) {
+        super(processor, elementUtils, xPathFactory);
     }
 
     @Override
-    public void process(final VariableElement field, final Element element, final String selector,
-            final MbuiViewContext context) {
+    public void process(VariableElement field, Element element, String selector, MbuiViewContext context) {
         MetadataInfo metadata = findMetadata(field, element, context);
         AddressTemplate template = AddressTemplate.of(metadata.getTemplate());
         String title = element.getAttributeValue(XmlTags.TITLE);

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="microprofile-config-vertical-navigation">
+
+        <item id="microprofile-config-source-item" title="Config Sources" icon="fa fa-cogs">
+            <metadata address="/{selected.profile}/subsystem=microprofile-config-smallrye/config-source=*">
+                <h1>Config Sources</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="microprofile-config-source-table" title="Config Source"
+                       form-ref="microprofile-config-source-form">
+                    <actions>
+                        <action handler-ref="add-resource">
+                            <attributes>
+                                <attribute name="class" provider="${new ClassFormItem()}"/>
+                                <attribute name="dir"/>
+                                <attribute name="properties"/>
+                                <attribute name="ordinal"/>
+                            </attributes>
+                        </action>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="${table.selectedRow().getName()}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                        <column name="ordinal"/>
+                    </columns>
+                </table>
+                <form id="microprofile-config-source-form" auto-save="true" reset="true"
+                      name-resolver="${form.getModel().getName()}">
+                    <attributes>
+                        <attribute name="class" provider="${new ClassFormItem()}"/>
+                        <attribute name="dir"/>
+                        <attribute name="properties"/>
+                        <attribute name="ordinal"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="microprofile-config-source-provider-item" title="Config Providers" icon="pficon pficon-services">
+            <metadata address="/{selected.profile}/subsystem=microprofile-config-smallrye/config-source-provider=*">
+                <h1>Config Providers</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="microprofile-config-source-provider-table" title="Config Provider"
+                       form-ref="microprofile-config-source-provider-form">
+                    <actions>
+                        <action handler-ref="add-resource">
+                            <attributes>
+                                <attribute name="class" provider="${new ClassFormItem()}"/>
+                            </attributes>
+                        </action>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="${table.selectedRow().getName()}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="microprofile-config-source-provider-form" auto-save="true" reset="true"
+                      name-resolver="${form.getModel().getName()}">
+                    <attributes>
+                        <attribute name="class" provider="${new ClassFormItem()}"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+    </vertical-navigation>
+</view>
