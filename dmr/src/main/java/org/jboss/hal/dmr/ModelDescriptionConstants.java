@@ -153,6 +153,7 @@ public interface ModelDescriptionConstants {
     String CONNECTION_LIMIT_LOW_WATER_MARK = "connection-limit-low-water-mark";
     String CONNECTION_DEFINITIONS = "connection-definitions";
     String CONNECTION_FACTORY = "connection-factory";
+    String CONNECTION_PROPERTIES = "connection-properties";
     String CONNECTION_TIMEOUT = "connection-timeout";
     String CONNECTION_URL = "connection-url";
     String CONNECTOR = "connector";
@@ -902,6 +903,7 @@ public interface ModelDescriptionConstants {
     String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATASOURCE_CLASS = "xa-datasource-class";
+    String XA_DATASOURCE_PROPERTIES = "xa-datasource-properties";
     String XML = "xml";
 }
 
