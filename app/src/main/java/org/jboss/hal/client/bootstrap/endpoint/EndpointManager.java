@@ -15,17 +15,29 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
+import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import elemental2.dom.HTMLScriptElement;
 import elemental2.dom.XMLHttpRequest;
+import org.jboss.hal.client.bootstrap.tasks.BootstrapTask;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.config.keycloak.Keycloak;
+import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.js.Json;
+import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setInterval;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTH_SERVER_URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEYCLOAK;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.js.JsHelper.requestParameter;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
@@ -40,6 +52,10 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
  */
 public class EndpointManager {
 
+    // wildfly-console is the name convention to set it as the configuration specifically for HAL
+    // as there is no setting specifically to associate /subsystem=keycloak/secure-server=*
+    // for http management authentication
+    private static final String KEYCLOAK_ADAPTER_WILDFLY_CONSOLE = "/keycloak/adapter/wildfly-console";
     public static final String CONNECT_PARAMETER = "connect";
     static final String DEFAULT_HOST = "localhost"; // must be in sync with the default value in endpoint.dmr!
     static final int DEFAULT_PORT = 9990; // must be in sync with the default value in endpoint.dmr!
@@ -47,13 +63,15 @@ public class EndpointManager {
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
+    private KeycloakHolder keycloakHolder;
 
     private Callback callback;
 
     @Inject
-    public EndpointManager(Endpoints endpoints, EndpointStorage storage) {
+    public EndpointManager(Endpoints endpoints, EndpointStorage storage, KeycloakHolder keycloakHolder) {
         this.endpoints = endpoints;
         this.storage = storage;
+        this.keycloakHolder = keycloakHolder;
     }
 
     public void select(Callback callback) {
@@ -85,16 +103,28 @@ public class EndpointManager {
 
         } else {
             // Test whether this console is served from a WildFly / EAP instance
-            String managementEndpoint = Endpoints.getBaseUrl() + MANAGEMENT;
+            String baseUrl = Endpoints.getBaseUrl();
+            String managementEndpoint = baseUrl + MANAGEMENT;
             XMLHttpRequest xhr = new XMLHttpRequest();
             xhr.onload = event -> {
-                int status = (int) xhr.status;
+                int status = xhr.status;
                 switch (status) {
                     case 0:
                     case 200:
                     case 401:
-                        endpoints.useBase(Endpoints.getBaseUrl());
-                        callback.execute();
+                        if (keycloakPresentAndValid()) {
+                            endpoints.useBase(baseUrl);
+                            callback.execute();
+                        } else {
+                            checkKeycloakAdapter(baseUrl, keycloakServerJsUrl -> {
+                                // if there is a keycloak adapter, call keycloak authentication
+                                authKeycloak(getKeycloakAdapterUrl(baseUrl), keycloakServerJsUrl, callback::execute);
+                            }, () -> {
+                                // if there is no keycloak adapter for wildfly-console, proceed with regular authentication
+                                endpoints.useBase(baseUrl);
+                                callback.execute();
+                            });
+                        }
                         break;
                     // TODO Show an error page!
                     // case 500:
@@ -116,26 +146,104 @@ public class EndpointManager {
         new EndpointDialog(this, storage).show();
     }
 
+    private String getKeycloakAdapterUrl(String baseUrl) {
+        return baseUrl + KEYCLOAK_ADAPTER_WILDFLY_CONSOLE;
+    }
+
     void pingServer(Endpoint endpoint, AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
+
+        checkKeycloakAdapter(endpoint.getUrl(), s ->  {
+            callback.onSuccess(null);
+        }, () -> {
+            try {
+                XMLHttpRequest xhr = new XMLHttpRequest();
+                xhr.onload = event -> {
+                    int status = xhr.status;
+                    if (status == 200) {
+                        callback.onSuccess(null);
+                    } else {
+                        logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
+                        callback.onFailure(new IllegalStateException());
+                    }
+                };
+                xhr.open(GET.name(), managementEndpoint, true);
+                xhr.withCredentials = true;
+                xhr.send();
+            } catch (Exception e) {
+                logger.error("Error when pinging '{}'. cause: {}", managementEndpoint, e.getMessage());
+                callback.onFailure(e);
+            }
+        });
+
+
+    }
+
+    private void checkKeycloakAdapter(String baseUrl, Consumer<String> kcExistsCallback, Callback wildflyCallback) {
+        String keycloakAdapterUrl = getKeycloakAdapterUrl(baseUrl);
         XMLHttpRequest xhr = new XMLHttpRequest();
         xhr.onload = event -> {
-            int status = (int) xhr.status;
+            int status = xhr.status;
             if (status == 200) {
-                callback.onSuccess(null);
+                JsonObject kcConfig = Json.parse(xhr.responseText);
+                String keycloakServerJsUrl = kcConfig.getString(AUTH_SERVER_URL) + "/js/keycloak.js";
+                kcExistsCallback.accept(keycloakServerJsUrl);
             } else {
-                logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
-                callback.onFailure(new IllegalStateException());
+                logger.error("Keycloak adapter '{}' doesn't exist - status: {}", keycloakAdapterUrl, status);
+                wildflyCallback.execute();
             }
         };
-        xhr.open(GET.name(), managementEndpoint, true);
-        xhr.withCredentials = true;
+        xhr.open(GET.name(), keycloakAdapterUrl, true);
         xhr.send();
     }
+
+    private void authKeycloak(String kcAdapterUrl, String keycloakServerJsUrl, Callback callback) {
+        // load keycloak.js from keycloak server url
+        HTMLScriptElement script = (HTMLScriptElement) document.createElement("script");
+        script.src = keycloakServerJsUrl;
+        script.onload = onLoadEvent -> {
+            Keycloak kc = new Keycloak(kcAdapterUrl);
+            Keycloak.Api initOptions = new Keycloak.Api();
+            kc.init(initOptions)
+                .success(authenticated -> {
+                    setInterval(o -> kc.updateToken(32), 30000);
+                    kc.loadUserProfile().success(profile -> {
+                        kc.userProfile = profile;
+                    });
+                    set(KEYCLOAK, kc);
+                    callback.execute();
+                })
+                .error(() -> logger.error("Error, could not initialize keycloak authentication."));
+
+            keycloakHolder.setKeycloak(kc);
+            return null;
+        };
+        document.head.appendChild(script);
+    }
+
+    private native boolean set(String key, Object value)/*-{
+        $wnd[key] = value;
+    }-*/;
+
+    private native boolean keycloakPresentAndValid()/*-{
+        var keycloak = $wnd[keycloak];
+        return keycloak != null && !keycloak.isTokenExpired();
+    }-*/;
 
     void onConnect(Endpoint endpoint) {
         storage.saveSelection(endpoint);
         endpoints.useBase(endpoint.getUrl());
-        callback.execute();
+
+        if (keycloakPresentAndValid()) {
+            callback.execute();
+        } else {
+            checkKeycloakAdapter(endpoint.getUrl(), keycloakServerJsUrl -> {
+                // if there is a keycloak adapter, call keycloak authentication
+                authKeycloak(getKeycloakAdapterUrl(endpoint.getUrl()), keycloakServerJsUrl, () -> callback.execute());
+            }, () -> {
+                // if there is no keycloak adapter for wildfly-console, proceed with regular authentication
+                callback.execute();
+            });
+        }
     }
 }

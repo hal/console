@@ -53,4 +53,8 @@ public class AccessControl {
         }
         return true;
     }
+
+    public boolean isSingleSignOn() {
+        return environment.isSingleSignOn();
+    }
 }

@@ -662,6 +662,7 @@ public interface Ids {
     String THREAD_POOL_ITEM = "thread-pool-item";
     String THREAD_POOL_FORM = "thread-pool-form";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
+    String TLC_ACCESS_CONTROL_SSO = "tlc-access-control-sso";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
     String TLC_HOMEPAGE = "tlc-homepage";

@@ -27,6 +27,7 @@ public interface NameTokens {
     String RUNTIME_SUFFIX = "-runtime";
 
     String ACCESS_CONTROL = "access-control";
+    String ACCESS_CONTROL_SSO = "access-control-sso";
     String BATCH_CONFIGURATION = ModelDescriptionConstants.BATCH_JBERET + CONFIGURATION_SUFFIX;
     String BROWSE_CONTENT = "browse-content";
     String CACHE_CONTAINER = ModelDescriptionConstants.CACHE_CONTAINER;

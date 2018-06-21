@@ -96,14 +96,14 @@ public class AccessControl {
                     () -> dispatcher.execute(builder.param(VALUE, RBAC.name().toLowerCase()).build(), result -> {
                         environment.setAccessControlProvider(RBAC);
                         MessageEvent
-                                .fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
+                                .fire(eventBus, Message.success(resources.messages().switchProviderSuccess(SIMPLE.name(), RBAC.name())));
                     }));
         } else {
             DialogFactory.showConfirmation(resources.constants().switchProvider(),
                     resources.messages().switchToSimpleProvider(),
                     () -> dispatcher.execute(builder.param(VALUE, SIMPLE.name().toLowerCase()).build(), result -> {
                         environment.setAccessControlProvider(SIMPLE);
-                        MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
+                        MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess(RBAC.name(), SIMPLE.name())));
                     }));
         }
     }

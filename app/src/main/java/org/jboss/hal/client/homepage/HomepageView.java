@@ -26,6 +26,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -44,6 +45,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
     public HomepageView(Environment environment, AccessControl ac, Resources resources, Places places) {
 
         boolean standalone = environment.isStandalone();
+        boolean ssoEnabled = environment.isSingleSignOn();
         boolean community = environment.getHalBuild() == Build.COMMUNITY;
         boolean su = ac.isSuperUserOrAdministrator();
         String name = environment.getInstanceInfo().productName();
@@ -177,19 +179,26 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         }
 
         if (su) {
-            sections = Collections.singleton(HomepageSection.create(places, resources,
-                    Ids.HOMEPAGE_ACCESS_CONTROL_SECTION, org.jboss.hal.meta.token.NameTokens.ACCESS_CONTROL,
-                    resources.constants().homepageAccessControlSection(),
-                    resources.constants().homepageAccessControlStepIntro(),
-                    Arrays.asList(
-                            resources.constants().homepageAccessControlStep1(),
-                            resources.constants().homepageAccessControlStep2()), true));
-            accessControl = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.ACCESS_CONTROL,
-                    "Access Control", //NON-NLS
-                    resources.constants().homepageAccessControlSubHeader(),
-                    resources.images().accessControl(),
-                    sections).asElement();
+            if (ssoEnabled) {
+                accessControl = HomepageModule.create(places, NameTokens.ACCESS_CONTROL_SSO,
+                        Names.ACCESS_CONTROL, //NON-NLS
+                        resources.constants().homepageAccessControlSsoSubHeader(),
+                        resources.images().accessControl(), Collections.emptyList()).asElement();
+            } else {
+                sections = Collections.singleton(HomepageSection.create(places, resources,
+                        Ids.HOMEPAGE_ACCESS_CONTROL_SECTION, NameTokens.ACCESS_CONTROL,
+                        resources.constants().homepageAccessControlSection(),
+                        resources.constants().homepageAccessControlStepIntro(),
+                        Arrays.asList(
+                                resources.constants().homepageAccessControlStep1(),
+                                resources.constants().homepageAccessControlStep2()), true));
+                accessControl = HomepageModule.create(places, NameTokens.ACCESS_CONTROL,
+                        Names.ACCESS_CONTROL, //NON-NLS
+                        resources.constants().homepageAccessControlSubHeader(),
+                        resources.images().accessControl(),
+                        sections).asElement();
+            }
+
 
             if (standalone) {
                 sections = Collections.singleton(HomepageSection.create(places, resources,
