@@ -191,6 +191,18 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                             .constraints(constraints(item, START_SERVERS))
                             .build());
                 }
+                // add destroy and kill action regardless of state
+                // to destroy and kill servers which might show a wrong state
+                actions.add(new ItemAction.Builder<ServerGroup>()
+                        .title(resources.constants().destroy())
+                        .handler(serverGroupActions::destroy)
+                        .constraints(constraints(item, DESTROY))
+                        .build());
+                actions.add(new ItemAction.Builder<ServerGroup>()
+                        .title(resources.constants().kill())
+                        .handler(serverGroupActions::kill)
+                        .constraints(constraints(item, KILL))
+                        .build());
                 return actions;
             }
         });
@@ -199,7 +211,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
         eventBus.addHandler(ServerGroupResultEvent.getType(), this);
     }
 
-    private Constraints constraints(final ServerGroup serverGroup, String operation) {
+    private Constraints constraints(ServerGroup serverGroup, String operation) {
         return Constraints.or(
                 Constraint.executable(AddressTemplate.of("/server-group=*"), operation),
                 Constraint.executable(serverGroupTemplate(serverGroup), operation)
@@ -207,14 +219,14 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
     }
 
     @Override
-    public void onServerGroupAction(final ServerGroupActionEvent event) {
+    public void onServerGroupAction(ServerGroupActionEvent event) {
         if (isVisible()) {
             event.getServers().forEach(server -> ItemMonitor.startProgress(server.getId()));
         }
     }
 
     @Override
-    public void onServerGroupResult(final ServerGroupResultEvent event) {
+    public void onServerGroupResult(ServerGroupResultEvent event) {
         if (isVisible()) {
             event.getServers().forEach(server -> ItemMonitor.stopProgress(server.getId()));
             refresh(RESTORE_SELECTION);

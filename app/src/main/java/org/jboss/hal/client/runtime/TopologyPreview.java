@@ -284,7 +284,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void update(final StaticItem item) {
+    public void update(StaticItem item) {
         // remember selection
         HTMLElement element = (HTMLElement) document.querySelector(DOT + topology + " ." + selected);
         String hostName = element != null ? String.valueOf(element.dataset.get("host")) : null;
@@ -452,7 +452,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         return table;
     }
 
-    private HTMLElement hostElement(final Host host) {
+    private HTMLElement hostElement(Host host) {
         HTMLElement dropdown;
         HTMLTableCellElement th = th()
                 .css(asList(rowHeader, statusCss(host)).toArray(new String[]{}))
@@ -495,7 +495,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         return th;
     }
 
-    private HTMLElement serverGroupElement(final ServerGroup serverGroup) {
+    private HTMLElement serverGroupElement(ServerGroup serverGroup) {
         HTMLElement dropdown;
         HTMLTableCellElement element = th()
                 .on(click, event -> serverGroupDetails(serverGroup))
@@ -638,7 +638,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     // ------------------------------------------------------ host
 
-    private void hostDetails(final Host host) {
+    private void hostDetails(Host host) {
         clearSelected();
         HTMLElement element = (HTMLElement) document.querySelector(hostSelector(host));
         if (element != null) {
@@ -668,19 +668,19 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + host.getAddressName()), RELOAD));
     }
 
-    private List<HTMLElement> hostActions(final Host host) {
+    private List<HTMLElement> hostActions(Host host) {
         List<HTMLElement> actions = new ArrayList<>();
         actions.add(actionLink(event -> hostActions.reload(host), resources.constants().reload()));
         actions.add(actionLink(event -> hostActions.restart(host), resources.constants().restart()));
         return actions;
     }
 
-    private String[] statusCss(final Host host) {
+    private String[] statusCss(Host host) {
         return hostActions.isPending(host) ? new String[]{withProgress} : new String[]{};
     }
 
     @Override
-    public void onHostAction(final HostActionEvent event) {
+    public void onHostAction(HostActionEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
 
@@ -695,7 +695,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     @Override
-    public void onHostResult(final HostResultEvent event) {
+    public void onHostResult(HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
 
@@ -705,14 +705,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         }
     }
 
-    private String hostSelector(final Host host) {
+    private String hostSelector(Host host) {
         return "[data-host='" + host.getName() + "']"; //NON-NLS
     }
 
 
     // ------------------------------------------------------ server group
 
-    private void serverGroupDetails(final ServerGroup serverGroup) {
+    private void serverGroupDetails(ServerGroup serverGroup) {
         clearSelected();
         HTMLElement element = (HTMLElement) document.querySelector(serverGroupSelector(serverGroup));
         if (element != null) {
@@ -736,7 +736,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .isAllowed(constraints);
     }
 
-    private List<HTMLElement> serverGroupActions(final ServerGroup serverGroup) {
+    private List<HTMLElement> serverGroupActions(ServerGroup serverGroup) {
         List<HTMLElement> actions = new ArrayList<>();
 
         // Order is: reload, restart, suspend, resume, stop, start
@@ -756,12 +756,15 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         if (serverGroup.hasServers(server -> server.isStopped() || server.isFailed())) {
             actions.add(actionLink(event -> serverGroupActions.start(serverGroup), resources.constants().start()));
         }
+        // add kill link regardless of state to destroy and kill servers which might show a wrong state
+        actions.add(actionLink(event -> serverGroupActions.destroy(serverGroup), resources.constants().destroy()));
+        actions.add(actionLink(event -> serverGroupActions.kill(serverGroup), resources.constants().kill()));
 
         return actions;
     }
 
     @Override
-    public void onServerGroupAction(final ServerGroupActionEvent event) {
+    public void onServerGroupAction(ServerGroupActionEvent event) {
         if (isVisible()) {
             ServerGroup serverGroup = event.getServerGroup();
             disableDropdown(Ids.serverGroup(serverGroup.getName()), serverGroup.getName());
@@ -773,21 +776,21 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     @Override
-    public void onServerGroupResult(final ServerGroupResultEvent event) {
+    public void onServerGroupResult(ServerGroupResultEvent event) {
         if (isVisible()) {
             event.getServers().forEach(server -> stopProgress(serverSelector(server)));
             update(null);
         }
     }
 
-    private String serverGroupSelector(final ServerGroup serverGroup) {
+    private String serverGroupSelector(ServerGroup serverGroup) {
         return "[data-server-group='" + serverGroup.getName() + "']"; //NON-NLS
     }
 
 
     // ------------------------------------------------------ server
 
-    private void serverDetails(final Server server) {
+    private void serverDetails(Server server) {
         clearSelected();
         HTMLElement element = (HTMLElement) document.querySelector(serverSelector(server));
         if (element != null) {
@@ -827,7 +830,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         RELOAD));
     }
 
-    private List<HTMLElement> serverActions(final Server server) {
+    private List<HTMLElement> serverActions(Server server) {
         List<HTMLElement> actions = new ArrayList<>();
 
         if (!server.isStarted()) {
@@ -849,65 +852,66 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             }
             actions.add(actionLink(event -> serverActions.stop(server), resources.constants().stop()));
         }
-        // add kill link regardless of server state to kill servers which might show a wrong state
+        // add kill link regardless of state to destroy and kill servers which might show a wrong state
+        actions.add(actionLink(event -> serverActions.destroy(server), resources.constants().destroy()));
         actions.add(actionLink(event -> serverActions.kill(server), resources.constants().kill()));
 
         return actions;
     }
 
-    private String[] statusCss(final Server server) {
+    private String[] statusCss(Server server) {
         Set<String> status = new HashSet<>();
         ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
             @Override
-            protected void onPending(final Server server) {
+            protected void onPending(Server server) {
             }
 
             @Override
-            protected void onBootErrors(final Server server) {
+            protected void onBootErrors(Server server) {
                 status.add(error);
             }
 
             @Override
-            protected void onFailed(final Server server) {
+            protected void onFailed(Server server) {
                 status.add(error);
             }
 
             @Override
-            protected void onAdminMode(final Server server) {
+            protected void onAdminMode(Server server) {
                 status.add(inactive);
             }
 
             @Override
-            protected void onStarting(final Server server) {
+            protected void onStarting(Server server) {
             }
 
             @Override
-            protected void onSuspended(final Server server) {
+            protected void onSuspended(Server server) {
                 status.add(suspended);
             }
 
             @Override
-            protected void onNeedsReload(final Server server) {
+            protected void onNeedsReload(Server server) {
                 status.add(warning);
             }
 
             @Override
-            protected void onNeedsRestart(final Server server) {
+            protected void onNeedsRestart(Server server) {
                 status.add(warning);
             }
 
             @Override
-            protected void onRunning(final Server server) {
+            protected void onRunning(Server server) {
                 status.add(ok);
             }
 
             @Override
-            protected void onStopped(final Server server) {
+            protected void onStopped(Server server) {
                 status.add(inactive);
             }
 
             @Override
-            protected void onUnknown(final Server server) {
+            protected void onUnknown(Server server) {
             }
         };
         sss.accept(server);
@@ -918,7 +922,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     @Override
-    public void onServerAction(final ServerActionEvent event) {
+    public void onServerAction(ServerActionEvent event) {
         if (isVisible()) {
             Server server = event.getServer();
             disableDropdown(server.getId(), server.getName());
@@ -927,14 +931,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     @Override
-    public void onServerResult(final ServerResultEvent event) {
+    public void onServerResult(ServerResultEvent event) {
         if (isVisible()) {
             stopProgress(serverSelector(event.getServer()));
             updateServer(event.getServer());
         }
     }
 
-    private String serverSelector(final Server server) {
+    private String serverSelector(Server server) {
         return "[data-server='" + server.getId() + "']"; //NON-NLS
     }
 }
