@@ -37,7 +37,6 @@
     "grunt-postcss": "^0.8.0",
     "grunt-stylelint": "^0.6.0",
     "matchdep": "~1.0.1",
-    "node-gyp": "~3.7.0",
     "pixrem": "^3.0.1"
   }
 }
