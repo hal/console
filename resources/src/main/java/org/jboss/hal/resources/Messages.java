@@ -132,6 +132,20 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentUnknownState(String name);
     String deprecated(String since, String reason);
     String destinationFilterDescription();
+
+    String destroy(String name);
+
+    SafeHtml destroyServerError(String name);
+
+    SafeHtml destroyServerQuestion(String name);
+
+    SafeHtml destroyServerSuccess(String name);
+
+    SafeHtml destroyServerGroupError(String name);
+
+    SafeHtml destroyServerGroupQuestion(String name);
+
+    SafeHtml destroyServerGroupSuccess(String name);
     SafeHtml disableSSLManagementQuestion(String serverName);
     SafeHtml disableSSLManagementError(String cause);
     SafeHtml disableSSLManagementSuccess();
@@ -253,12 +267,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml jpaStatisticsDisabled(String name, String deployment);
 
     String kill(String name);
-
     SafeHtml killServerError(String name);
-
     SafeHtml killServerQuestion(String name);
-
     SafeHtml killServerSuccess(String name);
+
+    SafeHtml killServerGroupError(String name);
+
+    SafeHtml killServerGroupQuestion(String name);
+
+    SafeHtml killServerGroupSuccess(String name);
 
     SafeHtml largeLogFile(String size);
     SafeHtml lastOperationException();

@@ -226,6 +226,8 @@ public interface ModelDescriptionConstants {
     String DESCRIPTION = "description";
     String DESTINATION_ADDRESS = "destination-address";
     String DESTINATION_PORT = "destination-port";
+    String DESTROY = "destroy";
+    String DESTROY_SERVERS = "destroy-servers";
     String DIR_CONTEXT = "dir-context";
     String DIRECT_VERIFICATION = "direct-verification";
     String DISABLED = "disabled";
@@ -410,6 +412,7 @@ public interface ModelDescriptionConstants {
     String KEYCLOAK = "keycloak";
     String KEYCLOAK_SERVER_URL = "keycloak-server-url";
     String KILL = "kill";
+    String KILL_SERVERS = "kill-servers";
     String LARGEST_THREAD_COUNT = "largest-thread-count";
     String LAST_CONNECTED = "last-connected";
     String LAST_UPDATED_TIME = "last-updated-time";

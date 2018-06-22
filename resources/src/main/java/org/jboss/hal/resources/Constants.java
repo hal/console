@@ -118,6 +118,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String deploymentSuccessful();
     String deployments();
     String description();
+
+    String destroy();
     String details();
     String directory();
     String disable();

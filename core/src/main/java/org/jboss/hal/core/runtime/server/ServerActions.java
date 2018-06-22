@@ -112,7 +112,8 @@ public class ServerActions {
     public static final int SERVER_STOP_TIMEOUT = 5;
     public static final int SERVER_RELOAD_TIMEOUT = 10;
     public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
-    private static final int SERVER_KILL_TIMEOUT = 5;
+    private static final int SERVER_DESTROY_TIMEOUT = SERVER_STOP_TIMEOUT + 5;
+    private static final int SERVER_KILL_TIMEOUT = SERVER_STOP_TIMEOUT + 5;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
 
     private static AddressTemplate serverConfigTemplate(Server server) {
@@ -516,6 +517,24 @@ public class ServerActions {
                                 resources.messages().stopServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().stopServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().stopServerError(server.getName())));
+    }
+
+    public void destroy(Server server) {
+        DialogFactory.showConfirmation(resources.messages().destroy(server.getName()),
+                resources.messages().destroyServerQuestion(server.getName()),
+                () -> {
+                    prepare(server, Action.DESTROY);
+                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), DESTROY).build();
+                    dispatcher.execute(operation,
+                            result -> repeatOperationUntil(dispatcher, SERVER_DESTROY_TIMEOUT,
+                                    readServerConfigStatus(server), checkServerConfigStatus(STOPPED, DISABLED))
+                                    .subscribe(new ServerTimeoutCallback(server, Action.DESTROY,
+                                            resources.messages().destroyServerSuccess(server.getName()))),
+                            new ServerFailedCallback(server,
+                                    resources.messages().destroyServerError(server.getName())),
+                            new ServerExceptionCallback(server,
+                                    resources.messages().destroyServerError(server.getName())));
+                });
     }
 
     public void kill(Server server) {

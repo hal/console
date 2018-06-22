@@ -410,7 +410,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 .build());
                     }
                 }
-                // add kill action regardless of server state to kill servers which might show a wrong state
+                // add destroy and kill action regardless of state
+                // to destroy and kill servers which might show a wrong state
+                actions.add(new ItemAction.Builder<Server>()
+                        .title(resources.constants().destroy())
+                        .handler(serverActions::destroy)
+                        .constraint(Constraint.executable(serverConfigTemplate(item), DESTROY))
+                        .build());
                 actions.add(new ItemAction.Builder<Server>()
                         .title(resources.constants().kill())
                         .handler(serverActions::kill)
