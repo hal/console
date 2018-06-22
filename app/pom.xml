@@ -196,7 +196,7 @@
                             <goal>yarn</goal>
                         </goals>
                         <configuration>
-                            <arguments>install --verbose</arguments>
+                            <arguments>install --ignore-platform</arguments>
                         </configuration>
                     </execution>
                     <execution>
