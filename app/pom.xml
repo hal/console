@@ -191,10 +191,13 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>yarn install</id>
+                        <id>yarn</id>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
+                        <configuration>
+                            <arguments>install --verbose</arguments>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>grunt build</id>
