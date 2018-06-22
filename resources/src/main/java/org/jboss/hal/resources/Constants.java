@@ -154,6 +154,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
+    String entry();
     String environment();
     String error();
     String excludeRole();

@@ -64,6 +64,10 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         return false;
     }
 
+    public String allowedCharacters() {
+        return null;
+    }
+
     @Override
     public void onSuggest(final String suggestion) {
         if (editingDecorations.contains(SUGGESTIONS)) {
@@ -126,7 +130,16 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
 
             TagsManager.Api api = TagsManager.Api.element(inputElement);
             api.tagsManager(options);
-            api.onRefresh((event, cst) -> modifyValue(mapping.parse(cst)));
+            api.onRefresh((event, cst) -> {
+                modifyValue(mapping.parse(cst));
+                clearError();
+            });
+            api.onInvalid((event, cst) -> {
+                String message = allowedCharacters() != null ? MESSAGES.invalidTagFormat(allowedCharacters())
+                        :  MESSAGES.invalidFormat();
+                showError(message);
+            });
+            api.onDuplicated((event, cst) -> showError(MESSAGES.duplicateResource(CONSTANTS.entry())));
         }
 
         @Override

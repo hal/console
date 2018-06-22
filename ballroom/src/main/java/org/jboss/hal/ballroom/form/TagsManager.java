@@ -39,6 +39,8 @@ public class TagsManager {
     private static final String EMPTY = "empty";
     private static final String PUSH_TAG = "pushTag";
     private static final String REFRESH_EVENT = "tm:refresh";
+    private static final String INVALID_EVENT = "tm:invalid";
+    private static final String DUPLICATED_EVENT = "tm:duplicated";
     private static final String TAGS = "tags";
     private static final String TAGS_MANAGER = "tagsManager";
 
@@ -59,6 +61,26 @@ public class TagsManager {
          * @param cst (c)omma (s)eparated (t)ags
          */
         void onRefresh(Event event, String cst);
+    }
+
+    @JsFunction
+    @FunctionalInterface
+    interface InvalidListener {
+
+        /**
+         * @param cst (c)omma (s)eparated (t)ags
+         */
+        void onInvalid(Event event, String cst);
+    }
+
+    @JsFunction
+    @FunctionalInterface
+    interface DuplicatedListener {
+
+        /**
+         * @param cst (c)omma (s)eparated (t)ags
+         */
+        void onDuplicated(Event event, String cst);
     }
 
 
@@ -93,6 +115,8 @@ public class TagsManager {
         public static native Api element(HTMLInputElement element);
 
         public native void on(String event, RefreshListener refreshListener);
+        public native void on(String event, InvalidListener invalidListener);
+        public native void on(String event, DuplicatedListener duplicatedListener);
 
         @JsMethod(name = TAGS_MANAGER)
         public native String[] tagsManagerGetTags(String getTags);
@@ -107,6 +131,16 @@ public class TagsManager {
         @JsOverlay
         final void onRefresh(RefreshListener refreshListener) {
             on(REFRESH_EVENT, refreshListener);
+        }
+
+        @JsOverlay
+        final void onInvalid(InvalidListener invalidListener) {
+            on(INVALID_EVENT, invalidListener);
+        }
+
+        @JsOverlay
+        final void onDuplicated(DuplicatedListener duplicatedListener) {
+            on(DUPLICATED_EVENT, duplicatedListener);
         }
 
         @JsOverlay

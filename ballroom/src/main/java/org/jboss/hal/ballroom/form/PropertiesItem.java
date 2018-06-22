@@ -17,20 +17,24 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.resources.Messages;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 public class PropertiesItem extends TagsItem<Map<String, String>> {
 
@@ -54,10 +58,25 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         return getValue() == null || getValue().isEmpty();
     }
 
+    @Override
+    public String allowedCharacters() {
+        return "- . : @ ; = ?";
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        HTMLElement element = (HTMLElement) document.getElementById(getId(READONLY));
+        if (element != null) {
+            // this pre style allows the \n line separator in the MapMapping.asString method
+            element.style.whiteSpace = "pre";
+        }
+    }
 
     private static class MapMapping implements TagsMapping<Map<String, String>> {
 
-        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:]+)$"); //NON-NLS
+        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\@\\;\\=\\?]+)$"); //NON-NLS
+        private static final String EQ = "=";
 
         @Override
         public TagsManager.Validator validator() {
@@ -67,11 +86,20 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         @Override
         public Map<String, String> parse(final String cst) {
             if (cst != null) {
-                return Splitter.on(',')
+                // split the full cst at the comma
+                Map<String, String> tags = new HashMap<>();
+                Iterable<String> cstParts = Splitter.on(',')
                         .trimResults()
                         .omitEmptyStrings()
-                        .withKeyValueSeparator('=')
                         .split(cst);
+                // split each key=value pair by the first '=' character
+                for (String part : cstParts) {
+                    int firstEq = part.indexOf(EQ);
+                    String keyPart = part.substring(0, firstEq);
+                    String valuePart = part.substring(firstEq + 1);
+                    tags.put(keyPart, valuePart);
+                }
+                return tags;
             }
             return emptyMap();
         }
@@ -83,14 +111,17 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
             }
             List<String> tags = new ArrayList<>();
             for (Map.Entry<String, String> entry : value.entrySet()) {
-                tags.add(entry.getKey() + "=" + entry.getValue());
+                tags.add(entry.getKey() + EQ + entry.getValue());
             }
             return tags;
         }
 
         @Override
         public String asString(final Map<String, String> value) {
-            return Joiner.on(", ").withKeyValueSeparator(" \u21D2 ").join(value);
+            // the \n line separator, works as there is a style: whitespace pre added in attach() method
+            return value.entrySet().stream()
+                    .map(entry -> entry.getKey() + " \u21D2 " + entry.getValue())
+                    .collect(joining("\n"));
         }
     }
 }
