@@ -308,6 +308,7 @@ public interface Names {
     String SERVER_GROUPS = "Server Groups";
     String SERVLET = "Servlet";
     String SERVLET_CONTAINER = "Servlet Container";
+    String SESSION_ID = "Session ID";
     String SESSIONS = "Sessions";
     String SHARED_STORE_COLOCATED = "Shared Store Colocated";
     String SHARED_STORE_MASTER = "Shared Store Master";

@@ -179,6 +179,7 @@ public interface ModelDescriptionConstants {
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CREATE = "create";
     String CREATE_TIME = "create-time";
+    String CREATION_TIME = "creation-time";
     String CREDENTIAL_REFERENCE = "credential-reference";
     String CREDENTIAL_STORE = "credential-store";
     String CURRENT_THREAD_COUNT = "current-thread-count";
@@ -310,6 +311,8 @@ public interface ModelDescriptionConstants {
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
     String GENERATE_CERTIFICATE_SIGNING_REQUEST = "generate-certificate-signing-request";
     String GENERATE_KEY_PAIR = "generate-key-pair";
+    String GET_SESSION_CREATION_TIME = "get-session-creation-time";
+    String GET_SESSION_LAST_ACCESSED_TIME = "get-session-last-accessed-time";
     String GLOBAL_MODULES = "global-modules";
     String GROUP = "group";
     String GROUPS_ATTRIBUTE = "groups-attribute";
@@ -368,7 +371,7 @@ public interface ModelDescriptionConstants {
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
     String INTERNAL = "internal";
-    String INVALIDATE_SESSION_OPERATION = "invalidate-session";
+    String INVALIDATE_SESSION = "invalidate-session";
     String INVALIDATION = "invalidation";
     String INVOCATIONS = "invocations";
     String IO = "io";
@@ -414,6 +417,7 @@ public interface ModelDescriptionConstants {
     String KILL = "kill";
     String KILL_SERVERS = "kill-servers";
     String LARGEST_THREAD_COUNT = "largest-thread-count";
+    String LAST_ACCESSED_TIME = "last-accessed-time";
     String LAST_CONNECTED = "last-connected";
     String LAST_UPDATED_TIME = "last-updated-time";
     String LAUNCH_TYPE = "launch-type";
@@ -428,6 +432,8 @@ public interface ModelDescriptionConstants {
     String LIST_CHANGES_OPERATION = "list-changes";
     String LIST_MESSAGES = "list-messages";
     String LIST_REMOVE_OPERATION = "list-remove";
+    String LIST_SESSION_ATTRIBUTES = "list-session-attributes";
+    String LIST_SESSIONS = "list-sessions";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOAD = "load";

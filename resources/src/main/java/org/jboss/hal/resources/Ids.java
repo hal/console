@@ -635,6 +635,7 @@ public interface Ids {
     String SERVER_STATUS_SYSTEM_PROPERTIES_ITEM = "server-runtime-system-properties-item";
     String SERVER_URL_FORM = "server-url-form";
     String SERVER_URL_STORAGE = "hal-local-storage-server-url";
+    String SESSION = "session";
     String SETTINGS_FORM = "settings-form";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_GROUP_ADD = "socket-binding-group-add";
