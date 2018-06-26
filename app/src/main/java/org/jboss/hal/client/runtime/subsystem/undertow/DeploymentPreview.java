@@ -132,7 +132,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .build();
         registerAttachable(sessions);
         sessionsElement = section()
-                .add(h(2, resources.constants().sessions()))
+                .add(h(2, Names.SESSIONS))
                 .add(sessions)
                 .asElement();
 

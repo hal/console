@@ -101,6 +101,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String copyToClipboard();
     String count();
     String counter();
+
+    String creationTime();
     String currentPage();
     String custom();
 
@@ -309,8 +311,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String kill();
 
     String largest();
-    String lastPage();
+
+    String lastAccessedTime();
     String lastModified();
+
+    String lastPage();
     String load();
     String loading();
     String loadingPleaseWait();
@@ -493,8 +498,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String serverUrlCustom();
     String serverUrlManagementModel();
     String sessionTime();
-    String sessions();
-    String sessionsCreated();
     String sessionsAvgAliveTime();
     String sessionsMaxAliveTime();
     String setIdentityPasswordTitle();

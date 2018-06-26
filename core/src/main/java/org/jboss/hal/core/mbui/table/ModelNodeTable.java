@@ -85,9 +85,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         applySecurity();
     }
 
-    /**
-     * Shortcut for {@code super.select(data, NamedNode::getName)}
-     */
+    /** Shortcut for {@code super.select(data, NamedNode::getName)} */
     public void select(T data) {
         if (!identifierChecked) {
             checkIdentifier(data);
@@ -96,15 +94,13 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     }
 
     @Override
-    public void select(final T data, final Function<T, String> identifier) {
+    public void select(T data, Function<T, String> identifier) {
         super.select(data, identifier);
         applySecurity();
     }
 
-    /**
-     * Shortcut for {@code super.update(data, NamedNode::getName)}
-     */
-    public void update(final Iterable<T> data) {
+    /** Shortcut for {@code super.update(data, NamedNode::getName)} */
+    public void update(Iterable<T> data) {
         if (!identifierChecked) {
             checkIdentifier(Iterables.isEmpty(data) ? null : data.iterator().next());
         }
@@ -112,8 +108,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     }
 
     @Override
-    public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
-
+    public void update(Iterable<T> data, RefreshMode mode, Function<T, String> identifier) {
         super.update(data, mode, identifier);
         applySecurity();
     }
@@ -171,7 +166,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         private final ColumnFactory columnFactory;
 
         @JsIgnore
-        public Builder(@NonNls final String id, final Metadata metadata) {
+        public Builder(@NonNls String id, Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
             this.columnFactory = new ColumnFactory();
@@ -213,18 +208,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
             return this;
         }
 
-        @Override
-        protected void validate() {
-            super.validate();
-            if (!metadata.getDescription().hasDefined(ATTRIBUTES)) {
-                throw new IllegalStateException(
-                        "No attributes found in resource description\n" + metadata.getDescription());
-            }
-        }
-
-        /**
-         * Creates and returns the table.
-         */
+        /** Creates and returns the table. */
         @EsReturn("Table")
         public ModelNodeTable<T> build() {
             return new ModelNodeTable<>(this);
@@ -246,7 +230,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
          */
         @JsMethod(name = "add")
         @EsReturn("TableBuilder")
-        public Builder<T> jsAdd(final String type,
+        public Builder<T> jsAdd(String type,
                 @EsParam("AddressTemplate|string") Object template,
                 @EsParam("string[]") String[] attributes,
                 @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {

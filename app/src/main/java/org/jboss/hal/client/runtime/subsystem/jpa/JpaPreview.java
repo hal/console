@@ -72,15 +72,15 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
                 .primaryAction(resources.constants().gotoDeployment(), () -> placeManager.revealPlace(placeRequest))
                 .build();
 
-        openedSessions = new Utilization(resources.constants().opened(), resources.constants().sessions(),
+        openedSessions = new Utilization(resources.constants().opened(), Names.SESSIONS,
                 environment.isStandalone(), false);
-        closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
+        closedSessions = new Utilization(resources.constants().closed(), Names.SESSIONS,
                 environment.isStandalone(), false);
 
         getHeaderContainer().appendChild(refresh = refreshLink(() -> update(jpaStatistic)));
         previewBuilder()
                 .add(noStatistics)
-                .add(header = h(2).textContent(resources.constants().sessions()).asElement())
+                .add(header = h(2).textContent(Names.SESSIONS).asElement())
                 .add(openedSessions)
                 .add(closedSessions);
 
@@ -88,7 +88,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     }
 
     @Override
-    public void update(final JpaStatistic jpaStatistics) {
+    public void update(JpaStatistic jpaStatistics) {
         Operation operation = new Operation.Builder(jpaStatistics.getAddress(), READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
@@ -97,7 +97,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void internalUpdate(final JpaStatistic statistic) {
+    private void internalUpdate(JpaStatistic statistic) {
         boolean statisticsEnabled = statistic.isStatisticsEnabled();
 
         Elements.setVisible(noStatistics.asElement(), !statisticsEnabled);
