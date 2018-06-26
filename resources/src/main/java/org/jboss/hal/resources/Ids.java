@@ -236,6 +236,7 @@ public interface Ids {
     String ELYTRON_PERMISSION_MAPPINGS_FORM = "elytron-permission-mappings-form";
     String ELYTRON_PERMISSION_MAPPINGS_PAGE = "elytron-permission-mappings-page";
     String ELYTRON_PERMISSION_MAPPINGS_TABLE = "elytron-permission-mappings-table";
+    String ELYTRON_PERMISSION_SET = "elytron-permission-set";
     String ELYTRON_PERMISSIONS_ADD = "elytron-permissions-add";
     String ELYTRON_PERMISSIONS_FORM = "elytron-permissions-form";
     String ELYTRON_PERMISSIONS_PAGE = "elytron-permissions-page";

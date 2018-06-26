@@ -564,7 +564,9 @@ public interface ModelDescriptionConstants {
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
     String PERIODIC_ROTATING_FILE_HANDLER = "periodic-rotating-file-handler";
     String PERIODIC_SIZE_ROTATING_FILE_HANDLER = "periodic-size-rotating-file-handler";
+    String PERMISSION = "permission";
     String PERMISSION_MAPPINGS = "permission-mappings";
+    String PERMISSION_SET = "permission-set";
     String PERMISSIONS = "permissions";
     String PERSISTENCE = "persistence";
     String PERSISTENT_SESSIONS = "persistent-sessions";

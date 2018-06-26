@@ -167,14 +167,6 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(PROVIDER_LOADER.baseId, Ids.ITEM),
                 labelBuilder.label(PROVIDER_LOADER.resource));
 
-        addResourceElement(SERVER_SSL_CONTEXT,
-                SERVER_SSL_CONTEXT.resourceElement(mbuiContext,
-                        () -> presenter.reload(SERVER_SSL_CONTEXT.resource,
-                                nodes -> updateResourceElement(SERVER_SSL_CONTEXT.resource, nodes))),
-                Ids.ELYTRON_SSL_ITEM,
-                Ids.build(SERVER_SSL_CONTEXT.baseId, Ids.ITEM),
-                labelBuilder.label(SERVER_SSL_CONTEXT.resource));
-
         securityDomainElement = SECURITY_DOMAIN.resourceElementBuilder(mbuiContext,
                 () -> presenter.reload(SECURITY_DOMAIN.resource,
                         nodes -> updateResourceElement(SECURITY_DOMAIN.resource, nodes)))
@@ -189,6 +181,14 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         securityDomainElement.getFormComplexList().getFormItem(REALM).registerSuggestHandler(null);
         addResourceElement(SECURITY_DOMAIN, securityDomainElement, Ids.ELYTRON_SSL_ITEM,
                 Ids.build(SECURITY_DOMAIN.baseId, Ids.ITEM), labelBuilder.label(SECURITY_DOMAIN.resource));
+
+        addResourceElement(SERVER_SSL_CONTEXT,
+                SERVER_SSL_CONTEXT.resourceElement(mbuiContext,
+                        () -> presenter.reload(SERVER_SSL_CONTEXT.resource,
+                                nodes -> updateResourceElement(SERVER_SSL_CONTEXT.resource, nodes))),
+                Ids.ELYTRON_SSL_ITEM,
+                Ids.build(SERVER_SSL_CONTEXT.baseId, Ids.ITEM),
+                labelBuilder.label(SERVER_SSL_CONTEXT.resource));
 
         addResourceElement(TRUST_MANAGER,
                 TRUST_MANAGER.resourceElementBuilder(mbuiContext,
@@ -237,6 +237,14 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         // ======= Logs
 
+        addResourceElement(AGGREGATE_SECURITY_EVENT_LISTENER,
+                AGGREGATE_SECURITY_EVENT_LISTENER.resourceElement(mbuiContext,
+                        () -> presenter.reload(AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                                nodes -> updateResourceElement(AGGREGATE_SECURITY_EVENT_LISTENER.resource, nodes))),
+                Ids.ELYTRON_LOGS_ITEM,
+                Ids.build(AGGREGATE_SECURITY_EVENT_LISTENER.baseId, Ids.ITEM),
+                labelBuilder.label(AGGREGATE_SECURITY_EVENT_LISTENER.resource));
+
         addResourceElement(FILE_AUDIT_LOG,
                 FILE_AUDIT_LOG.resourceElement(mbuiContext,
                         () -> presenter.reload(FILE_AUDIT_LOG.resource,
@@ -269,20 +277,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(SYSLOG_AUDIT_LOG.baseId, Ids.ITEM),
                 labelBuilder.label(SYSLOG_AUDIT_LOG.resource));
 
-        addResourceElement(AGGREGATE_SECURITY_EVENT_LISTENER,
-                AGGREGATE_SECURITY_EVENT_LISTENER.resourceElement(mbuiContext,
-                        () -> presenter.reload(AGGREGATE_SECURITY_EVENT_LISTENER.resource,
-                                nodes -> updateResourceElement(AGGREGATE_SECURITY_EVENT_LISTENER.resource, nodes))),
-                Ids.ELYTRON_LOGS_ITEM,
-                Ids.build(AGGREGATE_SECURITY_EVENT_LISTENER.baseId, Ids.ITEM),
-                labelBuilder.label(AGGREGATE_SECURITY_EVENT_LISTENER.resource));
-
         // ====== Other settings
-
-        Metadata policyMetadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.POLICY_TEMPLATE);
-        policyElement = new PolicyElement(policyMetadata, mbuiContext.resources());
-        registerAttachable(policyElement);
-        navigation.addSecondary(Ids.ELYTRON_OTHER_ITEM, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.asElement());
 
         addResourceElement(DIR_CONTEXT,
                 DIR_CONTEXT.resourceElementBuilder(mbuiContext,
@@ -293,6 +288,26 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.ELYTRON_OTHER_ITEM,
                 Ids.build(DIR_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(DIR_CONTEXT.resource));
+
+        addResourceElement(ElytronResource.PERMISSION_SET,
+                ElytronResource.PERMISSION_SET.resourceElementBuilder(mbuiContext,
+                        () -> presenter.reload(ElytronResource.PERMISSION_SET.resource,
+                                nodes -> updateResourceElement(ElytronResource.PERMISSION_SET.resource, nodes)))
+                        .setComplexListAttribute(PERMISSIONS, asList(
+                                CLASS_NAME,
+                                MODULE,
+                                "target-name",
+                                ACTION))
+                        .build(),
+                Ids.ELYTRON_OTHER_ITEM,
+                Ids.build(ElytronResource.PERMISSION_SET.baseId, Ids.ITEM),
+                labelBuilder.label(ElytronResource.PERMISSION_SET.resource));
+
+        Metadata policyMetadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.POLICY_TEMPLATE);
+        policyElement = new PolicyElement(policyMetadata, mbuiContext.resources());
+        registerAttachable(policyElement);
+        navigation.addSecondary(Ids.ELYTRON_OTHER_ITEM, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.asElement());
+
 
         initElement(row()
                 .add(column()

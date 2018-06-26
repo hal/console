@@ -31,6 +31,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
@@ -164,31 +165,33 @@ public class DataSourcePresenter
     }
 
     void saveDataSource(Form<DataSource> form, Map<String, Object> changedValues, Map<String, String> existing) {
-        Map<String, String> properties = form.<Map<String, String>>getFormItem(propertiesName()).getValue();
+        FormItem<Map<String, String>> propertiesItem = form.getFormItem(propertiesName());
         Composite operations = operationFactory.fromChangeSet(resourceAddress(), changedValues, metadata());
+        if (propertiesItem != null) {
+            Map<String, String> properties = propertiesItem.getValue();
+            // remove properties
+            existing.forEach((existingName, existingValue) -> {
+                String newValue = properties.get(existingName);
+                if (!existingValue.equals(newValue)) {
+                    ResourceAddress propAddress = new ResourceAddress(resourceAddress()).add(propertiesName(), existingName);
+                    Operation operation = new Operation.Builder(propAddress, REMOVE)
+                            .build();
+                    operations.add(operation);
+                }
+            });
 
-        // remove properties
-        existing.forEach((existingName, existingValue) -> {
-            String newValue = properties.get(existingName);
-            if (!existingValue.equals(newValue)) {
-                ResourceAddress propAddress = new ResourceAddress(resourceAddress()).add(propertiesName(), existingName);
-                Operation operation = new Operation.Builder(propAddress, REMOVE)
-                        .build();
-                operations.add(operation);
-            }
-        });
-
-        // add properties
-        properties.forEach((name, newValue) -> {
-            String existingValue = existing.get(name);
-            if (!newValue.equals(existingValue)) {
-                ResourceAddress propAddress = new ResourceAddress(resourceAddress()).add(propertiesName(), name);
-                Operation operation = new Operation.Builder(propAddress, ADD)
-                        .param(VALUE, newValue)
-                        .build();
-                operations.add(operation);
-            }
-        });
+            // add properties
+            properties.forEach((name, newValue) -> {
+                String existingValue = existing.get(name);
+                if (!newValue.equals(existingValue)) {
+                    ResourceAddress propAddress = new ResourceAddress(resourceAddress()).add(propertiesName(), name);
+                    Operation operation = new Operation.Builder(propAddress, ADD)
+                            .param(VALUE, newValue)
+                            .build();
+                    operations.add(operation);
+                }
+            });
+        }
         dispatcher.execute(operations, (CompositeResult compositeResult) -> {
             reload();
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().modifyResourceSuccess(type(), name)));
