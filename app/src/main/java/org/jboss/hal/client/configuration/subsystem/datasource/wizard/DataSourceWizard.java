@@ -212,7 +212,8 @@ public class DataSourceWizard {
         builder.addStep(NAMES, new NamesStep(dataSources, dataSourceMetadata, resources, xa));
         builder.addStep(DRIVER, new DriverStep(drivers, driverMetadata, resources));
         if (xa) {
-            builder.addStep(XA_PROPERTIES, new PropertiesStep(xaDataSourcePropertiesMetadata, resources));
+            builder.addStep(XA_PROPERTIES, new PropertiesStep(dispatcher, statementContext, environment, progress,
+                    xaDataSourcePropertiesMetadata, resources));
         }
         builder.addStep(CONNECTION, new ConnectionStep(dataSourceMetadata, resources, xa));
         builder.addStep(TEST, new TestStep(dispatcher, statementContext, environment, progress, resources));

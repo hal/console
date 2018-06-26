@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.core.datasource.DataSource;
@@ -183,6 +185,8 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private Form<ModelNode> xaCrForm;
     private DataSourcePresenter presenter;
     private Map<String, String> originalConnectionProperties;
+    private StaticAutoComplete xaAutoCompleteValues = new StaticAutoComplete(Collections.emptyList());
+    private StaticAutoComplete nonXaAutoCompleteValues = new StaticAutoComplete(Collections.emptyList());
 
     @Inject
     public DataSourceView(MetadataRegistry metadataRegistry, CredentialReference credentialReference,
@@ -259,6 +263,8 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         nonXaForm = nonXaFormBuilder.build();
         nonXaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> nonXaCrForm.getModel(), resources));
         xaForm = xaFormBuilder.build();
+        xaForm.getFormItem(XA_DATASOURCE_PROPERTIES).registerSuggestHandler(xaAutoCompleteValues);
+        nonXaForm.getFormItem(CONNECTION_PROPERTIES).registerSuggestHandler(nonXaAutoCompleteValues);
         xaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> xaCrForm.getModel(), resources));
         registerAttachable(nonXaForm);
         registerAttachable(xaForm);
@@ -316,6 +322,11 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                     .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
             originalConnectionProperties = p;
             xaForm.getFormItem(XA_DATASOURCE_PROPERTIES).setValue(p);
+            String dsClassname = dataSource.hasDefined(XA_DATASOURCE_CLASS) ? dataSource.get(XA_DATASOURCE_CLASS)
+                    .asString() : null;
+            String driverName = dataSource.get(DRIVER_NAME).asString();
+            presenter.readJdbcDriverProperties(true, dsClassname, driverName,
+                    dsProperties -> xaAutoCompleteValues.update(dsProperties));
             if (xaCrForm != null) {
                 xaCrForm.view(failSafeGet(dataSource, CREDENTIAL_REFERENCE));
             }
@@ -325,6 +336,12 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                     .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
             originalConnectionProperties = p;
             nonXaForm.getFormItem(CONNECTION_PROPERTIES).setValue(p);
+            String dsClassname = dataSource.hasDefined(DATASOURCE_CLASS) ? dataSource.get(DATASOURCE_CLASS)
+                    .asString() : null;
+            String driverName = dataSource.get(DRIVER_NAME).asString();
+            presenter.readJdbcDriverProperties(false, dsClassname, driverName,
+                    dsProperties -> nonXaAutoCompleteValues.update(dsProperties));
+
             if (nonXaCrForm != null) {
                 nonXaCrForm.view(failSafeGet(dataSource, CREDENTIAL_REFERENCE));
             }

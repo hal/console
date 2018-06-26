@@ -19,13 +19,20 @@ import java.util.List;
 
 public class StaticAutoComplete extends AutoComplete {
 
+    List<String> values;
+
     public StaticAutoComplete(final List<String> values) {
+        this.values = values;
         Options options = new OptionsBuilder<String>((query, response) -> {
-            String[] matches = values.stream()
+            String[] matches = this.values.stream()
                     .filter(value -> SHOW_ALL_VALUE.equals(query) || value.toLowerCase().contains(query.toLowerCase()))
                     .toArray(String[]::new);
             response.response(matches);
         }).build();
         init(options);
+    }
+
+    public void update(List<String> values) {
+        this.values = values;
     }
 }

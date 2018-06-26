@@ -200,6 +200,7 @@ public interface ModelDescriptionConstants {
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
     String DATASOURCE_CLASS = "datasource-class";
+    String DATASOURCE_CLASS_INFO = "datasource-class-info";
     String DEAD_LETTER_ADDRESS = "dead-letter-address";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
@@ -496,6 +497,7 @@ public interface ModelDescriptionConstants {
     String MODE = "mode";
     String MODEL_DESCRIPTION = "model-description";
     String MODULE = "module";
+    String MODULE_SLOT = "module-slot";
     String MOVE_MESSAGE = "move-message";
     String MOVE_MESSAGES = "move-messages";
     String MULTICAST_ADDRESS = "multicast-address";
