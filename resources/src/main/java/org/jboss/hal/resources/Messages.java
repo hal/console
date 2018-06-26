@@ -382,6 +382,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml readAliasError(String alias, String resource, String error);
     SafeHtml readAliasesError(String resource, String error);
     SafeHtml readAliasesSuccess(String resource);
+    String readDatasourcePropertiesErrorDomain(String profile);
     SafeHtml readIdentityError(String identity, String realm, String error);
     String recordedOperations(@PluralCount int count);
     SafeHtml recordingStarted();

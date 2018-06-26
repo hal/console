@@ -15,19 +15,20 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import com.google.common.base.Joiner;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_DATASOURCE_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME;
 
 class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
 
@@ -47,9 +48,9 @@ class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
 
         LabelBuilder labelBuilder = new LabelBuilder();
         PreviewAttributes<JdbcDriver> attributes = new PreviewAttributes<>(driver)
-                .append(model -> new PreviewAttribute(labelBuilder.label("driver-classes"), //NON-NLS
-                        model.getDriverClasses().isEmpty() ? Names.NOT_AVAILABLE : Joiner.on(',')
-                                .skipNulls().join(model.getDriverClasses())))
+                .append(DRIVER_CLASS_NAME)
+                .append(DRIVER_DATASOURCE_CLASS_NAME)
+                .append(DRIVER_XA_DATASOURCE_CLASS_NAME)
                 .append(model -> new PreviewAttribute(labelBuilder.label(DRIVER_VERSION), model.getDriverVersion()))
                 .append("jdbc-compliant"); //NON-NLS
         previewBuilder().addAll(attributes);
