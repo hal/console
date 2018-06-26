@@ -230,6 +230,10 @@ enum ElytronResource {
             ModelDescriptionConstants.PERIODIC_ROTATING_FILE_AUDIT_LOG,
             AddressTemplates.PERIODIC_ROTATING_FILE_AUDIT_LOG_TEMPLATE, false),
 
+    PERMISSION_SET(Ids.ELYTRON_PERMISSION_SET,
+            ModelDescriptionConstants.PERMISSION_SET,
+            AddressTemplates.PERMISSION_SET_TEMPLATE, false),
+
     POLICY(Ids.ELYTRON_POLICY,
             ModelDescriptionConstants.POLICY,
             AddressTemplates.POLICY_TEMPLATE, true),

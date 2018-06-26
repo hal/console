@@ -146,6 +146,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
                 ElytronResource.SYSLOG_AUDIT_LOG.resource,
                 ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                ElytronResource.PERMISSION_SET.resource,
                 ElytronResource.POLICY.resource), // policy must be the last item in the list!
                 result -> {
                     int i = 0;
@@ -185,6 +186,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                     getView().updateResourceElement(ElytronResource.SYSLOG_AUDIT_LOG.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.PERMISSION_SET.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // policy must be the last item in the list!
                     List<NamedNode> policies = asNamedNodes(result.step(i).get(RESULT).asPropertyList());
@@ -494,7 +497,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             SERVER_SSL_CONTEXT_ADDRESS,
             SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
             SYSLOG_AUDIT_LOG_ADDRESS,
-            TRUST_MANAGER_ADDRESS})
+            TRUST_MANAGER_ADDRESS,
+            PERMISSION_SET_ADDRESS})
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {
     }
