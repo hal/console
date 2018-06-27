@@ -412,6 +412,7 @@ public interface CSS {
     String wizardPfRow = "wizard-pf-row";
     String wizardPfStepNumber = "wizard-pf-step-number";
     String wizardPfStepTitle = "wizard-pf-step-title";
+    String wizardPfStep = "wizard-pf-step";
     String wizardPfSteps = "wizard-pf-steps";
     String wizardPfStepsIndicator = "wizard-pf-steps-indicator";
     String wizardPfSuccessIcon = "wizard-pf-success-icon";

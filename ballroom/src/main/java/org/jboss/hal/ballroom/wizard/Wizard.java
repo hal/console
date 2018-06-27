@@ -456,7 +456,7 @@ public class Wizard<C, S extends Enum<S>> {
             S status = entry.getKey();
             WizardStep<C, S> step = entry.getValue();
 
-            HTMLLIElement li = li()
+            HTMLLIElement li = li().css(wizardPfStep)
                     .add(a()
                             .add(span().css(wizardPfStepNumber).textContent(String.valueOf(index)))
                             .add(span().css(wizardPfStepTitle).textContent(step.title)))
