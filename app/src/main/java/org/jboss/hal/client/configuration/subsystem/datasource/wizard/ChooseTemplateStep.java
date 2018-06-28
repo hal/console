@@ -63,7 +63,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
                                         String id = ((HTMLInputElement) event.target).value;
                                         wizard().getContext().template = templates.getTemplate(id);
                                     }))
-                            .add(span().textContent(template.getId())))
+                            .add(span().textContent(template.getVendor().label)))
                     .asElement());
         }
 

@@ -104,6 +104,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(JNDI_NAME).set("java:/PostgresDS");
                     dataSource.get(DRIVER_NAME).set(POSTGRESQL);
                     dataSource.get(CONNECTION_URL).set("jdbc:postgresql://localhost:5432/postgresdb");
+                    dataSource.get(DATASOURCE_CLASS).set("org.postgresql.ds.PGSimpleDataSource");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
@@ -192,6 +193,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(JNDI_NAME).set("java:/OracleDS");
                     dataSource.get(DRIVER_NAME).set(ORACLE);
                     dataSource.get(CONNECTION_URL).set("jdbc:oracle:thin:@localhost:1521:orcalesid");
+                    dataSource.get(DATASOURCE_CLASS).set("oracle.jdbc.pool.OracleDataSource");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
@@ -243,6 +245,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(SQLSERVER);
                     dataSource.get(CONNECTION_URL)
                             .set("jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=MyDatabase");
+                    dataSource.get(DATASOURCE_CLASS).set("com.microsoft.sqlserver.jdbc.SQLServerDataSource");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
