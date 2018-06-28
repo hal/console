@@ -17,13 +17,13 @@
   -->
 <view>
     <vertical-navigation id="remoting-vertical-navigation">
-        <item id="remoting-endpoint-configuration-item" title="Endpoint Configuration" icon="pficon pficon-settings">
-            <metadata address="/{selected.profile}/subsystem=remoting/configuration=endpoint">
-                <h1>Endpoint Configuration</h1>
+        <item id="remoting-configuration-item" title="Configuration" icon="pficon pficon-settings">
+            <metadata address="/{selected.profile}/subsystem=remoting">
+                <h1>Configuration</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
-                <form id="remoting-endpoint-configuration" title="Endpoint Configuration" auto-save="true" reset="true">
+                <form id="remoting-configuration" title="Configuration" auto-save="true" reset="true">
                     <attributes>
-                        <group id="remoting-endpoint-configuration-attributes"
+                        <group id="remoting-configuration-attributes"
                                title="${mbuiContext.resources().constants().attributes()}">
                             <attribute name="buffer-region-size"/>
                             <attribute name="heartbeat-interval"/>
@@ -34,14 +34,14 @@
                             <attribute name="transmit-window-size"/>
                             <attribute name="worker"/>
                         </group>
-                        <group id="remoting-endpoint-configuration-security"
+                        <group id="remoting-configuration-security"
                                title="${mbuiContext.resources().constants().security()}">
                             <attribute name="auth-realm"/>
                             <attribute name="authentication-retries"/>
                             <attribute name="authorize-id"/>
                             <attribute name="sasl-protocol"/>
                         </group>
-                        <group id="remoting-endpoint-configuration-channels" title="Channels">
+                        <group id="remoting-configuration-channels" title="Channels">
                             <attribute name="max-inbound-channels"/>
                             <attribute name="max-inbound-message-size"/>
                             <attribute name="max-inbound-messages"/>
