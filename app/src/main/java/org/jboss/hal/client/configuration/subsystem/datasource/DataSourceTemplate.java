@@ -27,7 +27,7 @@ import static java.util.Collections.emptyMap;
 public class DataSourceTemplate {
 
     @SuppressWarnings("HardCodedStringLiteral")
-    enum Vendor {
+    public enum Vendor {
         H2("H2"),
         POSTGRE_SQL("PostgreSQL"),
         MYSQL("MySQL"),
@@ -36,7 +36,7 @@ public class DataSourceTemplate {
         DB2("IBM DB2"),
         SYBASE("Sybase");
 
-        private final String label;
+        public final String label;
 
         Vendor(String label) {
             this.label = label;
