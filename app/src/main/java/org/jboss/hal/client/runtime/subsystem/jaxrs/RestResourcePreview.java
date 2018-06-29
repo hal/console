@@ -60,11 +60,11 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.core.Strings.abbreviateFqClassName;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 
 class RestResourcePreview extends PreviewContent<RestResource> {
 

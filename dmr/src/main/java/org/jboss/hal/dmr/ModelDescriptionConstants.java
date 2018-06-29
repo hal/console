@@ -237,6 +237,7 @@ public interface ModelDescriptionConstants {
     String DISCONNECTED = "disconnected";
     String DISCOVERY_GROUP = "discovery-group";
     String DISTINGUISHED_NAME = "distinguished-name";
+    String DISTRIBUTED_CACHE = "distributed-cache";
     String DIVERT = "divert";
     String DOMAIN_UUID = "domain-uuid";
     String DOMAIN_ROLLOUT = "domain-rollout";
@@ -335,6 +336,7 @@ public interface ModelDescriptionConstants {
     String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
     String HOSTS = "hosts";
+    String HOTROD = "hotrod";
     String HTTP = "http";
     String HTTP_ACCEPTOR = "http-acceptor";
     String HTTP_AUTHENTICATION_FACTORY = "http-authentication-factory";
@@ -374,6 +376,7 @@ public interface ModelDescriptionConstants {
     String INTERNAL = "internal";
     String INVALIDATE_SESSION = "invalidate-session";
     String INVALIDATION = "invalidation";
+    String INVALIDATION_CACHE = "invalidation-cache";
     String INVOCATIONS = "invocations";
     String IO = "io";
     String IO_THREAD_COUNT = "io-thread-count";
@@ -438,6 +441,7 @@ public interface ModelDescriptionConstants {
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOAD = "load";
+    String LOCAL_CACHE = "local-cache";
     String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
     String LOCATION = "location";
     String LOCKING = "locking";
@@ -660,7 +664,6 @@ public interface ModelDescriptionConstants {
     String RELOAD_HOST = "reload-host";
     String RELOAD_REQUIRED = "reload-required";
     String RELOAD_SERVERS = "reload-servers";
-    String REMOTE = "remote";
     String REMOTE_ADDRESS = "remote-address";
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_CACHE_CONTAINER = "remote-cache-container";
@@ -676,6 +679,7 @@ public interface ModelDescriptionConstants {
     String REMOVE_IDENTITY_ATTRIBUTE = "remove-identity-attribute";
     String REMOVE_MESSAGE = "remove-message";
     String REMOVE_MESSAGES = "remove-messages";
+    String REPLICATED_CACHE = "replicated-cache";
     String REPLICATION_COLOCATED = "replication-colocated";
     String REPLICATION_MASTER = "replication-master";
     String REPLICATION_SLAVE = "replication-slave";
@@ -722,6 +726,7 @@ public interface ModelDescriptionConstants {
     String SALT = "salt";
     String SASL_AUTHENTICATION_FACTORY = "sasl-authentication-factory";
     String SASL_PROTOCOL = "sasl-protocol";
+    String SCATTERED_CACHE = "scattered-cache";
     String SCHEDULED_COUNT = "scheduled-count";
     String SCHEDULED_THREAD_POOL_MAX_SIZE = "scheduled-thread-pool-max-size";
     String SCHEMA_LOCATIONS = "schema-locations";

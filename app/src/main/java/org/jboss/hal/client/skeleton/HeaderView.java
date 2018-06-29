@@ -75,10 +75,10 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
-import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.large;
+import static org.jboss.hal.resources.Strings.abbreviateMiddle;
 import static org.jboss.hal.resources.UIConstants.HASH;
 
 @SuppressWarnings("WeakerAccess")

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.resources;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Math.max;

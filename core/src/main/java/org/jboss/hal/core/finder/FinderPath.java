@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
@@ -116,9 +117,32 @@ public class FinderPath implements Iterable<FinderSegment> {
         return new FinderPath(copy);
     }
 
-    /**
-     * @return a reversed copy of this path. The current path is not modified.
-     */
+    public FinderSegment findColumn(String columnId) {
+        return findSegment(segment -> segment.getColumnId().equals(columnId));
+    }
+
+    public FinderSegment findColumn(Predicate<String> condition) {
+        return findSegment(segment -> condition.test(segment.getColumnId()));
+    }
+
+    public FinderSegment findItem(String itemId) {
+        return findSegment(segment -> segment.getItemId().equals(itemId));
+    }
+
+    public FinderSegment findItem(Predicate<String> condition) {
+        return findSegment(segment -> condition.test(segment.getItemId()));
+    }
+
+    private FinderSegment findSegment(Predicate<FinderSegment> condition) {
+        for (FinderSegment segment : this) {
+            if (condition.test(segment)) {
+                return segment;
+            }
+        }
+        return null;
+    }
+
+    /** @return a reversed copy of this path. The current path is not modified. */
     FinderPath reversed() {
         return new FinderPath(Lists.reverse(segments));
     }

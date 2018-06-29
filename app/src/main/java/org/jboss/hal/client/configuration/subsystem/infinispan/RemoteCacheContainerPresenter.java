@@ -69,7 +69,7 @@ public class RemoteCacheContainerPresenter
     private final StatementContext statementContext;
     private final Resources resources;
     private String remoteCacheContainer;
-    private Cache cacheType;
+    private CacheType cacheTypeType;
     private String cacheName;
     private Memory memory;
     private Store store;

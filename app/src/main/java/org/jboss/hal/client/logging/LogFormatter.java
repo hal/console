@@ -24,8 +24,8 @@ import com.google.gwt.logging.impl.StackTracePrintStream;
 import org.jboss.hal.ballroom.Format;
 
 import static com.google.common.base.Strings.padEnd;
-import static org.jboss.hal.core.Strings.abbreviate;
-import static org.jboss.hal.core.Strings.abbreviateFqClassName;
+import static org.jboss.hal.resources.Strings.abbreviate;
+import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 
 class LogFormatter extends FormatterImpl {
 

@@ -39,10 +39,10 @@ import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE;
-import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
+import static org.jboss.hal.resources.Strings.abbreviateMiddle;
 
 public class SimplePermissionMapperElement
         implements IsElement<HTMLElement>, Attachable, HasPresenter<MapperDecoderPresenter> {

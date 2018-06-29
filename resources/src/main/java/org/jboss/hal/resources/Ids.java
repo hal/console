@@ -19,13 +19,15 @@ import java.util.List;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.base.CharMatcher.inRange;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
  * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an
@@ -60,6 +62,7 @@ public interface Ids {
     String BROWSE_CONTENT_DEPLOYMENT_EMPTY = "browse-content-deployment-empty";
     String BROWSE_CONTENT_EXPLODED_EMPTY = "browse-content-exploded-empty";
     String BROWSE_CONTENT_UNSUPPORTED_EMPTY = "browse-content-unsupported-empty";
+    String CACHE = "cache";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
     String CACHE_COMPONENT_LOCKING = "cache-component-locking";
     String CACHE_COMPONENT_PARTITION_HANDLING = "cache-component-partition-handling";
@@ -89,9 +92,9 @@ public interface Ids {
     String CACHE_STORE_BINARY_TABLE = "binary-table";
     String CACHE_STORE_CUSTOM = "cache-store-custom";
     String CACHE_STORE_FILE = "cache-store-file";
+    String CACHE_STORE_HOTROd = "cache-store-hotrod";
     String CACHE_STORE_JDBC = "cache-store-jdbc";
     String CACHE_STORE_MIXED_JDBC = "cache-store-mixed-jdbc";
-    String CACHE_STORE_REMOTE = "cache-store-remote";
     String CACHE_STORE_STRING_TABLE = "string-table";
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
@@ -599,6 +602,7 @@ public interface Ids {
     String ROLE_SERVER_GROUP_SCOPED_FORM = "role-server-group-form";
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEM = "rss";
+    String SCATTERED_CACHE = "scattered-cache";
     String SEARCH = "search";
     String SECURITY_ITEM = "security-item";
     String SECURITY_FORM = "security-form";
@@ -787,6 +791,10 @@ public interface Ids {
         return Ids.build("cc", name);
     }
 
+    static String extractCacheContainer(String id) {
+        return substringAfterLast(id, "cc-");
+    }
+
     static String content(String name) {
         return name;
     }
@@ -839,11 +847,15 @@ public interface Ids {
     }
 
     static String mailSession(String name) {
-        return Ids.build("ms", name);
+        return build("ms", name);
     }
 
     static String messagingServer(String name) {
         return build("msgs", name);
+    }
+
+    static String extractMessagingServer(String id) {
+        return substringAfterLast(id, "msgs-");
     }
 
     static String webServer(String name) {
@@ -893,8 +905,20 @@ public interface Ids {
         return build("uasd", name);
     }
 
+    static String undertowModcluster(String name) {
+        return build("umc", name);
+    }
+
+    static String extractUndertowModcluster(String id) {
+        return substringAfterLast(id, "umc-");
+    }
+
     static String undertowServer(String name) {
         return build("us", name);
+    }
+
+    static String extractUndertowServer(String id) {
+        return substringAfterLast(id, "us-");
     }
 
     static String undertowServletContainer(String name) {
@@ -925,13 +949,13 @@ public interface Ids {
     }
 
     static String build(@NonNls String id, char separator, @NonNls String... additionalIds) {
-        if (Strings.emptyToNull(id) == null) {
+        if (emptyToNull(id) == null) {
             throw new IllegalArgumentException("Id must not be null");
         }
         List<String> ids = Lists.newArrayList(id);
         if (additionalIds != null) {
             for (String additionalId : additionalIds) {
-                if (!Strings.isNullOrEmpty(additionalId)) {
+                if (!isNullOrEmpty(additionalId)) {
                     ids.add(additionalId);
                 }
             }

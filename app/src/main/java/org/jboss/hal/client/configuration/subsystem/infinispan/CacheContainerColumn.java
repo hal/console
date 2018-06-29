@@ -145,17 +145,6 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
             }
 
             @Override
-            public String getTooltip() {
-                return item.isRemote() ? Names.REMOTE_CACHE_CONTAINER : Names.CACHE_CONTAINER;
-            }
-
-            @Override
-            public String getFilterData() {
-                String name = item.getName();
-                return item.isRemote() ? name + " remote" : name;
-            }
-
-            @Override
             public HTMLElement asElement() {
                 if (item.isRemote()) {
                     return item.hasDefined(DEFAULT_REMOTE_CLUSTER) ? ItemDisplay.withSubtitle(item.getName(),
@@ -164,6 +153,17 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                     return item.hasDefined(DEFAULT_CACHE) ? ItemDisplay.withSubtitle(item.getName(),
                             item.get(DEFAULT_CACHE).asString()) : null;
                 }
+            }
+
+            @Override
+            public String getTooltip() {
+                return item.isRemote() ? Names.REMOTE_CACHE_CONTAINER : Names.CACHE_CONTAINER;
+            }
+
+            @Override
+            public String getFilterData() {
+                String name = item.getName();
+                return item.isRemote() ? name + " remote" : name;
             }
 
             @Override
@@ -185,6 +185,11 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                                     CACHE_CONTAINER_TEMPLATE, CacheContainerColumn.this)
                     );
                 }
+            }
+
+            @Override
+            public String nextColumn() {
+                return item.isRemote() ? null : Ids.CACHE;
             }
         });
     }

@@ -79,7 +79,7 @@ public class CacheContainerPresenter
     private final StatementContext statementContext;
     private final Resources resources;
     private String cacheContainer;
-    private Cache cacheType;
+    private CacheType cacheTypeType;
     private String cacheName;
     private Memory memory;
     private Store store;
@@ -124,8 +124,7 @@ public class CacheContainerPresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(INFINISPAN)
-                .append(Ids.CACHE_CONTAINER, Ids.cacheContainer(cacheContainer),
-                        Names.CACHE_CONTAINER, cacheContainer);
+                .append(Ids.CACHE_CONTAINER, Ids.cacheContainer(cacheContainer), Names.CACHE_CONTAINER, cacheContainer);
     }
 
     @Override
@@ -177,45 +176,47 @@ public class CacheContainerPresenter
 
     // ------------------------------------------------------ cache
 
-    void addCache(Cache cache) {
-        Metadata metadata = metadataRegistry.lookup(cache.template);
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cache.baseId, Ids.ADD),
-                resources.messages().addResourceTitle(cache.type), metadata,
-                (name, model) -> crud.add(cache.type, name, cacheAddress(cache, name), model, (n, a) -> reload()));
+    void addCache(CacheType cacheType) {
+        Metadata metadata = metadataRegistry.lookup(cacheType.template);
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, Ids.ADD),
+                resources.messages().addResourceTitle(cacheType.type), metadata,
+                (name, model) -> crud.add(cacheType.type, name, cacheAddress(cacheType, name), model,
+                        (n, a) -> reload()));
         dialog.show();
     }
 
-    void saveCache(Cache cache, String name, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(cache.template);
-        crud.save(cache.type, name, cacheAddress(cache, name), changedValues, metadata, this::reload);
+    void saveCache(CacheType cacheType, String name, Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(cacheType.template);
+        crud.save(cacheType.type, name, cacheAddress(cacheType, name), changedValues, metadata, this::reload);
     }
 
-    void resetCache(Cache cache, String name, Form<NamedNode> form) {
-        Metadata metadata = metadataRegistry.lookup(cache.template);
-        crud.reset(cache.type, name, cacheAddress(cache, name), form, metadata, new FinishReset<NamedNode>(form) {
-            @Override
-            public void afterReset(Form<NamedNode> form) {
-                reload();
-            }
-        });
+    void resetCache(CacheType cacheType, String name, Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(cacheType.template);
+        crud.reset(cacheType.type, name, cacheAddress(cacheType, name), form, metadata,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
-    void removeCache(Cache cache, String name) {
-        crud.remove(cache.type, name, cacheAddress(cache, name), this::reload);
+    void removeCache(CacheType cacheType, String name) {
+        crud.remove(cacheType.type, name, cacheAddress(cacheType, name), this::reload);
     }
 
-    void selectCache(Cache cacheType, String cacheName) {
-        this.cacheType = cacheType;
+    void selectCache(CacheType cacheTypeType, String cacheName) {
+        this.cacheTypeType = cacheTypeType;
         this.cacheName = cacheName;
     }
 
     String cacheSegment() {
-        return cacheType.type + ": " + cacheName;
+        return cacheTypeType.type + ": " + cacheName;
     }
 
-    private ResourceAddress cacheAddress(Cache cache, String name) {
+    private ResourceAddress cacheAddress(CacheType cacheType, String name) {
         // cannot use this.cacheType and this.cacheName here, since they might be null
-        return SELECTED_CACHE_CONTAINER_TEMPLATE.append(cache.resource() + EQUALS + name).resolve(statementContext);
+        return SELECTED_CACHE_CONTAINER_TEMPLATE.append(cacheType.resource() + EQUALS + name).resolve(statementContext);
     }
 
 
@@ -226,7 +227,7 @@ public class CacheContainerPresenter
     }
 
     Operation readCacheComponent(Component component) {
-        if (cacheType != null && cacheName != null) {
+        if (cacheTypeType != null && cacheName != null) {
             return new Operation.Builder(cacheComponentAddress(component), READ_RESOURCE_OPERATION).build();
         } else {
             return null;
@@ -235,14 +236,14 @@ public class CacheContainerPresenter
 
     void saveCacheComponent(Component component, Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(COMPONENT + EQUALS + component.resource));
         crud.saveSingleton(component.type, cacheComponentAddress(component), changedValues, metadata, this::reload);
     }
 
     void resetCacheComponent(Component component, Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(COMPONENT + EQUALS + component.resource));
         crud.resetSingleton(component.type, cacheComponentAddress(component), form, metadata,
                 new FinishReset<ModelNode>(form) {
@@ -264,7 +265,7 @@ public class CacheContainerPresenter
 
     private ResourceAddress cacheComponentAddress(Component component) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(COMPONENT + EQUALS + component.resource)
                 .resolve(statementContext);
     }
@@ -273,10 +274,10 @@ public class CacheContainerPresenter
     // ------------------------------------------------------ cache backup
 
     void addCacheBackup() {
-        Metadata metadata = metadataRegistry.lookup(cacheType.template
+        Metadata metadata = metadataRegistry.lookup(cacheTypeType.template
                 .append(COMPONENT + EQUALS + BACKUPS)
                 .append(BACKUP + EQ_WILDCARD));
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, BACKUPS, Ids.ADD),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheTypeType.baseId, BACKUPS, Ids.ADD),
                 resources.messages().addResourceTitle(Names.BACKUP), metadata,
                 (name, model) -> {
                     ResourceAddress address = cacheBackupAddress(name);
@@ -287,16 +288,16 @@ public class CacheContainerPresenter
 
     void showCacheBackup() {
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(COMPONENT + EQUALS + BACKUPS)
                 .resolve(statementContext);
         crud.readChildren(address, BACKUP,
-                children -> getView().updateCacheBackups(cacheType, asNamedNodes(children)));
+                children -> getView().updateCacheBackups(cacheTypeType, asNamedNodes(children)));
     }
 
     void saveCacheBackup(String name, Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(COMPONENT + EQUALS + BACKUPS)
                 .append(BACKUP + EQ_WILDCARD));
         crud.save(Names.BACKUP, name, cacheBackupAddress(name), changedValues, metadata, this::showCacheBackup);
@@ -304,7 +305,7 @@ public class CacheContainerPresenter
 
     void resetCacheBackup(String name, Form<NamedNode> form) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(COMPONENT + EQUALS + BACKUPS)
                 .append(BACKUP + EQ_WILDCARD));
         crud.reset(Names.BACKUP, name, cacheBackupAddress(name), form, metadata, new FinishReset<NamedNode>(form) {
@@ -321,7 +322,7 @@ public class CacheContainerPresenter
 
     private ResourceAddress cacheBackupAddress(String name) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(COMPONENT + EQUALS + BACKUPS)
                 .append(BACKUP + EQUALS + name)
                 .resolve(statementContext);
@@ -332,7 +333,7 @@ public class CacheContainerPresenter
 
     void showCacheMemory() {
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .resolve(statementContext);
         crud.readChildren(address, MEMORY, 2, children -> {
             if (children.isEmpty()) {
@@ -343,20 +344,20 @@ public class CacheContainerPresenter
                 }
                 memory = Memory.fromResource(children.get(0).getName());
             }
-            getView().updateCacheMemory(cacheType, children);
+            getView().updateCacheMemory(cacheTypeType, children);
         });
     }
 
     void saveCacheMemory(Memory memory, Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(MEMORY + EQUALS + memory.resource));
         crud.saveSingleton(memory.type, cacheMemoryAddress(memory), changedValues, metadata, this::showCacheMemory);
     }
 
     void resetCacheMemory(Memory memory, Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(MEMORY + EQUALS + memory.resource));
         crud.resetSingleton(memory.type, cacheMemoryAddress(memory), form, metadata,
                 new FinishReset<ModelNode>(form) {
@@ -394,7 +395,7 @@ public class CacheContainerPresenter
 
     private ResourceAddress cacheMemoryAddress(Memory memory) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(MEMORY + EQUALS + memory.resource)
                 .resolve(statementContext);
     }
@@ -404,8 +405,8 @@ public class CacheContainerPresenter
 
     void addCacheStore(Store store) {
         if (store.addWithDialog) {
-            Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + EQUALS + store.resource));
-            String id = Ids.build(cacheType.baseId, store.baseId, Ids.ADD);
+            Metadata metadata = metadataRegistry.lookup(cacheTypeType.template.append(STORE + EQUALS + store.resource));
+            String id = Ids.build(cacheTypeType.baseId, store.baseId, Ids.ADD);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
                     .fromRequestProperties()
                     .requiredOnly()
@@ -430,7 +431,7 @@ public class CacheContainerPresenter
 
     void showCacheStore() {
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .resolve(statementContext);
         crud.readChildren(address, STORE, 2, children -> {
             if (children.isEmpty()) {
@@ -442,17 +443,17 @@ public class CacheContainerPresenter
                 }
                 store = Store.fromResource(children.get(0).getName());
             }
-            getView().updateCacheStore(cacheType, children);
+            getView().updateCacheStore(cacheTypeType, children);
         });
     }
 
     void saveCacheStore(Store store, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + EQUALS + store.resource));
+        Metadata metadata = metadataRegistry.lookup(cacheTypeType.template.append(STORE + EQUALS + store.resource));
         crud.saveSingleton(store.type, cacheStoreAddress(store), changedValues, metadata, this::showCacheStore);
     }
 
     void resetCacheStore(Store store, Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + EQUALS + store.resource));
+        Metadata metadata = metadataRegistry.lookup(cacheTypeType.template.append(STORE + EQUALS + store.resource));
         crud.resetSingleton(store.type, cacheStoreAddress(store), form, metadata, new FinishReset<ModelNode>(form) {
             @Override
             public void afterReset(Form<ModelNode> form) {
@@ -470,8 +471,8 @@ public class CacheContainerPresenter
 
             if (newStore.addWithDialog) {
                 Metadata metadata = metadataRegistry.lookup(
-                        cacheType.template.append(STORE + EQUALS + newStore.resource));
-                String id = Ids.build(cacheType.baseId, newStore.baseId, Ids.ADD);
+                        cacheTypeType.template.append(STORE + EQUALS + newStore.resource));
+                String id = Ids.build(cacheTypeType.baseId, newStore.baseId, Ids.ADD);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
                         .fromRequestProperties()
                         .requiredOnly()
@@ -514,7 +515,7 @@ public class CacheContainerPresenter
 
     private ResourceAddress cacheStoreAddress(Store store) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(STORE + EQUALS + store.resource)
                 .resolve(statementContext);
     }
@@ -528,7 +529,7 @@ public class CacheContainerPresenter
 
     void saveWrite(Write write, Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(STORE + EQUALS + store.resource)
                 .append(WRITE + EQUALS + write.resource));
         crud.saveSingleton(Names.WRITE_BEHIND, writeAddress(write), changedValues, metadata, this::showCacheStore);
@@ -536,7 +537,7 @@ public class CacheContainerPresenter
 
     void resetWrite(Write write, Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(STORE + EQUALS + store.resource)
                 .append(WRITE + EQUALS + write.resource));
         crud.resetSingleton(Names.WRITE_BEHIND, writeAddress(write), form, metadata, new FinishReset<ModelNode>(form) {
@@ -560,7 +561,7 @@ public class CacheContainerPresenter
 
     private ResourceAddress writeAddress(Write write) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(STORE + EQUALS + store.resource)
                 .append(WRITE + EQUALS + write.resource)
                 .resolve(statementContext);
@@ -571,7 +572,7 @@ public class CacheContainerPresenter
 
     void saveStoreTable(Table table, Map<String, Object> changedValues) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(STORE + EQUALS + store.resource)
                 .append(TABLE + EQUALS + table.resource));
         crud.saveSingleton(table.type, storeTableAddress(store, table), changedValues, metadata, this::showCacheStore);
@@ -579,7 +580,7 @@ public class CacheContainerPresenter
 
     void resetStoreTable(Table table, Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQ_WILDCARD)
+                .append(cacheTypeType.resource() + EQ_WILDCARD)
                 .append(STORE + EQUALS + store.resource)
                 .append(TABLE + EQUALS + table.resource));
         crud.resetSingleton(table.type, storeTableAddress(store, table), form, metadata,
@@ -593,7 +594,7 @@ public class CacheContainerPresenter
 
     private ResourceAddress storeTableAddress(Store store, Table table) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheType.resource() + EQUALS + cacheName)
+                .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(STORE + EQUALS + store.resource)
                 .append(TABLE + EQUALS + table.resource)
                 .resolve(statementContext);
@@ -684,9 +685,9 @@ public class CacheContainerPresenter
 
     public interface MyView extends HalView, HasPresenter<CacheContainerPresenter> {
         void update(CacheContainer cacheContainer, boolean jgroups);
-        void updateCacheBackups(Cache cache, List<NamedNode> backups);
-        void updateCacheMemory(Cache cache, List<Property> memories);
-        void updateCacheStore(Cache cache, List<Property> stores);
+        void updateCacheBackups(CacheType cacheType, List<NamedNode> backups);
+        void updateCacheMemory(CacheType cacheType, List<Property> memories);
+        void updateCacheStore(CacheType cacheType, List<Property> stores);
     }
     // @formatter:on
 }

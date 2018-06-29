@@ -53,6 +53,7 @@ public interface Names {
     String BUNDLED_EXTENSION = "Bundled Extension";
     String BYTE_BUFFER_POOL = "Byte Buffer Pool";
 
+    String CACHE = "Cache";
     String CACHE_CONTAINER = "Cache Container";
     String CACHING_REALM = "Caching Realm";
     String CATEGORY = "Category";
@@ -137,6 +138,7 @@ public interface Names {
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
+    String HOTROD = "Hotrod";
     String HTTP = "HTTP";
     String HTTP_ACCEPTOR = "HTTP Acceptor";
     String HTTP_AUTHENTICATION_FACTORY = "HTTP Authentication Factory";
@@ -273,7 +275,6 @@ public interface Names {
 
     String REALM = "Realm";
     String RELAY = "Relay";
-    String REMOTE = "Remote";
     String REMOTE_ACCEPTOR = "Remote Acceptor";
     String REMOTE_CACHE_CONTAINER = "Remote Cache Container";
     String REMOTE_CLUSTER = "Remote Cluster";
@@ -297,6 +298,7 @@ public interface Names {
     String RUNTIME = "Runtime";
 
     String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";
+    String SCATTERED_CACHE = "Scattered Cache";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
     String SECURE_MANAGEMENT = "Secure Management";
     String SECURITY = "Security";

@@ -57,7 +57,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class CacheContainerView extends HalViewImpl implements CacheContainerPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;
-    private final Map<Cache, CacheElement> caches;
+    private final Map<CacheType, CacheElement> caches;
     private final Map<ThreadPool, ThreadPoolElement> threadPools;
     private final TransportElement transport;
     private final VerticalNavigation navigation;
@@ -73,8 +73,8 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
                 .build();
 
         caches = new HashMap<>();
-        for (Cache cache : Cache.values()) {
-            caches.put(cache, new CacheElement(cache, metadataRegistry, tableButtonFactory, resources));
+        for (CacheType cacheType : CacheType.values()) {
+            caches.put(cacheType, new CacheElement(cacheType, metadataRegistry, tableButtonFactory, resources));
         }
 
         threadPools = new HashMap<>();
@@ -144,17 +144,17 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
     }
 
     @Override
-    public void updateCacheBackups(Cache cache, List<NamedNode> backups) {
-        caches.get(cache).updateBackups(backups);
+    public void updateCacheBackups(CacheType cacheType, List<NamedNode> backups) {
+        caches.get(cacheType).updateBackups(backups);
     }
 
     @Override
-    public void updateCacheMemory(Cache cache, List<Property> memories) {
-        caches.get(cache).updateMemory(memories);
+    public void updateCacheMemory(CacheType cacheType, List<Property> memories) {
+        caches.get(cacheType).updateMemory(memories);
     }
 
     @Override
-    public void updateCacheStore(Cache cache, List<Property> stores) {
-        caches.get(cache).updateStore(stores);
+    public void updateCacheStore(CacheType cacheType, List<Property> stores) {
+        caches.get(cacheType).updateStore(stores);
     }
 }
