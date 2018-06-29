@@ -44,7 +44,6 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
@@ -63,7 +62,6 @@ import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class CacheContainerPresenter
         extends ApplicationFinderPresenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy>
@@ -291,8 +289,6 @@ public class CacheContainerPresenter
                 .append(cacheTypeType.resource() + EQUALS + cacheName)
                 .append(COMPONENT + EQUALS + BACKUPS)
                 .resolve(statementContext);
-        crud.readChildren(address, BACKUP,
-                children -> getView().updateCacheBackups(cacheTypeType, asNamedNodes(children)));
     }
 
     void saveCacheBackup(String name, Map<String, Object> changedValues) {
@@ -344,7 +340,6 @@ public class CacheContainerPresenter
                 }
                 memory = Memory.fromResource(children.get(0).getName());
             }
-            getView().updateCacheMemory(cacheTypeType, children);
         });
     }
 
@@ -443,7 +438,6 @@ public class CacheContainerPresenter
                 }
                 store = Store.fromResource(children.get(0).getName());
             }
-            getView().updateCacheStore(cacheTypeType, children);
         });
     }
 
@@ -685,9 +679,6 @@ public class CacheContainerPresenter
 
     public interface MyView extends HalView, HasPresenter<CacheContainerPresenter> {
         void update(CacheContainer cacheContainer, boolean jgroups);
-        void updateCacheBackups(CacheType cacheType, List<NamedNode> backups);
-        void updateCacheMemory(CacheType cacheType, List<Property> memories);
-        void updateCacheStore(CacheType cacheType, List<Property> stores);
     }
     // @formatter:on
 }

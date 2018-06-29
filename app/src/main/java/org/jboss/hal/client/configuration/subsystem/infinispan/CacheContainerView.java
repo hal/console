@@ -28,7 +28,6 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -43,7 +42,6 @@ import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSPORT;
-import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -57,7 +55,6 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class CacheContainerView extends HalViewImpl implements CacheContainerPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;
-    private final Map<CacheType, CacheElement> caches;
     private final Map<ThreadPool, ThreadPoolElement> threadPools;
     private final TransportElement transport;
     private final VerticalNavigation navigation;
@@ -71,11 +68,6 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
                 .onSave((form, changedValues) -> presenter.saveCacheContainer(changedValues))
                 .prepareReset(form -> presenter.resetCacheContainer(form))
                 .build();
-
-        caches = new HashMap<>();
-        for (CacheType cacheType : CacheType.values()) {
-            caches.put(cacheType, new CacheElement(cacheType, metadataRegistry, tableButtonFactory, resources));
-        }
 
         threadPools = new HashMap<>();
         for (ThreadPool threadPool : ThreadPool.values()) {
@@ -92,10 +84,6 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
                 .asElement();
         navigation.addPrimary(Ids.CACHE_CONTAINER_ITEM, Names.CONFIGURATION, pfIcon("settings"), section);
 
-        caches.forEach((cache, cacheElement) ->
-                navigation.addPrimary(Ids.build(cache.baseId, Ids.ITEM), cache.type, cache.icon,
-                        cacheElement.asElement()));
-
         navigation.addPrimary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM, Names.THREAD_POOLS, pfIcon("resource-pool"));
         threadPools.forEach((threadPool, threadPoolElement) ->
                 navigation.addSecondary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM,
@@ -107,7 +95,6 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
 
         registerAttachable(navigation);
         registerAttachable(configurationForm);
-        caches.values().forEach(cacheElement -> registerAttachable(cacheElement));
         threadPools.values().forEach(threadPoolElement -> registerAttachable(threadPoolElement));
         registerAttachable(transport);
 
@@ -119,7 +106,6 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
     @Override
     public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
-        caches.values().forEach(cacheElement -> cacheElement.setPresenter(presenter));
         threadPools.values().forEach(threadPoolElement -> threadPoolElement.setPresenter(presenter));
         transport.setPresenter(presenter);
     }
@@ -127,10 +113,6 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
     @Override
     public void update(CacheContainer cacheContainer, boolean jgroups) {
         configurationForm.view(cacheContainer);
-        caches.forEach((cache, cacheElement) -> {
-            List<NamedNode> caches = asNamedNodes(failSafePropertyList(cacheContainer, cache.resource()));
-            cacheElement.update(caches);
-        });
         threadPools.forEach((threadPool, threadPoolElement) -> {
             ModelNode modelNode = failSafeGet(cacheContainer, threadPool.path());
             threadPoolElement.update(modelNode);
@@ -141,20 +123,5 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
             List<Property> transports = failSafePropertyList(cacheContainer, TRANSPORT);
             transport.update(transports);
         }
-    }
-
-    @Override
-    public void updateCacheBackups(CacheType cacheType, List<NamedNode> backups) {
-        caches.get(cacheType).updateBackups(backups);
-    }
-
-    @Override
-    public void updateCacheMemory(CacheType cacheType, List<Property> memories) {
-        caches.get(cacheType).updateMemory(memories);
-    }
-
-    @Override
-    public void updateCacheStore(CacheType cacheType, List<Property> stores) {
-        caches.get(cacheType).updateStore(stores);
     }
 }
