@@ -365,6 +365,7 @@ public interface ModelDescriptionConstants {
     String INCLUDE_SINGLETONS = "include-singletons";
     String INCLUDES = "includes";
     String INDEX = "index";
+    String INDEXING = "indexing";
     String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
     String INIT = "init";
@@ -741,6 +742,7 @@ public interface ModelDescriptionConstants {
     String SECURITY_MANAGER = "security-manager";
     String SECURITY_REALM = "security-realm";
     String SECURITY_SETTING = "security-setting";
+    String SEGMENTS = "segments";
     String SELECT = "select";
     String SELECTOR = "selector";
     String SEND_MESSAGE_TO_DEAD_LETTER_ADDRESS = "send-message-to-dead-letter-address";

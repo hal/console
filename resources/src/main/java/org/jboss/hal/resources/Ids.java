@@ -63,6 +63,8 @@ public interface Ids {
     String BROWSE_CONTENT_EXPLODED_EMPTY = "browse-content-exploded-empty";
     String BROWSE_CONTENT_UNSUPPORTED_EMPTY = "browse-content-unsupported-empty";
     String CACHE = "cache";
+    String CACHE_ADD_ACTIONS = "cache-add-actions";
+    String CACHE_REFRESH = "cache-refresh";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
     String CACHE_COMPONENT_LOCKING = "cache-component-locking";
     String CACHE_COMPONENT_PARTITION_HANDLING = "cache-component-partition-handling";

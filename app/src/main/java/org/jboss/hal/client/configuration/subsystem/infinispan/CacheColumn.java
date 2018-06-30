@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -46,15 +47,14 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import static elemental2.dom.DomGlobal.alert;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.CACHE)
 @Requires(value = {DISTRIBUTED_CACHE_ADDRESS,
@@ -106,11 +106,23 @@ public class CacheColumn extends FinderColumn<Cache> {
                         callback.onSuccess(emptyList());
                     }
                 })
+                .onPreview(CachePreview::new)
                 .pinnable()
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
+
+        List<ColumnAction<Cache>> addActions = new ArrayList<>();
+        for (CacheType cacheType : CacheType.values()) {
+            addActions.add(new ColumnAction.Builder<Cache>(Ids.build(cacheType.baseId, Ids.ADD))
+                    .title(resources.messages().addResourceTitle(cacheType.type))
+                    .handler(column -> addCache(cacheType))
+                    .constraint(Constraint.executable(cacheType.template, ADD))
+                    .build());
+        }
+        addColumnActions(Ids.CACHE_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
+        addColumnAction(columnActionFactory.refresh(Ids.CACHE_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<Cache>() {
             @Override
@@ -166,5 +178,9 @@ public class CacheColumn extends FinderColumn<Cache> {
                 return actions;
             }
         });
+    }
+
+    private void addCache(CacheType cacheType) {
+        alert("Add " + cacheType.type + ": " + Names.NYI);
     }
 }

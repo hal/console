@@ -52,8 +52,8 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
     private VerticalNavigation navigation;
     private Form<Cache> form;
     private Map<Component, Form<ModelNode>> components;
-    private Memory2Element memoryElement;
-    private Store2Element storeElement;
+    private MemoryElement memoryElement;
+    private StoreElement storeElement;
     private org.jboss.hal.ballroom.table.Table<NamedNode> backupTable;
     private Form<NamedNode> backupForm;
     private P presenter;
@@ -114,14 +114,14 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
     }
 
     private void initMemory(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
-        memoryElement = new Memory2Element(cacheType, metadataRegistry, resources);
+        memoryElement = new MemoryElement(cacheType, metadataRegistry, resources);
         navigation.addPrimary(Ids.build(cacheType.baseId, MEMORY, Ids.ITEM), Names.MEMORY, pfIcon("memory"),
                 memoryElement);
         registerAttachable(memoryElement);
     }
 
     private void initStore(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
-        storeElement = new Store2Element(cacheType, metadataRegistry, resources);
+        storeElement = new StoreElement(cacheType, metadataRegistry, resources);
         navigation.addPrimary(Ids.build(cacheType.baseId, STORE, Ids.ITEM), Names.STORE, fontAwesome("shopping-basket"),
                 storeElement);
         registerAttachable(storeElement);

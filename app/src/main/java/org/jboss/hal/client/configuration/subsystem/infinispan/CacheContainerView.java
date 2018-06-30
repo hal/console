@@ -25,7 +25,6 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -49,8 +48,6 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * Implementation note: Not based on MBUI XML due to special cache container singleton resources.
- *
- * TODO This view generates a huge DOM tree (about 14k lines of HTML). Think about ways to optimize this.
  */
 public class CacheContainerView extends HalViewImpl implements CacheContainerPresenter.MyView {
 
@@ -61,8 +58,7 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
     private CacheContainerPresenter presenter;
 
     @Inject
-    public CacheContainerView(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
-            Resources resources) {
+    public CacheContainerView(MetadataRegistry metadataRegistry, Resources resources) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.saveCacheContainer(changedValues))

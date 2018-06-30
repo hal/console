@@ -52,7 +52,7 @@ import static org.jboss.hal.resources.CSS.*;
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
  * that we need to take care of {@code store=none}.
  */
-class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
+class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
 
     private final EmptyState emptyState;
     private final HTMLElement headerForm;
@@ -63,7 +63,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final Map<Store, WriteElement> writeElements;
     private final Map<StoreTable, Form<ModelNode>> tableForms;
     private final HTMLElement root;
-    private CacheContainerPresenter presenter;
+    private CachePresenter presenter;
 
     StoreElement(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
         this.tabs = new HashMap<>();
@@ -78,7 +78,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .add(emptyStoreSelect)
                 .primaryAction(resources.constants().add(), () -> {
                     String value = SelectBoxBridge.Single.element(emptyStoreSelect).getValue();
-                    presenter.addCacheStore(Store.fromResource(value));
+                    presenter.addStore(Store.fromResource(value));
                 })
                 .build();
 
@@ -93,8 +93,8 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cacheType.baseId, store.baseId, Ids.FORM),
                     metadata)
-                    .onSave((f, changedValues) -> presenter.saveCacheStore(store, changedValues))
-                    .prepareReset(f -> presenter.resetCacheStore(store, f))
+                    .onSave((f, changedValues) -> presenter.saveStore(store, changedValues))
+                    .prepareReset(f -> presenter.resetStore(store, f))
                     .build();
             storeForms.put(store, form);
             storeTabs.add(Ids.build(cacheType.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
@@ -167,8 +167,8 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .customFormItem(TIMESTAMP_COLUMN, ad -> new ColumnFormItem(TIMESTAMP_COLUMN))
                 .include(BATCH_SIZE, FETCH_SIZE)
                 .unsorted()
-                .onSave((f, changedValues) -> presenter.saveStoreTable(table, changedValues))
-                .prepareReset(f -> presenter.resetStoreTable(table, f))
+                .onSave((f, changedValues) -> presenter.saveTable(table, changedValues))
+                .prepareReset(f -> presenter.resetTable(table, f))
                 .build();
     }
 
@@ -209,7 +209,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(CacheContainerPresenter presenter) {
+    public void setPresenter(CachePresenter presenter) {
         this.presenter = presenter;
         writeElements.values().forEach(we -> we.setPresenter(presenter));
     }

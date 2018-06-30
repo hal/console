@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -33,8 +31,6 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -42,7 +38,6 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -53,14 +48,9 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class CacheContainerPresenter
@@ -68,19 +58,13 @@ public class CacheContainerPresenter
         implements SupportsExpertMode {
 
     private static final String EQUALS = "=";
-    private static final String EQ_WILDCARD = "=*";
 
     private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private final Resources resources;
     private String cacheContainer;
-    private CacheType cacheTypeType;
-    private String cacheName;
-    private Memory memory;
-    private Store store;
 
     @Inject
     public CacheContainerPresenter(EventBus eventBus,
@@ -91,15 +75,13 @@ public class CacheContainerPresenter
             Dispatcher dispatcher,
             CrudOperations crud,
             FinderPathFactory finderPathFactory,
-            StatementContext statementContext,
-            Resources resources) {
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.metadataRegistry = metadataRegistry;
         this.dispatcher = dispatcher;
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> cacheContainer);
-        this.resources = resources;
     }
 
     @Override
@@ -169,429 +151,6 @@ public class CacheContainerPresenter
                 reload();
             }
         });
-    }
-
-
-    // ------------------------------------------------------ cache
-
-    void addCache(CacheType cacheType) {
-        Metadata metadata = metadataRegistry.lookup(cacheType.template);
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, Ids.ADD),
-                resources.messages().addResourceTitle(cacheType.type), metadata,
-                (name, model) -> crud.add(cacheType.type, name, cacheAddress(cacheType, name), model,
-                        (n, a) -> reload()));
-        dialog.show();
-    }
-
-    void saveCache(CacheType cacheType, String name, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(cacheType.template);
-        crud.save(cacheType.type, name, cacheAddress(cacheType, name), changedValues, metadata, this::reload);
-    }
-
-    void resetCache(CacheType cacheType, String name, Form<NamedNode> form) {
-        Metadata metadata = metadataRegistry.lookup(cacheType.template);
-        crud.reset(cacheType.type, name, cacheAddress(cacheType, name), form, metadata,
-                new FinishReset<NamedNode>(form) {
-                    @Override
-                    public void afterReset(Form<NamedNode> form) {
-                        reload();
-                    }
-                });
-    }
-
-    void removeCache(CacheType cacheType, String name) {
-        crud.remove(cacheType.type, name, cacheAddress(cacheType, name), this::reload);
-    }
-
-    void selectCache(CacheType cacheTypeType, String cacheName) {
-        this.cacheTypeType = cacheTypeType;
-        this.cacheName = cacheName;
-    }
-
-    String cacheSegment() {
-        return cacheTypeType.type + ": " + cacheName;
-    }
-
-    private ResourceAddress cacheAddress(CacheType cacheType, String name) {
-        // cannot use this.cacheType and this.cacheName here, since they might be null
-        return SELECTED_CACHE_CONTAINER_TEMPLATE.append(cacheType.resource() + EQUALS + name).resolve(statementContext);
-    }
-
-
-    // ------------------------------------------------------ cache component
-
-    void addCacheComponent(Component component) {
-        crud.addSingleton(component.type, cacheComponentAddress(component), null, address -> reload());
-    }
-
-    Operation readCacheComponent(Component component) {
-        if (cacheTypeType != null && cacheName != null) {
-            return new Operation.Builder(cacheComponentAddress(component), READ_RESOURCE_OPERATION).build();
-        } else {
-            return null;
-        }
-    }
-
-    void saveCacheComponent(Component component, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(COMPONENT + EQUALS + component.resource));
-        crud.saveSingleton(component.type, cacheComponentAddress(component), changedValues, metadata, this::reload);
-    }
-
-    void resetCacheComponent(Component component, Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(COMPONENT + EQUALS + component.resource));
-        crud.resetSingleton(component.type, cacheComponentAddress(component), form, metadata,
-                new FinishReset<ModelNode>(form) {
-                    @Override
-                    public void afterReset(Form<ModelNode> form) {
-                        reload();
-                    }
-                });
-    }
-
-    void removeCacheComponent(Component component, Form<ModelNode> form) {
-        crud.removeSingleton(component.type, cacheComponentAddress(component), new FinishRemove<ModelNode>(form) {
-            @Override
-            public void afterRemove(Form<ModelNode> form) {
-                reload();
-            }
-        });
-    }
-
-    private ResourceAddress cacheComponentAddress(Component component) {
-        return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .append(COMPONENT + EQUALS + component.resource)
-                .resolve(statementContext);
-    }
-
-
-    // ------------------------------------------------------ cache backup
-
-    void addCacheBackup() {
-        Metadata metadata = metadataRegistry.lookup(cacheTypeType.template
-                .append(COMPONENT + EQUALS + BACKUPS)
-                .append(BACKUP + EQ_WILDCARD));
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheTypeType.baseId, BACKUPS, Ids.ADD),
-                resources.messages().addResourceTitle(Names.BACKUP), metadata,
-                (name, model) -> {
-                    ResourceAddress address = cacheBackupAddress(name);
-                    crud.add(Names.BACKUP, name, address, model, (n, a) -> showCacheBackup());
-                });
-        dialog.show();
-    }
-
-    void showCacheBackup() {
-        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .append(COMPONENT + EQUALS + BACKUPS)
-                .resolve(statementContext);
-    }
-
-    void saveCacheBackup(String name, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(COMPONENT + EQUALS + BACKUPS)
-                .append(BACKUP + EQ_WILDCARD));
-        crud.save(Names.BACKUP, name, cacheBackupAddress(name), changedValues, metadata, this::showCacheBackup);
-    }
-
-    void resetCacheBackup(String name, Form<NamedNode> form) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(COMPONENT + EQUALS + BACKUPS)
-                .append(BACKUP + EQ_WILDCARD));
-        crud.reset(Names.BACKUP, name, cacheBackupAddress(name), form, metadata, new FinishReset<NamedNode>(form) {
-            @Override
-            public void afterReset(Form<NamedNode> form) {
-                showCacheBackup();
-            }
-        });
-    }
-
-    void removeCacheBackup(String name) {
-        crud.remove(Names.BACKUP, name, cacheBackupAddress(name), this::showCacheBackup);
-    }
-
-    private ResourceAddress cacheBackupAddress(String name) {
-        return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .append(COMPONENT + EQUALS + BACKUPS)
-                .append(BACKUP + EQUALS + name)
-                .resolve(statementContext);
-    }
-
-
-    // ------------------------------------------------------ cache memory
-
-    void showCacheMemory() {
-        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .resolve(statementContext);
-        crud.readChildren(address, MEMORY, 2, children -> {
-            if (children.isEmpty()) {
-                memory = null;
-            } else {
-                if (children.size() > 1) {
-                    MessageEvent.fire(getEventBus(), Message.warning(resources.messages().moreThanOneCacheMemory()));
-                }
-                memory = Memory.fromResource(children.get(0).getName());
-            }
-        });
-    }
-
-    void saveCacheMemory(Memory memory, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(MEMORY + EQUALS + memory.resource));
-        crud.saveSingleton(memory.type, cacheMemoryAddress(memory), changedValues, metadata, this::showCacheMemory);
-    }
-
-    void resetCacheMemory(Memory memory, Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(MEMORY + EQUALS + memory.resource));
-        crud.resetSingleton(memory.type, cacheMemoryAddress(memory), form, metadata,
-                new FinishReset<ModelNode>(form) {
-                    @Override
-                    public void afterReset(Form<ModelNode> form) {
-                        showCacheMemory();
-                    }
-                });
-    }
-
-    void switchMemory(Memory newMemory) {
-        if (newMemory != null && newMemory != this.memory) {
-            List<Operation> operations = new ArrayList<>();
-            if (this.memory != null) {
-                operations.add(new Operation.Builder(cacheMemoryAddress(this.memory), REMOVE).build());
-            }
-            operations.add(new Operation.Builder(cacheMemoryAddress(newMemory), ADD).build());
-            Composite composite = new Composite(operations)
-                    .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
-            dispatcher.execute(composite, (CompositeResult result) -> {
-                MessageEvent.fire(getEventBus(),
-                        Message.success(resources.messages().addSingleResourceSuccess(newMemory.type)));
-                showCacheMemory();
-            });
-        }
-    }
-
-    String memorySegment() {
-        StringBuilder builder = new StringBuilder().append(Names.MEMORY);
-        if (memory != null) {
-            builder.append(": ").append(memory.type);
-        }
-        return builder.toString();
-    }
-
-    private ResourceAddress cacheMemoryAddress(Memory memory) {
-        return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .append(MEMORY + EQUALS + memory.resource)
-                .resolve(statementContext);
-    }
-
-
-    // ------------------------------------------------------ cache store
-
-    void addCacheStore(Store store) {
-        if (store.addWithDialog) {
-            Metadata metadata = metadataRegistry.lookup(cacheTypeType.template.append(STORE + EQUALS + store.resource));
-            String id = Ids.build(cacheTypeType.baseId, store.baseId, Ids.ADD);
-            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
-                    .fromRequestProperties()
-                    .requiredOnly()
-                    .build();
-            AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(store.type), form,
-                    (name, model) -> {
-                        Operation operation = new Operation.Builder(cacheStoreAddress(store), ADD)
-                                .header(ALLOW_RESOURCE_SERVICE_RESTART, true)
-                                .payload(model)
-                                .build();
-                        crud.addSingleton(store.type, operation, address -> showCacheStore());
-                    });
-            dialog.show();
-
-        } else {
-            Operation operation = new Operation.Builder(cacheStoreAddress(store), ADD)
-                    .header(ALLOW_RESOURCE_SERVICE_RESTART, true)
-                    .build();
-            crud.addSingleton(store.type, operation, address -> showCacheStore());
-        }
-    }
-
-    void showCacheStore() {
-        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .resolve(statementContext);
-        crud.readChildren(address, STORE, 2, children -> {
-            if (children.isEmpty()) {
-                store = null;
-            } else {
-                if (children.size() > 1) {
-                    MessageEvent.fire(getEventBus(), Message.warning(resources.messages().moreThanOneCacheStore(),
-                            resources.messages().moreThanOneCacheStoreDetails()));
-                }
-                store = Store.fromResource(children.get(0).getName());
-            }
-        });
-    }
-
-    void saveCacheStore(Store store, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(cacheTypeType.template.append(STORE + EQUALS + store.resource));
-        crud.saveSingleton(store.type, cacheStoreAddress(store), changedValues, metadata, this::showCacheStore);
-    }
-
-    void resetCacheStore(Store store, Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(cacheTypeType.template.append(STORE + EQUALS + store.resource));
-        crud.resetSingleton(store.type, cacheStoreAddress(store), form, metadata, new FinishReset<ModelNode>(form) {
-            @Override
-            public void afterReset(Form<ModelNode> form) {
-                showCacheStore();
-            }
-        });
-    }
-
-    void switchStore(Store newStore) {
-        if (newStore != null && newStore != this.store) {
-            List<Operation> operations = new ArrayList<>();
-            if (this.store != null) {
-                operations.add(new Operation.Builder(cacheStoreAddress(this.store), REMOVE).build());
-            }
-
-            if (newStore.addWithDialog) {
-                Metadata metadata = metadataRegistry.lookup(
-                        cacheTypeType.template.append(STORE + EQUALS + newStore.resource));
-                String id = Ids.build(cacheTypeType.baseId, newStore.baseId, Ids.ADD);
-                Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
-                        .fromRequestProperties()
-                        .requiredOnly()
-                        .build();
-                AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(newStore.type),
-                        form, (name, model) -> {
-                    operations.add(new Operation.Builder(cacheStoreAddress(newStore), ADD)
-                            .payload(model)
-                            .build());
-                    Composite composite = new Composite(operations)
-                            .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
-                    dispatcher.execute(composite, (CompositeResult result) -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
-                        showCacheStore();
-                    });
-                });
-                dialog.show();
-
-            } else {
-                operations.add(new Operation.Builder(cacheStoreAddress(newStore), ADD).build());
-                Composite composite = new Composite(operations)
-                        .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
-                dispatcher.execute(composite, (CompositeResult result) -> {
-                    MessageEvent.fire(getEventBus(),
-                            Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
-                    showCacheStore();
-                });
-            }
-        }
-    }
-
-    String storeSegment() {
-        StringBuilder builder = new StringBuilder().append(Names.STORE);
-        if (store != null) {
-            builder.append(": ").append(store.type);
-        }
-        return builder.toString();
-    }
-
-    private ResourceAddress cacheStoreAddress(Store store) {
-        return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .append(STORE + EQUALS + store.resource)
-                .resolve(statementContext);
-    }
-
-
-    // ------------------------------------------------------ write through / behind
-
-    void addWrite(Write write) {
-        crud.addSingleton(write.type, writeAddress(write), null, address -> showCacheStore());
-    }
-
-    void saveWrite(Write write, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(STORE + EQUALS + store.resource)
-                .append(WRITE + EQUALS + write.resource));
-        crud.saveSingleton(Names.WRITE_BEHIND, writeAddress(write), changedValues, metadata, this::showCacheStore);
-    }
-
-    void resetWrite(Write write, Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(STORE + EQUALS + store.resource)
-                .append(WRITE + EQUALS + write.resource));
-        crud.resetSingleton(Names.WRITE_BEHIND, writeAddress(write), form, metadata, new FinishReset<ModelNode>(form) {
-            @Override
-            public void afterReset(Form<ModelNode> form) {
-                showCacheStore();
-            }
-        });
-    }
-
-    void switchWrite(Write currentWrite, Write newWrite) {
-        List<Operation> operations = new ArrayList<>();
-        operations.add(new Operation.Builder(writeAddress(currentWrite), REMOVE).build());
-        operations.add(new Operation.Builder(writeAddress(newWrite), ADD).build());
-        dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().addSingleResourceSuccess(newWrite.type)));
-            showCacheStore();
-        });
-    }
-
-    private ResourceAddress writeAddress(Write write) {
-        return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .append(STORE + EQUALS + store.resource)
-                .append(WRITE + EQUALS + write.resource)
-                .resolve(statementContext);
-    }
-
-
-    // ------------------------------------------------------ tables of jdbc stores
-
-    void saveStoreTable(Table table, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(STORE + EQUALS + store.resource)
-                .append(TABLE + EQUALS + table.resource));
-        crud.saveSingleton(table.type, storeTableAddress(store, table), changedValues, metadata, this::showCacheStore);
-    }
-
-    void resetStoreTable(Table table, Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQ_WILDCARD)
-                .append(STORE + EQUALS + store.resource)
-                .append(TABLE + EQUALS + table.resource));
-        crud.resetSingleton(table.type, storeTableAddress(store, table), form, metadata,
-                new FinishReset<ModelNode>(form) {
-                    @Override
-                    public void afterReset(Form<ModelNode> form) {
-                        showCacheStore();
-                    }
-                });
-    }
-
-    private ResourceAddress storeTableAddress(Store store, Table table) {
-        return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cacheTypeType.resource() + EQUALS + cacheName)
-                .append(STORE + EQUALS + store.resource)
-                .append(TABLE + EQUALS + table.resource)
-                .resolve(statementContext);
     }
 
 
@@ -672,8 +231,17 @@ public class CacheContainerPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(CACHE_CONTAINER_ADDRESS)
     @NameToken(NameTokens.CACHE_CONTAINER)
+    @Requires(value = {CACHE_CONTAINER_ADDRESS,
+            THREAD_POOL_ASYNC_OPERATIONS,
+            THREAD_POOL_EXPIRATION,
+            THREAD_POOL_LISTENER,
+            THREAD_POOL_PERSISTENCE,
+            THREAD_POOL_REMOTE_COMMAND,
+            THREAD_POOL_SITE_TRANSFER,
+            THREAD_POOL_TRANSPORT,
+            TRANSPORT_JGROUPS_ADDRESS},
+            recursive = false)
     public interface MyProxy extends ProxyPlace<CacheContainerPresenter> {
     }
 

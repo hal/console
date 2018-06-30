@@ -186,12 +186,12 @@ public class RemoteCacheContainerPresenter
     }
 
     void saveConnectionPool(Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(CONNECTION_POOL_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(COMPONENT_CONNECTION_POOL_TEMPLATE);
         crud.saveSingleton(Names.CONNECTION_POOL, connectionPoolAddress(), changedValues, metadata, this::reload);
     }
 
     void resetConnectionPool(Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(CONNECTION_POOL_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(COMPONENT_CONNECTION_POOL_TEMPLATE);
         crud.resetSingleton(Names.CONNECTION_POOL, connectionPoolAddress(), form, metadata, this::reload);
     }
 
@@ -217,12 +217,12 @@ public class RemoteCacheContainerPresenter
     }
 
     void saveSecurity(Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(SECURITY_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(COMPONENT_SECURITY_TEMPLATE);
         crud.saveSingleton(Names.SECURITY, securityAddress(), changedValues, metadata, this::reload);
     }
 
     void resetSecurity(Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(SECURITY_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(COMPONENT_SECURITY_TEMPLATE);
         crud.resetSingleton(Names.SECURITY, securityAddress(), form, metadata, this::reload);
     }
 
@@ -248,12 +248,12 @@ public class RemoteCacheContainerPresenter
     }
 
     void saveThreadPool(Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(THREAD_POOL_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(THREAD_POOL_ASYNC_TEMPLATE);
         crud.saveSingleton(Names.THREAD_POOL, threadPoolAddress(), changedValues, metadata, this::reload);
     }
 
     void resetThreadPool(Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(THREAD_POOL_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(THREAD_POOL_ASYNC_TEMPLATE);
         crud.resetSingleton(Names.THREAD_POOL, threadPoolAddress(), form, metadata, this::reload);
     }
 
