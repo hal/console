@@ -55,7 +55,6 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private CachePresenter presenter;
 
     WriteElement(CacheType cacheType, Store store, MetadataRegistry metadataRegistry, Resources resources) {
-
         HTMLInputElement behindRadio;
         String radioName = Ids.build(cacheType.baseId, store.baseId, WRITE, "radio");
         ElementsBuilder elements = elements()
