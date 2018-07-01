@@ -48,6 +48,7 @@ import static org.jboss.hal.resources.CSS.*;
 /** Element to view and modify the {@code memory=*} singletons of a cache. */
 class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
 
+    private final HTMLElement currentMemory;
     private final HTMLElement headerForm;
     private final String selectMemoryId;
     private final HTMLSelectElement selectMemory;
@@ -80,7 +81,8 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                                 .textContent(resources.constants().switchMemory()))
                         .add(selectMemory)
                         .asElement())
-                .add(h(1).textContent(Names.MEMORY))
+                .add(h(1).textContent(Names.MEMORY + ": ")
+                        .add(currentMemory = span().asElement()))
                 .add(p().textContent(resources.constants().cacheMemory()))
                 .addAll(memoryForms.values().stream().map(Form::asElement).collect(toList()))
                 .asElement();
@@ -144,6 +146,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     void update(List<Property> memories) {
         Memory memory = Memory.fromResource(memories.get(0).getName());
         if (memory != null) {
+            currentMemory.textContent = memory.type;
             SelectBoxBridge.Single.element(selectMemory).setValue(memory.resource);
 
             ModelNode memoryNode = memories.get(0).getValue();
