@@ -76,7 +76,13 @@ public final class Strings {
 
     public static String abbreviateFqClassName(String fqcn) {
         return fqcn.replaceAll(FQ_CLASS_NAME, "$1");
+    }
 
+    public static String capitalize(String str) {
+        if (str != null && str.length() > 0) {
+            return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+        }
+        return str;
     }
 
     public static String substringAfterLast(String str, String separator) {

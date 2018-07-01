@@ -91,7 +91,7 @@ public class CacheColumn extends FinderColumn<Cache> {
                         CacheType[] cacheTypes = CacheType.values();
                         ResourceAddress address = CACHE_CONTAINER_TEMPLATE.resolve(statementContext, cacheContainer);
                         List<String> children = stream(cacheTypes).map(CacheType::resource).collect(toList());
-                        crud.readChildren(address, children, result -> {
+                        crud.readChildren(address, children, 1, result -> {
                             List<Cache> caches = new ArrayList<>();
                             for (int i = 0; i < result.size(); i++) {
                                 List<Property> properties = result.step(i).get(RESULT).asPropertyList();

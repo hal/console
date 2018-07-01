@@ -19,11 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Strings;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 class CachePreview extends PreviewContent<Cache> {
 
@@ -49,28 +55,37 @@ class CachePreview extends PreviewContent<Cache> {
         PreviewAttributes<Cache> basicAttributes = new PreviewAttributes<>(cache, attributes);
         previewBuilder().addAll(basicAttributes);
 
-/*
         PreviewAttributes<Cache> memoryAndStoreAttributes = new PreviewAttributes<>(cache,
                 Names.MEMORY + " / " + Names.STORE);
         memoryAndStoreAttributes.append(c -> {
-            ModelNode modelNode = failSafeGet(c, MEMORY);
-            if (modelNode.isDefined()) {
-                Property property = modelNode.asProperty();
-                return new PreviewAttribute(Names.MEMORY, property.getName());
-            } else {
-                return new PreviewAttribute(Names.MEMORY, "");
+            String resource = definedSingleton(c, MEMORY);
+            Memory memory = Memory.fromResource(resource);
+            if (memory != null) {
+                return new PreviewAttribute(Names.MEMORY, memory.type);
             }
+            return new PreviewAttribute(Names.MEMORY, Strings.capitalize(resource));
         });
         memoryAndStoreAttributes.append(c -> {
-            ModelNode modelNode = failSafeGet(c, STORE);
-            if (modelNode.isDefined()) {
-                Property property = modelNode.asProperty();
-                return new PreviewAttribute(Names.STORE, property.getName());
-            } else {
-                return new PreviewAttribute(Names.STORE, "");
+            String resource = definedSingleton(c, STORE);
+            Store store = Store.fromResource(resource);
+            if (store != null) {
+                return new PreviewAttribute(Names.STORE, store.type);
             }
+            return new PreviewAttribute(Names.STORE, Strings.capitalize(resource));
         });
         previewBuilder().addAll(memoryAndStoreAttributes);
-*/
+    }
+
+    private String definedSingleton(Cache cache, String name) {
+        ModelNode modelNode = failSafeGet(cache, name);
+        if (modelNode.isDefined()) {
+            List<Property> properties = modelNode.asPropertyList();
+            for (Property property : properties) {
+                if (property.getValue().isDefined()) {
+                    return property.getName();
+                }
+            }
+        }
+        return "";
     }
 }

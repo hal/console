@@ -36,11 +36,11 @@ public enum Store {
     static Store fromResource(String resource) {
         if (resource != null) {
             // STORE is an alias for custom
-            if (resource.equals("STORE")) { //NON-NLS
+            if (resource.equalsIgnoreCase("STORE")) { //NON-NLS
                 return CUSTOM;
             } else {
                 for (Store store : Store.values()) {
-                    if (store.resource.equals(resource)) {
+                    if (store.resource.equalsIgnoreCase(resource)) {
                         return store;
                     }
                 }
