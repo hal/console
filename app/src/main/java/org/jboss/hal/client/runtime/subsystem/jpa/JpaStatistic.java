@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.client.runtime.subsystem.jpa;
 
-import org.jboss.hal.core.Strings;
 import org.jboss.hal.core.deployment.DeploymentResource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.resources.Strings;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
@@ -26,7 +26,7 @@ class JpaStatistic extends DeploymentResource {
 
     private final String persistenceUnit;
 
-    JpaStatistic(final ResourceAddress address, final ModelNode node) {
+    JpaStatistic(ResourceAddress address, ModelNode node) {
         super(address, node);
         this.persistenceUnit = Strings.substringAfterLast(address.lastValue(), "#");
     }

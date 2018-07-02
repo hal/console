@@ -31,7 +31,7 @@ enum Memory {
     static Memory fromResource(String resource) {
         if (resource != null) {
             for (Memory memory : Memory.values()) {
-                if (memory.resource.equals(resource)) {
+                if (memory.resource.equalsIgnoreCase(resource)) {
                     return memory;
                 }
             }

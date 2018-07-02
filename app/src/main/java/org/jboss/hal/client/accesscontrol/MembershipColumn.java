@@ -17,9 +17,7 @@ package org.jboss.hal.client.accesscontrol;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -78,15 +76,15 @@ public class MembershipColumn extends FinderColumn<Assignment> {
     private final Resources resources;
 
     @Inject
-    public MembershipColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final User currentUser,
-            final AccessControl accessControl,
-            final AccessControlTokens tokens,
-            final Resources resources) {
+    public MembershipColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            User currentUser,
+            AccessControl accessControl,
+            AccessControlTokens tokens,
+            Resources resources) {
 
         super(new Builder<Assignment>(finder, Ids.MEMBERSHIP, resources.constants().membership())
                 .withFilter()
@@ -217,11 +215,11 @@ public class MembershipColumn extends FinderColumn<Assignment> {
     }
 
     private Role findRole(FinderPath path) {
-        Optional<String> optional = StreamSupport.stream(path.spliterator(), false)
-                .filter(segment -> Ids.ROLE.equals(segment.getColumnId()))
-                .findAny()
-                .map(FinderSegment::getItemId);
-        return optional.map(id -> accessControl.roles().get(id)).orElse(null);
+        FinderSegment segment = path.findColumn(Ids.ROLE);
+        if (segment != null) {
+            return accessControl.roles().get(segment.getItemId());
+        }
+        return null;
     }
 
     private String includeId(Principal principal) {

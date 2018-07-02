@@ -104,7 +104,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                 .add(remoteClusterForm)
                 .asElement();
 
-        metadata = metadataRegistry.lookup(CONNECTION_POOL_TEMPLATE);
+        metadata = metadataRegistry.lookup(COMPONENT_CONNECTION_POOL_TEMPLATE);
         connectionPoolForm = new ModelNodeForm.Builder<>(Ids.CONNECTION_POOL_FORM, metadata)
                 .singleton(() -> presenter.pingConnectionPool(), () -> presenter.addConnectionPool())
                 .onSave((form, changedValues) -> presenter.saveConnectionPool(changedValues))
@@ -117,7 +117,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                 .add(connectionPoolForm)
                 .asElement();
 
-        metadata = metadataRegistry.lookup(THREAD_POOL_TEMPLATE);
+        metadata = metadataRegistry.lookup(THREAD_POOL_ASYNC_TEMPLATE);
         threadPoolForm = new ModelNodeForm.Builder<>(Ids.THREAD_POOL_FORM, metadata)
                 .singleton(() -> presenter.pingThreadPool(), () -> presenter.addThreadPool())
                 .onSave((form, changedValues) -> presenter.saveThreadPool(changedValues))
@@ -130,7 +130,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                 .add(threadPoolForm)
                 .asElement();
 
-        metadata = metadataRegistry.lookup(SECURITY_TEMPLATE);
+        metadata = metadataRegistry.lookup(COMPONENT_SECURITY_TEMPLATE);
         securityForm = new ModelNodeForm.Builder<>(Ids.SECURITY_FORM, metadata)
                 .singleton(() -> presenter.pingSecurity(), () -> presenter.addSecurity())
                 .onSave((form, changedValues) -> presenter.saveSecurity(changedValues))

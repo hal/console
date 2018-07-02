@@ -28,19 +28,19 @@ public enum Store {
     BINARY_JDBC(Ids.CACHE_STORE_BINARY_JDBC, Names.BINARY_JDBC, ModelDescriptionConstants.BINARY_JDBC, true, BINARY),
     CUSTOM(Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM, true),
     FILE(Ids.CACHE_STORE_FILE, Names.FILE, ModelDescriptionConstants.FILE, false),
+    HOTROD(Ids.CACHE_STORE_HOTROd, Names.HOTROD, ModelDescriptionConstants.HOTROD, true),
     JDBC(Ids.CACHE_STORE_JDBC, Names.JDBC, ModelDescriptionConstants.JDBC, true, STRING),
     MIXED_JDBC(Ids.CACHE_STORE_MIXED_JDBC, Names.MIXED_JDBC, ModelDescriptionConstants.MIXED_JDBC, true,
-            BINARY, STRING),
-    REMOTE(Ids.CACHE_STORE_REMOTE, Names.REMOTE, ModelDescriptionConstants.REMOTE, true);
+            BINARY, STRING);
 
     static Store fromResource(String resource) {
         if (resource != null) {
             // STORE is an alias for custom
-            if (resource.equals("STORE")) { //NON-NLS
+            if (resource.equalsIgnoreCase("STORE")) { //NON-NLS
                 return CUSTOM;
             } else {
                 for (Store store : Store.values()) {
-                    if (store.resource.equals(resource)) {
+                    if (store.resource.equalsIgnoreCase(resource)) {
                         return store;
                     }
                 }

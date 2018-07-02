@@ -45,19 +45,18 @@ import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnDefault;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
+class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
 
     private final EmptyState emptyState;
     private final HTMLElement throughElement;
     private final HTMLElement behindElement;
     private final Form<ModelNode> behindForm;
     private final HTMLElement root;
-    private CacheContainerPresenter presenter;
+    private CachePresenter presenter;
 
-    WriteElement(Cache cache, Store store, MetadataRegistry metadataRegistry, Resources resources) {
-
+    WriteElement(CacheType cacheType, Store store, MetadataRegistry metadataRegistry, Resources resources) {
         HTMLInputElement behindRadio;
-        String radioName = Ids.build(cache.baseId, store.baseId, WRITE, "radio");
+        String radioName = Ids.build(cacheType.baseId, store.baseId, WRITE, "radio");
         ElementsBuilder elements = elements()
                 .add(div().css(CSS.radio)
                         .add(label()
@@ -74,7 +73,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                         .attr(UIConstants.CHECKED, UIConstants.TRUE))
                                 .add(span().textContent(THROUGH.type))));
 
-        emptyState = new EmptyState.Builder(Ids.build(cache.baseId, store.baseId, WRITE, Ids.EMPTY),
+        emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, store.baseId, WRITE, Ids.EMPTY),
                 resources.constants().noWrite())
                 .description(resources.messages().noWrite())
                 .addAll(elements.asElements())
@@ -93,8 +92,8 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .on(click, event -> presenter.switchWrite(THROUGH, BEHIND)))
                 .asElement();
 
-        String id = Ids.build(cache.baseId, store.baseId, BEHIND.baseId, Ids.FORM);
-        Metadata metadata = metadataRegistry.lookup(cache.template
+        String id = Ids.build(cacheType.baseId, store.baseId, BEHIND.baseId, Ids.FORM);
+        Metadata metadata = metadataRegistry.lookup(cacheType.template
                 .append(STORE + "=" + store.resource)
                 .append(WRITE + "=" + BEHIND.resource));
         behindForm = new ModelNodeForm.Builder<>(id, metadata)
@@ -138,7 +137,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(CacheContainerPresenter presenter) {
+    public void setPresenter(CachePresenter presenter) {
         this.presenter = presenter;
     }
 

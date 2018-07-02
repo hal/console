@@ -15,19 +15,19 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
+import javax.inject.Inject;
 
-class Cache extends NamedNode {
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.Resources;
 
-    private final CacheType type;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.CacheType.LOCAL;
 
-    Cache(String name, CacheType type, ModelNode node) {
-        super(name, node);
-        this.type = type;
-    }
+public class LocalCacheView extends CacheViewImpl<LocalCachePresenter> implements LocalCachePresenter.MyView {
 
-    CacheType type() {
-        return type;
+    @Inject
+    public LocalCacheView(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Resources resources) {
+        init(LOCAL, metadataRegistry, tableButtonFactory, resources);
     }
 }

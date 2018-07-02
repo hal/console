@@ -17,7 +17,6 @@ package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -47,12 +46,11 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.stream.StreamSupport.stream;
+import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.AJP_LISTENER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.AJP_LISTENER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_TEMPLATE;
-import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -82,13 +80,9 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
                 .itemsProvider((context, callback) -> {
 
                     // extract server name from the finder path
-                    Optional<String> optional = stream(context.getPath().spliterator(), false)
-                            .filter(segment -> Ids.UNDERTOW_RUNTIME_SERVER.equals(segment.getColumnId()))
-                            .findAny()
-                            .map(FinderSegment::getItemId);
-                    if (optional.isPresent()) {
-                        // Extract the server name from the item id "us-<server name>"
-                        String server = substringAfterLast(optional.get(), "us-");
+                    FinderSegment segment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_SERVER);
+                    if (segment != null) {
+                        String server = Ids.extractUndertowServer(segment.getItemId());
                         ResourceAddress address = WEB_SERVER_TEMPLATE.resolve(statementContext, server);
 
                         Operation opAjp = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
@@ -132,8 +126,9 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
 
                             callback.onSuccess(listeners);
                         });
+                    } else {
+                        callback.onSuccess(emptyList());
                     }
-
                 })
                 .onPreview(server -> new ListenerPreview(dispatcher, statementContext, resources, server)));
         this.dispatcher = dispatcher;

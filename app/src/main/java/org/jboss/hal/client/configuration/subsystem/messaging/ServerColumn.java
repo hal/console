@@ -48,12 +48,12 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class ServerColumn extends FinderColumn<NamedNode> {
 
     @Inject
-    public ServerColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final CrudOperations crud,
-            final PlaceManager placeManager,
-            final Places places) {
+    public ServerColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            PlaceManager placeManager,
+            Places places) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_CONFIGURATION, Names.SERVER)
 

@@ -57,8 +57,18 @@ import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView;
 import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerPresenter;
 import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerView;
+import org.jboss.hal.client.configuration.subsystem.infinispan.DistributedCachePresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.DistributedCacheView;
+import org.jboss.hal.client.configuration.subsystem.infinispan.InvalidationCachePresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.InvalidationCacheView;
+import org.jboss.hal.client.configuration.subsystem.infinispan.LocalCachePresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.LocalCacheView;
 import org.jboss.hal.client.configuration.subsystem.infinispan.RemoteCacheContainerPresenter;
 import org.jboss.hal.client.configuration.subsystem.infinispan.RemoteCacheContainerView;
+import org.jboss.hal.client.configuration.subsystem.infinispan.ReplicatedCachePresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.ReplicatedCacheView;
+import org.jboss.hal.client.configuration.subsystem.infinispan.ScatteredCachePresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.ScatteredCacheView;
 import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
@@ -311,6 +321,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_DestinationView.class,
                 DestinationPresenter.MyProxy.class);
 
+        bindPresenter(DistributedCachePresenter.class,
+                DistributedCachePresenter.MyView.class,
+                DistributedCacheView.class,
+                DistributedCachePresenter.MyProxy.class);
+
         bindPresenter(org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter.class,
                 org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter.MyView.class,
                 org.jboss.hal.client.configuration.subsystem.ejb.Mbui_EjbView.class,
@@ -386,6 +401,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
 
+        bindPresenter(InvalidationCachePresenter.class,
+                InvalidationCachePresenter.MyView.class,
+                InvalidationCacheView.class,
+                InvalidationCachePresenter.MyProxy.class);
+
         bindPresenter(JGroupsPresenter.class,
                 JGroupsPresenter.MyView.class,
                 JGroupsView.class,
@@ -430,6 +450,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.MyView.class,
                 org.jboss.hal.client.configuration.subsystem.jpa.Mbui_JpaView.class,
                 org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.MyProxy.class);
+
+        bindPresenter(LocalCachePresenter.class,
+                LocalCachePresenter.MyView.class,
+                LocalCacheView.class,
+                LocalCachePresenter.MyProxy.class);
 
         bindPresenter(LogFilePresenter.class,
                 LogFilePresenter.MyView.class,
@@ -526,6 +551,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_RemotingView.class,
                 RemotingPresenter.MyProxy.class);
 
+        bindPresenter(ReplicatedCachePresenter.class,
+                ReplicatedCachePresenter.MyView.class,
+                ReplicatedCacheView.class,
+                ReplicatedCachePresenter.MyProxy.class);
+
         bindPresenter(RequestControllerPresenter.class,
                 RequestControllerPresenter.MyView.class,
                 Mbui_RequestControllerView.class,
@@ -545,6 +575,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 RuntimePresenter.MyView.class,
                 RuntimeView.class,
                 RuntimePresenter.MyProxy.class);
+
+        bindPresenter(ScatteredCachePresenter.class,
+                ScatteredCachePresenter.MyView.class,
+                ScatteredCacheView.class,
+                ScatteredCachePresenter.MyProxy.class);
 
         bindPresenter(SecurityPresenter.class,
                 SecurityPresenter.MyView.class,

@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -45,9 +44,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
@@ -94,13 +91,9 @@ public class ServerSettingsColumn
 
         setItemsProvider((context, callback) -> {
             List<StaticItem> items = new ArrayList<>();
-            Optional<String> optional = stream(context.getPath().spliterator(), false)
-                    .filter(segment -> Ids.MESSAGING_SERVER_CONFIGURATION.equals(segment.getColumnId()))
-                    .findAny()
-                    .map(FinderSegment::getItemId);
-            if (optional.isPresent()) {
-                // Extract the server name from the item id "messaging-server-<server name>"
-                String server = substringAfterLast(optional.get(), "msgs" + "-");
+            FinderSegment segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_CONFIGURATION);
+            if (segment != null) {
+                String server = Ids.extractMessagingServer(segment.getItemId());
                 StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
                         () -> server);
                 ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(serverStatementContext);

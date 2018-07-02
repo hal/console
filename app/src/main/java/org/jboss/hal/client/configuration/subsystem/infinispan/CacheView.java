@@ -15,19 +15,10 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 
-class Cache extends NamedNode {
+interface CacheView<P extends CachePresenter> extends HalView, HasPresenter<P> {
 
-    private final CacheType type;
-
-    Cache(String name, CacheType type, ModelNode node) {
-        super(name, node);
-        this.type = type;
-    }
-
-    CacheType type() {
-        return type;
-    }
+    void update(Cache cache);
 }

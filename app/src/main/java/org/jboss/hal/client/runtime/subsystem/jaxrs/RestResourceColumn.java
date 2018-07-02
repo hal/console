@@ -36,10 +36,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
-import static org.jboss.hal.core.Strings.abbreviateFqClassName;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JAX_RS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REST_RESOURCE;
 import static org.jboss.hal.resources.CSS.breakTooltip;
+import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 
 @AsyncColumn(Ids.REST_RESOURCE)
 public class RestResourceColumn extends FinderColumn<RestResource> {

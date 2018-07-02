@@ -20,11 +20,11 @@ import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
-import org.jboss.hal.core.Strings;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.js.JsonArray;
 import org.jboss.hal.js.JsonObject;
+import org.jboss.hal.resources.Strings;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SCRIPT;
