@@ -21,7 +21,6 @@ import java.util.List;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Strings;
@@ -29,7 +28,7 @@ import org.jboss.hal.resources.Strings;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 class CachePreview extends PreviewContent<Cache> {
 
@@ -77,13 +76,10 @@ class CachePreview extends PreviewContent<Cache> {
     }
 
     private String definedSingleton(Cache cache, String name) {
-        ModelNode modelNode = failSafeGet(cache, name);
-        if (modelNode.isDefined()) {
-            List<Property> properties = modelNode.asPropertyList();
-            for (Property property : properties) {
-                if (property.getValue().isDefined()) {
-                    return property.getName();
-                }
+        List<Property> properties = failSafePropertyList(cache, name);
+        for (Property property : properties) {
+            if (property.getValue().isDefined()) {
+                return property.getName();
             }
         }
         return "";

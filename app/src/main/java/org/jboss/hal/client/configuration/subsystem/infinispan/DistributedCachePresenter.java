@@ -25,6 +25,7 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -44,11 +45,12 @@ public class DistributedCachePresenter
             MyProxy myProxy,
             Finder finder,
             FinderPathFactory finderPathFactory,
-            CrudOperations crudOperations,
+            CrudOperations crud,
+            Dispatcher dispatcher,
             MetadataRegistry metadataRegistry,
             StatementContext statementContext,
             Resources resources) {
-        super(eventBus, view, myProxy, finder, finderPathFactory, crudOperations, metadataRegistry, statementContext,
+        super(eventBus, view, myProxy, finder, finderPathFactory, crud, dispatcher, metadataRegistry, statementContext,
                 resources, DISTRIBUTED);
     }
 

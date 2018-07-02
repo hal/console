@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -31,10 +33,14 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -42,8 +48,11 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
         extends ApplicationFinderPresenter<V, Proxy_>
@@ -54,12 +63,14 @@ abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
 
     private final FinderPathFactory finderPathFactory;
     private final CrudOperations crud;
+    private final Dispatcher dispatcher;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
     private final CacheType cacheType;
     private String cacheContainer;
     private String cache;
+    private Memory memory;
     private Store store;
 
     CachePresenter(EventBus eventBus,
@@ -68,6 +79,7 @@ abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
             Finder finder,
             FinderPathFactory finderPathFactory,
             CrudOperations crud,
+            Dispatcher dispatcher,
             MetadataRegistry metadataRegistry,
             StatementContext statementContext,
             Resources resources,
@@ -75,6 +87,7 @@ abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
         super(eventBus, view, proxy_, finder);
         this.finderPathFactory = finderPathFactory;
         this.crud = crud;
+        this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
@@ -103,7 +116,23 @@ abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
     @Override
     protected void reload() {
         crud.readRecursive(resourceAddress(),
-                result -> getView().update(new Cache(cache, cacheType, result)));
+                result -> {
+                    List<Property> properties = failSafePropertyList(result, MEMORY);
+                    for (Property property : properties) {
+                        if (property.getValue().isDefined()) {
+                            memory = Memory.fromResource(property.getName());
+                            break;
+                        }
+                    }
+                    properties = failSafePropertyList(result, STORE);
+                    for (Property property : properties) {
+                        if (property.getValue().isDefined()) {
+                            store = Store.fromResource(property.getName());
+                            break;
+                        }
+                    }
+                    getView().update(new Cache(cache, cacheType, result));
+                });
     }
 
 
@@ -188,8 +217,22 @@ abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
                 });
     }
 
-    void switchMemory(Memory memory) {
-
+    void switchMemory(Memory newMemory) {
+        if (newMemory != null && newMemory != this.memory) {
+            List<Operation> operations = new ArrayList<>();
+            if (this.memory != null) {
+                operations.add(new Operation.Builder(memoryAddress(this.memory), REMOVE).build());
+            }
+            operations.add(new Operation.Builder(memoryAddress(newMemory), ADD).build());
+            Composite composite = new Composite(operations)
+                    .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
+            dispatcher.execute(composite, (CompositeResult result) -> {
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().addSingleResourceSuccess(newMemory.type)));
+                this.memory = newMemory;
+                reload();
+            });
+        }
     }
 
     private AddressTemplate memoryTemplate(Memory memory) {
@@ -245,7 +288,48 @@ abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
     }
 
     void switchStore(Store newStore) {
-        store = newStore;
+        if (newStore != null && newStore != this.store) {
+            List<Operation> operations = new ArrayList<>();
+            if (this.store != null) {
+                operations.add(new Operation.Builder(storeAddress(this.store), REMOVE).build());
+            }
+
+            if (newStore.addWithDialog) {
+                Metadata metadata = metadataRegistry.lookup(
+                        cacheType.template.append(STORE + EQUALS + newStore.resource));
+                String id = Ids.build(cacheType.baseId, newStore.baseId, Ids.ADD);
+                Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
+                        .fromRequestProperties()
+                        .requiredOnly()
+                        .build();
+                AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(newStore.type),
+                        form, (name, model) -> {
+                    operations.add(new Operation.Builder(storeAddress(newStore), ADD)
+                            .payload(model)
+                            .build());
+                    Composite composite = new Composite(operations)
+                            .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
+                    dispatcher.execute(composite, (CompositeResult result) -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
+                        this.store = newStore;
+                        reload();
+                    });
+                });
+                dialog.show();
+
+            } else {
+                operations.add(new Operation.Builder(storeAddress(newStore), ADD).build());
+                Composite composite = new Composite(operations)
+                        .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
+                dispatcher.execute(composite, (CompositeResult result) -> {
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
+                    this.store = newStore;
+                    reload();
+                });
+            }
+        }
     }
 
     private AddressTemplate storeTemplate(Store store) {
@@ -306,6 +390,14 @@ abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
     }
 
     void switchWrite(Write currentWrite, Write newWrite) {
+        List<Operation> operations = new ArrayList<>();
+        operations.add(new Operation.Builder(writeAddress(currentWrite), REMOVE).build());
+        operations.add(new Operation.Builder(writeAddress(newWrite), ADD).build());
+        dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().addSingleResourceSuccess(newWrite.type)));
+            reload();
+        });
     }
 
     private AddressTemplate writeTemplate(Write write) {

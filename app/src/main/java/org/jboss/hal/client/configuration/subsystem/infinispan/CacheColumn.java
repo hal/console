@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -33,10 +32,11 @@ import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -47,7 +47,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
-import static elemental2.dom.DomGlobal.alert;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -72,14 +71,17 @@ public class CacheColumn extends FinderColumn<Cache> {
         return null;
     }
 
+    private final CrudOperations crud;
+    private final MetadataRegistry metadataRegistry;
+    private final StatementContext statementContext;
+    private final Resources resources;
+
     @Inject
     public CacheColumn(Finder finder,
             ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
-            Dispatcher dispatcher,
             CrudOperations crud,
             Places places,
-            EventBus eventBus,
             MetadataRegistry metadataRegistry,
             StatementContext statementContext,
             Resources resources) {
@@ -112,6 +114,10 @@ public class CacheColumn extends FinderColumn<Cache> {
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
+        this.crud = crud;
+        this.metadataRegistry = metadataRegistry;
+        this.statementContext = statementContext;
+        this.resources = resources;
 
         List<ColumnAction<Cache>> addActions = new ArrayList<>();
         for (CacheType cacheType : CacheType.values()) {
@@ -181,6 +187,15 @@ public class CacheColumn extends FinderColumn<Cache> {
     }
 
     private void addCache(CacheType cacheType) {
-        alert("Add " + cacheType.type + ": " + Names.NYI);
+        Metadata metadata = metadataRegistry.lookup(cacheType.template);
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, Ids.ADD),
+                resources.messages().addResourceTitle(cacheType.type), metadata,
+                (name, model) -> {
+                    String cacheContainer = findCacheContainer(getFinder().getContext().getPath());
+                    ResourceAddress address = cacheType.template.resolve(statementContext, cacheContainer, name);
+                    crud.add(cacheType.type, name, address, model,
+                            (n, a) -> this.refresh(Ids.build(cacheType.baseId, name)));
+                });
+        dialog.show();
     }
 }

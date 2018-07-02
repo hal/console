@@ -123,7 +123,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                 .textContent(resources.constants().switchStore()))
                         .add(selectStore)
                         .asElement())
-                .add(h(1).textContent(Names.STORE + ": ")
+                .add(h(1).textContent(Names.STORE)
                         .add(currentStore = span().asElement()))
                 .add(p().textContent(resources.constants().cacheStore()))
                 .add(emptyState)
@@ -223,7 +223,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         } else {
             Store store = Store.fromResource(stores.get(0).getName());
             if (store != null) {
-                currentStore.textContent = store.type;
+                currentStore.textContent = ": " + store.type;
                 SelectBoxBridge.Single.element(selectStore).setValue(store.resource);
 
                 ModelNode storeNode = stores.get(0).getValue();
