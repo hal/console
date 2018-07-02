@@ -665,6 +665,7 @@ public interface ModelDescriptionConstants {
     String RELOAD_HOST = "reload-host";
     String RELOAD_REQUIRED = "reload-required";
     String RELOAD_SERVERS = "reload-servers";
+    @SuppressWarnings("unused") String REMOTE = "remote"; // used by test suite
     String REMOTE_ADDRESS = "remote-address";
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_CACHE_CONTAINER = "remote-cache-container";
