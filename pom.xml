@@ -89,7 +89,7 @@
         <gwt.failOnError>true</gwt.failOnError>
         <gwt.logLevel>FINE</gwt.logLevel>
         <gwt.optimize>0</gwt.optimize>
-        <gwt.style>PRETTY</gwt.style>
+        <gwt.style>DETAILED</gwt.style>
         <hal.version>${project.version}</hal.version>
 
         <linkXRef>false</linkXRef>
@@ -297,20 +297,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!--
-                                        <plugin>
-                                            <groupId>org.apache.maven.plugins</groupId>
-                                            <artifactId>maven-javadoc-plugin</artifactId>
-                                            <executions>
-                                                <execution>
-                                                    <id>attach-javadocs</id>
-                                                    <goals>
-                                                        <goal>jar</goal>
-                                                    </goals>
-                                                </execution>
-                                            </executions>
-                                        </plugin>
-                    -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
@@ -323,18 +309,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!--
-                                        <plugin>
-                                            <groupId>org.sonatype.plugins</groupId>
-                                            <artifactId>nexus-staging-maven-plugin</artifactId>
-                                            <extensions>true</extensions>
-                                            <configuration>
-                                                <serverId>ossrh</serverId>
-                                                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                                                <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                                            </configuration>
-                                        </plugin>
-                    -->
                 </plugins>
             </build>
         </profile>
