@@ -152,6 +152,27 @@
                                 </assembly>
                             </build>
                         </image>
+                        <image>
+                            <alias>hal-wildfly-nightly</alias>
+                            <name>halconsole/hal-wildfly-nightly</name>
+                            <build>
+                                <dockerFileDir>hal-wildfly-nightly</dockerFileDir>
+                                <assembly>
+                                    <mode>dir</mode>
+                                    <inline>
+                                        <fileSets>
+                                            <fileSet>
+                                                <directory>${project.build.directory}</directory>
+                                                <includes>
+                                                    <include>hal-console.jar</include>
+                                                </includes>
+                                                <outputDirectory>.</outputDirectory>
+                                            </fileSet>
+                                        </fileSets>
+                                    </inline>
+                                </assembly>
+                            </build>
+                        </image>
                     </images>
                 </configuration>
             </plugin>
