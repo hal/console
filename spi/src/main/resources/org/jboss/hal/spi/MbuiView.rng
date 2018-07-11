@@ -194,6 +194,11 @@
             </attribute>
         </optional>
         <optional>
+            <attribute name="add-handler">
+                <ref name="code"/>
+            </attribute>
+        </optional>
+        <optional>
             <choice>
                 <attribute name="auto-save">
                     <data type="boolean"/>

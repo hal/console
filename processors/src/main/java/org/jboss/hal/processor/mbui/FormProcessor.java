@@ -38,6 +38,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
     public void process(VariableElement field, Element element, String selector, MbuiViewContext context) {
         String title = element.getAttributeValue(XmlTags.TITLE);
         boolean autoSave = Boolean.parseBoolean(element.getAttributeValue(XmlTags.AUTO_SAVE));
+        String addHandler = element.getAttributeValue(XmlTags.ADD_HANDLER);
         boolean reset = Boolean.parseBoolean(element.getAttributeValue(XmlTags.RESET));
         boolean includeRuntime = Boolean.parseBoolean(element.getAttributeValue(XmlTags.INCLUDE_RUNTIME));
         boolean singleton = XmlTags.SINGLETON_FORM.equalsIgnoreCase(element.getName());
@@ -69,7 +70,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
         }
 
         FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
-                metadata, title, autoSave, onSave, reset, prepareReset, nameResolver, includeRuntime, singleton);
+                metadata, title, addHandler, autoSave, onSave, reset, prepareReset, nameResolver, includeRuntime, singleton);
         context.addFormInfo(formInfo);
 
         org.jdom2.Element attributesContainer = element.getChild(XmlTags.ATTRIBUTES);
