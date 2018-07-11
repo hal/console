@@ -40,6 +40,8 @@ import org.jboss.hal.client.configuration.SystemPropertiesView;
 import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView;
+import org.jboss.hal.client.configuration.subsystem.coremanagement.CoreManagementPresenter;
+import org.jboss.hal.client.configuration.subsystem.coremanagement.Mbui_CoreManagementView;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.DeploymentScannerPresenter;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Mbui_DeploymentScannerView;
@@ -290,6 +292,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 ConnectionPresenter.MyView.class,
                 Mbui_ConnectionView.class,
                 ConnectionPresenter.MyProxy.class);
+
+        bindPresenter(CoreManagementPresenter.class,
+                CoreManagementPresenter.MyView.class,
+                Mbui_CoreManagementView.class,
+                CoreManagementPresenter.MyProxy.class);
 
         bindPresenter(org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.class,
                 org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.MyView.class,

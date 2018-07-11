@@ -50,6 +50,10 @@ public class Subsystems {
                 .generic()
                 .preview(resources.previews().configurationBeanValidation())
                 .build());
+        addConfiguration(new SubsystemMetadata.Builder(CORE_MANAGEMENT, Names.CORE_MANAGEMENT)
+                .token(NameTokens.CORE_MANAGEMENT)
+                .preview(resources.previews().coreManagement())
+                .build());
         addConfiguration(new SubsystemMetadata.Builder(DATASOURCES, Names.DATASOURCES_DRIVERS)
                 .nextColumn(Ids.DATA_SOURCE_DRIVER)
                 .preview(resources.previews().configurationDatasourcesDrivers())
