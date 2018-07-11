@@ -78,6 +78,7 @@ public interface Names {
     String CONTEXT_ROOT = "Context Root";
     String CONTEXT_ROOTS = "Context Roots";
     String COOKIES = "Cookies";
+    String CORE_MANAGEMENT = "Core Management";
     String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
     String CREDENTIAL_REFERENCE = "Credential Reference";

@@ -55,6 +55,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/bean-validation.html")
     ExternalTextResource configurationBeanValidation();
 
+    @Source("previews/configuration/core-management.html")
+    ExternalTextResource coreManagement();
+
     @Source("previews/configuration/datasources.html")
     ExternalTextResource configurationDatasources();
 

@@ -32,15 +32,16 @@ public class FormInfo extends MbuiElementInfo {
     private final boolean reset;
     private String prepareReset;
     private final String nameResolver;
+    private final String addHandler;
     private final boolean includeRuntime;
     private final boolean singleton;
     private final List<Attribute> attributes;
     private final List<Group> groups;
 
     FormInfo(final String name, final String selector, final TypeParameter typeParameter,
-            final MetadataInfo metadata, final String title, final boolean autoSave, final String onSave,
-            final boolean reset, final String prepareReset,  final String nameResolver, final boolean includeRuntime,
-            final boolean singleton) {
+            final MetadataInfo metadata, final String title, final String addHandler, final boolean autoSave,
+            final String onSave, final boolean reset, final String prepareReset,  final String nameResolver,
+            final boolean includeRuntime, final boolean singleton) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
@@ -50,6 +51,7 @@ public class FormInfo extends MbuiElementInfo {
         this.reset = reset;
         this.prepareReset = ExpressionParser.stripExpression(prepareReset); // reset handler has to be an expression
         this.nameResolver = ExpressionParser.stripExpression(nameResolver); // name resolver has to be an expression
+        this.addHandler = ExpressionParser.stripExpression(addHandler); // add handler has to be an expression
         this.includeRuntime = includeRuntime;
         this.singleton = singleton;
         this.attributes = new ArrayList<>();
@@ -74,6 +76,10 @@ public class FormInfo extends MbuiElementInfo {
 
     public String getOnSave() {
         return onSave;
+    }
+
+    public String getAddHandler() {
+        return addHandler;
     }
 
     public boolean isReset() {
