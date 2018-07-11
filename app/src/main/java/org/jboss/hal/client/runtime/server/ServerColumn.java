@@ -17,7 +17,9 @@ package org.jboss.hal.client.runtime.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -92,6 +94,7 @@ import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.SERVER_CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -369,6 +372,20 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 .title(resources.constants().editURL())
                                 .handler(itm -> serverActions.editUrl(itm, () -> refresh(RESTORE_SELECTION)))
                                 .build());
+
+                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                            Map<String, String> params = new HashMap<>();
+                            params.put(HOST, item.getHost());
+                            params.put(SERVER, item.getName());
+                            params.put(PROFILE, item.get(PROFILE_NAME).asString());
+                            PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
+                                    .nameToken(NameTokens.CONFIGURATION_CHANGES)
+                                    .with(params)
+                                    .build();
+                            actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
+                                    ccPlaceRequest, Constraint.executable(SERVER_CONFIGURATION_CHANGES_TEMPLATE, LIST_CHANGES_OPERATION)));
+                        }
+
                         actions.add(ItemAction.separator());
                         // Order is: reload, restart, (resume | suspend), stop
                         actions.add(new ItemAction.Builder<Server>()

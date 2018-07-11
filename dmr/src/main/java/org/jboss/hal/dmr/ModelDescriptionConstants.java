@@ -172,6 +172,7 @@ public interface ModelDescriptionConstants {
     String CONTEXT = "context";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
+    String CORE_MANAGEMENT = "core-management";
     String CORE_POOL_SIZE = "core-pool-size";
     String CORE_SERVICE = "core-service";
     String CORE_SERVICE_PATCHING = "core-service-patching";
@@ -600,6 +601,7 @@ public interface ModelDescriptionConstants {
     String PROCESS_ID_SOCKET_MAX_PORTS = "process-id-socket-max-ports";
     String PROCESS_ID_UUID = "process-id-uuid";
     String PROCESS_STATE = "process-state";
+    String PROCESS_STATE_LISTENER = "process-state-listener";
     String PRODUCES = "produces";
     String PRODUCT_NAME = "product-name";
     String PRODUCT_VERSION = "product-version";

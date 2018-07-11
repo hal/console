@@ -33,6 +33,7 @@ public interface NameTokens {
     String CACHE_CONTAINER = ModelDescriptionConstants.CACHE_CONTAINER;
     String CONFIGURATION = "configuration";
     String CONFIGURATION_CHANGES = "configuration-changes";
+    String CORE_MANAGEMENT = "core-management";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;

@@ -55,8 +55,8 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_ADDRESS;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
@@ -64,7 +64,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @Column(Ids.STANDALONE_SERVER_COLUMN)
-@Requires(value = {"/", MANAGEMENT_ADDRESS, CONFIGURATION_CHANGES_ADDRESS, MANAGEMENT_OPERATIONS_ADDRESS},
+@Requires(value = {"/", MANAGEMENT_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS, MANAGEMENT_OPERATIONS_ADDRESS},
         recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
@@ -174,7 +174,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                         PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
                                 .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
                         actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                ccPlaceRequest, Constraint.executable(CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                                ccPlaceRequest, Constraint.executable(HOST_CONFIGURATION_CHANGES_TEMPLATE, ADD)));
                     }
                     PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
                             .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();

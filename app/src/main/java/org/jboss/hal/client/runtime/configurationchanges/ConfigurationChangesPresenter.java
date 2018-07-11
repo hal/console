@@ -18,11 +18,13 @@ package org.jboss.hal.client.runtime.configurationchanges;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLPreElement;
@@ -43,13 +45,16 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -67,19 +72,27 @@ import static org.jboss.hal.resources.Ids.ADD;
 public class ConfigurationChangesPresenter extends
         ApplicationFinderPresenter<ConfigurationChangesPresenter.MyView, ConfigurationChangesPresenter.MyProxy> {
 
-    public static final String CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
-    public static final AddressTemplate CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
-            CONFIGURATION_CHANGES_ADDRESS);
+    public static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
+    public static final AddressTemplate HOST_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
+            HOST_CONFIGURATION_CHANGES_ADDRESS);
+    private static final String SERVER_CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/{selected.server}/subsystem=core-management/service=configuration-changes";
+    public static final AddressTemplate SERVER_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
+            SERVER_CONFIGURATION_CHANGES_ADDRESS);
+    private static final String PROFILE_CONFIGURATION_CHANGES_ADDRESS = "/profile=*/subsystem=core-management/service=configuration-changes";
+    private static final AddressTemplate PROFILE_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(PROFILE_CONFIGURATION_CHANGES_ADDRESS);
     private static final AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of(
             "{selected.host}/subsystem=core-management");
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
+    private Provider<Progress> progress;
+    private MetadataProcessor metadataProcessor;
     private final StatementContext statementContext;
     private final Resources resources;
     private Environment environment;
     private CrudOperations crud;
-    private MetadataRegistry metadataRegistry;
+    private boolean hostOnly;
+    private String profile;
 
     @Inject
     public ConfigurationChangesPresenter(EventBus eventBus,
@@ -89,7 +102,8 @@ public class ConfigurationChangesPresenter extends
             Environment environment,
             FinderPathFactory finderPathFactory,
             Dispatcher dispatcher,
-            MetadataRegistry metadataRegistry,
+            @Footer Provider<Progress> progress,
+            MetadataProcessor metadataProcessor,
             StatementContext statementContext,
             CrudOperations crud,
             Resources resources) {
@@ -97,7 +111,8 @@ public class ConfigurationChangesPresenter extends
         this.environment = environment;
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
-        this.metadataRegistry = metadataRegistry;
+        this.progress = progress;
+        this.metadataProcessor = metadataProcessor;
         this.statementContext = statementContext;
         this.crud = crud;
         this.resources = resources;
@@ -110,22 +125,39 @@ public class ConfigurationChangesPresenter extends
     }
 
     @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+        hostOnly = !environment.isStandalone() && request.getParameter(SERVER, null) == null;
+        profile = request.getParameter(PROFILE, null);
+    }
+
+    @Override
     public FinderPath finderPath() {
-        return environment.isStandalone() ? finderPathFactory.runtimeServerPath() : finderPathFactory.runtimeHostPath();
+        return hostOnly ? finderPathFactory.runtimeHostPath() : finderPathFactory.runtimeServerPath();
     }
 
     @Override
     protected void reload() {
-        ResourceAddress coreAddress = CORE_MANAGEMENT_TEMPLATE.resolve(statementContext);
-        Operation coreOperation = new Operation.Builder(coreAddress, READ_CHILDREN_NAMES_OPERATION)
+        AddressTemplate template;
+        if (environment.isStandalone()) {
+            template = CORE_MANAGEMENT_TEMPLATE;
+        } else {
+            if (hostOnly) {
+                template = CORE_MANAGEMENT_TEMPLATE;
+            } else {
+                template = AddressTemplate.of("/{selected.host}/{selected.server}/subsystem=core-management");
+            }
+        }
+        ResourceAddress coreAddress = template.resolve(statementContext);
+        Operation operation = new Operation.Builder(coreAddress, READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, SERVICE)
                 .build();
-        dispatcher.execute(coreOperation, coreResult -> {
+        dispatcher.execute(operation, coreResult -> {
             if (coreResult.asList().size() > 0) {
                 Optional<ModelNode> configurationChangesResult = coreResult.asList().stream()
                         .filter(service -> service.asString().equals(CONFIGURATION_CHANGES)).findFirst();
                 if (configurationChangesResult.isPresent()) {
-                    ResourceAddress ccAddress = CONFIGURATION_CHANGES_TEMPLATE.resolve(statementContext);
+                    ResourceAddress ccAddress = template.append("service=configuration-changes").resolve(statementContext);
                     Operation ccOperation = new Operation.Builder(ccAddress, LIST_CHANGES_OPERATION)
                             .build();
                     dispatcher.execute(ccOperation, ccResult -> getView().update(ccResult));
@@ -139,43 +171,71 @@ public class ConfigurationChangesPresenter extends
     }
 
     void launchAdd() {
-        Metadata metadata = metadataRegistry.lookup(CONFIGURATION_CHANGES_TEMPLATE);
-        String id = Ids.build(Ids.CONFIGURATION_CHANGES, Ids.ADD);
-        Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, ADD)
-                .build();
-        ModelNode changeModel = new ModelNode();
-        Dialog dialog = new Dialog.Builder(resources.constants().configurationChanges())
-                .add(form.asElement())
-                .primary(resources.constants().yes(), () -> {
-                    boolean valid = form.save();
-                    // if the form contains validation error, don't close the dialog
-                    if (valid) {
-                        crud.addSingleton(Names.CONFIGURATION_CHANGES, CONFIGURATION_CHANGES_TEMPLATE, form.getModel(),
-                                address -> reload());
-                    }
-                    return valid;
-                })
-                .secondary(resources.constants().cancel(), () -> true)
-                .closeIcon(true)
-                .closeOnEsc(true)
-                .build();
+        AddressTemplate template;
+        if (environment.isStandalone()) {
+            template = HOST_CONFIGURATION_CHANGES_TEMPLATE;
+        } else {
+            if (hostOnly) {
+                template = HOST_CONFIGURATION_CHANGES_TEMPLATE;
+            } else {
+                template = PROFILE_CONFIGURATION_CHANGES_TEMPLATE.replaceWildcards(profile);
+            }
+        }
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(getEventBus(), resources) {
+                    @Override
+                    public void onMetadata(Metadata metadata) {
+                        String id = Ids.build(Ids.CONFIGURATION_CHANGES, Ids.ADD);
+                        Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, ADD)
+                                .build();
+                        ModelNode changeModel = new ModelNode();
+                        Dialog dialog = new Dialog.Builder(resources.constants().configurationChanges())
+                                .add(form.asElement())
+                                .primary(resources.constants().yes(), () -> {
+                                    boolean valid = form.save();
+                                    // if the form contains validation error, don't close the dialog
+                                    if (valid) {
+                                        crud.addSingleton(Names.CONFIGURATION_CHANGES, template, form.getModel(),
+                                                address -> reload());
+                                    }
+                                    return valid;
+                                })
+                                .secondary(resources.constants().cancel(), () -> true)
+                                .closeIcon(true)
+                                .closeOnEsc(true)
+                                .build();
 
-        dialog.registerAttachable(form);
-        dialog.show();
-        form.edit(changeModel);
+                        dialog.registerAttachable(form);
+                        dialog.show();
+                        form.edit(changeModel);
+                    }
+                }
+        );
     }
 
     void disable() {
-        String type = HOST;
-        String name = statementContext.selectedHost();
+        AddressTemplate template;
+        String type;
+        String name;
         if (environment.isStandalone()) {
+            template = HOST_CONFIGURATION_CHANGES_TEMPLATE;
             type = Names.STANDALONE_SERVER;
             name = Server.STANDALONE.getName();
+        } else {
+            if (hostOnly) {
+                template = HOST_CONFIGURATION_CHANGES_TEMPLATE;
+                type = HOST;
+                name = statementContext.selectedHost();
+            } else {
+                template = PROFILE_CONFIGURATION_CHANGES_TEMPLATE.replaceWildcards(profile);
+                type = SERVER;
+                name = statementContext.selectedServer();
+            }
         }
+
         DialogFactory.showConfirmation(resources.constants().configurationChanges(),
                 resources.messages().removeConfigurationChangesQuestion(type, name),
                 () -> {
-                    ResourceAddress address = CONFIGURATION_CHANGES_TEMPLATE.resolve(statementContext);
+                    ResourceAddress address = template.resolve(statementContext);
                     Operation operation = new Operation.Builder(address, REMOVE)
                             .build();
                     dispatcher.execute(operation, result -> getView().update(result));
@@ -212,7 +272,7 @@ public class ConfigurationChangesPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(CONFIGURATION_CHANGES)
-    @Requires(CONFIGURATION_CHANGES_ADDRESS)
+    @Requires({HOST_CONFIGURATION_CHANGES_ADDRESS, SERVER_CONFIGURATION_CHANGES_ADDRESS})
     public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {
 
     }
