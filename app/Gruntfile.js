@@ -106,16 +106,45 @@ module.exports = function (grunt) {
         },
 
         concat: {
-            /*
-             * Order
-             * 1) jQuery
-             * 2) Bootstrap + Components
-             * 3) C3 / D3
-             * 4) Datatables
-             * 5) Other JS libs (in no specific order)
-             * 6) PatternFly
-             */
-            dev: {
+            polyfillDev: {
+                src: [
+                    '<%= config.node %>/promise-polyfill/dist/polyfill.js',
+                    '<%= config.node %>/whatwg-fetch/fetch.js'
+                ],
+                dest: '<%= config.public %>/js/polyfill.js'
+            },
+            polyfillProd: {
+                options: {
+                    banner: '/*!\n' +
+                    ' * Polyfill JS files for IE 11 and below. HAL <%= config.version %>\n' +
+                    ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
+                    ' */\n\n',
+                    stripBanners: true
+                },
+                nonull: true,
+                filter: function (filepath) {
+                    if (!grunt.file.exists(filepath)) {
+                        grunt.fail.fatal('Grunt error. Could not find: ' + filepath);
+                    } else {
+                        return true;
+                    }
+                },
+                src: [
+                    '<%= config.node %>/promise-polyfill/dist/polyfill.min.js',
+                    '<%= config.node %>/whatwg-fetch/fetch.js'
+                ],
+                dest: '<%= config.public %>/js/polyfill.min.js'
+            },
+            externalDev: {
+                /*
+                 * Order
+                 * 1) jQuery
+                 * 2) Bootstrap + Components
+                 * 3) C3 / D3
+                 * 4) Datatables
+                 * 5) Other JS libs (in no specific order)
+                 * 6) PatternFly
+                 */
                 src: [
                     '<%= config.node %>/jquery/dist/jquery.js',
                     '<%= config.node %>/bootstrap/dist/js/bootstrap.js',
@@ -140,7 +169,7 @@ module.exports = function (grunt) {
                 ],
                 dest: '<%= config.public %>/js/external.js'
             },
-            prod: {
+            externalProd: {
                 options: {
                     banner: '/*!\n' +
                     ' * External JS files for HAL <%= config.version %>\n' +
@@ -267,7 +296,8 @@ module.exports = function (grunt) {
     grunt.registerTask('dev', [
         'clean',
         'copy:resources',
-        'concat:dev',
+        'concat:polyfillDev',
+        'concat:externalDev',
         'less',
         'postcss'
     ]);
@@ -275,7 +305,8 @@ module.exports = function (grunt) {
     grunt.registerTask('prod', [
         'clean',
         'copy:resources',
-        'concat:prod',
+        'concat:polyfillProd',
+        'concat:externalProd',
         'less',
         'postcss',
         'cssmin'

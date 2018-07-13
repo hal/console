@@ -22,10 +22,12 @@
     "moment-timezone": "^0.4.1",
     "patternfly": "~3.51.0",
     "pouchdb": "~7.0.0",
+    "promise-polyfill": "~8.0.0",
+    "whatwg-fetch": "~2.0.4",
     "zeroclipboard": "~2.3.0"
   },
   "devDependencies": {
-    "autoprefixer": "~8.6.3",
+    "autoprefixer": "~8.6.5",
     "esdoc": "~1.1.0",
     "grunt": "~1.0.3",
     "grunt-cli": "~1.2.0",
@@ -41,6 +43,6 @@
     "grunt-stylelint": "~0.10.0",
     "matchdep": "~2.0.0",
     "pixrem": "~4.0.1",
-    "stylelint": "^9.0.0"
+    "stylelint": "~9.3.0"
   }
 }

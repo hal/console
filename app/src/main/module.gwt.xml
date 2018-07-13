@@ -41,7 +41,10 @@
     <extend-property name="locale" values="en"/>
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en"/>
-
+    <!-- We do our own log setup -->
+    <replace-with class="com.google.gwt.logging.client.LogConfiguration.LogConfigurationImplNull">
+        <when-type-is class="com.google.gwt.logging.client.LogConfiguration.LogConfigurationImplNull"/>
+    </replace-with>
     <replace-with class="org.jboss.hal.client.logging.LogHandler">
         <when-type-is class="com.google.gwt.logging.client.ConsoleLogHandler"/>
     </replace-with>

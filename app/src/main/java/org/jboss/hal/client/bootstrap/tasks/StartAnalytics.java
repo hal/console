@@ -68,16 +68,13 @@ public class StartAnalytics implements BootstrapTask {
         boolean collectUserData = settings.get(COLLECT_USER_DATA).asBoolean();
         if (!testSuite && collectUserData) {
             String id;
-            boolean devMode = System.getProperty("superdevmode", "").equals("on");
-            boolean productionMode = pathname.equals("/") || pathname.endsWith("index.html");
-            if (devMode) {
+            if (environment.isDevMode()) {
                 id = DEVELOPMENT_ID;
-            } else if (productionMode) {
+            } else if (environment.isProductionMode()) {
                 id = PRODUCTION_ID;
             } else {
                 id = UNKNOWN_ID;
             }
-            logger.info("Collect user data is on: {}", id);
 
             HTMLScriptElement script = (HTMLScriptElement) document.createElement("script");
             script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', " + stringify(
@@ -102,6 +99,7 @@ public class StartAnalytics implements BootstrapTask {
             eventBus.addHandler(NavigationEvent.getType(), tracker);
             eventBus.addHandler(FinderContextEvent.getType(), tracker);
             eventBus.addHandler(ModelBrowserPathEvent.getType(), tracker);
+            logger.info("Collect user data is on: {}", id);
 
         } else {
             logger.info("Collect user data is off.");

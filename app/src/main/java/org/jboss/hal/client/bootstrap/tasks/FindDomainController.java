@@ -53,6 +53,7 @@ public class FindDomainController implements BootstrapTask {
         if (environment.isStandalone()) {
             return Completable.complete();
         } else {
+            logger.debug("Read hosts to find domain controller");
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, HOST)
                     .build();
@@ -77,6 +78,7 @@ public class FindDomainController implements BootstrapTask {
                                 }
                             }
                             if (domainController != null) {
+                                logger.debug("Found {}", domainController);
                                 environment.setDomainController(domainController);
                             } else {
                                 // HAL-1309: If the user belongs to a host scoped role which is scoped to a slave,

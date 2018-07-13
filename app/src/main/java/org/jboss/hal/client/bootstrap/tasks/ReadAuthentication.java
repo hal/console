@@ -69,6 +69,7 @@ public class ReadAuthentication implements BootstrapTask {
 
     @Override
     public Completable call() {
+        logger.debug("Read authentication");
         ResourceAddress address = CORE_SERVICE_TEMPLATE.resolve(statementContext);
         Operation opAuthorization = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, ACCESS)
@@ -121,7 +122,6 @@ public class ReadAuthentication implements BootstrapTask {
                                     .forEach(role -> environment.getRoles().add(role));
                         }
                     }
-
                 })
                 .onErrorResumeNext(throwable -> {
                     if (throwable instanceof DispatchFailure) {

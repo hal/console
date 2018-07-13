@@ -35,6 +35,9 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -46,6 +49,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ReadEnvironment implements BootstrapTask {
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
 
     private final Dispatcher dispatcher;
     private final Environment environment;
@@ -62,8 +67,14 @@ public class ReadEnvironment implements BootstrapTask {
 
     @Override
     public Completable call() {
+        logger.debug("Read environment");
+
         Keycloak keycloak = keycloakHolder.getKeycloak();
         environment.setSingleSignOn(keycloak != null);
+        if (keycloak != null) {
+            logger.debug("Keycloak token: {}", keycloak.token);
+        }
+
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
@@ -73,22 +84,27 @@ public class ReadEnvironment implements BootstrapTask {
 
         return dispatcher.execute(new Composite(ops))
                 .doOnSuccess((CompositeResult result) -> {
+
                     // server info
                     ModelNode node = result.step(0).get(RESULT);
+                    String serverName = node.get(NAME).asString();
                     environment.setInstanceInfo(node.get(PRODUCT_NAME).asString(),
                             node.get(PRODUCT_VERSION).asString(),
                             node.get(RELEASE_CODENAME).asString(), node.get(RELEASE_VERSION).asString(),
-                            node.get(NAME).asString());
+                            serverName);
+                    logger.debug("Server info: {}", serverName);
 
                     // operation mode
                     //noinspection Convert2MethodRef (conflicts with second method reference below)
                     OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, (name) -> OperationMode.valueOf(name),
                             OperationMode.UNDEFINED);
                     environment.setOperationMode(operationMode);
+                    logger.debug("Operation mode: {}", operationMode);
 
                     // management version
                     Version version = ManagementModel.parseVersion(node);
                     environment.setManagementVersion(version);
+                    logger.debug("Management model version: {}", version);
 
                     if (environment.isStandalone()) {
                         Server.STANDALONE.addServerAttributes(node);
@@ -103,7 +119,7 @@ public class ReadEnvironment implements BootstrapTask {
                             for (int i = 0; i < keycloak.realmAccess.roles.length; i++) {
                                 String role = keycloak.realmAccess.roles[i];
                                 user.addRole(new Role(role));
-                        }
+                            }
                         }
                     } else {
                         ModelNode whoami = result.step(1).get(RESULT);
@@ -117,6 +133,7 @@ public class ReadEnvironment implements BootstrapTask {
                             }
                         }
                     }
+                    logger.debug("User info: {}", user.getName(), user.getRoles());
                 })
                 .toCompletable();
     }

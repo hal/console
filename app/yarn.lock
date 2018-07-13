@@ -410,7 +410,7 @@ autocompleter@~1.0.33:
   version "1.0.33"
   resolved "https://registry.yarnpkg.com/autocompleter/-/autocompleter-1.0.33.tgz#4d0ce85a6d4266a34f83d28da43a43cbf8267baa"
 
-autoprefixer@^8.0.0, autoprefixer@~8.6.3:
+autoprefixer@^8.0.0:
   version "8.6.3"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-8.6.3.tgz#1d38a129e6a4582a565b6570d16f2d7d3de9cbf9"
   dependencies:
@@ -419,6 +419,17 @@ autoprefixer@^8.0.0, autoprefixer@~8.6.3:
     normalize-range "^0.1.2"
     num2fraction "^1.2.2"
     postcss "^6.0.22"
+    postcss-value-parser "^3.2.3"
+
+autoprefixer@~8.6.5:
+  version "8.6.5"
+  resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-8.6.5.tgz#343f3d193ed568b3208e00117a1b96eb691d4ee9"
+  dependencies:
+    browserslist "^3.2.8"
+    caniuse-lite "^1.0.30000864"
+    normalize-range "^0.1.2"
+    num2fraction "^1.2.2"
+    postcss "^6.0.23"
     postcss-value-parser "^3.2.3"
 
 aws-sign2@~0.7.0:
@@ -709,6 +720,10 @@ camelcase@^4.1.0:
 caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30000856:
   version "1.0.30000856"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000856.tgz#ecc16978135a6f219b138991eb62009d25ee8daa"
+
+caniuse-lite@^1.0.30000864:
+  version "1.0.30000865"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000865.tgz#70026616e8afe6e1442f8bb4e1092987d81a2f25"
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -3522,6 +3537,10 @@ process-nextick-args@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.0.tgz#a37d732f4271b4ab1ad070d35508e8290788ffaa"
 
+promise-polyfill@~8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/promise-polyfill/-/promise-polyfill-8.0.0.tgz#b47c7fc74052cc5b2132b703cca144f1a5eb56ef"
+
 promise@^7.1.1:
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/promise/-/promise-7.3.1.tgz#064b72602b18f90f29192b8b1bc418ffd1ebd3bf"
@@ -4182,7 +4201,7 @@ style-search@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/style-search/-/style-search-0.1.0.tgz#7958c793e47e32e07d2b5cafe5c0bf8e12e77902"
 
-stylelint@^9.0.0:
+stylelint@~9.3.0:
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/stylelint/-/stylelint-9.3.0.tgz#fe176e4e421ac10eac1a6b6d9f28e908eb58c5db"
   dependencies:
@@ -4572,6 +4591,10 @@ websocket-driver@>=0.5.1:
 websocket-extensions@>=0.1.1:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.2.tgz#0e18781de629a18308ce1481650f67ffa2693a5d"
+
+whatwg-fetch@~2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.4.tgz#dde6a5df315f9d39991aa17621853d720b85566f"
 
 whatwg-url-compat@~0.6.5:
   version "0.6.5"

@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.jboss.hal.config.rebind.EnvironmentGenerator;
 
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.config.OperationMode.SELF_CONTAINED;
 import static org.jboss.hal.config.OperationMode.STANDALONE;
 
@@ -35,18 +36,23 @@ public abstract class AbstractEnvironment implements Environment {
     private final List<String> locales;
     private final InstanceInfo instanceInfo;
     private final Roles roles;
+    private final boolean devMode;
+    private final boolean productionMode;
     private OperationMode operationMode;
     private String domainController;
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
     private boolean sso;
 
-    protected AbstractEnvironment(String halVersion, String halBuild, List<String> locales) {
+    AbstractEnvironment(String halVersion, String halBuild, List<String> locales) {
         this.halVersion = org.jboss.hal.config.Version.parseVersion(halVersion);
         this.halBuild = Build.parse(halBuild);
         this.locales = locales;
         this.instanceInfo = new InstanceInfo();
         this.roles = new Roles();
+        this.devMode = System.getProperty("superdevmode", "").equals("on");
+        String pathname = window.location.getPathname();
+        this.productionMode = pathname.equals("/") || pathname.endsWith("index.html");
         this.operationMode = STANDALONE;
         this.domainController = null;
         this.managementVersion = Version.EMPTY_VERSION;
@@ -137,6 +143,16 @@ public abstract class AbstractEnvironment implements Environment {
     @Override
     public void setSingleSignOn(boolean sso) {
         this.sso = sso;
+    }
+
+    @Override
+    public boolean isDevMode() {
+        return devMode;
+    }
+
+    @Override
+    public boolean isProductionMode() {
+        return productionMode;
     }
 
     @Override

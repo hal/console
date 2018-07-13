@@ -26,6 +26,7 @@ import org.jboss.hal.client.bootstrap.tasks.InitializationTasks;
 import org.jboss.hal.client.bootstrap.tasks.InitializedTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.ExceptionHandler;
+import org.jboss.hal.js.Browser;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +65,12 @@ public class HalBootstrapper implements Bootstrapper {
     @Override
     public void onBootstrap() {
         // event for users of the JS API
-        Event event = new Event("halReady"); //NON-NLS
-        window.dispatchEvent(event);
+        if (Browser.isIE()) {
+            logger.warn("Custom events are not supported in IE! HAL extension won't work.");
+        } else {
+            Event event = new Event("halReady"); //NON-NLS
+            window.dispatchEvent(event);
+        }
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
