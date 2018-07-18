@@ -94,7 +94,7 @@ public interface Ids {
     String CACHE_STORE_BINARY_TABLE = "binary-table";
     String CACHE_STORE_CUSTOM = "cache-store-custom";
     String CACHE_STORE_FILE = "cache-store-file";
-    String CACHE_STORE_HOTROd = "cache-store-hotrod";
+    String CACHE_STORE_HOT_ROD = "cache-store-hot-rod";
     String CACHE_STORE_JDBC = "cache-store-jdbc";
     String CACHE_STORE_MIXED_JDBC = "cache-store-mixed-jdbc";
     String CACHE_STORE_STRING_TABLE = "string-table";
