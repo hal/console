@@ -139,7 +139,7 @@ public interface Names {
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
-    String HOTROD = "Hotrod";
+    String HOT_ROD = "Hot Rod";
     String HTTP = "HTTP";
     String HTTP_ACCEPTOR = "HTTP Acceptor";
     String HTTP_AUTHENTICATION_FACTORY = "HTTP Authentication Factory";
