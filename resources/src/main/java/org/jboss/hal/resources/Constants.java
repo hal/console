@@ -454,6 +454,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String rename();
     String replace();
     String replaceContent();
+    String replaceDeployment();
     String request();
     String requests();
     String required();
