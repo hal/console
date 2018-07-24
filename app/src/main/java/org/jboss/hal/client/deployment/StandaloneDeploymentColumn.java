@@ -24,6 +24,7 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;
 import org.jboss.hal.client.deployment.DeploymentTasks.CheckDeployment;
@@ -33,6 +34,7 @@ import org.jboss.hal.client.deployment.dialog.CreateEmptyDialog;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
+import org.jboss.hal.client.deployment.wizard.UploadElement;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.SuccessfulOutcome;
@@ -216,6 +218,14 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, DEPLOY))
                             .build());
                 }
+                if (item.isManaged()) {
+                    actions.add(new ItemAction.Builder<Deployment>()
+                            .title(resources.constants().replace())
+                            .handler(itm -> replace(item))
+                            .constraint(Constraint.executable(AddressTemplate.ROOT, FULL_REPLACE_DEPLOYMENT))
+                            .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, ADD))
+                            .build());
+                }
                 if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
                         && !item.isExploded() && !item.isEnabled()) {
                     actions.add(new ItemAction.Builder<Deployment>()
@@ -286,6 +296,41 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 })
                 .build();
         wizard.show();
+    }
+
+    private void replace(Deployment deployment) {
+        UploadElement uploadElement = new UploadElement(resources.messages().noDeployment());
+        Dialog dialog = new Dialog.Builder(resources.constants().replaceDeployment())
+                .add(uploadElement.asElement())
+                .cancel()
+                .primary(resources.constants().replace(), () -> {
+                    boolean valid = uploadElement.validate();
+                    if (valid) {
+                        series(new FlowContext(progress.get()),
+                                new CheckDeployment(dispatcher, deployment.getName()),
+                                // To replace an existing deployment, the original name and runtime-name must be preserved.
+                                new UploadOrReplace(environment, dispatcher, deployment.getName(),
+                                        deployment.getRuntimeName(), uploadElement.getFiles().item(0), false))
+                                .subscribe(new Outcome<FlowContext>() {
+                                    @Override
+                                    public void onError(FlowContext context, Throwable error) {
+                                        MessageEvent.fire(eventBus, Message.error(
+                                                resources.messages().contentReplaceError(deployment.getName()),
+                                                error.getMessage()));
+                                    }
+
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        refresh(Ids.content(deployment.getName()));
+                                        MessageEvent.fire(eventBus, Message.success(
+                                                resources.messages().contentReplaceSuccess(deployment.getName())));
+                                    }
+                                });
+                    }
+                    return valid;
+                })
+                .build();
+        dialog.show();
     }
 
     private void addUnmanaged() {
