@@ -408,6 +408,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                 });
                     }
                 });
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
         dialog.show();
     }
 

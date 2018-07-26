@@ -17,10 +17,12 @@ package org.jboss.hal.core.finder;
 
 import java.util.Collections;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
@@ -55,12 +57,12 @@ public class ColumnActionFactory {
      * is selected using the name as identifier in {@link FinderColumn#refresh(String)}.
      */
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template) {
-        return add(id, type, template, Collections.emptyList(), Ids::asId);
+        return add(id, type, template, Collections.emptyList(), Ids::asId, null);
     }
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
             Function<String, String> identifier) {
-        return add(id, type, template, Collections.emptyList(), identifier);
+        return add(id, type, template, Collections.emptyList(), identifier, null);
     }
 
     /**
@@ -71,16 +73,35 @@ public class ColumnActionFactory {
      * is selected using the name as identifier in {@link FinderColumn#refresh(String)}.
      */
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes) {
-        return add(id, type, template, attributes, Ids::asId);
+        return add(id, type, template, attributes, Ids::asId, null);
+    }
+
+    public <T> ColumnAction<T> add(String id,
+                                   String type,
+                                   AddressTemplate template,
+                                   Iterable<String> attributes,
+                                   Supplier<FormItemValidation<String>> createValidator) {
+        return add(id, type, template, attributes, Ids::asId, createValidator);
+    }
+
+    public <T> ColumnAction<T> add(String id,
+                                   String type,
+                                   AddressTemplate template,
+                                   Function<String, String> identifier,
+                                   Supplier<FormItemValidation<String>> createValidator) {
+        return add(id, type, template, Collections.emptyList(), identifier, createValidator);
     }
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes,
-            Function<String, String> identifier) {
+                                   Function<String, String> identifier,
+                                   Supplier<FormItemValidation<String>> createValidator) {
         //noinspection Convert2Lambda
         return add(id, type, template, new ColumnActionHandler<T>() {
             @Override
             public void execute(final FinderColumn<T> column) {
-                crud.add(id, type, template, attributes, (name, address) -> {
+                FormItemValidation<String> validator = createValidator != null ? createValidator.get() : null;
+
+                crud.add(id, type, template, attributes, validator, (name, address) -> {
                     if (name != null) {
                         column.refresh(identifier.apply(name));
                     }

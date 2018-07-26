@@ -362,11 +362,12 @@ public class ContentColumn extends FinderColumn<Content> {
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                             }
                         }));
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
         dialog.show();
     }
 
     private void createEmpty() {
-        new CreateEmptyDialog(resources, name -> {
+        CreateEmptyDialog dialog = new CreateEmptyDialog(resources, name -> {
             ResourceAddress address = CONTENT_TEMPLATE.resolve(statementContext, name);
             ModelNode contentNode = new ModelNode();
             contentNode.get(EMPTY).set(true);
@@ -377,7 +378,9 @@ public class ContentColumn extends FinderColumn<Content> {
                 refresh(Ids.deployment(name));
                 MessageEvent.fire(eventBus, Message.success(resources.messages().deploymentEmptySuccess(name)));
             });
-        }).show();
+        });
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.show();
     }
 
     private void replace(Content content) {

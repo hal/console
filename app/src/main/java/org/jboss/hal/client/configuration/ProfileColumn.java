@@ -87,10 +87,6 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
             final Resources resources) {
 
         super(new Builder<NamedNode>(finder, Ids.PROFILE, Names.PROFILE)
-                .columnAction(columnActionFactory.add(Ids.PROFILE_ADD, Names.PROFILE, PROFILE_TEMPLATE,
-                        Collections.singletonList(INCLUDES)))
-                .columnAction(columnActionFactory.refresh(Ids.PROFILE_REFRESH))
-
                 .itemsProvider((context, callback) ->
                         crud.readChildren(ResourceAddress.root(), PROFILE, children ->
                                 callback.onSuccess(asNamedNodes(children))))
@@ -162,6 +158,10 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
                 return Ids.CONFIGURATION_SUBSYSTEM;
             }
         });
+
+        addColumnAction(columnActionFactory.add(Ids.PROFILE_ADD, Names.PROFILE,
+                PROFILE_TEMPLATE,Collections.singletonList(INCLUDES), this::createUniqueValidation));
+        addColumnAction(columnActionFactory.refresh(Ids.PROFILE_REFRESH));
     }
 
     private void cloneProfile(String from) {

@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.core.datasource;
 
+import org.jboss.hal.config.NamedObject;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-public class JdbcDriver extends ModelNode {
+public class JdbcDriver extends ModelNode implements NamedObject {
 
     public enum Provider {
         UNKNOWN(Names.NOT_AVAILABLE), DEPLOYMENT(Names.DEPLOYMENT.toLowerCase()), MODULE(Names.MODULE.toLowerCase());

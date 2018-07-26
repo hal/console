@@ -142,6 +142,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String download();
     String dropSubscriptions();
     String duplicateMacro();
+    String duplicateResource();
     String duration();
 
     String edit();

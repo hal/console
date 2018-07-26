@@ -347,11 +347,12 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                             }
                         }));
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
         dialog.show();
     }
 
     private void createEmpty() {
-        new CreateEmptyDialog(resources, name -> {
+        CreateEmptyDialog dialog = new CreateEmptyDialog(resources, name -> {
             ResourceAddress address = DEPLOYMENT_TEMPLATE.resolve(statementContext, name);
             ModelNode contentNode = new ModelNode();
             contentNode.get(EMPTY).set(true);
@@ -362,7 +363,9 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 refresh(Ids.deployment(name));
                 MessageEvent.fire(eventBus, Message.success(resources.messages().deploymentEmptySuccess(name)));
             });
-        }).show();
+        });
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.show();
     }
 
     void enable(Deployment deployment) {

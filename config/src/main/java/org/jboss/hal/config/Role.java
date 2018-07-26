@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NonNls;
 
 /** A standard or scoped role used when RBAC is turned on. */
 @JsType
-public class Role {
+public class Role implements NamedObject {
 
     /** Has all permissions except cannot read or write resources related to the administrative audit logging system. */
     public static final Role ADMINISTRATOR = new Role("Administrator");

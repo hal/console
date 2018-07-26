@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -63,7 +64,9 @@ public class SocketBindingGroupColumn extends FinderColumn<NamedNode> {
             addColumnAction(columnActionFactory.add(
                     Ids.SOCKET_BINDING_GROUP_ADD,
                     Names.SOCKET_BINDING_GROUP,
-                    SocketBindingGroupPresenter.ROOT_TEMPLATE));
+                    SocketBindingGroupPresenter.ROOT_TEMPLATE,
+                    Collections.emptyList(),
+                    this::createUniqueValidation));
         }
         addColumnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_GROUP_REFRESH));
 

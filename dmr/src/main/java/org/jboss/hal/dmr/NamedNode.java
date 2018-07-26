@@ -19,12 +19,13 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.config.NamedObject;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /** A model node with a name. */
 @JsType
-public class NamedNode extends ModelNode {
+public class NamedNode extends ModelNode implements NamedObject {
 
     private final String name;
     private final ModelNode node;
