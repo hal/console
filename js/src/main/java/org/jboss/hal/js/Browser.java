@@ -24,6 +24,11 @@ public final class Browser {
         return userAgent.indexOf("Trident/") != -1;
     }
 
+    public static boolean isEdge() {
+        String userAgent = DomGlobal.window.navigator.userAgent;
+        return userAgent.indexOf("Edge") != -1;
+    }
+
     private Browser() {
     }
 }
