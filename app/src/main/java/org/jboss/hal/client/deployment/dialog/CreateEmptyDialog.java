@@ -46,6 +46,10 @@ public class CreateEmptyDialog {
                 .closeOnEsc(true)
                 .closeIcon(true)
                 .primary(resources.constants().add(), form::save)
+                .secondary(() -> {
+                    form.cancel();
+                    return true;
+                })
                 .build();
         dialog.registerAttachable(form);
     }
