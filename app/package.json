@@ -27,7 +27,7 @@
     "zeroclipboard": "~2.3.0"
   },
   "devDependencies": {
-    "autoprefixer": "~8.6.5",
+    "autoprefixer": "~9.0.2",
     "esdoc": "~1.1.0",
     "grunt": "~1.0.3",
     "grunt-cli": "~1.2.0",
@@ -43,7 +43,11 @@
     "grunt-stylelint": "~0.10.0",
     "matchdep": "~2.0.0",
     "node-gyp": "~3.7.0",
+    "prebuild-install": "~5.0.0",
     "pixrem": "~4.0.1",
     "stylelint": "~9.3.0"
+  },
+  "scripts": {
+    "install": "prebuild-install || node-gyp rebuild"
   }
 }
