@@ -191,6 +191,15 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>add global node-gyp</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>global add node-gyp</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>yarn</id>
                         <goals>
                             <goal>yarn</goal>
