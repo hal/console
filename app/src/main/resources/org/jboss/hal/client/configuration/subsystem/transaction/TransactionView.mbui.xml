@@ -28,6 +28,7 @@
                         <attribute name="enable-tsm-status"/>
                         <attribute name="journal-store-enable-async-io"/>
                         <attribute name="jts"/>
+                        <attribute name="maximum-timeout"/>
                         <attribute name="node-identifier"/>
                         <attribute name="statistics-enabled"/>
                         <attribute name="use-journal-store"/>
