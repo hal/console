@@ -86,6 +86,7 @@ public interface Names {
     String CUSTOM = "Custom";
     String CUSTOM_ACTION_HANDLER = "Custom ActionHandler";
     String CUSTOM_FORMATTER = "Custom Formatter";
+    String CUSTOM_LOAD_METRIC = "Custom Load Metric";
     String CUSTOM_MODIFIABLE_REALM = "Custom Modifiable Realm";
     String CUSTOM_POLICY = "Custom Policy";
 
@@ -102,6 +103,7 @@ public interface Names {
     String DISTRIBUTED_CACHE = "Distributed Cache";
     String DIVERT = "Divert";
     String DOMAIN_CONTROLLER = "Domain Controller";
+    String DYNAMIC_LOAD_PROVIDER = "Dynamic Load Provider";
 
     String EE = "EE";
     String EJB3 = "EJB";
@@ -192,6 +194,7 @@ public interface Names {
     String LDAP_REALM = "LDAP Realm";
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
+    String LOAD_METRIC = "Load Metric";
     String LOCAL_CACHE = "Local Cache";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
@@ -270,6 +273,7 @@ public interface Names {
     String PROFILES = "Profiles";
     String PROPERTIES_REALM = "Properties Realm";
     String PROTOCOL = "Protocol";
+    String PROXY = "Proxy";
 
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";

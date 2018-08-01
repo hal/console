@@ -139,7 +139,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationMicroprofileConfig())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(MODCLUSTER, Names.MODCLUSTER)
-                .token(NameTokens.MODCLUSTER)
+                .nextColumn(Ids.MODCLUSTER_PROXY)
                 .preview(resources.previews().configurationModcluster())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(NAMING, "Naming")

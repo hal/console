@@ -162,6 +162,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml duplicateAuthenticationModule();
     String duplicateAuthenticationModuleReason();
     String duplicateResource(String type);
+    SafeHtml dynamicLoadProviderWarning();
 
     String ejbFilterDescription();
     SafeHtml emptyModelNodeForm();
@@ -374,6 +375,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
+    String proxyColumnFilterDescription();
     SafeHtml propertiesHint();
     SafeHtml pruneDisconnectedQuestion();
     SafeHtml pruneExpiredQuestion();

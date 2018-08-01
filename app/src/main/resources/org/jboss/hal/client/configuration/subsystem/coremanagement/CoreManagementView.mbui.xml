@@ -23,7 +23,7 @@
                 <h1>Configuration Changes</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
                 <singleton-form id="core-mgmt-conf-change-form" title="Configuration Changes"  auto-save="true"
-                    add-handler="${presenter.addConfigurationChanges())}" reset="true" />
+                    add-handler="${presenter.addConfigurationChanges()}" reset="true" />
             </metadata>
         </item>
 

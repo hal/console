@@ -16,20 +16,22 @@
   ~ limitations under the License.
   -->
 <view>
-    <vertical-navigation id="modcluster-vertical-navigation">
-        <item id="modcluster-configuration-item" title="Configuration" icon="pficon pficon-settings">
-            <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration">
+    <vertical-navigation id="proxy-vertical-navigation">
+        <item id="proxy-item" title="Configuration" icon="pficon pficon-settings">
+            <metadata address="/{selected.profile}/subsystem=modcluster/proxy=*">
                 <h1>Configuration</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
-                <form id="modcluster-configuration" title="Configuration" auto-save="true" reset="true">
+                <form id="proxy-conf-form" title="Configuration" auto-save="true" reset="true"
+                      name-resolver="${presenter.getProxyName()}">
                     <attributes>
                         <group id="advertising" title="Advertising">
+                            <attribute name="advertise"/>
+                            <attribute name="advertise-security-key"/>
+                            <attribute name="advertise-socket"/>
+                            <attribute name="balancer"/>
                             <attribute name="connector"/>
                             <attribute name="load-balancing-group"/>
-                            <attribute name="balancer"/>
-                            <attribute name="advertise-socket"/>
-                            <attribute name="advertise-security-key"/>
-                            <attribute name="advertise"/>
+                            <attribute name="simple-load-provider"/>
                         </group>
                         <group id="sessions" title="Sessions">
                             <attribute name="sticky-session"/>
@@ -39,19 +41,23 @@
                         <group id="web-contexts" title="Web Contexts">
                             <attribute name="auto-enable-context"/>
                             <attribute name="excluded-contexts"/>
+                            <attribute name="session-draining-strategy"/>
                         </group>
                         <group id="proxies" title="Proxies">
-                            <attribute name="proxy-url"/>
                             <attribute name="proxies"/>
+                            <attribute name="proxy-url"/>
+                            <attribute name="ssl-context"/>
                         </group>
                         <group id="networking" title="Networking">
-                            <attribute name="node-timeout"/>
-                            <attribute name="socket-timeout"/>
-                            <attribute name="stop-context-timeout"/>
-                            <attribute name="max-attempts"/>
                             <attribute name="flush-packets"/>
                             <attribute name="flush-wait"/>
+                            <attribute name="max-attempts"/>
+                            <attribute name="node-timeout"/>
                             <attribute name="ping"/>
+                            <attribute name="smax"/>
+                            <attribute name="socket-timeout"/>
+                            <attribute name="status-interval"/>
+                            <attribute name="stop-context-timeout"/>
                             <attribute name="ttl"/>
                             <attribute name="worker-timeout"/>
                         </group>
@@ -59,23 +65,46 @@
                 </form>
             </metadata>
         </item>
-
-        <item id="modcluster-ssl-item" title="SSL" icon="fa fa-lock">
-            <metadata
-                    address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration/ssl=configuration">
-                <h1>SSL</h1>
-                <p>${metadata.getDescription().getDescription()}</p>
-                <singleton-form id="modcluster-ssl-form" title="SSL" auto-save="true" reset="true">
-                    <attributes>
-                        <attribute name="key-alias"/>
-                        <attribute name="password"/>
-                        <attribute name="ca-certificate-file"/>
-                        <attribute name="certificate-key-file"/>
-                        <attribute name="cipher-suite"/>
-                        <attribute name="ca-revocation-url"/>
-                        <attribute name="protocol"/>
-                    </attributes>
-                </singleton-form>
+        <item id="custom-load-metrics-item" title="Custom Load Metrics" icon="pficon pficon-service">
+            <metadata address="/{selected.profile}/subsystem=modcluster/proxy=*/dynamic-load-provider=configuration/custom-load-metric=*">
+            <h1>Custom Load Metrics</h1>
+            <p>${metadata.getDescription().getDescription()}</p>
+            <table id="custom-load-metrics-table" title="Custom Load Metrics"
+                   form-ref="custom-load-metrics-form">
+                <actions>
+                    <action title="${mbuiContext.resources().constants().add()}"
+                            handler="${presenter.addCustomLoadMetric()}" constraint="add"/>
+                    <action title="${mbuiContext.resources().constants().remove()}"
+                            handler="${presenter.removeCustomLoadMetric(table)}" scope="selected" constraint="remove"/>
+                </actions>
+                <columns>
+                    <column name="name" value="${row.getName()}"/>
+                </columns>
+            </table>
+            <form id="custom-load-metrics-form" title="Custom Load Metric"
+                  on-save="${presenter.saveCustomLoadMetric(form, changedValues)}"
+                  prepare-reset="${presenter.prepareResetCustomLoadMetric(form)}" />
+            </metadata>
+        </item>
+        <item id="load-metrics-item" title="Load Metrics" icon="fa fa-map">
+            <metadata address="/{selected.profile}/subsystem=modcluster/proxy=*/dynamic-load-provider=configuration/load-metric=*">
+            <h1>Load Metrics</h1>
+            <p>${metadata.getDescription().getDescription()}</p>
+            <table id="load-metrics-table" title="Load Metrics"
+                   form-ref="load-metrics-form">
+                <actions>
+                    <action title="${mbuiContext.resources().constants().add()}"
+                            handler="${presenter.addLoadMetric()}" constraint="add"/>
+                    <action title="${mbuiContext.resources().constants().remove()}"
+                            handler="${presenter.removeLoadMetric(table)}" scope="selected" constraint="remove"/>
+                </actions>
+                <columns>
+                    <column name="name" value="${row.getName()}"/>
+                </columns>
+            </table>
+            <form id="load-metrics-form" title="Load Metric"
+                  on-save="${presenter.saveLoadMetric(form, changedValues)}"
+                  prepare-reset="${presenter.prepareResetLoadMetric(form)}" />
             </metadata>
         </item>
     </vertical-navigation>
