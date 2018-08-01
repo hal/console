@@ -108,7 +108,7 @@ public final class ${context.subclass} extends ${context.base} {
                 () -> new Operation.Builder(${form.metadata.name}Template.resolve(mbuiContext.statementContext()), READ_RESOURCE_OPERATION).build(),
                 <#if form.metadata.singleton>
                     <#if form.addHandler??>
-                () -> ${form.addHandler}
+                () -> ${form.addHandler})
                     <#else>
                 () -> addSingleton("${form.selector}", ${form.title}, ${form.metadata.name}Template))
                     </#if>

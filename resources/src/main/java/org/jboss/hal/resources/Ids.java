@@ -121,6 +121,7 @@ public interface Ids {
     String CONTENT_TREE_SEARCH = "content-tree-search";
     String CONTENT_UNMANAGED_ADD = "content-unmanaged-add";
     String COOKIE = "hal-cookie";
+    String CUSTOM_LOAD_METRIC = "custom-load-metric";
     String DATA_SOURCE_ADD = "ds-configuration-add";
     String DATA_SOURCE_ADD_ACTIONS = "ds-configuration-add-actions";
     String DATA_SOURCE_CONFIGURATION = "ds-configuration";
@@ -439,6 +440,7 @@ public interface Ids {
     String JPA_RUNTIME_QUERY_CACHE_ITEM = "jpa-runtime-query-cache-item";
     String JPA_RUNTIME_STATISTICS_DISABLED = "jpa-runtime-statistics-disabled";
     String JPA_RUNTIME_TAB_CONTAINER = "jpa-runtime-tab-container";
+    String LOAD_METRIC = "load-metric";
     String LOCAL_CACHE = "local-cache";
     String LOG_FILE = "lf";
     String LOG_FILE_EDITOR = "lf-editor";
@@ -534,6 +536,9 @@ public interface Ids {
     String MESSAGING_SERVER_RUNTIME = "msg-server-r";
     String MESSAGING_SERVER_RUNTIME_REFRESH = "msg-server-r-refresh";
     String MESSAGING_SERVER_SETTINGS = "msg-server-settings";
+    String MODCLUSTER_PROXY = "modcluster-proxy";
+    String MODCLUSTER_PROXY_ADD = "modcluster-proxy-add";
+    String MODCLUSTER_PROXY_REFRESH = "modcluster-proxy-refresh";
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = "model-browser-create-singleton-form";
     String MODEL_BROWSER_ROOT = "model-browser-root";
@@ -850,6 +855,10 @@ public interface Ids {
 
     static String mailSession(String name) {
         return build("ms", name);
+    }
+
+    static String modclusterProxy(String name) {
+        return build("mcp", name);
     }
 
     static String messagingServer(String name) {

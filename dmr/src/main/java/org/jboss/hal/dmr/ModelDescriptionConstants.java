@@ -619,6 +619,7 @@ public interface ModelDescriptionConstants {
     String PROVIDER_MODULE = "provider-module";
     String PROVIDER_SASL_SERVER_FACTORY = "provider-sasl-server-factory";
     String PROXIES = "proxies";
+    String PROXY = "proxy";
     String PRUNE_EXPIRED = "prune-expired";
     String PRUNE_DISCONNECTED = "prune-disconnected";
     String QUERY = "query";
