@@ -45,7 +45,7 @@ public class UploadElement implements IsElement<HTMLElement> {
     private HTMLInputElement fileInput;
     private HTMLElement labelElement;
 
-    public UploadElement(final SafeHtml noFilesError) {
+    public UploadElement(SafeHtml noFilesError) {
         HTMLElement iconElement, dragElement;
 
         this.alert = new Alert(Icons.ERROR, noFilesError);
@@ -60,9 +60,9 @@ public class UploadElement implements IsElement<HTMLElement> {
                         .asElement())
                 .add(labelElement = label()
                         .apply(l -> l.htmlFor = Ids.UPLOAD_FILE_INPUT)
-                        .add(a().css(clickable)
-                                .textContent(CONSTANTS.chooseFile())
-                                .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).asElement()))
+                        .css(clickable, link)
+                        .textContent(CONSTANTS.chooseFile())
+                        .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).asElement())
                         .asElement())
                 .asElement();
 

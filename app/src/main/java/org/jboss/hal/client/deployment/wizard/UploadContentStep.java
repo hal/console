@@ -19,7 +19,7 @@ import org.jboss.hal.resources.Resources;
 
 public class UploadContentStep extends UploadStep {
 
-    public UploadContentStep(final Resources resources) {
+    public UploadContentStep(Resources resources) {
         super(resources.constants().uploadContent(), resources.messages().noContent());
     }
 }

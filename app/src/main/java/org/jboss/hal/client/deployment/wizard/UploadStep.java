@@ -23,7 +23,7 @@ abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
 
     private final UploadElement uploadElement;
 
-    UploadStep(final String title, final SafeHtml onError) {
+    UploadStep(String title, SafeHtml onError) {
         super(title);
         this.uploadElement = new UploadElement(onError);
     }
@@ -34,17 +34,17 @@ abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    public void reset(final UploadContext context) {
+    public void reset(UploadContext context) {
         context.file = null;
     }
 
     @Override
-    protected void onShow(final UploadContext context) {
+    protected void onShow(UploadContext context) {
         uploadElement.reset();
     }
 
     @Override
-    protected boolean onNext(final UploadContext context) {
+    protected boolean onNext(UploadContext context) {
         if (uploadElement.validate()) {
             context.file = uploadElement.getFiles().item(0);
             return true;

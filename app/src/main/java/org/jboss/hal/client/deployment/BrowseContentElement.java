@@ -53,6 +53,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.js.Browser;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.AuthorisationDecision;
@@ -284,8 +285,9 @@ class BrowseContentElement implements IsElement, Attachable {
                                 .add(unsupportedFileType)))
                 .asElement();
 
+        boolean supported = !(Browser.isEdge() || Browser.isIE());
         AuthorisationDecision ad = AuthorisationDecision.from(environment, metadata.getSecurityContext());
-        if (ad.isAllowed(Constraint.executable(CONTENT_TEMPLATE, ADD_CONTENT))) {
+        if (supported && ad.isAllowed(Constraint.executable(CONTENT_TEMPLATE, ADD_CONTENT))) {
             addContentButton = Optional.of(button().css(btn, btnDefault)
                     .on(click, event -> addContent())
                     .title(resources.constants().newContent())

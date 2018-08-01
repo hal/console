@@ -197,6 +197,7 @@ public interface CSS {
     String langJava = "lang-java";
     String last = "last";
     String lead = "lead";
+    String link = "link";
     String listGroup = "list-group";
     String listGroupItem = "list-group-item";
     String listGroupItemValue = "list-group-item-value";
