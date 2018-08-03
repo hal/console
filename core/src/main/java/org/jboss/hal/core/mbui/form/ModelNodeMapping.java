@@ -104,12 +104,22 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     break;
 
                 case INT:
-                    // NumberFormItem uses *always* long
+                    // NumberItem uses *always* long
                     try {
                         formItem.setValue((long) value.asInt());
                     } catch (IllegalArgumentException e) {
                         logger.error(
                                 "{}: Unable to populate form item '{}': Metadata says it's an INT, but value is not '{}'",
+                                id, name, value.asString());
+
+                    }
+                    break;
+                case DOUBLE:
+                    try {
+                        formItem.setValue(value.asDouble());
+                    } catch (IllegalArgumentException e) {
+                        logger.error(
+                                "{}: Unable to populate form item '{}': Metadata says it's an DOUBLE, but value is not '{}'",
                                 id, name, value.asString());
 
                     }
@@ -152,7 +162,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
                 // unsupported types
                 case BIG_DECIMAL:
-                case DOUBLE:
                 case BYTES:
                 case EXPRESSION:
                 case PROPERTY:
@@ -234,6 +243,15 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                                 }
                                 break;
 
+                            case DOUBLE:
+                                Double doubleValue = (Double) value;
+                                if (doubleValue == null) {
+                                    failSafeRemove(model, name);
+                                } else {
+                                    model.get(name).set(doubleValue);
+                                }
+                                break;
+
                             case LIST:
                                 List<String> list = (List<String>) value;
                                 if (list == null || list.isEmpty()) {
@@ -279,7 +297,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                             // unsupported types
                             case BIG_DECIMAL:
                             case BYTES:
-                            case DOUBLE:
                             case EXPRESSION:
                             case PROPERTY:
                             case TYPE:

@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.MultiSelectBoxItem;
+import org.jboss.hal.ballroom.form.NumberDoubleItem;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
@@ -118,6 +119,17 @@ class DefaultFormItemProvider implements FormItemProvider {
                     formItem = numberItem;
                     break;
                 }
+                case DOUBLE: {
+                    long min = attributeDescription.get(MIN).asLong(MIN_SAFE_LONG);
+                    long max = attributeDescription.get(MAX).asLong(MAX_SAFE_LONG);
+                    NumberDoubleItem numberItem = new NumberDoubleItem(name, label, unit, min, max);
+                    if (attributeDescription.hasDefined(DEFAULT)) {
+                        double defaultValue = attributeDescription.get(DEFAULT).asDouble();
+                        numberItem.assignDefaultValue(defaultValue);
+                    }
+                    formItem = numberItem;
+                    break;
+                }
 
                 case LIST: {
                     if (valueType != null && ModelType.STRING == valueType) {
@@ -196,7 +208,6 @@ class DefaultFormItemProvider implements FormItemProvider {
                 // unsupported types
                 case BIG_DECIMAL:
                 case BYTES:
-                case DOUBLE:
                 case EXPRESSION:
                 case PROPERTY:
                 case TYPE:
