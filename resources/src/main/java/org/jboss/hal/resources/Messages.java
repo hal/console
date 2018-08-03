@@ -254,7 +254,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String invalidTagFormat(String allowed);
     String invalidJNDIName();
     String invalidLength();
-    String invalidRange(long value, long min, long max);
+    String invalidRange(double value, long min, long max);
     SafeHtml invalidateSessionQuestion();
     SafeHtml invalidateSessionSuccess();
     SafeHtml invalidateSessionError(String cause);
