@@ -310,7 +310,7 @@
                         <devmodeArg>hal/dev.html</devmodeArg>
                         <devmodeArg>-generateJsInteropExports</devmodeArg>
                         <devmodeArg>-bindAddress</devmodeArg>
-                        <devmodeArg>0.0.0.0</devmodeArg>
+                        <devmodeArg>${gwt.devmode.hostname}</devmodeArg>
                     </devmodeArgs>
                     <jvmArgs>
                         <jvmArg>-Xms1024m</jvmArg>
