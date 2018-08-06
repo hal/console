@@ -1,0 +1,25 @@
+<p>A host controller is launched when the <code>domain.sh</code> or <code>domain.bat</code> script is run on a host.</p>
+
+<p>&#x4e3b;&#x673a;&#x63a7;&#x5236;&#x5668;&#x7684;&#x4e3b;&#x8981;&#x804c;&#x8d23;&#x662f;&#x7ba1;&#x7406;&#x670d;&#x52a1;&#x5668;&#x3002;&#x5b83;&#x8d1f;&#x8d23;&#x59d4;&#x6d3e;&#x57df;&#x7ba1;&#x7406;&#x4efb;&#x52a1;&#xff0c;&#x5e76;&#x8d1f;&#x8d23;&#x542f;&#x52a8;&#x548c;&#x505c;&#x6b62;&#x8fd0;&#x884c;&#x5728;&#x4e3b;&#x673a;&#x4e0a;&#x7684;&#x5e94;&#x7528;&#x670d;&#x52a1;&#x5668;&#x8fdb;&#x7a0b;&#x3002;</p>
+
+<p>&#x5b83;&#x548c;&#x57df;&#x63a7;&#x5236;&#x5668;&#x8fdb;&#x884c;&#x4ea4;&#x6d41;&#xff0c;&#x6765;&#x5e2e;&#x52a9;&#x7ba1;&#x7406;&#x670d;&#x52a1;&#x5668;&#x548c;&#x57df;&#x63a7;&#x5236;&#x5668;&#x95f4;&#x7684;&#x901a;&#x8baf;&#x3002;&#x4e00;&#x4e2a;&#x57df;&#x7684;&#x591a;&#x4e2a;&#x4e3b;&#x673a;&#x63a7;&#x5236;&#x5668;&#x53ef;&#x4ee5;&#x53ea;&#x548c;&#x4e00;&#x4e2a;&#x57df;&#x63a7;&#x5236;&#x5668;&#x8fdb;&#x884c;&#x4ea4;&#x6d41;&#x3002;&#x5728;&#x4e00;&#x4e2a;&#x72ec;&#x7acb;&#x57df;&#x6a21;&#x5f0f;&#x4e2d;&#x8fd0;&#x884c;&#x7684;&#x6240;&#x6709;&#x4e3b;&#x673a;&#x63a7;&#x5236;&#x5668;&#x548c;&#x670d;&#x52a1;&#x5668;&#x5b9e;&#x4f8b;&#x4f1a;&#x6709;&#x4e00;&#x4e2a;&#x72ec;&#x7acb;&#x7684;&#x57df;&#x63a7;&#x5236;&#x5668;&#xff0c;&#x5b83;&#x4eec;&#x9700;&#x8981;&#x5c5e;&#x4e8e;&#x76f8;&#x540c;&#x7684;&#x57df;&#x3002;</p>
+
+<p>By default each host controller reads its configuration from the
+    <code>domain/configuration/host.xml</code> file located in the unzipped ${build.shortName} installation file on its host&#39;s filesystem. The
+    <code>host.xml</code> file contains the following configuration information that is specific to the particular host:
+</p>
+
+<ul>
+    <li>The names of the ${build.shortName} instances meant to run from this installation.</li>
+    <li>&#x4efb;&#x4f55;&#x4e0b;&#x5217;&#x7684;&#x914d;&#x7f6e;&#xff1a;</li>
+    <ul>
+        <li>&#x4e3b;&#x673a;&#x63a7;&#x5236;&#x5668;&#x5982;&#x4f55;&#x8054;&#x7cfb;&#x57df;&#x63a7;&#x5236;&#x5668;&#x6765;&#x6ce8;&#x518c;&#x81ea;&#x5df1;&#x5e76;&#x8bbf;&#x95ee;&#x57df;&#x914d;&#x7f6e;&#x3002;</li>
+        <li>&#x5982;&#x4f55;&#x627e;&#x5230;&#x5e76;&#x8054;&#x7cfb;&#x8fdc;&#x7a0b;&#x57df;&#x63a7;&#x5236;&#x5668;&#x3002;</li>
+        <li> That the host controller is to act as the domain controller</li>
+    </ul>
+    <li>Configurations specific to the local physical installation. For example, named interface definitions declared in
+        <code>domain.xml</code> can be mapped to an actual machine-specific IP address in
+        <code>host.xml</code>. And abstract path names in domain.xml can be mapped to actual filesystem paths in
+        <code>host.xml</code>.
+    </li>
+</ul>

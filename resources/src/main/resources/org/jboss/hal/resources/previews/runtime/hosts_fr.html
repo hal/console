@@ -1,0 +1,25 @@
+<p>A host controller is launched when the <code>domain.sh</code> or <code>domain.bat</code> script is run on a host.</p>
+
+<p>Le principale responsabilit&eacute; d&#39;un contr&ocirc;leur h&ocirc;te est la gestion de serveurs. Il d&eacute;l&egrave;gue les t&acirc;ches de gestion de domaines et est charg&eacute; de d&eacute;marrer ou stopper les processus de serveurs d&#39;application individuels qui ex&eacute;cutent sur son h&ocirc;te.</p>
+
+<p>Il entre en interaction avec le contr&ocirc;leur de domaines pour g&eacute;rer la communication entre les serveurs et le contr&ocirc;leur de domaines. Plusieurs contr&ocirc;leurs h&ocirc;tes d&#39;un domaine peuvent interagir avec un contr&ocirc;leur de domaine unique. Par cons&eacute;quent, tous les contr&ocirc;leurs h&ocirc;tes et les instances de serveurs ex&eacute;cutant en mode de domaine unique ont un contr&ocirc;leur de domaine unique et doivent appartenir au m&ecirc;me domaine.</p>
+
+<p>By default each host controller reads its configuration from the
+    <code>domain/configuration/host.xml</code> file located in the unzipped ${build.shortName} installation file on its host&#39;s filesystem. The
+    <code>host.xml</code> file contains the following configuration information that is specific to the particular host:
+</p>
+
+<ul>
+    <li>The names of the ${build.shortName} instances meant to run from this installation.</li>
+    <li>Une des configurations suivantes :</li>
+    <ul>
+        <li>La fa&ccedil;on dont le contr&ocirc;leur contacte le contr&ocirc;leur de domaines pour s&#39;enregistrer lui-m&ecirc;me et pour acc&eacute;der &agrave; la configuration de domaine.</li>
+        <li>La fa&ccedil;on de rechercher et contacter un contr&ocirc;leur de domaines &eacute;loign&eacute;.</li>
+        <li> That the host controller is to act as the domain controller</li>
+    </ul>
+    <li>Configurations specific to the local physical installation. For example, named interface definitions declared in
+        <code>domain.xml</code> can be mapped to an actual machine-specific IP address in
+        <code>host.xml</code>. And abstract path names in domain.xml can be mapped to actual filesystem paths in
+        <code>host.xml</code>.
+    </li>
+</ul>

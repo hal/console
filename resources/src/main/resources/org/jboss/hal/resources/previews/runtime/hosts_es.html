@@ -1,0 +1,25 @@
+<p>A host controller is launched when the <code>domain.sh</code> or <code>domain.bat</code> script is run on a host.</p>
+
+<p>La responsabilidad principal de un controlador host es la administraci&oacute;n de servidores. Delega tareas de administraci&oacute;n de dominio y es el responsable de iniciar y detener los procesos del servidor de aplicaciones individuales que ejecutan en su host.</p>
+
+<p>Interact&uacute;a con el controlador de dominios para ayudar a administrar la comunicaci&oacute;n entre los servidores y el controlador de dominios. M&uacute;ltiples controladores host de un dominio pueden interactuar con un solo controlador de dominios. Por lo tanto, todos los controladores host e instancias de servidor ejecutando en un solo modo de dominios tienen un solo controlador de dominios y deben pertenecer al mismo dominio.</p>
+
+<p>By default each host controller reads its configuration from the
+    <code>domain/configuration/host.xml</code> file located in the unzipped ${build.shortName} installation file on its host&#39;s filesystem. The
+    <code>host.xml</code> file contains the following configuration information that is specific to the particular host:
+</p>
+
+<ul>
+    <li>The names of the ${build.shortName} instances meant to run from this installation.</li>
+    <li>Cualquiera de las siguientes configuraciones:</li>
+    <ul>
+        <li>La manera en que el controlador host contacta el controlador de dominios para registrarse a si mismo y acceder a la configuraci&oacute;n del dominio.</li>
+        <li>La manera de encontrar y contactar un controlador de dominios remoto.</li>
+        <li> That the host controller is to act as the domain controller</li>
+    </ul>
+    <li>Configurations specific to the local physical installation. For example, named interface definitions declared in
+        <code>domain.xml</code> can be mapped to an actual machine-specific IP address in
+        <code>host.xml</code>. And abstract path names in domain.xml can be mapped to actual filesystem paths in
+        <code>host.xml</code>.
+    </li>
+</ul>
