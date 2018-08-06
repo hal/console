@@ -90,6 +90,7 @@
         <gwt.logLevel>FINE</gwt.logLevel>
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>DETAILED</gwt.style>
+        <gwt.devmode.hostname>0.0.0.0</gwt.devmode.hostname>
         <hal.version>${project.version}</hal.version>
 
         <linkXRef>false</linkXRef>
