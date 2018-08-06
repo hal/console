@@ -71,7 +71,6 @@ class FinderRow<T> implements IsElement {
             boolean pinned,
             ItemDisplay<T> display,
             PreviewCallback<T> previewCallback) {
-
         this.finder = finder;
         this.column = column;
         this.display = display;

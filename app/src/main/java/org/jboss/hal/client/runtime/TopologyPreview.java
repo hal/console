@@ -447,7 +447,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             }
         }
         table.appendChild(tbody);
-        // </tbody> @formatter:on
+        // </tbody>
 
         return table;
     }
