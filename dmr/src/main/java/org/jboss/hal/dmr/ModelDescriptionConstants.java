@@ -120,6 +120,7 @@ public interface ModelDescriptionConstants {
     String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
     String CANCELLED = "cancelled";
     String CAPABILITY_REFERENCE = "capability-reference";
+    String CERTIFICATE_AUTHORITY_ACCOUNT = "certificate-authority-account";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
     String CHANGE_ALIAS = "change-alias";
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
@@ -197,6 +198,7 @@ public interface ModelDescriptionConstants {
     String CUSTOM_REALM_MAPPER = "custom-realm-mapper";
     String CUSTOM_ROLE_DECODER = "custom-role-decoder";
     String CUSTOM_ROLE_MAPPER = "custom-role-mapper";
+    String CUSTOM_SECURITY_EVENT_LISTENER = "custom-security-event-listener";
     String DATA_COLUMN = "data-column";
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
@@ -471,6 +473,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_SPEC_VERSION = "management-spec-version";
     String MANAGEMENT_VERSION = "management-version";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
+    String MAPPED_ROLE_MAPPER = "mapped-role-mapper";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
     String MATCH_ALL = "match-all";
@@ -717,6 +720,7 @@ public interface ModelDescriptionConstants {
     String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
     String ROLE = "role";
+    String ROLE_MAP = "role-map";
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "roles";
     String ROLLBACK_OPERATION = "rollback";

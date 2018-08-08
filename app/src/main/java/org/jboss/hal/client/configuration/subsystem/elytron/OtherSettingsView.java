@@ -45,8 +45,10 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResour
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AUTHENTICATION_CONFIGURATION;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AUTHENTICATION_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CERTIFICATE_AUTHORITY_ACCOUNT;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CLIENT_SSL_CONTEXT;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CREDENTIAL_STORE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CUSTOM_SECURITY_EVENT_LISTENER;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.DIR_CONTEXT;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.FILE_AUDIT_LOG;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.FILTERING_KEY_STORE;
@@ -245,6 +247,14 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(AGGREGATE_SECURITY_EVENT_LISTENER.baseId, Ids.ITEM),
                 labelBuilder.label(AGGREGATE_SECURITY_EVENT_LISTENER.resource));
 
+        addResourceElement(CUSTOM_SECURITY_EVENT_LISTENER,
+                CUSTOM_SECURITY_EVENT_LISTENER.resourceElement(mbuiContext,
+                        () -> presenter.reload(CUSTOM_SECURITY_EVENT_LISTENER.resource,
+                                nodes -> updateResourceElement(CUSTOM_SECURITY_EVENT_LISTENER.resource, nodes))),
+                Ids.ELYTRON_LOGS_ITEM,
+                Ids.build(CUSTOM_SECURITY_EVENT_LISTENER.baseId, Ids.ITEM),
+                labelBuilder.label(CUSTOM_SECURITY_EVENT_LISTENER.resource));
+
         addResourceElement(FILE_AUDIT_LOG,
                 FILE_AUDIT_LOG.resourceElement(mbuiContext,
                         () -> presenter.reload(FILE_AUDIT_LOG.resource,
@@ -278,6 +288,16 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 labelBuilder.label(SYSLOG_AUDIT_LOG.resource));
 
         // ====== Other settings
+
+        addResourceElement(CERTIFICATE_AUTHORITY_ACCOUNT,
+                CERTIFICATE_AUTHORITY_ACCOUNT.resourceElementBuilder(mbuiContext,
+                        () -> presenter.reload(CERTIFICATE_AUTHORITY_ACCOUNT.resource,
+                                nodes -> updateResourceElement(CERTIFICATE_AUTHORITY_ACCOUNT.resource, nodes)))
+                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .build(),
+                Ids.ELYTRON_OTHER_ITEM,
+                Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT.baseId, Ids.ITEM),
+                labelBuilder.label(CERTIFICATE_AUTHORITY_ACCOUNT.resource));
 
         addResourceElement(DIR_CONTEXT,
                 DIR_CONTEXT.resourceElementBuilder(mbuiContext,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Red Hat, Inc, and individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,42 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.elytron;
+package org.jboss.hal.client.configuration.subsystem.elytron;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.ballroom.form.TagsItem;
 import org.jboss.hal.ballroom.form.TagsManager;
 import org.jboss.hal.ballroom.form.TagsMapping;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Messages;
 
 import static elemental2.dom.DomGlobal.document;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
-public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
+class RoleMapListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public IdentityAttributeItem(final String name, final String label) {
+    public RoleMapListItem(final String name, final String label) {
         super(name, label, MESSAGES.multiValueListHint(), EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
-                new MapMapping());
+                new RoleMapListItem.MapMapping());
     }
 
     @Override
     public boolean isEmpty() {
-        return getValue() == null || getValue().isEmpty();
+        return getValue() == null || !getValue().isDefined();
     }
 
     @Override
@@ -62,7 +61,7 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
     }
 
 
-    private static class MapMapping implements TagsMapping<Map<String, List<String>>> {
+    private static class MapMapping implements TagsMapping<ModelNode> {
 
         private static final String VALUE_SEPARATOR = ":";
         private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\;]+)$"); //NON-NLS
@@ -73,8 +72,8 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
         }
 
         @Override
-        public Map<String, List<String>> parse(final String cst) {
-            Map<String, List<String>> result = new HashMap<>();
+        public ModelNode parse(final String cst) {
+            ModelNode result = new ModelNode();
             if (cst != null) {
                 Splitter.on(",")
                         .trimResults()
@@ -82,36 +81,38 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
                         .withKeyValueSeparator('=')
                         .split(cst)
                         .forEach((key, value) -> {
-                            result.put(key, asList(value.split(VALUE_SEPARATOR)));
+                            ModelNode multiValue = new ModelNode();
+                            for (String v: value.split(VALUE_SEPARATOR)) {
+                                multiValue.add(v);
+                            }
+                            result.add(key, multiValue);
                         });
             }
             return result;
         }
 
         @Override
-        public List<String> tags(final Map<String, List<String>> sourceValue) {
-            if (sourceValue.isEmpty()) {
+        public List<String> tags(final ModelNode value) {
+            if (!value.isDefined()) {
                 return emptyList();
             }
-            List<String> tags = new ArrayList<>();
-            sourceValue.forEach((key, values) -> {
-                String tag = key + "=" + Joiner.on(VALUE_SEPARATOR).join(values);
-                tags.add(tag);
-            });
-            return tags;
+            return value.asPropertyList().stream()
+                    .map(kv -> kv.getName() + "=" + kv.getValue().asList().stream()
+                            .map(ModelNode::asString)
+                            .collect(joining(VALUE_SEPARATOR)))
+                    .collect(toList());
         }
 
         @Override
-        public String asString(final Map<String, List<String>> sourceValue) {
-            if (sourceValue.isEmpty()) {
+        public String asString(final ModelNode value) {
+            if (!value.isDefined()) {
                 return "";
             }
-            StringBuilder result = new StringBuilder();
-            sourceValue.forEach((key, values) -> {
-                String tag = key + " \u21D2 " + Joiner.on(",").join(values) + "\n";
-                result.append(tag);
-            });
-            return result.toString();
+            return value.asPropertyList().stream()
+                    .map(kv -> kv.getName() + " \u21D2 " + kv.getValue().asList().stream()
+                            .map(ModelNode::asString)
+                            .collect(joining(",")))
+                    .collect(joining("\n"));
         }
     }
 }

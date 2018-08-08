@@ -172,9 +172,8 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
     void addIdentity(AddressTemplate template, Metadata metadata, String name) {
         Metadata opMetadata = metadata.forOperation(ADD_IDENTITY);
         SafeHtml identityAttributeHelp = resources.messages().identityAttributeHelp();
-        SafeHtml identityAttributeHint = resources.messages().identityAttributeHint();
         IdentityAttributeItem identityAttribute = new IdentityAttributeItem(Ids.asId(IDENTITY_ATTRIBUTE_MAPPING),
-                IDENTITY_ATTRIBUTE_MAPPING, identityAttributeHint);
+                IDENTITY_ATTRIBUTE_MAPPING);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), ADD_IDENTITY), opMetadata)
                 .unboundFormItem(identityAttribute, 1, identityAttributeHelp)
                 .build();

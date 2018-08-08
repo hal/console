@@ -93,9 +93,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
 
         Metadata identityMetadata = metadata.forOperation(READ_IDENTITY);
         SafeHtml identityAttributeHelp = resources.messages().identityAttributeHelp();
-        SafeHtml identityAttributeHint = resources.messages().identityAttributeHint();
-        IdentityAttributeItem identityAttribute = new IdentityAttributeItem(ATTRIBUTES, labelBuilder.label(ATTRIBUTES),
-                identityAttributeHint);
+        IdentityAttributeItem identityAttribute = new IdentityAttributeItem(ATTRIBUTES, labelBuilder.label(ATTRIBUTES));
         identityForm = new ModelNodeForm.Builder<>(Ids.build(baseId, IDENTITY, FORM), identityMetadata)
                 .unboundFormItem(identityAttribute, 1, identityAttributeHelp)
                 .onSave((form1, changedValues) -> presenter.saveIdentity(metadata, selectedRealm, selectedIdentity,
