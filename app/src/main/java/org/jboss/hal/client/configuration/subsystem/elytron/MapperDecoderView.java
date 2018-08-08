@@ -19,20 +19,34 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.ResourceElement;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONSTANT_PERMISSION_MAPPER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.MAPPED_ROLE_MAPPER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.ITEM;
+import static org.jboss.hal.resources.Ids.build;
 
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
@@ -73,6 +87,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-logical-permission-mapper-form") Form<NamedNode> logicalPermissionMapperForm;
     @MbuiElement("mappers-decoders-logical-role-mapper-table") Table<NamedNode> logicalRoleMapperTable;
     @MbuiElement("mappers-decoders-logical-role-mapper-form") Form<NamedNode> logicalRoleMapperForm;
+    private Table<NamedNode> mappedRoleMapperTable;
+    private Form<NamedNode> mappedRoleMapperForm;
     private SimplePermissionMapperElement simplePermissionMapperElement;
     @MbuiElement("mappers-decoders-simple-role-decoder-table") Table<NamedNode> simpleRoleDecoderTable;
     @MbuiElement("mappers-decoders-simple-role-decoder-form") Form<NamedNode> simpleRoleDecoderForm;
@@ -87,22 +103,57 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
 
     @PostConstruct
     void init() {
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.CONSTANT_PERMISSION_MAPPER_TEMPLATE);
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(CONSTANT_PERMISSION_MAPPER_TEMPLATE);
         constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
                 CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
-                        modelNode -> Ids.build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
+                        modelNode -> build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
                 .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
                 .build();
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
-                Ids.build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, Ids.ITEM),
+                build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, ITEM),
                 "mappers-decoders-custom-permission-mapper-item",
                 "Constant Permission Mapper",
                 constantPermissionMapperElement.asElement());
 
         registerAttachable(constantPermissionMapperElement);
+
+        // =========
+        String mappedId = "mappers-decoders-mapped-role-mapper";
+        Metadata mappedMetadata = mbuiContext.metadataRegistry().lookup(MAPPED_ROLE_MAPPER_TEMPLATE);
+        LabelBuilder labelBuilder = new LabelBuilder();
+        String title = labelBuilder.label(MAPPED_ROLE_MAPPER);
+        mappedRoleMapperTable = new ModelNodeTable.Builder<NamedNode>(build(mappedId, TABLE), mappedMetadata)
+                .button(mbuiContext.tableButtonFactory().add(MAPPED_ROLE_MAPPER_TEMPLATE, table -> presenter.addMappedRoleMapper()))
+                .button(mbuiContext.tableButtonFactory().remove(title, MAPPED_ROLE_MAPPER_TEMPLATE,
+                        table -> table.selectedRow().getName(),
+                        () -> presenter.reload()))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
+
+        mappedRoleMapperForm = new ModelNodeForm.Builder<NamedNode>(build(mappedId, FORM), mappedMetadata)
+                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, labelBuilder.label(ROLE_MAP)))
+                .onSave((form, changedValues) -> {
+                    String name = form.getModel().getName();
+                    ResourceAddress address = MAPPED_ROLE_MAPPER_TEMPLATE.resolve(mbuiContext.statementContext(), name);
+                    saveForm(title, name, address, changedValues, mappedMetadata);
+                })
+                .build();
+
+        HTMLElement mappedSection = section()
+                .add(h(1).textContent(Names.SIMPLE_PERMISSION_MAPPER))
+                .add(p().textContent(metadata.getDescription().getDescription()))
+                .add(mappedRoleMapperTable)
+                .add(mappedRoleMapperForm)
+                .asElement();
+
+        registerAttachable(mappedRoleMapperTable, mappedRoleMapperForm);
+
+        navigation.insertSecondary("mappers-decoders-role-mappers", build(mappedId, ITEM), null, title, mappedSection);
+
+        // =========
 
         Metadata spmMetadata = mbuiContext.metadataRegistry()
                 .lookup(AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE);
@@ -110,12 +161,18 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 mbuiContext.tableButtonFactory());
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
-                Ids.build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, Ids.ITEM),
+                build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, ITEM),
                 "mappers-decoders-simple-permission-mapper-item",
                 "Simple Permission Mapper",
                 simplePermissionMapperElement.asElement());
 
         registerAttachable(simplePermissionMapperElement);
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        mappedRoleMapperTable.bindForm(mappedRoleMapperForm);
     }
 
     @Override
@@ -199,6 +256,11 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     public void updateLogicalRoleMapper(final List<NamedNode> model) {
         logicalRoleMapperForm.clear();
         logicalRoleMapperTable.update(model);
+    }
+    @Override
+    public void updateMappedRoleMapper(final List<NamedNode> model) {
+        mappedRoleMapperForm.clear();
+        mappedRoleMapperTable.update(model);
     }
 
     @Override

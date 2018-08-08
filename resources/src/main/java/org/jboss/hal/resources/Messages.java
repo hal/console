@@ -243,7 +243,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml includeAllHelpText();
     String identityDescription();
     SafeHtml identityAttributeHelp();
-    SafeHtml identityAttributeHint();
     SafeHtml importCertificateError(String alias, String path, String resource, String error);
     SafeHtml importCertificateSuccess(String alias, String path, String resource);
     SafeHtml initError(String name, String error);

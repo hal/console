@@ -375,7 +375,8 @@ public class OperationFactory {
                                         valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
                                     }
                                 } else {
-                                    logger.error("Unsupported value type {} for attribute {} of type {}",
+                                    valueNode = (ModelNode) value;
+                                    logger.warn("Unsupported value type {} for attribute {} of type {}. Will try to save anyway.",
                                             valueType, name, type);
                                 }
                             } else if (typeOfValueType == ModelType.OBJECT) {

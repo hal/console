@@ -193,6 +193,7 @@ public interface Ids {
     String ELYTRON_AUTHENTICATION_CONFIGURATION = "elytron-authentication-configuration";
     String ELYTRON_AUTHENTICATION_CONTEXT = "elytron-authentication-context";
     String ELYTRON_CACHING_REALM = "elytron-caching-realm";
+    String ELYTRON_CERTIFICATE_AUTHORITY_ACCOUNT = "elytron-certificate-authority-account";
     String ELYTRON_CHAINED_PRINCIPAL_TRANSFORMER = "elytron-chained-principal-transformer";
     String ELYTRON_CLIENT_SSL_CONTEXT = "elytron-client-ssl-context";
     String ELYTRON_CONCATENATING_PRINCIPAL_DECODER = "elytron-concatenating-principal-decoder";
@@ -215,6 +216,7 @@ public interface Ids {
     String ELYTRON_CUSTOM_REALM_MAPPER = "elytron-custom-realm-mapper";
     String ELYTRON_CUSTOM_ROLE_DECODER = "elytron-custom-role-decoder";
     String ELYTRON_CUSTOM_ROLE_MAPPER = "elytron-custom-role-mapper";
+    String ELYTRON_CUSTOM_SECURITY_EVENT_LISTENER = "elytron-custom-security-event-listener";
     String ELYTRON_DIR_CONTEXT = "elytron-dir-context";
     String ELYTRON_FACTORIES_TRANSFORMERS = "elytron-factories-transformers";
     String ELYTRON_FILE_AUDIT_LOG = "elytron-file-audit-log";
@@ -234,6 +236,7 @@ public interface Ids {
     String ELYTRON_LOGICAL_ROLE_MAPPER = "elytron-logical-role-mapper";
     String ELYTRON_LOGS_ITEM = "logs-item";
     String ELYTRON_MAPPED_REGEX_REALM_MAPPER = "elytron-mapped-regex-realm-mapper";
+    String ELYTRON_MAPPED_ROLE_MAPPER = "elytron-mapped-role-mapper";
     String ELYTRON_MAPPERS_DECODERS = "elytron-mappers-decoders";
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "elytron-mechanism-provider-filtering-sasl-server-factory";
     String ELYTRON_OTHER_ITEM = "other-item";
