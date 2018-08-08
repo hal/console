@@ -30,7 +30,7 @@ public class Extension {
 
         private final String title;
 
-        Point(@NonNls final String title) {
+        Point(@NonNls String title) {
             this.title = title;
         }
 
@@ -72,7 +72,7 @@ public class Extension {
     final Point point;
     final JsCallback entryPoint;
 
-    private Extension(final String name, final String title, final Point point, final JsCallback entryPoint) {
+    private Extension(String name, String title, Point point, JsCallback entryPoint) {
         this.name = name;
         this.point = point;
         this.title = title;
