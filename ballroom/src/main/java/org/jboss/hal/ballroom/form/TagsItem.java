@@ -43,8 +43,8 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
     private final TagsMapping<T> mapping;
     private final TagsEditingAppearance editingAppearance;
 
-    protected TagsItem(final String name, final String label, final SafeHtml inputHelp,
-            final Set<Decoration> editingDecorations, final TagsMapping<T> mapping) {
+    protected TagsItem(String name, String label, SafeHtml inputHelp,
+            Set<Decoration> editingDecorations, TagsMapping<T> mapping) {
         super(name, label, null);
 
         this.editingDecorations = editingDecorations;
@@ -69,7 +69,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
     }
 
     @Override
-    public void onSuggest(final String suggestion) {
+    public void onSuggest(String suggestion) {
         if (editingDecorations.contains(SUGGESTIONS)) {
             editingAppearance.onSuggest(suggestion);
         }
@@ -139,11 +139,10 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
                         :  MESSAGES.invalidFormat();
                 showError(message);
             });
-            api.onDuplicated((event, cst) -> showError(MESSAGES.duplicateResource(CONSTANTS.entry())));
         }
 
         @Override
-        public void showValue(final T value) {
+        public void showValue(T value) {
             if (attached) {
                 TagsManager.Api.element(inputElement).setTags(mapping.tags(value));
             } else {
@@ -152,7 +151,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         }
 
         @Override
-        public String asString(final T value) {
+        public String asString(T value) {
             return mapping.asString(value);
         }
 
@@ -165,7 +164,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
             }
         }
 
-        void onSuggest(final String suggestion) {
+        void onSuggest(String suggestion) {
             if (attached) {
                 TagsManager.Api.element(inputElement).addTag(suggestion);
             }
@@ -174,7 +173,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         }
 
         @Override
-        void applyInvalid(final String errorMessage) {
+        void applyInvalid(String errorMessage) {
             root.classList.add(hasError);
             helpBlock.classList.remove(CSS.hint);
             helpBlock.textContent = errorMessage;
