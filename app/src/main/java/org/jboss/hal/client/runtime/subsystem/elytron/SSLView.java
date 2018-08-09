@@ -15,7 +15,9 @@
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -23,6 +25,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.PreTextItem;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -32,6 +35,7 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -42,22 +46,28 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_MANAGER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.TRUST_MANAGER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.TABLE;
 
 public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
 
+    private final Table<NamedNode> caaTable;
+    private final Form<NamedNode> caaForm;
     private final Table<NamedNode> keyManagerTable;
     private final Form<NamedNode> keyManagerForm;
     private final Table<NamedNode> securityDomainTable;
     private final Form<NamedNode> securityDomainForm;
     private final Table<NamedNode> trustManagerTable;
     private final Form<NamedNode> trustManagerForm;
+    private final PreTextItem caaMetadata;
+    private Map<String, String> caaMetadataCache = new HashMap<>();
     private SSLPresenter presenter;
 
     @Inject
@@ -65,6 +75,51 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
 
         VerticalNavigation nav = new VerticalNavigation();
         LabelBuilder labelBuilder = new LabelBuilder();
+        Constants cons = resources.constants();
+
+        // ----------------- certificate authority account
+        Metadata certAuthorityMeta = metadataRegistry.lookup(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE);
+        caaTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT, TABLE),
+                certAuthorityMeta)
+                .button(new Button<>(cons.create(), cons.createAccount(),
+                        table -> presenter.createAccount(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CREATE_ACCOUNT)))
+
+                .button(new Button<>(cons.deactivate(), cons.deactivateAccount(),
+                        table -> presenter.deactivateAccount(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
+
+                .button(new Button<>(cons.update(), cons.updateAccount(),
+                        table -> presenter.updateAccount(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
+
+                .button(cons.getMetadata(), table -> presenter.getMetadata(table.selectedRow().getName(),
+                        this::updateCertificateMetadata),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, GET_METADATA))
+
+                .button(cons.changeAccountKey(), table -> presenter.changeAccountKey(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY))
+
+                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .build();
+
+        caaMetadata = new PreTextItem(METADATA);
+        caaMetadata.setEnabled(false);
+        caaForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT, FORM), certAuthorityMeta)
+                .readOnly()
+                .includeRuntime()
+                .unboundFormItem(caaMetadata, 4)
+                .build();
+
+        String caaTitle = labelBuilder.label(CERTIFICATE_AUTHORITY_ACCOUNT);
+        HTMLElement caaSection = section()
+                .add(h(1).textContent(caaTitle))
+                .add(p().textContent(certAuthorityMeta.getDescription().getDescription()))
+                .add(caaTable)
+                .add(caaForm)
+                .asElement();
+
+        nav.addPrimary(Ids.ELYTRON_CERTIFICATE_AUTHORITY_ACCOUNT, caaTitle, fontAwesome("exchange"), caaSection);
 
         // ----------------- key manager
         Metadata keyManagerMeta = metadataRegistry.lookup(KEY_MANAGER_TEMPLATE);
@@ -89,7 +144,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
 
         nav.addPrimary(Ids.ELYTRON_KEY_MANAGER, Names.KEY_MANAGER, pfIcon("settings"), keyManagerSection);
 
-        // ----------------- key manager
+        // ----------------- security domain
         Metadata secDomainMeta = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
         securityDomainTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(SECURITY_DOMAIN, TABLE), secDomainMeta)
                 .button(resources.constants().readIdentity(),
@@ -134,8 +189,8 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .asElement();
         nav.addPrimary(Ids.ELYTRON_TRUST_MANAGER, Names.TRUST_MANAGER, pfIcon("resource-pool"), trustManagerSection);
 
-        registerAttachables(asList(nav, keyManagerTable, keyManagerForm, securityDomainTable, securityDomainForm,
-                trustManagerTable, trustManagerForm));
+        registerAttachables(asList(nav, caaTable, caaForm, keyManagerTable, keyManagerForm, securityDomainTable,
+                securityDomainForm, trustManagerTable, trustManagerForm));
 
         initElement(row()
                 .add(column()
@@ -145,6 +200,31 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
     @Override
     public void attach() {
         super.attach();
+
+        caaTable.enableButton(0, false);
+        caaTable.enableButton(1, false);
+        caaTable.enableButton(2, false);
+        caaTable.enableButton(3, false);
+        caaTable.enableButton(4, false);
+
+        caaTable.bindForm(caaForm);
+        caaTable.onSelectionChange(table -> {
+            table.enableButton(0, table.hasSelection());
+            table.enableButton(1, table.hasSelection());
+            table.enableButton(2, table.hasSelection());
+            table.enableButton(3, table.hasSelection());
+            table.enableButton(4, table.hasSelection());
+            if (table.hasSelection()) {
+                String account = table.selectedRow().getName();
+                String value = caaMetadataCache.get(account);
+                if (value != null) {
+                    caaMetadata.setValue(value);
+                } else  {
+                    caaMetadata.clearValue();
+                }
+            }
+        });
+
         keyManagerTable.bindForm(keyManagerForm);
         keyManagerTable.enableButton(0, false);
         keyManagerTable.onSelectionChange(table -> table.enableButton(0, table.hasSelection()));
@@ -156,6 +236,17 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
         trustManagerTable.bindForm(trustManagerForm);
         trustManagerTable.enableButton(0, false);
         trustManagerTable.onSelectionChange(table -> table.enableButton(0, table.hasSelection()));
+    }
+
+    private void updateCertificateMetadata(String data) {
+        caaMetadata.setValue(data);
+        caaMetadataCache.put(caaTable.selectedRow().getName(), data);
+    }
+
+    @Override
+    public void updateCertificateAuthorityAccount(List<NamedNode> items) {
+        caaForm.clear();
+        caaTable.update(items);
     }
 
     @Override
