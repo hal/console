@@ -30,6 +30,7 @@ import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent.HostSelectionHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent.ServerSelectionHandler;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -63,13 +64,13 @@ public class CoreStatementContext implements StatementContext,
         eventBus.addHandler(ServerSelectionEvent.getType(), this);
     }
 
-    public String resolve(String resource) {
+    public String resolve(String resource, AddressTemplate template) {
         // not supported
         return null;
     }
 
     @Override
-    public String[] resolveTuple(String placeholder) {
+    public String[] resolveTuple(String placeholder, AddressTemplate template) {
         if (!environment.isStandalone()) {
             Tuple validTuple = Tuple.from(placeholder);
             if (validTuple != null) {

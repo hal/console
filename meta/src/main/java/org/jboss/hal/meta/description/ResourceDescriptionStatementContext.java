@@ -16,6 +16,7 @@
 package org.jboss.hal.meta.description;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.StatementContext;
 
@@ -26,22 +27,25 @@ public class ResourceDescriptionStatementContext extends FilteringStatementConte
     public ResourceDescriptionStatementContext(StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
-            public String filter(String placeholder) {
+            public String filter(String placeholder, AddressTemplate template) {
                 if (SELECTION_KEY.equals(placeholder)) {
                     return "*";
                 }
-                return delegate.resolve(placeholder);
+                return delegate.resolve(placeholder, template);
             }
 
             @Override
-            public String[] filterTuple(String placeholder) {
+            public String[] filterTuple(String placeholder, AddressTemplate template) {
                 if (!environment.isStandalone()) {
                     Tuple t = Tuple.from(placeholder);
                     if (t != null) {
+                        if (t == Tuple.SELECTED_HOST && template.size() == 1) {
+                            return delegate.resolveTuple(placeholder, template);
+                        }
                         return new String[]{t.resource(), "*"};
                     }
                 }
-                return delegate.resolveTuple(placeholder);
+                return delegate.resolveTuple(placeholder, template);
             }
         });
     }

@@ -132,7 +132,7 @@ public class ServerPresenter
         this.statementContext = new FilteringStatementContext(statementContext,
                 new Filter() {
                     @Override
-                    public String filter(String placeholder) {
+                    public String filter(String placeholder, AddressTemplate template) {
                         if (SELECTION_KEY.equals(placeholder)) {
                             return serverName;
                         } else if (HOST.equals(placeholder)) {
@@ -142,7 +142,7 @@ public class ServerPresenter
                     }
 
                     @Override
-                    public String[] filterTuple(String placeholder) {
+                    public String[] filterTuple(String placeholder, AddressTemplate template) {
                         return null;
                     }
                 });

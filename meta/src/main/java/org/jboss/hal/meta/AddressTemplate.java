@@ -317,8 +317,7 @@ public final class AddressTemplate implements Iterable<String> {
      */
     @JsIgnore
     public AddressTemplate subTemplate(int fromIndex, int toIndex) {
-        LinkedList<Token> subTokens = new LinkedList<>();
-        subTokens.addAll(this.tokens.subList(fromIndex, toIndex));
+        LinkedList<Token> subTokens = new LinkedList<>(this.tokens.subList(fromIndex, toIndex));
         return AddressTemplate.of(join(this.optional, subTokens));
     }
 
@@ -453,9 +452,9 @@ public final class AddressTemplate implements Iterable<String> {
                 if (tokenRef.startsWith("{")) {
                     tokenRef = tokenRef.substring(1, tokenRef.length() - 1);
                     if (!tupleMemory.contains(tokenRef)) {
-                        if (context.resolveTuple(tokenRef) != null) {
+                        if (context.resolveTuple(tokenRef, this) != null) {
                             tupleMemory.memorize(tokenRef,
-                                    Lists.<String[]>newArrayList(context.resolveTuple(tokenRef)));
+                                    Lists.<String[]>newArrayList(context.resolveTuple(tokenRef, this)));
                         }
                     }
                     resolvedValue = tupleMemory.next(tokenRef);
@@ -501,8 +500,8 @@ public final class AddressTemplate implements Iterable<String> {
         if (input.startsWith("{")) {
             input = input.substring(1, input.length() - 1);
             if (!memory.contains(input)) {
-                if (context.resolve(input) != null) {
-                    memory.memorize(input, Lists.newArrayList(context.resolve(input)));
+                if (context.resolve(input, this) != null) {
+                    memory.memorize(input, Lists.newArrayList(context.resolve(input, this)));
                 }
             }
             resolved = memory.next(input);

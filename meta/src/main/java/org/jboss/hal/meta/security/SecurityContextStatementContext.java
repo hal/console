@@ -16,6 +16,7 @@
 package org.jboss.hal.meta.security;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.StatementContext;
 
@@ -26,15 +27,15 @@ public class SecurityContextStatementContext extends FilteringStatementContext {
     public SecurityContextStatementContext(StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
-            public String filter(String placeholder) {
+            public String filter(String placeholder, AddressTemplate template) {
                 if (SELECTION_KEY.equals(placeholder)) {
                     return "*";
                 }
-                return delegate.resolve(placeholder);
+                return delegate.resolve(placeholder, template);
             }
 
             @Override
-            public String[] filterTuple(String placeholder) {
+            public String[] filterTuple(String placeholder, AddressTemplate template) {
                 if (!environment.isStandalone()) {
                     Tuple t = Tuple.from(placeholder);
                     if (t != null) {
@@ -43,7 +44,7 @@ public class SecurityContextStatementContext extends FilteringStatementContext {
                             case SELECTED_HOST:
                             case SELECTED_GROUP:
                             case SELECTED_SERVER:
-                                return delegate.resolveTuple(placeholder);
+                                return delegate.resolveTuple(placeholder, template);
 
                             case SELECTED_PROFILE:
                             case SELECTED_SERVER_CONFIG:
@@ -53,7 +54,7 @@ public class SecurityContextStatementContext extends FilteringStatementContext {
                         }
                     }
                 }
-                return delegate.resolveTuple(placeholder);
+                return delegate.resolveTuple(placeholder, template);
             }
         });
     }

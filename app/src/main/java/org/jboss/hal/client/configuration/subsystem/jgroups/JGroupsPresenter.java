@@ -105,7 +105,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
                 new FilteringStatementContext.Filter() {
                     @Override
                     @SuppressWarnings("HardCodedStringLiteral")
-                    public String filter(String filterKey) {
+                    public String filter(String filterKey, AddressTemplate template) {
                         switch (filterKey) {
                             case "selected.channel":
                                 return currentChannel;
@@ -120,7 +120,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
                     }
 
                     @Override
-                    public String[] filterTuple(String placeholder) {
+                    public String[] filterTuple(String placeholder, AddressTemplate template) {
                         return null;
                     }
                 });

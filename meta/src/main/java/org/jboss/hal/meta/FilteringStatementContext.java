@@ -27,15 +27,15 @@ public class FilteringStatementContext implements StatementContext {
     }
 
     @Override
-    public String resolve(String placeholder) {
-        String filtered = filter.filter(placeholder);
-        return filtered != null ? filtered : delegate.resolve(placeholder);
+    public String resolve(String placeholder, AddressTemplate template) {
+        String filtered = filter.filter(placeholder, template);
+        return filtered != null ? filtered : delegate.resolve(placeholder, template);
     }
 
     @Override
-    public String[] resolveTuple(String placeholder) {
-        String[] filtered = filter.filterTuple(placeholder);
-        return filtered != null ? filtered : delegate.resolveTuple(placeholder);
+    public String[] resolveTuple(String placeholder, AddressTemplate template) {
+        String[] filtered = filter.filterTuple(placeholder, template);
+        return filtered != null ? filtered : delegate.resolveTuple(placeholder, template);
     }
 
     @Override
@@ -75,8 +75,8 @@ public class FilteringStatementContext implements StatementContext {
      */
     public interface Filter {
 
-        String filter(String resource);
+        String filter(String placeholder, AddressTemplate template);
 
-        String[] filterTuple(String placeholder);
+        String[] filterTuple(String placeholder, AddressTemplate template);
     }
 }

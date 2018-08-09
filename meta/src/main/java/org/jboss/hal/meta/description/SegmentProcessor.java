@@ -25,12 +25,18 @@ final class SegmentProcessor {
     static void process(List<String[]> segments, Consumer<String[]> consumer) {
         if (segments != null) {
             int index = 0;
+            int length = segments.size();
             for (String[] segment : segments) {
                 String key = segment[0];
                 String value = segment[1];
                 if (key != null && value != null) {
                     switch (key) {
                         case HOST:
+                            if (length > 1 && index == 0) {
+                                value = "*";
+                            }
+                            break;
+
                         case PROFILE:
                         case SERVER_GROUP:
                             if (index == 0) {
