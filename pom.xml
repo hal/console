@@ -88,6 +88,7 @@
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>
         <gwt.logLevel>FINE</gwt.logLevel>
+        <gwt.moduleTemplate>${project.basedir}/src/main/module.gwt.xml</gwt.moduleTemplate>
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>DETAILED</gwt.style>
         <gwt.devmode.hostname>0.0.0.0</gwt.devmode.hostname>
@@ -312,6 +313,12 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>i18n</id>
+            <properties>
+                <gwt.module>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.module>
+            </properties>
         </profile>
         <profile>
             <id>theme-eap</id>

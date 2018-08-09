@@ -321,6 +321,7 @@
                     <failOnError>${gwt.failOnError}</failOnError>
                     <moduleName>org.jboss.hal.Console</moduleName>
                     <moduleShortName>hal</moduleShortName>
+                    <moduleTemplate>${gwt.moduleTemplate}</moduleTemplate>
                     <optimize>${gwt.optimize}</optimize>
                     <style>${gwt.style}</style>
                 </configuration>
