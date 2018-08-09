@@ -59,6 +59,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String cancelActiveOperation();
     String cancelNonProgressingOperation();
     String category();
+    String change();
+    String changeAccountKey();
     String changeAlias();
     String changePriority();
     String chooseFile();
@@ -102,6 +104,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String count();
     String counter();
 
+    String create();
+    String createAccount();
     String creationTime();
     String currentPage();
     String custom();
@@ -109,6 +113,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String data();
     String day();
     String days();
+    String deactivate();
+    String deactivateAccount();
     String defaultValue();
     String deploy();
     String deployContent();
@@ -191,6 +197,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
     String fromDeployment();
 
+    String getMetadata();
     String generateCSR();
     String generateKeyPair();
     String globalSettings();
@@ -571,6 +578,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unmanaged();
     String unpin();
     String unsupportedFileType();
+    String update();
+    String updateAccount();
     String upload();
     String uploadContent();
     String uploadPatch();

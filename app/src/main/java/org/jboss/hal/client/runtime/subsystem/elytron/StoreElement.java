@@ -42,6 +42,7 @@ import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_DETAILS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
@@ -97,7 +98,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
                 .column(ALIAS, (cell, t, row, meta) -> row.asString())
                 .build();
 
-        aliasDetails = new PreTextItem(ALIAS);
+        aliasDetails = new PreTextItem(CERTIFICATE_DETAILS);
         aliasDetails.setEnabled(false);
         formAlias = new ModelNodeForm.Builder<>(id(ALIAS, FORM), Metadata.empty())
                 .readOnly()

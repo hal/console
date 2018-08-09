@@ -121,8 +121,10 @@ public interface ModelDescriptionConstants {
     String CANCELLED = "cancelled";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CERTIFICATE_AUTHORITY_ACCOUNT = "certificate-authority-account";
+    String CERTIFICATE_DETAILS = "certificate-details";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
     String CHANGE_ALIAS = "change-alias";
+    String CHANGE_ACCOUNT_KEY = "change-account-key";
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
     String CHANGE_MESSAGES_PRIORITY = "change-messages-priority";
     String CHANNEL = "channel";
@@ -180,6 +182,7 @@ public interface ModelDescriptionConstants {
     String COUNT_MESSAGES = "count-messages";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CREATE = "create";
+    String CREATE_ACCOUNT = "create-account";
     String CREATE_TIME = "create-time";
     String CREATION_TIME = "creation-time";
     String CREDENTIAL_REFERENCE = "credential-reference";
@@ -204,6 +207,7 @@ public interface ModelDescriptionConstants {
     String DATASOURCES = "datasources";
     String DATASOURCE_CLASS = "datasource-class";
     String DATASOURCE_CLASS_INFO = "datasource-class-info";
+    String DEACTIVATE_ACCOUNT = "deactivate-account";
     String DEAD_LETTER_ADDRESS = "dead-letter-address";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
@@ -314,6 +318,7 @@ public interface ModelDescriptionConstants {
     String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
+    String GET_METADATA = "get-metadata";
     String GENERATE_CERTIFICATE_SIGNING_REQUEST = "generate-certificate-signing-request";
     String GENERATE_KEY_PAIR = "generate-key-pair";
     String GET_SESSION_CREATION_TIME = "get-session-creation-time";
@@ -493,6 +498,7 @@ public interface ModelDescriptionConstants {
     String MESSAGE_ID = "message-id";
     String MESSAGES_ADDED = "messages-added";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
+    String METADATA = "metadata";
     String METRIC = "metric";
     String MICROPROFILE_CONFIG_SMALLRYE = "microprofile-config-smallrye";
     String MIME_MAPPING = "mime-mapping";
@@ -893,6 +899,7 @@ public interface ModelDescriptionConstants {
     String UNDERTOW = "undertow";
     String UNIT = "unit";
     String UNREGISTERED = "unregistered";
+    String UPDATE_ACCOUNT = "update-account";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
     String UPTIME = "uptime";
     String URL = "url";
