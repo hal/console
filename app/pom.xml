@@ -372,5 +372,28 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>i18n</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.ltgt.gwt.maven</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-i18n-module</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>generate-module</goal>
+                                </goals>
+                                <configuration>
+                                    <moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</moduleTemplate>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
