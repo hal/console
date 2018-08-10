@@ -41,6 +41,22 @@
     <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja"/>
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
+    <property-provider name="locale">
+        var locale_value = "";
+        var cookieName = "hal-cookie-locale"; // keep in sync with org.jboss.hal.resources.Ids.COOKIE
+
+        var theCookie = " " + document.cookie;
+        var ind = theCookie.indexOf(" " + cookieName + "=");
+        if (ind == -1) ind = theCookie.indexOf(";" + cookieName + "=");
+        if (ind == -1 || cookieName == "") {
+        locale_value = "en";
+        } else {
+        var ind1 = theCookie.indexOf(";", ind + 1);
+        if (ind1 == -1) ind1 = theCookie.length;
+        locale_value = unescape(theCookie.substring(ind + cookieName.length + 2, ind1));
+        }
+        return locale_value;
+    </property-provider>
 
     <!-- We do our own log setup -->
     <replace-with class="com.google.gwt.logging.client.LogConfiguration.LogConfigurationImplNull">

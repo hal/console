@@ -452,6 +452,7 @@ public interface ModelDescriptionConstants {
     String LOAD = "load";
     String LOCAL_CACHE = "local-cache";
     String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
+    String LOCALE = "locale";
     String LOCATION = "location";
     String LOCKING = "locking";
     String LOGGER = "logger";
