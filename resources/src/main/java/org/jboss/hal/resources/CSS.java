@@ -197,6 +197,7 @@ public interface CSS {
     String langJava = "lang-java";
     String last = "last";
     String lead = "lead";
+    String link = "link";
     String listGroup = "list-group";
     String listGroupItem = "list-group-item";
     String listGroupItemValue = "list-group-item-value";
@@ -412,6 +413,7 @@ public interface CSS {
     String wizardPfRow = "wizard-pf-row";
     String wizardPfStepNumber = "wizard-pf-step-number";
     String wizardPfStepTitle = "wizard-pf-step-title";
+    String wizardPfStep = "wizard-pf-step";
     String wizardPfSteps = "wizard-pf-steps";
     String wizardPfStepsIndicator = "wizard-pf-steps-indicator";
     String wizardPfSuccessIcon = "wizard-pf-success-icon";

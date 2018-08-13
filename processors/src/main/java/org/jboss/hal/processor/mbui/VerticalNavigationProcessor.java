@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -30,14 +29,12 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    VerticalNavigationProcessor(final MbuiViewProcessor processor, final Types typeUtils,
-            final Elements elementUtils, final XPathFactory xPathFactory) {
-        super(processor, typeUtils, elementUtils, xPathFactory);
+    VerticalNavigationProcessor(MbuiViewProcessor processor, Elements elementUtils, XPathFactory xPathFactory) {
+        super(processor, elementUtils, xPathFactory);
     }
 
     @Override
-    public void process(final VariableElement field, final Element element, final String selector,
-            final MbuiViewContext context) {
+    public void process(VariableElement field, Element element, String selector, MbuiViewContext context) {
         VerticalNavigationInfo navigationInfo = new VerticalNavigationInfo(field.getSimpleName().toString(), selector);
         context.setVerticalNavigation(navigationInfo);
 
@@ -46,8 +43,8 @@ class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implement
                 .forEach(itemElement -> navigationInfo.addItem(createItem(field, itemElement, context, 0)));
     }
 
-    private VerticalNavigationInfo.Item createItem(final VariableElement field, org.jdom2.Element element,
-            final MbuiViewContext context, int level) {
+    private VerticalNavigationInfo.Item createItem(VariableElement field, org.jdom2.Element element,
+            MbuiViewContext context, int level) {
         String id = element.getAttributeValue(XmlTags.ID);
         String title = element.getAttributeValue(XmlTags.TITLE);
         String icon = element.getAttributeValue(XmlTags.ICON);

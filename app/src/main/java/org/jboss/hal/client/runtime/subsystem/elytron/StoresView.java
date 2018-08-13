@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -46,7 +45,7 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
 
     private final StoreElement credentialStoreElement;
     private final StoreElement filteringStoreElement;
-    private final StoreElement keystoreElement;
+    private final KeyStoreElement keystoreElement;
     private final StoreElement ldapKeystoreElement;
     private StoresPresenter presenter;
 
@@ -54,7 +53,6 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
     public StoresView(final MetadataRegistry metadataRegistry, final Resources resources) {
 
         VerticalNavigation navigation = new VerticalNavigation();
-        LabelBuilder labelBuilder = new LabelBuilder();
 
         // -------------- credential store
         Metadata credentialStoreMetadata = metadataRegistry.lookup(CREDENTIAL_STORE_TEMPLATE);
@@ -93,37 +91,7 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
 
         // -------------- key store
         Metadata keystoreMetadata = metadataRegistry.lookup(KEY_STORE_TEMPLATE);
-        keystoreElement = new StoreElement.Builder(KEY_STORE, Names.KEY_STORE, resources, keystoreMetadata)
-                .addButtonHandler(new Button<>(resources.constants().load(),
-                        table -> presenter.loadKeyStore(table.selectedRow().getName()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, LOAD)))
-                .addButtonHandler(new Button<>(resources.constants().store(),
-                        table -> presenter.storeKeyStore(table.selectedRow().getName()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, STORE)))
-                .addAliasButtonHandler(new Button<>(resources.constants().changeAlias(),
-                        table -> changeAlias(keystoreMetadata, table.selectedRow().asString()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, CHANGE_ALIAS)))
-                .addAliasButtonHandler(new Button<>(resources.constants().exportCertificate(),
-                        table -> exportCertificate(keystoreMetadata, table.selectedRow().asString()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, EXPORT_CERTIFICATE)))
-                .addAliasButtonHandler(new Button<>(resources.constants().generateCSR(),
-                        labelBuilder.label(GENERATE_CERTIFICATE_SIGNING_REQUEST),
-                        table -> generateCSR(keystoreMetadata, table.selectedRow().asString()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, GENERATE_CERTIFICATE_SIGNING_REQUEST)))
-                .addAliasButtonHandler(new Button<>(resources.constants().generateKeyPair(),
-                        table -> generateKeyPair(keystoreMetadata),
-                        Constraint.executable(KEY_STORE_TEMPLATE, GENERATE_KEY_PAIR)))
-                .addAliasButtonHandler(new Button<>(resources.constants().importCertificate(),
-                        table -> importCertificate(keystoreMetadata),
-                        Constraint.executable(KEY_STORE_TEMPLATE, IMPORT_CERTIFICATE)))
-                .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(),
-                        table -> removeKeyStoreAlias(keystoreMetadata, table.selectedRow().asString()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, REMOVE_ALIAS)))
-                .addAliasButtonHandler(new Button<>(resources.constants().details(),
-                        resources.constants().viewDetailsAlias(),
-                        table -> readKeystoreAlias(keystoreMetadata, table.selectedRow().asString()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, READ_ALIAS)))
-                .build();
+        keystoreElement = new KeyStoreElement(resources, keystoreMetadata);
 
         navigation.addPrimary(Ids.ELYTRON_KEY_STORE, Names.KEY_STORE, pfIcon("resource-pool"), keystoreElement);
 
@@ -154,8 +122,6 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
     public void attach() {
         super.attach();
         credentialStoreElement.getAliasesTable().enableButton(0, true);
-        keystoreElement.getAliasesTable().enableButton(3, true);
-        keystoreElement.getAliasesTable().enableButton(4, true);
     }
 
     private void addCredentialStoreAlias(Metadata metadata) {
@@ -173,11 +139,6 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
                 filteringStoreElement::updateAliases);
     }
 
-    private void removeKeyStoreAlias(Metadata metadata, String alias) {
-        presenter.removeAlias(metadata, keystoreElement.getSelectedResource(), alias,
-                keystoreElement::updateAliases);
-    }
-
     private void removeLdapKeyStoreAlias(Metadata metadata, String alias) {
         presenter.removeAlias(metadata, ldapKeystoreElement.getSelectedResource(), alias,
                 ldapKeystoreElement::updateAliases);
@@ -188,11 +149,6 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
                 filteringStoreElement::updateAliasDetails);
     }
 
-    private void readKeystoreAlias(Metadata metadata, String alias) {
-        presenter.readAlias(metadata, keystoreElement.getSelectedResource(), alias,
-                keystoreElement::updateAliasDetails);
-    }
-
     private void readLdapKeystoreAlias(Metadata metadata, String alias) {
         presenter.readAlias(metadata, ldapKeystoreElement.getSelectedResource(), alias,
                 ldapKeystoreElement::updateAliasDetails);
@@ -200,27 +156,6 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
 
     private void setCredentialStoreSecretAlias(Metadata metadata, String alias) {
         presenter.setSecret(metadata, credentialStoreElement.getSelectedResource(), alias);
-    }
-
-    private void changeAlias(Metadata metadata, String alias) {
-        presenter.changeAlias(metadata, keystoreElement.getSelectedResource(), alias,
-                keystoreElement::updateAliases);
-    }
-
-    private void exportCertificate(Metadata metadata, String alias) {
-        presenter.exportCertificate(metadata, keystoreElement.getSelectedResource(), alias);
-    }
-
-    private void generateCSR(Metadata metadata, String alias) {
-        presenter.generateCSR(metadata, keystoreElement.getSelectedResource(), alias);
-    }
-
-    private void generateKeyPair(Metadata metadata) {
-        presenter.generateKeyPair(metadata, keystoreElement.getSelectedResource(), keystoreElement::updateAliases);
-    }
-
-    private void importCertificate(Metadata metadata) {
-        presenter.importCertificate(metadata, keystoreElement.getSelectedResource(), keystoreElement::updateAliases);
     }
 
     @Override

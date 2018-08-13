@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>3.0.2.Final</version>
+        <version>3.0.3.Final</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -42,6 +42,11 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

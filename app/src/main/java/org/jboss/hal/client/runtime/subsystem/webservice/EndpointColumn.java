@@ -37,19 +37,19 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
-import static org.jboss.hal.core.Strings.abbreviateFqClassName;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENDPOINT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WEBSERVICES;
 import static org.jboss.hal.resources.CSS.breakTooltip;
+import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 
 @AsyncColumn(Ids.ENDPOINT)
 public class EndpointColumn extends FinderColumn<DeploymentResource> {
 
     @Inject
-    public EndpointColumn(final FinderPathFactory finderPathFactory, final Places places, final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final Dispatcher dispatcher,
-            final DeploymentResources deploymentResources, final Resources resources) {
+    public EndpointColumn(FinderPathFactory finderPathFactory, Places places, Finder finder,
+            ColumnActionFactory columnActionFactory,
+            Dispatcher dispatcher,
+            DeploymentResources deploymentResources, Resources resources) {
 
         super(new Builder<DeploymentResource>(finder, Ids.ENDPOINT, Names.ENDPOINT)
 

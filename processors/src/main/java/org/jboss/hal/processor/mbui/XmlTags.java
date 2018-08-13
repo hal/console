@@ -19,6 +19,7 @@ public interface XmlTags {
 
     String ACTION = "action";
     String ACTIONS = "actions";
+    String ADD_HANDLER = "add-handler";
     String ADDRESS = "address";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTE = "attribute";

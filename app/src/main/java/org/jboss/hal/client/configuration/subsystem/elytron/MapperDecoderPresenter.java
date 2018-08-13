@@ -25,6 +25,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
@@ -34,6 +35,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -51,9 +53,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSION_MAPPINGS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter.MyView, MapperDecoderPresenter.MyProxy>
@@ -122,6 +122,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 ElytronResource.CUSTOM_ROLE_MAPPER.resource,
                 ElytronResource.LOGICAL_PERMISSION_MAPPER.resource,
                 ElytronResource.LOGICAL_ROLE_MAPPER.resource,
+                ElytronResource.MAPPED_ROLE_MAPPER.resource,
                 ElytronResource.SIMPLE_PERMISSION_MAPPER.resource,
                 ElytronResource.SIMPLE_ROLE_DECODER.resource,
                 ElytronResource.X500_ATTRIBUTE_PRINCIPAL_DECODER.resource),
@@ -142,6 +143,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                     getView().updateCustomRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateLogicalPermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateLogicalRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateMappedRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateSimplePermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateSimpleRoleDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateX500AttributePrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
@@ -219,6 +221,24 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         return PERMISSION_MAPPINGS + "[" + pmIndex + "]." + PERMISSIONS;
     }
 
+    // -------------------------------------------- Mapped Role Mapper
+
+    void addMappedRoleMapper() {
+        Metadata metadata = metadataRegistry.lookup(MAPPED_ROLE_MAPPER_TEMPLATE);
+        String id = Ids.build(Ids.ELYTRON_MAPPED_ROLE_MAPPER, Ids.ADD);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, new LabelBuilder().label(ROLE_MAP)))
+                .addOnly()
+                .build();
+        String title = new LabelBuilder().label(MAPPED_ROLE_MAPPER);
+        new AddResourceDialog(title, form, (name, payload) -> {
+            // :add(role-map=[role1 => [role2,role3],role2 => [mane,m2n3]])
+            crud.add(title, name, MAPPED_ROLE_MAPPER_TEMPLATE, payload, (name1, address) -> reload());
+        }).show();
+    }
+
+
 
     @ProxyCodeSplit
     @Requires(value = {
@@ -236,6 +256,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             CUSTOM_ROLE_MAPPER_ADDRESS,
             LOGICAL_PERMISSION_MAPPER_ADDRESS,
             LOGICAL_ROLE_MAPPER_ADDRESS,
+            MAPPED_ROLE_MAPPER_ADDRESS,
             SIMPLE_PERMISSION_MAPPER_ADDRESS,
             SIMPLE_ROLE_DECODER_ADDRESS,
             X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS})
@@ -260,6 +281,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         void updateCustomRoleMapper(List<NamedNode> model);
         void updateLogicalPermissionMapper(List<NamedNode> model);
         void updateLogicalRoleMapper(List<NamedNode> model);
+        void updateMappedRoleMapper(List<NamedNode> model);
         void updateSimplePermissionMapper(List<NamedNode> model);
         void updateSimpleRoleDecoder(List<NamedNode> model);
         void updateX500AttributePrincipalDecoder(List<NamedNode> model);

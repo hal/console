@@ -19,13 +19,15 @@ import java.util.List;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.base.CharMatcher.inRange;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
  * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an
@@ -60,6 +62,9 @@ public interface Ids {
     String BROWSE_CONTENT_DEPLOYMENT_EMPTY = "browse-content-deployment-empty";
     String BROWSE_CONTENT_EXPLODED_EMPTY = "browse-content-exploded-empty";
     String BROWSE_CONTENT_UNSUPPORTED_EMPTY = "browse-content-unsupported-empty";
+    String CACHE = "cache";
+    String CACHE_ADD_ACTIONS = "cache-add-actions";
+    String CACHE_REFRESH = "cache-refresh";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
     String CACHE_COMPONENT_LOCKING = "cache-component-locking";
     String CACHE_COMPONENT_PARTITION_HANDLING = "cache-component-partition-handling";
@@ -89,9 +94,9 @@ public interface Ids {
     String CACHE_STORE_BINARY_TABLE = "binary-table";
     String CACHE_STORE_CUSTOM = "cache-store-custom";
     String CACHE_STORE_FILE = "cache-store-file";
+    String CACHE_STORE_HOT_ROD = "cache-store-hot-rod";
     String CACHE_STORE_JDBC = "cache-store-jdbc";
     String CACHE_STORE_MIXED_JDBC = "cache-store-mixed-jdbc";
-    String CACHE_STORE_REMOTE = "cache-store-remote";
     String CACHE_STORE_STRING_TABLE = "string-table";
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
@@ -116,6 +121,7 @@ public interface Ids {
     String CONTENT_TREE_SEARCH = "content-tree-search";
     String CONTENT_UNMANAGED_ADD = "content-unmanaged-add";
     String COOKIE = "hal-cookie";
+    String CUSTOM_LOAD_METRIC = "custom-load-metric";
     String DATA_SOURCE_ADD = "ds-configuration-add";
     String DATA_SOURCE_ADD_ACTIONS = "ds-configuration-add-actions";
     String DATA_SOURCE_CONFIGURATION = "ds-configuration";
@@ -187,6 +193,7 @@ public interface Ids {
     String ELYTRON_AUTHENTICATION_CONFIGURATION = "elytron-authentication-configuration";
     String ELYTRON_AUTHENTICATION_CONTEXT = "elytron-authentication-context";
     String ELYTRON_CACHING_REALM = "elytron-caching-realm";
+    String ELYTRON_CERTIFICATE_AUTHORITY_ACCOUNT = "elytron-certificate-authority-account";
     String ELYTRON_CHAINED_PRINCIPAL_TRANSFORMER = "elytron-chained-principal-transformer";
     String ELYTRON_CLIENT_SSL_CONTEXT = "elytron-client-ssl-context";
     String ELYTRON_CONCATENATING_PRINCIPAL_DECODER = "elytron-concatenating-principal-decoder";
@@ -209,6 +216,7 @@ public interface Ids {
     String ELYTRON_CUSTOM_REALM_MAPPER = "elytron-custom-realm-mapper";
     String ELYTRON_CUSTOM_ROLE_DECODER = "elytron-custom-role-decoder";
     String ELYTRON_CUSTOM_ROLE_MAPPER = "elytron-custom-role-mapper";
+    String ELYTRON_CUSTOM_SECURITY_EVENT_LISTENER = "elytron-custom-security-event-listener";
     String ELYTRON_DIR_CONTEXT = "elytron-dir-context";
     String ELYTRON_FACTORIES_TRANSFORMERS = "elytron-factories-transformers";
     String ELYTRON_FILE_AUDIT_LOG = "elytron-file-audit-log";
@@ -228,6 +236,7 @@ public interface Ids {
     String ELYTRON_LOGICAL_ROLE_MAPPER = "elytron-logical-role-mapper";
     String ELYTRON_LOGS_ITEM = "logs-item";
     String ELYTRON_MAPPED_REGEX_REALM_MAPPER = "elytron-mapped-regex-realm-mapper";
+    String ELYTRON_MAPPED_ROLE_MAPPER = "elytron-mapped-role-mapper";
     String ELYTRON_MAPPERS_DECODERS = "elytron-mappers-decoders";
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "elytron-mechanism-provider-filtering-sasl-server-factory";
     String ELYTRON_OTHER_ITEM = "other-item";
@@ -236,6 +245,7 @@ public interface Ids {
     String ELYTRON_PERMISSION_MAPPINGS_FORM = "elytron-permission-mappings-form";
     String ELYTRON_PERMISSION_MAPPINGS_PAGE = "elytron-permission-mappings-page";
     String ELYTRON_PERMISSION_MAPPINGS_TABLE = "elytron-permission-mappings-table";
+    String ELYTRON_PERMISSION_SET = "elytron-permission-set";
     String ELYTRON_PERMISSIONS_ADD = "elytron-permissions-add";
     String ELYTRON_PERMISSIONS_FORM = "elytron-permissions-form";
     String ELYTRON_PERMISSIONS_PAGE = "elytron-permissions-page";
@@ -433,6 +443,7 @@ public interface Ids {
     String JPA_RUNTIME_QUERY_CACHE_ITEM = "jpa-runtime-query-cache-item";
     String JPA_RUNTIME_STATISTICS_DISABLED = "jpa-runtime-statistics-disabled";
     String JPA_RUNTIME_TAB_CONTAINER = "jpa-runtime-tab-container";
+    String LOAD_METRIC = "load-metric";
     String LOCAL_CACHE = "local-cache";
     String LOG_FILE = "lf";
     String LOG_FILE_EDITOR = "lf-editor";
@@ -528,6 +539,9 @@ public interface Ids {
     String MESSAGING_SERVER_RUNTIME = "msg-server-r";
     String MESSAGING_SERVER_RUNTIME_REFRESH = "msg-server-r-refresh";
     String MESSAGING_SERVER_SETTINGS = "msg-server-settings";
+    String MODCLUSTER_PROXY = "modcluster-proxy";
+    String MODCLUSTER_PROXY_ADD = "modcluster-proxy-add";
+    String MODCLUSTER_PROXY_REFRESH = "modcluster-proxy-refresh";
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = "model-browser-create-singleton-form";
     String MODEL_BROWSER_ROOT = "model-browser-root";
@@ -598,6 +612,7 @@ public interface Ids {
     String ROLE_SERVER_GROUP_SCOPED_FORM = "role-server-group-form";
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEM = "rss";
+    String SCATTERED_CACHE = "scattered-cache";
     String SEARCH = "search";
     String SECURITY_ITEM = "security-item";
     String SECURITY_FORM = "security-form";
@@ -635,6 +650,7 @@ public interface Ids {
     String SERVER_STATUS_SYSTEM_PROPERTIES_ITEM = "server-runtime-system-properties-item";
     String SERVER_URL_FORM = "server-url-form";
     String SERVER_URL_STORAGE = "hal-local-storage-server-url";
+    String SESSION = "session";
     String SETTINGS_FORM = "settings-form";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_GROUP_ADD = "socket-binding-group-add";
@@ -662,6 +678,7 @@ public interface Ids {
     String THREAD_POOL_ITEM = "thread-pool-item";
     String THREAD_POOL_FORM = "thread-pool-form";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
+    String TLC_ACCESS_CONTROL_SSO = "tlc-access-control-sso";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
     String TLC_HOMEPAGE = "tlc-homepage";
@@ -784,6 +801,10 @@ public interface Ids {
         return Ids.build("cc", name);
     }
 
+    static String extractCacheContainer(String id) {
+        return substringAfterLast(id, "cc-");
+    }
+
     static String content(String name) {
         return name;
     }
@@ -836,11 +857,19 @@ public interface Ids {
     }
 
     static String mailSession(String name) {
-        return Ids.build("ms", name);
+        return build("ms", name);
+    }
+
+    static String modclusterProxy(String name) {
+        return build("mcp", name);
     }
 
     static String messagingServer(String name) {
         return build("msgs", name);
+    }
+
+    static String extractMessagingServer(String id) {
+        return substringAfterLast(id, "msgs-");
     }
 
     static String webServer(String name) {
@@ -890,8 +919,20 @@ public interface Ids {
         return build("uasd", name);
     }
 
+    static String undertowModcluster(String name) {
+        return build("umc", name);
+    }
+
+    static String extractUndertowModcluster(String id) {
+        return substringAfterLast(id, "umc-");
+    }
+
     static String undertowServer(String name) {
         return build("us", name);
+    }
+
+    static String extractUndertowServer(String id) {
+        return substringAfterLast(id, "us-");
     }
 
     static String undertowServletContainer(String name) {
@@ -922,13 +963,13 @@ public interface Ids {
     }
 
     static String build(@NonNls String id, char separator, @NonNls String... additionalIds) {
-        if (Strings.emptyToNull(id) == null) {
+        if (emptyToNull(id) == null) {
             throw new IllegalArgumentException("Id must not be null");
         }
         List<String> ids = Lists.newArrayList(id);
         if (additionalIds != null) {
             for (String additionalId : additionalIds) {
-                if (!Strings.isNullOrEmpty(additionalId)) {
+                if (!isNullOrEmpty(additionalId)) {
                     ids.add(additionalId);
                 }
             }

@@ -56,7 +56,7 @@ public class ResourceDescriptionTemplateProcessorTest {
     @Test
     public void host() throws Exception {
         AddressTemplate input = AddressTemplate.of("/host=master");
-        AddressTemplate expected = AddressTemplate.of("/host=*");
+        AddressTemplate expected = AddressTemplate.of("/host=master");
 
         AddressTemplate result = processor.apply(input);
         assertEquals(expected, result);

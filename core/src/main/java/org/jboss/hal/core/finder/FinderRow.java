@@ -25,12 +25,12 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.PatternFly;
-import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
 
 import static java.util.stream.Collectors.toList;
@@ -71,7 +71,6 @@ class FinderRow<T> implements IsElement {
             boolean pinned,
             ItemDisplay<T> display,
             PreviewCallback<T> previewCallback) {
-
         this.finder = finder;
         this.column = column;
         this.display = display;

@@ -31,7 +31,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER)
@@ -57,7 +59,7 @@ public class ModclusterColumn extends FinderColumn<NamedNode> {
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {
                     @Override
                     public String getId() {
-                        return Ids.build(UNDERTOW, MODCLUSTER, item.getName());
+                        return Ids.undertowModcluster(item.getName());
                     }
 
                     @Override

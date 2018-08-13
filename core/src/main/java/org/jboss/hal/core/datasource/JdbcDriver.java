@@ -15,14 +15,10 @@
  */
 package org.jboss.hal.core.datasource;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Names;
 
-import static com.google.common.base.Strings.emptyToNull;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class JdbcDriver extends ModelNode {
@@ -79,20 +75,6 @@ public class JdbcDriver extends ModelNode {
 
     public String getModule() {
         return get(DRIVER_MODULE_NAME).asString();
-    }
-
-    public List<String> getDriverClasses() {
-        List<String> values = new ArrayList<>();
-        if (hasDefined(DRIVER_CLASS_NAME)) {
-            values.add(emptyToNull(get(DRIVER_CLASS_NAME).asString()));
-        }
-        if (hasDefined(DRIVER_DATASOURCE_CLASS_NAME)) {
-            values.add(emptyToNull(get(DRIVER_DATASOURCE_CLASS_NAME).asString()));
-        }
-        if (hasDefined(DRIVER_XA_DATASOURCE_CLASS_NAME)) {
-            values.add(emptyToNull(get(DRIVER_XA_DATASOURCE_CLASS_NAME).asString()));
-        }
-        return values;
     }
 
     public String getDriverVersion() {

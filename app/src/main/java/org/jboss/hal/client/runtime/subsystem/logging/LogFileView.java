@@ -56,8 +56,8 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 public abstract class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
 
     // @formatter:off
-    public static LogFileView create(final Environment environment, final StatementContext statementContext,
-            final LogFiles logFiles, final Resources resources) {
+    public static LogFileView create(Environment environment, StatementContext statementContext, LogFiles logFiles,
+            Resources resources) {
         return new Templated_LogFileView(environment, statementContext, logFiles, resources);
     }
 
@@ -160,7 +160,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     }
 
     @Override
-    public void setPresenter(final LogFilePresenter presenter) {
+    public void setPresenter(LogFilePresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -177,7 +177,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     }
 
     @Override
-    public void show(final LogFile logFile, int lines, final String content) {
+    public void show(LogFile logFile, int lines, String content) {
         statusUpdate(lines);
         StringBuilder builder = new StringBuilder();
         if (presenter.isExternal()) {
@@ -201,7 +201,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     }
 
     @Override
-    public void refresh(final int lines, final String content) {
+    public void refresh(int lines, String content) {
         statusUpdate(lines);
         editor.getEditor().getSession().setValue(content);
         editor.getEditor().gotoLine(lines, 0, false);

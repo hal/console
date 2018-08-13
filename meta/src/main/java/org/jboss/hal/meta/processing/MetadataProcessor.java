@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -26,10 +28,12 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
+import org.jboss.hal.js.Browser;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -73,6 +77,7 @@ public class MetadataProcessor {
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final SecurityContextDatabase securityContextDatabase;
     private final SecurityContextRegistry securityContextRegistry;
+    private final Settings settings;
     private final WorkerChannel workerChannel;
 
     @Inject
@@ -86,6 +91,7 @@ public class MetadataProcessor {
             SecurityContextRegistry securityContextRegistry,
             ResourceDescriptionDatabase resourceDescriptionDatabase,
             ResourceDescriptionRegistry resourceDescriptionRegistry,
+            Settings settings,
             WorkerChannel workerChannel) {
         this.environment = environment;
         this.dispatcher = dispatcher;
@@ -96,6 +102,7 @@ public class MetadataProcessor {
         this.securityContextRegistry = securityContextRegistry;
         this.resourceDescriptionDatabase = resourceDescriptionDatabase;
         this.resourceDescriptionRegistry = resourceDescriptionRegistry;
+        this.settings = settings;
         this.workerChannel = workerChannel;
     }
 
@@ -142,13 +149,17 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            Task[] tasks = new Task[]{
-                    lookupRegistries,
-                    new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase),
-                    new RrdTask(environment, dispatcher, statementContext, BATCH_SIZE, RRD_DEPTH),
-                    new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry),
-                    new UpdateDatabaseTask(workerChannel)
-            };
+            boolean ie = Browser.isIE();
+            List<Task<LookupContext>> tasks = new ArrayList<>();
+            tasks.add(lookupRegistries);
+            if (!ie) {
+                tasks.add(new LookupDatabaseTask(resourceDescriptionDatabase, securityContextDatabase));
+            }
+            tasks.add(new RrdTask(environment, dispatcher, statementContext, settings, BATCH_SIZE, RRD_DEPTH));
+            tasks.add(new UpdateRegistryTask(resourceDescriptionRegistry, securityContextRegistry));
+            if (!ie) {
+                tasks.add(new UpdateDatabaseTask(workerChannel));
+            }
 
             LookupContext context = new LookupContext(progress, templates, recursive);
             Stopwatch stopwatch = Stopwatch.createStarted();

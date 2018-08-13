@@ -70,14 +70,14 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @Inject
     @JsIgnore
-    public ExtensionRegistry(final EventBus eventBus) {
+    public ExtensionRegistry(EventBus eventBus) {
         this.queue = new LinkedList<>();
         this.extensions = new HashSet<>();
         eventBus.addHandler(ApplicationReadyEvent.getType(), this);
     }
 
     @JsIgnore
-    public void verifyMetadata(final String url, final MetadataCallback metadataCallback) {
+    public void verifyMetadata(String url, MetadataCallback metadataCallback) {
         SafeUri safeUrl = UriUtils.fromString(url);
         XMLHttpRequest xhr = new XMLHttpRequest();
         xhr.onload = event -> {
@@ -100,19 +100,19 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     }
 
     @JsIgnore
-    public boolean verifyScript(final String script) {
+    public boolean verifyScript(String script) {
         return document.head.querySelector("script[src='" + script + "']") != null; //NON-NLS
     }
 
     @JsIgnore
-    public void inject(final String script, final List<String> stylesheets) {
+    public void inject(String script, List<String> stylesheets) {
         jsInject(script, stylesheets.toArray(new String[stylesheets.size()]));
     }
 
     @Override
     @JsIgnore
     @SuppressWarnings("HardCodedStringLiteral")
-    public void onApplicationReady(final ApplicationReadyEvent event) {
+    public void onApplicationReady(ApplicationReadyEvent event) {
         ready = true;
         headerDropdown = document.getElementById(Ids.HEADER_EXTENSIONS_DROPDOWN);
         headerExtensions = document.getElementById(Ids.HEADER_EXTENSIONS);
@@ -131,7 +131,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
      *
      * @param extension the extension to register.
      */
-    public void register(final Extension extension) {
+    public void register(Extension extension) {
         if (!ready) {
             queue.offer(extension);
         } else {

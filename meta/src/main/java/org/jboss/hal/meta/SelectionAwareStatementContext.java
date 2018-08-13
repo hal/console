@@ -23,10 +23,10 @@ public class SelectionAwareStatementContext extends FilteringStatementContext im
     public static final String SELECTION_KEY = "selection";
     public static final String SELECTION_EXPRESSION = "{" + SELECTION_KEY + "}";
 
-    public SelectionAwareStatementContext(final StatementContext delegate, final Supplier<String> selection) {
+    public SelectionAwareStatementContext(StatementContext delegate, Supplier<String> selection) {
         super(delegate, new Filter() {
             @Override
-            public String filter(final String placeholder) {
+            public String filter(String placeholder, AddressTemplate template) {
                 if (SELECTION_KEY.equals(placeholder)) {
                     return selection.get();
                 }
@@ -34,7 +34,7 @@ public class SelectionAwareStatementContext extends FilteringStatementContext im
             }
 
             @Override
-            public String[] filterTuple(final String placeholder) {
+            public String[] filterTuple(String placeholder, AddressTemplate template) {
                 return null;
             }
         });

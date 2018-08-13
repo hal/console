@@ -24,22 +24,23 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeDate;
 
 class LogFile extends ModelNode {
 
+    // TODO Move to ModelDescriptionConstants
     private static final String FILE_NAME = "file-name";
     private static final String FILE_SIZE = "file-size";
     private static final String LAST_MODIFIED_DATE = "last-modified-date";
     private static final String LAST_MODIFIED_TIMESTAMP = "last-modified-timestamp";
 
-    LogFile(final ModelNode node) {
+    LogFile(ModelNode node) {
         set(node);
     }
 
-    LogFile(final String name, final ModelNode node) {
+    LogFile(String name, ModelNode node) {
         set(node);
         get(FILE_NAME).set(name);
     }
 
     public String getFilename() {
-        return get(FILE_NAME).asString(); //NON-NLS
+        return get(FILE_NAME).asString();
     }
 
     public Date getLastModifiedDate() {

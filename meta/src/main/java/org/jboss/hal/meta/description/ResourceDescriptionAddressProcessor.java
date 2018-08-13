@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 
@@ -29,7 +32,7 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * The following parts of a resource address are modified by this function:
  * <ul>
- * <li>{@code host}</li>
+ * <li>{@code host} (only if segments &gt; 1)</li>
  * <li>{@code server-group}</li>
  * <li>{@code server} (if it's the 2nd segment of the address)</li>
  * <li>{@code server-config} (if it's the 2nd segment of the address)</li>
@@ -45,6 +48,8 @@ import static java.util.stream.Collectors.toList;
  */
 public class ResourceDescriptionAddressProcessor implements Function<ResourceAddress, ResourceAddress> {
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionAddressProcessor.class);
+
     @Override
     public ResourceAddress apply(ResourceAddress address) {
         ResourceAddress modified = new ResourceAddress();
@@ -56,6 +61,7 @@ public class ResourceDescriptionAddressProcessor implements Function<ResourceAdd
             SegmentProcessor.process(segments, segment -> modified.add(segment[0], segment[1]));
         }
 
+        logger.debug("{} -> {}", address, modified);
         return modified;
     }
 }

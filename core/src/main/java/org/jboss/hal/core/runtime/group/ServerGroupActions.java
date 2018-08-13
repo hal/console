@@ -300,6 +300,46 @@ public class ServerGroupActions {
         }
     }
 
+    public void destroy(ServerGroup serverGroup) {
+        List<Server> startedServers = serverGroup.getServers(Server::isStarted);
+        DialogFactory.showConfirmation(resources.messages().destroy(serverGroup.getName()),
+                resources.messages().destroyServerGroupQuestion(serverGroup.getName()),
+                () -> {
+                    prepare(serverGroup, startedServers, Action.DESTROY);
+                    Operation operation = new Operation.Builder(serverGroup.getAddress(), DESTROY_SERVERS).build();
+                    dispatcher.execute(operation,
+                            result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, Action.DESTROY),
+                                    readServerConfigStatus(startedServers),
+                                    checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
+                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                            resources.messages().destroyServerGroupSuccess(serverGroup.getName()))),
+                            new ServerGroupFailedCallback(serverGroup, startedServers,
+                                    resources.messages().destroyServerError(serverGroup.getName())),
+                            new ServerGroupExceptionCallback(serverGroup, startedServers,
+                                    resources.messages().destroyServerError(serverGroup.getName())));
+                });
+    }
+
+    public void kill(ServerGroup serverGroup) {
+        List<Server> startedServers = serverGroup.getServers(Server::isStarted);
+        DialogFactory.showConfirmation(resources.messages().kill(serverGroup.getName()),
+                resources.messages().killServerGroupQuestion(serverGroup.getName()),
+                () -> {
+                    prepare(serverGroup, startedServers, Action.KILL);
+                    Operation operation = new Operation.Builder(serverGroup.getAddress(), KILL_SERVERS).build();
+                    dispatcher.execute(operation,
+                            result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, Action.KILL),
+                                    readServerConfigStatus(startedServers),
+                                    checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
+                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                            resources.messages().killServerGroupSuccess(serverGroup.getName()))),
+                            new ServerGroupFailedCallback(serverGroup, startedServers,
+                                    resources.messages().killServerError(serverGroup.getName())),
+                            new ServerGroupExceptionCallback(serverGroup, startedServers,
+                                    resources.messages().killServerError(serverGroup.getName())));
+                });
+    }
+
     private int timeout(ServerGroup serverGroup, Action action) {
         int timeout = DEFAULT_TIMEOUT;
         switch (action) {

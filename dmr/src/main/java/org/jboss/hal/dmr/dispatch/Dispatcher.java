@@ -431,6 +431,11 @@ public class Dispatcher implements RecordingHandler {
                 event -> handleErrorCodes(url, (int) xhr.status, operation, error), false);
         xhr.open(method.name(), url, true);
         xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
+        String bearerToken = getBearerToken();
+        if (bearerToken != null) {
+            xhr.setRequestHeader("Authorization", "Bearer " + bearerToken);
+        }
+
         xhr.withCredentials = true;
 
         return xhr;
@@ -564,6 +569,21 @@ public class Dispatcher implements RecordingHandler {
     public void jsExecute(Operation operation, @EsParam("function(result: ModelNode)") JsOperationCallback callback) {
         dmr(operation, payload -> callback.onSuccess(payload.get(RESULT)), failedCallback, exceptionCallback);
     }
+
+    // ------------------------------------------------------ Keycloak methods
+
+    /**
+     * Obtains the bearer token from keycloak object attached to the window.
+     */
+    public static native String getBearerToken()/*-{
+        // keycloak javascript object is created in EndpointManager class
+        var keycloak = $wnd.keycloak;
+        if (keycloak != null && keycloak.token != null) {
+            return keycloak.token;
+        }
+        return null;
+    }-*/;
+
 
 
     // ------------------------------------------------------ inner classes

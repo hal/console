@@ -32,6 +32,7 @@ class AccessControlPreview extends PreviewContent<Void> {
 
     private final Environment environment;
     private final Alert warning;
+    private final Alert warningSso;
 
     AccessControlPreview(AccessControl accessControl, Environment environment, Resources resources) {
         super(Names.ACCESS_CONTROL);
@@ -40,11 +41,13 @@ class AccessControlPreview extends PreviewContent<Void> {
                 resources.constants().enableRbac(),
                 event -> accessControl.switchProvider());
 
+        this.warningSso = new Alert(Icons.WARNING, resources.messages().ssoAccessControlWarning());
+
         HTMLElement content;
         previewBuilder().add(warning);
+        previewBuilder().add(warningSso);
         previewBuilder().add(content = section().asElement());
         Previews.innerHtml(content, resources.previews().rbacOverview());
-
         update(null);
     }
 
@@ -52,5 +55,6 @@ class AccessControlPreview extends PreviewContent<Void> {
     public void update(final Void item) {
         Elements.setVisible(warning.asElement(),
                 environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
+        Elements.setVisible(warningSso.asElement(), environment.isSingleSignOn());
     }
 }

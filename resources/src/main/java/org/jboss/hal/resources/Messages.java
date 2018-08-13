@@ -21,6 +21,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     SafeHtml accessMechanismLabel(String name);
+    String accessControlSsoDescription();
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
     SafeHtml addError(String type, String identity, String resource, String error);
@@ -55,6 +56,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml cannotDownloadExploded();
 
     SafeHtml capabilityReference(String capability);
+    SafeHtml changeAccountKeyError(String name, String error);
+    String changeAccountKeyQuestion(String name);
+    SafeHtml changeAccountKeySuccess(String name);
     SafeHtml changeAliasError(String alias, String newAlias, String resource, String error);
     SafeHtml changeAliasSuccess(String alias, String newAlias, String resource);
     SafeHtml changePrioritySuccess(int priority);
@@ -89,6 +93,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml contentUndeployed(String name);
     SafeHtml contentUndeployedFromServerGroup(String name, String serverGroup);
     String copyServerTitle();
+    SafeHtml createAccountError(String name, String error);
+    String createAccountQuestion(String name);
+    SafeHtml createAccountSuccess(String name);
     SafeHtml credentialReferenceAddConfirmation(String alternative);
     SafeHtml credentialReferenceAddressError();
     String credentialReferenceConflict();
@@ -105,6 +112,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String datasourceRuntimeFilterDescription();
     SafeHtml dataSourceStatisticsDisabled(String name);
     SafeHtml dataSourceStatisticsFromDeployment();
+    SafeHtml deactivateAccountError(String name, String error);
+    SafeHtml deactivateAccountSuccess(String name);
+    String deactivateAccountQuestion(String name);
     SafeHtml deployedTo(String name);
     SafeHtml deploymentActive(String name);
     SafeHtml deploymentAdded(@PluralCount int count);
@@ -131,6 +141,20 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentUnknownState(String name);
     String deprecated(String since, String reason);
     String destinationFilterDescription();
+
+    String destroy(String name);
+
+    SafeHtml destroyServerError(String name);
+
+    SafeHtml destroyServerQuestion(String name);
+
+    SafeHtml destroyServerSuccess(String name);
+
+    SafeHtml destroyServerGroupError(String name);
+
+    SafeHtml destroyServerGroupQuestion(String name);
+
+    SafeHtml destroyServerGroupSuccess(String name);
     SafeHtml disableSSLManagementQuestion(String serverName);
     SafeHtml disableSSLManagementError(String cause);
     SafeHtml disableSSLManagementSuccess();
@@ -147,6 +171,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml duplicateAuthenticationModule();
     String duplicateAuthenticationModuleReason();
     String duplicateResource(String type);
+    SafeHtml dynamicLoadProviderWarning();
 
     String ejbFilterDescription();
     SafeHtml emptyModelNodeForm();
@@ -188,6 +213,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml extensionScriptError();
     SafeHtml extensionUrl();
 
+    SafeHtml failedReadKeycloak(String address, String errorMessage);
     SafeHtml failedRedirectConsole(String url, String message);
     String filterBy(String name);
     SafeHtml flushConnectionSuccess();
@@ -196,6 +222,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml generateCSRSuccess(String alias, String path, String resource);
     SafeHtml generateKeyPairError(String alias, String resource, String error);
     SafeHtml generateKeyPairSuccess(String alias, String resource);
+    SafeHtml getMetadataError(String name, String error);
+    SafeHtml getMetadataSuccess(String name);
     String goTo(String name);
 
     String homepagePatchingSubHeader(String name);
@@ -226,7 +254,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml includeAllHelpText();
     String identityDescription();
     SafeHtml identityAttributeHelp();
-    SafeHtml identityAttributeHint();
     SafeHtml importCertificateError(String alias, String path, String resource, String error);
     SafeHtml importCertificateSuccess(String alias, String path, String resource);
     SafeHtml initError(String name, String error);
@@ -234,14 +261,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml invalidExtensionJson();
     SafeHtml invalidExtensionMetadata(String extensionDocumentation);
     String invalidFormat();
+    String invalidTagFormat(String allowed);
     String invalidJNDIName();
     String invalidLength();
-    String invalidRange(long value, long min, long max);
-    String invalidateSessionTitle();
+    String invalidRange(double value, long min, long max);
     SafeHtml invalidateSessionQuestion();
-    SafeHtml invalidateSessionSuccess(String sessionId);
-    SafeHtml invalidateSessionError(String sessionId, String cause);
-    SafeHtml invalidateSessionNotExist(String sessionId);
+    SafeHtml invalidateSessionSuccess();
+    SafeHtml invalidateSessionError(String cause);
 
     String jdbcDriverColumnFilterDescription();
     SafeHtml jdbcDriverDeploymentHint();
@@ -251,12 +277,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml jpaStatisticsDisabled(String name, String deployment);
 
     String kill(String name);
-
     SafeHtml killServerError(String name);
-
     SafeHtml killServerQuestion(String name);
-
     SafeHtml killServerSuccess(String name);
+
+    SafeHtml killServerGroupError(String name);
+
+    SafeHtml killServerGroupQuestion(String name);
+
+    SafeHtml killServerGroupSuccess(String name);
 
     SafeHtml largeLogFile(String size);
     SafeHtml lastOperationException();
@@ -299,6 +328,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml nearCacheUndefined();
     SafeHtml newContentSuccess(String deployment, String file);
+
     String noBootErrors();
     SafeHtml noChanges();
     SafeHtml noContent();
@@ -355,6 +385,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
+    String proxyColumnFilterDescription();
     SafeHtml propertiesHint();
     SafeHtml pruneDisconnectedQuestion();
     SafeHtml pruneExpiredQuestion();
@@ -363,6 +394,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml readAliasError(String alias, String resource, String error);
     SafeHtml readAliasesError(String resource, String error);
     SafeHtml readAliasesSuccess(String resource);
+    String readDatasourcePropertiesErrorDomain(String profile);
     SafeHtml readIdentityError(String identity, String realm, String error);
     String recordedOperations(@PluralCount int count);
     SafeHtml recordingStarted();
@@ -512,6 +544,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml sharedStoreSlave();
     SafeHtml sharedStoreStrategy();
     SafeHtml simpleProviderWarning();
+    SafeHtml ssoAccessControlWarning();
     SafeHtml specifyParameters(String link);
     SafeHtml staleStatistics();
 
@@ -546,7 +579,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml suspendServerQuestion(String name);
     SafeHtml suspendServerSuccess(String name);
 
-    SafeHtml switchProviderSuccess();
+    SafeHtml switchProviderSuccess(String from, String to);
     SafeHtml switchToRbacProvider();
     SafeHtml switchToSimpleProvider();
 
@@ -565,6 +598,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String undertowListenerProcessingDisabled(String listener, String server);
     String updateAvailable(String current, String update);
+    SafeHtml updateAccountError(String name, String error);
+    String updateAccountQuestion(String name);
+    SafeHtml updateAccountSuccess(String name);
     SafeHtml updateServerError(String name);
     SafeHtml uploadContentDescription();
     String uploadContentInvalid();

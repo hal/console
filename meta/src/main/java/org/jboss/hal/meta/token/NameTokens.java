@@ -27,16 +27,19 @@ public interface NameTokens {
     String RUNTIME_SUFFIX = "-runtime";
 
     String ACCESS_CONTROL = "access-control";
+    String ACCESS_CONTROL_SSO = "access-control-sso";
     String BATCH_CONFIGURATION = ModelDescriptionConstants.BATCH_JBERET + CONFIGURATION_SUFFIX;
     String BROWSE_CONTENT = "browse-content";
     String CACHE_CONTAINER = ModelDescriptionConstants.CACHE_CONTAINER;
     String CONFIGURATION = "configuration";
     String CONFIGURATION_CHANGES = "configuration-changes";
+    String CORE_MANAGEMENT = "core-management";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
     String DEPLOYMENT = "deployment";
     String DEPLOYMENTS = "deployments";
+    String DISTRIBUTED_CACHE = ModelDescriptionConstants.DISTRIBUTED_CACHE;
     String EE = ModelDescriptionConstants.EE;
     String ELYTRON = ModelDescriptionConstants.ELYTRON;
     String ELYTRON_FACTORIES_TRANSFORMERS = "elytron-factories-transformers";
@@ -54,6 +57,7 @@ public interface NameTokens {
     String HOST_CONFIGURATION = "host-configuration";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
     String INTERFACE = "interface";
+    String INVALIDATION_CACHE = ModelDescriptionConstants.INVALIDATION_CACHE;
     String IO = ModelDescriptionConstants.IO;
     String JCA = ModelDescriptionConstants.JCA;
     String JGROUPS = ModelDescriptionConstants.JGROUPS;
@@ -65,6 +69,7 @@ public interface NameTokens {
     String JOB = "job" + RUNTIME_SUFFIX;
     String JPA_CONFIGURATION = ModelDescriptionConstants.JPA + CONFIGURATION_SUFFIX;
     String JPA_RUNTIME = ModelDescriptionConstants.JPA + RUNTIME_SUFFIX;
+    String LOCAL_CACHE = ModelDescriptionConstants.LOCAL_CACHE;
     String LOG_FILE = "log-file";
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";
@@ -79,6 +84,7 @@ public interface NameTokens {
     String MESSAGING_SERVER_CLUSTERING = "messaging-server-clustering";
     String MESSAGING_SERVER_DESTINATION = "messaging-server-destination";
     String MESSAGING_SERVER_HA_POLICY = "messaging-server-ha-policy";
+    String MICROPROFILE_CONFIG = "micro-profile-config";
     String MODCLUSTER = ModelDescriptionConstants.MODCLUSTER;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
@@ -86,9 +92,11 @@ public interface NameTokens {
     String QUEUE = "queue";
     String REMOTING = ModelDescriptionConstants.REMOTING;
     String REMOTE_CACHE_CONTAINER = ModelDescriptionConstants.REMOTE_CACHE_CONTAINER;
+    String REPLICATED_CACHE = ModelDescriptionConstants.REPLICATED_CACHE;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;
     String RUNTIME = "runtime";
+    String SCATTERED_CACHE = ModelDescriptionConstants.SCATTERED_CACHE;
     String SECURITY_CONFIGURATION = "security";
     String SECURITY_MANAGER = "security-manager";
     String SECURITY_DOMAIN = ModelDescriptionConstants.SECURITY_DOMAIN;

@@ -53,6 +53,7 @@ public interface Names {
     String BUNDLED_EXTENSION = "Bundled Extension";
     String BYTE_BUFFER_POOL = "Byte Buffer Pool";
 
+    String CACHE = "Cache";
     String CACHE_CONTAINER = "Cache Container";
     String CACHING_REALM = "Caching Realm";
     String CATEGORY = "Category";
@@ -77,6 +78,7 @@ public interface Names {
     String CONTEXT_ROOT = "Context Root";
     String CONTEXT_ROOTS = "Context Roots";
     String COOKIES = "Cookies";
+    String CORE_MANAGEMENT = "Core Management";
     String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
     String CREDENTIAL_REFERENCE = "Credential Reference";
@@ -84,6 +86,7 @@ public interface Names {
     String CUSTOM = "Custom";
     String CUSTOM_ACTION_HANDLER = "Custom ActionHandler";
     String CUSTOM_FORMATTER = "Custom Formatter";
+    String CUSTOM_LOAD_METRIC = "Custom Load Metric";
     String CUSTOM_MODIFIABLE_REALM = "Custom Modifiable Realm";
     String CUSTOM_POLICY = "Custom Policy";
 
@@ -100,6 +103,7 @@ public interface Names {
     String DISTRIBUTED_CACHE = "Distributed Cache";
     String DIVERT = "Divert";
     String DOMAIN_CONTROLLER = "Domain Controller";
+    String DYNAMIC_LOAD_PROVIDER = "Dynamic Load Provider";
 
     String EE = "EE";
     String EJB3 = "EJB";
@@ -137,6 +141,7 @@ public interface Names {
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
+    String HOT_ROD = "Hot Rod";
     String HTTP = "HTTP";
     String HTTP_ACCEPTOR = "HTTP Acceptor";
     String HTTP_AUTHENTICATION_FACTORY = "HTTP Authentication Factory";
@@ -189,6 +194,7 @@ public interface Names {
     String LDAP_REALM = "LDAP Realm";
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
+    String LOAD_METRIC = "Load Metric";
     String LOCAL_CACHE = "Local Cache";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
@@ -209,6 +215,7 @@ public interface Names {
     String MASTER = "Master";
     String MAXIMUM_PERMISSIONS = "Maximum Permissions";
     String MB = "MB";
+    String MICROPROFILE_CONFIG = "Microprofile Config";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
     String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
@@ -266,13 +273,13 @@ public interface Names {
     String PROFILES = "Profiles";
     String PROPERTIES_REALM = "Properties Realm";
     String PROTOCOL = "Protocol";
+    String PROXY = "Proxy";
 
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
 
     String REALM = "Realm";
     String RELAY = "Relay";
-    String REMOTE = "Remote";
     String REMOTE_ACCEPTOR = "Remote Acceptor";
     String REMOTE_CACHE_CONTAINER = "Remote Cache Container";
     String REMOTE_CLUSTER = "Remote Cluster";
@@ -296,6 +303,7 @@ public interface Names {
     String RUNTIME = "Runtime";
 
     String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";
+    String SCATTERED_CACHE = "Scattered Cache";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
     String SECURE_MANAGEMENT = "Secure Management";
     String SECURITY = "Security";
@@ -307,6 +315,7 @@ public interface Names {
     String SERVER_GROUPS = "Server Groups";
     String SERVLET = "Servlet";
     String SERVLET_CONTAINER = "Servlet Container";
+    String SESSION_ID = "Session ID";
     String SESSIONS = "Sessions";
     String SHARED_STORE_COLOCATED = "Shared Store Colocated";
     String SHARED_STORE_MASTER = "Shared Store Master";
@@ -317,6 +326,7 @@ public interface Names {
     String SIZE_ACTION_HANDLER = "Size ActionHandler";
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
+    String SMALLRYE = "Smallrye";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";

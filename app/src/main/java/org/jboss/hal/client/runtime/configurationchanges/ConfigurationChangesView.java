@@ -36,7 +36,7 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Ids.CONFIGURATION_CHANGES;
 
@@ -52,7 +52,7 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
     public ConfigurationChangesView(MetadataRegistry metadataRegistry, Resources resources) {
         dataProvider = new DataProvider<>(ConfigurationChange::getName, false);
 
-        Metadata metadata = metadataRegistry.lookup(CONFIGURATION_CHANGES_TEMPLATE)
+        Metadata metadata = metadataRegistry.lookup(HOST_CONFIGURATION_CHANGES_TEMPLATE)
                 .forOperation(LIST_CHANGES_OPERATION);
 
         Messages messages = resources.messages();

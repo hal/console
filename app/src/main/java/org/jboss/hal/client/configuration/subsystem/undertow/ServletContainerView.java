@@ -162,7 +162,6 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
     @Override
     public void attach() {
         super.attach();
-        configurationForm.attach();
         settings.get(ServletContainerSetting.WEBSOCKETS).getFormItem(BUFFER_POOL).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(),
                         AddressTemplate.of("/{selected.profile}/subsystem=io/buffer-pool=*")));
@@ -171,12 +170,6 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                         AddressTemplate.of("/{selected.profile}/subsystem=io/worker=*")));
         settings.get(SESSIONS).getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
 
-    }
-
-    @Override
-    public void detach() {
-        super.detach();
-        configurationForm.detach();
     }
 
     @Override

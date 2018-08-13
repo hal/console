@@ -62,7 +62,7 @@ public class ResourceDescriptionAddressProcessorTest {
         ResourceAddress input = new ResourceAddress()
                 .add("host", "master");
         ResourceAddress expected = new ResourceAddress()
-                .add("host", "*");
+                .add("host", "master");
 
         ResourceAddress result = processor.apply(input);
         assertEquals(expected, result);

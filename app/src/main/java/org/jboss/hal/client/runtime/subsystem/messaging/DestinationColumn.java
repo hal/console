@@ -18,7 +18,6 @@ package org.jboss.hal.client.runtime.subsystem.messaging;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -28,7 +27,6 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
-import org.jboss.hal.core.Strings;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -52,17 +50,17 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.DEPLOYMENT_RESOURCES;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.SUBSYSTEM_RESOURCES;
-import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -104,15 +102,10 @@ public class DestinationColumn extends FinderColumn<Destination> {
         this.resources = resources;
 
         ItemsProvider<Destination> itemsProvider = (context, callback) -> {
-
             // extract server name from the finder path
-            Optional<String> optional = stream(context.getPath().spliterator(), false)
-                    .filter(segment -> Ids.MESSAGING_SERVER_RUNTIME.equals(segment.getColumnId()))
-                    .findAny()
-                    .map(FinderSegment::getItemId);
-            if (optional.isPresent()) {
-                // Extract the server name from the item id "msgs-<server name>"
-                String server = substringAfterLast(optional.get(), "msgs-");
+            FinderSegment segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
+            if (segment != null) {
+                String server = Ids.extractMessagingServer(segment.getItemId());
                 List<Operation> operations = new ArrayList<>();
                 for (Type type : SUBSYSTEM_RESOURCES) {
                     ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
@@ -141,6 +134,8 @@ public class DestinationColumn extends FinderColumn<Destination> {
                     destinations.sort(Comparator.comparing(NamedNode::getName));
                     callback.onSuccess(destinations);
                 });
+            } else {
+                callback.onSuccess(emptyList());
             }
         };
         setItemsProvider(itemsProvider);
@@ -250,11 +245,12 @@ public class DestinationColumn extends FinderColumn<Destination> {
     }
 
     private String messageServer() {
-        Optional<String> server = stream(getFinder().getContext().getPath().spliterator(), false)
-                .filter(segment -> Ids.MESSAGING_SERVER_RUNTIME.equals(segment.getColumnId()))
-                .findFirst()
-                .map(segment -> segment.getItemId().substring("msgs-".length())); // decode Ids.messagingServer()
-        return server.orElse(UNDEFINED);
+        String server = UNDEFINED;
+        FinderSegment segment = getFinder().getContext().getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
+        if (segment != null) {
+            server = Ids.extractMessagingServer(segment.getItemId());
+        }
+        return server;
     }
 
     private void resume(Destination destination) {

@@ -35,7 +35,7 @@ public class SegmentProcessorTest {
         AsListConsumer() {result = new ArrayList<>();}
 
         @Override
-        public void accept(final String[] strings) {
+        public void accept(String[] strings) {
             result.add(strings);
         }
     }
@@ -134,7 +134,7 @@ public class SegmentProcessorTest {
     public void host() throws Exception {
         Fixture fixture = new Fixture.Builder("host")
                 .segments("host", "master")
-                .expected("host", "*")
+                .expected("host", "master")
                 .build();
         SegmentProcessor.process(fixture.segments, consumer);
         assertFixture(fixture, consumer.result);

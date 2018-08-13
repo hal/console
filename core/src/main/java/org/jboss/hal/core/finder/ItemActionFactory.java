@@ -91,9 +91,7 @@ public class ItemActionFactory {
                 .build();
     }
 
-    /**
-     * Wraps the specified handler inside a confirmation dialog. The action is executed upon confirmation.
-     */
+    /** Wraps the specified handler inside a confirmation dialog. The action is executed upon confirmation. */
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, ItemActionHandler<T> handler) {
         return remove(type, name, template, template, handler);
     }

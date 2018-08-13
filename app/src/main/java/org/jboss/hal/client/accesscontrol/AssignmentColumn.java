@@ -17,7 +17,6 @@ package org.jboss.hal.client.accesscontrol;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -58,7 +57,6 @@ import org.jboss.hal.spi.MessageEvent;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
@@ -80,15 +78,15 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
     private final Resources resources;
 
     @Inject
-    public AssignmentColumn(final Finder finder,
-            final ItemActionFactory itemActionFactory,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final User currentUser,
-            final AccessControl accessControl,
-            final AccessControlTokens tokens,
-            final Resources resources) {
+    public AssignmentColumn(Finder finder,
+            ItemActionFactory itemActionFactory,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            User currentUser,
+            AccessControl accessControl,
+            AccessControlTokens tokens,
+            Resources resources) {
 
         super(new Builder<Assignment>(finder, Ids.ASSIGNMENT, resources.constants().assignment())
                 .withFilter()
@@ -207,11 +205,12 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
     }
 
     private Principal findPrincipal(FinderPath path) {
-        Optional<String> optional = stream(path.spliterator(), false)
-                .filter(segment -> Ids.USER.equals(segment.getColumnId()) || Ids.GROUP.equals(segment.getColumnId()))
-                .findAny()
-                .map(FinderSegment::getItemId);
-        return optional.map(id -> accessControl.principals().get(id)).orElse(null);
+        FinderSegment segment = path.findColumn(
+                columnId -> Ids.USER.equals(columnId) || Ids.GROUP.equals(columnId));
+        if (segment != null) {
+            return accessControl.principals().get(segment.getItemId());
+        }
+        return null;
     }
 
     private boolean isCurrentUser() {

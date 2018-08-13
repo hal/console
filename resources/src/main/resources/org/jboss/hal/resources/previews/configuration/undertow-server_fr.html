@@ -1,0 +1,13 @@
+<p>A server represents an instance of Undertow and consists of several elements:</p>
+<ol>
+    <li>H&ocirc;te </li>
+    <li>HTTP Listener</li>
+    <li>HTTPS Listener</li>
+    <li>AJP Listener</li>
+</ol>
+
+<p>The host element provides a virtual host configuration while the three listeners provide connections of that type to the Undertow instance.</p>
+
+<p><strong>Note</strong><br/>
+    Multiple servers may be configured, which allow deployments and servers to be completely isolated. This may be useful in certain scenarios such as multi-tenant environments.
+</p>

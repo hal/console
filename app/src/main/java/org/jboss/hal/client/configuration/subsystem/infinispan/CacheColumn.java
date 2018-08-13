@@ -1,0 +1,201 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.client.configuration.subsystem.infinispan;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import elemental2.dom.HTMLElement;
+import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.finder.ColumnAction;
+import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderSegment;
+import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
+import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Requires;
+
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.pfIcon;
+
+@AsyncColumn(Ids.CACHE)
+@Requires(value = {DISTRIBUTED_CACHE_ADDRESS,
+        INVALIDATION_CACHE_ADDRESS,
+        LOCAL_CACHE_ADDRESS,
+        REPLICATED_CACHE_ADDRESS,
+        SCATTERED_CACHE_ADDRESS}, recursive = false)
+public class CacheColumn extends FinderColumn<Cache> {
+
+    private static String findCacheContainer(FinderPath path) {
+        FinderSegment segment = path.findColumn(Ids.CACHE_CONTAINER);
+        if (segment != null) {
+            return Ids.extractCacheContainer(segment.getItemId());
+        }
+        return null;
+    }
+
+    private final CrudOperations crud;
+    private final MetadataRegistry metadataRegistry;
+    private final StatementContext statementContext;
+    private final Resources resources;
+
+    @Inject
+    public CacheColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            CrudOperations crud,
+            Places places,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
+
+        super(new Builder<Cache>(finder, Ids.CACHE, Names.CACHE)
+                .itemsProvider((context, callback) -> {
+                    String cacheContainer = findCacheContainer(context.getPath());
+                    if (cacheContainer != null) {
+                        CacheType[] cacheTypes = CacheType.values();
+                        ResourceAddress address = CACHE_CONTAINER_TEMPLATE.resolve(statementContext, cacheContainer);
+                        List<String> children = stream(cacheTypes).map(CacheType::resource).collect(toList());
+                        crud.readChildren(address, children, 1, result -> {
+                            List<Cache> caches = new ArrayList<>();
+                            for (int i = 0; i < result.size(); i++) {
+                                List<Property> properties = result.step(i).get(RESULT).asPropertyList();
+                                for (Property property : properties) {
+                                    caches.add(new Cache(property.getName(), cacheTypes[i], property.getValue()));
+                                }
+                            }
+                            Collections.sort(caches, (c1, c2) -> c1.getName().compareTo(c2.getName()));
+                            callback.onSuccess(caches);
+                        });
+                    } else {
+                        callback.onSuccess(emptyList());
+                    }
+                })
+                .onPreview(CachePreview::new)
+                .pinnable()
+                .showCount()
+                .useFirstActionAsBreadcrumbHandler()
+                .withFilter()
+        );
+        this.crud = crud;
+        this.metadataRegistry = metadataRegistry;
+        this.statementContext = statementContext;
+        this.resources = resources;
+
+        List<ColumnAction<Cache>> addActions = new ArrayList<>();
+        for (CacheType cacheType : CacheType.values()) {
+            addActions.add(new ColumnAction.Builder<Cache>(Ids.build(cacheType.baseId, Ids.ADD))
+                    .title(resources.messages().addResourceTitle(cacheType.type))
+                    .handler(column -> addCache(cacheType))
+                    .constraint(Constraint.executable(cacheType.template, ADD))
+                    .build());
+        }
+        addColumnActions(Ids.CACHE_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
+        addColumnAction(columnActionFactory.refresh(Ids.CACHE_REFRESH));
+
+        setItemRenderer(item -> new ItemDisplay<Cache>() {
+            @Override
+            public String getId() {
+                return Ids.build(item.type().baseId, item.getName());
+            }
+
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public HTMLElement asElement() {
+                return ItemDisplay.withSubtitle(item.getName(), item.type().type);
+            }
+
+            @Override
+            public String getTooltip() {
+                return item.type().type;
+            }
+
+            @Override
+            public HTMLElement getIcon() {
+                return Icons.custom(item.type().icon);
+            }
+
+            @Override
+            public String getFilterData() {
+                return item.getName() + " " + item.type().type;
+            }
+
+            @Override
+            public List<ItemAction<Cache>> actions() {
+                List<ItemAction<Cache>> actions = new ArrayList<>();
+                String cacheContainer = findCacheContainer(getFinder().getContext().getPath());
+                if (cacheContainer != null) {
+                    actions.add(itemActionFactory.viewAndMonitor(Ids.build(item.type().baseId, item.getName()),
+                            places.selectedProfile(item.type().nameToken)
+                                    .with(CACHE_CONTAINER, cacheContainer)
+                                    .with(NAME, item.getName())
+                                    .build()));
+                    actions.add(new ItemAction.Builder<Cache>()
+                            .title(resources.constants().remove())
+                            .handler(item -> {
+                                ResourceAddress address = item.type().template.resolve(statementContext,
+                                        cacheContainer, item.getName());
+                                crud.remove(item.type().type, item.getName(), address, () -> refresh(CLEAR_SELECTION));
+                            })
+                            .constraint(Constraint.executable(item.type().template, REMOVE))
+                            .build());
+                }
+                return actions;
+            }
+        });
+    }
+
+    private void addCache(CacheType cacheType) {
+        Metadata metadata = metadataRegistry.lookup(cacheType.template);
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, Ids.ADD),
+                resources.messages().addResourceTitle(cacheType.type), metadata,
+                (name, model) -> {
+                    String cacheContainer = findCacheContainer(getFinder().getContext().getPath());
+                    ResourceAddress address = cacheType.template.resolve(statementContext, cacheContainer, name);
+                    crud.add(cacheType.type, name, address, model,
+                            (n, a) -> this.refresh(Ids.build(cacheType.baseId, name)));
+                });
+        dialog.show();
+    }
+}

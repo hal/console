@@ -25,9 +25,7 @@ import jsinterop.annotations.JsType;
 @JsType
 public interface Environment {
 
-    /**
-     * @return the HAL version.
-     */
+    /** @return the HAL version. */
     @JsProperty
     Version getHalVersion();
 
@@ -37,9 +35,7 @@ public interface Environment {
     @JsIgnore
     List<String> getLocales();
 
-    /**
-     * @return information about the server instance.
-     */
+    /** @return information about the server instance. */
     @JsProperty
     InstanceInfo getInstanceInfo();
 
@@ -51,27 +47,21 @@ public interface Environment {
     @JsIgnore
     OperationMode getOperationMode();
 
-    /**
-     * @return true for standalone mode, false otherwise.
-     */
+    /** @return true for standalone mode, false otherwise. */
     @JsProperty
     boolean isStandalone();
 
     @JsIgnore
     void setOperationMode(OperationMode operationMode);
 
-    /**
-     * @return the name of the domain controller (DC).
-     */
+    /** @return the name of the domain controller (DC). */
     @JsProperty
     String getDomainController();
 
     @JsIgnore
     void setDomainController(String domainController);
 
-    /**
-     * @return the management model version.
-     */
+    /** @return the management model version. */
     @JsProperty
     Version getManagementVersion();
 
@@ -84,15 +74,20 @@ public interface Environment {
     @JsIgnore
     void setAccessControlProvider(AccessControlProvider accessControlProvider);
 
-    /**
-     * @return true if SSO is used, false otherwise.
-     */
+    @JsIgnore
+    void setSingleSignOn(boolean sso);
+
+    /** @return true if SSO is used, false otherwise. */
     @JsProperty
     boolean isSingleSignOn();
 
-    /**
-     * @return the standard and scoped roles.
-     */
+    /** @return the standard and scoped roles. */
     @JsProperty
     Roles getRoles();
+
+    /** @return whether HAL is run in development mode */
+    boolean isDevMode();
+
+    /** @return whether HAL is run in production mode */
+    boolean isProductionMode();
 }

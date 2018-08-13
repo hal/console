@@ -58,7 +58,7 @@ class CompositeRrdParser {
                     if (result.isDefined()) {
                         ResourceAddress operationAddress = operationAddress(index);
                         ResourceAddress resultAddress = new ResourceAddress(modelNode.get(ADDRESS));
-                        ResourceAddress resolvedAddress = adjustAddress(operationAddress, resultAddress);
+                        ResourceAddress resolvedAddress = makeFqAddress(operationAddress, resultAddress);
 
                         new SingleRrdParser(rrdResult).parse(resolvedAddress, result);
                     }
@@ -85,7 +85,7 @@ class CompositeRrdParser {
     }
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private ResourceAddress adjustAddress(ResourceAddress operationAddress, ResourceAddress resultAddress) {
+    private ResourceAddress makeFqAddress(ResourceAddress operationAddress, ResourceAddress resultAddress) {
         ResourceAddress resolved = resultAddress;
         List<Property> operationSegments = operationAddress.asPropertyList();
         List<Property> resultSegments = resultAddress.asPropertyList();

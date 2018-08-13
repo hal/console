@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>3.0.2.Final</version>
+        <version>3.0.3.Final</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -90,7 +90,6 @@
                                     <overWrite>true</overWrite>
                                     <includes>
                                         **/*.mbui.xml,
-                                        org/jboss/hal/core/Strings.java,
                                         org/jboss/hal/dmr/ModelDescriptionConstants.java,
                                         org/jboss/hal/meta/token/NameTokens.java,
                                         org/jboss/hal/resources/CSS.java,
@@ -98,6 +97,7 @@
                                         org/jboss/hal/resources/FontAwesomeSize.java,
                                         org/jboss/hal/resources/Ids.java,
                                         org/jboss/hal/resources/Names.java,
+                                        org/jboss/hal/resources/Strings.java,
                                         org/jboss/hal/resources/UIConstants.java,
                                         org/jboss/hal/resources/Urls.java
                                     </includes>

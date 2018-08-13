@@ -20,9 +20,14 @@ import javax.inject.Inject;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 public class ReadExtensions implements BootstrapTask {
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadExtensions.class);
 
     private final ExtensionRegistry extensionRegistry;
     private final ExtensionStorage extensionStorage;
@@ -37,6 +42,7 @@ public class ReadExtensions implements BootstrapTask {
     public Completable call() {
         // TODO Load server side extensions from /core-service=management/console-extension=*
         for (InstalledExtension extension : extensionStorage.list()) {
+            logger.debug("Read extension {}", extension.getName());
             extensionRegistry.inject(extension.getFqScript(), extension.getFqStylesheets());
         }
         return Completable.complete();

@@ -59,6 +59,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String cancelActiveOperation();
     String cancelNonProgressingOperation();
     String category();
+    String change();
+    String changeAccountKey();
     String changeAlias();
     String changePriority();
     String chooseFile();
@@ -101,12 +103,18 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String copyToClipboard();
     String count();
     String counter();
+
+    String create();
+    String createAccount();
+    String creationTime();
     String currentPage();
     String custom();
 
     String data();
     String day();
     String days();
+    String deactivate();
+    String deactivateAccount();
     String defaultValue();
     String deploy();
     String deployContent();
@@ -118,6 +126,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String deploymentSuccessful();
     String deployments();
     String description();
+
+    String destroy();
     String details();
     String directory();
     String disable();
@@ -152,6 +162,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
+    String entry();
     String environment();
     String error();
     String excludeRole();
@@ -186,6 +197,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
     String fromDeployment();
 
+    String getMetadata();
     String generateCSR();
     String generateKeyPair();
     String globalSettings();
@@ -237,6 +249,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageAccessControlStepIntro();
     String homepageAccessControlStep1();
     String homepageAccessControlStep2();
+    String homepageAccessControlSsoSubHeader();
     String homepagePatchingSection();
     String homepagePatchingStep1();
     String homepagePatchingDomainStep2();
@@ -306,8 +319,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String kill();
 
     String largest();
-    String lastPage();
+
+    String lastAccessedTime();
     String lastModified();
+
+    String lastPage();
     String load();
     String loading();
     String loadingPleaseWait();
@@ -445,6 +461,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String rename();
     String replace();
     String replaceContent();
+    String replaceDeployment();
     String request();
     String requests();
     String required();
@@ -490,8 +507,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String serverUrlCustom();
     String serverUrlManagementModel();
     String sessionTime();
-    String sessions();
-    String sessionsCreated();
     String sessionsAvgAliveTime();
     String sessionsMaxAliveTime();
     String setIdentityPasswordTitle();
@@ -563,6 +578,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unmanaged();
     String unpin();
     String unsupportedFileType();
+    String update();
+    String updateAccount();
     String upload();
     String uploadContent();
     String uploadPatch();

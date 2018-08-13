@@ -23,6 +23,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Names;
 
 public final class Format {
 
@@ -36,19 +37,19 @@ public final class Format {
 
 
     public static String timestamp(Date date) {
-        return TIMESTAMP.format(date);
+        return date != null ? TIMESTAMP.format(date) : Names.NOT_AVAILABLE;
     }
 
     public static String time(Date date) {
-        return TIME_MEDIUM.format(date);
+        return date != null ? TIME_MEDIUM.format(date) : Names.NOT_AVAILABLE;
     }
 
     public static String shortDateTime(Date date) {
-        return DATE_TIME_SHORT.format(date);
+        return date != null ? DATE_TIME_SHORT.format(date) : Names.NOT_AVAILABLE;
     }
 
     public static String mediumDateTime(Date date) {
-        return DATE_TIME_MEDIUM.format(date);
+        return date != null ? DATE_TIME_MEDIUM.format(date) : Names.NOT_AVAILABLE;
     }
 
     public static String humanReadableFileSize(long size) {

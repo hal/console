@@ -52,9 +52,10 @@ import static org.jboss.hal.resources.CSS.*;
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
  * that we need to take care of {@code store=none}.
  */
-class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
+class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
 
     private final EmptyState emptyState;
+    private final HTMLElement currentStore;
     private final HTMLElement headerForm;
     private final String selectStoreId;
     private final HTMLSelectElement selectStore;
@@ -63,51 +64,52 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final Map<Store, WriteElement> writeElements;
     private final Map<StoreTable, Form<ModelNode>> tableForms;
     private final HTMLElement root;
-    private CacheContainerPresenter presenter;
+    private CachePresenter presenter;
 
-    StoreElement(Cache cache, MetadataRegistry metadataRegistry, Resources resources) {
+    StoreElement(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
         this.tabs = new HashMap<>();
         this.storeForms = new HashMap<>();
         this.writeElements = new HashMap<>();
         this.tableForms = new HashMap<>();
 
         HTMLSelectElement emptyStoreSelect = storeSelect();
-        emptyState = new EmptyState.Builder(Ids.build(cache.baseId, STORE, Ids.EMPTY), resources.constants().noStore())
+        emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, STORE, Ids.EMPTY),
+                resources.constants().noStore())
                 .description(resources.messages().noStore())
                 .add(emptyStoreSelect)
                 .primaryAction(resources.constants().add(), () -> {
                     String value = SelectBoxBridge.Single.element(emptyStoreSelect).getValue();
-                    presenter.addCacheStore(Store.fromResource(value));
+                    presenter.addStore(Store.fromResource(value));
                 })
                 .build();
 
-        selectStoreId = Ids.build(cache.baseId, STORE, "select");
+        selectStoreId = Ids.build(cacheType.baseId, STORE, "select");
         selectStore = storeSelect();
         selectStore.id = selectStoreId;
 
         for (Store store : Store.values()) {
-            Tabs storeTabs = new Tabs(Ids.build(cache.baseId, store.baseId, Ids.TAB_CONTAINER));
+            Tabs storeTabs = new Tabs(Ids.build(cacheType.baseId, store.baseId, Ids.TAB_CONTAINER));
             tabs.put(store, storeTabs);
 
-            Metadata metadata = metadataRegistry.lookup(cache.template.append(STORE + "=" + store.resource));
-            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cache.baseId, store.baseId, Ids.FORM),
+            Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cacheType.baseId, store.baseId, Ids.FORM),
                     metadata)
-                    .onSave((f, changedValues) -> presenter.saveCacheStore(store, changedValues))
-                    .prepareReset(f -> presenter.resetCacheStore(store, f))
+                    .onSave((f, changedValues) -> presenter.saveStore(store, changedValues))
+                    .prepareReset(f -> presenter.resetStore(store, f))
                     .build();
             storeForms.put(store, form);
-            storeTabs.add(Ids.build(cache.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
+            storeTabs.add(Ids.build(cacheType.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
                     resources.constants().attributes(), form.asElement());
 
-            WriteElement writeElement = new WriteElement(cache, store, metadataRegistry, resources);
-            storeTabs.add(Ids.build(cache.baseId, store.baseId, WRITE, Ids.TAB), Names.WRITE_BEHAVIOUR,
+            WriteElement writeElement = new WriteElement(cacheType, store, metadataRegistry, resources);
+            storeTabs.add(Ids.build(cacheType.baseId, store.baseId, WRITE, Ids.TAB), Names.WRITE_BEHAVIOUR,
                     writeElement.asElement());
             writeElements.put(store, writeElement);
 
             if (store.tables != null) {
                 for (Table table : store.tables) {
-                    Form<ModelNode> tableForm = tableForm(cache, store, table, metadataRegistry);
-                    storeTabs.add(Ids.build(cache.baseId, store.baseId, table.baseId, Ids.TAB), table.type,
+                    Form<ModelNode> tableForm = tableForm(cacheType, store, table, metadataRegistry);
+                    storeTabs.add(Ids.build(cacheType.baseId, store.baseId, table.baseId, Ids.TAB), table.type,
                             tableForm.asElement());
                     tableForms.put(new StoreTable(store, table), tableForm);
                 }
@@ -121,7 +123,8 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                 .textContent(resources.constants().switchStore()))
                         .add(selectStore)
                         .asElement())
-                .add(h(1).textContent(Names.STORE))
+                .add(h(1).textContent(Names.STORE)
+                        .add(currentStore = span().asElement()))
                 .add(p().textContent(resources.constants().cacheStore()))
                 .add(emptyState)
                 .addAll(tabs.values().stream().map(Tabs::asElement).collect(toList()))
@@ -151,13 +154,14 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         return select;
     }
 
-    private Form<ModelNode> tableForm(Cache cache, Store store, Table table, MetadataRegistry metadataRegistry) {
-        AddressTemplate template = cache.template
+    private Form<ModelNode> tableForm(CacheType cacheType, Store store, Table table,
+            MetadataRegistry metadataRegistry) {
+        AddressTemplate template = cacheType.template
                 .append(STORE + "=" + store.resource)
                 .append(TABLE + "=" + table.resource);
         Metadata metadata = metadataRegistry.lookup(template);
 
-        String id = Ids.build(cache.baseId, store.baseId, table.baseId, Ids.FORM);
+        String id = Ids.build(cacheType.baseId, store.baseId, table.baseId, Ids.FORM);
         return new ModelNodeForm.Builder<>(id, metadata)
                 .include(PREFIX)
                 .customFormItem(ID_COLUMN, ad -> new ColumnFormItem(ID_COLUMN))
@@ -165,8 +169,8 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .customFormItem(TIMESTAMP_COLUMN, ad -> new ColumnFormItem(TIMESTAMP_COLUMN))
                 .include(BATCH_SIZE, FETCH_SIZE)
                 .unsorted()
-                .onSave((f, changedValues) -> presenter.saveStoreTable(table, changedValues))
-                .prepareReset(f -> presenter.resetStoreTable(table, f))
+                .onSave((f, changedValues) -> presenter.saveTable(table, changedValues))
+                .prepareReset(f -> presenter.resetTable(table, f))
                 .build();
     }
 
@@ -207,7 +211,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(CacheContainerPresenter presenter) {
+    public void setPresenter(CachePresenter presenter) {
         this.presenter = presenter;
         writeElements.values().forEach(we -> we.setPresenter(presenter));
     }
@@ -219,6 +223,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         } else {
             Store store = Store.fromResource(stores.get(0).getName());
             if (store != null) {
+                currentStore.textContent = ": " + store.type;
                 SelectBoxBridge.Single.element(selectStore).setValue(store.resource);
 
                 ModelNode storeNode = stores.get(0).getValue();

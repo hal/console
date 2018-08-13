@@ -10,7 +10,15 @@
             "type" => STRING,
             "description" => "The user interface language.",
             "nillable" => false,
-            "allowed" => [],
+            "allowed" => [
+                "en",
+                "de",
+                "es",
+                "fr",
+                "pt_BR",
+                "zh_Hans",
+                "ja"
+            ],
         },
         "page-size" => {
             "type" => INT,

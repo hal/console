@@ -76,6 +76,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
+    private static final String MODEL_MUST_NOT_BE_NULL = "Model must not be null in ";
     private static final String MODEL_MUST_NOT_BE_UNDEFINED = "Model must not be undefined in ";
     private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
@@ -423,8 +424,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
-        if (isUndefined()) {
-            throw new NullPointerException(MODEL_MUST_NOT_BE_UNDEFINED + formId() + ".cancel()");
+        if (getModel() == null) {
+            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".cancel()");
         }
         stateExec(CANCEL);
         dataMapping.populateFormItems(model, this); // restore persisted model

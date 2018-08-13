@@ -48,10 +48,12 @@ public class CheckForUpdate implements InitializedTask {
         if (environment.getHalBuild() == Build.PRODUCT) {
             logger.debug("Version update check skipped for EAP");
         } else {
+            logger.debug("Check for update");
             XMLHttpRequest xhr = new XMLHttpRequest();
             xhr.onload = event -> {
                 String versionText = xhr.responseText;
                 try {
+                    logger.debug("Online version {}", versionText);
                     Version version = Version.parseVersion(versionText);
                     eventBus.fireEvent(new VersionUpdateEvent(version));
                 } catch (Throwable t) {

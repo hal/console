@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
@@ -70,6 +71,11 @@ public class Settings {
         }
     }
 
+    @Override
+    public String toString() {
+        return Joiner.on(", ").withKeyValueSeparator('=').join(values);
+    }
+
     private String cookieName(Key key) {
         return Ids.build(Ids.COOKIE, key.key);
     }
@@ -100,7 +106,7 @@ public class Settings {
         private final String key;
         private final boolean persistent;
 
-        Key(@NonNls final String key, final boolean persistent) {
+        Key(@NonNls String key, boolean persistent) {
             this.key = key;
             this.persistent = persistent;
         }
@@ -118,7 +124,7 @@ public class Settings {
 
         private final String value;
 
-        private Value(final String value) {
+        private Value(String value) {
             this.value = value;
         }
 
@@ -150,6 +156,11 @@ public class Settings {
         }
 
         public String value() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
             return value;
         }
     }

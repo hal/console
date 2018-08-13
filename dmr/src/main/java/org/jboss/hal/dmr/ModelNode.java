@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import com.google.common.base.CharMatcher;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -51,8 +52,10 @@ public class ModelNode implements Cloneable {
      * @return the new model node
      */
     public static ModelNode fromBase64(String encoded) {
+        // Bloody IE can't cope with line breaks when decoding base64!
+        String safeEncoded = CharMatcher.breakingWhitespace().removeFrom(encoded);
         ModelNode node = new ModelNode();
-        String decoded = Base64.decode(encoded);
+        String decoded = Base64.decode(safeEncoded);
         node.readExternal(new DataInput(toBytes(decoded)));
         return node;
     }
@@ -68,7 +71,7 @@ public class ModelNode implements Cloneable {
     private static final String NEW_VALUE_IS_NULL = "newValue is null";
 
     private boolean protect = false;
-    private ModelValue value = ModelValue.UNDEFINED;
+    private ModelValue value;
 
     @JsIgnore
     public ModelNode() {

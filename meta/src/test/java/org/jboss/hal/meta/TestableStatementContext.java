@@ -38,7 +38,7 @@ public class TestableStatementContext implements StatementContext {
 
 
     @Override
-    public String resolve(final String placeholder) {
+    public String resolve(String placeholder, AddressTemplate template) {
         if (SELECTION_KEY.equals(placeholder)) {
             return "selection";
         }
@@ -46,7 +46,7 @@ public class TestableStatementContext implements StatementContext {
     }
 
     @Override
-    public String[] resolveTuple(final String placeholder) {
+    public String[] resolveTuple(String placeholder, AddressTemplate template) {
         Tuple t = Tuple.from(placeholder);
         if (t != null && context.containsKey(t)) {
             String value = context.get(t);

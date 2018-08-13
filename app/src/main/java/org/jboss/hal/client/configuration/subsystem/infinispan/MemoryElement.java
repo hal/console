@@ -46,28 +46,29 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MEMORY;
 import static org.jboss.hal.resources.CSS.*;
 
 /** Element to view and modify the {@code memory=*} singletons of a cache. */
-class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
+class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
 
+    private final HTMLElement currentMemory;
     private final HTMLElement headerForm;
     private final String selectMemoryId;
     private final HTMLSelectElement selectMemory;
     private final Map<Memory, Form<ModelNode>> memoryForms;
     private final HTMLElement root;
-    private CacheContainerPresenter presenter;
+    private CachePresenter presenter;
 
-    MemoryElement(Cache cache, MetadataRegistry metadataRegistry, Resources resources) {
-        this.memoryForms = new HashMap<>();
+    MemoryElement(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
+        memoryForms = new HashMap<>();
 
-        selectMemoryId = Ids.build(cache.baseId, MEMORY, "select");
+        selectMemoryId = Ids.build(cacheType.baseId, MEMORY, "select");
         selectMemory = memorySelect();
         selectMemory.id = selectMemoryId;
 
         for (Memory memory : Memory.values()) {
-            Metadata metadata = metadataRegistry.lookup(cache.template.append(MEMORY + "=" + memory.resource));
-            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cache.baseId, memory.baseId, Ids.FORM),
+            Metadata metadata = metadataRegistry.lookup(cacheType.template.append(MEMORY + "=" + memory.resource));
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cacheType.baseId, memory.baseId, Ids.FORM),
                     metadata)
-                    .onSave((f, changedValues) -> presenter.saveCacheMemory(memory, changedValues))
-                    .prepareReset(f -> presenter.resetCacheMemory(memory, f))
+                    .onSave((f, changedValues) -> presenter.saveMemory(memory, changedValues))
+                    .prepareReset(f -> presenter.resetMemory(memory, f))
                     .build();
             Elements.setVisible(form.asElement(), false);
             memoryForms.put(memory, form);
@@ -80,7 +81,8 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                                 .textContent(resources.constants().switchMemory()))
                         .add(selectMemory)
                         .asElement())
-                .add(h(1).textContent(Names.MEMORY))
+                .add(h(1).textContent(Names.MEMORY)
+                        .add(currentMemory = span().asElement()))
                 .add(p().textContent(resources.constants().cacheMemory()))
                 .addAll(memoryForms.values().stream().map(Form::asElement).collect(toList()))
                 .asElement();
@@ -137,16 +139,17 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     @Override
-    public void setPresenter(CacheContainerPresenter presenter) {
+    public void setPresenter(CachePresenter presenter) {
         this.presenter = presenter;
     }
 
-    void update(List<Property> stores) {
-        Memory memory = Memory.fromResource(stores.get(0).getName());
+    void update(List<Property> memories) {
+        Memory memory = Memory.fromResource(memories.get(0).getName());
         if (memory != null) {
+            currentMemory.textContent = ": " + memory.type;
             SelectBoxBridge.Single.element(selectMemory).setValue(memory.resource);
 
-            ModelNode memoryNode = stores.get(0).getValue();
+            ModelNode memoryNode = memories.get(0).getValue();
             memoryForms.get(memory).view(memoryNode);
         }
         memoryForms.forEach((m, f) -> Elements.setVisible(f.asElement(), m == memory));

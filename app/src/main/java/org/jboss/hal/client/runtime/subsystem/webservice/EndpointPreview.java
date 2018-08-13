@@ -43,8 +43,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.hal.core.Strings.abbreviateFqClassName;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 
 class EndpointPreview extends PreviewContent<DeploymentResource> {
 
@@ -56,8 +56,8 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
     private Donut requests;
     private LabelBuilder lblBuilder = new LabelBuilder();
 
-    EndpointPreview(final FinderPathFactory finderPathFactory, final Places places,
-            final DeploymentResource deploymentResource, final Dispatcher dispatcher, final Resources resources) {
+    EndpointPreview(FinderPathFactory finderPathFactory, Places places,
+            DeploymentResource deploymentResource, Dispatcher dispatcher, Resources resources) {
         super(abbreviateFqClassName(deploymentResource.getName()), deploymentResource.getPath());
         this.dispatcher = dispatcher;
 
@@ -115,7 +115,7 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
     }
 
     @Override
-    public void update(final DeploymentResource item) {
+    public void update(DeploymentResource item) {
         // the endpoint name (last value of address) contains %3A character separator
         // however the dispatcher.execute call performs a http call, then the url is encoded, the %3A becomes %253A
         // in the endpointa name, causing a HTTP 500 address not found.

@@ -50,6 +50,10 @@ public class Subsystems {
                 .generic()
                 .preview(resources.previews().configurationBeanValidation())
                 .build());
+        addConfiguration(new SubsystemMetadata.Builder(CORE_MANAGEMENT, Names.CORE_MANAGEMENT)
+                .token(NameTokens.CORE_MANAGEMENT)
+                .preview(resources.previews().coreManagement())
+                .build());
         addConfiguration(new SubsystemMetadata.Builder(DATASOURCES, Names.DATASOURCES_DRIVERS)
                 .nextColumn(Ids.DATA_SOURCE_DRIVER)
                 .preview(resources.previews().configurationDatasourcesDrivers())
@@ -129,8 +133,13 @@ public class Subsystems {
                 .nextColumn(Ids.MESSAGING_CATEGORY)
                 .preview(resources.previews().configurationMessaging())
                 .build());
+        addConfiguration(new SubsystemMetadata.Builder(MICROPROFILE_CONFIG_SMALLRYE, Names.MICROPROFILE_CONFIG)
+                .subtitle(Names.SMALLRYE)
+                .token(NameTokens.MICROPROFILE_CONFIG)
+                .preview(resources.previews().configurationMicroprofileConfig())
+                .build());
         addConfiguration(new SubsystemMetadata.Builder(MODCLUSTER, Names.MODCLUSTER)
-                .token(NameTokens.MODCLUSTER)
+                .nextColumn(Ids.MODCLUSTER_PROXY)
                 .preview(resources.previews().configurationModcluster())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(NAMING, "Naming")

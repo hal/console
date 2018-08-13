@@ -25,6 +25,8 @@ import org.jboss.hal.config.OperationMode;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.Version;
+import org.jboss.hal.config.keycloak.Keycloak;
+import org.jboss.hal.config.keycloak.KeycloakHolder;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
@@ -33,6 +35,9 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.ManagementModel;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -45,19 +50,31 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 @SuppressWarnings("HardCodedStringLiteral")
 public class ReadEnvironment implements BootstrapTask {
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
+
     private final Dispatcher dispatcher;
     private final Environment environment;
     private final User user;
+    private KeycloakHolder keycloakHolder;
 
     @Inject
-    public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user) {
+    public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user, KeycloakHolder keycloakHolder) {
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.user = user;
+        this.keycloakHolder = keycloakHolder;
     }
 
     @Override
     public Completable call() {
+        logger.debug("Read environment");
+
+        Keycloak keycloak = keycloakHolder.getKeycloak();
+        environment.setSingleSignOn(keycloak != null);
+        if (keycloak != null) {
+            logger.debug("Keycloak token: {}", keycloak.token);
+        }
+
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
@@ -67,38 +84,56 @@ public class ReadEnvironment implements BootstrapTask {
 
         return dispatcher.execute(new Composite(ops))
                 .doOnSuccess((CompositeResult result) -> {
+
                     // server info
                     ModelNode node = result.step(0).get(RESULT);
+                    String serverName = node.get(NAME).asString();
                     environment.setInstanceInfo(node.get(PRODUCT_NAME).asString(),
                             node.get(PRODUCT_VERSION).asString(),
                             node.get(RELEASE_CODENAME).asString(), node.get(RELEASE_VERSION).asString(),
-                            node.get(NAME).asString());
+                            serverName);
+                    logger.debug("Server info: {}", serverName);
 
                     // operation mode
                     //noinspection Convert2MethodRef (conflicts with second method reference below)
                     OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, (name) -> OperationMode.valueOf(name),
                             OperationMode.UNDEFINED);
                     environment.setOperationMode(operationMode);
+                    logger.debug("Operation mode: {}", operationMode);
 
                     // management version
                     Version version = ManagementModel.parseVersion(node);
                     environment.setManagementVersion(version);
+                    logger.debug("Management model version: {}", version);
 
                     if (environment.isStandalone()) {
                         Server.STANDALONE.addServerAttributes(node);
                     }
 
                     // user info
-                    ModelNode whoami = result.step(1).get(RESULT);
-                    String username = whoami.get("identity").get("username").asString();
-                    user.setName(username);
-                    if (whoami.hasDefined("mapped-roles")) {
-                        List<ModelNode> roles = whoami.get("mapped-roles").asList();
-                        for (ModelNode role : roles) {
-                            String roleName = role.asString();
-                            user.addRole(new Role(roleName));
+                    if (environment.isSingleSignOn()) {
+                        user.setName(keycloak.userProfile.username);
+                        // as Keycloak is a native js object, the Java 8 collection methods as: stream, foreach, iterator
+                        // are not supported on the javascript side when run in the browser.
+                        if (keycloak.realmAccess != null && keycloak.realmAccess.roles != null) {
+                            for (int i = 0; i < keycloak.realmAccess.roles.length; i++) {
+                                String role = keycloak.realmAccess.roles[i];
+                                user.addRole(new Role(role));
+                            }
+                        }
+                    } else {
+                        ModelNode whoami = result.step(1).get(RESULT);
+                        String username = whoami.get("identity").get("username").asString();
+                        user.setName(username);
+                        if (whoami.hasDefined("mapped-roles")) {
+                            List<ModelNode> roles = whoami.get("mapped-roles").asList();
+                            for (ModelNode role : roles) {
+                                String roleName = role.asString();
+                                user.addRole(new Role(roleName));
+                            }
                         }
                     }
+                    logger.debug("User info: {}", user.getName(), user.getRoles());
                 })
                 .toCompletable();
     }

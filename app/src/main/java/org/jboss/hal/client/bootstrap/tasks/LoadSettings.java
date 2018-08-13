@@ -20,6 +20,9 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
@@ -33,6 +36,8 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * dispatcher.
  */
 public class LoadSettings implements BootstrapTask {
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(LoadSettings.class);
 
     private final Environment environment;
     private final Settings settings;
@@ -49,6 +54,7 @@ public class LoadSettings implements BootstrapTask {
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);
         settings.load(PAGE_SIZE, Settings.DEFAULT_PAGE_SIZE);
         settings.load(RUN_AS, null);
+        logger.debug("Load settings: {}", settings);
         return Completable.complete();
     }
 }

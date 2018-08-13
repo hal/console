@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
 import com.google.common.base.Strings;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -31,16 +30,15 @@ import org.jdom2.xpath.XPathFactory;
 
 class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    FormProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,
-            final XPathFactory xPathFactory) {
-        super(processor, typeUtils, elementUtils, xPathFactory);
+    FormProcessor(MbuiViewProcessor processor, Elements elementUtils, XPathFactory xPathFactory) {
+        super(processor, elementUtils, xPathFactory);
     }
 
     @Override
-    public void process(final VariableElement field, final Element element, final String selector,
-            final MbuiViewContext context) {
+    public void process(VariableElement field, Element element, String selector, MbuiViewContext context) {
         String title = element.getAttributeValue(XmlTags.TITLE);
         boolean autoSave = Boolean.parseBoolean(element.getAttributeValue(XmlTags.AUTO_SAVE));
+        String addHandler = element.getAttributeValue(XmlTags.ADD_HANDLER);
         boolean reset = Boolean.parseBoolean(element.getAttributeValue(XmlTags.RESET));
         boolean includeRuntime = Boolean.parseBoolean(element.getAttributeValue(XmlTags.INCLUDE_RUNTIME));
         boolean singleton = XmlTags.SINGLETON_FORM.equalsIgnoreCase(element.getName());
@@ -72,7 +70,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
         }
 
         FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
-                metadata, title, autoSave, onSave, reset, prepareReset, nameResolver, includeRuntime, singleton);
+                metadata, title, addHandler, autoSave, onSave, reset, prepareReset, nameResolver, includeRuntime, singleton);
         context.addFormInfo(formInfo);
 
         org.jdom2.Element attributesContainer = element.getChild(XmlTags.ATTRIBUTES);

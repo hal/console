@@ -42,6 +42,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.FilteringStatementContext.Filter;
 import org.jboss.hal.meta.Metadata;
@@ -94,7 +95,7 @@ public class ApplicationSecurityDomainPresenter extends
         this.statementContext = new FilteringStatementContext(statementContext,
                 new Filter() {
                     @Override
-                    public String filter(String placeholder) {
+                    public String filter(String placeholder, AddressTemplate template) {
                         if (SELECTION_KEY.equals(placeholder)) {
                             return appSecurityDomain;
                         }
@@ -102,7 +103,7 @@ public class ApplicationSecurityDomainPresenter extends
                     }
 
                     @Override
-                    public String[] filterTuple(String placeholder) {
+                    public String[] filterTuple(String placeholder, AddressTemplate template) {
                         return null;
                     }
                 });

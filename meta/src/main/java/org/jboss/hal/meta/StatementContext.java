@@ -48,7 +48,7 @@ public interface StatementContext {
         private final String name;
         private final String resource;
 
-        Tuple(final String name, final String resource) {
+        Tuple(String name, String resource) {
             this.name = name;
             this.resource = resource;
         }
@@ -76,12 +76,12 @@ public interface StatementContext {
     StatementContext NOOP = new StatementContext() {
 
         @Override
-        public String resolve(String placeholder) {
+        public String resolve(String placeholder, AddressTemplate template) {
             return placeholder;
         }
 
         @Override
-        public String[] resolveTuple(String placeholder) {
+        public String[] resolveTuple(String placeholder, AddressTemplate template) {
             return new String[]{placeholder, placeholder};
         }
 
@@ -117,51 +117,35 @@ public interface StatementContext {
     };
 
 
-    /**
-     * Resolves a single value.
-     */
+    /** Resolves a single value. */
     @JsIgnore
-    String resolve(String placeholder);
+    String resolve(String placeholder, AddressTemplate template);
 
-    /**
-     * Resolves a tuple.
-     */
+    /** Resolves a tuple. */
     @JsIgnore
-    String[] resolveTuple(String placeholder);
+    String[] resolveTuple(String placeholder, AddressTemplate template);
 
-    /**
-     * @return the domain controller
-     */
+    /** @return the domain controller */
     @JsProperty(name = "domainController")
     String domainController();
 
-    /**
-     * @return the selected profile
-     */
+    /** @return the selected profile */
     @JsProperty(name = "selectedProfile")
     String selectedProfile();
 
-    /**
-     * @return the selected server group
-     */
+    /** @return the selected server group */
     @JsProperty(name = "selectedServerGroup")
     String selectedServerGroup();
 
-    /**
-     * @return the selected host
-     */
+    /** @return the selected host */
     @JsProperty(name = "selectedHost")
     String selectedHost();
 
-    /**
-     * @return the selected server config
-     */
+    /** @return the selected server config */
     @JsProperty(name = "selectedServerConfig")
     String selectedServerConfig();
 
-    /**
-     * @return the selected server
-     */
+    /** @return the selected server */
     @JsProperty(name = "selectedServer")
     String selectedServer();
 }

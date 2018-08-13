@@ -44,7 +44,7 @@ import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.auto.AbstractProcessor;
-import org.jboss.hal.core.Strings;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
 

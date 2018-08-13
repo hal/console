@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -46,11 +47,12 @@ class RrdTask implements Task<LookupContext> {
     private final int batchSize;
     private final CreateRrdOperations rrdOps;
 
-    RrdTask(Environment environment, Dispatcher dispatcher, StatementContext statementContext,
+    RrdTask(Environment environment, Dispatcher dispatcher, StatementContext statementContext, Settings settings,
             int batchSize, int depth) {
         this.dispatcher = dispatcher;
         this.batchSize = batchSize;
-        this.rrdOps = new CreateRrdOperations(environment, statementContext, depth);
+        this.rrdOps = new CreateRrdOperations(environment, statementContext, settings.get(Settings.Key.LOCALE).value(),
+                depth);
     }
 
     @Override

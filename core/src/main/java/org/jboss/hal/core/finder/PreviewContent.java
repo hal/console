@@ -28,10 +28,10 @@ import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
-import org.jboss.hal.core.Strings;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Previews;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.spi.Callback;
 
 import static org.jboss.gwt.elemento.core.Elements.*;

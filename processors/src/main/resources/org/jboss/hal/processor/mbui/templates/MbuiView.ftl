@@ -106,7 +106,15 @@ public final class ${context.subclass} extends ${context.base} {
                 <#if form.singleton>
             .singleton(
                 () -> new Operation.Builder(${form.metadata.name}Template.resolve(mbuiContext.statementContext()), READ_RESOURCE_OPERATION).build(),
-                () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template))
+                <#if form.metadata.singleton>
+                    <#if form.addHandler??>
+                () -> ${form.addHandler})
+                    <#else>
+                () -> addSingleton("${form.selector}", ${form.title}, ${form.metadata.name}Template))
+                    </#if>
+                <#else>
+                () -> add("${form.selector}", ${form.title}, ${form.metadata.name}Template))
+                </#if>
             .prepareRemove(form -> removeSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form))
                 </#if>
                 <#if form.includeRuntime>

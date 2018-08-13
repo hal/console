@@ -78,6 +78,10 @@ enum ElytronResource {
             ModelDescriptionConstants.CACHING_REALM,
             AddressTemplates.CACHING_REALM_TEMPLATE, false),
 
+    CERTIFICATE_AUTHORITY_ACCOUNT(Ids.ELYTRON_CERTIFICATE_AUTHORITY_ACCOUNT,
+            ModelDescriptionConstants.CERTIFICATE_AUTHORITY_ACCOUNT,
+            AddressTemplates.CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, false),
+
     CHAINED_PRINCIPAL_TRANSFORMER(Ids.ELYTRON_CHAINED_PRINCIPAL_TRANSFORMER,
             ModelDescriptionConstants.CHAINED_PRINCIPAL_TRANSFORMER,
             AddressTemplates.CHAINED_PRINCIPAL_TRANSFORMER_TEMPLATE, false),
@@ -158,6 +162,10 @@ enum ElytronResource {
             ModelDescriptionConstants.CUSTOM_ROLE_MAPPER,
             AddressTemplates.CUSTOM_ROLE_MAPPER_TEMPLATE, false),
 
+    CUSTOM_SECURITY_EVENT_LISTENER(Ids.ELYTRON_CUSTOM_SECURITY_EVENT_LISTENER,
+            ModelDescriptionConstants.CUSTOM_SECURITY_EVENT_LISTENER,
+            AddressTemplates.CUSTOM_SECURITY_EVENT_LISTENER_TEMPLATE, false),
+
     DIR_CONTEXT(Ids.ELYTRON_DIR_CONTEXT,
             ModelDescriptionConstants.DIR_CONTEXT,
             AddressTemplates.DIR_CONTEXT_TEMPLATE, false),
@@ -222,6 +230,10 @@ enum ElytronResource {
             ModelDescriptionConstants.MAPPED_REGEX_REALM_MAPPER,
             AddressTemplates.MAPPED_REGEX_REALM_MAPPER_TEMPLATE, false),
 
+    MAPPED_ROLE_MAPPER(Ids.ELYTRON_MAPPED_ROLE_MAPPER,
+            ModelDescriptionConstants.MAPPED_ROLE_MAPPER,
+            AddressTemplates.MAPPED_ROLE_MAPPER_TEMPLATE, false),
+
     MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY(Ids.ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY,
             ModelDescriptionConstants.MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY,
             AddressTemplates.MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_TEMPLATE, false),
@@ -229,6 +241,10 @@ enum ElytronResource {
     PERIODIC_ROTATING_FILE_AUDIT_LOG(Ids.ELYTRON_PERIODIC_ROTATING_FILE_AUDIT_LOG,
             ModelDescriptionConstants.PERIODIC_ROTATING_FILE_AUDIT_LOG,
             AddressTemplates.PERIODIC_ROTATING_FILE_AUDIT_LOG_TEMPLATE, false),
+
+    PERMISSION_SET(Ids.ELYTRON_PERMISSION_SET,
+            ModelDescriptionConstants.PERMISSION_SET,
+            AddressTemplates.PERMISSION_SET_TEMPLATE, false),
 
     POLICY(Ids.ELYTRON_POLICY,
             ModelDescriptionConstants.POLICY,

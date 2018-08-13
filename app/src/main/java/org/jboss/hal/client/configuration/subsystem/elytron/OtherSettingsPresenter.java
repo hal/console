@@ -146,6 +146,9 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
                 ElytronResource.SYSLOG_AUDIT_LOG.resource,
                 ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                ElytronResource.CUSTOM_SECURITY_EVENT_LISTENER.resource,
+                ElytronResource.PERMISSION_SET.resource,
+                ElytronResource.CERTIFICATE_AUTHORITY_ACCOUNT.resource,
                 ElytronResource.POLICY.resource), // policy must be the last item in the list!
                 result -> {
                     int i = 0;
@@ -185,6 +188,12 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                     getView().updateResourceElement(ElytronResource.SYSLOG_AUDIT_LOG.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CUSTOM_SECURITY_EVENT_LISTENER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.PERMISSION_SET.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CERTIFICATE_AUTHORITY_ACCOUNT.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // policy must be the last item in the list!
                     List<NamedNode> policies = asNamedNodes(result.step(i).get(RESULT).asPropertyList());
@@ -477,8 +486,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @ProxyCodeSplit
     @Requires(value = {AGGREGATE_PROVIDERS_ADDRESS,
             AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS,
+            CUSTOM_SECURITY_EVENT_LISTENER_ADDRESS,
             AUTHENTICATION_CONFIGURATION_ADDRESS,
             AUTHENTICATION_CONTEXT_ADDRESS,
+            CERTIFICATE_AUTHORITY_ACCOUNT_ADDRESS,
             CLIENT_SSL_CONTEXT_ADDRESS,
             CREDENTIAL_STORE_ADDRESS,
             DIR_CONTEXT_ADDRESS,
@@ -494,7 +505,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             SERVER_SSL_CONTEXT_ADDRESS,
             SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
             SYSLOG_AUDIT_LOG_ADDRESS,
-            TRUST_MANAGER_ADDRESS})
+            TRUST_MANAGER_ADDRESS,
+            PERMISSION_SET_ADDRESS})
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {
     }

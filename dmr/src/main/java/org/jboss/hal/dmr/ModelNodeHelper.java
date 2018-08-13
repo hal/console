@@ -110,7 +110,15 @@ public class ModelNodeHelper {
         ModelNode attribute = failSafeGet(modelNode, path);
         if (attribute.isDefined()) {
             try {
-                return ISO_8601.parse(attribute.asString());
+                String date = attribute.asString();
+                if (date.indexOf('[') != -1 && date.endsWith("]")) {
+                    // Strip zone ID which comes from using
+                    // java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME instead of
+                    // java.time.format.DateTimeFormatter.ISO_DATE_TIME
+                    // see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_ZONED_DATE_TIME
+                    date = date.substring(0, date.indexOf('['));
+                }
+                return ISO_8601.parse(date);
             } catch (IllegalArgumentException ignore) { }
         }
         return null;

@@ -62,7 +62,7 @@ public class LoggingProfilePresenter
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private ComplexAttributeOperations ca;
+    private final ComplexAttributeOperations ca;
     private String loggingProfile;
 
     @Inject

@@ -6,6 +6,16 @@ import org.junit.Test;
 public class VersionTest {
 
     @Test
+    public void parseEap() {
+        String input = "3.0.2.Final-redhat-1";
+        Version version = org.jboss.hal.config.Version.parseVersion(input);
+        Assert.assertEquals(version.getMajor(), 3);
+        Assert.assertEquals(version.getMinor(), 0);
+        Assert.assertEquals(version.getMicro(), 2);
+        Assert.assertEquals(version.getQualifier(), "Final-redhat-1");
+    }
+
+    @Test
     public void parseSnapshot() {
         String input = "3.0.1-SNAPSHOT";
         Version version = org.jboss.hal.config.Version.parseVersion(input);

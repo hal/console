@@ -38,7 +38,7 @@ enum ServletContainerSetting {
     final String resource;
     final String icon;
 
-    ServletContainerSetting(final String baseId, final String type, final String resource, final String icon) {
+    ServletContainerSetting(String baseId, String type, String resource, String icon) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;

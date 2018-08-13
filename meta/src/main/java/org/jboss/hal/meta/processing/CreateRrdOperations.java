@@ -36,12 +36,14 @@ class CreateRrdOperations {
     private final SecurityContextStatementContext securityContextStatementContext;
     private final ResourceDescriptionStatementContext resourceDescriptionStatementContext;
     private final int depth;
+    private final String locale;
 
-    CreateRrdOperations(Environment environment, StatementContext statementContext, int depth) {
-        this.depth = depth;
+    CreateRrdOperations(Environment environment, StatementContext statementContext, String locale, int depth) {
         this.securityContextStatementContext = new SecurityContextStatementContext(statementContext, environment);
         this.resourceDescriptionStatementContext = new ResourceDescriptionStatementContext(statementContext,
                 environment);
+        this.locale = locale;
+        this.depth = depth;
     }
 
     public List<Operation> create(LookupContext context, boolean recursive, boolean optional) {
@@ -78,6 +80,7 @@ class CreateRrdOperations {
                             if (recursive) {
                                 builder.param(RECURSIVE_DEPTH, depth);
                             }
+                            builder.param(LOCALE, locale);
                             operations.add(builder.build());
                         }
                     }

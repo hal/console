@@ -40,6 +40,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.FilteringStatementContext.Filter;
 import org.jboss.hal.meta.Metadata;
@@ -91,7 +92,7 @@ public class WebservicePresenter
         this.metadataRegistry = metadataRegistry;
         this.statementContext = new FilteringStatementContext(statementContext, new Filter() {
             @Override
-            public String filter(String resource) {
+            public String filter(String resource, AddressTemplate template) {
                 switch (resource) {
                     case CONFIG_TYPE:
                         return configType.resource;
@@ -108,7 +109,7 @@ public class WebservicePresenter
             }
 
             @Override
-            public String[] filterTuple(String placeholder) {
+            public String[] filterTuple(String placeholder, AddressTemplate template) {
                 return null;
             }
         });

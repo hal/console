@@ -1,0 +1,17 @@
+<p>The Undertow subsystem allows you to configure the web server and servlet container settings. It implements the
+    <a href="https://jcp.org/en/jsr/detail?id=340" target="_blank">Java Servlet 3.1 Specification</a> as well as websockets and supports HTTP Upgrade and using high performance non-blocking handlers in servlet deployments. The Undertow subsystem also has the ability to act as a high performance reverse proxy which supports mod_cluster.
+</p>
+
+<p>Within the Undertow subsystem, there are six main components to configure:</p>
+<ol>
+    <li>Global Settings</li>
+    <li>Buffer Caches</li>
+    <li>Serveur</li>
+    <li>Servlet Container</li>
+    <li>Filtres</li>
+    <li>Gestionnaires</li>
+</ol>
+
+<p><strong>Important</strong><br/>
+    The Undertow subsystem also relies on the IO subsystem to provide XNIO workers and buffer pools. The IO subsystem is configured separately and provides a default configuration which should give optimal performance in most cases.
+</p>

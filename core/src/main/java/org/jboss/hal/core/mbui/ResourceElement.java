@@ -271,6 +271,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
     @Override
     public void attach() {
         table.attach();
+        table.enableButton(1, false);
         form.attach();
         table.bindForm(form);
         table.onSelectionChange(table -> {
@@ -284,6 +285,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     form.clear();
                 }
             }
+            table.enableButton(1, table.hasSelection());
         });
         coForms.forEach((s, form1) -> form1.attach());
         if (Iterables.isEmpty(form.getFormItems())) {

@@ -30,6 +30,7 @@ import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent.HostSelectionHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent.ServerSelectionHandler;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -63,13 +64,13 @@ public class CoreStatementContext implements StatementContext,
         eventBus.addHandler(ServerSelectionEvent.getType(), this);
     }
 
-    public String resolve(final String resource) {
+    public String resolve(String resource, AddressTemplate template) {
         // not supported
         return null;
     }
 
     @Override
-    public String[] resolveTuple(final String placeholder) {
+    public String[] resolveTuple(String placeholder, AddressTemplate template) {
         if (!environment.isStandalone()) {
             Tuple validTuple = Tuple.from(placeholder);
             if (validTuple != null) {
@@ -87,25 +88,25 @@ public class CoreStatementContext implements StatementContext,
     }
 
     @Override
-    public void onProfileSelection(final ProfileSelectionEvent event) {
+    public void onProfileSelection(ProfileSelectionEvent event) {
         context.put(SELECTED_PROFILE, event.getProfile());
         logger.info("Selected profile {}", event.getProfile());
     }
 
     @Override
-    public void onServerGroupSelection(final ServerGroupSelectionEvent event) {
+    public void onServerGroupSelection(ServerGroupSelectionEvent event) {
         context.put(SELECTED_GROUP, event.getServerGroup());
         logger.info("Selected server-group {}", event.getServerGroup());
     }
 
     @Override
-    public void onHostSelection(final HostSelectionEvent event) {
+    public void onHostSelection(HostSelectionEvent event) {
         context.put(SELECTED_HOST, event.getHost());
         logger.info("Selected host {}", event.getHost());
     }
 
     @Override
-    public void onServerSelection(final ServerSelectionEvent event) {
+    public void onServerSelection(ServerSelectionEvent event) {
         context.put(SELECTED_SERVER_CONFIG, event.getServer());
         context.put(SELECTED_SERVER, event.getServer());
         logger.info("Selected server {}", event.getServer());

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.0.2.Final</version>
+        <version>3.0.3.Final</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -38,7 +38,7 @@
         <auto-service.version>1.0-rc4</auto-service.version>
         <compile-testing.version>0.15</compile-testing.version>
         <elemental.version>1.0.0-RC1</elemental.version>
-        <elemento.version>0.8.2-gwt2</elemento.version>
+        <elemento.version>0.8.6-gwt2</elemento.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>25.0-jre</guava.version>
         <gwt.version>2.8.2</gwt.version>
@@ -50,7 +50,7 @@
         <jdom.version>2.0.2</jdom.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
-        <node.version>v8.11.1</node.version>
+        <node.version>v8.11.3</node.version>
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
@@ -59,7 +59,7 @@
         <wildfly.version>12.0.0.Final</wildfly.version>
         <wildfly-core.version>4.0.0.Final</wildfly-core.version>
         <wildfly-swarm.version>2018.5.0</wildfly-swarm.version>
-        <yarn.version>v1.3.2</yarn.version>
+        <yarn.version>v1.9.2</yarn.version>
     </properties>
 
     <!-- Do not declare any build settings here! Declare them in hal-parent. -->

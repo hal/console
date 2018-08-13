@@ -17,4 +17,4 @@ cd ${ROOT}
 stop_spinner $?
 
 echo
-cloc . --exclude-dir=.idea,bower_components,node,node_modules,target --exclude-ext=iml
+cloc . --exclude-dir=.idea,node,node_modules,target --exclude-ext=iml

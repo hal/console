@@ -61,7 +61,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     }
 
     @MbuiElement("remoting-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("remoting-endpoint-configuration") Form<ModelNode> endpointConfigurationForm;
+    @MbuiElement("remoting-configuration") Form<ModelNode> configurationForm;
 
     @MbuiElement("remoting-connector-table") Table<NamedNode> connectorTable;
     @MbuiElement("remoting-http-connector-table") Table<NamedNode> httpConnectorTable;
@@ -215,7 +215,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
 
     @Override
     public void update(ModelNode payload) {
-        endpointConfigurationForm.view(failSafeGet(payload, "configuration/endpoint")); //NON-NLS
+        configurationForm.view(payload); //NON-NLS
 
         connectorForm.clear();
         connectorForm.getFormItem(PROPERTY).clearValue();

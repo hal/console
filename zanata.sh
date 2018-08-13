@@ -101,7 +101,7 @@ function pull {
 
 function pullBundles {
     mkdir -p target/zanata/pull/bundles
-    cp resources/src/main/zanata/bundles/zanata.xml target/zanata/push/bundles
+    cp resources/src/main/zanata/bundles/zanata.xml target/zanata/pull/bundles
     cd target/zanata/pull/bundles
     zanata-cli pull --batch-mode
     cd "${ROOT}"
@@ -109,7 +109,7 @@ function pullBundles {
 
 function pullPreviews {
     mkdir -p target/zanata/pull/previews
-    cp resources/src/main/zanata/previews/zanata.xml target/zanata/push/previews
+    cp resources/src/main/zanata/previews/zanata.xml target/zanata/pull/previews
     cd target/zanata/pull/previews
     zanata-cli pull --batch-mode
     cd "${ROOT}"

@@ -18,7 +18,6 @@ package org.jboss.hal.client.bootstrap.tasks;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.resources.Resources;
@@ -28,6 +27,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static elemental2.dom.DomGlobal.setTimeout;
 
 public class CheckTargetVersion implements InitializedTask {
 
@@ -46,7 +47,9 @@ public class CheckTargetVersion implements InitializedTask {
 
     @Override
     public void run() {
-        DomGlobal.setTimeout(o -> {
+        setTimeout(o -> {
+            logger.debug("Management model version: {}, target version: {}",
+                    environment.getManagementVersion(), ManagementModel.TARGET_VERSION);
             if (environment.getManagementVersion().lessThan(ManagementModel.TARGET_VERSION)) {
                 logger.warn("The management model version {} is lower than the target version {}",
                         environment.getManagementVersion(), ManagementModel.TARGET_VERSION);

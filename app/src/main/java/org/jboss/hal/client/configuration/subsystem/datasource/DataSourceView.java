@@ -15,7 +15,9 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -24,13 +26,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.elytron.CredentialReference.AlternativeValidation;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Constants;
@@ -40,6 +45,7 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -51,8 +57,8 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.XA;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/** TODO Add support for nested 'connection-properties' (non-xa) and 'xa-datasource-properties' (xa) */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
@@ -178,13 +184,17 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private Form<DataSource> xaForm;
     private Form<ModelNode> xaCrForm;
     private DataSourcePresenter presenter;
+    private Map<String, String> originalConnectionProperties;
+    private StaticAutoComplete xaAutoCompleteValues = new StaticAutoComplete(Collections.emptyList());
+    private StaticAutoComplete nonXaAutoCompleteValues = new StaticAutoComplete(Collections.emptyList());
 
     @Inject
     public DataSourceView(MetadataRegistry metadataRegistry, CredentialReference credentialReference,
             Resources resources) {
         this.resources = resources;
 
-        Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(changedValues);
+        Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(f, changedValues,
+                originalConnectionProperties);
         Form.PrepareReset<DataSource> prepareReset = (f) -> presenter.resetDataSource(f);
 
         Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
@@ -231,8 +241,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                         .map(attribute -> attribute.name)
                         .collect(toList());
                 nonXaFormBuilder.customGroup(nonXaId, group)
-                        .include(nonXaNames)
-                        .end();
+                        .include(nonXaNames);
 
                 // xa form and tab
                 List<String> xaNames = groupAttributes.stream()
@@ -240,14 +249,22 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                         .map(attribute -> attribute.name)
                         .collect(toList());
                 xaFormBuilder.customGroup(xaId, group)
-                        .include(xaNames)
-                        .end();
+                        .include(xaNames);
+
+                if (group.equals(CONSTANTS.connection())) {
+                    nonXaFormBuilder.unboundFormItem(new PropertiesItem(CONNECTION_PROPERTIES));
+                    xaFormBuilder.unboundFormItem(new PropertiesItem(XA_DATASOURCE_PROPERTIES));
+                }
+                nonXaFormBuilder.end();
+                xaFormBuilder.end();
             }
         }
 
         nonXaForm = nonXaFormBuilder.build();
         nonXaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> nonXaCrForm.getModel(), resources));
         xaForm = xaFormBuilder.build();
+        xaForm.getFormItem(XA_DATASOURCE_PROPERTIES).registerSuggestHandler(xaAutoCompleteValues);
+        nonXaForm.getFormItem(CONNECTION_PROPERTIES).registerSuggestHandler(nonXaAutoCompleteValues);
         xaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> xaCrForm.getModel(), resources));
         registerAttachable(nonXaForm);
         registerAttachable(xaForm);
@@ -301,11 +318,30 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 .toSafeHtml().asString();
         if (dataSource.isXa()) {
             xaForm.view(dataSource);
+            Map<String, String> p = failSafePropertyList(dataSource, XA_DATASOURCE_PROPERTIES).stream()
+                    .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
+            originalConnectionProperties = p;
+            xaForm.getFormItem(XA_DATASOURCE_PROPERTIES).setValue(p);
+            String dsClassname = dataSource.hasDefined(XA_DATASOURCE_CLASS) ? dataSource.get(XA_DATASOURCE_CLASS)
+                    .asString() : null;
+            String driverName = dataSource.get(DRIVER_NAME).asString();
+            presenter.readJdbcDriverProperties(true, dsClassname, driverName,
+                    dsProperties -> xaAutoCompleteValues.update(dsProperties));
             if (xaCrForm != null) {
                 xaCrForm.view(failSafeGet(dataSource, CREDENTIAL_REFERENCE));
             }
         } else {
             nonXaForm.view(dataSource);
+            Map<String, String> p = failSafePropertyList(dataSource, CONNECTION_PROPERTIES).stream()
+                    .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
+            originalConnectionProperties = p;
+            nonXaForm.getFormItem(CONNECTION_PROPERTIES).setValue(p);
+            String dsClassname = dataSource.hasDefined(DATASOURCE_CLASS) ? dataSource.get(DATASOURCE_CLASS)
+                    .asString() : null;
+            String driverName = dataSource.get(DRIVER_NAME).asString();
+            presenter.readJdbcDriverProperties(false, dsClassname, driverName,
+                    dsProperties -> nonXaAutoCompleteValues.update(dsProperties));
+
             if (nonXaCrForm != null) {
                 nonXaCrForm.view(failSafeGet(dataSource, CREDENTIAL_REFERENCE));
             }

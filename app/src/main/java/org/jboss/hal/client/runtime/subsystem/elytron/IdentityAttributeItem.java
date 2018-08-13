@@ -25,22 +25,24 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.TagsItem;
 import org.jboss.hal.ballroom.form.TagsManager;
 import org.jboss.hal.ballroom.form.TagsMapping;
 import org.jboss.hal.resources.Messages;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public IdentityAttributeItem(final String name, final String label, final SafeHtml inputHelp) {
-        super(name, label, inputHelp, EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
+    public IdentityAttributeItem(final String name, final String label) {
+        super(name, label, MESSAGES.multiValueListHint(), EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
                 new MapMapping());
     }
 
@@ -49,9 +51,20 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
         return getValue() == null || getValue().isEmpty();
     }
 
+    @Override
+    public void attach() {
+        super.attach();
+        HTMLElement element = (HTMLElement) document.getElementById(getId(READONLY));
+        if (element != null) {
+            // this pre style allows the \n line separator in the MapMapping.asString method
+            element.style.whiteSpace = "pre";
+        }
+    }
+
+
     private static class MapMapping implements TagsMapping<Map<String, List<String>>> {
 
-        private static final String VALUE_SEPARATOR = ";";
+        private static final String VALUE_SEPARATOR = ":";
         private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\;]+)$"); //NON-NLS
 
         @Override
@@ -95,7 +108,7 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
             }
             StringBuilder result = new StringBuilder();
             sourceValue.forEach((key, values) -> {
-                String tag = key + " \u21D2 " + Joiner.on(VALUE_SEPARATOR).join(values) + " \n ";
+                String tag = key + " \u21D2 " + Joiner.on(",").join(values) + "\n";
                 result.append(tag);
             });
             return result.toString();
