@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.Settings;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
@@ -39,12 +38,12 @@ class CreateRrdOperations {
     private final int depth;
     private final String locale;
 
-    CreateRrdOperations(Environment environment, Settings settings, StatementContext statementContext, int depth) {
-        this.depth = depth;
+    CreateRrdOperations(Environment environment, StatementContext statementContext, String locale, int depth) {
         this.securityContextStatementContext = new SecurityContextStatementContext(statementContext, environment);
         this.resourceDescriptionStatementContext = new ResourceDescriptionStatementContext(statementContext,
                 environment);
-        this.locale = settings.get(Settings.Key.LOCALE).value();
+        this.locale = locale;
+        this.depth = depth;
     }
 
     public List<Operation> create(LookupContext context, boolean recursive, boolean optional) {

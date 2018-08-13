@@ -51,7 +51,8 @@ class RrdTask implements Task<LookupContext> {
             int batchSize, int depth) {
         this.dispatcher = dispatcher;
         this.batchSize = batchSize;
-        this.rrdOps = new CreateRrdOperations(environment, settings, statementContext, depth);
+        this.rrdOps = new CreateRrdOperations(environment, statementContext, settings.get(Settings.Key.LOCALE).value(),
+                depth);
     }
 
     @Override
