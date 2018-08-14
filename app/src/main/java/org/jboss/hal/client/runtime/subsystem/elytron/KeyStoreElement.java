@@ -36,6 +36,7 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -66,15 +67,18 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
     KeyStoreElement(Resources resources, Metadata metadata) {
 
         LabelBuilder labelBuilder = new LabelBuilder();
+        Constants cons = resources.constants();
         table = new ModelNodeTable.Builder<NamedNode>(id(TABLE), metadata)
-                .button(new Button<>(resources.constants().load(),
-                        table -> presenter.loadKeyStore(table.selectedRow().getName()),
+                .button(new Button<>(cons.load(), table -> presenter.loadKeyStore(table.selectedRow().getName()),
                         Constraint.executable(KEY_STORE_TEMPLATE, LOAD)))
-                .button(new Button<>(resources.constants().store(),
-                        table -> presenter.storeKeyStore(table.selectedRow().getName()),
+                .button(new Button<>(cons.store(), table -> presenter.storeKeyStore(table.selectedRow().getName()),
                         Constraint.executable(KEY_STORE_TEMPLATE, STORE)))
+                .button(new Button<>(cons.generateKeyPair(), table -> generateKeyPair(metadata),
+                        Constraint.executable(KEY_STORE_TEMPLATE, GENERATE_KEY_PAIR)))
+                .button(new Button<>(cons.importCertificate(), table -> importCertificate(metadata),
+                        Constraint.executable(KEY_STORE_TEMPLATE, IMPORT_CERTIFICATE)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column(new InlineAction<>(resources.constants().aliases(),
+                .column(new InlineAction<>(cons.aliases(),
                         row -> {
                             selectedKeystore = row.getName();
                             showAliases(metadata.getTemplate(), row.getName());
@@ -94,29 +98,29 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .asElement();
 
         aliasesTable = new ModelNodeTable.Builder<>(id(ALIAS, TABLE), metadata)
-                .button(new Button<>(resources.constants().changeAlias(),
-                        table -> changeAlias(metadata, table.selectedRow().asString()),
+                .button(new Button<>(cons.changeAlias(), table -> changeAlias(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, CHANGE_ALIAS)))
-                .button(new Button<>(resources.constants().exportCertificate(),
+                .button(new Button<>(cons.exportCertificate(),
                         table -> exportCertificate(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, EXPORT_CERTIFICATE)))
-                .button(new Button<>(resources.constants().generateCSR(),
-                        labelBuilder.label(GENERATE_CERTIFICATE_SIGNING_REQUEST),
+                .button(new Button<>(cons.generateCSR(), labelBuilder.label(GENERATE_CERTIFICATE_SIGNING_REQUEST),
                         table -> generateCSR(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, GENERATE_CERTIFICATE_SIGNING_REQUEST)))
-                .button(new Button<>(resources.constants().generateKeyPair(),
-                        table -> generateKeyPair(metadata),
-                        Constraint.executable(KEY_STORE_TEMPLATE, GENERATE_KEY_PAIR)))
-                .button(new Button<>(resources.constants().importCertificate(),
-                        table -> importCertificate(metadata),
-                        Constraint.executable(KEY_STORE_TEMPLATE, IMPORT_CERTIFICATE)))
-                .button(new Button<>(resources.constants().removeAlias(),
+                .button(new Button<>(cons.removeAlias(),
                         table -> removeKeyStoreAlias(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, REMOVE_ALIAS)))
-                .button(new Button<>(resources.constants().details(),
-                        resources.constants().viewDetailsAlias(),
+                .button(new Button<>(cons.details(), cons.viewDetailsAlias(),
                         table -> readKeystoreAlias(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, READ_ALIAS)))
+                .button(new Button<>(cons.obtain(), cons.obtainCertificate(),
+                        table -> obtainCertificate(metadata, table.selectedRow().asString()),
+                        Constraint.executable(KEY_STORE_TEMPLATE, OBTAIN_CERTIFICATE)))
+                .button(new Button<>(cons.revoke(), cons.revokeCertificate(),
+                        table -> revokeCertificate(metadata, table.selectedRow().asString()),
+                        Constraint.executable(KEY_STORE_TEMPLATE, REVOKE_CERTIFICATE)))
+                .button(new Button<>(cons.verifyRenew(), cons.verifyRenewCertificate(),
+                        table -> verifyRenewCertificate(metadata, table.selectedRow().asString()),
+                        Constraint.executable(KEY_STORE_TEMPLATE, SHOULD_RENEW_CERTIFICATE)))
                 .column(ALIAS, (cell, t, row, meta) -> row.asString())
                 .build();
 
@@ -128,7 +132,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .build();
 
         HTMLElement aliasesSection = section()
-                .add(h(1).textContent(resources.constants().aliases()))
+                .add(h(1).textContent(cons.aliases()))
                 .add(aliasesTable)
                 .add(formAlias)
                 .asElement();
@@ -136,7 +140,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         pages = new Pages(id(PAGES), id(PAGE), mainSection);
         pages.addPage(id(PAGE), id(ALIAS, PAGE),
                 () -> Names.KEY_STORE + ": " + selectedKeystore,
-                () -> resources.constants().aliases(), aliasesSection);
+                () -> cons.aliases(), aliasesSection);
 
         root = section()
                 .add(pages)
@@ -160,23 +164,33 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         // disable table buttons if there is no selected row
         table.enableButton(0, false);
         table.enableButton(1, false);
+        table.enableButton(2, false);
+        table.enableButton(3, false);
 
         aliasesTable.enableButton(0, false);
         aliasesTable.enableButton(1, false);
         aliasesTable.enableButton(2, false);
+        aliasesTable.enableButton(3, false);
+        aliasesTable.enableButton(4, false);
         aliasesTable.enableButton(5, false);
         aliasesTable.enableButton(6, false);
+        aliasesTable.enableButton(7, false);
 
         table.onSelectionChange(table1 -> {
             table.enableButton(0, table1.hasSelection());
             table.enableButton(1, table1.hasSelection());
+            table.enableButton(2, table1.hasSelection());
+            table.enableButton(3, table1.hasSelection());
         });
         aliasesTable.onSelectionChange(table1 -> {
             table1.enableButton(0, table1.hasSelection());
             table1.enableButton(1, table1.hasSelection());
             table1.enableButton(2, table1.hasSelection());
+            table1.enableButton(3, table1.hasSelection());
+            table1.enableButton(4, table1.hasSelection());
             table1.enableButton(5, table1.hasSelection());
             table1.enableButton(6, table1.hasSelection());
+            table1.enableButton(7, table1.hasSelection());
             if (table1.hasSelection()) {
                 String alias = table1.selectedRow().asString();
                 String value = aliasDetailsMapping.get(alias);
@@ -249,12 +263,24 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         presenter.generateCSR(metadata, selectedKeystore, alias);
     }
 
+    private void obtainCertificate(Metadata metadata, String alias) {
+        presenter.obtainCertificate(metadata, selectedKeystore, alias);
+    }
+
+    private void revokeCertificate(Metadata metadata, String alias) {
+        presenter.revokeCertificate(metadata, selectedKeystore, alias);
+    }
+
+    private void verifyRenewCertificate(Metadata metadata, String alias) {
+        presenter.verifyRenewCertificate(metadata, selectedKeystore, alias);
+    }
+
     private void generateKeyPair(Metadata metadata) {
-        presenter.generateKeyPair(metadata, selectedKeystore, this::updateAliases);
+        presenter.generateKeyPair(metadata, table.selectedRow().getName());
     }
 
     private void importCertificate(Metadata metadata) {
-        presenter.importCertificate(metadata, selectedKeystore, this::updateAliases);
+        presenter.importCertificate(metadata, table.selectedRow().getName());
     }
 
 }

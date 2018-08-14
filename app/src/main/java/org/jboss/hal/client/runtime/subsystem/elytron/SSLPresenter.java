@@ -53,8 +53,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
@@ -133,7 +131,6 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
     }
 
     // ----------------- certificate authority account
-static Logger _log = LoggerFactory.getLogger("org.jboss");
 
     void createAccount(String name) {
         Metadata metadata = metadataRegistry.lookup(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE)
@@ -224,7 +221,7 @@ static Logger _log = LoggerFactory.getLogger("org.jboss");
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().updateAccountQuestion(name)).asElement())
                 .add(form.asElement())
-                .primary(resources.constants().create(), form::save)
+                .primary(resources.constants().update(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
                 .cancel()
@@ -273,7 +270,7 @@ static Logger _log = LoggerFactory.getLogger("org.jboss");
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().changeAccountKeyQuestion(name)).asElement())
                 .add(form.asElement())
-                .primary(resources.constants().create(), form::save)
+                .primary(resources.constants().change(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
                 .cancel()
