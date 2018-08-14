@@ -32,14 +32,15 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.SELECTED_RESOURCE_ADAPTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_ADAPTERS;
+import static org.jboss.hal.meta.token.NameTokens.RESOURCE_ADAPTER;
 
 public class ResourceAdapterPresenter
         extends MbuiPresenter<ResourceAdapterPresenter.MyView, ResourceAdapterPresenter.MyProxy>
@@ -101,8 +102,8 @@ public class ResourceAdapterPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.RESOURCE_ADAPTER)
-    @Requires(AddressTemplates.RESOURCE_ADAPTER_ADDRESS)
+    @NameToken(RESOURCE_ADAPTER)
+    @Requires(RESOURCE_ADAPTER_ADDRESS)
     public interface MyProxy extends ProxyPlace<ResourceAdapterPresenter> {
     }
 
