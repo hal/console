@@ -22,6 +22,7 @@ interface AddressTemplates {
     // @formatter:off
     String ELYTRON_SUBSYSTEM_ADDRESS = "{selected.host}/{selected.server}/subsystem=elytron";
     AddressTemplate ELYTRON_SUBSYSTEM_TEMPLATE = AddressTemplate.of(ELYTRON_SUBSYSTEM_ADDRESS);
+    AddressTemplate ELYTRON_PROFILE_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=elytron");
 
     // ------------------------------------------------------ address (a-z)
 

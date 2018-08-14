@@ -15,23 +15,32 @@
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -48,29 +57,39 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.resources.Ids.FORM;
 
 public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.MyView, StoresPresenter.MyProxy>
         implements SupportsExpertMode {
 
     private static final String SPACE = " ";
-
+    private Environment environment;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private Resources resources;
+    private Provider<Progress> progress;
     private Dispatcher dispatcher;
 
     @Inject
@@ -79,12 +98,16 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             MyProxy proxy,
             Resources resources,
             Finder finder,
+            @Footer Provider<Progress> progress,
             Dispatcher dispatcher,
+            Environment environment,
             FinderPathFactory finderPathFactory,
             StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.resources = resources;
+        this.progress = progress;
         this.dispatcher = dispatcher;
+        this.environment = environment;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
     }
@@ -123,14 +146,14 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         });
     }
 
+    // ----------------- credential store
+
     private Operation operation(AddressTemplate template) {
         return new Operation.Builder(template.getParent().resolve(statementContext), READ_CHILDREN_RESOURCES_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(CHILD_TYPE, template.lastName())
                 .build();
     }
-
-    // ----------------- credential store
 
     void reloadCredentialStore(String name) {
         Operation operation = new Operation.Builder(CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, name), RELOAD)
@@ -183,6 +206,9 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         dialog.show();
     }
 
+
+    // ----------------- key store
+
     void setSecret(Metadata metadata, String name, String alias) {
         AddressTemplate template = metadata.getTemplate();
         String resource = Names.CREDENTIAL_STORE + SPACE + name;
@@ -196,23 +222,23 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         model.get(ALIAS).set(alias);
         form.getFormItem(ALIAS).setEnabled(false);
         form.edit(model);
-        DialogFactory.buildConfirmation(resources.constants().setSecret(), question, formElement, Dialog.Size.MEDIUM, () -> {
-            ResourceAddress address = template.resolve(statementContext, name);
-            Operation addOp = new Operation.Builder(address, REMOVE_ALIAS)
-                    .param(ALIAS, alias)
-                    .build();
-            dispatcher.execute(addOp, result -> MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().setSecretPasswordSuccess(alias, resource))),
-                    (operation, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().setSecretPasswordError(alias, resource, failure))),
-                    (operation, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().setSecretPasswordError(alias, resource, ex.getMessage()))));
+        DialogFactory.buildConfirmation(resources.constants().setSecret(), question, formElement, Dialog.Size.MEDIUM,
+                () -> {
+                    ResourceAddress address = template.resolve(statementContext, name);
+                    Operation addOp = new Operation.Builder(address, REMOVE_ALIAS)
+                            .param(ALIAS, alias)
+                            .build();
+                    dispatcher.execute(addOp, result -> MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().setSecretPasswordSuccess(alias, resource))),
+                            (operation, failure) -> MessageEvent.fire(getEventBus(),
+                                    Message.error(
+                                            resources.messages().setSecretPasswordError(alias, resource, failure))),
+                            (operation, ex) -> MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages()
+                                            .setSecretPasswordError(alias, resource, ex.getMessage()))));
 
-        }).show();
+                }).show();
     }
-
-
-    // ----------------- key store
 
     void loadKeyStore(String name) {
         Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), LOAD)
@@ -232,7 +258,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
                 .build();
         dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
-                        Message.success(resources.messages().storeSuccess(name))),
+                Message.success(resources.messages().storeSuccess(name))),
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().storeError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -242,62 +268,85 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
     void changeAlias(Metadata metadata, String name, String alias, Consumer<List<ModelNode>> callback) {
         AddressTemplate template = metadata.getTemplate();
         String resource = Names.KEY_STORE + SPACE + name;
-        Metadata opMetadata = metadata.forOperation(CHANGE_ALIAS);
-        SafeHtml question = SafeHtmlUtils.fromString(opMetadata.getDescription().getDescription());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), CHANGE_ALIAS), opMetadata)
+        metadata = metadata.forOperation(CHANGE_ALIAS);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), CHANGE_ALIAS), metadata)
                 .build();
-        form.attach();
-        HTMLElement formElement = form.asElement();
+        form.setSaveCallback((form1, changedValues) -> {
+            String newAlias = form.getModel().get("new-alias").asString();
+            ResourceAddress address = template.resolve(statementContext, name);
+
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, CHANGE_ALIAS)
+                        .payload(form.getModel())
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .doOnSuccess(flowContext::push)
+                        .toCompletable();
+            });
+
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(FlowContext flowContext) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.success(
+                                            resources.messages().changeAliasSuccess(alias, newAlias, resource)));
+                            ModelNode aliases = flowContext.pop();
+                            if (aliases.isDefined()) {
+                                callback.accept(aliases.asList());
+                            } else {
+                                callback.accept(Collections.emptyList());
+                            }
+                        }
+
+                        @Override
+                        public void onError(FlowContext context, Throwable ex) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(
+                                            resources.messages()
+                                                    .changeAliasError(alias, newAlias, resource, ex.getMessage())));
+                        }
+                    });
+        });
         ModelNode model = new ModelNode();
         model.get(ALIAS).set(alias);
         form.getFormItem(ALIAS).setEnabled(false);
+        Dialog dialog = new Dialog.Builder(resources.constants().changeAlias())
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().change(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
         form.edit(model);
-        DialogFactory.buildConfirmation(resources.constants().changeAlias(), question, formElement, Dialog.Size.MEDIUM, () -> {
-            form.save();
-            String newAlias = form.getModel().get("new-alias").asString();
-            Composite composite = new Composite();
-            ResourceAddress address = template.resolve(statementContext, name);
-            Operation addOp = new Operation.Builder(address, CHANGE_ALIAS)
-                    .payload(form.getModel())
-                    .build();
-            composite.add(addOp);
-            Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
-                    .build();
-            composite.add(operation);
-
-            dispatcher.execute(composite, (CompositeResult result) -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().changeAliasSuccess(alias, newAlias, resource)));
-                        ModelNode aliases = result.step(1).get(RESULT);
-                        if (aliases.isDefined()) {
-                            callback.accept(aliases.asList());
-                        } else {
-                            callback.accept(Collections.emptyList());
-                        }
-                    },
-                    (op, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().changeAliasError(alias, newAlias, resource, failure))),
-                    (op, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().changeAliasError(alias, newAlias, resource, ex.getMessage()))));
-
-        }).show();
     }
 
     void exportCertificate(Metadata metadata, String name, String alias) {
         AddressTemplate template = metadata.getTemplate();
         String resource = Names.KEY_STORE + SPACE + name;
-        Metadata opMetadata = metadata.forOperation(EXPORT_CERTIFICATE);
-        SafeHtml question = SafeHtmlUtils.fromString(opMetadata.getDescription().getDescription());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), EXPORT_CERTIFICATE), opMetadata)
+        metadata = metadata.forOperation(EXPORT_CERTIFICATE);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), EXPORT_CERTIFICATE), metadata)
                 .build();
-        form.attach();
-        HTMLElement formElement = form.asElement();
-        ModelNode model = new ModelNode();
-        model.get(ALIAS).set(alias);
-        form.getFormItem(ALIAS).setEnabled(false);
-        form.edit(model);
-        DialogFactory.buildConfirmation(resources.constants().exportCertificate(), question, formElement, Dialog.Size.MEDIUM, () -> {
-            form.save();
+        form.setSaveCallback((form1, changedValues) -> {
             ResourceAddress address = template.resolve(statementContext, name);
             Operation operation = new Operation.Builder(address, EXPORT_CERTIFICATE)
                     .payload(form.getModel())
@@ -308,26 +357,33 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                     (op, failure) -> MessageEvent.fire(getEventBus(),
                             Message.error(resources.messages().exportCertificateError(alias, path, resource, failure))),
                     (op, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().exportCertificateError(alias, path, resource, ex.getMessage()))));
-
-        }).show();
+                            Message.error(resources.messages()
+                                    .exportCertificateError(alias, path, resource, ex.getMessage()))));
+        });
+        ModelNode model = new ModelNode();
+        model.get(ALIAS).set(alias);
+        form.getFormItem(ALIAS).setEnabled(false);
+        Dialog dialog = new Dialog.Builder(resources.constants().exportCertificate())
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().export(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
+        form.edit(model);
     }
 
     void generateCSR(Metadata metadata, String name, String alias) {
         AddressTemplate template = metadata.getTemplate();
         String resource = Names.KEY_STORE + SPACE + name;
         Metadata opMetadata = metadata.forOperation(GENERATE_CERTIFICATE_SIGNING_REQUEST);
-        SafeHtml question = SafeHtmlUtils.fromString(opMetadata.getDescription().getDescription());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), GENERATE_CERTIFICATE_SIGNING_REQUEST), opMetadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                Ids.build(template.lastName(), GENERATE_CERTIFICATE_SIGNING_REQUEST), opMetadata)
                 .build();
-        form.attach();
-        HTMLElement formElement = form.asElement();
-        ModelNode model = new ModelNode();
-        model.get(ALIAS).set(alias);
-        form.getFormItem(ALIAS).setEnabled(false);
-        form.edit(model);
-        DialogFactory.buildConfirmation(resources.constants().generateCSR(), question, formElement, Dialog.Size.MEDIUM, () -> {
-            form.save();
+        form.setSaveCallback((form1, changedValues) -> {
             ResourceAddress address = template.resolve(statementContext, name);
             Operation operation = new Operation.Builder(address, GENERATE_CERTIFICATE_SIGNING_REQUEST)
                     .payload(form.getModel())
@@ -338,103 +394,314 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                     (op, failure) -> MessageEvent.fire(getEventBus(),
                             Message.error(resources.messages().generateCSRError(alias, path, resource, failure))),
                     (op, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().generateCSRError(alias, path, resource, ex.getMessage()))));
+                            Message.error(
+                                    resources.messages().generateCSRError(alias, path, resource, ex.getMessage()))));
+        });
+        ModelNode model = new ModelNode();
+        model.get(ALIAS).set(alias);
+        form.getFormItem(ALIAS).setEnabled(false);
+        Dialog dialog = new Dialog.Builder(resources.constants().generateCSR())
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().generate(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
+        form.edit(model);
 
-        }).show();
     }
 
-    void generateKeyPair(Metadata metadata, String name, Consumer<List<ModelNode>> callback) {
+    void generateKeyPair(Metadata metadata, String name) {
         AddressTemplate template = metadata.getTemplate();
         String resource = Names.KEY_STORE + SPACE + name;
-        Metadata opMetadata = metadata.forOperation(GENERATE_KEY_PAIR);
-        SafeHtml question = SafeHtmlUtils.fromString(opMetadata.getDescription().getDescription());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), GENERATE_KEY_PAIR), opMetadata)
+        metadata = metadata.forOperation(GENERATE_KEY_PAIR);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), GENERATE_KEY_PAIR), metadata)
                 .build();
-        form.attach();
-        HTMLElement formElement = form.asElement();
-        form.edit(new ModelNode());
-        DialogFactory.buildConfirmation(resources.constants().generateKeyPair(), question, formElement,
-                Dialog.Size.MEDIUM, () -> {
-                    form.save();
-                    ResourceAddress address = template.resolve(statementContext, name);
-                    Composite composite = new Composite();
-                    Operation operation = new Operation.Builder(address, GENERATE_KEY_PAIR)
-                            .payload(form.getModel())
-                            .build();
-                    composite.add(operation);
-                    Operation opRead = new Operation.Builder(address, READ_ALIASES_OPERATION)
-                            .build();
-                    composite.add(opRead);
-                    String alias = form.getModel().get(ALIAS).asString();
+        form.setSaveCallback((form1, changedValues) -> {
+            ResourceAddress address = template.resolve(statementContext, name);
+            String alias = form.getModel().get(ALIAS).asString();
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, GENERATE_KEY_PAIR)
+                        .payload(form.getModel())
+                        .build();
 
-                    dispatcher.execute(composite, (CompositeResult result) -> {
-                                MessageEvent.fire(getEventBus(),
-                                        Message.success(resources.messages().generateKeyPairSuccess(alias, resource)));
-                                ModelNode aliases = result.step(1).get(RESULT);
-                                if (aliases.isDefined()) {
-                                    callback.accept(aliases.asList());
-                                } else {
-                                    callback.accept(Collections.emptyList());
-                                }
-                            },
-                            (op, failure) -> MessageEvent.fire(getEventBus(),
+                return dispatcher.execute(operation)
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .toCompletable();
+            });
+
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(FlowContext flowContext) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.success(resources.messages().generateKeyPairSuccess(alias, resource)));
+                        }
+
+                        @Override
+                        public void onError(FlowContext context, Throwable ex) {
+                            MessageEvent.fire(getEventBus(),
                                     Message.error(
-                                            resources.messages().generateKeyPairError(alias, resource, failure))),
-                            (op, ex) -> MessageEvent.fire(getEventBus(),
-                                    Message.error(resources.messages()
-                                            .generateKeyPairError(alias, resource, ex.getMessage()))));
+                                            resources.messages()
+                                                    .generateKeyPairError(alias, resource, ex.getMessage())));
+                        }
+                    });
+        });
 
-                }).show();
+        Dialog dialog = new Dialog.Builder(resources.constants().generateKeyPair())
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().generate(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
+        form.edit(new ModelNode());
     }
 
-    void importCertificate(Metadata metadata, String name, Consumer<List<ModelNode>> callback) {
+    void importCertificate(Metadata metadata, String name) {
         AddressTemplate template = metadata.getTemplate();
         String resource = Names.KEY_STORE + SPACE + name;
-        Metadata opMetadata = metadata.forOperation(IMPORT_CERTIFICATE);
-        SafeHtml question = SafeHtmlUtils.fromString(opMetadata.getDescription().getDescription());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), IMPORT_CERTIFICATE), opMetadata)
+        metadata = metadata.forOperation(IMPORT_CERTIFICATE);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), IMPORT_CERTIFICATE), metadata)
                 .build();
-        HTMLElement formElement = form.asElement();
-        form.attach();
-        form.edit(new ModelNode());
-        DialogFactory.buildConfirmation(resources.constants().importCertificate(), question, formElement,
-                Dialog.Size.MEDIUM, () -> {
-                    form.save();
-                    ModelNode payload = form.getModel();
-                    String path = payload.get(PATH).asString();
-                    if (!payload.hasDefined(VALIDATE)) {
-                        payload.get(VALIDATE).set(false);
-                    }
-                    ResourceAddress address = template.resolve(statementContext, name);
-                    Composite composite = new Composite();
-                    Operation operation = new Operation.Builder(address, IMPORT_CERTIFICATE)
-                            .payload(payload)
-                            .build();
-                    composite.add(operation);
-                    Operation opRead = new Operation.Builder(address, READ_ALIASES_OPERATION)
-                            .build();
-                    composite.add(opRead);
-                    String alias = payload.get(ALIAS).asString();
-                    dispatcher.execute(composite, (CompositeResult result) -> {
-                                MessageEvent.fire(getEventBus(),
-                                        Message.success(resources.messages().importCertificateSuccess(alias, path, resource)));
-                                ModelNode aliases = result.step(1).get(RESULT);
-                                if (aliases.isDefined()) {
-                                    callback.accept(aliases.asList());
-                                } else {
-                                    callback.accept(Collections.emptyList());
-                                }
-                            },
-                            (op, failure) -> MessageEvent.fire(getEventBus(),
-                                    Message.error(
-                                            resources.messages().importCertificateError(alias, path, resource, failure))),
-                            (op, ex) -> MessageEvent.fire(getEventBus(),
-                                    Message.error(resources.messages()
-                                            .importCertificateError(alias, path, resource, ex.getMessage()))));
+        form.setSaveCallback((form1, changedValues) -> {
+            ModelNode payload = form.getModel();
+            String path = payload.get(PATH).asString();
+            if (!payload.hasDefined(VALIDATE)) {
+                payload.get(VALIDATE).set(false);
+            }
+            ResourceAddress address = template.resolve(statementContext, name);
+            String alias = payload.get(ALIAS).asString();
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, IMPORT_CERTIFICATE)
+                        .payload(payload)
+                        .build();
 
-                }).show();
+                return dispatcher.execute(operation)
+                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages()
+                                        .importCertificateError(alias, path, resource, ex.getMessage()))))
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().storeError(resource, ex.getMessage()))))
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().readAliasesError(resource, ex.getMessage()))))
+                        .toCompletable();
+            });
+
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(FlowContext flowContext) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.success(
+                                            resources.messages().importCertificateSuccess(alias, path, resource)));
+                        }
+
+                        @Override
+                        public void onError(FlowContext context, Throwable ex) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(
+                                            resources.messages().removeAliasError(alias, resource, ex.getMessage())));
+                        }
+                    });
+        });
+
+        Dialog dialog = new Dialog.Builder(resources.constants().importCertificate())
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().importt(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
+        form.edit(new ModelNode());
     }
 
+    void obtainCertificate(Metadata metadata, String name, String alias) {
+        metadata = metadata.forOperation(OBTAIN_CERTIFICATE);
+        String id = Ids.build(KEY_STORE, OBTAIN_CERTIFICATE, FORM);
+        String title = new LabelBuilder().label(CERTIFICATE_AUTHORITY_ACCOUNT);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .build();
+        form.setSaveCallback((form1, changedValues) -> {
+            ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, name);
+            Operation operation = new Operation.Builder(address, OBTAIN_CERTIFICATE)
+                    .payload(form.getModel())
+                    .build();
+            dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().obtainCertificateSuccess(alias, name))),
+                    (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().obtainCertificateError(alias, name, failure))),
+                    (operation1, ex) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().obtainCertificateError(alias, name, ex.getMessage()))));
+        });
+        Dialog dialog = new Dialog.Builder(title)
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().obtain(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        ModelNode model = new ModelNode();
+        model.get(ALIAS).set(alias);
+        form.getFormItem(ALIAS).setEnabled(false);
+        if (!environment.isStandalone()) {
+            // the capability reference the /profile=* resource and the template attached to the metadata
+            // points to the {selected.host}/{selected.server}, so we need to register the template to the profile
+            String capability = metadata.getDescription()
+                    .get(ATTRIBUTES)
+                    .get(CERTIFICATE_AUTHORITY_ACCOUNT)
+                    .get(CAPABILITY_REFERENCE)
+                    .asString();
+            form.getFormItem(CERTIFICATE_AUTHORITY_ACCOUNT)
+                    .registerSuggestHandler(
+                            new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, capability,
+                                    ELYTRON_PROFILE_TEMPLATE));
+        }
+        dialog.show();
+        form.edit(model);
+    }
+
+    void revokeCertificate(Metadata metadata, String name, String alias) {
+        metadata = metadata.forOperation(REVOKE_CERTIFICATE);
+        String id = Ids.build(KEY_STORE, REVOKE_CERTIFICATE, FORM);
+        String title = new LabelBuilder().label(CERTIFICATE_AUTHORITY_ACCOUNT);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .build();
+        form.setSaveCallback((form1, changedValues) -> {
+            ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, name);
+            Operation operation = new Operation.Builder(address, REVOKE_CERTIFICATE)
+                    .payload(form.getModel())
+                    .build();
+            dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().revokeCertificateSuccess(alias, name))),
+                    (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().revokeCertificateError(alias, name, failure))),
+                    (operation1, ex) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().revokeCertificateError(alias, name, ex.getMessage()))));
+        });
+        Dialog dialog = new Dialog.Builder(title)
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().revoke(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        ModelNode model = new ModelNode();
+        model.get(ALIAS).set(alias);
+        form.getFormItem(ALIAS).setEnabled(false);
+        if (!environment.isStandalone()) {
+            // the capability reference the /profile=* resource and the template attached to the metadata
+            // points to the {selected.host}/{selected.server}, so we need to register the template to the profile
+            String capability = metadata.getDescription()
+                    .get(ATTRIBUTES)
+                    .get(CERTIFICATE_AUTHORITY_ACCOUNT)
+                    .get(CAPABILITY_REFERENCE)
+                    .asString();
+            form.getFormItem(CERTIFICATE_AUTHORITY_ACCOUNT)
+                    .registerSuggestHandler(
+                            new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, capability,
+                                    ELYTRON_PROFILE_TEMPLATE));
+        }
+        dialog.show();
+        form.edit(model);
+    }
+
+    void verifyRenewCertificate(Metadata metadata, String name, String alias) {
+        metadata = metadata.forOperation(SHOULD_RENEW_CERTIFICATE);
+        String id = Ids.build(KEY_STORE, SHOULD_RENEW_CERTIFICATE, FORM);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .build();
+        form.setSaveCallback((form1, changedValues) -> {
+            ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, name);
+            Operation operation = new Operation.Builder(address, SHOULD_RENEW_CERTIFICATE)
+                    .payload(form.getModel())
+                    .build();
+            dispatcher.execute(operation, result -> {
+                        int days = result.get("days-to-expiry").asInt();
+                        Date dueDate = new Date();
+                        CalendarUtil.addDaysToDate(dueDate, days);
+
+                        HTMLElement content;
+                        if (days < 1) {
+                            Alert warning = new Alert(Icons.WARNING, resources.messages().certificateExpired(alias));
+                            content = div().add(warning).asElement();
+                        } else {
+                            SafeHtml description = resources.messages()
+                                    .certificateShouldRenew(days, alias, Format.mediumDateTime(dueDate));
+                                content = p().innerHtml(description).asElement();
+                        }
+
+                        new Dialog.Builder(resources.constants().verifyRenewCertificate())
+                                .primary(resources.constants().ok(), null)
+                                .size(Dialog.Size.MEDIUM)
+                                .add(content)
+                                .build()
+                                .show();
+
+
+                    },
+                    (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().verifyRenewError(alias, name, failure))),
+                    (operation1, ex) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().verifyRenewError(alias, name, ex.getMessage()))));
+        });
+        Dialog dialog = new Dialog.Builder(resources.constants().verifyRenewCertificate())
+                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(form.asElement())
+                .primary(resources.constants().verifyRenew(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
+        ModelNode model = new ModelNode();
+        model.get(ALIAS).set(alias);
+        form.getFormItem(ALIAS).setEnabled(false);
+        form.edit(model);
+    }
 
     // ----------------- common methods
 
@@ -466,31 +733,59 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         SafeHtml question = resources.messages().removeAliasQuestion(alias, resource);
         DialogFactory.showConfirmation(resources.constants().removeAlias(), question, () -> {
             ResourceAddress address = template.resolve(statementContext, name);
-            Composite composite = new Composite();
-            Operation addOp = new Operation.Builder(address, REMOVE_ALIAS)
-                    .param(ALIAS, alias)
-                    .build();
 
-            composite.add(addOp);
-            Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
-                    .build();
-            composite.add(operation);
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, REMOVE_ALIAS)
+                        .param(ALIAS, alias)
+                        .build();
 
-            dispatcher.execute(composite, (CompositeResult result) -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().addSuccess(ALIAS, alias, resource)));
-                        ModelNode aliases = result.step(1).get(RESULT);
-                        if (aliases.isDefined()) {
-                            callback.accept(aliases.asList());
-                        } else {
-                            callback.accept(Collections.emptyList());
+                return dispatcher.execute(operation)
+                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().removeAliasError(alias, resource, ex.getMessage()))))
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().storeError(resource, ex.getMessage()))))
+                        .toCompletable();
+            });
+            tasks.add(flowContext -> {
+                Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
+                        .build();
+
+                return dispatcher.execute(operation)
+                        .doOnSuccess(flowContext::push)
+                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().readAliasesError(resource, ex.getMessage()))))
+                        .toCompletable();
+            });
+
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(FlowContext flowContext) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.success(resources.messages().removeAliasSuccess(alias, resource)));
+                            ModelNode aliases = flowContext.pop();
+                            if (aliases.isDefined()) {
+                                callback.accept(aliases.asList());
+                            } else {
+                                callback.accept(Collections.emptyList());
+                            }
                         }
-                    },
-                    (op, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().addError(ALIAS, alias, resource, failure))),
-                    (op, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().addError(ALIAS, alias, resource, ex.getMessage()))));
 
+                        @Override
+                        public void onError(FlowContext context, Throwable ex) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(
+                                            resources.messages().removeAliasError(alias, resource, ex.getMessage())));
+                        }
+                    });
         });
     }
 

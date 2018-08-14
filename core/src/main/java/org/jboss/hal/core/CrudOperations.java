@@ -217,9 +217,12 @@ public class CrudOperations {
             builder.payload(payload);
         }
         dispatcher.execute(builder.build(), result -> {
-            MessageEvent.fire(eventBus, Message.success(successMessage));
-            callback.execute(name, address);
-        });
+                    MessageEvent.fire(eventBus, Message.success(successMessage));
+                    callback.execute(name, address);
+                }, (operation, failure) -> MessageEvent.fire(eventBus,
+                Message.error(resources.messages().addResourceError(name, failure))),
+                (operation, exception) -> MessageEvent.fire(eventBus,
+                        Message.error(resources.messages().addResourceError(name, exception.getMessage()))));
     }
 
 
@@ -372,9 +375,12 @@ public class CrudOperations {
     @JsIgnore
     public void addSingleton(String type, Operation operation, AddSingletonCallback callback) {
         dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));
-            callback.execute(operation.getAddress());
-        });
+                    MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));
+                    callback.execute(operation.getAddress());
+                }, (operation1, failure) -> MessageEvent.fire(eventBus,
+                Message.error(resources.messages().addSingleResourceError(type, failure))),
+                (operation1, exception) -> MessageEvent.fire(eventBus,
+                        Message.error(resources.messages().addSingleResourceError(type, exception.getMessage()))));
     }
 
 

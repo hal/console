@@ -33,6 +33,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml addressLabel(String address);
     SafeHtml addServerHostHelp();
     String addServerTitle();
+    SafeHtml addSingleResourceError(String type, String error);
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml allContentAlreadyDeployedToServerGroup(String serverGroup);
     SafeHtml allMailServersExist();
@@ -56,6 +57,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml cannotDownloadExploded();
 
     SafeHtml capabilityReference(String capability);
+    SafeHtml certificateExpired(String alias);
+    SafeHtml certificateShouldRenew(int days, String alias, String dueDate);
+    // String certificateShouldNotRenew(int days, String dueDate);
     SafeHtml changeAccountKeyError(String name, String error);
     String changeAccountKeyQuestion(String name);
     SafeHtml changeAccountKeySuccess(String name);
@@ -364,6 +368,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml normalLogFile(String size);
     String notifications(@PluralCount int count);
 
+    SafeHtml obtainCertificateError(String alias, String resource, String error);
+    SafeHtml obtainCertificateSuccess(String alias, String resource);
     SafeHtml operationLabel(String name);
     String operations(int size);
 
@@ -423,7 +429,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml reloadServerSuccess(String name);
     SafeHtml reloadSettings();
 
+    SafeHtml removeAliasError(String alias, String resource, String error);
     SafeHtml removeAliasQuestion(String alias, String resource);
+    SafeHtml removeAliasSuccess(String alias, String resource);
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
     SafeHtml removeConfigurationChangesQuestion(String type, String name);
@@ -495,6 +503,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerGroupSuccess(String name);
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
+    SafeHtml revokeCertificateError(String alias, String resource, String error);
+    SafeHtml revokeCertificateSuccess(String alias, String resource);
     String roleColumnFilterDescription();
     SafeHtml rollbackError(String failure);
     SafeHtml rollbackInProgress(String patchid);
@@ -616,6 +626,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String uptime(String uptime);
     String used(double value);
 
+    SafeHtml verifyRenewError(String alias, String resource, String error);
+    SafeHtml verifyRenewSuccess(String alias, String resource);
     String view(String type);
 
     SafeHtml writeBehaviour(String current, String switchTo);

@@ -175,6 +175,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String expiredSessions();
     String explode();
     String exploded();
+    String export();
     String exportCertificate();
     String expression();
     String expressionResolver();
@@ -198,6 +199,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String fromDeployment();
 
     String getMetadata();
+    String generate();
     String generateCSR();
     String generateKeyPair();
     String globalSettings();
@@ -293,6 +295,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String httpManagementInterface();
 
     String identity();
+    // contains two t as the import is a reserved word
+    String importt();
     String importCertificate();
     String inactive();
     String includeRole();
@@ -396,6 +400,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String notEnabled();
     String nothingSelected();
 
+    String obtain();
+    String obtainCertificate();
     String of();
     String ok();
     String opened();
@@ -483,6 +489,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String results();
     String resume();
     String review();
+    String revoke();
+    String revokeCertificate();
     String role();
     String roles();
     String rollback();
@@ -593,6 +601,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String users();
 
     String validation();
+    String verifyRenew();
+    String verifyRenewCertificate();
     String view();
     String viewDetailsAlias();
     String viewInEditor();

@@ -549,6 +549,7 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_TRANSACTIONS = "number-of-transactions";
     String OBJECT = "object";
     String OFF_HEAP = "off-heap";
+    String OBTAIN_CERTIFICATE = "obtain-certificate";
     String OOB = "oob";
     String OP = "operation";
     String OPERATION = "operation";
@@ -726,6 +727,7 @@ public interface ModelDescriptionConstants {
     String RESULT = "result";
     String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
+    String REVOKE_CERTIFICATE = "revoke-certificate";
     String ROLE = "role";
     String ROLE_MAP = "role-map";
     String ROLE_MAPPING = "role-mapping";
@@ -789,6 +791,7 @@ public interface ModelDescriptionConstants {
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
     String SHARED_STORE_SLAVE = "shared-store-slave";
+    String SHOULD_RENEW_CERTIFICATE = "should-renew-certificate";
     String SHOW_HISTORY_OPERATION = "show-history";
     String SHUTDOWN = "shutdown";
     String SIMPLE_PERMISSION_MAPPER = "simple-permission-mapper";
