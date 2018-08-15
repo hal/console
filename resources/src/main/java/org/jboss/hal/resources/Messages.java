@@ -175,7 +175,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml duplicateAuthenticationModule();
     String duplicateAuthenticationModuleReason();
     String duplicateResource(String type);
-    SafeHtml dynamicLoadProviderWarning();
+    SafeHtml loadProviderDynamicWarning();
 
     String ejbFilterDescription();
     SafeHtml emptyModelNodeForm();

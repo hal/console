@@ -112,12 +112,12 @@ public class ModclusterPresenter
     protected void reload() {
         crud.read(PROXY_TEMPLATE.replaceWildcards(proxyName), 2, result -> {
             getView().updateConfiguration(result);
-            ModelNode dynLoadProvModel = failSafeGet(result, "dynamic-load-provider/configuration");
-            if (dynLoadProvModel.isDefined()) {
-                getView().updateDynamicLoadProvider(dynLoadProvModel);
+            ModelNode loadProvDynamicModel = failSafeGet(result, "load-provider/dynamic");
+            if (loadProvDynamicModel.isDefined()) {
+                getView().updateLoadProviderDynamic(loadProvDynamicModel);
 
                 // update custom load metric
-                ModelNode customLoadMetricModel = failSafeGet(result, "dynamic-load-provider/configuration/custom-load-metric");
+                ModelNode customLoadMetricModel = failSafeGet(result, "load-provider/dynamic/custom-load-metric");
                 List<NamedNode> customLoadMetricNamedNodes = Collections.emptyList();
                 if (customLoadMetricModel.isDefined()) {
                     customLoadMetricNamedNodes = asNamedNodes(customLoadMetricModel.asPropertyList());
@@ -125,14 +125,14 @@ public class ModclusterPresenter
                 getView().updateCustomLoadMetrics(customLoadMetricNamedNodes);
 
                 // update load metric
-                ModelNode loadMetricModel = failSafeGet(result, "dynamic-load-provider/configuration/load-metric");
+                ModelNode loadMetricModel = failSafeGet(result, "load-provider/dynamic/load-metric");
                 List<NamedNode> loadMetricNamedNodes = Collections.emptyList();
                 if (loadMetricModel.isDefined()) {
                     loadMetricNamedNodes = asNamedNodes(loadMetricModel.asPropertyList());
                 }
                 getView().updateLoadMetrics(loadMetricNamedNodes);
             } else {
-                getView().updateDynamicLoadProvider(dynLoadProvModel);
+                getView().updateLoadProviderDynamic(loadProvDynamicModel);
                 getView().updateCustomLoadMetrics(Collections.emptyList());
                 getView().updateLoadMetrics(Collections.emptyList());
             }
@@ -143,23 +143,44 @@ public class ModclusterPresenter
         return proxyName;
     }
 
-    public Operation dynamicLoadProviderOperation() {
-        AddressTemplate template = DYNAMIC_LOAD_PROVIDER_TEMPLATE.replaceWildcards(proxyName);
+    // =================== load-provider=dynamic
+
+    public Operation loadProviderDynamicOperation() {
+        AddressTemplate template = LOAD_PROVIDER_DYNAMIC_TEMPLATE.replaceWildcards(proxyName);
         return new Operation.Builder(template.resolve(statementContext), READ_RESOURCE_OPERATION).build();
     }
 
-    public void addDynamicLoadProvider() {
-        String id = Ids.build("dynamic-load-provider", FORM, ADD);
-        AddressTemplate template = DYNAMIC_LOAD_PROVIDER_TEMPLATE.replaceWildcards(proxyName);
-        crud.addSingleton(id, Names.DYNAMIC_LOAD_PROVIDER, template, address -> reload());
+    public void addLoadProviderDynamic() {
+        String id = Ids.build("load-provider-dynamic", FORM, ADD);
+        AddressTemplate template = LOAD_PROVIDER_DYNAMIC_TEMPLATE.replaceWildcards(proxyName);
+        crud.addSingleton(id, Names.LOAD_PROVIDER_DYNAMIC, template, address -> reload());
     }
 
-    public void removeDynamicLoadProvider() {
-        AddressTemplate template = DYNAMIC_LOAD_PROVIDER_TEMPLATE.replaceWildcards(proxyName);
-        crud.removeSingleton(Names.DYNAMIC_LOAD_PROVIDER, template, this::reload);
+    public void removeLoadProviderDynamic() {
+        AddressTemplate template = LOAD_PROVIDER_DYNAMIC_TEMPLATE.replaceWildcards(proxyName);
+        crud.removeSingleton(Names.LOAD_PROVIDER_DYNAMIC, template, this::reload);
+    }
+
+    // =================== load-provider=simple
+
+    public Operation loadProviderSimpleOperation() {
+        AddressTemplate template = LOAD_PROVIDER_SIMPLE_TEMPLATE.replaceWildcards(proxyName);
+        return new Operation.Builder(template.resolve(statementContext), READ_RESOURCE_OPERATION).build();
+    }
+
+    public void addLoadProviderSimple() {
+        String id = Ids.build("load-provider-simple", FORM, ADD);
+        AddressTemplate template = LOAD_PROVIDER_SIMPLE_TEMPLATE.replaceWildcards(proxyName);
+        crud.addSingleton(id, Names.LOAD_PROVIDER_SIMPLE, template, address -> reload());
+    }
+
+    public void removeLoadProviderSimple() {
+        AddressTemplate template = LOAD_PROVIDER_SIMPLE_TEMPLATE.replaceWildcards(proxyName);
+        crud.removeSingleton(Names.LOAD_PROVIDER_SIMPLE, template, this::reload);
     }
 
     // =================== custom load metric
+
     public void addCustomLoadMetric() {
         String id = Ids.build(CUSTOM_LOAD_METRIC, FORM, ADD);
         AddressTemplate template = CUSTOM_LOAD_METRIC_TEMPLATE.replaceWildcards(proxyName);
@@ -215,7 +236,7 @@ public class ModclusterPresenter
 
     public interface MyView extends MbuiView<ModclusterPresenter> {
         void updateConfiguration(ModelNode payload);
-        void updateDynamicLoadProvider(ModelNode payload);
+        void updateLoadProviderDynamic(ModelNode payload);
         void updateCustomLoadMetrics(List<NamedNode> nodes);
         void updateLoadMetrics(List<NamedNode> nodes);
     }
