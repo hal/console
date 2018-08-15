@@ -103,7 +103,6 @@ public interface Names {
     String DISTRIBUTED_CACHE = "Distributed Cache";
     String DIVERT = "Divert";
     String DOMAIN_CONTROLLER = "Domain Controller";
-    String DYNAMIC_LOAD_PROVIDER = "Dynamic Load Provider";
 
     String EE = "EE";
     String EJB3 = "EJB";
@@ -195,6 +194,8 @@ public interface Names {
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
     String LOAD_METRIC = "Load Metric";
+    String LOAD_PROVIDER_DYNAMIC = "Load Provider Dynamic";
+    String LOAD_PROVIDER_SIMPLE = "Load Provider Simple";
     String LOCAL_CACHE = "Local Cache";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
