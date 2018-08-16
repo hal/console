@@ -25,9 +25,6 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
@@ -36,7 +33,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 public class WorkerChannel {
 
     private static final String WORKER_JS = "js/worker.js";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(WorkerChannel.class);
 
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
     private final SecurityContextDatabase securityContextDatabase;
@@ -52,16 +48,11 @@ public class WorkerChannel {
 
     void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription, boolean recursive) {
         if (worker != null) {
-            // Stopwatch watch = Stopwatch.createStarted();
             resourceDescription.get(HAL_RECURSIVE).set(recursive);
             UpdateMessage message = new UpdateMessage();
             message.database = resourceDescriptionDatabase.name();
             message.document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
             worker.postMessage(message);
-            // watch.stop();
-            // logger.debug("Posted rd({}): {} bytes in {} ms", document.getId(),
-            //         document.getAny(PAYLOAD).asString().length(),
-            //         watch.elapsed(MILLISECONDS));
         }
     }
 
