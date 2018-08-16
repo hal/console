@@ -24,7 +24,6 @@ import org.jboss.hal.client.bootstrap.tasks.CheckForUpdate;
 import org.jboss.hal.client.bootstrap.tasks.CheckTargetVersion;
 import org.jboss.hal.client.bootstrap.tasks.FindDomainController;
 import org.jboss.hal.client.bootstrap.tasks.InitializationTasks;
-import org.jboss.hal.client.bootstrap.tasks.InjectPolyfill;
 import org.jboss.hal.client.bootstrap.tasks.LoadSettings;
 import org.jboss.hal.client.bootstrap.tasks.ReadAuthentication;
 import org.jboss.hal.client.bootstrap.tasks.ReadEnvironment;
@@ -45,7 +44,6 @@ public class BootstrapModule extends AbstractGinModule {
         bind(EndpointStorage.class).in(Singleton.class);
         bind(FindDomainController.class).in(Singleton.class);
         bind(InitializationTasks.class).in(Singleton.class);
-        bind(InjectPolyfill.class).in(Singleton.class);
         bind(LoadSettings.class).in(Singleton.class);
         bind(ReadAuthentication.class).in(Singleton.class);
         bind(ReadEnvironment.class).in(Singleton.class);

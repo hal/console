@@ -23,8 +23,7 @@ public class BootstrapTasks {
     private final BootstrapTask[] tasks;
 
     @Inject
-    public BootstrapTasks(InjectPolyfill injectPolyfill,
-            ReadEnvironment readEnvironment,
+    public BootstrapTasks(ReadEnvironment readEnvironment,
             ReadAuthentication readAuthentication,
             FindDomainController findDomainController,
             RegisterStaticCapabilities registerStaticCapabilities,
@@ -32,7 +31,6 @@ public class BootstrapTasks {
             LoadSettings loadSettings,
             StartAnalytics startAnalytics) {
         this.tasks = new BootstrapTask[]{
-                injectPolyfill,
                 readEnvironment,
                 readAuthentication,
                 findDomainController,

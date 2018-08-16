@@ -106,14 +106,7 @@ module.exports = function (grunt) {
         },
 
         concat: {
-            polyfillDev: {
-                src: [
-                    '<%= config.node %>/promise-polyfill/dist/polyfill.js',
-                    '<%= config.node %>/whatwg-fetch/fetch.js'
-                ],
-                dest: '<%= config.public %>/js/polyfill.js'
-            },
-            polyfillProd: {
+            polyfill: {
                 options: {
                     banner: '/*!\n' +
                     ' * Polyfill JS files for IE 11 and below. HAL <%= config.version %>\n' +
@@ -296,7 +289,7 @@ module.exports = function (grunt) {
     grunt.registerTask('dev', [
         'clean',
         'copy:resources',
-        'concat:polyfillDev',
+        'concat:polyfill',
         'concat:externalDev',
         'less',
         'postcss'
@@ -305,7 +298,7 @@ module.exports = function (grunt) {
     grunt.registerTask('prod', [
         'clean',
         'copy:resources',
-        'concat:polyfillProd',
+        'concat:polyfill',
         'concat:externalProd',
         'less',
         'postcss',
