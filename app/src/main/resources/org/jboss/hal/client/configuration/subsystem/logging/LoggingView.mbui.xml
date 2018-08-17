@@ -50,6 +50,7 @@
                                     <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
                                     <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
                                     <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/socket-handler=*"/>
                                     <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
                                     <!-- @formatter:on -->
                                 </templates>
@@ -85,6 +86,7 @@
                                             <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
                                             <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
                                             <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/socket-handler=*"/>
                                             <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
                                             <!-- @formatter:on -->
                                         </templates>
@@ -105,7 +107,7 @@
                       name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="category"/>
-                        <attribute name="level"/>
+                        <attribute name="filter-spec"/>
                         <attribute name="handlers">
                             <suggest-handler>
                                 <templates>
@@ -117,13 +119,14 @@
                                     <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
                                     <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
                                     <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/socket-handler=*"/>
                                     <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
                                     <!-- @formatter:on -->
                                 </templates>
                             </suggest-handler>
                         </attribute>
+                        <attribute name="level"/>
                         <attribute name="use-parent-handlers"/>
-                        <attribute name="filter-spec"/>
                     </attributes>
                 </form>
             </metadata>
@@ -143,6 +146,8 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="level"/>
+                                    <attribute name="overflow-action"/>
+                                    <attribute name="queue-length"/>
                                     <attribute name="subhandlers">
                                         <suggest-handler>
                                             <templates>
@@ -153,13 +158,12 @@
                                                 <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
                                                 <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
                                                 <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/socket-handler=*"/>
                                                 <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
                                                 <!-- @formatter:on -->
                                             </templates>
                                         </suggest-handler>
                                     </attribute>
-                                    <attribute name="queue-length"/>
-                                    <attribute name="overflow-action"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -173,7 +177,10 @@
                     <form id="logging-handler-async-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
+                            <attribute name="filter-spec"/>
                             <attribute name="level"/>
+                            <attribute name="overflow-action"/>
+                            <attribute name="queue-length"/>
                             <attribute name="subhandlers">
                                 <suggest-handler>
                                     <templates>
@@ -184,14 +191,12 @@
                                         <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/socket-handler=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="queue-length"/>
-                            <attribute name="overflow-action"/>
-                            <attribute name="filter-spec"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -209,8 +214,8 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="level"/>
-                                    <attribute name="target"/>
                                     <attribute name="formatter"/>
+                                    <attribute name="target"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -225,10 +230,12 @@
                     <form id="logging-handler-console-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
-                            <attribute name="level"/>
-                            <attribute name="target"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
@@ -239,9 +246,7 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="target"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -258,10 +263,10 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="level"/>
-                                    <attribute name="module"/>
                                     <attribute name="class"/>
                                     <attribute name="formatter"/>
+                                    <attribute name="level"/>
+                                    <attribute name="module"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -275,11 +280,13 @@
                     <form id="logging-handler-custom-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
+                            <attribute name="class"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                            <attribute name="formatter"/>
                             <attribute name="level"/>
                             <attribute name="module"/>
-                            <attribute name="class"/>
-                            <attribute name="properties"/>
-                            <attribute name="formatter"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
@@ -290,9 +297,7 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="properties"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -310,8 +315,8 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="level"/>
                                     <attribute name="formatter"/>
+                                    <attribute name="level"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -326,11 +331,14 @@
                     <form id="logging-handler-file-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
@@ -341,9 +349,6 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -363,9 +368,9 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
                                     <attribute name="formatter"/>
+                                    <attribute name="level"/>
+                                    <attribute name="suffix"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -380,12 +385,14 @@
                     <form id="logging-handler-periodic-rotating-file-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
@@ -396,9 +403,7 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="suffix"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -418,11 +423,11 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
                                     <attribute name="formatter"/>
-                                    <attribute name="rotate-size"/>
+                                    <attribute name="level"/>
                                     <attribute name="max-backup-index"/>
+                                    <attribute name="rotate-size"/>
+                                    <attribute name="suffix"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -437,15 +442,15 @@
                     <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
-                            <attribute name="rotate-size"/>
-                            <attribute name="rotate-on-boot"/>
-                            <attribute name="max-backup-index"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
+                            <attribute name="max-backup-index"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
@@ -456,9 +461,9 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="suffix"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -478,11 +483,11 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file" provider="${new FileFormItem()}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
                                     <attribute name="formatter"/>
-                                    <attribute name="rotate-size"/>
+                                    <attribute name="level"/>
                                     <attribute name="max-backup-index"/>
+                                    <attribute name="rotate-size"/>
+                                    <attribute name="suffix"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -497,15 +502,15 @@
                     <form id="logging-handler-size-rotating-file-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
-                            <attribute name="rotate-size"/>
-                            <attribute name="rotate-on-boot"/>
-                            <attribute name="max-backup-index"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
+                            <attribute name="max-backup-index"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
@@ -516,17 +521,78 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="suffix"/>
                         </attributes>
                     </form>
                 </metadata>
             </sub-item>
 
             <!--
-                Syslog Handler
+                Socket Handler
             -->
+            <sub-item id="logging-handler-socket-item" title="Socket Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/socket-handler=*">
+                    <h1>Socket Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-handler-socket-table" form-ref="logging-handler-socket-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="named-formatter">
+                                        <suggest-handler>
+                                            <templates>
+                                                <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                            </templates>
+                                        </suggest-handler>
+                                    </attribute>
+                                    <attribute name="outbound-socket-binding-ref" />
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <!-- socket handlers do not have a name attribute,
+                            so we need to provide a value using NamedNode.getName() -->
+                            <column name="name" value="${row.getName()}"/>
+                            <column name="level"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-socket-form" auto-save="true" reset="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                            <attribute name="autoflush"/>
+                            <attribute name="block-on-reconnect"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                            <attribute name="level"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="outbound-socket-binding-ref" />
+                            <attribute name="protocol"/>
+                            <attribute name="ssl-context"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+        <!--
+            Syslog Handler
+        -->
             <sub-item id="logging-handler-syslog-item" title="Syslog Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/syslog-handler=*">
                     <h1>Syslog Handler</h1>
@@ -535,13 +601,13 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="level"/>
-                                    <attribute name="syslog-format"/>
-                                    <attribute name="hostname"/>
-                                    <attribute name="server-address"/>
-                                    <attribute name="port"/>
                                     <attribute name="app-name"/>
                                     <attribute name="facility"/>
+                                    <attribute name="hostname"/>
+                                    <attribute name="level"/>
+                                    <attribute name="port"/>
+                                    <attribute name="server-address"/>
+                                    <attribute name="syslog-format"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -557,14 +623,14 @@
                     <form id="logging-handler-syslog-form" auto-save="true" reset="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
-                            <attribute name="level"/>
-                            <attribute name="syslog-format"/>
-                            <attribute name="hostname"/>
-                            <attribute name="server-address"/>
-                            <attribute name="port"/>
                             <attribute name="app-name"/>
-                            <attribute name="facility"/>
                             <attribute name="enabled"/>
+                            <attribute name="facility"/>
+                            <attribute name="hostname"/>
+                            <attribute name="level"/>
+                            <attribute name="port"/>
+                            <attribute name="server-address"/>
+                            <attribute name="syslog-format"/>
                         </attributes>
                     </form>
                 </metadata>

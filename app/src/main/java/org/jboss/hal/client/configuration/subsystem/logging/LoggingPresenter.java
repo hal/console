@@ -115,6 +115,7 @@ public class LoggingPresenter
             getView().updatePeriodicHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE.lastName())));
             getView().updatePeriodicSizeHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastName())));
             getView().updateSizeHandlerHandler(asNamedNodes(failSafePropertyList(result, SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastName())));
+            getView().updateSocketHandler(asNamedNodes(failSafePropertyList(result, SOCKET_HANDLER_TEMPLATE.lastName())));
             getView().updateSyslogHandler(asNamedNodes(failSafePropertyList(result, SYSLOG_HANDLER_TEMPLATE.lastName())));
 
             getView().updateCustomFormatter(asNamedNodes(failSafePropertyList(result, CUSTOM_FORMATTER_TEMPLATE.lastName())));
@@ -153,7 +154,7 @@ public class LoggingPresenter
     @Requires({LOGGING_SUBSYSTEM_ADDRESS, ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
             ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
             PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
-            SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
+            SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS, SOCKET_HANDLER_ADDRESS,
             CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS, JSON_FORMATTER_ADDRESS, XML_FORMATTER_ADDRESS})
     public interface MyProxy extends ProxyPlace<LoggingPresenter> {
     }
@@ -172,6 +173,7 @@ public class LoggingPresenter
         void updatePeriodicHandler(List<NamedNode> items);
         void updatePeriodicSizeHandler(List<NamedNode> items);
         void updateSizeHandlerHandler(List<NamedNode> items);
+        void updateSocketHandler(List<NamedNode> items);
         void updateSyslogHandler(List<NamedNode> items);
 
         void updateCustomFormatter(List<NamedNode> items);

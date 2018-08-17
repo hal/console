@@ -328,6 +328,7 @@ public interface Names {
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
     String SMALLRYE = "Smallrye";
+    String SOCKET_ACTION_HANDLER = "Socket ActionHandler";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";

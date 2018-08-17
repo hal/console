@@ -109,8 +109,9 @@ public class OperationFactory {
 
                 // the easy part: no conflicts
                 alternatives.forEach(alternative -> {
-                    if (resourceDescription.isDeprecated(ATTRIBUTES, alternative)) {
-                        logger.debug("Skip undefine operations for deprecated alternative {}", alternative);
+                    boolean alternativeDoesntExist = resourceDescription.findAttribute(ATTRIBUTES, alternative) == null;
+                    if (resourceDescription.isDeprecated(ATTRIBUTES, alternative) || alternativeDoesntExist) {
+                        logger.debug("Skip undefine operations for deprecated or non-existent alternative {}", alternative);
                     } else {
                         logger.debug("Add undefine operations for alternative {}", alternative);
                         operations.putIfAbsent(alternative, undefineAttribute(address, alternative));

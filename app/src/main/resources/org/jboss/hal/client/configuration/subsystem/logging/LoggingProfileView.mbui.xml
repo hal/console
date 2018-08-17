@@ -27,9 +27,25 @@
                 <form id="logging-profile-root-logger-form" on-save="${saveRootLogger(form, changedValues)}"
                       prepare-reset="${resetRootLogger(form)}">
                     <attributes>
-                        <attribute name="level"/>
-                        <attribute name="handlers"/>
                         <attribute name="filter-spec"/>
+                        <attribute name="handlers">
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/async-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/console-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/socket-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/syslog-handler=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                        <attribute name="level"/>
                     </attributes>
                 </form>
             </metadata>
@@ -60,10 +76,26 @@
                       prepare-reset="${resetLogger(form)}">
                     <attributes>
                         <attribute name="category"/>
-                        <attribute name="level"/>
-                        <attribute name="handlers"/>
-                        <attribute name="use-parent-handlers"/>
                         <attribute name="filter-spec"/>
+                        <attribute name="handlers">
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/async-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/console-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/socket-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/syslog-handler=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                        <attribute name="level"/>
+                        <attribute name="use-parent-handlers"/>
                     </attributes>
                 </form>
             </metadata>
@@ -93,25 +125,26 @@
                     <form id="logging-profile-handler-async-form" on-save="${saveAsyncHandler(form, changedValues)}"
                           prepare-reset="${resetAsyncHandler(form)}">
                         <attributes>
+                            <attribute name="filter-spec"/>
                             <attribute name="level"/>
+                            <attribute name="overflow-action"/>
+                            <attribute name="queue-length"/>
                             <attribute name="subhandlers">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/console-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/syslog-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/console-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/socket-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/syslog-handler=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="queue-length"/>
-                            <attribute name="overflow-action"/>
-                            <attribute name="filter-spec"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -142,25 +175,25 @@
                           on-save="${saveConsoleHandler(form, changedValues)}"
                           prepare-reset="${resetConsoleHandler(form)}">
                         <attributes>
-                            <attribute name="level"/>
-                            <attribute name="target"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="target"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -188,26 +221,26 @@
                     <form id="logging-profile-handler-custom-form" on-save="${saveCustomHandler(form, changedValues)}"
                           prepare-reset="${resetCustomHandler(form)}">
                         <attributes>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="class"/>
+                            <attribute name="filter-spec"/>
+                            <attribute name="formatter"/>
                             <attribute name="level"/>
                             <attribute name="module"/>
-                            <attribute name="class"/>
-                            <attribute name="properties"/>
-                            <attribute name="formatter"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="properties"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -236,26 +269,26 @@
                     <form id="logging-profile-handler-file-form" on-save="${saveFileHandler(form, changedValues)}"
                           prepare-reset="${resetFileHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -288,27 +321,27 @@
                           on-save="${savePeriodicHandler(form, changedValues)}"
                           prepare-reset="${resetPeriodicHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="suffix"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -341,30 +374,30 @@
                           on-save="${savePeriodicSizeHandler(form, changedValues)}"
                           prepare-reset="${resetPeriodicSizeHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
-                            <attribute name="rotate-size"/>
-                            <attribute name="rotate-on-boot"/>
-                            <attribute name="max-backup-index"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
+                            <attribute name="max-backup-index"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="suffix"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -396,38 +429,86 @@
                     <form id="logging-profile-handler-size-rotating-file-form"
                           on-save="${saveSizeHandler(form, changedValues)}" prepare-reset="${resetSizeHandler(form)}">
                         <attributes>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
-                            <attribute name="suffix"/>
-                            <attribute name="level"/>
-                            <attribute name="rotate-size"/>
-                            <attribute name="rotate-on-boot"/>
-                            <attribute name="max-backup-index"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
+                            <attribute name="level"/>
+                            <attribute name="max-backup-index"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/json-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/xml-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="suffix"/>
                         </attributes>
                     </form>
                 </metadata>
             </sub-item>
 
             <!--
-                Syslog Handler
+                Socket Handler
             -->
+            <sub-item id="logging-profile-handler-socket-item" title="Socket Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/socket-handler=*">
+                    <h1>Socket Handler</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="logging-profile-handler-socket-table" form-ref="logging-profile-handler-socket-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${addSocketHandler()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${removeSocketHandler(table)}" scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <!-- socket handlers don't have a name attribute,
+                            so we need to provide a value using NamedNode.getName() -->
+                            <column name="name" value="${row.getName()}"/>
+                            <column name="level"/>
+                        </columns>
+                    </table>
+                    <form id="logging-profile-handler-socket-form" on-save="${saveSocketHandler(form, changedValues)}"
+                          prepare-reset="${resetSocketHandler(form)}">
+                        <attributes>
+                            <attribute name="autoflush"/>
+                            <attribute name="block-on-reconnect"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                            <attribute name="level"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="outbound-socket-binding-ref"/>
+                            <attribute name="protocol"/>
+                            <attribute name="ssl-context"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+        <!--
+            Syslog Handler
+        -->
             <sub-item id="logging-profile-handler-syslog-item" title="Syslog Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*">
                     <h1>Syslog Handler</h1>
@@ -449,14 +530,14 @@
                     <form id="logging-profile-handler-syslog-form" on-save="${saveSyslogHandler(form, changedValues)}"
                           prepare-reset="${resetSyslogHandler(form)}">
                         <attributes>
-                            <attribute name="level"/>
-                            <attribute name="syslog-format"/>
-                            <attribute name="hostname"/>
-                            <attribute name="server-address"/>
-                            <attribute name="port"/>
                             <attribute name="app-name"/>
-                            <attribute name="facility"/>
                             <attribute name="enabled"/>
+                            <attribute name="facility"/>
+                            <attribute name="hostname"/>
+                            <attribute name="level"/>
+                            <attribute name="port"/>
+                            <attribute name="server-address"/>
+                            <attribute name="syslog-format"/>
                         </attributes>
                     </form>
                 </metadata>

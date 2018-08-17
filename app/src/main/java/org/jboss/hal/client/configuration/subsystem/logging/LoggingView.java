@@ -90,6 +90,8 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @MbuiElement("logging-handler-async-form") Form<NamedNode> asyncHandlerForm;
     @MbuiElement("logging-handler-custom-table") Table<NamedNode> customHandlerTable;
     @MbuiElement("logging-handler-custom-form") Form<NamedNode> customHandlerForm;
+    @MbuiElement("logging-handler-socket-table") Table<NamedNode> socketHandlerTable;
+    @MbuiElement("logging-handler-socket-form") Form<NamedNode> socketHandlerForm;
     @MbuiElement("logging-handler-syslog-table") Table<NamedNode> syslogHandlerTable;
     @MbuiElement("logging-handler-syslog-form") Form<NamedNode> syslogHandlerForm;
     @MbuiElement("logging-formatter-custom-table") Table<NamedNode> customFormatterTable;
@@ -377,6 +379,13 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         navigation.updateBadge("logging-handler-custom-item", items.size());
         customHandlerForm.clear();
         customHandlerTable.update(items);
+    }
+
+    @Override
+    public void updateSocketHandler(List<NamedNode> items) {
+        navigation.updateBadge("logging-handler-socket-item", items.size());
+        socketHandlerForm.clear();
+        socketHandlerTable.update(items);
     }
 
     @Override
