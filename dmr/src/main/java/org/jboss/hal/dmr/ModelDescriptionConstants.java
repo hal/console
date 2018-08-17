@@ -415,6 +415,7 @@ public interface ModelDescriptionConstants {
     String JPA = "jpa";
     String JSF = "jsf";
     String JSON = "json";
+    String JSON_FORMATTER = "json-formatter";
     String JSP = "jsp";
     String JSR77 = "jsr77";
     String JVM = "jvm";
@@ -810,6 +811,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SOCKET_BINDING_REF = "socket-binding-ref";
     String SOCKET_BINDINGS = "socket-bindings";
+    String SOCKET_HANDLER = "socket-handler";
     String SOCKET_TIMEOUT = "socket-timeout";
     String SOURCE = "source";
     String SOURCE_CREDENTIAL_REFERENCE = "source-credential-reference";
@@ -944,5 +946,6 @@ public interface ModelDescriptionConstants {
     String XA_DATASOURCE_CLASS = "xa-datasource-class";
     String XA_DATASOURCE_PROPERTIES = "xa-datasource-properties";
     String XML = "xml";
+    String XML_FORMATTER = "xml-formatter";
 }
 

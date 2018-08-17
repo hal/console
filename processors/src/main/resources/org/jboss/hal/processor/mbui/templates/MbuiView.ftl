@@ -105,7 +105,7 @@ public final class ${context.subclass} extends ${context.base} {
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
                 <#if form.singleton>
             .singleton(
-                () -> new Operation.Builder(${form.metadata.name}Template.resolve(mbuiContext.statementContext()), READ_RESOURCE_OPERATION).build(),
+                () -> new Operation.Builder(${form.metadata.name}Template.resolve(statementContext()), READ_RESOURCE_OPERATION).build(),
                 <#if form.metadata.singleton>
                     <#if form.addHandler??>
                 () -> ${form.addHandler})
@@ -115,7 +115,7 @@ public final class ${context.subclass} extends ${context.base} {
                 <#else>
                 () -> add("${form.selector}", ${form.title}, ${form.metadata.name}Template))
                 </#if>
-            .prepareRemove(form -> removeSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form))
+            .prepareRemove(form -> removeSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(statementContext()), form))
                 </#if>
                 <#if form.includeRuntime>
             .includeRuntime()
@@ -147,10 +147,10 @@ public final class ${context.subclass} extends ${context.base} {
                 <#if form.nameResolver??>
             .onSave((form, changedValues) -> {
                 String name = ${form.nameResolver};
-                saveForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), changedValues, ${form.metadata.name});
+                saveForm(${form.title}, name, ${form.metadata.name}Template.resolve(statementContext(), name), changedValues, ${form.metadata.name});
             })
                 <#else>
-            .onSave((form, changedValues) -> saveSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), changedValues, ${form.metadata.name}))
+            .onSave((form, changedValues) -> saveSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(statementContext()), changedValues, ${form.metadata.name}))
                 </#if>
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})
@@ -159,10 +159,10 @@ public final class ${context.subclass} extends ${context.base} {
                 <#if form.nameResolver??>
             .prepareReset(form -> {
                 String name = ${form.nameResolver};
-                resetForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), form, ${form.metadata.name});
+                resetForm(${form.title}, name, ${form.metadata.name}Template.resolve(statementContext(), name), form, ${form.metadata.name});
             })
                 <#else>
-            .prepareReset(form -> resetSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form, ${form.metadata.name}))
+            .prepareReset(form -> resetSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(statementContext()), form, ${form.metadata.name}))
                 </#if>
             <#elseif form.prepareReset??>
             .prepareReset(form -> ${form.prepareReset})
@@ -176,12 +176,12 @@ public final class ${context.subclass} extends ${context.base} {
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                 <#elseif attribute.suggestHandlerTemplates?size == 1>
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
-            mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
+            mbuiContext.dispatcher(), statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
                 <#else>
         List<AddressTemplate> ${form.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
             AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
-                    mbuiContext.dispatcher(), mbuiContext.statementContext(), ${form.name}Templates));
+                    mbuiContext.dispatcher(), statementContext(), ${form.name}Templates));
                 </#if>
             </#list>
         </#list>
@@ -218,19 +218,19 @@ public final class ${context.subclass} extends ${context.base} {
                 form.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
                 form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
-                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
+                                            mbuiContext.dispatcher(), statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
                 form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
-                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), ${table.name}Templates));
+                                            mbuiContext.dispatcher(), statementContext(), ${table.name}Templates));
                                         </#if>
                                     </#list>
                 AddResourceDialog dialog = new AddResourceDialog(
                     mbuiContext.resources().messages().addResourceTitle(${table.title}),
                     form,
                     (name, modelNode) -> {
-                        ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
+                        ResourceAddress address = ${table.metadata.name}Template.resolve(statementContext(), name);
                         mbuiContext.crud().add(${table.title}, name, address, modelNode, (n, a) -> presenter.reload());
                     });
                 dialog.show();
@@ -243,7 +243,7 @@ public final class ${context.subclass} extends ${context.base} {
                     ${table.metadata.name},
                     asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>),
                     (name, modelNode) -> {
-                        ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
+                        ResourceAddress address = ${table.metadata.name}Template.resolve(statementContext(), name);
                         mbuiContext.crud().add(${table.title}, name, address, modelNode, (n, a) -> presenter.reload());
                     });
                                     <#list action.validationHandlerAttributes as attribute>
@@ -254,12 +254,12 @@ public final class ${context.subclass} extends ${context.base} {
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
-                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
+                                            mbuiContext.dispatcher(), statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
-                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), ${table.name}Templates));
+                                            mbuiContext.dispatcher(), statementContext(), ${table.name}Templates));
                                         </#if>
                                     </#list>
                 dialog.show();

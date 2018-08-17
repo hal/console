@@ -32,6 +32,7 @@ interface AddressTemplates {
     String PERIODIC_ROTATING_FILE_HANDLER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/periodic-rotating-file-handler=*";
     String PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/periodic-size-rotating-file-handler=*";
     String SIZE_ROTATING_FILE_HANDLER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/size-rotating-file-handler=*";
+    String SOCKET_HANDLER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/socket-handler=*";
     String SYSLOG_HANDLER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/syslog-handler=*";
 
     String CUSTOM_FORMATTER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/custom-formatter=*";
@@ -55,6 +56,7 @@ interface AddressTemplates {
     AddressTemplate PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE = AddressTemplate
             .of(PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS);
     AddressTemplate SIZE_ROTATING_FILE_HANDLER_TEMPLATE = AddressTemplate.of(SIZE_ROTATING_FILE_HANDLER_ADDRESS);
+    AddressTemplate SOCKET_HANDLER_TEMPLATE = AddressTemplate.of(SOCKET_HANDLER_ADDRESS);
     AddressTemplate SYSLOG_HANDLER_TEMPLATE = AddressTemplate.of(SYSLOG_HANDLER_ADDRESS);
 
     AddressTemplate CUSTOM_FORMATTER_TEMPLATE = AddressTemplate.of(CUSTOM_FORMATTER_ADDRESS);

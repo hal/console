@@ -130,6 +130,7 @@ public class LoggingProfilePresenter
             getView().updatePeriodicHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE.lastName())));
             getView().updatePeriodicSizeHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastName())));
             getView().updateSizeHandler(asNamedNodes(failSafePropertyList(result, SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastName())));
+            getView().updateSocketHandler(asNamedNodes(failSafePropertyList(result, SOCKET_HANDLER_TEMPLATE.lastName())));
             getView().updateSyslogHandler(asNamedNodes(failSafePropertyList(result, SYSLOG_HANDLER_TEMPLATE.lastName())));
 
             getView().updateCustomFormatter(asNamedNodes(failSafePropertyList(result, CUSTOM_FORMATTER_TEMPLATE.lastName())));
@@ -182,6 +183,7 @@ public class LoggingProfilePresenter
         void updatePeriodicHandler(List<NamedNode> items);
         void updatePeriodicSizeHandler(List<NamedNode> items);
         void updateSizeHandler(List<NamedNode> items);
+        void updateSocketHandler(List<NamedNode> items);
         void updateSyslogHandler(List<NamedNode> items);
 
         void updateCustomFormatter(List<NamedNode> items);
