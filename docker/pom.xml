@@ -99,9 +99,11 @@
                 </executions>
             </plugin>
             <!--
-             Produce two docker images:
+             Produce three docker images:
                 1. halconsole/hal-standalone: Contains HAL standalone
-                2. halconsole/hal-wildfly: Contains latest WildFly and and HAL
+                2. halconsole/hal-wildfly: Contains latest WildFly and HAL
+                3. halconsole/hal-wildfly-nightly: Contains latest nightly
+                   build of WildFly with HAL 
             -->
             <plugin>
                 <groupId>io.fabric8</groupId>
