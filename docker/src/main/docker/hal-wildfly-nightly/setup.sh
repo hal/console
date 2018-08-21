@@ -2,7 +2,7 @@
 
 WF_ARTIFACT_VERSION=wildfly-$wildfly_version
 
-function downloadLatestWildflyOrSpecified() {
+function downloadSpecifiedOrLatestWildfly() {
     if [ -z "$wildfly_version" ]
     then
         echo "Version of Wildfly has not been specified, resolving latest one"
@@ -11,11 +11,10 @@ function downloadLatestWildflyOrSpecified() {
         echo "Latest version of Wildfly is $WF_ARTIFACT_VERSION"
     fi
     curl -O https://ci.wildfly.org/guestAuth/repository/download/WF_Nightly/latest.lastFinished/${WF_ARTIFACT_VERSION}.zip
-    unzip ${WF_ARTIFACT_VERSION}.zip
-    mv ${WF_ARTIFACT_VERSION} ${JBOSS_HOME}
-    rm ${WF_ARTIFACT_VERSION}.zip
-    chown -R jboss:0 ${JBOSS_HOME}
-    chmod -R g+rw ${JBOSS_HOME}
 }
-
-downloadLatestWildflyOrSpecified
+downloadSpecifiedOrLatestWildfly
+unzip ${WF_ARTIFACT_VERSION}.zip
+mv ${WF_ARTIFACT_VERSION} ${JBOSS_HOME}
+rm ${WF_ARTIFACT_VERSION}.zip
+chown -R jboss:0 ${JBOSS_HOME}
+chmod -R g+rw ${JBOSS_HOME}
