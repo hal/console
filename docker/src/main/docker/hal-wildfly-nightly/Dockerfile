@@ -22,7 +22,7 @@ RUN sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/
     && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full.xml > $JBOSS_HOME/standalone/configuration/standalone-full-insecure.xml \
     && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-ha-insecure.xml \
     && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/standalone/configuration/standalone-full-ha.xml > $JBOSS_HOME/standalone/configuration/standalone-full-ha-insecure.xml \
-    && sed -i "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/domain/configuration/host.xml \
+    && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/domain/configuration/host.xml > $JBOSS_HOME/domain/configuration/host-insecure.xml \
     && $JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent
 
 # Expose the ports we're interested in
