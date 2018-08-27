@@ -68,6 +68,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -118,8 +119,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(ResourceAddress.root(),
-                            READ_CHILDREN_RESOURCES_OPERATION
-                    )
+                            READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE_DEPTH, 2)
@@ -168,7 +168,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         setItemRenderer(item -> new ItemDisplay<Deployment>() {
             @Override
             public String getId() {
-                return Ids.deployment(item.getName());
+                return Strings.sanitize(Ids.deployment(item.getName()));
             }
 
             @Override

@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -71,7 +72,7 @@ public class SimplePermissionMapperElement
                         SIMPLE_PERMISSION_MAPPER_TEMPLATE, (name, address) -> presenter.reloadSimplePermissionMapper()))
                 .button(tableButtonFactory.remove(Names.SIMPLE_PERMISSION_MAPPER, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadSimplePermissionMapper()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new InlineAction<>(Names.PERMISSION_MAPPINGS, this::showPermissionMappings), "15em")
                 .build();
 
@@ -95,10 +96,10 @@ public class SimplePermissionMapperElement
                 .button(tableButtonFactory.remove(pmMetadata.getTemplate(),
                         table -> presenter.removePermissionMappings(selectedSimplePermissionMapper, pmIndex)))
                 // there are four attributes, none are required=true, so we must display all of them
-                .column(MATCH_ALL, (cell, type, row, meta) -> extractValue(row, MATCH_ALL))
-                .column(PRINCIPALS, (cell, type, row, meta) -> extractValue(row, PRINCIPALS))
-                .column(ROLES, (cell, type, row, meta) -> extractValue(row, ROLES))
-                .column(PERMISSIONS, (cell, type, row, meta) -> extractPermissionsString(row))
+                .column(MATCH_ALL, (cell, type, row, meta) -> SafeHtmlUtils.fromString(extractValue(row, MATCH_ALL)).asString())
+                .column(PRINCIPALS, (cell, type, row, meta) -> SafeHtmlUtils.fromString(extractValue(row, PRINCIPALS)).asString())
+                .column(ROLES, (cell, type, row, meta) -> SafeHtmlUtils.fromString(extractValue(row, ROLES)).asString())
+                .column(PERMISSIONS, (cell, type, row, meta) -> SafeHtmlUtils.fromString(extractPermissionsString(row)).asString())
                 .column(new InlineAction<>(Names.PERMISSIONS, this::showPermissions))
                 .build();
         pmForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_PERMISSION_MAPPINGS_FORM, pmMetadata)

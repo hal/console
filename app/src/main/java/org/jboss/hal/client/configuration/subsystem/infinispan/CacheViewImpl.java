@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -140,7 +141,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                     .button(tableButtonFactory.add(backupTemplate, table -> presenter.addBackup()))
                     .button(tableButtonFactory.remove(backupTemplate,
                             table -> presenter.removeBackup(table.selectedRow().getName())))
-                    .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                    .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                     .build();
 
             backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cacheType.baseId, BACKUPS, Ids.FORM),

@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -31,12 +32,12 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<ServerPresenter> {
 
@@ -57,7 +58,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(listenerType)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(listenerType, table.selectedRow().getName())))
-                .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM), metadata)

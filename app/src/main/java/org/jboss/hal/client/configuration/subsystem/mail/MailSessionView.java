@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -108,10 +109,10 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .button(tableButtonFactory.remove(SERVER_TEMPLATE,
                         table -> presenter.removeServer(table.selectedRow())))
                 .column(new ColumnBuilder<NamedNode>(TYPE, resources.constants().type(),
-                        (cell, type, row, meta) -> row.getName().toUpperCase()).build())
+                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName().toUpperCase()).asString()).build())
                 .column(new ColumnBuilder<NamedNode>(OUTBOUND_SOCKET_BINDING_REF, "Outbound Socket Binding", //NON-NLS
-                        (cell, type, row, meta) -> row.get(OUTBOUND_SOCKET_BINDING_REF)
-                                .asString()).build())
+                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.get(OUTBOUND_SOCKET_BINDING_REF)
+                                .asString()).asString()).build())
                 .build();
         registerAttachable(serverTable);
 

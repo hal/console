@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -116,7 +117,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                         table -> presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, table.selectedRow()),
                         Scope.SELECTED,
                         Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         pooledConnectionFactoryForm = new ModelNodeForm.Builder<NamedNode>(

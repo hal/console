@@ -17,6 +17,7 @@ package org.jboss.hal.client.deployment.dialog;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
@@ -62,7 +63,7 @@ public class DeployContentDialog2 {
 
         Options<Content> options = new OptionsBuilder<Content>()
                 .checkboxColumn()
-                .column(resources.constants().content(), (cell, type, row, meta) -> row.getName())
+                .column(resources.constants().content(), (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .keys(false)
                 .paging(false)
                 .searching(false)

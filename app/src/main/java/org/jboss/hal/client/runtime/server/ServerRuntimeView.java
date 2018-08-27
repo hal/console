@@ -21,6 +21,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Splitter;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -103,9 +104,9 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
                 .build();
 
         Options<Property> options = new OptionsBuilder<Property>()
-                .column(NAME, Names.NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, Names.NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new ColumnBuilder<Property>(VALUE, Names.VALUE,
-                        (cell, t, row, meta) -> row.getValue().asString())
+                        (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getValue().asString()).asString())
                         .width("66%")
                         .searchable(false)
                         .orderable(false)

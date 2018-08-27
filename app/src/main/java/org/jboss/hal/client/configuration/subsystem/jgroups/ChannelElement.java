@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -71,7 +72,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .button(tableButtonFactory.remove(CHANNEL_TEMPLATE,
                         table -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new InlineAction<>(Names.FORK, row -> {
                     selectedChannel = row.getName();
                     presenter.showForks(row);
