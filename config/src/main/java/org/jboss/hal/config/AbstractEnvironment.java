@@ -20,6 +20,7 @@ import java.util.List;
 import org.jboss.hal.config.rebind.EnvironmentGenerator;
 
 import static elemental2.dom.DomGlobal.window;
+import static org.jboss.hal.config.OperationMode.EMBEDDED;
 import static org.jboss.hal.config.OperationMode.SELF_CONTAINED;
 import static org.jboss.hal.config.OperationMode.STANDALONE;
 
@@ -92,7 +93,7 @@ public abstract class AbstractEnvironment implements Environment {
 
     @Override
     public boolean isStandalone() {
-        return operationMode == SELF_CONTAINED || operationMode == STANDALONE;
+        return operationMode == SELF_CONTAINED || operationMode == STANDALONE || operationMode == EMBEDDED;
     }
 
     @Override
