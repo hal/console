@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
@@ -78,7 +79,7 @@ class ChildrenPanel implements HasElements, Attachable {
         this.metadataProcessor = metadataProcessor;
 
         Options<String> options = new OptionsBuilder<String>()
-                .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
+                .column("resource", Names.RESOURCE, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row).asString())
                 .column(new InlineAction<>(resources.constants().view(), row -> modelBrowser.tree.openNode(parent.id,
                         () -> modelBrowser.select(uniqueId(parent, row), false))))
                 .button(resources.constants().add(), table -> modelBrowser.add(parent, table.getRows()))

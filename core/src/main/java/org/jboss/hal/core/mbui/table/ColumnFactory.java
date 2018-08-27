@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.mbui.table;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
@@ -36,7 +37,7 @@ class ColumnFactory {
         // TODO Think about other column types depending on ModelType
         Column.RenderCallback<T, Object> render = (cell, type, row, meta) -> {
             if (row.hasDefined(name)) {
-                return row.get(name).asString();
+                return SafeHtmlUtils.fromString(row.get(name).asString()).asString();
             }
             return null;
         };

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
@@ -185,7 +186,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .button(constants.remove(), table -> crud().remove(Names.JSON_FORMATTER, table.selectedRow().getName(),
                         jsonTemplate.replaceWildcards(presenter.getLoggingProfile()), () -> presenter.reload()),
                         Constraint.executable(jsonTemplate, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, JSON, FORMATTER, FORM), jsonMetadata)
@@ -246,7 +247,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .button(constants.remove(), table -> crud().remove(Names.XML_FORMATTER, table.selectedRow().getName(),
                         xmlTemplate.replaceWildcards(presenter.getLoggingProfile()), () -> presenter.reload()),
                         Constraint.executable(xmlTemplate, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, XML, FORMATTER, FORM), xmlMetadata)

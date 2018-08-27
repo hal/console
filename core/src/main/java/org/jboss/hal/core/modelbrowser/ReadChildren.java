@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.ballroom.tree.DataFunction;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
@@ -117,7 +118,7 @@ final class ReadChildren implements DataFunction<Context> {
 
                 // Add existing children
                 for (ModelNode modelNode : modelNodes) {
-                    String name = modelNode.asString();
+                    String name = SafeHtmlUtils.fromString(modelNode.asString()).asString();
                     singletons.remove(name);
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, name);
                     Context context = new Context(address, Collections.emptySet());

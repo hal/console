@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -82,9 +83,9 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
                 .button(mbuiContext.tableButtonFactory().remove(ROLE_TEMPLATE,
                         table -> presenter.removeSecuritySettingRole(table.selectedRow())))
                 .column(SECURITY_SETTING, mbuiContext.resources().constants().pattern(),
-                        (cell, type, row, meta) -> row.get(SECURITY_SETTING).asString())
+                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.get(SECURITY_SETTING).asString()).asString())
                 .column(ROLE, mbuiContext.resources().constants().role(),
-                        (cell, type, row, meta) -> row.getName())
+                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         roleForm = new ModelNodeForm.Builder<NamedNode>(Ids.MESSAGING_SECURITY_SETTING_ROLE_FORM, roleMetadata)

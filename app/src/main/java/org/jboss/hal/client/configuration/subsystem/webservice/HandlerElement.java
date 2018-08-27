@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -56,7 +57,7 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .button(tableButtonFactory.add(HANDLER_TEMPLATE, table -> presenter.addHandler()))
                 .button(tableButtonFactory.remove(HANDLER_TEMPLATE,
                         table -> presenter.removeHandler(table.selectedRow().getName())))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         String formId = Ids.build(configType.baseId, "handler", Ids.FORM);

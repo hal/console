@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.NodeList;
@@ -28,7 +29,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.button;
@@ -39,6 +39,7 @@ import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 import static org.jboss.hal.resources.CSS.halTableButtons;
 import static org.jboss.hal.resources.Ids.DISABLE_SSL;
@@ -76,7 +77,7 @@ class HttpsListenerElement extends ListenerElement {
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(HTTPS)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(HTTPS, table.selectedRow().getName())))
-                .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(HTTPS.baseId, Ids.FORM), metadata)

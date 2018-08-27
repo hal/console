@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -81,7 +82,7 @@ public class DeployContentDialog1 {
 
         Options<ServerGroup> options = new OptionsBuilder<ServerGroup>()
                 .checkboxColumn()
-                .column(Names.SERVER_GROUP, (cell, type, row, meta) -> row.serverGroup)
+                .column(Names.SERVER_GROUP, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.serverGroup).asString())
                 .keys(false)
                 .paging(false)
                 .searching(false)

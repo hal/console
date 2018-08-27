@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -73,7 +74,7 @@ public class SystemPropertiesView extends HalViewImpl implements SystemPropertie
                 .button(tableButtonFactory.remove(Names.SYSTEM_PROPERTY, ROOT_TEMPLATE,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(VALUE);
         if (!environment.isStandalone()) {
             tb.column("boot-time");

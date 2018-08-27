@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.google.common.collect.Sets;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.core.JsArray;
 import elemental2.dom.File;
@@ -522,7 +523,8 @@ class BrowseContentElement implements IsElement, Attachable {
         Operation operation = new Operation.Builder(address, BROWSE_CONTENT).build();
         return dispatcher.execute(operation)
                 .doOnSuccess(result -> {
-                    Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, content.getName(),
+                    String contentName = SafeHtmlUtils.htmlEscapeAllowEntities(content.getName());
+                    Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, contentName,
                             new ContentEntry())
                             .root()
                             .folder()

@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -65,7 +66,7 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
                 .button(tableButtonFactory.remove(CHANNEL_FORK_TEMPLATE,
                         table -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
                                 table.selectedRow().getName(), Names.FORK)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new InlineAction<>(Names.PROTOCOL, row -> {
                     presenter.showChannelProtocol(row);
                     presenter.showChannelInnerPage(PROTOCOL_ID);

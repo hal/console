@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -77,7 +78,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
                 .button(tableButtonFactory.remove(WORKMANAGER_LRT_TEMPLATE,
                         table -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
                                 table.selectedRow())))
-                .column(NAME)
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
                 .build();

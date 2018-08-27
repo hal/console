@@ -76,7 +76,7 @@ class FinderRow<T> implements IsElement {
         this.display = display;
         this.actions = allowedActions(display.actions());
         this.nextColumn = display.nextColumn();
-        this.id = display.getId();
+        this.id = Strings.sanitize(display.getId());
         this.primaryAction = actions.isEmpty() ? null : actions.get(0).handler;
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent<>(
                 display.getTitle());
@@ -112,13 +112,12 @@ class FinderRow<T> implements IsElement {
     }
 
     private void updateItem(T item) {
-        this.id = display.getId();
         this.item = item;
     }
 
     private void drawItem() {
         Elements.removeChildrenFrom(root);
-        root.id = display.getId();
+        root.id = id;
         root.dataset.set(DATA_BREADCRUMB, display.getTitle());
         // TODO getFilterData() causes a ReferenceError in SuperDevMode WTF?
         if (display.getFilterData() != null) {
@@ -212,7 +211,7 @@ class FinderRow<T> implements IsElement {
             root.appendChild(buttonContainer);
             Elements.setVisible(buttonContainer, isSelected());
         }
-        PatternFly.initComponents(HASH + display.getId());
+        PatternFly.initComponents(HASH + id);
     }
 
     private HTMLAnchorElement actionLink(ItemAction<T> action, boolean li) {
@@ -282,7 +281,7 @@ class FinderRow<T> implements IsElement {
     }
 
     private boolean isSelected() {
-        return column.selectedRow() != null && column.selectedRow().getId().equals(display.getId());
+        return column.selectedRow() != null && column.selectedRow().getId().equals(id);
     }
 
     @Override
