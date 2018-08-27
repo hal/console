@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -56,7 +57,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
                         Ids.build(resourceId, Ids.ADD, Ids.FORM), name)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeResource(template, table.selectedRow().getName(), name)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(resourceId, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter

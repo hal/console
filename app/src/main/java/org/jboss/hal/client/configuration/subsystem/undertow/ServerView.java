@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
@@ -110,7 +111,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.add(HOST_TEMPLATE, table -> presenter.addHost()))
                 .button(tableButtonFactory.remove(HOST_TEMPLATE,
                         table -> presenter.removeHost(table.selectedRow().getName())))
-                .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(inlineActions, "15em")
                 .build();
 
@@ -145,7 +146,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.add(FILTER_REF_TEMPLATE, table -> presenter.addFilterRef()))
                 .button(tableButtonFactory.remove(FILTER_REF_TEMPLATE,
                         table -> presenter.removeFilterRef(table.selectedRow().getName())))
-                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(PRIORITY)
                 .build();
 
@@ -168,7 +169,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.add(LOCATION_TEMPLATE, table -> presenter.addLocation()))
                 .button(tableButtonFactory.remove(LOCATION_TEMPLATE,
                         table -> presenter.removeLocation(table.selectedRow().getName())))
-                .column(LOCATION, Names.LOCATION, (cell, type, row, meta) -> row.getName())
+                .column(LOCATION, Names.LOCATION, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(HANDLER)
                 .column(new InlineAction<>(Names.FILTERS, row -> presenter.showLocationFilterRef(row)))
                 .build();
@@ -194,7 +195,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         table -> presenter.addLocationFilterRef()))
                 .button(tableButtonFactory.remove(LOCATION_FILTER_REF_TEMPLATE,
                         table -> presenter.removeLocationFilterRef(table.selectedRow().getName())))
-                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(PRIORITY)
                 .build();
 

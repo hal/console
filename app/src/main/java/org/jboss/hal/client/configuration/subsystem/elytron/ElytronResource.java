@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -341,7 +342,7 @@ enum ElytronResource {
     ResourceElement.Builder resourceElementBuilder(MbuiContext mbuiContext, Callback onCrud) {
         return new ResourceElement.Builder(baseId, resource,
                 mbuiContext.metadataRegistry().lookup(template), mbuiContext)
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .onCrud(onCrud);
 
     }

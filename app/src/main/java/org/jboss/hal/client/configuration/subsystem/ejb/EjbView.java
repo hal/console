@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.ejb;
 
 import javax.annotation.PostConstruct;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -112,7 +113,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                                     (name, address) -> presenter.reload()))
                     .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
                             (api) -> api.selectedRow().getName(), () -> presenter.reload()))
-                    .column(NAME, (cell, type, row, meta) -> row.getName())
+                    .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                     .build();
 
             appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_FORM,

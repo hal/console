@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -68,7 +69,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                         metadata.getTemplate(), (n, a) -> presenter.reloadHttpAuthenticationFactories()))
                 .button(tableButtonFactory.remove(Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadHttpAuthenticationFactories()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new InlineAction<>(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration), "15em")
                 .build();
         factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)

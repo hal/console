@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -75,7 +76,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
                 .button(resources.constants().addIdentity(), table -> presenter.addIdentity(template,
                         metadata, table.selectedRow().getName()),
                         Constraint.executable(template, ADD_IDENTITY))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new InlineAction<>(resources.constants().editIdentity(), this::showIdentityPage))
                 .build();
 

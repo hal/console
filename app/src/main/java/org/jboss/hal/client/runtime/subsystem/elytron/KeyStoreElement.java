@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -73,7 +74,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .button(new Button<>(resources.constants().store(),
                         table -> presenter.storeKeyStore(table.selectedRow().getName()),
                         Constraint.executable(KEY_STORE_TEMPLATE, STORE)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new InlineAction<>(resources.constants().aliases(),
                         row -> {
                             selectedKeystore = row.getName();
@@ -117,7 +118,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                         resources.constants().viewDetailsAlias(),
                         table -> readKeystoreAlias(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, READ_ALIAS)))
-                .column(ALIAS, (cell, t, row, meta) -> row.asString())
+                .column(ALIAS, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.asString()).asString())
                 .build();
 
         aliasDetails = new PreTextItem(CERTIFICATE_DETAILS);

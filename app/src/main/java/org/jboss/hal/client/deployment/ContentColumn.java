@@ -75,6 +75,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -190,7 +191,7 @@ public class ContentColumn extends FinderColumn<Content> {
         setItemRenderer(item -> new ItemDisplay<Content>() {
             @Override
             public String getId() {
-                return Ids.content(item.getName());
+                return Strings.sanitize(Ids.content(item.getName()));
             }
 
             @Override

@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Format;
@@ -76,7 +77,7 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .button(resources.constants().invalidateSession(),
                         table -> presenter.invalidateSession(table.selectedRow()), Scope.SELECTED,
                         Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, INVALIDATE_SESSION))
-                .column(SESSION_ID, Names.SESSION_ID, (cell, type, row, meta) -> row.getName())
+                .column(SESSION_ID, Names.SESSION_ID, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(CREATION_TIME, resources.constants().creationTime(),
                         (cell, type, row, meta) -> Format.shortDateTime(row.getCreationTime()))
                 .column(LAST_ACCESSED_TIME, resources.constants().lastAccessedTime(),
@@ -108,7 +109,7 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 Ids.TABLE), servletMetadata)
                 .button(resources.constants().reload(), table -> presenter.reload(),
                         Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
-                .column(Names.SERVLET, (cell, type, row, meta) -> row.getName())
+                .column(Names.SERVLET, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         servletsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, SERVLET,
@@ -132,7 +133,7 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 Ids.TABLE), websocketMetadata)
                 .button(resources.constants().reload(), table -> presenter.reload(),
                         Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
-                .column(Names.WEBSOCKET, (cell, type, row, meta) -> row.getName())
+                .column(Names.WEBSOCKET, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .build();
 
         websocketsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET, FORM),

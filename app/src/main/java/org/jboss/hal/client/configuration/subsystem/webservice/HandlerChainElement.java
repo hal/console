@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -57,7 +58,7 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, table -> presenter.addHandlerChain()))
                 .button(tableButtonFactory.remove(HANDLER_CHAIN_TEMPLATE,
                         table -> presenter.removeHandlerChain(table.selectedRow().getName())))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
                 .column(new InlineAction<>(Names.HANDLER, row -> presenter.showHandlers(row)))
                 .build();
 

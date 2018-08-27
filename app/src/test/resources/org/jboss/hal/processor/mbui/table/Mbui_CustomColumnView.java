@@ -56,7 +56,7 @@ public final class Mbui_CustomColumnView extends CustomColumnView {
 
         table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .column("name")
-                .column("foo", (cell, type, row, meta) -> "foo")
+                .column("foo", (cell, type, row, meta) -> SafeHtmlUtils.fromString("foo").asString())
                 .build();
 
         HTMLElement html0;

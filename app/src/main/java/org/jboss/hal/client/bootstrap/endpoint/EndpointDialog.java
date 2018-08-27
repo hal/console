@@ -17,6 +17,7 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
@@ -82,7 +83,7 @@ class EndpointDialog {
                     dialog.getButton(PRIMARY_POSITION).disabled = !this.table.hasSelection();
                 }, Scope.SELECTED)
                 .column(NAME)
-                .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
+                .column("url", "URL", (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getUrl()).asString()) //NON-NLS
                 .build();
 
         selectPage = div()
