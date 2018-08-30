@@ -280,18 +280,35 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         form.edit(new ModelNode());
     }
 
+    // ----------------- SSL
+
     void initKeyManager(String name) {
         Operation operation = new Operation.Builder(KEY_MANAGER_TEMPLATE.resolve(statementContext, name), INIT)
                 .build();
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initSuccess(name)));
+                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initKeyManagerSuccess(name)));
                     reload();
                 },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initError(name, failure))),
+                        Message.error(resources.messages().initKeyManagerError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initError(name, exception.getMessage()))));
+                        Message.error(resources.messages().initKeyManagerError(name, exception.getMessage()))));
     }
+
+    void initTrustManager(String name) {
+        Operation operation = new Operation.Builder(TRUST_MANAGER_TEMPLATE.resolve(statementContext, name), INIT)
+                .build();
+        dispatcher.execute(operation, result -> {
+                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initTrustManagerSuccess(name)));
+                    reload();
+                },
+                (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                        Message.error(resources.messages().initTrustManagerError(name, failure))),
+                (operation1, exception) -> MessageEvent.fire(getEventBus(),
+                        Message.error(resources.messages().initTrustManagerError(name, exception.getMessage()))));
+    }
+
+
 
     void reloadCRL(String name) {
         Operation operation = new Operation.Builder(TRUST_MANAGER_TEMPLATE.resolve(statementContext, name),

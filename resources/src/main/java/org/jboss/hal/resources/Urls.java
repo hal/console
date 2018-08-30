@@ -28,7 +28,6 @@ public interface Urls {
     String WILDFLY_NEWS = "http://wildfly.org/news/";
     String WILDFLY_IRC = "irc://freenode.org/#wildfly";
     String WILDFLY_DEV_MAILING_LIST = "https://lists.jboss.org/mailman/listinfo/wildfly-dev";
-    String WILDFLY_10_ADMIN_GUIDE = "https://docs.jboss.org/author/display/WFLY10/Admin+Guide";
-    String WILDFLY_10_DOCUMENTATION = "https://docs.jboss.org/author/display/WFLY10/Documentation";
+    String WILDFLY_DOCUMENTATION = "http://docs.wildfly.org";
     String WILDSCRIBE_GITHUB_IO = "http://wildscribe.github.io/index.html";
 }

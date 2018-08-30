@@ -260,8 +260,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml identityAttributeHelp();
     SafeHtml importCertificateError(String alias, String path, String resource, String error);
     SafeHtml importCertificateSuccess(String alias, String path, String resource);
-    SafeHtml initError(String name, String error);
-    SafeHtml initSuccess(String name);
+    SafeHtml initKeyManagerError(String name, String error);
+    SafeHtml initKeyManagerSuccess(String name);
+    SafeHtml initTrustManagerError(String name, String error);
+    SafeHtml initTrustManagerSuccess(String name);
     SafeHtml invalidExtensionJson();
     SafeHtml invalidExtensionMetadata(String extensionDocumentation);
     String invalidFormat();
