@@ -61,7 +61,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     public void reset(final UploadContext context) {
         context.name = "";
         context.runtimeName = "";
-        context.enabled = false;
+        context.enabled = true;
     }
 
     @Override
