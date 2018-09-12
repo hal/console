@@ -82,7 +82,7 @@ class DeploymentTasks {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
                 tasks.add(new CheckDeployment(dispatcher, filename));
-                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
+                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), true));
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder);
@@ -273,7 +273,7 @@ class DeploymentTasks {
                         .add(DEPLOYMENT, name);
                 Operation operation = new Operation.Builder(address, ADD)
                         .param(RUNTIME_NAME, runtimeName)
-                        .param(ENABLED, false)
+                        .param(ENABLED, true)
                         .build();
                 return dispatcher.execute(operation).toCompletable();
             }
