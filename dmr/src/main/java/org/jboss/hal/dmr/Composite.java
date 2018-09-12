@@ -41,15 +41,20 @@ public class Composite extends Operation implements Iterable<Operation> {
     private List<Operation> operations;
 
     /** Creates a new empty composite. */
-    @JSConstructor
+    @JsIgnore
     public Composite() {
-        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
+        this(ResourceAddress.root());
+    }
+
+    @JSConstructor
+    public Composite(ResourceAddress address) {
+        super(COMPOSITE, address, new ModelNode(), new ModelNode(), emptySet());
         this.operations = new ArrayList<>();
     }
 
     @JsIgnore
     public Composite(Operation first, Operation... rest) {
-        this(); // required by JsInterop
+        this(ResourceAddress.root()); // required by JsInterop
         add(first);
         if (rest != null) {
             for (Operation operation : rest) {
@@ -60,7 +65,7 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     @JsIgnore
     public Composite(List<Operation> operations) {
-        this();
+        this(ResourceAddress.root());
         operations.forEach(this::add);
     }
 
