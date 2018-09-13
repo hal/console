@@ -58,8 +58,10 @@ public final class Mbui_UnboundFormItemView extends UnboundFormItemView {
                 .include("foo")
                 .unboundFormItem(new org.jboss.hal.ballroom.form.PropertiesItem("bar"), 1)
                 .unsorted()
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues, metadata0))
-                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
+                .onSave((form, changedValues) -> saveSingletonForm("Form",
+                        metadata0Template.resolve(statementContext()), changedValues, metadata0))
+                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(statementContext()), form,
+                        metadata0))
                 .build();
 
         HTMLElement html0;

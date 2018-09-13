@@ -56,12 +56,14 @@ public final class Mbui_FailSafeView extends FailSafeView {
 
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .singleton(
-                        () -> new Operation.Builder(metadata0Template.resolve(mbuiContext.statementContext()),
+                        () -> new Operation.Builder(metadata0Template.resolve(statementContext()),
                                 READ_RESOURCE_OPERATION).build(),
                         () -> addSingleton("form", "Form", metadata0Template))
-                .prepareRemove(form -> removeSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form))
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues, metadata0))
-                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
+                .prepareRemove(form -> removeSingletonForm("Form", metadata0Template.resolve(statementContext()), form))
+                .onSave((form, changedValues) -> saveSingletonForm("Form",
+                        metadata0Template.resolve(statementContext()), changedValues, metadata0))
+                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(statementContext()), form,
+                        metadata0))
                 .build();
 
         HTMLElement html0;

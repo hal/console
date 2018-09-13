@@ -62,11 +62,11 @@ public final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerV
                             metadata0,
                             asList("foo"),
                             (name, modelNode) -> {
-                                ResourceAddress address = metadata0Template.resolve(mbuiContext.statementContext(), name);
+                                ResourceAddress address = metadata0Template.resolve(statementContext(), name);
                                 mbuiContext.crud().add("Foo", name, address, modelNode, (n, a) -> presenter.reload());
                             });
                     dialog.getForm().getFormItem("foo").registerSuggestHandler(new ReadChildrenAutoComplete(
-                            mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("/foo=*")));
+                            mbuiContext.dispatcher(), statementContext(), AddressTemplate.of("/foo=*")));
                     dialog.show();
                 }))
                 .columns("name")

@@ -57,16 +57,18 @@ public final class Mbui_SuggestHandlerView extends SuggestHandlerView {
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .include("foo", "bar")
                 .unsorted()
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues, metadata0))
-                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
+                .onSave((form, changedValues) -> saveSingletonForm("Form",
+                        metadata0Template.resolve(statementContext()), changedValues, metadata0))
+                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(statementContext()), form,
+                        metadata0))
                 .build();
         form.getFormItem("foo").registerSuggestHandler(new ReadChildrenAutoComplete(
-                mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("/foo=*")));
+                mbuiContext.dispatcher(), statementContext(), AddressTemplate.of("/foo=*")));
         List<AddressTemplate> formTemplates = asList(
                 AddressTemplate.of("/bar=*"),
                 AddressTemplate.of("/another-bar=*"));
         form.getFormItem("bar").registerSuggestHandler(new ReadChildrenAutoComplete(
-                mbuiContext.dispatcher(), mbuiContext.statementContext(), formTemplates));
+                mbuiContext.dispatcher(), statementContext(), formTemplates));
 
         HTMLElement html0;
         HTMLElement root = row()
