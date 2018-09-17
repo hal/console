@@ -88,6 +88,7 @@ public interface CSS {
     String contentViewPfPagination = "content-view-pf-pagination";
     String controlLabel = "control-label";
     String copy = "copy";
+    String currentStep = "current-step";
 
     String dataTable = "datatable";
     String date = "date";
@@ -118,6 +119,14 @@ public interface CSS {
 
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
+    String eapPagination = "eap-pagination";
+    String eapQuickTour = "eap-quick-tour";
+    String eapQuickTourStep1 = "eap-quick-tour-step-1";
+    String eapQuickTourStep2 = "eap-quick-tour-step-2";
+    String eapQuickTourStep3 = "eap-quick-tour-step-3";
+    String eapQuickTourStep4 = "eap-quick-tour-step-4";
+    String eapQuickTourStep5 = "eap-quick-tour-step-5";
+    String eapQuickTourSteps = "eap-quick-tour-steps";
     String editing = "editing";
     String editor = "editor";
     String editorControls = "editor-controls";
@@ -352,6 +361,7 @@ public interface CSS {
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
+    String standalone = "standalone";
     String static_ = "static";
     String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";
@@ -369,6 +379,9 @@ public interface CSS {
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
     String text = "text";
+    String text1 = "text-1";
+    String text2 = "text-2";
+    String text3 = "text-3";
     String textCenter = "text-center";
     String textRight = "text-right";
     String time = "time";

@@ -605,6 +605,30 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml transactionSetUuidOrSocket();
     SafeHtml transactionUnableSetProcessId();
 
+    SafeHtml tourAccessControl();
+    SafeHtml tourAccessControlRoles();
+    SafeHtml tourAccessControlUsers();
+    SafeHtml tourDomainConfiguration();
+    SafeHtml tourDomainConfigurationSubsystem();
+    SafeHtml tourDomainDeploymentsAddActions();
+    SafeHtml tourDomainDeploymentsBrowseBy();
+    SafeHtml tourDomainHomeConfiguration();
+    SafeHtml tourDomainHomeDeployments();
+    SafeHtml tourDomainHomeRuntime();
+    SafeHtml tourDomainRuntimeBrowseBy();
+    SafeHtml tourDomainRuntimeServer();
+    SafeHtml tourDomainRuntimeServerAdd();
+    SafeHtml tourDomainRuntimeServerGroup();
+    SafeHtml tourDomainRuntimeServerGroupsAdd();
+    SafeHtml tourStandaloneConfigurationSubsystem();
+    SafeHtml tourStandaloneDeployment();
+    SafeHtml tourStandaloneDeploymentAddActions();
+    SafeHtml tourStandaloneHomeConfiguration();
+    SafeHtml tourStandaloneHomeDeployments();
+    SafeHtml tourStandaloneHomeRuntime();
+    SafeHtml tourStandaloneRuntimeServer();
+    SafeHtml tourStandaloneRuntimeSubsystem();
+
     SafeHtml unauthorized();
     SafeHtml undeployedContent(String name);
 
