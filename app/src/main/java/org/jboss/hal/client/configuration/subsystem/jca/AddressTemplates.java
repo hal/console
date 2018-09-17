@@ -25,6 +25,8 @@ interface AddressTemplates {
     String BOOTSTRAP_CONTEXT_ADDRESS = JCA_ADDRESS + "/bootstrap-context=*";
     String CCM_ADDRESS = JCA_ADDRESS + "/cached-connection-manager=cached-connection-manager";
     String DISTRIBUTED_WORKMANAGER_ADDRESS = JCA_ADDRESS + "/distributed-workmanager=*";
+    String DISTRIBUTED_WORKMANAGER_LRT_ADDRESS = DISTRIBUTED_WORKMANAGER_ADDRESS + "/long-running-threads=*";
+    String DISTRIBUTED_WORKMANAGER_SRT_ADDRESS = DISTRIBUTED_WORKMANAGER_ADDRESS + "/short-running-threads=*";
     String TRACER_ADDRESS = JCA_ADDRESS + "/tracer=tracer";
     String WORKMANAGER_ADDRESS = JCA_ADDRESS + "/workmanager=*";
     String WORKMANAGER_LRT_ADDRESS = WORKMANAGER_ADDRESS + "/long-running-threads=*";
@@ -36,6 +38,8 @@ interface AddressTemplates {
     AddressTemplate BOOTSTRAP_CONTEXT_TEMPLATE = AddressTemplate.of(BOOTSTRAP_CONTEXT_ADDRESS);
     AddressTemplate CCM_TEMPLATE = AddressTemplate.of(CCM_ADDRESS);
     AddressTemplate DISTRIBUTED_WORKMANAGER_TEMPLATE = AddressTemplate.of(DISTRIBUTED_WORKMANAGER_ADDRESS);
+    AddressTemplate DISTRIBUTED_WORKMANAGER_LRT_TEMPLATE = AddressTemplate.of(DISTRIBUTED_WORKMANAGER_LRT_ADDRESS);
+    AddressTemplate DISTRIBUTED_WORKMANAGER_SRT_TEMPLATE = AddressTemplate.of(DISTRIBUTED_WORKMANAGER_SRT_ADDRESS);
     AddressTemplate TRACER_TEMPLATE = AddressTemplate.of(TRACER_ADDRESS);
     AddressTemplate WORKMANAGER_TEMPLATE = AddressTemplate.of(WORKMANAGER_ADDRESS);
     AddressTemplate WORKMANAGER_LRT_TEMPLATE = AddressTemplate.of(WORKMANAGER_LRT_ADDRESS);

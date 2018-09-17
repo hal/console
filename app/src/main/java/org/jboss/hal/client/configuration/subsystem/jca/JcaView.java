@@ -258,14 +258,24 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         String dwmType = labelBuilder.label(DISTRIBUTED_WORKMANAGER_TEMPLATE.lastName());
         Metadata dwmMetadata = metadataRegistry.lookup(DISTRIBUTED_WORKMANAGER_TEMPLATE);
+        Metadata srtMetadata = metadataRegistry.lookup(WORKMANAGER_SRT_TEMPLATE);
+
+        // short-running-thread is required for a distributed workmanager
+        Property maxThreadsDesc = srtMetadata.getDescription().findAttribute(ATTRIBUTES, MAX_THREADS);
+        Property queueLengthDesc = srtMetadata.getDescription().findAttribute(ATTRIBUTES, QUEUE_LENGTH);
+        ModelNode addOpDwm = dwmMetadata.getDescription().get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES);
+        addOpDwm.get(MAX_THREADS).set(maxThreadsDesc.getValue());
+        addOpDwm.get(QUEUE_LENGTH).set(queueLengthDesc.getValue());
+        dwmMetadata.makeWritable(MAX_THREADS);
+        dwmMetadata.makeWritable(QUEUE_LENGTH);
 
         Form<ModelNode> dwmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_ADD, dwmMetadata)
                 .include(NAME, ELYTRON_ENABLED)
                 .unsorted()
-                .addOnly()
+                .fromRequestProperties()
                 .build();
         AddResourceDialog dwmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(dwmType),
-                dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
+                dwmAddForm, (name, model) -> presenter.addDistributedWorkManager(dwmType, name, model));
 
         dwmTable = new ModelNodeTable.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmMetadata)
                 .button(tableButtonFactory.add(DISTRIBUTED_WORKMANAGER_TEMPLATE, table -> dwmAddDialog.show()))
