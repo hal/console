@@ -30,13 +30,13 @@ import org.jboss.hal.core.mvp.Places;
 abstract class HomepageModule implements IsElement {
 
     // @formatter:off
-    static HomepageModule create(final Places places,
-            final String token, final String header, final String intro,
-            final ImageResource image, final Iterable<HomepageSection> sections) {
-        return new Templated_HomepageModule(places, token, header, intro, image, sections);
+    static HomepageModule create(Places places, String id, String token, String header, String intro,
+            ImageResource image, Iterable<HomepageSection> sections) {
+        return new Templated_HomepageModule(places, id, token, header, intro, image, sections);
     }
 
     abstract Places places();
+    abstract String id();
     abstract String token();
     abstract String header();
     abstract String intro();
@@ -53,6 +53,7 @@ abstract class HomepageModule implements IsElement {
     @PostConstruct
     void init() {
         moduleImage.src = image().getSafeUri().asString();
+        moduleHeader.id = id();
         moduleHeader.textContent = header();
         moduleIntro.textContent = intro();
 

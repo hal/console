@@ -48,10 +48,10 @@ public class Places {
     private final TokenFormatter tokenFormatter;
 
     @Inject
-    public Places(final Environment environment,
-            final StatementContext statementContext,
-            final Finder finder,
-            final TokenFormatter tokenFormatter) {
+    public Places(Environment environment,
+            StatementContext statementContext,
+            Finder finder,
+            TokenFormatter tokenFormatter) {
         this.environment = environment;
         this.statementContext = statementContext;
         this.finder = finder;
@@ -61,7 +61,7 @@ public class Places {
     /**
      * Returns a place request builder for the specified finder path.
      */
-    public PlaceRequest.Builder finderPlace(final String token, final FinderPath path) {
+    public PlaceRequest.Builder finderPlace(String token, FinderPath path) {
         return new PlaceRequest.Builder().nameToken(token).with(PATH_PARAM, path.toString());
     }
 
@@ -70,7 +70,7 @@ public class Places {
      * Returns a place request builder for the specified token with parameters for the selected profile
      * (when running domain mode).
      */
-    public PlaceRequest.Builder selectedProfile(final String token) throws IllegalStateException {
+    public PlaceRequest.Builder selectedProfile(String token) throws IllegalStateException {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
         if (!environment.isStandalone()) {
             builder.with(PROFILE, statementContext.selectedProfile());
@@ -82,7 +82,7 @@ public class Places {
      * Returns a place request builder for the specified token with parameters for the selected host and server
      * (when running domain mode).
      */
-    public PlaceRequest.Builder selectedServer(final String token) throws IllegalStateException {
+    public PlaceRequest.Builder selectedServer(String token) throws IllegalStateException {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
         if (!environment.isStandalone()) {
             if (browseByServerGroups()) {

@@ -137,6 +137,7 @@ public interface Names {
     String HANDLERS = "Handlers";
     String HANDLER_CHAIN = "Handler Chain";
     String HEAP = "Heap";
+    String HOMEPAGE = "Homepage";
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";

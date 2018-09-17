@@ -428,6 +428,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pool();
     String preparedStatementCache();
     String preview();
+    String previous();
     String previousPage();
     String processingTime();
     String processors();
