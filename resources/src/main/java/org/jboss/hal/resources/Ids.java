@@ -309,11 +309,16 @@ public interface Ids {
     String HEADER_EXTENSIONS_DROPDOWN = "header-extensions-dropdown";
     String HEADER_USERNAME = "header-username";
     String HOMEPAGE = "homepage";
+    String HOMEPAGE_ACCESS_CONTROL_MODULE = "homepage-access-control-module";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = "homepage-access-control-section";
+    String HOMEPAGE_CONFIGURATION_MODULE = "homepage-configuration-module";
     String HOMEPAGE_CONFIGURATION_SECTION = "homepage-configuration-section";
+    String HOMEPAGE_DEPLOYMENTS_MODULE = "homepage-deployments-module";
     String HOMEPAGE_DEPLOYMENTS_SECTION = "homepage-deployments-section";
+    String HOMEPAGE_PATCHING_MODULE = "homepage-patching-module";
     String HOMEPAGE_PATCHING_SECTION = "homepage-patching-section";
     String HOMEPAGE_RUNTIME_MONITOR_SECTION = "homepage-runtime-monitor-section";
+    String HOMEPAGE_RUNTIME_MODULE = "homepage-runtime-module";
     String HOMEPAGE_RUNTIME_SECTION = "homepage-runtime-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
@@ -688,6 +693,9 @@ public interface Ids {
     String TOOLBAR = "toolbar";
     String TOOLBAR_ACTION_DROPDOWN = "toolbar-action-dropdown";
     String TOOLBAR_FILTER = "toolbar-filter";
+    String TOUR_BUTTON_BACK = "tour-button-back";
+    String TOUR_BUTTON_DONE = "tour-button-done";
+    String TOUR_BUTTON_NEXT = "tour-button-next";
     String TRANSACTION = "transaction";
     String TRANSACTION_PARTICIPANTS_PAGE = "transaction-Participants-page";
     String TRANSACTION_STATISTICS_DISABLED = "transaction-statistics-disabled";

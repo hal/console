@@ -127,7 +127,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement HTMLElement connectedTo;
     @DataElement HTMLElement patching;
     @DataElement HTMLElement accessControl;
-    // @DataElement HTMLElement management;
     @DataElement HTMLElement topLevelCategories;
     @DataElement HTMLElement breadcrumb;
     @DataElement HTMLElement backItem;
@@ -155,7 +154,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         if (!su) {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
-            // topLevelCategories.removeChild(management);
         }
         String accessControlNameToken = ac().isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
 
@@ -179,7 +177,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         NameTokens.RUNTIME,
                         NameTokens.PATCHING,
                         accessControlNameToken,
-                        // NameTokens.MANAGEMENT,
                 },
                 new String[]{
                         Ids.TLC_HOMEPAGE,
@@ -188,7 +185,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         Ids.TLC_RUNTIME,
                         Ids.TLC_PATCHING,
                         Ids.TLC_ACCESS_CONTROL,
-                        // Ids.TLC_MANAGEMENT
                 });
 
         handlers = new ArrayList<>();
