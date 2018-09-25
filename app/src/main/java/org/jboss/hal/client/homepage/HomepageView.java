@@ -59,20 +59,20 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         HTMLElement patching = div().asElement();
         HTMLElement help;
 
-        // if (community) {
-        //     header = div().css(eapHomeTitle)
-        //             .add(h(1).textContent(resources.theme().getFullName()))
-        //             .asElement();
-        // } else {
-        header = div().css(eapHomeTitle)
-                .add(p()
-                        .add(span().textContent(resources.constants().homepageNewToEap() + " "))
-                        .add(a().css(clickable)
-                                .on(click, event -> presenter.launchGuidedTour())
-                                .textContent(resources.constants().homepageTakeATour())))
-                .add(h(1).textContent(resources.theme().getFullName()))
-                .asElement();
-        // }
+        if (community) {
+            header = div().css(eapHomeTitle)
+                    .add(h(1).textContent(resources.theme().getFullName()))
+                    .asElement();
+        } else {
+            header = div().css(eapHomeTitle)
+                    .add(p()
+                            .add(span().textContent(resources.constants().homepageNewToEap() + " "))
+                            .add(a().css(clickable)
+                                    .on(click, event -> presenter.launchGuidedTour())
+                                    .textContent(resources.constants().homepageTakeATour())))
+                    .add(h(1).textContent(resources.theme().getFullName()))
+                    .asElement();
+        }
 
         if (standalone) {
             sections = Collections.singleton(HomepageSection.create(places, resources,
