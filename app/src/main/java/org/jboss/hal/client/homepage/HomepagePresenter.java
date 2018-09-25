@@ -184,7 +184,7 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
                         tour.addStep(firstServerGroup, Ids.SERVER, Names.RUNTIME,
                                 resources.messages().tourDomainRuntimeServer(), Placement.RIGHT);
                         tour.addStep(firstServerGroup, Ids.SERVER_ADD, Names.RUNTIME,
-                                resources.messages().tourDomainRuntimeServerAdd(), Placement.RIGHT);
+                                resources.messages().tourDomainRuntimeServerAdd(), Placement.BOTTOM);
                     }
                 }
 
