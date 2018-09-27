@@ -114,6 +114,7 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                             resources.messages().addResourceTitle(Names.RESOURCE_ADAPTER), form,
                             (name, model) -> crud.add(Names.RESOURCE_ADAPTER, name, RESOURCE_ADAPTER_TEMPLATE, model,
                                     (n, a) -> refresh(Ids.resourceAdapter(n))));
+                    dialog.addValidationHandlerForNameItem(createUniqueValidation());
                     dialog.show();
                 }));
 

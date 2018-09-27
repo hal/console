@@ -91,11 +91,13 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
                             .requiredOnly()
                             .build();
                     registerSuggestionHandler(dispatcher, statementContext, form);
-                    new AddResourceDialog(resources.messages().addResourceTitle(Names.JMS_BRIDGE),
+                    AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.JMS_BRIDGE),
                             form, (name, model) -> crud.add(Names.JMS_BRIDGE, name, JMS_BRIDGE_TEMPLATE, model,
                             (n, a) -> {
                                 refresh(Ids.jmsBridge(n));
-                            })).show();
+                            }));
+                    dialog.addValidationHandlerForNameItem(createUniqueValidation());
+                    dialog.show();
                 }));
         addColumnAction(columnActionFactory.refresh(Ids.JMS_BRIDGE_REFRESH));
 

@@ -293,7 +293,8 @@ public class RoleColumn extends FinderColumn<Role> {
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, typeaheadTemplate));
         form.attach();
 
-        new AddResourceDialog(resources.messages().addResourceTitle(typeName), form, (name, model) -> {
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(typeName),
+                form, (name, model) -> {
             List<Task<FlowContext>> tasks = new ArrayList<>();
             tasks.add(new AddScopedRole(dispatcher, type, name, model));
             Boolean includeAll = form.<Boolean>getFormItem(INCLUDE_ALL).getValue();
@@ -317,7 +318,9 @@ public class RoleColumn extends FinderColumn<Role> {
                             });
                         }
                     });
-        }).show();
+        });
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.show();
     }
 
 

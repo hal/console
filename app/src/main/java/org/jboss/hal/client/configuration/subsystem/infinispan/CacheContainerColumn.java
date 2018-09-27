@@ -196,6 +196,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
 
     private void addCacheContainer() {
         crud.add(Ids.CACHE_CONTAINER_ADD, Names.CACHE_CONTAINER, CACHE_CONTAINER_TEMPLATE,
+                createUniqueValidationFromFilteredItems(item -> !item.isRemote()),
                 (name, address) -> refresh(Ids.cacheContainer(name)));
     }
 
@@ -230,6 +231,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                 refresh(Ids.remoteCacheContainer(name));
             });
         });
+        dialog.addValidationHandlerForNameItem(createUniqueValidationFromFilteredItems(CacheContainer::isRemote));
         dialog.show();
     }
 }

@@ -24,6 +24,7 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.JdbcDriver;
@@ -115,6 +116,10 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                                     DRIVER_XA_DATASOURCE_CLASS_NAME)
                             .unsorted()
                             .build();
+
+                    FormItem<String> driverNameItem = form.getFormItem(DRIVER_NAME);
+                    driverNameItem.addValidationHandler(createUniqueValidation());
+
                     AddResourceDialog dialog = new AddResourceDialog(
                             resources.messages().addResourceTitle(Names.JDBC_DRIVER), form,
                             (name, modelNode) -> {

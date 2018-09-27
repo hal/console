@@ -36,6 +36,7 @@ import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.Composite;
@@ -119,6 +120,12 @@ public class CrudOperations {
         add(id, type, template, Collections.emptyList(), callback);
     }
 
+    @JsIgnore
+    public void add(String id, String type, AddressTemplate template,
+                    @Nullable FormItemValidation<String> nameItemValidator, AddCallback callback) {
+        add(id, type, template, Collections.emptyList(), nameItemValidator, callback);
+    }
+
     /**
      * Opens an add-resource-dialog for the given resource type. The dialog contains fields for all required request
      * properties plus the ones specified by {@code attributes}. When clicking "Add", a new resource is added using the
@@ -135,11 +142,18 @@ public class CrudOperations {
     @JsIgnore
     public void add(String id, String type, AddressTemplate template, Iterable<String> attributes,
             AddCallback callback) {
+        add(id, type, template, attributes, null, callback);
+    }
+
+    @JsIgnore
+    public void add(String id, String type, AddressTemplate template, Iterable<String> attributes,
+                    @Nullable FormItemValidation<String> nameItemValidator, AddCallback callback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(Metadata metadata) {
                 AddResourceDialog dialog = new AddResourceDialog(id, resources.messages().addResourceTitle(type),
                         metadata, attributes, (name, model) -> add(type, name, template, model, callback));
+                dialog.addValidationHandlerForNameItem(nameItemValidator);
                 dialog.show();
             }
         });

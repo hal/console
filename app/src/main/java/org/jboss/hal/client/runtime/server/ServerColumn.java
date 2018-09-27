@@ -467,7 +467,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             String id = Ids.build(HOST, statementContext.selectedHost(), SERVER, Ids.ADD);
             List<String> attributes = asList(AUTO_START, GROUP, SOCKET_BINDING_DEFAULT_INTERFACE,
                     SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET, UPDATE_AUTO_START_WITH_SERVER_STATUS);
-            crud.add(id, Names.SERVER, template, attributes, (name, address) -> refresh(RESTORE_SELECTION));
+            crud.add(id, Names.SERVER, template, attributes,
+                    createUniqueValidation(), (name, address) -> refresh(RESTORE_SELECTION));
         } else {
 
             // load all available hosts to show in the copy dialog
@@ -521,6 +522,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                             resources.messages().addResourceSuccess(Names.SERVER,
                                                     serverName), (name, address1) -> refresh(RESTORE_SELECTION));
                                 });
+                                dialog.addValidationHandlerForNameItem(createUniqueValidation());
                                 dialog.show();
                                 form.<String>getFormItem(GROUP).setValue(statementContext.selectedServerGroup());
                             }

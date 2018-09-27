@@ -28,6 +28,7 @@ import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.UniqueNameValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
@@ -124,6 +125,21 @@ class PrincipalColumn extends FinderColumn<Principal> {
             form.getFormItem(EXCLUDE).registerSuggestHandler(new StaticAutoComplete(roleNames));
 
             form.addFormValidation(frm -> {
+                FormItem<String> name = frm.getFormItem(NAME);
+                FormItem<String> realm = frm.getFormItem(REALM);
+                if (!name.isUndefined()) {
+                    String[] names = getCurrentItems().stream()
+                            .map(item -> item.getName() + "@" + item.getRealm()).toArray(String[]::new);
+                    UniqueNameValidation<String> validator = new UniqueNameValidation<>(names);
+
+                    ValidationResult nameValidationResult = validator
+                            .validate(name.getValue() + "@" + realm.getValue());
+
+                    if (!nameValidationResult.isValid()) {
+                        return nameValidationResult;
+                    }
+                }
+
                 FormItem<List<String>> includeItem = frm.getFormItem(INCLUDE);
                 FormItem<List<String>> excludeItem = frm.getFormItem(EXCLUDE);
                 boolean noIncludes = includeItem.isUndefined() || includeItem.getValue() == null || includeItem

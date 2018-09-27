@@ -56,12 +56,6 @@ public class InterfaceColumn extends FinderColumn<NamedNode> {
             CrudOperations crud) {
 
         super(new Builder<NamedNode>(finder, Ids.INTERFACE, Names.INTERFACE)
-                .columnAction(columnActionFactory.add(
-                        Ids.INTERFACE_ADD,
-                        Names.INTERFACE,
-                        InterfacePresenter.ROOT_TEMPLATE,
-                        singletonList(INET_ADDRESS)))
-                .columnAction(columnActionFactory.refresh(Ids.INTERFACE_REFRESH))
                 .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), INTERFACE,
                         result -> callback.onSuccess(asNamedNodes(result))))
                 .useFirstActionAsBreadcrumbHandler()
@@ -82,5 +76,12 @@ public class InterfaceColumn extends FinderColumn<NamedNode> {
                                 InterfaceColumn.this));
             }
         });
+        addColumnAction(columnActionFactory.add(
+                Ids.INTERFACE_ADD,
+                Names.INTERFACE,
+                InterfacePresenter.ROOT_TEMPLATE,
+                singletonList(INET_ADDRESS),
+                this::createUniqueValidation));
+        addColumnAction(columnActionFactory.refresh(Ids.INTERFACE_REFRESH));
     }
 }

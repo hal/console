@@ -53,10 +53,6 @@ public class ServletContainerColumn extends FinderColumn<NamedNode> {
             final CrudOperations crud) {
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_SERVLET_CONTAINER, Names.SERVLET_CONTAINER)
 
-                .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVLET_CONTAINER_ADD, Names.SERVLET_CONTAINER,
-                        SERVLET_CONTAINER_TEMPLATE, Ids::undertowServletContainer))
-                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVLET_CONTAINER_REFRESH))
-
                 .itemsProvider(
                         (context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVLET_CONTAINER, 2,
                                 children -> callback.onSuccess(asNamedNodes(children))))
@@ -66,6 +62,10 @@ public class ServletContainerColumn extends FinderColumn<NamedNode> {
                 .pinnable()
                 .withFilter()
         );
+
+        addColumnAction(columnActionFactory.add(Ids.UNDERTOW_SERVLET_CONTAINER_ADD, Names.SERVLET_CONTAINER,
+                SERVLET_CONTAINER_TEMPLATE, Ids::undertowServletContainer, this::createUniqueValidation));
+        addColumnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVLET_CONTAINER_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
