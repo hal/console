@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
@@ -42,6 +43,8 @@ import org.jboss.gwt.elemento.core.Key;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.ballroom.form.FormItemValidation;
+import org.jboss.hal.ballroom.form.UniqueNameValidation;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
@@ -52,6 +55,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.NamedObject;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +122,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     private boolean asElement;
     private boolean firstActionAsBreadcrumbHandler;
     private ItemsProvider<T> itemsProvider;
+    private List<T> currentItems;
     private ItemRenderer<T> itemRenderer;
     private PreviewCallback<T> previewCallback;
     private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
@@ -133,6 +138,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         this.showCount = builder.showCount;
         this.pinnable = builder.pinnable;
         this.initialItems = builder.items;
+        this.currentItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
         this.itemRenderer = builder.itemRenderer;
         this.selectionHandler = builder.selectionHandler;
@@ -646,6 +652,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     private void setItems(List<T> items, AsyncCallback<FinderColumn> callback) {
         rows.clear();
+        currentItems = items;
         Elements.removeChildrenFrom(ulElement);
         if (filterElement != null) {
             filterElement.value = "";
@@ -768,6 +775,27 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     List<T> getInitialItems() {
         return initialItems;
+    }
+
+    protected List<T> getCurrentItems() {
+        return currentItems;
+    }
+
+    protected FormItemValidation<String> createUniqueValidation() {
+        String[] names = getCurrentItems().stream().map(this::getNameOfItem).toArray(String[]::new);
+        return new UniqueNameValidation<>(names);
+    }
+
+    protected FormItemValidation<String> createUniqueValidationFromFilteredItems(Predicate<T> filter) {
+        String[] names = getCurrentItems().stream().filter(filter).map(this::getNameOfItem).toArray(String[]::new);
+        return new UniqueNameValidation<>(names);
+    }
+
+    protected String getNameOfItem(T item) {
+        if (item instanceof NamedObject) {
+           return ((NamedObject) item).getName();
+        }
+        return item.toString();
     }
 
     /**

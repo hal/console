@@ -57,6 +57,7 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -83,109 +84,6 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_CONFIGURATION, Names.SERVER)
 
-                .columnAction(columnActionFactory.add(MESSAGING_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
-                        column -> {
-                            // read server resources, if there is no server
-                            // the path parameters are optional
-                            crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
-                                    children -> {
-                                        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
-                                        TextBoxItem pathBindingDir = new TextBoxItem("path-bindings-directory");
-                                        TextBoxItem pathJournalDir = new TextBoxItem("path-journal-directory");
-                                        TextBoxItem pathLargeMessagesDir = new TextBoxItem(
-                                                "path-large-messages-directory");
-                                        TextBoxItem pathPagingDir = new TextBoxItem("path-paging-directory");
-                                        boolean hasServers = !children.isEmpty();
-                                        pathBindingDir.setRequired(hasServers);
-                                        pathJournalDir.setRequired(hasServers);
-                                        pathLargeMessagesDir.setRequired(hasServers);
-                                        pathPagingDir.setRequired(hasServers);
-
-                                        Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                                                build(MESSAGING_SERVER_ADD, FORM), metadata)
-                                                .requiredOnly()
-                                                .unboundFormItem(new NameItem())
-                                                .unboundFormItem(pathBindingDir)
-                                                .unboundFormItem(pathJournalDir)
-                                                .unboundFormItem(pathLargeMessagesDir)
-                                                .unboundFormItem(pathPagingDir)
-                                                .build();
-
-                                        AddResourceDialog dialog = new AddResourceDialog(
-                                                resources.messages().addResourceTitle(Names.SERVER), form,
-                                                (name, modelNode) -> {
-                                                    if (modelNode != null) {
-                                                        ResourceAddress address = SERVER_TEMPLATE.resolve(
-                                                                statementContext, name);
-                                                        Composite composite = new Composite();
-                                                        Operation addOp = new Operation.Builder(address, ADD)
-                                                                .build();
-                                                        composite.add(addOp);
-
-                                                        if (!pathBindingDir.isEmpty()) {
-                                                            ResourceAddress bindDirAddress = BINDING_DIRECTORY_TEMPLATE.resolve(
-                                                                    statementContext, name);
-                                                            Operation pathBindDirOp = new Operation.Builder(bindDirAddress,
-                                                                    ADD)
-                                                                    .param(PATH, pathBindingDir.getValue())
-                                                                    .build();
-                                                            composite.add(pathBindDirOp);
-                                                        }
-
-                                                        if (!pathJournalDir.isEmpty()) {
-                                                            ResourceAddress journalDirAddress = JOURNAL_DIRECTORY_TEMPLATE
-                                                                    .resolve(
-                                                                            statementContext, name);
-                                                            Operation pathJournalDirOp = new Operation.Builder(
-                                                                    journalDirAddress, ADD)
-                                                                    .param(PATH, pathJournalDir.getValue())
-                                                                    .build();
-                                                            composite.add(pathJournalDirOp);
-                                                        }
-
-                                                        if (!pathLargeMessagesDir.isEmpty()) {
-                                                            ResourceAddress largMsgDirAddress = LARGE_MESSAGES_DIRECTORY_TEMPLATE
-                                                                    .resolve(statementContext, name);
-                                                            Operation pathLargMsgDirOp = new Operation.Builder(
-                                                                    largMsgDirAddress, ADD)
-                                                                    .param(PATH, pathLargeMessagesDir.getValue())
-                                                                    .build();
-                                                            composite.add(pathLargMsgDirOp);
-                                                        }
-
-                                                        if (!pathPagingDir.isEmpty()) {
-                                                            ResourceAddress pagingDirAddress = PAGING_DIRECTORY_TEMPLATE.resolve(
-                                                                    statementContext, name);
-                                                            Operation pathPagingDirOp = new Operation.Builder(
-                                                                    pagingDirAddress, ADD)
-                                                                    .param(PATH, pathPagingDir.getValue())
-                                                                    .build();
-                                                            composite.add(pathPagingDirOp);
-                                                        }
-
-                                                        dispatcher.execute(composite,
-                                                                (CompositeResult compositeResult) -> {
-                                                                    MessageEvent.fire(eventBus,
-                                                                            Message.success(resources.messages()
-                                                                                    .addResourceSuccess(Names.SERVER,
-                                                                                            name)));
-                                                                    column.refresh(Ids.messagingServer(name));
-
-                                                                }, (operation, failure) -> MessageEvent.fire(eventBus,
-                                                                        Message.error(resources.messages()
-                                                                                .addResourceError(name, failure))),
-                                                                (operation, e) -> MessageEvent.fire(eventBus,
-                                                                        Message.error(resources.messages()
-                                                                                .addResourceError(name,
-                                                                                        e.getMessage()))));
-                                                    }
-                                                });
-                                        dialog.show();
-                                    });
-
-                        }))
-                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_CONFIGURATION_REFRESH))
-
                 .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
                         children -> callback.onSuccess(asNamedNodes(children))))
 
@@ -201,6 +99,111 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                 .pinnable()
                 .withFilter()
         );
+
+        addColumnAction(columnActionFactory.add(MESSAGING_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
+                column -> {
+                    // read server resources, if there is no server
+                    // the path parameters are optional
+                    crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
+                            children -> {
+                                Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
+                                TextBoxItem pathBindingDir = new TextBoxItem("path-bindings-directory");
+                                TextBoxItem pathJournalDir = new TextBoxItem("path-journal-directory");
+                                TextBoxItem pathLargeMessagesDir = new TextBoxItem(
+                                        "path-large-messages-directory");
+                                TextBoxItem pathPagingDir = new TextBoxItem("path-paging-directory");
+                                boolean hasServers = !children.isEmpty();
+                                pathBindingDir.setRequired(hasServers);
+                                pathJournalDir.setRequired(hasServers);
+                                pathLargeMessagesDir.setRequired(hasServers);
+                                pathPagingDir.setRequired(hasServers);
+
+                                Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                                        build(MESSAGING_SERVER_ADD, FORM), metadata)
+                                        .requiredOnly()
+                                        .unboundFormItem(new NameItem())
+                                        .unboundFormItem(pathBindingDir)
+                                        .unboundFormItem(pathJournalDir)
+                                        .unboundFormItem(pathLargeMessagesDir)
+                                        .unboundFormItem(pathPagingDir)
+                                        .build();
+
+                                AddResourceDialog dialog = new AddResourceDialog(
+                                        resources.messages().addResourceTitle(Names.SERVER), form,
+                                        (name, modelNode) -> {
+                                            if (modelNode != null) {
+                                                ResourceAddress address = SERVER_TEMPLATE.resolve(
+                                                        statementContext, name);
+                                                Composite composite = new Composite();
+                                                Operation addOp = new Operation.Builder(address, ADD)
+                                                        .build();
+                                                composite.add(addOp);
+
+                                                if (!pathBindingDir.isEmpty()) {
+                                                    ResourceAddress bindDirAddress = BINDING_DIRECTORY_TEMPLATE.resolve(
+                                                            statementContext, name);
+                                                    Operation pathBindDirOp = new Operation.Builder(bindDirAddress,
+                                                            ADD)
+                                                            .param(PATH, pathBindingDir.getValue())
+                                                            .build();
+                                                    composite.add(pathBindDirOp);
+                                                }
+
+                                                if (!pathJournalDir.isEmpty()) {
+                                                    ResourceAddress journalDirAddress = JOURNAL_DIRECTORY_TEMPLATE
+                                                            .resolve(
+                                                                    statementContext, name);
+                                                    Operation pathJournalDirOp = new Operation.Builder(
+                                                            journalDirAddress, ADD)
+                                                            .param(PATH, pathJournalDir.getValue())
+                                                            .build();
+                                                    composite.add(pathJournalDirOp);
+                                                }
+
+                                                if (!pathLargeMessagesDir.isEmpty()) {
+                                                    ResourceAddress largMsgDirAddress = LARGE_MESSAGES_DIRECTORY_TEMPLATE
+                                                            .resolve(statementContext, name);
+                                                    Operation pathLargMsgDirOp = new Operation.Builder(
+                                                            largMsgDirAddress, ADD)
+                                                            .param(PATH, pathLargeMessagesDir.getValue())
+                                                            .build();
+                                                    composite.add(pathLargMsgDirOp);
+                                                }
+
+                                                if (!pathPagingDir.isEmpty()) {
+                                                    ResourceAddress pagingDirAddress = PAGING_DIRECTORY_TEMPLATE.resolve(
+                                                            statementContext, name);
+                                                    Operation pathPagingDirOp = new Operation.Builder(
+                                                            pagingDirAddress, ADD)
+                                                            .param(PATH, pathPagingDir.getValue())
+                                                            .build();
+                                                    composite.add(pathPagingDirOp);
+                                                }
+
+                                                dispatcher.execute(composite,
+                                                        (CompositeResult compositeResult) -> {
+                                                            MessageEvent.fire(eventBus,
+                                                                    Message.success(resources.messages()
+                                                                            .addResourceSuccess(Names.SERVER,
+                                                                                    name)));
+                                                            column.refresh(Ids.messagingServer(name));
+
+                                                        }, (operation, failure) -> MessageEvent.fire(eventBus,
+                                                                Message.error(resources.messages()
+                                                                        .addResourceError(name, failure))),
+                                                        (operation, e) -> MessageEvent.fire(eventBus,
+                                                                Message.error(resources.messages()
+                                                                        .addResourceError(name,
+                                                                                e.getMessage()))));
+                                            }
+                                        });
+                                dialog.getForm().<String>getFormItem(NAME).addValidationHandler(
+                                        createUniqueValidation());
+                                dialog.show();
+                            });
+
+                }));
+        addColumnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_CONFIGURATION_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override

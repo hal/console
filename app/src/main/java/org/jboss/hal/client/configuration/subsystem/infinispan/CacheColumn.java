@@ -196,6 +196,7 @@ public class CacheColumn extends FinderColumn<Cache> {
                     crud.add(cacheType.type, name, address, model,
                             (n, a) -> this.refresh(Ids.build(cacheType.baseId, name)));
                 });
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 }

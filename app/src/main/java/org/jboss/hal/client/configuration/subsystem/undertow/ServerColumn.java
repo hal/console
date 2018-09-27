@@ -54,10 +54,6 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.UNDERTOW_SERVER, Names.SERVER)
 
-                .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
-                        Ids::undertowServer))
-                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVER_REFRESH))
-
                 .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVER,
                         children -> callback.onSuccess(asNamedNodes(children))))
 
@@ -66,6 +62,10 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                 .pinnable()
                 .withFilter()
         );
+
+        addColumnAction(columnActionFactory.add(Ids.UNDERTOW_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
+                Ids::undertowServer, this::createUniqueValidation));
+        addColumnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVER_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override

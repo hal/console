@@ -54,12 +54,6 @@ public class ApplicationSecurityDomainColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_APP_SECURITY_DOMAIN, Names.APPLICATION_SECURITY_DOMAIN)
 
-                .columnAction(
-                        columnActionFactory.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN,
-                                APPLICATION_SECURITY_DOMAIN_TEMPLATE,
-                                Ids::undertowApplicationSecurityDomain))
-                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_APP_SECURITY_DOMAIN_REFRESH))
-
                 .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE,
                         APPLICATION_SECURITY_DOMAIN,
                         children -> callback.onSuccess(asNamedNodes(children))))
@@ -69,6 +63,13 @@ public class ApplicationSecurityDomainColumn extends FinderColumn<NamedNode> {
                 .pinnable()
                 .withFilter()
         );
+
+        addColumnAction(columnActionFactory.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_ADD,
+                Names.APPLICATION_SECURITY_DOMAIN,
+                APPLICATION_SECURITY_DOMAIN_TEMPLATE,
+                Ids::undertowApplicationSecurityDomain,
+                this::createUniqueValidation));
+        addColumnAction(columnActionFactory.refresh(Ids.UNDERTOW_APP_SECURITY_DOMAIN_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
