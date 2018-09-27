@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -61,7 +60,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .button(tableButtonFactory.remove(RELAY_TEMPLATE,
                         table -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
                                 Names.RELAY)))
-                .column(NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(new InlineAction<>(Names.REMOTE_SITE, row -> {
                     presenter.showRemoteSites(row);
                     presenter.showStackInnerPage(REMOTE_SITE_ID);

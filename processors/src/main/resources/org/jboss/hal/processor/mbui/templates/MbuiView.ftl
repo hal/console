@@ -289,7 +289,7 @@ public final class ${context.subclass} extends ${context.base} {
             <#else>
                 <#list table.columns as column>
                     <#if column.value??>
-            .column("${column.name}", (cell, type, row, meta) -> SafeHtmlUtils.fromString(${column.value}).asString())
+            .column("${column.name}", (cell, type, row, meta) -> ${column.value})
                     <#else>
             .column("${column.name}")
                     </#if>

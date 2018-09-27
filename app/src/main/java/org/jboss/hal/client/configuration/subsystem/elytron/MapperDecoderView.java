@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -54,7 +53,7 @@ import static org.jboss.hal.resources.Ids.build;
 public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         implements MapperDecoderPresenter.MyView {
 
-    public static MapperDecoderView create(final MbuiContext mbuiContext) {
+    public static MapperDecoderView create(MbuiContext mbuiContext) {
         return new Mbui_MapperDecoderView(mbuiContext);
     }
 
@@ -98,7 +97,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     // @formatter:on
 
 
-    MapperDecoderView(final MbuiContext mbuiContext) {
+    MapperDecoderView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -107,7 +106,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONSTANT_PERMISSION_MAPPER_TEMPLATE);
         constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
                 CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
                         modelNode -> build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
                 .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
@@ -131,7 +130,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .button(mbuiContext.tableButtonFactory().remove(title, MAPPED_ROLE_MAPPER_TEMPLATE,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         mappedRoleMapperForm = new ModelNodeForm.Builder<NamedNode>(build(mappedId, FORM), mappedMetadata)
@@ -177,112 +176,112 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     }
 
     @Override
-    public void updateAddPrefixRoleMapper(final List<NamedNode> model) {
+    public void updateAddPrefixRoleMapper(List<NamedNode> model) {
         addPrefixRoleMapperForm.clear();
         addPrefixRoleMapperTable.update(model);
     }
 
     @Override
-    public void updateAddSuffixRoleMapper(final List<NamedNode> model) {
+    public void updateAddSuffixRoleMapper(List<NamedNode> model) {
         addSuffixRoleMapperForm.clear();
         addSuffixRoleMapperTable.update(model);
     }
 
     @Override
-    public void updateAggregatePrincipalDecoder(final List<NamedNode> model) {
+    public void updateAggregatePrincipalDecoder(List<NamedNode> model) {
         aggregatePrincipalDecoderForm.clear();
         aggregatePrincipalDecoderTable.update(model);
     }
 
     @Override
-    public void updateAggregateRoleMapper(final List<NamedNode> model) {
+    public void updateAggregateRoleMapper(List<NamedNode> model) {
         aggregateRoleMapperForm.clear();
         aggregateRoleMapperTable.update(model);
     }
 
     @Override
-    public void updateConcatenatingPrincipalDecoder(final List<NamedNode> model) {
+    public void updateConcatenatingPrincipalDecoder(List<NamedNode> model) {
         concatenatingPrincipalDecoderForm.clear();
         concatenatingPrincipalDecoderTable.update(model);
     }
 
     @Override
-    public void updateConstantPermissionMapper(final List<NamedNode> model) {
+    public void updateConstantPermissionMapper(List<NamedNode> model) {
         constantPermissionMapperElement.update(model);
     }
 
     @Override
-    public void updateConstantPrincipalDecoder(final List<NamedNode> model) {
+    public void updateConstantPrincipalDecoder(List<NamedNode> model) {
         constantPrincipalDecoderForm.clear();
         constantPrincipalDecoderTable.update(model);
     }
 
     @Override
-    public void updateConstantRoleMapper(final List<NamedNode> model) {
+    public void updateConstantRoleMapper(List<NamedNode> model) {
         constantRoleMapperForm.clear();
         constantRoleMapperTable.update(model);
     }
 
     @Override
-    public void updateCustomPermissionMapper(final List<NamedNode> model) {
+    public void updateCustomPermissionMapper(List<NamedNode> model) {
         customPermissionMapperForm.clear();
         customPermissionMapperTable.update(model);
     }
 
     @Override
-    public void updateCustomPrincipalDecoder(final List<NamedNode> model) {
+    public void updateCustomPrincipalDecoder(List<NamedNode> model) {
         customPrincipalDecoderForm.clear();
         customPrincipalDecoderTable.update(model);
     }
 
     @Override
-    public void updateCustomRoleDecoder(final List<NamedNode> model) {
+    public void updateCustomRoleDecoder(List<NamedNode> model) {
         customRoleDecoderForm.clear();
         customRoleDecoderTable.update(model);
     }
 
     @Override
-    public void updateCustomRoleMapper(final List<NamedNode> model) {
+    public void updateCustomRoleMapper(List<NamedNode> model) {
         customRoleMapperForm.clear();
         customRoleMapperTable.update(model);
     }
 
     @Override
-    public void updateLogicalPermissionMapper(final List<NamedNode> model) {
+    public void updateLogicalPermissionMapper(List<NamedNode> model) {
         logicalPermissionMapperForm.clear();
         logicalPermissionMapperTable.update(model);
     }
 
     @Override
-    public void updateLogicalRoleMapper(final List<NamedNode> model) {
+    public void updateLogicalRoleMapper(List<NamedNode> model) {
         logicalRoleMapperForm.clear();
         logicalRoleMapperTable.update(model);
     }
     @Override
-    public void updateMappedRoleMapper(final List<NamedNode> model) {
+    public void updateMappedRoleMapper(List<NamedNode> model) {
         mappedRoleMapperForm.clear();
         mappedRoleMapperTable.update(model);
     }
 
     @Override
-    public void updateSimplePermissionMapper(final List<NamedNode> model) {
+    public void updateSimplePermissionMapper(List<NamedNode> model) {
         simplePermissionMapperElement.update(model);
     }
 
     @Override
-    public void updateSimpleRoleDecoder(final List<NamedNode> model) {
+    public void updateSimpleRoleDecoder(List<NamedNode> model) {
         simpleRoleDecoderForm.clear();
         simpleRoleDecoderTable.update(model);
     }
 
     @Override
-    public void updateX500AttributePrincipalDecoder(final List<NamedNode> model) {
+    public void updateX500AttributePrincipalDecoder(List<NamedNode> model) {
         x500AttributePrincipalDecoderForm.clear();
         x500AttributePrincipalDecoderTable.update(model);
     }
 
     @Override
-    public void setPresenter(final MapperDecoderPresenter presenter) {
+    public void setPresenter(MapperDecoderPresenter presenter) {
         super.setPresenter(presenter);
         simplePermissionMapperElement.setPresenter(presenter);
     }

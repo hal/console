@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -72,12 +71,12 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     private MailSessionPresenter presenter;
 
     @Inject
-    public MailSessionView(final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final TableButtonFactory tableButtonFactory,
-            final CredentialReference cr,
-            final Resources resources) {
+    public MailSessionView(MetadataRegistry metadataRegistry,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            TableButtonFactory tableButtonFactory,
+            CredentialReference cr,
+            Resources resources) {
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -109,10 +108,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .button(tableButtonFactory.remove(SERVER_TEMPLATE,
                         table -> presenter.removeServer(table.selectedRow())))
                 .column(new ColumnBuilder<NamedNode>(TYPE, resources.constants().type(),
-                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName().toUpperCase()).asString()).build())
+                        (cell, type, row, meta) -> row.getName().toUpperCase()).build())
                 .column(new ColumnBuilder<NamedNode>(OUTBOUND_SOCKET_BINDING_REF, "Outbound Socket Binding", //NON-NLS
-                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.get(OUTBOUND_SOCKET_BINDING_REF)
-                                .asString()).asString()).build())
+                        (cell, type, row, meta) -> row.get(OUTBOUND_SOCKET_BINDING_REF).asString()).build())
                 .build();
         registerAttachable(serverTable);
 
@@ -169,13 +167,13 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     }
 
     @Override
-    public void setPresenter(final MailSessionPresenter presenter) {
+    public void setPresenter(MailSessionPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void update(final MailSession mailSession) {
+    public void update(MailSession mailSession) {
         mailSessionForm.view(mailSession);
 
         List<NamedNode> servers = asNamedNodes(failSafePropertyList(mailSession, SERVER));
@@ -186,7 +184,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     }
 
     @Override
-    public void select(final NamedNode mailServer) {
+    public void select(NamedNode mailServer) {
         serverTable.select(mailServer);
     }
 }

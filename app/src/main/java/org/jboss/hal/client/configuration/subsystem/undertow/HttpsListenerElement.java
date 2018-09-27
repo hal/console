@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.NodeList;
@@ -77,7 +76,7 @@ class HttpsListenerElement extends ListenerElement {
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(HTTPS)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(HTTPS, table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(HTTPS.baseId, Ids.FORM), metadata)

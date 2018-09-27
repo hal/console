@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -51,7 +50,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
         implements DestinationPresenter.MyView {
 
-    public static DestinationView create(final MbuiContext mbuiContext) {
+    public static DestinationView create(MbuiContext mbuiContext) {
         return new Mbui_DestinationView(mbuiContext);
     }
 
@@ -70,7 +69,7 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
     private Table<NamedNode> roleTable;
     private Form<NamedNode> roleForm;
 
-    DestinationView(final MbuiContext mbuiContext) {
+    DestinationView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -83,9 +82,9 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
                 .button(mbuiContext.tableButtonFactory().remove(ROLE_TEMPLATE,
                         table -> presenter.removeSecuritySettingRole(table.selectedRow())))
                 .column(SECURITY_SETTING, mbuiContext.resources().constants().pattern(),
-                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.get(SECURITY_SETTING).asString()).asString())
+                        (cell, type, row, meta) -> row.get(SECURITY_SETTING).asString())
                 .column(ROLE, mbuiContext.resources().constants().role(),
-                        (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                        (cell, type, row, meta) -> row.getName())
                 .build();
 
         roleForm = new ModelNodeForm.Builder<NamedNode>(Ids.MESSAGING_SECURITY_SETTING_ROLE_FORM, roleMetadata)
@@ -123,25 +122,25 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
     }
 
     @Override
-    public void updateCoreQueue(final List<NamedNode> coreQueues) {
+    public void updateCoreQueue(List<NamedNode> coreQueues) {
         coreQueueForm.clear();
         coreQueueTable.update(coreQueues);
     }
 
     @Override
-    public void updateJmsQueue(final List<NamedNode> jmsQueues) {
+    public void updateJmsQueue(List<NamedNode> jmsQueues) {
         jmsQueueForm.clear();
         jmsQueueTable.update(jmsQueues);
     }
 
     @Override
-    public void updateJmsTopic(final List<NamedNode> jmsTopics) {
+    public void updateJmsTopic(List<NamedNode> jmsTopics) {
         jmsTopicForm.clear();
         jmsTopicTable.update(jmsTopics);
     }
 
     @Override
-    public void updateSecuritySetting(final List<NamedNode> securitySettings) {
+    public void updateSecuritySetting(List<NamedNode> securitySettings) {
         // Extract the roles and store the parent security setting name as artificial value
         List<NamedNode> roles = new ArrayList<>();
         securitySettings.forEach(securitySetting -> {
@@ -157,13 +156,13 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
     }
 
     @Override
-    public void updateAddressSetting(final List<NamedNode> addressSettings) {
+    public void updateAddressSetting(List<NamedNode> addressSettings) {
         addressSettingForm.clear();
         addressSettingTable.update(addressSettings);
     }
 
     @Override
-    public void updateDivert(final List<NamedNode> diverts) {
+    public void updateDivert(List<NamedNode> diverts) {
         divertForm.clear();
         divertTable.update(diverts);
     }

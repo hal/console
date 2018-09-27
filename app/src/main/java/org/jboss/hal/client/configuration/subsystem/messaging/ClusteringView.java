@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -101,7 +100,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 .button(mbuiContext.resources().constants().remove(),
                         table -> presenter.remove(ServerSubResource.BRIDGE, table.selectedRow()), Scope.SELECTED,
                         Constraint.executable(BRIDGE_TEMPLATE, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         bridgeForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.MESSAGING_BRIDGE, Ids.FORM), metadata)

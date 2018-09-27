@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.core.mbui.table;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
@@ -30,14 +29,14 @@ class ColumnFactory {
         labelBuilder = new LabelBuilder();
     }
 
-    <T extends ModelNode> Column<T> createColumn(final Property attributeDescription) {
+    <T extends ModelNode> Column<T> createColumn(Property attributeDescription) {
         String name = attributeDescription.getName();
         String title = labelBuilder.label(attributeDescription);
 
         // TODO Think about other column types depending on ModelType
-        Column.RenderCallback<T, Object> render = (cell, type, row, meta) -> {
+        Column.RenderCallback<T, String> render = (cell, type, row, meta) -> {
             if (row.hasDefined(name)) {
-                return SafeHtmlUtils.fromString(row.get(name).asString()).asString();
+                return row.get(name).asString();
             }
             return null;
         };

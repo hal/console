@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -184,7 +183,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(baseId, resource, Ids.TABLE), metadata)
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM),
@@ -225,12 +224,12 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final JpaPresenter presenter) {
+    public void setPresenter(JpaPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void update(final JpaStatistic statistic) {
+    public void update(JpaStatistic statistic) {
         headerElement.textContent = statistic.getPersistenceUnit();
         leadElement.textContent = statistic.getPath();
 

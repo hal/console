@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
@@ -72,7 +71,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
         transactionsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(TRANSACTIONS, TABLE), metadataTx)
                 .button(resources.constants().probe(), table -> presenter.probe())
                 .button(resources.constants().reload(), table -> presenter.reload())
-                .column(Names.TRANSACTION, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(Names.TRANSACTION, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(Names.PARTICIPANTS, this::showParticipants), "20em")
                 .build();
 
@@ -93,7 +92,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
         Metadata metadataPart = metadataRegistry.lookup(PARTICIPANTS_LOGSTORE_RUNTIME_TEMPLATE);
 
         participantsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(PARTICIPANTS, TABLE), metadataPart)
-                .column(Names.PARTICIPANT, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(Names.PARTICIPANT, (cell, type, row, meta) -> row.getName())
                 .build();
 
         participantsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(PARTICIPANTS, FORM), metadataPart)

@@ -115,11 +115,11 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         return that();
     }
 
-    public B column(String name, Column.RenderCallback<T, ?> render) {
+    public B column(String name, Column.RenderCallback<T, String> render) {
         return column(new ColumnBuilder<>(name, new LabelBuilder().label(name), render).build());
     }
 
-    public B column(String name, String title, Column.RenderCallback<T, ?> render) {
+    public B column(String name, String title, Column.RenderCallback<T, String> render) {
         return column(new ColumnBuilder<>(name, title, render).build());
     }
 
@@ -180,7 +180,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         Column<T> checkboxColumn = new Column<>();
         checkboxColumn.orderable = false;
         checkboxColumn.className = selectCheckbox;
-        checkboxColumn.render = (Column.RenderCallback<T, String>) (cell, type, row, meta) -> null;
+        checkboxColumn.render = (cell, type, row, meta) -> null;
         checkboxColumn.width = "40px"; //NON-NLS
         return column(checkboxColumn);
     }
@@ -235,7 +235,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
             options.buttons.dom.button = new Api.Buttons.Dom.Factory();
             options.buttons.dom.button.tag = "button";
             options.buttons.dom.button.className = btn + " " + btnDefault;
-            options.buttons.buttons = buttons.toArray(new Api.Button[buttons.size()]);
+            options.buttons.buttons = buttons.toArray(new Api.Button[0]);
 
             for (int i = 0; i < options.buttons.buttons.length; i++) {
                 if (options.buttons.buttons[i].constraint != null) {
@@ -243,7 +243,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
                 }
             }
         }
-        options.columns = columns.toArray(new Column[columns.size()]);
+        options.columns = columns.toArray(new Column[0]);
         options.keys = keys;
         options.paging = paging;
         options.pageLength = pageLength;

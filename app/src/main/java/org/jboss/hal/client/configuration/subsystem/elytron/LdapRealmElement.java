@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -69,7 +68,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addLdapRealm()))
                 .button(tableButtonFactory.remove(Names.LDAP_REALM, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapRealms()))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(Names.IDENTITY_ATTRIBUTE_MAPPING, this::showIdentityAttributeMapping),
                         "15em")
                 .build();

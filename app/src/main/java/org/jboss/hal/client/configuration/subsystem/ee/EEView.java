@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -241,7 +240,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE),
                 metadata)
-                .column(NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, t, row, meta) -> row.getName())
                 .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
                         (name, address) -> presenter.reload()))
                 .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),

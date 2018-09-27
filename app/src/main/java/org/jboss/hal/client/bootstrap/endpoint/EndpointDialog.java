@@ -17,7 +17,6 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
@@ -70,7 +69,7 @@ class EndpointDialog {
     private Table<Endpoint> table;
     private Dialog dialog;
 
-    EndpointDialog(final EndpointManager manager, final EndpointStorage storage) {
+    EndpointDialog(EndpointManager manager, EndpointStorage storage) {
         this.manager = manager;
         this.storage = storage;
         Metadata metadata = Metadata.staticDescription(RESOURCES.endpoint());
@@ -83,7 +82,7 @@ class EndpointDialog {
                     dialog.getButton(PRIMARY_POSITION).disabled = !this.table.hasSelection();
                 }, Scope.SELECTED)
                 .column(NAME)
-                .column("url", "URL", (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getUrl()).asString()) //NON-NLS
+                .column("url", "URL", (cell, type, row, meta) -> row.getUrl())
                 .build();
 
         selectPage = div()
@@ -97,14 +96,14 @@ class EndpointDialog {
             Endpoint endpoint = transientEndpoint();
             manager.pingServer(endpoint, new AsyncCallback<Void>() {
                 @Override
-                public void onFailure(final Throwable throwable) {
+                public void onFailure(Throwable throwable) {
                     alert.setIcon(Icons.ERROR)
                             .setText(MESSAGES.endpointError(endpoint.getUrl(), Endpoints.getBaseUrl()));
                     Elements.setVisible(alert.asElement(), true);
                 }
 
                 @Override
-                public void onSuccess(final Void aVoid) {
+                public void onSuccess(Void aVoid) {
                     alert.setIcon(Icons.OK).setText(MESSAGES.endpointOk(endpoint.getUrl()));
                     Elements.setVisible(alert.asElement(), true);
                 }
@@ -173,7 +172,7 @@ class EndpointDialog {
         return endpoint;
     }
 
-    private void switchTo(final Mode mode) {
+    private void switchTo(Mode mode) {
         HTMLButtonElement primaryButton = dialog.getButton(PRIMARY_POSITION);
         if (mode == SELECT) {
             dialog.setTitle(CONSTANTS.endpointSelectTitle());

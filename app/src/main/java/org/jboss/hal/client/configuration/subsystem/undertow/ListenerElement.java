@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -58,7 +57,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(listenerType)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(listenerType, table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM), metadata)
@@ -94,7 +93,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
     }
 
     @Override
-    public void setPresenter(final ServerPresenter presenter) {
+    public void setPresenter(ServerPresenter presenter) {
         this.presenter = presenter;
     }
 

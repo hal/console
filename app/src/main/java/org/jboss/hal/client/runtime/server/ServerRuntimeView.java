@@ -21,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Splitter;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -81,7 +80,7 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
     private final HTMLElement headerElement;
 
     @Inject
-    public ServerRuntimeView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public ServerRuntimeView(MetadataRegistry metadataRegistry, Resources resources) {
         Metadata metadata = metadataRegistry.lookup(ServerRuntimePresenter.SERVER_RUNTIME_TEMPLATE);
         mainAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_RUNTIME_JVM_ATTRIBUTES_FORM, metadata)
                 .readOnly()
@@ -104,9 +103,9 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
                 .build();
 
         Options<Property> options = new OptionsBuilder<Property>()
-                .column(NAME, Names.NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, Names.NAME, (cell, t, row, meta) -> row.getName())
                 .column(new ColumnBuilder<Property>(VALUE, Names.VALUE,
-                        (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getValue().asString()).asString())
+                        (cell, t, row, meta) -> row.getValue().asString())
                         .width("66%")
                         .searchable(false)
                         .orderable(false)
@@ -149,7 +148,7 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
     }
 
     @Override
-    public void update(final ModelNode modelNode) {
+    public void update(ModelNode modelNode) {
         List<Property> sp = modelNode.get(SYSTEM_PROPERTIES).asPropertyList();
         String pathSeparator = sp.stream()
                 .filter(p -> "path.separator".equals(p.getName())) //NON-NLS
