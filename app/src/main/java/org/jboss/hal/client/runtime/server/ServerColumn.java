@@ -522,7 +522,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                             resources.messages().addResourceSuccess(Names.SERVER,
                                                     serverName), (name, address1) -> refresh(RESTORE_SELECTION));
                                 });
-                                dialog.addValidationHandlerForNameItem(createUniqueValidation());
+                                dialog.getForm().<String>getFormItem(NAME).addValidationHandler(
+                                        createUniqueValidation());
                                 dialog.show();
                                 form.<String>getFormItem(GROUP).setValue(statementContext.selectedServerGroup());
                             }

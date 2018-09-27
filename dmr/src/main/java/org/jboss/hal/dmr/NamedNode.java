@@ -19,7 +19,7 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.config.NamedObject;
+import org.jboss.hal.spi.NamedObject;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -31,18 +31,18 @@ public class NamedNode extends ModelNode implements NamedObject {
     private final ModelNode node;
 
     @JsIgnore
-    public NamedNode(final ModelNode node) {
+    public NamedNode(ModelNode node) {
         this(node.hasDefined(NAME) ? node.get(NAME).asString() : ModelDescriptionConstants.UNDEFINED + "_" + System
                 .currentTimeMillis(), node);
     }
 
     @JsIgnore
-    public NamedNode(final Property property) {
+    public NamedNode(Property property) {
         this(property.getName(), property.getValue());
     }
 
     @JsIgnore
-    public NamedNode(final String name, final ModelNode node) {
+    public NamedNode(String name, ModelNode node) {
         this.name = name;
         this.node = node;
         set(node);
@@ -51,7 +51,7 @@ public class NamedNode extends ModelNode implements NamedObject {
 
     @Override
     @JsIgnore
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -95,7 +95,7 @@ public class NamedNode extends ModelNode implements NamedObject {
         return get(NAME).asString();
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         get(NAME).set(name);
     }
 
@@ -116,7 +116,7 @@ public class NamedNode extends ModelNode implements NamedObject {
     // ------------------------------------------------------ JS methods
 
     @JsMethod(name = "create")
-    public static NamedNode jsCreate(final String name) {
+    public static NamedNode jsCreate(String name) {
         return new NamedNode(name, new ModelNode());
     }
 }

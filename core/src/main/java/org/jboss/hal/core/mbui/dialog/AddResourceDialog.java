@@ -25,7 +25,6 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
@@ -99,10 +98,6 @@ public class AddResourceDialog {
         // First call dialog.show() (which attaches everything), then call form.edit()
         dialog.show();
         form.edit(new ModelNode());
-    }
-
-    public void addValidationHandlerForNameItem(FormItemValidation<String> validationHandler) {
-        nameItem.addValidationHandler(validationHandler);
     }
 
     @FunctionalInterface

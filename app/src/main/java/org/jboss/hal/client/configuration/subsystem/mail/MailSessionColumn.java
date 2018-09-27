@@ -105,7 +105,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                                     });
                                 }
                             });
-                    dialog.addValidationHandlerForNameItem(createUniqueValidation());
+                    dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
                     dialog.show();
                 }));
         addColumnAction(columnActionFactory.refresh(Ids.MAIL_SESSION_REFRESH));

@@ -347,7 +347,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                             }
                         }));
-        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 

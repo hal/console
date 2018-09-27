@@ -362,7 +362,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                             }
                         }));
-        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 

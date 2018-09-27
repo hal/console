@@ -57,6 +57,7 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -196,7 +197,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                                                 e.getMessage()))));
                                             }
                                         });
-                                dialog.addValidationHandlerForNameItem(createUniqueValidation());
+                                dialog.getForm().<String>getFormItem(NAME).addValidationHandler(
+                                        createUniqueValidation());
                                 dialog.show();
                             });
 

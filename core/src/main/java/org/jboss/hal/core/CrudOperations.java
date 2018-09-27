@@ -153,7 +153,9 @@ public class CrudOperations {
             public void onMetadata(Metadata metadata) {
                 AddResourceDialog dialog = new AddResourceDialog(id, resources.messages().addResourceTitle(type),
                         metadata, attributes, (name, model) -> add(type, name, template, model, callback));
-                dialog.addValidationHandlerForNameItem(nameItemValidator);
+                if (nameItemValidator != null) {
+                    dialog.getForm().<String>getFormItem(NAME).addValidationHandler(nameItemValidator);
+                }
                 dialog.show();
             }
         });

@@ -109,18 +109,18 @@ public class RoleColumn extends FinderColumn<Role> {
     private final List<String> standardRoleNames;
 
     @Inject
-    public RoleColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final AccessControl accessControl,
-            final AccessControlTokens tokens,
-            final Environment environment,
-            final Settings settings,
-            final Resources resources) {
+    public RoleColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            AccessControl accessControl,
+            AccessControlTokens tokens,
+            Environment environment,
+            Settings settings,
+            Resources resources) {
 
         super(new Builder<Role>(finder, Ids.ROLE, resources.constants().role())
                 .itemsProvider((context, callback) -> {
@@ -319,14 +319,14 @@ public class RoleColumn extends FinderColumn<Role> {
                         }
                     });
         });
-        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 
 
     // ------------------------------------------------------ modify roles
 
-    private void editStandardRole(final Role role) {
+    private void editStandardRole(Role role) {
         Metadata metadata = metadataRegistry.lookup(ROLE_MAPPING_TEMPLATE);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ROLE_MAPPING_FORM, metadata)
                 .unboundFormItem(new NameItem(), 0)
@@ -409,7 +409,7 @@ public class RoleColumn extends FinderColumn<Role> {
 
     // ------------------------------------------------------ remove roles
 
-    private void removeScopedRole(Role role, final String type) {
+    private void removeScopedRole(Role role, String type) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         List<Assignment> assignments = accessControl.assignments().byRole(role).collect(toList());
         if (!assignments.isEmpty()) {

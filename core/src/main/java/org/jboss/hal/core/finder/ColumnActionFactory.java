@@ -44,7 +44,7 @@ public class ColumnActionFactory {
     private final Resources resources;
 
     @Inject
-    public ColumnActionFactory(final CrudOperations crud, final Resources resources) {
+    public ColumnActionFactory(CrudOperations crud, Resources resources) {
         this.crud = crud;
         this.resources = resources;
     }
@@ -76,29 +76,22 @@ public class ColumnActionFactory {
         return add(id, type, template, attributes, Ids::asId, null);
     }
 
-    public <T> ColumnAction<T> add(String id,
-                                   String type,
-                                   AddressTemplate template,
-                                   Iterable<String> attributes,
-                                   Supplier<FormItemValidation<String>> createValidator) {
+    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes,
+            Supplier<FormItemValidation<String>> createValidator) {
         return add(id, type, template, attributes, Ids::asId, createValidator);
     }
 
-    public <T> ColumnAction<T> add(String id,
-                                   String type,
-                                   AddressTemplate template,
-                                   Function<String, String> identifier,
-                                   Supplier<FormItemValidation<String>> createValidator) {
+    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
+            Function<String, String> identifier, Supplier<FormItemValidation<String>> createValidator) {
         return add(id, type, template, Collections.emptyList(), identifier, createValidator);
     }
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes,
-                                   Function<String, String> identifier,
-                                   Supplier<FormItemValidation<String>> createValidator) {
+            Function<String, String> identifier, Supplier<FormItemValidation<String>> createValidator) {
         //noinspection Convert2Lambda
         return add(id, type, template, new ColumnActionHandler<T>() {
             @Override
-            public void execute(final FinderColumn<T> column) {
+            public void execute(FinderColumn<T> column) {
                 FormItemValidation<String> validator = createValidator != null ? createValidator.get() : null;
 
                 crud.add(id, type, template, attributes, validator, (name, address) -> {

@@ -231,7 +231,8 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                 refresh(Ids.remoteCacheContainer(name));
             });
         });
-        dialog.addValidationHandlerForNameItem(createUniqueValidationFromFilteredItems(CacheContainer::isRemote));
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(
+                createUniqueValidationFromFilteredItems(CacheContainer::isRemote));
         dialog.show();
     }
 }

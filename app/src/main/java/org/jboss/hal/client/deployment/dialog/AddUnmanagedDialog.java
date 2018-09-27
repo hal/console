@@ -16,7 +16,6 @@
 package org.jboss.hal.client.deployment.dialog;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
@@ -76,8 +75,8 @@ public class AddUnmanagedDialog {
                 });
     }
 
-    public void addValidationHandlerForNameItem(FormItemValidation<String> validationHandler) {
-        dialog.addValidationHandlerForNameItem(validationHandler);
+    public Form<ModelNode> getForm() {
+        return dialog.getForm();
     }
 
     public void show() {

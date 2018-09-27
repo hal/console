@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.core.datasource;
 
-import org.jboss.hal.config.NamedObject;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.spi.NamedObject;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -29,7 +29,7 @@ public class JdbcDriver extends ModelNode implements NamedObject {
 
         private final String text;
 
-        Provider(final String text) {
+        Provider(String text) {
             this.text = text;
         }
 
@@ -43,15 +43,15 @@ public class JdbcDriver extends ModelNode implements NamedObject {
         this("");
     }
 
-    public JdbcDriver(final String name) {
+    public JdbcDriver(String name) {
         this(name, new ModelNode());
     }
 
-    public JdbcDriver(final Property property) {
+    public JdbcDriver(Property property) {
         this(property.getName(), property.getValue());
     }
 
-    public JdbcDriver(final String name, final ModelNode modelNode) {
+    public JdbcDriver(String name, ModelNode modelNode) {
         set(modelNode);
         get(DRIVER_NAME).set(name);
     }

@@ -47,7 +47,10 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTION_FACTORY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_BRIDGE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.POOLED_CONNECTION_FACTORY_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_BRIDGE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -64,15 +67,15 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
     }
 
     @Inject
-    public JmsBridgeColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final StatementContext statementContext,
-            final Places places,
-            final Resources resources) {
+    public JmsBridgeColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            MetadataRegistry metadataRegistry,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            StatementContext statementContext,
+            Places places,
+            Resources resources) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.JMS_BRIDGE, Names.JMS_BRIDGE)
                 .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, JMS_BRIDGE,
@@ -91,12 +94,13 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
                             .requiredOnly()
                             .build();
                     registerSuggestionHandler(dispatcher, statementContext, form);
-                    AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.JMS_BRIDGE),
+                    AddResourceDialog dialog = new AddResourceDialog(
+                            resources.messages().addResourceTitle(Names.JMS_BRIDGE),
                             form, (name, model) -> crud.add(Names.JMS_BRIDGE, name, JMS_BRIDGE_TEMPLATE, model,
                             (n, a) -> {
                                 refresh(Ids.jmsBridge(n));
                             }));
-                    dialog.addValidationHandlerForNameItem(createUniqueValidation());
+                    dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
                     dialog.show();
                 }));
         addColumnAction(columnActionFactory.refresh(Ids.JMS_BRIDGE_REFRESH));

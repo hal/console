@@ -112,18 +112,18 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
     private final Resources resources;
 
     @Inject
-    public ServerGroupDeploymentColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final Environment environment,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final Places places,
-            final ServerActions serverActions,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final @Footer Provider<Progress> progress,
-            final Resources resources) {
+    public ServerGroupDeploymentColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Environment environment,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            Places places,
+            ServerActions serverActions,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
 
         super(new FinderColumn.Builder<ServerGroupDeployment>(finder, Ids.SERVER_GROUP_DEPLOYMENT, Names.DEPLOYMENT)
                 .useFirstActionAsBreadcrumbHandler()
@@ -184,12 +184,12 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<ServerGroupDeployment>>() {
                     @Override
-                    public void onFailure(final Throwable caught) {
+                    public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
                     }
 
                     @Override
-                    public void onSuccess(final List<ServerGroupDeployment> result) {
+                    public void onSuccess(List<ServerGroupDeployment> result) {
                         // only running deployments w/ a reference server will show up in the breadcrumb dropdown
                         List<ServerGroupDeployment> deploymentsOnServer = result.stream()
                                 .filter(ServerGroupDeployment::runningWithReferenceServer)
@@ -408,7 +408,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                 });
                     }
                 });
-        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 
