@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -71,7 +70,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
         builder.buttonsHandler.forEach(tableBuilder::button);
 
         table = tableBuilder
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(builder.resources.constants().aliases(),
                         row -> {
                             selectedResource = row.getName();
@@ -96,7 +95,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
         builder.aliasButtonsHandler.forEach(aliasTableBuilder::button);
 
         aliasesTable = aliasTableBuilder
-                .column(ALIAS, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.asString()).asString())
+                .column(ALIAS, (cell, t, row, meta) -> row.asString())
                 .build();
 
         aliasDetails = new PreTextItem(CERTIFICATE_DETAILS);

@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
@@ -136,7 +135,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                         JSON_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove(jsonLabel, JSON_FORMATTER_TEMPLATE,
                         table -> table.selectedRow().getName(), () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, JSON, FORMATTER, FORM), jsonMetadata)
@@ -192,7 +191,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                         XML_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove(xmlLabel, XML_FORMATTER_TEMPLATE,
                         table -> table.selectedRow().getName(), () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, XML, FORMATTER, FORM), xmlMetadata)

@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
 /**
  * Builder for a {@link Column}.
  *
@@ -24,7 +26,7 @@ public class ColumnBuilder<T> {
 
     private final String name;
     private final String title;
-    private final Column.RenderCallback<T, ?> render;
+    private final Column.RenderCallback<T, String> render;
 
     private boolean orderable;
     private boolean searchable;
@@ -32,7 +34,7 @@ public class ColumnBuilder<T> {
     private String width;
     private String className;
 
-    public ColumnBuilder(String name, String title, Column.RenderCallback<T, ?> render) {
+    public ColumnBuilder(String name, String title, Column.RenderCallback<T, String> render) {
         this.name = name;
         this.title = title;
         this.render = render;
@@ -66,10 +68,16 @@ public class ColumnBuilder<T> {
     }
 
     public Column<T> build() {
+        Column.RenderCallback<T, String> safeHtmlRender = (cell, type, row, meta) -> {
+            String value = ColumnBuilder.this.render.render(cell, type, row, meta);
+            String safeHtmlValue = SafeHtmlUtils.fromString(value).asString();
+            return safeHtmlValue;
+        };
+
         Column<T> column = new Column<>();
         column.name = name;
         column.title = title;
-        column.render = render;
+        column.render = safeHtmlRender;
         column.orderable = orderable;
         column.searchable = searchable;
         if (type != null) {

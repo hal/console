@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -90,7 +89,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                 .button(tableButtonFactory.remove(STACK_TEMPLATE,
                         table -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),
                                 Names.STACK)))
-                .column(NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(inlineActions)
                 .build();
 

@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -47,8 +46,8 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
     private HTMLElement section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    GenericElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
-            final Resources resources,
+    GenericElement(Metadata metadata, TableButtonFactory tableButtonFactory,
+            Resources resources,
             AddressTemplate template, String name, String resourceId) {
         this.resources = resources;
 
@@ -57,7 +56,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
                         Ids.build(resourceId, Ids.ADD, Ids.FORM), name)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeResource(template, table.selectedRow().getName(), name)))
-                .column(NAME, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(resourceId, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter
@@ -95,7 +94,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
     }
 
     @Override
-    public void setPresenter(final JGroupsPresenter presenter) {
+    public void setPresenter(JGroupsPresenter presenter) {
         this.presenter = presenter;
     }
 

@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -60,7 +59,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
     public static final String EQ_WILDCARD = "=*";
 
-    public static ConnectionView create(final MbuiContext mbuiContext) {
+    public static ConnectionView create(MbuiContext mbuiContext) {
         return new Mbui_ConnectionView(mbuiContext);
     }
 
@@ -117,7 +116,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                         table -> presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, table.selectedRow()),
                         Scope.SELECTED,
                         Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         pooledConnectionFactoryForm = new ModelNodeForm.Builder<NamedNode>(

@@ -123,10 +123,11 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
         table = builder.tableBuilder.build();
 
-        ModelNodeForm.Builder formBuilder = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM), builder.metadata)
+        ModelNodeForm.Builder formBuilder = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM),
+                builder.metadata)
                 .onSave((f, changedValues) -> builder.mbuiContext.crud().save(builder.type, f.getModel().getName(),
                         builder.metadata.getTemplate(), changedValues, builder.crudCallback));
-        builder.customFormItems.forEach((_attribute, _formItemProvider) -> formBuilder.customFormItem(_attribute, _formItemProvider));
+        builder.customFormItems.forEach(formBuilder::customFormItem);
 
         form = formBuilder.build();
 
@@ -175,10 +176,9 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 ModelNodeForm.Builder<ModelNode> coFormBuilder = new ModelNodeForm.Builder<>(
                         Ids.build(builder.baseId, complexAttribute, Ids.FORM), metadata)
                         .singleton(ping, callback)
-                        .onSave((f, changedValues) -> {
-                            builder.mbuiContext.ca().save(selectedResource, complexAttribute, type,
-                                    metadata.getTemplate(), changedValues, builder.crudCallback);
-                        })
+                        .onSave((f, changedValues) -> builder.mbuiContext.ca()
+                                .save(selectedResource, complexAttribute, type,
+                                        metadata.getTemplate(), changedValues, builder.crudCallback))
                         .prepareReset(f -> builder.mbuiContext.ca().reset(selectedResource, complexAttribute, type,
                                 metadata.getTemplate(), f, new Form.FinishReset<ModelNode>(f) {
                                     @Override
@@ -412,7 +412,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             return this;
         }
 
-        public Builder column(String name, Column.RenderCallback<NamedNode, ?> render) {
+        public Builder column(String name, Column.RenderCallback<NamedNode, String> render) {
             tableBuilder.column(name, render);
             return this;
         }

@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -54,14 +53,14 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
     private final HTMLElement root;
     private OtherSettingsPresenter presenter;
 
-    LdapKeyStoreElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    LdapKeyStoreElement(Metadata metadata, TableButtonFactory tableButtonFactory,
+            Resources resources) {
         table = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(id(Ids.ADD), Names.LDAP_KEY_STORE, metadata.getTemplate(),
                         asList(DIR_CONTEXT, SEARCH_PATH), (n, a) -> presenter.reloadLdapKeyStores()))
                 .button(tableButtonFactory.remove(Names.LDAP_KEY_STORE, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapKeyStores()))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         attributes = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
@@ -125,7 +124,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
     }
 
     @Override
-    public void setPresenter(final OtherSettingsPresenter presenter) {
+    public void setPresenter(OtherSettingsPresenter presenter) {
         this.presenter = presenter;
     }
 

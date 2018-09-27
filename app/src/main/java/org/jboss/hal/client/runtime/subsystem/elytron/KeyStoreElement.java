@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -78,7 +77,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                         Constraint.executable(KEY_STORE_TEMPLATE, GENERATE_KEY_PAIR)))
                 .button(new Button<>(cons.importCertificate(), table -> importCertificate(metadata),
                         Constraint.executable(KEY_STORE_TEMPLATE, IMPORT_CERTIFICATE)))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(cons.aliases(),
                         row -> {
                             selectedKeystore = row.getName();
@@ -122,7 +121,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .button(new Button<>(cons.verifyRenew(), cons.verifyRenewCertificate(),
                         table -> verifyRenewCertificate(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, SHOULD_RENEW_CERTIFICATE)))
-                .column(ALIAS, (cell, t, row, meta) -> SafeHtmlUtils.fromString(row.asString()).asString())
+                .column(ALIAS, (cell, t, row, meta) -> row.asString())
                 .build();
 
         aliasDetails = new PreTextItem(CERTIFICATE_DETAILS);

@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -67,8 +66,8 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
     private String workmanager;
 
     @SuppressWarnings("ConstantConditions")
-    ThreadPoolsEditor(final String prefixId, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory, final Resources resources) {
+    ThreadPoolsEditor(String prefixId, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory, Resources resources) {
         attachables = new ArrayList<>();
 
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
@@ -78,7 +77,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
                 .button(tableButtonFactory.remove(WORKMANAGER_LRT_TEMPLATE,
                         table -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
                                 table.selectedRow())))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
                 .build();
@@ -135,7 +134,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
     }
 
     @Override
-    public void setPresenter(final JcaPresenter presenter) {
+    public void setPresenter(JcaPresenter presenter) {
         this.presenter = presenter;
     }
 

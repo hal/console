@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -72,7 +71,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
     private SSLPresenter presenter;
 
     @Inject
-    public SSLView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public SSLView(MetadataRegistry metadataRegistry, Resources resources) {
 
         VerticalNavigation nav = new VerticalNavigation();
         LabelBuilder labelBuilder = new LabelBuilder();
@@ -107,7 +106,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                         table -> presenter.changeAccountKey(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY)))
 
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         caaMetadata = new PreTextItem(METADATA);
@@ -134,7 +133,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .button(resources.constants().initialize(),
                         table -> presenter.initKeyManager(table.selectedRow().getName()),
                         Constraint.executable(KEY_MANAGER_TEMPLATE, INIT))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         keyManagerForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(KEY_MANAGER, FORM), keyManagerMeta)
@@ -157,7 +156,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .button(resources.constants().readIdentity(),
                         table -> presenter.readIdentity(secDomainMeta, table.selectedRow().getName()),
                         Constraint.executable(SECURITY_DOMAIN_TEMPLATE, READ_IDENTITY))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         securityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(SECURITY_DOMAIN, FORM), secDomainMeta)
@@ -184,7 +183,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .button(new Button<>(resources.constants().reloadCRL(), labelBuilder.label(RELOAD_CERTIFICATE_REVOCATION_LIST),
                         table -> presenter.reloadCRL(table.selectedRow().getName()),
                         Constraint.executable(TRUST_MANAGER_TEMPLATE, RELOAD_CERTIFICATE_REVOCATION_LIST)))
-                .column(NAME, (cell, type, row, meta) -> SafeHtmlUtils.fromString(row.getName()).asString())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         trustManagerForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(TRUST_MANAGER, FORM), trustMeta)
