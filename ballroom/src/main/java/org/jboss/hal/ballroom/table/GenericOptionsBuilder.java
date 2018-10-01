@@ -166,6 +166,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
                     .className(tableViewHalActions)
                     .orderable(false)
                     .searchable(false)
+                    .safeHtml()
                     .width(width)
                     .build();
             columns.add(column);

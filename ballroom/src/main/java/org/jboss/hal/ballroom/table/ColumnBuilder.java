@@ -30,6 +30,7 @@ public class ColumnBuilder<T> {
 
     private boolean orderable;
     private boolean searchable;
+    private boolean safeHtml;
     private String type;
     private String width;
     private String className;
@@ -40,6 +41,7 @@ public class ColumnBuilder<T> {
         this.render = render;
         this.orderable = true;
         this.searchable = true;
+        this.safeHtml = false;
     }
 
     public ColumnBuilder<T> orderable(boolean orderable) {
@@ -49,6 +51,11 @@ public class ColumnBuilder<T> {
 
     public ColumnBuilder<T> searchable(boolean searchable) {
         this.searchable = searchable;
+        return this;
+    }
+
+    public ColumnBuilder<T> safeHtml() {
+        this.safeHtml = true;
         return this;
     }
 
@@ -68,16 +75,23 @@ public class ColumnBuilder<T> {
     }
 
     public Column<T> build() {
-        Column.RenderCallback<T, String> safeHtmlRender = (cell, type, row, meta) -> {
-            String value = ColumnBuilder.this.render.render(cell, type, row, meta);
-            String safeHtmlValue = SafeHtmlUtils.fromString(value).asString();
-            return safeHtmlValue;
-        };
+        Column.RenderCallback<T, String> effectiveRender;
+        if (safeHtml) {
+            // use render callback as-is
+            effectiveRender = render;
+        } else {
+            // make sure the render escapes HTML
+            effectiveRender = (cell, type, row, meta) -> {
+                String value = ColumnBuilder.this.render.render(cell, type, row, meta);
+                String safeHtmlValue = SafeHtmlUtils.fromString(value).asString();
+                return safeHtmlValue;
+            };
+        }
 
         Column<T> column = new Column<>();
         column.name = name;
         column.title = title;
-        column.render = safeHtmlRender;
+        column.render = effectiveRender;
         column.orderable = orderable;
         column.searchable = searchable;
         if (type != null) {
