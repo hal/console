@@ -1,0 +1,9 @@
+<h2>Mappeurs de rôles</h2>
+<p>Un mappeur de rôle applique une modification de rôle à une identité. Cela peut aller de la normalisation du format des rôles à l'ajout ou la suppression de rôles spécifiques. Un mappeur de rôles peut être associé divers domaines de sécurité (security realms &amp; security domains).</p>
+<h2>Mappeurs de permissions</h2>
+<p>Un mappeur de permissions est associé à un domaine de sécurité et attribue un ensemble de permissions à une SecurityIdentity.</p>
+<h2>Principaux décodeurs</h2>
+<p>Un décodeur principal peut être utilisé à plusieurs endroits dans le sous-système elytron. Un décodeur principal convertit l'identité d'un Principal en une chaîne de caractères représentant le nom. Par exemple, le décodeur X500PrincipalDecoder vous permet de convertir un X500Principal du nom distingué d'un certificat en une représentation sous forme de chaîne de caractères.</p>
+<h2>Décodeurs de rôles</h2>
+<p>Un décodeur de rôle est associé à un domaine de sécurité et est utilisé pour décoder les rôles de l'utilisateur en cours. Le décodeur de rôle prend l'AuthorizationIdentity brute retournée du domaine de la sécurité et convertit ses attributs en rôles. </p>
+

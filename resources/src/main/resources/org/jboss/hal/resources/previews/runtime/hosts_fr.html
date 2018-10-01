@@ -1,25 +1,20 @@
-<p>A host controller is launched when the <code>domain.sh</code> or <code>domain.bat</code> script is run on a host.</p>
+<p>Un contrôleur d'hôte est lancé lorsque le script <code>domain.sh</code> ou <code>domain.bat</code> est exécuté sur un hôte.</p>
 
-<p>Le principale responsabilit&eacute; d&#39;un contr&ocirc;leur h&ocirc;te est la gestion de serveurs. Il d&eacute;l&egrave;gue les t&acirc;ches de gestion de domaines et est charg&eacute; de d&eacute;marrer ou stopper les processus de serveurs d&#39;application individuels qui ex&eacute;cutent sur son h&ocirc;te.</p>
+<p>La responsabilité première d'un contrôleur hôte est la gestion du serveur. Il délègue les tâches de gestion de domaine et est responsable du démarrage et de l'arrêt des différents processus du serveur d'application qui s'exécutent sur son hôte.</p>
 
-<p>Il entre en interaction avec le contr&ocirc;leur de domaines pour g&eacute;rer la communication entre les serveurs et le contr&ocirc;leur de domaines. Plusieurs contr&ocirc;leurs h&ocirc;tes d&#39;un domaine peuvent interagir avec un contr&ocirc;leur de domaine unique. Par cons&eacute;quent, tous les contr&ocirc;leurs h&ocirc;tes et les instances de serveurs ex&eacute;cutant en mode de domaine unique ont un contr&ocirc;leur de domaine unique et doivent appartenir au m&ecirc;me domaine.</p>
+<p>Il interagit avec le contrôleur de domaine pour aider à gérer la communication entre les serveurs et le contrôleur de domaine. Plusieurs contrôleurs hôtes d'un domaine peuvent interagir avec un seul contrôleur de domaine. Par conséquent, tous les contrôleurs hôtes et les instances de serveur fonctionnant en mode domaine unique ont un contrôleur de domaine unique et doivent appartenir au même domaine.</p>
 
-<p>By default each host controller reads its configuration from the
-    <code>domain/configuration/host.xml</code> file located in the unzipped ${build.shortName} installation file on its host&#39;s filesystem. The
-    <code>host.xml</code> file contains the following configuration information that is specific to the particular host:
+<p>Par défaut, chaque contrôleur hôte lit sa configuration à partir du fichier <code>domain/configuration/host.xml</code> situé dans le fichier d'installation ${build.shortName} décompressé sur le système de fichiers de son hôte. Le fichier <code>host.xml</code> contient les informations de configuration suivantes qui sont spécifiques à l'hôte en question :
 </p>
 
 <ul>
-    <li>The names of the ${build.shortName} instances meant to run from this installation.</li>
+    <li>Les noms des instances ${build.shortName} destinées à être exécutées à partir de cette installation.</li>
     <li>Une des configurations suivantes :</li>
     <ul>
-        <li>La fa&ccedil;on dont le contr&ocirc;leur contacte le contr&ocirc;leur de domaines pour s&#39;enregistrer lui-m&ecirc;me et pour acc&eacute;der &agrave; la configuration de domaine.</li>
-        <li>La fa&ccedil;on de rechercher et contacter un contr&ocirc;leur de domaines &eacute;loign&eacute;.</li>
-        <li> That the host controller is to act as the domain controller</li>
+        <li>Comment le contrôleur contacte le contrôleur de domaines pour s'enregistrer lui-même et pour accéder à la configuration de domaine.</li>
+        <li>Comment rechercher et contacter un contrôleur de domaines éloigné.</li>
+        <li> Si le contrôleur hôte doit agir en tant que contrôleur de domaine</li>
     </ul>
-    <li>Configurations specific to the local physical installation. For example, named interface definitions declared in
-        <code>domain.xml</code> can be mapped to an actual machine-specific IP address in
-        <code>host.xml</code>. And abstract path names in domain.xml can be mapped to actual filesystem paths in
-        <code>host.xml</code>.
+    <li>Configurations spécifiques à l'installation physique locale. Par exemple, les définitions d'interface nommées déclarées dans <code>domain.xml</code> peuvent être mappées à une adresse IP spécifique à la machine dans <code>host.xml</code>. Et les noms de chemins d’accès abstraits dans le domaine.xml peuvent être mappés aux chemins réels du système de fichiers dans <code>host.xml</code>.
     </li>
 </ul>

@@ -1,33 +1,30 @@
-<p>Extensions are a way to add new features to the management console. They are written in JavaScript and should use the
-    <a href="https://github.com/hal/hal.next/wiki/JavaScript-API">JavaScript API</a> to interact with the console and the management interface. If you want to develop an extension, see
-    <a href="https://github.com/hal/hal.next/wiki/Extensions">https://github.com/hal/hal.next/wiki/Extensions</a> for more information.
+<p>Les extensions sont un moyen d'ajouter de nouvelles fonctionnalités à la console d'administration. Ils sont écrits en JavaScript et devraient utiliser l'<a href="https://github.com/hal/hal.next/wiki/JavaScript-API">API JavaScript</a> pour interagir avec la console et l'interface de gestion. Si vous souhaitez développer une extension, consultez <a href="https://github.com/hal/hal.next/wiki/Extensions">https://github.com/hal/hal.next/wiki/Extensions</a> pour plus d'informations.
 </p>
 
 <div class="alert alert-warning">
-    <span class="pficon pficon-warning-triangle-o"></span>Extensions are written in <strong>JavaScript</strong> and are
-    <strong>injected</strong> into the browser. Please install only extensions that you trust!
+    <span class="pficon pficon-warning-triangle-o"></span>Les extensions sont écrites en <strong>JavaScript</strong> et sont <strong>injectées</strong> dans le navigateur. Veuillez n'installer que des extensions en lesquelles vous avez confiance !
 </div>
 
-<h2>Extension Points</h2>
-<p>The console provides four different extension points which can be used by extensions:</p>
+<h2>Points d'extension</h2>
+<p>La console fournit quatre points d'extension différents qui peuvent être utilisés par des extensions :</p>
 <ol>
-    <li>Header: Adds a menu item to the &quot;Extensions&quot; dropdown in the header</li>
-    <li>Finder Item: Adds a new item to a specific finder column</li>
-    <li>Footer: Adds a menu item to the &quot;Extensions&quot; dropdown in the footer</li>
-    <li>Custom: It&#39;s up to the extension how to add itself to the console</li>
+    <li>En-tête : Ajoute un élément de menu au menu déroulant "Extensions" dans l'en-tête</li>
+    <li>Rechercher un élément : Ajoute un nouvel élément à une colonne de recherche spécifique</li>
+    <li>Pied de page : Ajoute un élément de menu au menu déroulant "Extensions" dans le pied de page</li>
+    <li>Personnalisé : C'est à l'extension de décider comment s'ajouter à la console</li>
 </ol>
 
 <h2>Installation</h2>
-<p>Extensions can be added to the console using two different ways:</p>
+<p>Les extensions peuvent être ajoutées à la console de deux façons différentes :</p>
 
 <dl>
-    <dt>Bundled Extensions</dt>
+    <dt>Extensions groupées</dt>
     <dd>
-        <p>Bundled extensions are part of the ${build.fullName} installation and installed as modules. They have to be installed outside of the console. WildFly and the console have to be restarted / reloaded after adding or removing bundled extensions.</p>
+        <p>Les extensions groupées font partie de l'installation ${build.fullName} et sont installées sous forme de modules. Elles doivent être installées à l'extérieur de la console. WildFly et la console doivent être redémarrés / rechargés après l'ajout ou la suppression des extensions groupées.</p>
     </dd>
 
-    <dt>Standalone Extensions</dt>
+    <dt>Extensions autonomes</dt>
     <dd>
-        <p>Standalone extensions are hosted by a public available endpoint. This endpoint must serve a JSON file which contains metadata for the extension. You can add and remove standalone extensions using the management console. They&#39;re stored in the browser&#39;s local storage. As such they&#39;re scoped to the browser and URL which runs the management console.</p>
+        <p>Les extensions autonomes sont hébergées par un terminal accessible au public. Ce point d'extrémité doit servir un fichier JSON qui contient des métadonnées pour l'extension. Vous pouvez ajouter et supprimer des extensions autonomes à l'aide de la console de gestion. Elles sont stockées dans le stockage local du navigateur. En tant que tel, elles sont dirigées vers le navigateur et l'URL qui exécute la console d'administration.</p>
     </dd>
 </dl>

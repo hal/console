@@ -1,32 +1,32 @@
-<h2>Standard Roles</h2>
-<p>There are seven predefined user roles:</p>
+<h2>Rôles standard</h2>
+<p>Il existe sept rôles utilisateur prédéfinis :</p>
 <ul>
-    <li>Surveillant</li>
-    <li>Op&eacute;rateur</li>
-    <li>Charg&eacute; de maintenance</li>
-    <li>D&eacute;ployeur</li>
-    <li>Auditeur</li>
-    <li>Administrateur</li>
-    <li>Superutilisateur</li>
+    <li>Contrôleur (Monitor)</li>
+    <li>Opérateur (Operator)</li>
+    <li>Chargé de maintenance (Maintainer)</li>
+    <li>Déployeur (Deployer)</li>
+    <li>Auditeur (Auditor)</li>
+    <li>Administrateur (Administrator)</li>
+    <li>SuperUtilisateur (SuperUser)</li>
 </ul>
-<p>Each of these roles has a different set of permissions and is designed for specific use cases. The Monitor, Operator, Maintainer, Administrator, and SuperUser role each build upon each other, with each having more permissions than the previous. The Auditor and Deployer roles are similar to the Monitor and Maintainer roles respectively but have some additional special permissions and restrictions.</p>
+<p>Chacun de ces rôles a un ensemble différent de permissions et est conçu pour des cas d'utilisation spécifiques. Les rôles Monitor, Operator, Maintainer, Administrator et SuperUser se construisent les uns sur les autres, chacun ayant plus de permissions que le précédent. Les rôles Auditor et Deployer sont semblables à ceux de Monitor et Maintainer, mais ils ont des permissions et des restrictions spéciales supplémentaires.</p>
 
-<h2>Scoped Roles</h2>
-<p>Scoped Roles are user-defined roles that grant the permissions of one of the standard roles but only for one or more specified server groups or hosts. Scoped roles allow for management users to be granted permissions that are limited to only those server groups or hosts that are required.</p>
-<p>They are defined by five characteristics:</p>
+<h2>Roles Scoped (champ d’application limité)</h2>
+<p>Les rôles Scoped sont des rôles définis par l'utilisateur qui accordent les permissions de l'un des rôles standard, mais seulement pour un ou plusieurs groupes de serveurs ou hôtes spécifiés. Les rôles Scoped permettent d'accorder aux utilisateurs de gestion des permissions qui sont limitées aux seuls groupes de serveurs ou hôtes requis.</p>
+<p>Ils sont définis par cinq caractéristiques :</p>
 <ol>
-    <li>A unique name.</li>
-    <li>Which of the standard roles it is based on.</li>
-    <li>If it applies to Server Groups or Hosts</li>
-    <li>The list of server groups or hosts that it is restricted to.</li>
-    <li>If all users are automatically include. This defaults to false.</li>
+    <li>Un nom unique.</li>
+    <li>Rôle(s) standard sur lequel il est basé.</li>
+    <li>S’il s'applique aux groupes de serveurs ou aux hôtes</li>
+    <li>La liste des groupes de serveurs ou des hôtes auxquels il est limité.</li>
+    <li>Si tous les utilisateurs sont automatiquement inclus. Cette valeur par défaut est false.</li>
 </ol>
-<p>Once created a scoped role can be assigned to users and groups the same way that the standard roles are.</p>
-<p>Creating a scoped role does not let you define new permissions. Scoped roles can only be used to apply the permissions of an existing role in a limited scope. For example, you could create a scoped role based on the Deployer role which is restricted to a single server group.</p>
-<p>There are only two scopes that roles can be limited to, host and server group.</p>
+<p>Une fois créé, un rôle scoped peut être assigné aux utilisateurs et aux groupes de la même manière que les rôles standard.</p>
+<p>La création d'un rôle Scoped ne vous permet pas de définir de nouvelles permissions. Les rôles Scoped ne peuvent être utilisés que pour appliquer les permissions d'un rôle existant dans un champ d'application limité. Par exemple, vous pouvez créer un rôle Scoped basé sur le rôle Deployer qui est limité à un seul groupe de serveurs.</p>
+<p>Il n'y a que deux champs d'application auxquels les rôles peuvent être limités, à savoir le groupe d'hôtes et le groupe de serveurs.</p>
 <dl>
-    <dt>Host-scoped roles</dt>
-    <dd>A role that is host-scoped restricts the permissions of that role to one or more hosts. This means access is provided to the relevant /host=*/ resource trees but resources that are specific to other hosts are hidden.</dd>
-    <dt>Server-Group-scoped roles</dt>
-    <dd>A role that is server-group-scoped restricts the permissions of that role to one or more server groups. Additionally the role permissions will also apply to the profile, socket binding group, server config and server resources that are associated with the specified server-groups. Any sub-resources within any of those that are not logically related to the server-group will not be visible to the user.</dd>
+    <dt>Rôles Host-Scoped</dt>
+    <dd>Un rôle dont le champ d’application au niveau hôte et qui limite les permissions de ce rôle à un ou plusieurs hôtes. Cela signifie que l'accès est fourni aux arborescences de ressources /host=*/ pertinents mais les ressources spécifiques à d'autres hôtes sont cachées.</dd>
+    <dt>Rôles Server-Group-Scoped </dt>
+    <dd>Un rôle Server-Group-Scoped limite les permissions de ce rôle à un ou plusieurs groupes de serveurs. De plus, les permissions de rôle s'appliqueront également au profil, au groupe de liaison de socket, à la configuration de serveur et aux ressources de serveur qui sont associées aux groupes de serveurs spécifiés. Toutes les sous-ressources à l'intérieur de celles qui ne sont pas logiquement liées au groupe de serveurs ne seront pas visibles pour l'utilisateur.</dd>
 </dl>
