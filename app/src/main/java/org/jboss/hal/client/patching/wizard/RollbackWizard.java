@@ -32,7 +32,6 @@ import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Messages;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 import rx.Completable;
@@ -114,9 +113,7 @@ public class RollbackWizard extends PatchWizard {
                                         callback.execute();
                                         wzd.showSuccess(
                                                 resources.constants().rollbackSuccessful(),
-                                                messages.rollbackSucessful(name),
-                                                messages.view(Names.PATCH),
-                                                cxt -> { /* nothing to do, content is already selected */ });
+                                                messages.rollbackSucessful(name));
                                     }
                                 });
                     });
