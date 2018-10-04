@@ -83,8 +83,10 @@ public class ColumnBuilder<T> {
             // make sure the render escapes HTML
             effectiveRender = (cell, type, row, meta) -> {
                 String value = ColumnBuilder.this.render.render(cell, type, row, meta);
-                String safeHtmlValue = SafeHtmlUtils.fromString(value).asString();
-                return safeHtmlValue;
+                if (value != null) {
+                    value = SafeHtmlUtils.htmlEscape(value);
+                }
+                return value;
             };
         }
 
