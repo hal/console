@@ -27,7 +27,6 @@ class LogFile extends ModelNode {
     // TODO Move to ModelDescriptionConstants
     private static final String FILE_NAME = "file-name";
     private static final String FILE_SIZE = "file-size";
-    private static final String LAST_MODIFIED_DATE = "last-modified-date";
     private static final String LAST_MODIFIED_TIMESTAMP = "last-modified-timestamp";
 
     LogFile(ModelNode node) {
@@ -44,12 +43,7 @@ class LogFile extends ModelNode {
     }
 
     public Date getLastModifiedDate() {
-        // first try LAST_MODIFIED_DATE then LAST_MODIFIED_TIMESTAMP
-        Date date = failSafeDate(this, LAST_MODIFIED_DATE);
-        if (date == null) {
-            date = failSafeDate(this, LAST_MODIFIED_TIMESTAMP);
-        }
-        return date;
+        return failSafeDate(this, LAST_MODIFIED_TIMESTAMP);
     }
 
     public String getFormattedLastModifiedDate() {
