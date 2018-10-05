@@ -37,6 +37,7 @@ import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.deployment.wizard.UploadElement;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.Deployment.Status;
@@ -80,6 +81,7 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -109,6 +111,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
             Environment environment,
             ServerActions serverActions,
             Dispatcher dispatcher,
+            CrudOperations crud,
             StatementContext statementContext,
             EventBus eventBus,
             MetadataRegistry metadataRegistry,
@@ -234,8 +237,12 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, EXPLODE))
                             .build());
                 }
-                actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
-                        StandaloneDeploymentColumn.this));
+                actions.add(new ItemAction.Builder<Deployment>()
+                        .title(resources.constants().undeploy())
+                        .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
+                                () -> refresh(CLEAR_SELECTION)))
+                        .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, REMOVE))
+                        .build());
                 return actions;
             }
         });

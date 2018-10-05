@@ -53,6 +53,7 @@ public class LabelBuilder {
             .put("io", "IO")
             .put("jaas", "JAAS")
             .put("jacc", "JACC")
+            .put("jaspi", "JASPI")
             .put("jaxrs", "JAX-RS")
             .put("jboss", "JBoss")
             .put("jdbc", "JDBC")

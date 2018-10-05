@@ -40,6 +40,7 @@ import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment.Status;
@@ -89,6 +90,7 @@ import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.deployment.Deployment.Status.OK;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -119,6 +121,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             EventBus eventBus,
             Dispatcher dispatcher,
             Places places,
+            CrudOperations crud,
             ServerActions serverActions,
             StatementContext statementContext,
             MetadataRegistry metadataRegistry,
@@ -274,8 +277,12 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 }
                 AddressTemplate template = SERVER_GROUP_DEPLOYMENT_TEMPLATE
                         .replaceWildcards(statementContext.selectedServerGroup());
-                actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(),
-                        template, SERVER_GROUP_DEPLOYMENT_TEMPLATE, ServerGroupDeploymentColumn.this));
+                actions.add(new ItemAction.Builder<ServerGroupDeployment>()
+                        .title(resources.constants().undeploy())
+                        .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), template,
+                                () -> refresh(CLEAR_SELECTION)))
+                        .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, REMOVE))
+                        .build());
                 return actions;
             }
         });
