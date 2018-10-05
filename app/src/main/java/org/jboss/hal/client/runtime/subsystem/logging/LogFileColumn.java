@@ -28,6 +28,8 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -42,10 +44,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @Column(Ids.LOG_FILE)
 @Requires(value = {LOGGING_SUBSYSTEM_ADDRESS, LOG_FILE_ADDRESS}, recursive = false)
@@ -63,13 +62,20 @@ public class LogFileColumn extends FinderColumn<LogFile> {
 
                 .columnAction(columnActionFactory.refresh(Ids.LOG_FILE_REFRESH))
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(
-                            AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext),
-                            "list-log-files").build(); //NON-NLS
-                    dispatcher.execute(operation, result -> callback.onSuccess(result.asList().stream()
-                            .map(LogFile::new)
-                            .sorted(comparing(LogFile::getFilename))
-                            .collect(toList())));
+                    ResourceAddress address = AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+                    Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                            .param(CHILD_TYPE, "log-file") //NON-NLS
+                            .param(INCLUDE_RUNTIME, true)
+                            .build();
+                    dispatcher.execute(operation, result -> {
+                        callback.onSuccess(result.asList().stream()
+                                .map(node -> {
+                                    Property prop = node.asProperty();
+                                    return new LogFile(prop.getName(), prop.getValue());
+                                })
+                                .sorted(comparing(LogFile::getFilename))
+                                .collect(toList()));
+                    });
                 })
                 .itemRenderer(item -> new ItemDisplay<LogFile>() {
                     @Override
