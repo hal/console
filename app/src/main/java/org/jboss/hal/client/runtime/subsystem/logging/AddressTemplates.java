@@ -24,4 +24,7 @@ interface AddressTemplates {
 
     String LOG_FILE_ADDRESS = "/{selected.host}/{selected.server}/subsystem=logging/log-file=*";
     AddressTemplate LOG_FILE_TEMPLATE = AddressTemplate.of(LOG_FILE_ADDRESS);
+
+    String PROFILE_LOG_FILE_ADDRESS = "/{selected.host}/{selected.server}/subsystem=logging/logging-profile=*/log-file=*";
+    AddressTemplate PROFILE_LOG_FILE_TEMPLATE = AddressTemplate.of(PROFILE_LOG_FILE_ADDRESS);
 }

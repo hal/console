@@ -456,6 +456,7 @@ public interface ModelDescriptionConstants {
     String LOCALE = "locale";
     String LOCATION = "location";
     String LOCKING = "locking";
+    String LOG_FILE = "log-file";
     String LOGGER = "logger";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
