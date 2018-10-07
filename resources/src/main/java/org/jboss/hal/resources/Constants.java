@@ -335,6 +335,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logFile();
     String logFilePreviewError();
     String logFiles();
+    String loggingProfile();
     String logout();
 
     String macroEditor();

@@ -50,6 +50,8 @@ import static elemental2.dom.DomGlobal.setInterval;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.PROFILE_LOG_FILE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.token.NameTokens.LOG_FILE;
 
@@ -62,6 +64,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     private final StatementContext statementContext;
     private final Resources resources;
     private String logFileName;
+    private String loggingProfile;
     private LogFile logFile;
     private double intervalHandle;
 
@@ -81,6 +84,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         this.resources = resources;
 
         this.logFileName = null;
+        this.loggingProfile = null;
         this.logFile = null;
         this.intervalHandle = -1;
     }
@@ -95,6 +99,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         logFileName = request.getParameter(NAME, null);
+        loggingProfile = request.getParameter(LOGGING_PROFILE, null);
     }
 
     @Override
@@ -109,7 +114,12 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     protected void reload() {
         if (logFileName != null) {
             double handle = setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
-            ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
+            ResourceAddress address;
+            if (loggingProfile == null) {
+                address = LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
+            } else {
+                address = PROFILE_LOG_FILE_TEMPLATE.resolve(statementContext, loggingProfile, logFileName);
+            }
             Operation logFileOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
@@ -121,7 +131,11 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
             dispatcher.execute(new Composite(logFileOp, contentOp),
                     (CompositeResult result) -> {
                         clearTimeout(handle);
-                        logFile = new LogFile(logFileName, result.step(0).get(RESULT));
+                        if (loggingProfile == null) {
+                            logFile = new LogFile(logFileName, result.step(0).get(RESULT));
+                        } else {
+                            logFile = new LogFile(logFileName, loggingProfile, result.step(0).get(RESULT));
+                        }
                         List<ModelNode> linesRead = result.step(1).get(RESULT).asList();
                         String content = linesRead.stream().map(ModelNode::asString)
                                 .collect(joining("\n"));
@@ -146,11 +160,16 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         if (logFile != null) {
             int linesToRead = inTailMode() ? getView().visibleLines() : LogFiles.LINES;
             double handle = setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
-            ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
+            ResourceAddress address;
+            if (loggingProfile == null) {
+                address = LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
+            } else {
+                address = PROFILE_LOG_FILE_TEMPLATE.resolve(statementContext, loggingProfile, logFileName);
+            }
             //noinspection HardCodedStringLiteral
-            Operation operation = new Operation.Builder(address, "read-log-file")
-                    .param("lines", linesToRead)
-                    .param("tail", true)
+            Operation operation = new Operation.Builder(address, READ_LOG_FILE)
+                    .param(LINES, linesToRead)
+                    .param(TAIL, true)
                     .build();
             dispatcher.execute(operation, result -> {
                         clearTimeout(handle);
