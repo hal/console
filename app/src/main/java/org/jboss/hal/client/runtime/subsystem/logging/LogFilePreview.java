@@ -47,7 +47,7 @@ class LogFilePreview extends PreviewContent<LogFile> {
                         .add(icon = span().asElement())
                         .add(message = span().asElement())
                         .add(" ")
-                        .add(a(logFiles.downloadUrl(logFile.getFilename())).css(alertLink)
+                        .add(a(logFiles.downloadUrl(logFile.getFilename(), logFile.getLoggingProfile())).css(alertLink)
                                 .apply(a -> a.download = logFile.getFilename())
                                 .textContent(resources.constants().download()))
                         .asElement());
@@ -67,6 +67,10 @@ class LogFilePreview extends PreviewContent<LogFile> {
                                 logFile.getFormattedLastModifiedDate()))
                 .append(model ->
                         new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()));
+        if (logFile.getLoggingProfile() != null) {
+            previewAttributes.append(mode -> new PreviewAttribute(resources.constants().loggingProfile(),
+                    logFile.getLoggingProfile()));
+        }
         previewBuilder().addAll(previewAttributes);
 
         previewBuilder()
@@ -79,7 +83,7 @@ class LogFilePreview extends PreviewContent<LogFile> {
 
     @Override
     public void update(final LogFile item) {
-        logFiles.tail(item.getFilename(), PREVIEW_LINES, new AsyncCallback<String>() {
+        logFiles.tail(item.getFilename(), item.getLoggingProfile(), PREVIEW_LINES, new AsyncCallback<String>() {
             @Override
             public void onFailure(final Throwable caught) {
                 preview.textContent = resources.constants().logFilePreviewError();

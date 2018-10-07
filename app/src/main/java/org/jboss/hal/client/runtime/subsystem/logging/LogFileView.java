@@ -69,6 +69,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
 
 
     private static final int MIN_HEIGHT = 70;
+    private static final String SLASH = " / ";
 
     private Search search;
     private AceEditor editor;
@@ -185,18 +186,22 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         if (presenter.isExternal()) {
             if (!environment().isStandalone()) {
                 builder.append(statementContext().selectedHost())
-                        .append(" / ")
+                        .append(SLASH)
                         .append(statementContext().selectedServer())
-                        .append(" / ");
+                        .append(SLASH);
             } else {
                 builder.append(Server.STANDALONE.getName())
-                        .append(" / ");
+                        .append(SLASH);
             }
+        }
+        if (logFile.getLoggingProfile() != null) {
+            builder.append(logFile.getLoggingProfile())
+                    .append(SLASH);
         }
         builder.append(logFile.getFilename());
         header.textContent = builder.toString();
         download.setAttribute(UIConstants.DOWNLOAD, logFile.getFilename());
-        download.setAttribute(UIConstants.HREF, logFiles().downloadUrl(logFile.getFilename()));
+        download.setAttribute(UIConstants.HREF, logFiles().downloadUrl(logFile.getFilename(), logFile.getLoggingProfile()));
 
         editor.getEditor().getSession().setValue(content);
         editor.getEditor().gotoLine(lines, 0, false);
