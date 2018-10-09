@@ -75,6 +75,7 @@ interface AddressTemplates {
 
     String IDENTITY_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/identity-realm=*";
 
+    String JASPI_CONFIGURATION_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/jaspi-configuration=*";
     String JDBC_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/jdbc-realm=*";
 
     String KERBEROS_SECURITY_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/kerberos-security-factory=*";
@@ -169,6 +170,7 @@ interface AddressTemplates {
 
     AddressTemplate IDENTITY_REALM_TEMPLATE = AddressTemplate.of(IDENTITY_REALM_ADDRESS);
 
+    AddressTemplate JASPI_CONFIGURATION_TEMPLATE = AddressTemplate.of(JASPI_CONFIGURATION_ADDRESS);
     AddressTemplate JDBC_REALM_TEMPLATE = AddressTemplate.of(JDBC_REALM_ADDRESS);
 
     AddressTemplate KERBEROS_SECURITY_FACTORY_TEMPLATE = AddressTemplate.of(KERBEROS_SECURITY_FACTORY_ADDRESS);

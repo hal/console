@@ -225,6 +225,7 @@ public interface Ids {
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY = "elytron-http-authentication-factory";
     String ELYTRON_IDENTITY_REALM = "elytron-identity-realm";
     String ELYTRON_JACC_POLICY_FORM = "elytron-jacc-policy-form";
+    String ELYTRON_JASPI = "elytron-jaspi";
     String ELYTRON_JDBC_REALM = "elytron-jdbc-realm";
     String ELYTRON_KERBEROS_SECURITY_FACTORY = "elytron-kerberos-security-factory";
     String ELYTRON_KEY_MANAGER = "elytron-key-manager";
