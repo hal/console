@@ -309,6 +309,21 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(DIR_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(DIR_CONTEXT.resource));
 
+        addResourceElement(ElytronResource.JASPI_CONFIGURATION,
+                ElytronResource.JASPI_CONFIGURATION.resourceElementBuilder(mbuiContext,
+                        () -> presenter.reload(ElytronResource.JASPI_CONFIGURATION.resource,
+                                nodes -> updateResourceElement(ElytronResource.JASPI_CONFIGURATION.resource, nodes)))
+                        .setComplexListAttribute(SERVER_AUTH_MODULES, asList(
+                                CLASS_NAME,
+                                MODULE,
+                                FLAG,
+                                "options"))
+                        .onAdd(() -> presenter.addJaspiConfiguration())
+                        .build(),
+                Ids.ELYTRON_OTHER_ITEM,
+                Ids.build(ElytronResource.JASPI_CONFIGURATION.baseId, Ids.ITEM),
+                labelBuilder.label(ElytronResource.JASPI_CONFIGURATION.resource));
+
         addResourceElement(ElytronResource.PERMISSION_SET,
                 ElytronResource.PERMISSION_SET.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(ElytronResource.PERMISSION_SET.resource,

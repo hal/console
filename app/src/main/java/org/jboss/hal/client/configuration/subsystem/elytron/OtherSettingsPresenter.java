@@ -149,6 +149,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.CUSTOM_SECURITY_EVENT_LISTENER.resource,
                 ElytronResource.PERMISSION_SET.resource,
                 ElytronResource.CERTIFICATE_AUTHORITY_ACCOUNT.resource,
+                ElytronResource.JASPI_CONFIGURATION.resource,
                 ElytronResource.POLICY.resource), // policy must be the last item in the list!
                 result -> {
                     int i = 0;
@@ -194,6 +195,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                     getView().updateResourceElement(ElytronResource.PERMISSION_SET.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.CERTIFICATE_AUTHORITY_ACCOUNT.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.JASPI_CONFIGURATION.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // policy must be the last item in the list!
                     List<NamedNode> policies = asNamedNodes(result.step(i).get(RESULT).asPropertyList());
@@ -430,6 +433,39 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 });
     }
 
+    // -------------------------------------------- JASPI Configuration
+
+    void addJaspiConfiguration() {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JASPI_CONFIGURATION_TEMPLATE);
+        Metadata metaServerAuth = metadata.forComplexAttribute(SERVER_AUTH_MODULES, true);
+        metaServerAuth.copyComplexAttributeAttributes(asList(CLASS_NAME, MODULE, FLAG), metadata);
+        String id = Ids.build(Ids.ELYTRON_JASPI, Ids.ADD);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .unsorted()
+                .addOnly()
+                .build();
+        String type = new LabelBuilder().label(JASPI_CONFIGURATION);
+        form.getFormItem(CLASS_NAME).setRequired(true);
+        new AddResourceDialog(resources.messages().addResourceTitle(type), form,
+                (name, model) -> {
+                    ModelNode serverAuthModule = new ModelNode();
+                    serverAuthModule.get(CLASS_NAME).set(model.remove(CLASS_NAME));
+                    if (model.hasDefined(MODULE)) {
+                        serverAuthModule.get(MODULE).set(model.remove(MODULE));
+                    }
+                    if (model.hasDefined(FLAG)) {
+                        serverAuthModule.get(FLAG).set(model.remove(FLAG));
+                    }
+                    model.get(SERVER_AUTH_MODULES).add(serverAuthModule);
+                    crud.add(type, name, AddressTemplates.JASPI_CONFIGURATION_TEMPLATE, model,  (name1, address) -> {
+                                reload(JASPI_CONFIGURATION,
+                                        nodes -> getView().updateResourceElement(JASPI_CONFIGURATION, nodes));
+                            });
+                })
+                .show();
+    }
+
     // -------------------------------------------- Policy
 
     void addPolicy(String complexAttribute, String type) {
@@ -495,6 +531,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             DIR_CONTEXT_ADDRESS,
             FILE_AUDIT_LOG_ADDRESS,
             FILTERING_KEY_STORE_ADDRESS,
+            JASPI_CONFIGURATION_ADDRESS,
             KEY_MANAGER_ADDRESS,
             KEY_STORE_ADDRESS,
             LDAP_KEY_STORE_ADDRESS,

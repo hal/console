@@ -190,6 +190,10 @@ enum ElytronResource {
             ModelDescriptionConstants.IDENTITY_REALM,
             AddressTemplates.IDENTITY_REALM_TEMPLATE, false),
 
+    JASPI_CONFIGURATION(Ids.ELYTRON_JASPI,
+            ModelDescriptionConstants.JASPI_CONFIGURATION,
+            AddressTemplates.JASPI_CONFIGURATION_TEMPLATE, false),
+
     JDBC_REALM(Ids.ELYTRON_JDBC_REALM,
             ModelDescriptionConstants.JDBC_REALM,
             AddressTemplates.JDBC_REALM_TEMPLATE, true),

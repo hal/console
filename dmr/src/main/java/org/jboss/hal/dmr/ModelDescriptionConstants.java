@@ -310,6 +310,7 @@ public interface ModelDescriptionConstants {
     String FILTERS = "filters";
     String FIND_NON_PROGRESSING_OPERATION = "find-non-progressing-operation";
     String FIXED_PORT = "fixed-port";
+    String FLAG = "flag";
     String FLUSH_ALL_CONNECTION_IN_POOL = "flush-all-connection-in-pool";
     String FLUSH_GRACEFULLY_CONNECTION_IN_POOL = "flush-gracefully-connection-in-pool";
     String FLUSH_IDLE_CONNECTION_IN_POOL = "flush-idle-connection-in-pool";
@@ -391,6 +392,7 @@ public interface ModelDescriptionConstants {
     String IO_THREAD_COUNT = "io-thread-count";
     String IO_THREADS = "io-threads";
     String JACC_POLICY = "jacc-policy";
+    String JASPI_CONFIGURATION = "jaspi-configuration";
     String JAVA_METHOD = "java-method";
     String JAX_RS = "jaxrs";
     String JCA = "jca";
@@ -768,6 +770,7 @@ public interface ModelDescriptionConstants {
     String SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS = "send-messages-to-dead-letter-address";
     String SENSITIVE = "sensitive";
     String SERVER = "server";
+    String SERVER_AUTH_MODULES = "server-auth-modules";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
     String SERVER_GROUP_SCOPED_ROLE = "server-group-scoped-role";
