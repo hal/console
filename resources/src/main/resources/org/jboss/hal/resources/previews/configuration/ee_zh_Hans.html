@@ -1,0 +1,7 @@
+<p>EE 子系统提供在 Java EE 平台的通用功能，如 EE Concurrency Utilities (JSR 236) 和 <code>@Resource</code>注入。该子系统还负责管理Java EE应用程序部署的整个生命周期，也就是.ear文件。</p>
+<p>EE子系统配置可以被用于：</p>
+<ul>
+    <li>对 Java EE 应用程序部署行为进行定制。</li>
+    <li>管理全局模块：一组 JBoss 模块将会作为依赖组件添加到每个 Java EE 部署的 Boss模块中。这些依赖组件将允许 Java EE 看到由全局模块导出的类。</li>
+    <li>管理 EE 并行工具程序（JSR 236）：Java EE 7 引入了这个功能，用于简化编写多线程 Java EE 应用程序的任务。这些实用程序的实例是由管理，并且由EE子系统提供的相关的配置。</li>
+</ul>
