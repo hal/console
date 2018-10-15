@@ -1,0 +1,10 @@
+<p>Enterprise bean 是服务器端的应用程序组件，它由 Enterprise JavaBeans（EJB）3.1规范，JSR-318 定义。Enterprise bean 是为以分离的方式实现应用程序的业务逻辑也设计的，这样就可能实现对逻辑的重复使用。Enterprise beans 以 Java 类的形式编写，并使用相关的 EJB 注解进行注解。它们可以以自己的归档形式（一个JAR文件）部署到应用服务器，部署为Java EE 应用程序的一部分。应用服务器管理每个 enterprise bean的生命周期，并给提供如安全、事务和并行管理等服务。一个enterprise bean也可以定义任意数量的业务接口。业务接口可以更好地控制哪些 bean 的方法可以被客户端访问，也可以允许访问远程JVM上运行的客户端。有三种类型的 Enterprise Bean：会话Bean，消息驱动Bean和实体Bean。</p>
+
+<h2>会话Bean</h2>
+<p>会话Bean封装了一组相关的业务流程或任务，并注入到请求它们的类。会话bean分为三类：无状态（stateless）、有状态（stateful）和单例（singleton）。</p>
+
+<h2>消息驱动Bean</h2>
+<p>消息驱动Bean（MDB）的提供用于应用程序开发的事件驱动模型。MDB 无法注入到客户端代码或从客户端代码调用，它是由从消息服务（如 JMS 服务器）收到的消息来触发。Java EE 6规范要求支持 JMS，但其他消息系统也可以支持。</p>
+
+<h2>Entity Beans</h2>
+<p>Entity bean 在 EJB 3.1 中已过时，现在推荐使用 JPA 实体。Entity bean 只用于需要提供向后兼容性的遗留系统。</p>

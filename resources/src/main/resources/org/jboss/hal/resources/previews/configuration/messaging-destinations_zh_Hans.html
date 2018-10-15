@@ -1,0 +1,44 @@
+<p>包含以下功能的配置：</p>
+<ul>
+    <li>核心队列</li>
+    <li>JMS 目的地</li>
+    <li>安全设置</li>
+    <li>地址设置</li>
+    <li>转接</li>
+</ul>
+
+<h2>核心队列</h2>
+<p>Apache ActiveMQ Artemis core 不了解 JMS。它没有一个 JMS 主题的概念。JMS主题在 core 中作为一个有零个或多个队列与其绑定的地址（主题名称）来实现的。绑定到该地址的每个队列代表一个主题订阅。同样地，JMS 队列作为一个只有单一队列与其绑定的地址（JMS 队列名称）实现的。</p>
+
+<p>按照规则，所有 JMS 队列都会映射到 core 队列名称带有 “jms.queue.” 前缀的 core 队列。例如。名为“orders.europe”的 JMS队列会映射到名为“jms.queue.orders.europe” 的 core 队列。core 队列绑定到的地址也由 core 队列名提供。</p>
+
+<p>对于JMS主题在其代表订阅的队列都绑定是通过前面加上字符串给出的地址“jms.topic。”到JMS主题的名称。例如。名称为“news.europe” JMS主题将映射到核心地址“jms.topic.news.europe”</p>
+
+<h2>JMS 目的地</h2>
+<p>JMS目的地和 JMS连接工厂都是 JMS 管理对象。JMS 客户端使用目的地生成和使用消息。目的地允许 JMS 客户端在产生消息时指定目标，在使用消息时指定消息源。当使用 publish-subscribe 模式时，目的地被称为主题。当使用点对点模式时，目的地被称为队列。</p>
+
+<p>应用程序可以使用在服务器侧配置的、通常通过JNDI访问的多个不同的 JMS 目的地。</p>
+
+<h2>安全设置</h2>
+<p>安全设置用于配置特定目的地的安全性。这是通过使用 security-setting 配置项来添加一个安全限制来实现的。${build.shortName} 消息默认配置带有一个<code>security-setting</code> 。</p>
+
+<p>security-setting 选项使用通配符来处理要应用安全约束的目的地。一个 <code>#</code> 值代表匹配任何地址。如需了解更多相关信息，请参阅 <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-7-configuring-security#role_based_security_for_address">Role Based Security for Addresses</a>。
+</p>
+
+<h2>地址设置</h2>
+<p>messaging-activemq 子系统带有多个可配置选项，它们可以用来控制，什么时候以及如何传递信息，应该尝试的次数，以及消息在什么时候过期。这些配置选项都存在于 <code>&lt;address-setting></code> 配置项中。通过使用通配符，可以使 ${build.shortName} 把一个 <code>&lt;address-setting></code> 应用到多个目的地。</p>
+
+<p>如需了解更多相关信息，请参阅 <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-6-address-settings">Wildcard Syntax</a>。
+</p>
+
+<h2>转移</h2>
+<p>转移（Diverts）是 ${build.shortName} 消息中配置的对象，它被用来把消息从一个地址转移到另外一个地址。.转移可以分为以下几种类型：
+
+<dl>
+    <dt>排他（exclusive）</dt>
+    <dd>消息只转移到新的地址，永远不会发送到旧地址。</dd>
+    <dt>非排他（non-exclusive）</dt>
+    <dd>消息被发送到旧地址，并把它的一个副本发送到新地址。非排他转移可用于分离消息的数据流。</dd>
+</dl>
+
+<p>转接只会把消息转移到同一台服务器上的地址。如果需要把消息转移到另外一台服务器的一个地址时，则可以先把它转移到本地的 store-and-forward 队列中，然后设置一个 api 来从队列中获取信息并转发到另外一个服务器的一个地址上。</p>
