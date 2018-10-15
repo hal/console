@@ -20,9 +20,12 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -34,8 +37,14 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.ResourceCheck;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -45,7 +54,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+import rx.Completable;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
@@ -53,6 +66,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.CACHE)
@@ -75,6 +89,9 @@ public class CacheColumn extends FinderColumn<Cache> {
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
+    private final Dispatcher dispatcher;
+    private final Provider<Progress> progress;
+    private final EventBus eventBus;
 
     @Inject
     public CacheColumn(Finder finder,
@@ -84,7 +101,10 @@ public class CacheColumn extends FinderColumn<Cache> {
             Places places,
             MetadataRegistry metadataRegistry,
             StatementContext statementContext,
-            Resources resources) {
+            Resources resources,
+            Dispatcher dispatcher,
+            @Footer Provider<Progress> progress,
+            EventBus eventBus) {
 
         super(new Builder<Cache>(finder, Ids.CACHE, Names.CACHE)
                 .itemsProvider((context, callback) -> {
@@ -118,6 +138,9 @@ public class CacheColumn extends FinderColumn<Cache> {
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
+        this.dispatcher = dispatcher;
+        this.progress = progress;
+        this.eventBus = eventBus;
 
         List<ColumnAction<Cache>> addActions = new ArrayList<>();
         for (CacheType cacheType : CacheType.values()) {
@@ -188,13 +211,42 @@ public class CacheColumn extends FinderColumn<Cache> {
 
     private void addCache(CacheType cacheType) {
         Metadata metadata = metadataRegistry.lookup(cacheType.template);
+
         AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, Ids.ADD),
                 resources.messages().addResourceTitle(cacheType.type), metadata,
                 (name, model) -> {
                     String cacheContainer = findCacheContainer(getFinder().getContext().getPath());
                     ResourceAddress address = cacheType.template.resolve(statementContext, cacheContainer, name);
-                    crud.add(cacheType.type, name, address, model,
-                            (n, a) -> this.refresh(Ids.build(cacheType.baseId, name)));
+
+                    if (cacheType.equals(CacheType.LOCAL)) {
+                        crud.add(cacheType.type, name, address, model,
+                                (n, a) -> refresh(Ids.build(cacheType.baseId, name)));
+                    } else {
+                        ResourceAddress jgroupsAddress = AddressTemplates.TRANSPORT_JGROUPS_TEMPLATE.resolve(statementContext, cacheContainer);
+                        ResourceCheck check = new ResourceCheck(dispatcher, jgroupsAddress);
+                        Task<FlowContext> add = context -> {
+                            Operation addJgroups = new Operation.Builder(jgroupsAddress, ADD).build();
+
+                            int status = context.pop();
+                            if (status == 200) {
+                                return Completable.complete();
+                            } else {
+                                return dispatcher.execute(addJgroups).toCompletable();
+                            }
+                        };
+
+                        series(new FlowContext(progress.get()), check, add)
+                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                .addResourceSuccess(Names.TRANSPORT, Names.JGROUPS)));
+                                        crud.add(cacheType.type, name, address, model,
+                                                (n, a) -> refresh(Ids.build(cacheType.baseId, name)));
+                                    }
+                                });
+                    }
+
                 });
         dialog.show();
     }
