@@ -1,0 +1,26 @@
+<p>Contains the configuration for discover groups, connector, connection factory, queues and topics to a remote ActiveMQ Artemis server:</p>
+
+<h2>Connectors</h2>
+<p>A connector defines how to connect to a remote ActiveMQ Artemis server.</p>
+
+<p>For more information about connectors, see the
+    <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/acceptors_and_connectors">Connectors documentation</a>.
+</p>
+
+<h2>Discovery Groups</h2>
+<p>A discovery group defines how connector information is received from a broadcast endpoint, for example, a UDP multicast address or JGroup channel.</p>
+<p>A discovery group maintains a list of connectors, one for each broadcast by a different server. As it receives broadcasts on the broadcast endpoint from a particular server, it updates its entry in the list for that server. If it has not received a broadcast from a particular server for a length of time it will remove that server’s entry from its list.</p>
+
+
+<h2>Connection Factories</h2>
+<p>By default, the ${build.shortName} messaging subsystem provides the <code>InVmConnectionFactory</code> and
+    <code>RemoteConnectionFactory</code> connection factories, as well as the
+    <code>activemq-ra</code> pooled connection factory.
+</p>
+
+<p>Pooled connection factories allow you to configure the inbound and outbound connectors of the remote ActiveMQ Artemis resource adapter. For more information on configuring a pooled-connection-factory to connect to a remote ActiveMQ Artemis server, see
+    <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">Using the Integrated Resource Adapter for Remote Connections</a>.
+</p>
+
+<h2>External Queue / Topic</h2>
+<p>The queues and topics that exists in the remote ActiveMQ Artemis server.</p>

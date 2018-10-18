@@ -493,6 +493,7 @@ public interface Ids {
     String MESSAGING_CORE_QUEUE = "messaging-core-queue";
     String MESSAGING_DISCOVERY_GROUP = "messaging-discovery-group";
     String MESSAGING_DIVERT = "messaging-divert";
+    String MESSAGING_REMOTE_ACTIVEMQ = "msg-remote-activemq";
     String MESSAGING_GLOBAL_SETTINGS = "messaging-global-settings";
     String MESSAGING_GROUPING_HANDLER = "messaging-grouping-handler";
     String MESSAGING_HA_CHOOSE_STRATEGY = "messaging-ha-choose-strategy";

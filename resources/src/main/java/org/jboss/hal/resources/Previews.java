@@ -154,6 +154,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/messaging-destinations.html")
     ExternalTextResource configurationMessagingDestinations();
 
+    @Source("previews/configuration/messaging-remote-activemq.html")
+    ExternalTextResource configurationMessagingRemoteActiveMQ();
+
     @Source("previews/configuration/messaging-ha-policy.html")
     ExternalTextResource configurationMessagingHaPolicy();
 

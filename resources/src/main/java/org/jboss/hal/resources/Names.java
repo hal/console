@@ -116,6 +116,8 @@ public interface Names {
     String EXPIRATION = "Expiration";
     String EXTENSION = "Extension";
     String EXTENSIONS = "Extensions";
+    String EXTERNAL_JMS_QUEUE = "External JMS Queue";
+    String EXTERNAL_JMS_TOPIC = "External JMS Topic";
 
     String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";
@@ -225,6 +227,7 @@ public interface Names {
     String MEMORY = "Memory";
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MESSAGING = "Messaging";
+    String MESSAGING_REMOTE_ACTIVEMQ = "Remote ActiveMQ";
     String MIME_MAPPING = "Mime Mapping";
     String MINIMUM_PERMISSIONS = "Minimum Permissions";
     String MISSING_DEPENDENCIES = "Missing Dependencies";

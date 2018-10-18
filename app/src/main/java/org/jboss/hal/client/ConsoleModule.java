@@ -96,7 +96,9 @@ import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ClusteringVie
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ConnectionView;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_DestinationView;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_MessagingSubsystemView;
+import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_RemoteActiveMQView;
 import org.jboss.hal.client.configuration.subsystem.messaging.MessagingSubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.RemoteActiveMQPresenter;
 import org.jboss.hal.client.configuration.subsystem.microprofile.Mbui_MicroProfileConfigView;
 import org.jboss.hal.client.configuration.subsystem.microprofile.MicroProfileConfigPresenter;
 import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView;
@@ -517,6 +519,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 MailSessionPresenter.MyView.class,
                 MailSessionView.class,
                 MailSessionPresenter.MyProxy.class);
+
+        bindPresenter(RemoteActiveMQPresenter.class,
+                RemoteActiveMQPresenter.MyView.class,
+                Mbui_RemoteActiveMQView.class,
+                RemoteActiveMQPresenter.MyProxy.class);
 
         bindPresenter(MessagingSubsystemPresenter.class,
                 MessagingSubsystemPresenter.MyView.class,

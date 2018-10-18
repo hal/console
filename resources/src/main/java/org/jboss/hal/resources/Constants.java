@@ -462,6 +462,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String reloadCRL();
     String reloadRequired();
     String reloadStandaloneTooltip();
+    String remoteActiveMQServer();
     String remoteAddress();
     String remove();
     String removeAlias();
