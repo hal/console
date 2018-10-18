@@ -294,6 +294,8 @@ public interface ModelDescriptionConstants {
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
     String EXTENSION_POINT = "extension-point";
+    String EXTERNAL_JMS_QUEUE = "external-jms-queue";
+    String EXTERNAL_JMS_TOPIC = "external-jms-topic";
     String FAILED = "failed";
     String FAILED_OPERATION = "failed-operation";
     String FAILED_SERVICES = "failed-services";

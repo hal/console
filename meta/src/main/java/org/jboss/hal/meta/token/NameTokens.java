@@ -79,6 +79,7 @@ public interface NameTokens {
     String MANAGEMENT_INTERFACE = "management-interface";
     String MANAGEMENT_OPERATIONS = "management-operations";
     String MESSAGING = "messaging";
+    String MESSAGING_REMOTE_ACTIVEMQ = "msg-remote-activemq";
     String MESSAGING_SERVER = "messaging-server";
     String MESSAGING_SERVER_CONNECTION = "messaging-server-connection";
     String MESSAGING_SERVER_CLUSTERING = "messaging-server-clustering";

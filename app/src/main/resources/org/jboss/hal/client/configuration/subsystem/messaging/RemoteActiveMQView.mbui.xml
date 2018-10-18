@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="msg-remote-connection-vertical-navigation">
+
+        <item id="msg-remote-connector-group-item" title="Connector" icon="fa fa-link">
+            <sub-item id="msg-remote-connector-item" title="Generic">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/connector=*">
+                    <h1>Generic Connector</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="msg-remote-connector-table" title="Generic Connector" form-ref="msg-remote-connector-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(RemoteActiveMQSubResource.CONNECTOR)}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(RemoteActiveMQSubResource.CONNECTOR, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="msg-remote-connector-form" title="Generic Connector"
+                          on-save="${presenter.save(RemoteActiveMQSubResource.CONNECTOR, form, changedValues)}"
+                          prepare-reset="${presenter.reset(RemoteActiveMQSubResource.CONNECTOR, form)}"/>
+
+                </metadata>
+            </sub-item>
+            <sub-item id="msg-remote-in-vm-connector-item" title="In VM">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/in-vm-connector=*">
+                    <h1>In VM Connector</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="msg-remote-in-vm-connector-table" title="In VM Connector"
+                           form-ref="msg-remote-in-vm-connector-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(RemoteActiveMQSubResource.IN_VM_CONNECTOR)}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(RemoteActiveMQSubResource.IN_VM_CONNECTOR, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                            <column name="server-id"/>
+                        </columns>
+                    </table>
+                    <form id="msg-remote-in-vm-connector-form" title="In VM Connector"
+                          on-save="${presenter.save(RemoteActiveMQSubResource.IN_VM_CONNECTOR, form, changedValues)}"
+                          prepare-reset="${presenter.reset(RemoteActiveMQSubResource.IN_VM_CONNECTOR, form)}"/>
+                </metadata>
+            </sub-item>
+            <sub-item id="msg-remote-http-connector-item" title="HTTP">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/http-connector=*">
+                    <h1>HTTP Connector</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="msg-remote-http-connector-table" title="HTTP Connector"
+                           form-ref="msg-remote-http-connector-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.addHttpConnector()}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(RemoteActiveMQSubResource.HTTP_CONNECTOR, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="msg-remote-http-connector-form" title="HTTP Connector"
+                          on-save="${presenter.save(RemoteActiveMQSubResource.HTTP_CONNECTOR, form, changedValues)}"
+                          prepare-reset="${presenter.reset(RemoteActiveMQSubResource.HTTP_CONNECTOR, form)}"/>
+                </metadata>
+            </sub-item>
+            <sub-item id="msg-remote-remote-connector-item" title="Remote">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/remote-connector=*">
+                    <h1>Remote Connector</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="msg-remote-remote-connector-table" title="Remote Connector"
+                           form-ref="msg-remote-remote-connector-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.addRemoteConnector()}"
+                                    constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(RemoteActiveMQSubResource.REMOTE_CONNECTOR, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="msg-remote-remote-connector-form" title="Remote Connector"
+                          on-save="${presenter.save(RemoteActiveMQSubResource.REMOTE_CONNECTOR, form, changedValues)}"
+                          prepare-reset="${presenter.reset(RemoteActiveMQSubResource.REMOTE_CONNECTOR, form)}" />
+                </metadata>
+            </sub-item>
+        </item>
+
+        <item id="msg-remote-discovery-group-item" title="Discovery Group" icon="pficon pficon-service">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/discovery-group=*">
+                <h1>Discovery Group</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="msg-remote-discovery-group-table" title="Discovery Group"
+                       form-ref="msg-remote-discovery-group-form">
+                    <actions>
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.add(RemoteActiveMQSubResource.DISCOVERY_GROUP)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(RemoteActiveMQSubResource.DISCOVERY_GROUP, table.selectedRow())}"
+                                scope="selected" constraint="remove"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="msg-remote-discovery-group-form" title="Discovery Group"
+                      on-save="${presenter.save(RemoteActiveMQSubResource.DISCOVERY_GROUP, form, changedValues)}"
+                      prepare-reset="${presenter.reset(RemoteActiveMQSubResource.DISCOVERY_GROUP, form)}" />
+            </metadata>
+        </item>
+
+        <item id="msg-remote-connection-factory-item" title="Connection Factory" icon="fa fa-cubes">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/connection-factory=*">
+                <h1>Connection Factory</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="msg-remote-connection-factory-table" title="Connection Factory"
+                       form-ref="msg-remote-connection-factory-form">
+                    <actions>
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.addConnectionFactory(RemoteActiveMQSubResource.CONNECTION_FACTORY)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(RemoteActiveMQSubResource.CONNECTION_FACTORY, table.selectedRow())}"
+                                scope="selected" constraint="remove"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="msg-remote-connection-factory-form" title="Connection Factory"
+                      on-save="${presenter.save(RemoteActiveMQSubResource.CONNECTION_FACTORY, form, changedValues)}"
+                      prepare-reset="${presenter.reset(RemoteActiveMQSubResource.CONNECTION_FACTORY, form)}"/>
+            </metadata>
+        </item>
+
+        <item id="msg-remote-external-queue-item" title="External JMS Queue" icon="fa fa-long-arrow-right">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/external-jms-queue=*">
+                <h1>External JMS Queue</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="msg-remote-external-queue-table" title="External JMS Queue"
+                       form-ref="msg-remote-external-queue-form">
+                    <actions>
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.add(RemoteActiveMQSubResource.EXTERNAL_QUEUE)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(RemoteActiveMQSubResource.EXTERNAL_QUEUE, table.selectedRow())}"
+                                scope="selected" constraint="remove"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="msg-remote-external-queue-form" title="External JMS Queue"
+                      on-save="${presenter.save(RemoteActiveMQSubResource.EXTERNAL_QUEUE, form, changedValues)}"
+                      prepare-reset="${presenter.reset(RemoteActiveMQSubResource.EXTERNAL_QUEUE, form)}"/>
+            </metadata>
+        </item>
+
+        <item id="msg-remote-external-topic-item" title="External JMS Topic" icon="fa fa-arrows">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/external-jms-topic=*">
+                <h1>External JMS Topic</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="msg-remote-external-topic-table" title="External JMS Topic"
+                       form-ref="msg-remote-external-topic-form">
+                    <actions>
+                        <action title="${mbuiContext.resources().constants().add()}"
+                                handler="${presenter.add(RemoteActiveMQSubResource.EXTERNAL_TOPIC)}" constraint="add"/>
+                        <action title="${mbuiContext.resources().constants().remove()}"
+                                handler="${presenter.remove(RemoteActiveMQSubResource.EXTERNAL_TOPIC, table.selectedRow())}"
+                                scope="selected" constraint="remove"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="msg-remote-external-topic-form" title="External JMS Topic"
+                      on-save="${presenter.save(RemoteActiveMQSubResource.EXTERNAL_TOPIC, form, changedValues)}"
+                      prepare-reset="${presenter.reset(RemoteActiveMQSubResource.EXTERNAL_TOPIC, form)}"/>
+            </metadata>
+        </item>
+
+    </vertical-navigation>
+</view>

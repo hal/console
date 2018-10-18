@@ -49,6 +49,12 @@ public class MessagingCategoryColumn extends StaticItemColumn {
                         .action(itemActionFactory.view(places.selectedProfile(NameTokens.MESSAGING).build()))
                         .onPreview(new MessagingSubsystemPreview(crud, resources))
                         .build(),
+                new StaticItem.Builder(resources.constants().remoteActiveMQServer())
+                        .id(Ids.MESSAGING_REMOTE_ACTIVEMQ)
+                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.MESSAGING_REMOTE_ACTIVEMQ).build()))
+                        .onPreview(new PreviewContent<>(Names.MESSAGING_REMOTE_ACTIVEMQ,
+                                resources.previews().configurationMessagingRemoteActiveMQ()))
+                        .build(),
                 new StaticItem.Builder(Names.SERVER)
                         .nextColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
                         .onPreview(new PreviewContent<>(Names.SERVER,

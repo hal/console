@@ -80,7 +80,7 @@ public class NumberItem extends AbstractFormItem<Long> {
             } else {
                 if (!Strings.isNullOrEmpty(stringValue)) {
                     try {
-                        Long value = Long.parseLong(stringValue);
+                        Long value = Long.parseLong(stringValue.trim());
                         modifyValue(value);
                         logger.debug("modified value to {}", value);
                     } catch (NumberFormatException ignored) {
@@ -177,10 +177,12 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         public ValidationResult validate(Long value) {
-            if (!isExpressionValue() && !isEmpty()) {
+            // use the inputElement.value instead of isEmpty because the isEmpty evaluates the getValue() method
+            // the attach method already bind numbers only values, so this validation would always returns numbers only
+            if (!isExpressionValue() && inputElement.value != null) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
-                    Long.parseLong(inputElement.value);
+                    Long.parseLong(inputElement.value.trim());
                     return ValidationResult.OK;
                 } catch (NumberFormatException e) {
                     return ValidationResult.invalid(CONSTANTS.notANumber());
