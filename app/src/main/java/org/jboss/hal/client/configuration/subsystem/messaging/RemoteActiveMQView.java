@@ -138,7 +138,8 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
         registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
 
         String primId = Ids.build(MESSAGING_REMOTE_ACTIVEMQ, POOLED_CONNECTION_FACTORY, Ids.ITEM);
-        navigation.insertPrimary(primId, null, Names.POOLED_CONNECTION_FACTORY, pfIcon("replicator"), htmlSection);
+        navigation.insertPrimary(primId, "msg-remote-external-queue-item", Names.POOLED_CONNECTION_FACTORY,
+                pfIcon("replicator"), htmlSection);
 
     }
 
