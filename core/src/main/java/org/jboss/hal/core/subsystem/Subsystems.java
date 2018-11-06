@@ -242,6 +242,9 @@ public class Subsystems {
                 .nextColumn(Ids.MESSAGING_SERVER_RUNTIME)
                 .preview(resources.previews().runtimeMessagingServer())
                 .build());
+        addRuntime(new SubsystemMetadata.Builder(MICROPROFILE_HEALTH_SMALLRYE, Names.MICROPROFILE_HEALTH)
+                .token(NameTokens.MICROPROFILE_HEALTH)
+                .build());
         addRuntime(new SubsystemMetadata.Builder(TRANSACTIONS, Names.TRANSACTION)
                 .token(NameTokens.TRANSACTIONS_RUNTIME)
                 .build());

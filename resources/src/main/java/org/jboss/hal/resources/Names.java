@@ -219,7 +219,6 @@ public interface Names {
     String MASTER = "Master";
     String MAXIMUM_PERMISSIONS = "Maximum Permissions";
     String MB = "MB";
-    String MICROPROFILE_CONFIG = "Microprofile Config";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
     String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
@@ -228,6 +227,8 @@ public interface Names {
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MESSAGING = "Messaging";
     String MESSAGING_REMOTE_ACTIVEMQ = "Remote ActiveMQ";
+    String MICROPROFILE_CONFIG = "Microprofile Config";
+    String MICROPROFILE_HEALTH = "MicroProfile Health";
     String MIME_MAPPING = "Mime Mapping";
     String MINIMUM_PERMISSIONS = "Minimum Permissions";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
@@ -346,6 +347,7 @@ public interface Names {
     String STORES = "Stores";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
+    String STATE = "State";
     String STATEFUL_SESSION_BEAN = "Stateful Session Bean";
     String STATELESS_SESSION_BEAN = "Stateless Session Bean";
     String SUB_RESOURCE_LOCATORS = "Sub Resource Locators";

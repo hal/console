@@ -1,0 +1,35 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Check the healthiness of the application server and its deployments",
+    "attributes" => {
+        "name" => {
+            "type" => STRING,
+            "description" => "The health check name.",
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-only",
+            "storage" => "runtime"
+        },
+        "state" => {
+            "type" => STRING,
+            "description" => "The state of the health check.",
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-only",
+            "storage" => "runtime"
+        },
+        "data" => {
+            "type" => OBJECT,
+            "description" => "The health check data.",
+            "required" => true,
+            "nillable" => false,
+            "value-type" => STRING,
+            "access-type" => "read-only",
+            "storage" => "runtime"
+        }
+    }
+}

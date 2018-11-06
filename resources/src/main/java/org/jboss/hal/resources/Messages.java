@@ -317,6 +317,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml mappingHint();
     String membershipColumnFilterDescription();
     SafeHtml metadataError();
+    String microprofileHealthNoChecks();
+    SafeHtml microprofileHealthOutcome(String outcome);
+    String microprofileHealthPreviewDescription();
     String modifyResourceTitle(String type);
     SafeHtml modifyResourceSuccess(String type, String name);
     SafeHtml modifySingleResourceSuccess(String type);

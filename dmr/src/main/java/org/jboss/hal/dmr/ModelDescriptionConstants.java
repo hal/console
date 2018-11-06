@@ -128,6 +128,8 @@ public interface ModelDescriptionConstants {
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
     String CHANGE_MESSAGES_PRIORITY = "change-messages-priority";
     String CHANNEL = "channel";
+    String CHECK = "check";
+    String CHECKS = "checks";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS = "class";
@@ -248,6 +250,7 @@ public interface ModelDescriptionConstants {
     String DIVERT = "divert";
     String DOMAIN_UUID = "domain-uuid";
     String DOMAIN_ROLLOUT = "domain-rollout";
+    String DOWN = "DOWN";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
     String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
@@ -508,6 +511,7 @@ public interface ModelDescriptionConstants {
     String METADATA = "metadata";
     String METRIC = "metric";
     String MICROPROFILE_CONFIG_SMALLRYE = "microprofile-config-smallrye";
+    String MICROPROFILE_HEALTH_SMALLRYE = "microprofile-health-smallrye";
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
     String MIN_POOL_SIZE = "min-pool-size";
@@ -840,6 +844,7 @@ public interface ModelDescriptionConstants {
     String START_SERVERS = "start-servers";
     String START_TIME = "start-time";
     String STARTED = "started";
+    String STATE = "state";
     String STATE_TRANSFER = "state-transfer";
     String STATIC_CONNECTORS = "static-connectors";
     String STATISTICS_ENABLED = "statistics-enabled";
@@ -913,6 +918,7 @@ public interface ModelDescriptionConstants {
     String UNREGISTERED = "unregistered";
     String UPDATE_ACCOUNT = "update-account";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
+    String UP = "UP";
     String UPTIME = "uptime";
     String URL = "url";
     String USE_RECURSIVE_SEARCH = "use-recursive-search";
