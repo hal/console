@@ -176,6 +176,8 @@ import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
 import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView;
 import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueuePresenter;
 import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueueView;
+import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroProfileHealthPresenter;
+import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroProfileHealthView;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView;
@@ -504,6 +506,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 MicroProfileConfigPresenter.MyView.class,
                 Mbui_MicroProfileConfigView.class,
                 MicroProfileConfigPresenter.MyProxy.class);
+
+        bindPresenter(MicroProfileHealthPresenter.class,
+                MicroProfileHealthPresenter.MyView.class,
+                MicroProfileHealthView.class,
+                MicroProfileHealthPresenter.MyProxy.class);
 
         bindPresenter(ModclusterPresenter.class,
                 ModclusterPresenter.MyView.class,

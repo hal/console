@@ -28,6 +28,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.client.runtime.server.ServerRuntimePreview;
 import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
+import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroprofileHealthPreview;
 import org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPreview;
 import org.jboss.hal.client.runtime.subsystem.undertow.UndertowPreview;
 import org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPreview;
@@ -110,6 +111,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 Version serverVersion = ManagementModel.parseVersion(result.step(1).get(RESULT));
                 if (!ManagementModel.supportsListLogFiles(serverVersion)) {
                     existingSubsystems.remove(LOGGING);
+                }
+                if (existingSubsystems.containsKey(MICROPROFILE_HEALTH_SMALLRYE)) {
+                    customPreviews.put(MICROPROFILE_HEALTH_SMALLRYE, new MicroprofileHealthPreview(dispatcher, statementContext, resources));
                 }
 
                 // add server runtime as first item

@@ -75,6 +75,7 @@ public class LabelBuilder {
             .put("mcp", "MCP")
             .put("mdb", "MDB")
             .put("mbean", "MBean")
+            .put("microprofile", "MicroProfile")
             .put("oauth2", "OAuth 2")
             .put("otp", "OTP")
             .put("rdn", "RDN")
