@@ -554,7 +554,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         form.edit(new ModelNode());
     }
 
-    void obtainCertificate(Metadata metadata, String name, String alias) {
+    void obtainCertificate(Metadata metadata, String name) {
         metadata = metadata.forOperation(OBTAIN_CERTIFICATE);
         String id = Ids.build(KEY_STORE, OBTAIN_CERTIFICATE, FORM);
         String title = new LabelBuilder().label(CERTIFICATE_AUTHORITY_ACCOUNT);
@@ -565,6 +565,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             Operation operation = new Operation.Builder(address, OBTAIN_CERTIFICATE)
                     .payload(form.getModel())
                     .build();
+            String alias = form.getModel().get(ALIAS).asString();
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().obtainCertificateSuccess(alias, name))),
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
@@ -581,9 +582,6 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 .cancel()
                 .build();
         dialog.registerAttachable(form);
-        ModelNode model = new ModelNode();
-        model.get(ALIAS).set(alias);
-        form.getFormItem(ALIAS).setEnabled(false);
         if (!environment.isStandalone()) {
             // the capability reference the /profile=* resource and the template attached to the metadata
             // points to the {selected.host}/{selected.server}, so we need to register the template to the profile
@@ -598,7 +596,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                                     ELYTRON_PROFILE_TEMPLATE));
         }
         dialog.show();
-        form.edit(model);
+        form.edit(new ModelNode());
     }
 
     void revokeCertificate(Metadata metadata, String name, String alias) {
