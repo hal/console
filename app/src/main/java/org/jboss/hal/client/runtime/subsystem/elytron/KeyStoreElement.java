@@ -73,10 +73,15 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                         Constraint.executable(KEY_STORE_TEMPLATE, LOAD)))
                 .button(new Button<>(cons.store(), table -> presenter.storeKeyStore(table.selectedRow().getName()),
                         Constraint.executable(KEY_STORE_TEMPLATE, STORE)))
-                .button(new Button<>(cons.generateKeyPair(), table -> generateKeyPair(metadata),
+                .button(new Button<>(cons.generateKeyPair(),
+                        table -> presenter.generateKeyPair(metadata, table.selectedRow().getName()),
                         Constraint.executable(KEY_STORE_TEMPLATE, GENERATE_KEY_PAIR)))
-                .button(new Button<>(cons.importCertificate(), table -> importCertificate(metadata),
+                .button(new Button<>(cons.importCertificate(),
+                        table -> presenter.importCertificate(metadata, table.selectedRow().getName()),
                         Constraint.executable(KEY_STORE_TEMPLATE, IMPORT_CERTIFICATE)))
+                .button(new Button<>(cons.obtain(), cons.obtainCertificate(),
+                        table -> presenter.obtainCertificate(metadata, table.selectedRow().getName()),
+                        Constraint.executable(KEY_STORE_TEMPLATE, OBTAIN_CERTIFICATE)))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(cons.aliases(),
                         row -> {
@@ -112,9 +117,6 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .button(new Button<>(cons.details(), cons.viewDetailsAlias(),
                         table -> readKeystoreAlias(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, READ_ALIAS)))
-                .button(new Button<>(cons.obtain(), cons.obtainCertificate(),
-                        table -> obtainCertificate(metadata, table.selectedRow().asString()),
-                        Constraint.executable(KEY_STORE_TEMPLATE, OBTAIN_CERTIFICATE)))
                 .button(new Button<>(cons.revoke(), cons.revokeCertificate(),
                         table -> revokeCertificate(metadata, table.selectedRow().asString()),
                         Constraint.executable(KEY_STORE_TEMPLATE, REVOKE_CERTIFICATE)))
@@ -160,13 +162,27 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         formAlias.attach();
 
         table.bindForm(form);
+    }
 
+    private void toggleKeyStoreButtons() {
         // disable table buttons if there is no selected row
         table.enableButton(0, false);
         table.enableButton(1, false);
         table.enableButton(2, false);
         table.enableButton(3, false);
+        table.enableButton(4, false);
 
+        table.onSelectionChange(table1 -> {
+            table.enableButton(0, table1.hasSelection());
+            table.enableButton(1, table1.hasSelection());
+            table.enableButton(2, table1.hasSelection());
+            table.enableButton(3, table1.hasSelection());
+            table.enableButton(4, table1.hasSelection());
+        });
+    }
+
+    private void toggleAliasesButtons() {
+        // disable table buttons if there is no selected row
         aliasesTable.enableButton(0, false);
         aliasesTable.enableButton(1, false);
         aliasesTable.enableButton(2, false);
@@ -174,14 +190,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         aliasesTable.enableButton(4, false);
         aliasesTable.enableButton(5, false);
         aliasesTable.enableButton(6, false);
-        aliasesTable.enableButton(7, false);
 
-        table.onSelectionChange(table1 -> {
-            table.enableButton(0, table1.hasSelection());
-            table.enableButton(1, table1.hasSelection());
-            table.enableButton(2, table1.hasSelection());
-            table.enableButton(3, table1.hasSelection());
-        });
         aliasesTable.onSelectionChange(table1 -> {
             table1.enableButton(0, table1.hasSelection());
             table1.enableButton(1, table1.hasSelection());
@@ -190,7 +199,6 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
             table1.enableButton(4, table1.hasSelection());
             table1.enableButton(5, table1.hasSelection());
             table1.enableButton(6, table1.hasSelection());
-            table1.enableButton(7, table1.hasSelection());
             if (table1.hasSelection()) {
                 String alias = table1.selectedRow().asString();
                 String value = aliasDetailsMapping.get(alias);
@@ -223,6 +231,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         form.clear();
         table.update(items);
         aliasDetailsMapping.clear();
+        toggleKeyStoreButtons();
     }
 
     // -------------- aliases operations
@@ -230,6 +239,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
     private void showAliases(AddressTemplate template, String resource) {
         presenter.readAliases(template, resource, aliasesTable::update);
         pages.showPage(id(ALIAS, PAGE));
+        toggleAliasesButtons();
     }
 
     private void updateAliases(List<ModelNode> items) {
@@ -263,10 +273,6 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         presenter.generateCSR(metadata, selectedKeystore, alias);
     }
 
-    private void obtainCertificate(Metadata metadata, String alias) {
-        presenter.obtainCertificate(metadata, selectedKeystore, alias);
-    }
-
     private void revokeCertificate(Metadata metadata, String alias) {
         presenter.revokeCertificate(metadata, selectedKeystore, alias);
     }
@@ -274,13 +280,4 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
     private void verifyRenewCertificate(Metadata metadata, String alias) {
         presenter.verifyRenewCertificate(metadata, selectedKeystore, alias);
     }
-
-    private void generateKeyPair(Metadata metadata) {
-        presenter.generateKeyPair(metadata, table.selectedRow().getName());
-    }
-
-    private void importCertificate(Metadata metadata) {
-        presenter.importCertificate(metadata, table.selectedRow().getName());
-    }
-
 }
