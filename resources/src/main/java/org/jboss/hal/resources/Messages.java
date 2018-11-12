@@ -188,6 +188,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml enableSSLStrategyQuestion();
     SafeHtml enableSSLStrategyQuestionCreateAll();
     SafeHtml enableSSLStrategyQuestionCreateKeyStore();
+    SafeHtml enableSSLStrategyQuestionObtainFromLetsEncrypt();
     SafeHtml enableSSLStrategyQuestionReuseKeyStore();
     SafeHtml enableSSLSuccess();
     SafeHtml enableUndertowSSLDescription();

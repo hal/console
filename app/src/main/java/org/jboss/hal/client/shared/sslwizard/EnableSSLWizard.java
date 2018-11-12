@@ -28,6 +28,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -44,6 +45,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static elemental2.dom.DomGlobal.window;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
@@ -53,6 +55,10 @@ public class EnableSSLWizard {
             "{domain.controller}/core-service=management/management-interface=http-interface");
     private static final AddressTemplate UNDERTOW_HTTPS_LISTENER_TEMPLATE = AddressTemplate.of(
             "/{selected.profile}/subsystem=undertow/server=*/https-listener=*");
+
+    // default values
+    private static final String KEY_MANAGER_ALGORITHM = "SunX509";
+    private static final String KEY_MANAGER_TLSV1_2 = "TLSv1.2";
 
     private final Resources resources;
     private final Environment environment;
@@ -147,7 +153,7 @@ public class EnableSSLWizard {
                             ResourceAddress ksAddress = keyStoreTemplate().resolve(statementContext, keyStoreName);
                             tasks.add(flowContext -> {
                                 Operation.Builder builder = new Operation.Builder(ksAddress, ADD)
-                                        .param(PATH, asString(model, AbstractConfiguration.KEY_STORE_PATH))
+                                        .param(PATH, asString(model, KEY_STORE_PATH))
                                         .param(CREDENTIAL_REFERENCE, credRef)
                                         .param(TYPE, asString(model, AbstractConfiguration.KEY_STORE_TYPE));
 
@@ -177,7 +183,7 @@ public class EnableSSLWizard {
                                         .param(ALIAS, asString(model, AbstractConfiguration.PRIVATE_KEY_ALIAS))
                                         .param(DISTINGUISHED_NAME, dn)
                                         .param(VALIDITY, asString(model, AbstractConfiguration.PRIVATE_KEY_VALIDITY))
-                                        .param(ALGORITHM, asString(model, AbstractConfiguration.PRIVATE_KEY_ALGORITHM))
+                                        .param(ModelDescriptionConstants.ALGORITHM, asString(model, AbstractConfiguration.PRIVATE_KEY_ALGORITHM))
                                         .build();
                                 composite.add(genKeyOp);
 
@@ -194,7 +200,7 @@ public class EnableSSLWizard {
                             tasks.add(flowContext -> {
                                 ResourceAddress ksAddress = keyStoreTemplate().resolve(statementContext, keyStoreName);
                                 Operation.Builder builder = new Operation.Builder(ksAddress, ADD)
-                                        .param(PATH, asString(model, AbstractConfiguration.KEY_STORE_PATH))
+                                        .param(PATH, asString(model, KEY_STORE_PATH))
                                         .param(CREDENTIAL_REFERENCE, credRef)
                                         .param(TYPE, asString(model, AbstractConfiguration.KEY_STORE_TYPE))
                                         .param(REQUIRED, true);
@@ -207,6 +213,68 @@ public class EnableSSLWizard {
                                         .doOnError(exception -> wizard.showError(constants.failed(),
                                                 resources.messages().addKeyStoreError(keyStoreName),
                                                 exception.getMessage(), false))
+                                        .toCompletable();
+                            });
+                        } else if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_OBTAIN_LETSENCRYPT)) {
+
+                            ResourceAddress ksAddress = keyStoreTemplate().resolve(statementContext, keyStoreName);
+                            tasks.add(flowContext -> {
+                                Operation.Builder builder = new Operation.Builder(ksAddress, ADD)
+                                        .param(PATH, asString(model, KEY_STORE_PATH))
+                                        .param(CREDENTIAL_REFERENCE, credRef)
+                                        .param(TYPE, asString(model, AbstractConfiguration.KEY_STORE_TYPE));
+
+                                if (model.hasDefined(AbstractConfiguration.KEY_STORE_RELATIVE_TO)) {
+                                    builder.param(RELATIVE_TO, asString(model, AbstractConfiguration.KEY_STORE_RELATIVE_TO));
+                                }
+                                Operation keyStoreOp = builder.build();
+
+                                return dispatcher.execute(keyStoreOp)
+                                        .doOnError(exception -> wizard.showError(constants.failed(),
+                                                resources.messages().addKeyStoreError(keyStoreName),
+                                                exception.getMessage(), false))
+                                        .toCompletable();
+                            });
+
+                            String caaName = asString(model, CAA_NAME);
+                            ResourceAddress caaAddress = certificateAuthorityAccountTemplate().resolve(statementContext, caaName);
+                            tasks.add(flowContext -> {
+                                Operation caaOp = new Operation.Builder(caaAddress, ADD)
+                                        .param(KEY_STORE, keyStoreName)
+                                        .param(ALIAS, asString(model, CAA_ALIAS))
+                                        .build();
+
+
+                                return dispatcher.execute(caaOp)
+                                        .doOnError(exception -> wizard.showError(constants.failed(),
+                                                resources.messages().addResourceError(caaName, exception.getMessage()),
+                                                false))
+                                        .toCompletable();
+                            });
+
+                            tasks.add(flowContext -> {
+                                Composite composite = new Composite();
+                                String obtainAlias = asString(model, PRIVATE_KEY_ALIAS);
+                                Operation obtainOp = new Operation.Builder(ksAddress, OBTAIN_CERTIFICATE)
+                                        .param(ALIAS, obtainAlias)
+                                        .param(CERTIFICATE_AUTHORITY_ACCOUNT, caaName)
+                                        .param("domain-names", model.get(CAA_DOMAIN_NAMES))
+                                        .param("agree-to-terms-of-service", true)
+                                        .param("staging", asString(model, CAA_STAGING))
+                                        .build();
+                                composite.add(obtainOp);
+
+                                Operation storeOp = new Operation.Builder(ksAddress, STORE)
+                                        .build();
+                                composite.add(storeOp);
+
+
+                                return dispatcher.execute(composite)
+                                        .doOnError(ex -> wizard.showError(constants.failed(),
+                                                resources.messages()
+                                                        .obtainCertificateError(obtainAlias, keyStoreName,
+                                                                ex.getMessage()),
+                                                false))
                                         .toCompletable();
                             });
                         }
@@ -252,7 +320,7 @@ public class EnableSSLWizard {
                             ResourceAddress etmAddress = trustManagerTemplate().resolve(statementContext, trustManagerName);
                             Operation trustManagerOp = new Operation.Builder(etmAddress, ADD)
                                     .param(KEY_STORE, trustStoreName)
-                                    .param(ALGORITHM, "SunX509")
+                                    .param(ModelDescriptionConstants.ALGORITHM, KEY_MANAGER_ALGORITHM)
                                     .build();
                             composite.add(trustManagerOp);
 
@@ -266,13 +334,13 @@ public class EnableSSLWizard {
                     ResourceAddress ekmAddress = keyManagerTemplate().resolve(statementContext, keyManager);
                     Operation keyManagerOp = new Operation.Builder(ekmAddress, ADD)
                             .param(KEY_STORE, keyStoreName)
-                            .param(ALGORITHM, "SunX509")
+                            .param(ModelDescriptionConstants.ALGORITHM, KEY_MANAGER_ALGORITHM)
                             .param(CREDENTIAL_REFERENCE, credRef)
                             .build();
                     composite.add(keyManagerOp);
 
                     ModelNode protocols = new ModelNode();
-                    protocols.add("TLSv1.2");
+                    protocols.add(KEY_MANAGER_TLSV1_2);
                     String serverSslContext = asString(model, SERVER_SSL_CONTEXT);
                     ResourceAddress sslCtxAddress = sslContextTemplate().resolve(statementContext,
                             serverSslContext);
@@ -394,6 +462,10 @@ public class EnableSSLWizard {
         return new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                 .param(NAME, attribute)
                 .build();
+    }
+
+    private AddressTemplate certificateAuthorityAccountTemplate() {
+        return AddressTemplate.of(prefix() + "/subsystem=elytron/certificate-authority-account=*");
     }
 
     private AddressTemplate keyStoreTemplate() {

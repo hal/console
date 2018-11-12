@@ -68,6 +68,10 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
     static final String CLIENT_CERTIFICATE_ALIAS = "client-certificate-alias";
     static final String CLIENT_CERTIFICATE_TRUST = "client-certificate-trust-cacerts";
     static final String CLIENT_CERTIFICATE_VALIDATE = "client-certificate-validate";
+    static final String CAA_NAME = "certificate-authority-account-name";
+    static final String CAA_ALIAS = "certificate-authority-alias";
+    static final String CAA_DOMAIN_NAMES = "certificate-domain-names";
+    static final String CAA_STAGING = "certificate-staging";
     private static final EnableSSLResources RESOURCES = GWT.create(EnableSSLResources.class);
 
     protected ResourceDescription description;
@@ -99,6 +103,9 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
             builder.exclude(SECURE_SOCKET_BINDING);
             builder.exclude(SECURE_PORT);
         }
+        if (!editMode) {
+            builder.readOnly();
+        }
 
         form = builder.build();
         registerAttachable(form);
@@ -128,6 +135,10 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
             hide(PRIVATE_KEY_DN_ST);
             hide(PRIVATE_KEY_DN_C);
             hide(PRIVATE_KEY_VALIDITY);
+            hide(CAA_NAME);
+            hide(CAA_ALIAS);
+            hide(CAA_DOMAIN_NAMES);
+            hide(CAA_STAGING);
 
         } else if (context.strategy == EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS) {
             show(KEY_STORE_NAME);
@@ -146,8 +157,37 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
             hide(PRIVATE_KEY_DN_ST);
             hide(PRIVATE_KEY_DN_C);
             hide(PRIVATE_KEY_VALIDITY);
+            hide(CAA_NAME);
+            hide(CAA_ALIAS);
+            hide(CAA_DOMAIN_NAMES);
+            hide(CAA_STAGING);
+        } else if (context.strategy == EnableSSLContext.Strategy.KEYSTORE_OBTAIN_LETSENCRYPT) {
+            show(KEY_STORE_NAME);
+            show(KEY_STORE_PASSWORD);
+            show(KEY_STORE_PATH);
+            show(KEY_STORE_RELATIVE_TO);
+            show(KEY_STORE_TYPE);
+            show(PRIVATE_KEY_ALIAS);
+            show(CAA_NAME);
+            show(CAA_ALIAS);
+            show(CAA_DOMAIN_NAMES);
+            show(CAA_STAGING);
+
+            hide(KEY_STORE);
+            hide(PRIVATE_KEY_ALGORITHM);
+            hide(PRIVATE_KEY_DN_CN);
+            hide(PRIVATE_KEY_DN_OU);
+            hide(PRIVATE_KEY_DN_O);
+            hide(PRIVATE_KEY_DN_L);
+            hide(PRIVATE_KEY_DN_ST);
+            hide(PRIVATE_KEY_DN_C);
+            hide(PRIVATE_KEY_VALIDITY);
         } else {
             hide(KEY_STORE);
+            hide(CAA_NAME);
+            hide(CAA_ALIAS);
+            hide(CAA_DOMAIN_NAMES);
+            hide(CAA_STAGING);
 
             show(KEY_STORE_NAME);
             show(KEY_STORE_PASSWORD);
@@ -192,38 +232,28 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
 
     // show the form item element and the <hr> form item separator (read-only mode)
     private void show(String name) {
-        FormItem item = form.getFormItem(name);
-        Form.State state = Form.State.READONLY;
-        if (editMode) {
-            state = Form.State.EDITING;
-        }
-        HTMLElement itemElem = item.asElement(state);
-        Elements.setVisible(itemElem, true);
-        if (!editMode) {
-            // for read-only mode, there are the <hr> separators, we should hide it too
-            Element hrElem = itemElem.nextElementSibling;
-            if (hrElem instanceof HTMLHRElement) {
-                HTMLHRElement hre = (HTMLHRElement) hrElem;
-                Elements.setVisible(hre, true);
-            }
-        }
+        hideOrShow(name, true);
     }
 
     // hide the form item element and the <hr> form item separator (read-only mode)
     private void hide(String name) {
+        hideOrShow(name, false);
+    }
+
+    private void hideOrShow(String name, boolean show) {
         FormItem item = form.getFormItem(name);
         Form.State state = Form.State.READONLY;
         if (editMode) {
             state = Form.State.EDITING;
         }
         HTMLElement formItemElement = item.asElement(state);
-        Elements.setVisible(formItemElement, false);
+        Elements.setVisible(formItemElement, show);
         if (!editMode) {
             // for read-only mode, there are the <hr> separators, we should hide it too
             Element separatorElement = formItemElement.nextElementSibling;
             if (separatorElement instanceof HTMLHRElement) {
                 HTMLHRElement hre = (HTMLHRElement) separatorElement;
-                Elements.setVisible(hre, false);
+                Elements.setVisible(hre, show);
             }
         }
     }
