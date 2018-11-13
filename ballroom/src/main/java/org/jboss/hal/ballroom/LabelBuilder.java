@@ -83,6 +83,7 @@ public class LabelBuilder {
             .put("sasl", "SASL")
             .put("sfsb", "SFSB")
             .put("slsb", "SLSB")
+            .put("sni", "SNI")
             .put("sql", "SQL")
             .put("ssl", "SSL")
             .put("tcp", "TCP")

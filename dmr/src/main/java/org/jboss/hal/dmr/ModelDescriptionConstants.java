@@ -782,6 +782,7 @@ public interface ModelDescriptionConstants {
     String SERVER_GROUP_SCOPED_ROLE = "server-group-scoped-role";
     String SERVER_GROUPS = "server-groups";
     String SERVER_SSL_CONTEXT = "server-ssl-context";
+    String SERVER_SSL_SNI_CONTEXT = "server-ssl-sni-context";
     String SERVER_STATE = "server-state";
     String SERVER_TYPE = "server-type";
     String SERVICE = "service";
