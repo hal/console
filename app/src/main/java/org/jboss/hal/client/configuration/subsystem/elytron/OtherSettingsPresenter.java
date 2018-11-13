@@ -150,6 +150,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.PERMISSION_SET.resource,
                 ElytronResource.CERTIFICATE_AUTHORITY_ACCOUNT.resource,
                 ElytronResource.JASPI_CONFIGURATION.resource,
+                ElytronResource.SERVER_SSL_SNI_CONTEXT.resource,
                 ElytronResource.POLICY.resource), // policy must be the last item in the list!
                 result -> {
                     int i = 0;
@@ -197,6 +198,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                     getView().updateResourceElement(ElytronResource.CERTIFICATE_AUTHORITY_ACCOUNT.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.JASPI_CONFIGURATION.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.SERVER_SSL_SNI_CONTEXT.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // policy must be the last item in the list!
                     List<NamedNode> policies = asNamedNodes(result.step(i).get(RESULT).asPropertyList());
@@ -466,6 +469,29 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .show();
     }
 
+    // -------------------------------------------- server ssl sni context
+
+    void addServerSslSniContext() {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_SSL_SNI_CONTEXT_TEMPLATE);
+        String id = Ids.build(Ids.ELYTRON_SERVER_SSL_SNI_CONTEXT, Ids.ADD);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .unsorted()
+                .addOnly()
+                .build();
+        // "host-context-map" is not required in r-r-d for "add" operation
+        // but the resource fails to add without this parameter, see https://issues.jboss.org/browse/WFCORE-4223
+        form.getFormItem("host-context-map").setRequired(true);
+        String type = new LabelBuilder().label(SERVER_SSL_SNI_CONTEXT);
+        new AddResourceDialog(resources.messages().addResourceTitle(type), form,
+                (name, model) -> {
+                    crud.add(type, name, AddressTemplates.SERVER_SSL_SNI_CONTEXT_TEMPLATE, model,
+                            (name1, address) -> reload(SERVER_SSL_SNI_CONTEXT,
+                                    nodes -> getView().updateResourceElement(SERVER_SSL_SNI_CONTEXT, nodes)));
+                })
+                .show();
+    }
+
     // -------------------------------------------- Policy
 
     void addPolicy(String complexAttribute, String type) {
@@ -540,6 +566,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             PROVIDER_LOADER_ADDRESS,
             SECURITY_DOMAIN_ADDRESS,
             SERVER_SSL_CONTEXT_ADDRESS,
+            SERVER_SSL_SNI_CONTEXT_ADDRESS,
             SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
             SYSLOG_AUDIT_LOG_ADDRESS,
             TRUST_MANAGER_ADDRESS,

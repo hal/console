@@ -263,6 +263,7 @@ public interface Ids {
     String ELYTRON_SECURITY_DOMAIN = "elytron-security-domain";
     String ELYTRON_SECURITY_REALMS = "elytron-security-realms";
     String ELYTRON_SERVER_SSL_CONTEXT = "elytron-server-ssl-context";
+    String ELYTRON_SERVER_SSL_SNI_CONTEXT = "elytron-server-ssl-sni-context";
     String ELYTRON_SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY = "elytron-service-loader-http-server-mechanism-factory";
     String ELYTRON_SERVICE_LOADER_SASL_SERVER_FACTORY = "elytron-service-loader-sasl-server-factory";
     String ELYTRON_SIMPLE_PERMISSION_MAPPER = "elytron-simple-permission-mapper";
