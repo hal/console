@@ -21,7 +21,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -35,8 +34,8 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICROPROFILE_CONFIG_SUBSYSTEM_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICROPROFILE_CONFIG_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICRO_PROFILE_CONFIG_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICRO_PROFILE_CONFIG_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MICROPROFILE_CONFIG_SMALLRYE;
 
 public class MicroProfileConfigPresenter
@@ -46,7 +45,6 @@ public class MicroProfileConfigPresenter
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private final ComplexAttributeOperations ca;
 
     @Inject
     public MicroProfileConfigPresenter(EventBus eventBus,
@@ -55,13 +53,11 @@ public class MicroProfileConfigPresenter
             Finder finder,
             CrudOperations crud,
             FinderPathFactory finderPathFactory,
-            StatementContext statementContext,
-            ComplexAttributeOperations ca) {
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
-        this.ca = ca;
     }
 
     @Override
@@ -72,7 +68,7 @@ public class MicroProfileConfigPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return MICROPROFILE_CONFIG_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+        return MICRO_PROFILE_CONFIG_TEMPLATE.resolve(statementContext);
     }
 
     @Override
@@ -82,15 +78,15 @@ public class MicroProfileConfigPresenter
 
     @Override
     protected void reload() {
-        crud.readRecursive(MICROPROFILE_CONFIG_SUBSYSTEM_TEMPLATE.resolve(statementContext),
+        crud.readRecursive(MICRO_PROFILE_CONFIG_TEMPLATE.resolve(statementContext),
                 result -> getView().update(result));
     }
 
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.MICROPROFILE_CONFIG)
-    @Requires(MICROPROFILE_CONFIG_SUBSYSTEM_ADDRESS)
+    @NameToken(NameTokens.MICRO_PROFILE_CONFIG)
+    @Requires(MICRO_PROFILE_CONFIG_ADDRESS)
     public interface MyProxy extends ProxyPlace<MicroProfileConfigPresenter> {
     }
 

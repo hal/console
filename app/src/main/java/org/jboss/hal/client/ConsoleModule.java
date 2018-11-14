@@ -101,6 +101,8 @@ import org.jboss.hal.client.configuration.subsystem.messaging.MessagingSubsystem
 import org.jboss.hal.client.configuration.subsystem.messaging.RemoteActiveMQPresenter;
 import org.jboss.hal.client.configuration.subsystem.microprofile.Mbui_MicroProfileConfigView;
 import org.jboss.hal.client.configuration.subsystem.microprofile.MicroProfileConfigPresenter;
+import org.jboss.hal.client.configuration.subsystem.microprofile.MicroProfileMetricsPresenter;
+import org.jboss.hal.client.configuration.subsystem.microprofile.MicroProfileMetricsView;
 import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView;
 import org.jboss.hal.client.configuration.subsystem.modcluster.ModclusterPresenter;
 import org.jboss.hal.client.configuration.subsystem.remoting.Mbui_RemotingView;
@@ -511,6 +513,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 MicroProfileHealthPresenter.MyView.class,
                 MicroProfileHealthView.class,
                 MicroProfileHealthPresenter.MyProxy.class);
+
+        bindPresenter(MicroProfileMetricsPresenter.class,
+                MicroProfileMetricsPresenter.MyView.class,
+                MicroProfileMetricsView.class,
+                MicroProfileMetricsPresenter.MyProxy.class);
 
         bindPresenter(ModclusterPresenter.class,
                 ModclusterPresenter.MyView.class,

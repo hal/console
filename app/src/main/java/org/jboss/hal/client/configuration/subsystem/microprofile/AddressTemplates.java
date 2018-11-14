@@ -19,7 +19,9 @@ import org.jboss.hal.meta.AddressTemplate;
 
 interface AddressTemplates {
 
-    String MICROPROFILE_CONFIG_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=microprofile-config-smallrye";
+    String MICRO_PROFILE_CONFIG_ADDRESS = "/{selected.profile}/subsystem=microprofile-config-smallrye";
+    String MICRO_PROFILE_METRICS_ADDRESS = "/{selected.profile}/subsystem=microprofile-metrics-smallrye";
 
-    AddressTemplate MICROPROFILE_CONFIG_SUBSYSTEM_TEMPLATE = AddressTemplate.of(MICROPROFILE_CONFIG_SUBSYSTEM_ADDRESS);
+    AddressTemplate MICRO_PROFILE_CONFIG_TEMPLATE = AddressTemplate.of(MICRO_PROFILE_CONFIG_ADDRESS);
+    AddressTemplate MICRO_PROFILE_METRICS_TEMPLATE = AddressTemplate.of(MICRO_PROFILE_METRICS_ADDRESS);
 }

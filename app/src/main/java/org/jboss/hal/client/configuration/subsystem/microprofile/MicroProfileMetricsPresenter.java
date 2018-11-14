@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.microprofile.health;
+package org.jboss.hal.client.configuration.subsystem.microprofile;
 
 import javax.inject.Inject;
 
@@ -21,6 +21,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -29,45 +30,35 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.microprofile.health.AddressTemplates.MICROPROFILE_HEALTH_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.microprofile.health.AddressTemplates.MICROPROFILE_HEALTH_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHECK;
-import static org.jboss.hal.resources.Ids.MICRO_PROFILE_HEALTH;
+import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICRO_PROFILE_METRICS_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICRO_PROFILE_METRICS_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MICROPROFILE_METRICS_SMALLRYE;
 
-public class MicroProfileHealthPresenter
-        extends ApplicationFinderPresenter<MicroProfileHealthPresenter.MyView, MicroProfileHealthPresenter.MyProxy>
+public class MicroProfileMetricsPresenter
+        extends ApplicationFinderPresenter<MicroProfileMetricsPresenter.MyView, MicroProfileMetricsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    private final Dispatcher dispatcher;
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private final Resources resources;
 
     @Inject
-    public MicroProfileHealthPresenter(
-            EventBus eventBus,
+    public MicroProfileMetricsPresenter(EventBus eventBus,
             MyView view,
             MyProxy myProxy,
             Finder finder,
-            Dispatcher dispatcher,
+            CrudOperations crud,
             FinderPathFactory finderPathFactory,
-            StatementContext statementContext,
-            Resources resources) {
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
-        this.dispatcher = dispatcher;
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
-        this.resources = resources;
     }
 
     @Override
@@ -78,38 +69,29 @@ public class MicroProfileHealthPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return MICROPROFILE_HEALTH_TEMPLATE.resolve(statementContext);
+        return MICRO_PROFILE_METRICS_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, MICRO_PROFILE_HEALTH,
-                        resources.constants().monitor(), Names.MICROPROFILE_HEALTH);
+        return finderPathFactory.configurationSubsystemPath(MICROPROFILE_METRICS_SMALLRYE);
     }
 
     @Override
     protected void reload() {
-        ResourceAddress address = MICROPROFILE_HEALTH_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(address, CHECK)
-                .build();
-        dispatcher.execute(operation, result -> getView().update(result));
-    }
-
-    StatementContext getStatementContext() {
-        return statementContext;
+        crud.read(MICRO_PROFILE_METRICS_TEMPLATE, result -> getView().update(result));
     }
 
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(MICROPROFILE_HEALTH_ADDRESS)
-    @NameToken(NameTokens.MICRO_PROFILE_HEALTH)
-    public interface MyProxy extends ProxyPlace<MicroProfileHealthPresenter> {
+    @Requires(MICRO_PROFILE_METRICS_ADDRESS)
+    @NameToken(NameTokens.MICRO_PROFILE_METRICS)
+    public interface MyProxy extends ProxyPlace<MicroProfileMetricsPresenter> {
     }
 
-    public interface MyView extends HalView, HasPresenter<MicroProfileHealthPresenter> {
-        void update(ModelNode model);
+    public interface MyView extends HalView, HasPresenter<MicroProfileMetricsPresenter> {
+        void update(ModelNode payload);
     }
     // @formatter:on
 }

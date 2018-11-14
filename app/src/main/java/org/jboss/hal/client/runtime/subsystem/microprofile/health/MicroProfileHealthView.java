@@ -39,7 +39,7 @@ import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Ids.FORM;
-import static org.jboss.hal.resources.Ids.MICROPROFILE_HEALTH;
+import static org.jboss.hal.resources.Ids.MICRO_PROFILE_HEALTH;
 import static org.jboss.hal.resources.Ids.TABLE;
 
 public class MicroProfileHealthView extends HalViewImpl implements MicroProfileHealthPresenter.MyView {
@@ -58,13 +58,13 @@ public class MicroProfileHealthView extends HalViewImpl implements MicroProfileH
 
         Metadata metadata = Metadata.staticDescription(mpCheckResource.checksOperationDescription());
 
-        checkTable = new ModelNodeTable.Builder<>(Ids.build(MICROPROFILE_HEALTH, TABLE), metadata)
+        checkTable = new ModelNodeTable.Builder<>(Ids.build(MICRO_PROFILE_HEALTH, TABLE), metadata)
                 .button(resources.constants().refresh(), table -> presenter.reload())
                 .column(Names.NAME, (cell, type, row, meta) -> row.get(NAME).asString())
                 .column(Names.STATE, (cell, type, row, meta) -> row.get(STATE).asString())
                 .build();
 
-        checkForm = new ModelNodeForm.Builder<>(Ids.build(MICROPROFILE_HEALTH, FORM), metadata)
+        checkForm = new ModelNodeForm.Builder<>(Ids.build(MICRO_PROFILE_HEALTH, FORM), metadata)
                 .includeRuntime()
                 .readOnly()
                 .unsorted()

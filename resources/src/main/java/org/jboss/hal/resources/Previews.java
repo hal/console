@@ -140,7 +140,10 @@ public interface Previews extends ClientBundleWithLookup {
     ExternalTextResource configurationMail();
 
     @Source("previews/configuration/microprofile-config.html")
-    ExternalTextResource configurationMicroprofileConfig();
+    ExternalTextResource configurationMicroProfileConfig();
+
+    @Source("previews/configuration/microprofile-metrics.html")
+    ExternalTextResource configurationMicroProfileMetrics();
 
     @Source("previews/configuration/messaging.html")
     ExternalTextResource configurationMessaging();
