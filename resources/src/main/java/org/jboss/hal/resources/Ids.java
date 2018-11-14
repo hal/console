@@ -547,7 +547,8 @@ public interface Ids {
     String MESSAGING_SERVER_RUNTIME = "msg-server-r";
     String MESSAGING_SERVER_RUNTIME_REFRESH = "msg-server-r-refresh";
     String MESSAGING_SERVER_SETTINGS = "msg-server-settings";
-    String MICROPROFILE_HEALTH = "microprofile-health";
+    String MICRO_PROFILE_HEALTH = "microprofile-health";
+    String MICRO_PROFILE_METRICS_FORM = "microprofile-metrics-form";
     String MODCLUSTER_PROXY = "modcluster-proxy";
     String MODCLUSTER_PROXY_ADD = "modcluster-proxy-add";
     String MODCLUSTER_PROXY_REFRESH = "modcluster-proxy-refresh";

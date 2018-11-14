@@ -38,13 +38,13 @@ public class ReadChildrenAutoComplete extends AutoComplete {
 
     private static final String ERROR_MESSAGE = "Unable to read child resource suggestions for {}: {}";
 
-    public ReadChildrenAutoComplete(final Dispatcher dispatcher, final StatementContext statementContext,
-            final AddressTemplate template) {
+    public ReadChildrenAutoComplete(Dispatcher dispatcher, StatementContext statementContext,
+            AddressTemplate template) {
         this(dispatcher, statementContext, singleton(template));
     }
 
-    public ReadChildrenAutoComplete(final Dispatcher dispatcher, final StatementContext statementContext,
-            final Iterable<AddressTemplate> templates) {
+    public ReadChildrenAutoComplete(Dispatcher dispatcher, StatementContext statementContext,
+            Iterable<AddressTemplate> templates) {
         verifyTemplates(templates);
 
         ResultProcessor resultProcessor;
@@ -106,7 +106,7 @@ public class ReadChildrenAutoComplete extends AutoComplete {
         init(options);
     }
 
-    private void verifyTemplates(final Iterable<AddressTemplate> templates) {
+    private void verifyTemplates(Iterable<AddressTemplate> templates) {
         if (Iterables.isEmpty(templates)) {
             throw new IllegalArgumentException("Templates must not be empty in ReadChildrenAutoComplete");
         }

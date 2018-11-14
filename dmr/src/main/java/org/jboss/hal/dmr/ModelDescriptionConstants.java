@@ -296,6 +296,7 @@ public interface ModelDescriptionConstants {
     String EXPORT_CERTIFICATE = "export-certificate";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
+    String EXPOSED_SUBSYSTEMS = "exposed-subsystems";
     String EXTENSION_POINT = "extension-point";
     String EXTERNAL_JMS_QUEUE = "external-jms-queue";
     String EXTERNAL_JMS_TOPIC = "external-jms-topic";
@@ -512,6 +513,7 @@ public interface ModelDescriptionConstants {
     String METRIC = "metric";
     String MICROPROFILE_CONFIG_SMALLRYE = "microprofile-config-smallrye";
     String MICROPROFILE_HEALTH_SMALLRYE = "microprofile-health-smallrye";
+    String MICROPROFILE_METRICS_SMALLRYE = "microprofile-metrics-smallrye";
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
     String MIN_POOL_SIZE = "min-pool-size";

@@ -135,8 +135,13 @@ public class Subsystems {
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(MICROPROFILE_CONFIG_SMALLRYE, Names.MICROPROFILE_CONFIG)
                 .subtitle(Names.SMALLRYE)
-                .token(NameTokens.MICROPROFILE_CONFIG)
-                .preview(resources.previews().configurationMicroprofileConfig())
+                .token(NameTokens.MICRO_PROFILE_CONFIG)
+                .preview(resources.previews().configurationMicroProfileConfig())
+                .build());
+        addConfiguration(new SubsystemMetadata.Builder(MICROPROFILE_METRICS_SMALLRYE, Names.MICROPROFILE_METRICS)
+                .subtitle(Names.SMALLRYE)
+                .token(NameTokens.MICRO_PROFILE_METRICS)
+                .preview(resources.previews().configurationMicroProfileMetrics())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(MODCLUSTER, Names.MODCLUSTER)
                 .nextColumn(Ids.MODCLUSTER_PROXY)
@@ -243,7 +248,7 @@ public class Subsystems {
                 .preview(resources.previews().runtimeMessagingServer())
                 .build());
         addRuntime(new SubsystemMetadata.Builder(MICROPROFILE_HEALTH_SMALLRYE, Names.MICROPROFILE_HEALTH)
-                .token(NameTokens.MICROPROFILE_HEALTH)
+                .token(NameTokens.MICRO_PROFILE_HEALTH)
                 .build());
         addRuntime(new SubsystemMetadata.Builder(TRANSACTIONS, Names.TRANSACTION)
                 .token(NameTokens.TRANSACTIONS_RUNTIME)
