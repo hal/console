@@ -296,6 +296,7 @@ public interface ModelDescriptionConstants {
     String EXPORT_CERTIFICATE = "export-certificate";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
+    String EXPOSED_SUBSYSTEMS = "exposed-subsystems";
     String EXTENSION_POINT = "extension-point";
     String EXTERNAL_JMS_QUEUE = "external-jms-queue";
     String EXTERNAL_JMS_TOPIC = "external-jms-topic";

@@ -15,12 +15,15 @@
  */
 package org.jboss.hal.client.configuration.subsystem.microprofile;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -31,8 +34,12 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICRO_PROFILE_METRICS_ADDRESS;
@@ -45,7 +52,9 @@ public class MicroProfileMetricsPresenter
 
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
+    private final Resources resources;
 
     @Inject
     public MicroProfileMetricsPresenter(EventBus eventBus,
@@ -54,11 +63,15 @@ public class MicroProfileMetricsPresenter
             Finder finder,
             CrudOperations crud,
             FinderPathFactory finderPathFactory,
-            StatementContext statementContext) {
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
+        this.resources = resources;
     }
 
     @Override
@@ -80,6 +93,15 @@ public class MicroProfileMetricsPresenter
     @Override
     protected void reload() {
         crud.read(MICRO_PROFILE_METRICS_TEMPLATE, result -> getView().update(result));
+    }
+
+    void reset(Form<ModelNode> form) {
+        Metadata metadata = metadataRegistry.lookup(MICRO_PROFILE_METRICS_TEMPLATE);
+        crud.resetSingleton(Names.MICROPROFILE_METRICS, MICRO_PROFILE_METRICS_TEMPLATE, form, metadata, this::reload);
+    }
+
+    void save(Map<String, Object> changedValues) {
+        crud.saveSingleton(Names.MICROPROFILE_METRICS, MICRO_PROFILE_METRICS_TEMPLATE, changedValues, this::reload);
     }
 
 
