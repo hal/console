@@ -85,6 +85,8 @@ public class CacheColumn extends FinderColumn<Cache> {
         return null;
     }
 
+    private static final String JGROUPS_ADDITION_STATUS = "jgrupsAdditionStatus";
+
     private final CrudOperations crud;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
@@ -229,8 +231,10 @@ public class CacheColumn extends FinderColumn<Cache> {
 
                             int status = context.pop();
                             if (status == 200) {
+                                context.set(JGROUPS_ADDITION_STATUS, false);
                                 return Completable.complete();
                             } else {
+                                context.set(JGROUPS_ADDITION_STATUS, true);
                                 return dispatcher.execute(addJgroups).toCompletable();
                             }
                         };
@@ -239,8 +243,10 @@ public class CacheColumn extends FinderColumn<Cache> {
                                 .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                                     @Override
                                     public void onSuccess(FlowContext context) {
-                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                .addResourceSuccess(Names.TRANSPORT, Names.JGROUPS)));
+                                        if (context.get(JGROUPS_ADDITION_STATUS).equals(true)) {
+                                            MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                    .addResourceSuccess(Names.TRANSPORT, Names.JGROUPS)));
+                                        }
                                         crud.add(cacheType.type, name, address, model,
                                                 (n, a) -> refresh(Ids.build(cacheType.baseId, name)));
                                     }
