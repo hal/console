@@ -287,13 +287,13 @@ static Logger _log = LoggerFactory.getLogger("org.jboss");
         Operation operation = new Operation.Builder(KEY_MANAGER_TEMPLATE.resolve(statementContext, name), INIT)
                 .build();
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initSuccess(name)));
+                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initKeyManagerSuccess(name)));
                     reload();
                 },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initError(name, failure))),
+                        Message.error(resources.messages().initKeyManagerError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initError(name, exception.getMessage()))));
+                        Message.error(resources.messages().initKeyManagerError(name, exception.getMessage()))));
     }
 
     void reloadCRL(String name) {
