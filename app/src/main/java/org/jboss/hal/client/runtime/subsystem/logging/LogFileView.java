@@ -149,6 +149,8 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     public void detach() {
         super.detach();
         window.onresize = null;
+
+        SwitchBridge.Api.element(tailMode).destroy();
     }
 
     private void adjustEditorHeight() {
