@@ -138,6 +138,10 @@ public class Subsystems {
                 .token(NameTokens.MICRO_PROFILE_CONFIG)
                 .preview(resources.previews().configurationMicroProfileConfig())
                 .build());
+        addConfiguration(new SubsystemMetadata.Builder(MICROPROFILE_HEALTH_SMALLRYE, Names.MICROPROFILE_HEALTH)
+                .subtitle(Names.SMALLRYE)
+                .generic()
+                .build());
         addConfiguration(new SubsystemMetadata.Builder(MICROPROFILE_METRICS_SMALLRYE, Names.MICROPROFILE_METRICS)
                 .subtitle(Names.SMALLRYE)
                 .token(NameTokens.MICRO_PROFILE_METRICS)
@@ -248,6 +252,7 @@ public class Subsystems {
                 .preview(resources.previews().runtimeMessagingServer())
                 .build());
         addRuntime(new SubsystemMetadata.Builder(MICROPROFILE_HEALTH_SMALLRYE, Names.MICROPROFILE_HEALTH)
+                .subtitle(Names.SMALLRYE)
                 .token(NameTokens.MICRO_PROFILE_HEALTH)
                 .build());
         addRuntime(new SubsystemMetadata.Builder(TRANSACTIONS, Names.TRANSACTION)

@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -42,11 +41,10 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.runtime.subsystem.microprofile.health.AddressTemplates.MICROPROFILE_HEALTH_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.microprofile.health.AddressTemplates.MICROPROFILE_HEALTH_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHECK;
-import static org.jboss.hal.resources.Ids.MICRO_PROFILE_HEALTH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MICROPROFILE_HEALTH_SMALLRYE;
 
 public class MicroProfileHealthPresenter
-        extends ApplicationFinderPresenter<MicroProfileHealthPresenter.MyView, MicroProfileHealthPresenter.MyProxy>
-        implements SupportsExpertMode {
+        extends ApplicationFinderPresenter<MicroProfileHealthPresenter.MyView, MicroProfileHealthPresenter.MyProxy> {
 
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
@@ -77,14 +75,9 @@ public class MicroProfileHealthPresenter
     }
 
     @Override
-    public ResourceAddress resourceAddress() {
-        return MICROPROFILE_HEALTH_TEMPLATE.resolve(statementContext);
-    }
-
-    @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, MICRO_PROFILE_HEALTH,
+                .append(Ids.RUNTIME_SUBSYSTEM, MICROPROFILE_HEALTH_SMALLRYE,
                         resources.constants().monitor(), Names.MICROPROFILE_HEALTH);
     }
 
