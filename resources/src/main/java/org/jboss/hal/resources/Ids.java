@@ -45,6 +45,9 @@ public interface Ids {
     String ABOUT_MODAL = "about-modal";
     String ABOUT_MODAL_TITLE = "about-modal-title";
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
+    String ACCESS_CONTROL_BROWSE_BY_GROUPS = "access-control-browse-by-groups";
+    String ACCESS_CONTROL_BROWSE_BY_ROLES = "access-control-browse-by-roles";
+    String ACCESS_CONTROL_BROWSE_BY_USERS = "access-control-browse-by-users";
     String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_OPERATION_EMPTY = "active-operation-empty";
     String ADD = "add";

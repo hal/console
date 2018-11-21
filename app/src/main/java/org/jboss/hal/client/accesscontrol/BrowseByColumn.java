@@ -46,8 +46,8 @@ public class BrowseByColumn extends StaticItemColumn {
         private final Environment environment;
         private final Alert warning;
 
-        TopLevelPreview(final String header, final ExternalTextResource resource,
-                final AccessControl accessControl, final Environment environment, final Resources resources) {
+        TopLevelPreview(String header, ExternalTextResource resource,
+                AccessControl accessControl, Environment environment, Resources resources) {
             super(header);
             this.environment = environment;
             this.warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
@@ -61,7 +61,7 @@ public class BrowseByColumn extends StaticItemColumn {
         }
 
         @Override
-        public void update(final StaticItem item) {
+        public void update(StaticItem item) {
             Elements.setVisible(warning.asElement(),
                     environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
         }
@@ -69,8 +69,8 @@ public class BrowseByColumn extends StaticItemColumn {
 
 
     @Inject
-    public BrowseByColumn(final Finder finder, final AccessControl accessControl, final Environment environment,
-            final Resources resources) {
+    public BrowseByColumn(Finder finder, AccessControl accessControl, Environment environment,
+            Resources resources) {
         super(finder, Ids.ACCESS_CONTROL_BROWSE_BY, resources.constants().browseBy(),
 
                 // if Keycloak-SSO is enabled, the user management is performed in keycloak server,
@@ -80,18 +80,21 @@ public class BrowseByColumn extends StaticItemColumn {
                 environment.isSingleSignOn() ? Collections.emptyList() :
                         Arrays.asList(
                                 new StaticItem.Builder(resources.constants().users())
+                                        .id(Ids.ACCESS_CONTROL_BROWSE_BY_USERS)
                                         .onPreview(new TopLevelPreview(resources.constants().users(),
                                                 resources.previews().rbacUsers(), accessControl, environment,
                                                 resources))
                                         .nextColumn(Ids.USER)
                                         .build(),
                                 new StaticItem.Builder(resources.constants().groups())
+                                        .id(Ids.ACCESS_CONTROL_BROWSE_BY_GROUPS)
                                         .onPreview(new TopLevelPreview(resources.constants().groups(),
                                                 resources.previews().rbacGroups(), accessControl, environment,
                                                 resources))
                                         .nextColumn(Ids.GROUP)
                                         .build(),
                                 new StaticItem.Builder(resources.constants().roles())
+                                        .id(Ids.ACCESS_CONTROL_BROWSE_BY_ROLES)
                                         .onPreview(new TopLevelPreview(resources.constants().roles(),
                                                 environment.isStandalone() ? resources.previews()
                                                         .rbacRolesStandalone() : resources.previews().rbacRolesDomain(),
