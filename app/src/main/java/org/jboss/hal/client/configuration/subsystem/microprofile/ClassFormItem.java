@@ -29,17 +29,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
- * Form item used in the microprofile-config subsystem to configure the complex attribute {@code class} which is roughly
- * defined as
+ * Form item used in the microprofile-config subsystem to configure the complex attribute {@code class} defined as
  * <pre>
  * "class" => {
  *     "type" => OBJECT,
  *     "value-type" => {
  *         "name" => {
  *             "type" => STRING,
+ *             ...
  *         },
  *         "module" => {
  *             "type" => STRING,
+ *             ...
  *         }
  *     },
  * }

@@ -568,6 +568,7 @@ public interface ModelDescriptionConstants {
     String OPERATION_DATE = "operation-date";
     String OPERATION_HEADERS = "operation-headers";
     String OPERATIONS = "operations";
+    String ORDINAL = "ordinal";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
     String OTHER_QUEUE_NAME = "other-queue-name";

@@ -64,6 +64,7 @@ public interface Names {
     String CLUSTER_CONNECTION = "Cluster Connection";
     String CLUSTERING = "Clustering";
     String COLLECTION = "Collection";
+    String CONFIG_SOURCE = "Config Source";
     String CONFIGURATION = "Configuration";
     String CONFIGURATION_CHANGES = "Configuration Changes";
     String CONNECTION = "Connection";

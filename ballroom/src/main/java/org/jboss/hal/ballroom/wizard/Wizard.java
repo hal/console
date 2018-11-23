@@ -148,7 +148,7 @@ public class Wizard<C, S extends Enum<S>> {
     private boolean finishCanClose;
     private S state;
 
-    private Wizard(final Builder<C, S> builder) {
+    private Wizard(Builder<C, S> builder) {
         this.context = builder.context;
         this.steps = new LinkedHashMap<>(builder.steps);
         this.steps.values().forEach(step -> step.init(this));
@@ -201,7 +201,7 @@ public class Wizard<C, S extends Enum<S>> {
         pushState(state);
     }
 
-    public void showProgress(final String title, final SafeHtml text) {
+    public void showProgress(String title, SafeHtml text) {
         blankSlate.classList.remove(wizardPfComplete);
         blankSlate.classList.add(wizardPfProcess);
         Elements.removeChildrenFrom(blankSlate);
@@ -217,30 +217,33 @@ public class Wizard<C, S extends Enum<S>> {
         nextButton.disabled = true;
     }
 
-    public void showSuccess(final String title, final SafeHtml text) {
+    public void showSuccess(String title, SafeHtml text) {
         showSuccess(title, text, null, null, true);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, boolean lastStep) {
         showSuccess(title, text, null, null, lastStep);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, CloseAction<C> closeAction, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, CloseAction<C> closeAction) {
+        showSuccess(title, text, null, null, closeAction, true);
+    }
+
+    public void showSuccess(String title, SafeHtml text, CloseAction<C> closeAction, boolean lastStep) {
         showSuccess(title, text, null, null, closeAction, lastStep);
     }
 
-    public void showSuccess(final String title, final SafeHtml text,
-            final String successButton, SuccessAction<C> successAction) {
+    public void showSuccess(String title, SafeHtml text, String successButton, SuccessAction<C> successAction) {
         showSuccess(title, text, successButton, successAction, true);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, final String successButton,
-            SuccessAction<C> successAction, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, String successButton, SuccessAction<C> successAction,
+            boolean lastStep) {
         showSuccess(title, text, successButton, successAction, null, lastStep);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, final String successButton,
-            SuccessAction<C> successAction, CloseAction<C> closeAction, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, String successButton, SuccessAction<C> successAction,
+            CloseAction<C> closeAction, boolean lastStep) {
         blankSlate.classList.remove(wizardPfProcess);
         blankSlate.classList.add(wizardPfComplete);
         Elements.removeChildrenFrom(blankSlate);
@@ -274,7 +277,7 @@ public class Wizard<C, S extends Enum<S>> {
         if (closeAction != null) {
             nextButton.onclick = event -> {
                 closeAction.execute(context);
-                return  null;
+                return null;
             };
         } else {
             nextButton.onclick = null;
@@ -282,19 +285,19 @@ public class Wizard<C, S extends Enum<S>> {
         finishCanClose = lastStep;
     }
 
-    public void showError(final String title, final SafeHtml text) {
+    public void showError(String title, SafeHtml text) {
         showError(title, text, null, true);
     }
 
-    public void showError(final String title, final SafeHtml text, final boolean lastStep) {
+    public void showError(String title, SafeHtml text, boolean lastStep) {
         showError(title, text, null, lastStep);
     }
 
-    public void showError(final String title, final SafeHtml text, final String error) {
+    public void showError(String title, SafeHtml text, String error) {
         showError(title, text, error, true);
     }
 
-    public void showError(final String title, final SafeHtml text, final String error, final boolean lastStep) {
+    public void showError(String title, SafeHtml text, String error, boolean lastStep) {
         blankSlate.classList.remove(wizardPfProcess);
         blankSlate.classList.add(wizardPfComplete);
         Elements.removeChildrenFrom(blankSlate);
@@ -375,7 +378,7 @@ public class Wizard<C, S extends Enum<S>> {
         if (showsError) {
             pushState(state);
         } else {
-            final S previousState = back.back(context, state);
+            S previousState = back.back(context, state);
             if (previousState != null) {
                 pushState(previousState);
             }
@@ -399,7 +402,7 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     private void next() {
-        final S nextState = next.next(context, state);
+        S nextState = next.next(context, state);
         if (nextState != null) {
             pushState(nextState);
         } else {
@@ -421,7 +424,7 @@ public class Wizard<C, S extends Enum<S>> {
      *
      * @param state the next state
      */
-    private void pushState(final S state) {
+    private void pushState(S state) {
         this.state = state;
         this.showsError = false;
 
@@ -507,6 +510,7 @@ public class Wizard<C, S extends Enum<S>> {
         void execute(C context);
     }
 
+
     /**
      * An action executed when the user clicks on the close button of the success page.
      */
@@ -557,7 +561,7 @@ public class Wizard<C, S extends Enum<S>> {
         private CancelCallback<C> cancelCallback;
         private boolean stayOpenAfterFinish;
 
-        public Builder(final String title, final C context) {
+        public Builder(String title, C context) {
             this.title = title;
             this.context = context;
             this.steps = new LinkedHashMap<>();
