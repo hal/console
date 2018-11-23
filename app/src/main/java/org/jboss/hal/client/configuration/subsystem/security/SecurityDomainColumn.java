@@ -58,13 +58,6 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
         super(new FinderColumn.Builder<SecurityDomain>(finder, Ids.SECURITY_DOMAIN, Names.SECURITY_DOMAIN)
 
-                .columnAction(columnActionFactory.add(
-                        Ids.SECURITY_DOMAIN_ADD,
-                        Names.SECURITY_DOMAIN,
-                        SECURITY_DOMAIN_TEMPLATE,
-                        Collections.singletonList(CACHE_TYPE),
-                        Ids::securityDomain))
-
                 .itemsProvider((context, callback) ->
                         crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {
                             List<SecurityDomain> securityDomains = children.stream()
@@ -76,8 +69,19 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                 .withFilter()
                 .filterDescription(resources.messages().securityDomainColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler()
-                .onPreview(SecurityDomainPreview::new)
+                //Do not optimize this lambda to a method reference,
+                //the JavaToJavaScript transpiler can't handle a method reference here
+                .onPreview(item -> new SecurityDomainPreview(item))
         );
+
+        addColumnAction(columnActionFactory.add(
+                Ids.SECURITY_DOMAIN_ADD,
+                Names.SECURITY_DOMAIN,
+                SECURITY_DOMAIN_TEMPLATE,
+                Collections.singletonList(CACHE_TYPE),
+                Ids::securityDomain,
+                this::createUniqueValidation
+        ));
 
         setItemRenderer(item -> new ItemDisplay<SecurityDomain>() {
             @Override

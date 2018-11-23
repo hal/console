@@ -70,7 +70,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
         builder.buttonsHandler.forEach(tableBuilder::button);
 
         table = tableBuilder
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(builder.resources.constants().aliases(),
                         row -> {
                             selectedResource = row.getName();

@@ -41,9 +41,9 @@ abstract class HomepageSection implements IsElement {
     private static final String FA_ANGLE_DOWN = "fa-angle-down";
 
     // @formatter:off
-    static HomepageSection create(final Places places, final Resources resources,
-            final String id, final String token, final String header, final String intro,
-            final Iterable<String> steps, final boolean open) {
+    static HomepageSection create(Places places, Resources resources,
+            String id, String token, String header, String intro,
+            Iterable<String> steps, boolean open) {
         return new Templated_HomepageSection(places, resources, id, token, header, intro, steps, open);
     }
 

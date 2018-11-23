@@ -1,6 +1,6 @@
 {
     "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
-    "description" => "A definition to enable SSL on the management interface, it combines elytron resources: key-store, key-manager, server-ssl-context, http-interface",
+    "description" => "A definition to enable SSL on the management interface, it combines elytron resources: key-store, key-manager, trust-manager, certificate-authority-account, server-ssl-context, http-interface",
     "attributes" => {
         "key-store" => {
             "type" => STRING,
@@ -247,6 +247,38 @@
             "default" => 9993,
             "min" => 0L,
             "max" => 65535L,
-        }
+        },
+        "certificate-authority-account-name" => {
+            "type" => STRING,
+            "description" => "The certificate authority account name.",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "certificate-authority-alias" => {
+            "type" => STRING,
+            "description" => "The key-store alias to store the certificate authority account information.",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "certificate-domain-names" => {
+            "type" => LIST,
+            "description" => "The list of DNS name(s) to request the certificate for.",
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 0L,
+            "max-length" => 2147483647L,
+            "value-type" => STRING
+        },
+        "certificate-staging" => {
+            "type" => BOOLEAN,
+            "description" => "Indicates whether or not the certificate authority's staging URL should be used. This should only be set to true for testing purposes. This should never be set to true in a production environment.",
+            "required" => false,
+            "nillable" => true,
+            "default" => false
+        },
     }
 }

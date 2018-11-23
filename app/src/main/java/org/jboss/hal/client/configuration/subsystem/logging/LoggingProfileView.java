@@ -82,7 +82,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     // ------------------------------------------------------ initialization
 
-    public static LoggingProfileView create(final MbuiContext mbuiContext, final CrudOperations crud) {
+    public static LoggingProfileView create(MbuiContext mbuiContext, CrudOperations crud) {
         return new Mbui_LoggingProfileView(mbuiContext, crud);
     }
 
@@ -106,6 +106,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     @MbuiElement(Ids.LOGGING_PROFILE + "-handler-async-form") Form<NamedNode> asyncHandlerForm;
     @MbuiElement(Ids.LOGGING_PROFILE + "-handler-custom-table") Table<NamedNode> customHandlerTable;
     @MbuiElement(Ids.LOGGING_PROFILE + "-handler-custom-form") Form<NamedNode> customHandlerForm;
+    @MbuiElement(Ids.LOGGING_PROFILE + "-handler-socket-table") Table<NamedNode> socketHandlerTable;
+    @MbuiElement(Ids.LOGGING_PROFILE + "-handler-socket-form") Form<NamedNode> socketHandlerForm;
     @MbuiElement(Ids.LOGGING_PROFILE + "-handler-syslog-table") Table<NamedNode> syslogHandlerTable;
     @MbuiElement(Ids.LOGGING_PROFILE + "-handler-syslog-form") Form<NamedNode> syslogHandlerForm;
     @MbuiElement(Ids.LOGGING_PROFILE + "-formatter-custom-table") Table<NamedNode> customFormatterTable;
@@ -121,13 +123,14 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     final SelectionAwareStatementContext selectionAwareStatementContext;
     final SuggestHandler suggestHandlers;
+    final SuggestHandler namedFormatters;
     EmptyState noRootLogger;
 
     LoggingProfileView(MbuiContext mbuiContext) {
         super(mbuiContext);
         selectionAwareStatementContext = new SelectionAwareStatementContext(mbuiContext.statementContext(),
                 () -> presenter.getLoggingProfile());
-        List<AddressTemplate> templates = asList(
+        List<AddressTemplate> templatesHandlers = asList(
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append(ASYNC_HANDLER + EQ_WILDCARD),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append(CONSOLE_HANDLER + EQ_WILDCARD),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append(CUSTOM_HANDLER + EQ_WILDCARD),
@@ -135,9 +138,23 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append(PERIODIC_ROTATING_FILE_HANDLER + EQ_WILDCARD),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append(PERIODIC_SIZE_ROTATING_FILE_HANDLER + EQ_WILDCARD),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append(SIZE_ROTATING_FILE_HANDLER + EQ_WILDCARD),
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append(SOCKET_HANDLER + EQ_WILDCARD),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append(SYSLOG_HANDLER + EQ_WILDCARD));
         suggestHandlers = new ReadChildrenAutoComplete(mbuiContext.dispatcher(), selectionAwareStatementContext,
-                templates);
+                templatesHandlers);
+
+        List<AddressTemplate> templatesNamedFormatters = asList(
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append(PATTERN_FORMATTER + EQ_WILDCARD),
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append(CUSTOM_FORMATTER + EQ_WILDCARD),
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append(JSON_FORMATTER + EQ_WILDCARD),
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append(XML_FORMATTER + EQ_WILDCARD));
+        namedFormatters = new ReadChildrenAutoComplete(mbuiContext.dispatcher(), selectionAwareStatementContext,
+                templatesNamedFormatters);
+    }
+
+    @Override
+    protected StatementContext statementContext() {
+        return selectionAwareStatementContext;
     }
 
     @PostConstruct
@@ -154,10 +171,6 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
         rootLoggerForm.asElement().parentNode.appendChild(noRootLogger.asElement());
         rootLoggerVisibility(false);
-
-        // add suggest handler
-        rootLoggerForm.getFormItem(HANDLERS).registerSuggestHandler(suggestHandlers);
-        loggerForm.getFormItem(HANDLERS).registerSuggestHandler(suggestHandlers);
 
         // --------------------------- json formatter
         AddressTemplate jsonTemplate = LOGGING_PROFILE_TEMPLATE.append(JSON_FORMATTER_TEMPLATE.lastName() + EQ_WILDCARD);
@@ -689,6 +702,42 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         customHandlerTable.update(items);
     }
 
+    // ------------------------------------------------------ socket handler
+
+    void addSocketHandler() {
+        addResource(SOCKET_HANDLER + EQ_WILDCARD,
+                Ids.build(Ids.LOGGING_PROFILE, "handler-socket", Ids.TABLE, Ids.ADD),
+                Names.SOCKET_ACTION_HANDLER, LEVEL, "named-formatter", "outbound-socket-binding-ref");
+    }
+
+    void removeSocketHandler(Table<NamedNode> table) {
+        removeResource(table, SOCKET_HANDLER + EQ_WILDCARD, Names.SOCKET_ACTION_HANDLER);
+    }
+
+    void saveSocketHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry()
+                .lookup(LOGGING_PROFILE_TEMPLATE.append(SOCKET_HANDLER + EQ_WILDCARD));
+        saveForm(Names.SOCKET_ACTION_HANDLER, name, SELECTED_LOGGING_PROFILE_TEMPLATE
+                .append(SOCKET_HANDLER + EQ_WILDCARD)
+                .resolve(selectionAwareStatementContext, name), changedValues, metadata);
+    }
+
+    void resetSocketHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry()
+                .lookup(LOGGING_PROFILE_TEMPLATE.append(SOCKET_HANDLER + EQ_WILDCARD));
+        resetForm(Names.SOCKET_ACTION_HANDLER, name, SELECTED_LOGGING_PROFILE_TEMPLATE
+                .append(SOCKET_HANDLER + EQ_WILDCARD)
+                .resolve(selectionAwareStatementContext, name), form, metadata);
+    }
+
+    @Override
+    public void updateSocketHandler(List<NamedNode> items) {
+        navigation.updateBadge(Ids.build(Ids.LOGGING_PROFILE, "handler-socket", Ids.ITEM), items.size());
+        socketHandlerForm.clear();
+        socketHandlerTable.update(items);
+    }
 
     // ------------------------------------------------------ syslog handler
 
@@ -822,6 +871,10 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         FormItem<Object> handlers = dialog.getForm().getFormItem("handlers");
         if (handlers != null) {
             handlers.registerSuggestHandler(suggestHandlers);
+        }
+        FormItem<Object> namedFormatter = dialog.getForm().getFormItem("named-formatter");
+        if (namedFormatter != null) {
+            namedFormatter.registerSuggestHandler(namedFormatters);
         }
         dialog.show();
     }

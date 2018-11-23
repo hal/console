@@ -110,7 +110,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.add(HOST_TEMPLATE, table -> presenter.addHost()))
                 .button(tableButtonFactory.remove(HOST_TEMPLATE,
                         table -> presenter.removeHost(table.selectedRow().getName())))
-                .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(inlineActions, "15em")
                 .build();
 

@@ -190,6 +190,10 @@ enum ElytronResource {
             ModelDescriptionConstants.IDENTITY_REALM,
             AddressTemplates.IDENTITY_REALM_TEMPLATE, false),
 
+    JASPI_CONFIGURATION(Ids.ELYTRON_JASPI,
+            ModelDescriptionConstants.JASPI_CONFIGURATION,
+            AddressTemplates.JASPI_CONFIGURATION_TEMPLATE, false),
+
     JDBC_REALM(Ids.ELYTRON_JDBC_REALM,
             ModelDescriptionConstants.JDBC_REALM,
             AddressTemplates.JDBC_REALM_TEMPLATE, true),
@@ -285,6 +289,10 @@ enum ElytronResource {
     SERVER_SSL_CONTEXT(Ids.ELYTRON_SERVER_SSL_CONTEXT,
             ModelDescriptionConstants.SERVER_SSL_CONTEXT,
             AddressTemplates.SERVER_SSL_CONTEXT_TEMPLATE, false),
+
+    SERVER_SSL_SNI_CONTEXT(Ids.ELYTRON_SERVER_SSL_SNI_CONTEXT,
+            ModelDescriptionConstants.SERVER_SSL_SNI_CONTEXT,
+            AddressTemplates.SERVER_SSL_SNI_CONTEXT_TEMPLATE, false),
 
     SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY(Ids.ELYTRON_SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY,
             ModelDescriptionConstants.SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY,

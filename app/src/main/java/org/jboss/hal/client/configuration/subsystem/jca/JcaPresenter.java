@@ -37,7 +37,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
@@ -166,6 +165,38 @@ public class JcaPresenter
     }
 
 
+    // ------------------------------------------------------ distributed work manager
+
+    void addDistributedWorkManager(String type, String name, ModelNode payload) {
+        ModelNode maxThreads = payload.remove(MAX_THREADS);
+        ModelNode queueLength = payload.remove(QUEUE_LENGTH);
+        ModelNode srtModel = new ModelNode();
+        srtModel.get(MAX_THREADS).set(maxThreads);
+        srtModel.get(QUEUE_LENGTH).set(queueLength);
+        Composite composite = new Composite();
+        ResourceAddress dwmAddress = DISTRIBUTED_WORKMANAGER_TEMPLATE.resolve(statementContext, name);
+        Operation addDwm = new Operation.Builder(dwmAddress, ADD)
+                .payload(payload)
+                .build();
+        composite.add(addDwm);
+
+        ResourceAddress srtAddress = DISTRIBUTED_WORKMANAGER_SRT_TEMPLATE.resolve(statementContext, name, name);
+        Operation addSrt = new Operation.Builder(srtAddress, ADD)
+                .payload(srtModel)
+                .build();
+        composite.add(addSrt);
+        dispatcher.execute(composite, (CompositeResult compositeResult) -> {
+                    MessageEvent.fire(getEventBus(), Message.success(
+                            resources.messages().addResourceSuccess(type, name)));
+                    reload();
+                },
+                (operation, failure) -> MessageEvent.fire(getEventBus(), Message.error(
+                        resources.messages().addResourceError(type, failure))),
+                (operation, e) -> MessageEvent.fire(getEventBus(), Message.error(
+                        resources.messages().addResourceError(type, e.getMessage()))));
+    }
+
+
     // ------------------------------------------------------ tracer
 
     void addTracer() {
@@ -209,7 +240,6 @@ public class JcaPresenter
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JCA_THREAD_POOL_ADD, metadata)
                         .fromRequestProperties()
                         .unboundFormItem(typeItem, 0)
-                        .unboundFormItem(new NameItem(), 1)
                         .include(MAX_THREADS, QUEUE_LENGTH, THREAD_FACTORY)
                         .unsorted()
                         .build();
@@ -218,11 +248,10 @@ public class JcaPresenter
                         (name, modelNode) -> {
                             String type = typeItem.getValue();
                             AddressTemplate tpTemplate = Names.LONG_RUNNING.equals(type)
-                                    ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + EQUALS + name)
-                                    : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + EQUALS + name);
+                                    ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + EQUALS + workmanager)
+                                    : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + EQUALS + workmanager);
                             ResourceAddress address = tpTemplate.resolve(statementContext, workmanager);
                             Operation operation = new Operation.Builder(address, ADD)
-                                    .param(NAME, name)
                                     .payload(modelNode)
                                     .build();
                             dispatcher.execute(operation, result -> {

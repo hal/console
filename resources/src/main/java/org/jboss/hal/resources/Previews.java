@@ -140,7 +140,10 @@ public interface Previews extends ClientBundleWithLookup {
     ExternalTextResource configurationMail();
 
     @Source("previews/configuration/microprofile-config.html")
-    ExternalTextResource configurationMicroprofileConfig();
+    ExternalTextResource configurationMicroProfileConfig();
+
+    @Source("previews/configuration/microprofile-metrics.html")
+    ExternalTextResource configurationMicroProfileMetrics();
 
     @Source("previews/configuration/messaging.html")
     ExternalTextResource configurationMessaging();
@@ -153,6 +156,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/messaging-destinations.html")
     ExternalTextResource configurationMessagingDestinations();
+
+    @Source("previews/configuration/messaging-remote-activemq.html")
+    ExternalTextResource configurationMessagingRemoteActiveMQ();
 
     @Source("previews/configuration/messaging-ha-policy.html")
     ExternalTextResource configurationMessagingHaPolicy();

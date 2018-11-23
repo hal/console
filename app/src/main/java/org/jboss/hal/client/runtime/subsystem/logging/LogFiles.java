@@ -32,6 +32,8 @@ import org.jboss.hal.resources.Ids;
 
 import static elemental2.dom.DomGlobal.window;
 import static java.util.stream.Collectors.joining;
+import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.PROFILE_LOG_FILE_TEMPLATE;
 import static org.jboss.hal.core.mvp.Places.EXTERNAL_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -65,24 +67,36 @@ public class LogFiles {
     }
 
     public void download(String logFile) {
-        window.open(downloadUrl(logFile), "", "");
+        window.open(downloadUrl(logFile, null), "", "");
     }
 
-    String downloadUrl(String name) {
-        ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
+    public void download(String logFile, String loggingProfile) {
+        window.open(downloadUrl(logFile, loggingProfile), "", "");
+    }
+
+    String downloadUrl(String name, String loggingProfile) {
+        ResourceAddress address;
+        if (loggingProfile == null) {
+            address = LOG_FILE_TEMPLATE.resolve(statementContext, name);
+        } else {
+            address = PROFILE_LOG_FILE_TEMPLATE.resolve(statementContext, loggingProfile, name);
+        }
         Operation operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                 .param(NAME, STREAM)
                 .build();
         return dispatcher.downloadUrl(operation);
     }
 
-    String externalUrl(String name) {
-        PlaceRequest request = new PlaceRequest.Builder().nameToken(NameTokens.LOG_FILE)
+    String externalUrl(String name, String loggingProfile) {
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(NameTokens.LOG_FILE)
                 .with(HOST, statementContext.selectedHost())
                 .with(SERVER, statementContext.selectedServer())
                 .with(NAME, name)
-                .with(EXTERNAL_PARAM, String.valueOf(true))
-                .build();
+                .with(EXTERNAL_PARAM, String.valueOf(true));
+        if (loggingProfile != null) {
+            builder.with(LOGGING_PROFILE, loggingProfile);
+        }
+        PlaceRequest request = builder.build();
         return places.historyToken(request);
     }
 
@@ -91,8 +105,13 @@ public class LogFiles {
                 .build(statementContext.selectedHost(), statementContext.selectedServer(), Ids.asId(name));
     }
 
-    public void tail(String name, int lines, AsyncCallback<String> callback) {
-        ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
+    public void tail(String name, String loggingProfile, int lines, AsyncCallback<String> callback) {
+        ResourceAddress address;
+        if (loggingProfile == null) {
+            address = LOG_FILE_TEMPLATE.resolve(statementContext, name);
+        } else {
+            address = PROFILE_LOG_FILE_TEMPLATE.resolve(statementContext, loggingProfile, name);
+        }
         Operation operation = new Operation.Builder(address, READ_LOG_FILE)
                 .param(ModelDescriptionConstants.LINES, lines)
                 .param(TAIL, true)

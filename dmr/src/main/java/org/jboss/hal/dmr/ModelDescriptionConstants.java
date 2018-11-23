@@ -128,6 +128,8 @@ public interface ModelDescriptionConstants {
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
     String CHANGE_MESSAGES_PRIORITY = "change-messages-priority";
     String CHANNEL = "channel";
+    String CHECK = "check";
+    String CHECKS = "checks";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS = "class";
@@ -248,6 +250,7 @@ public interface ModelDescriptionConstants {
     String DIVERT = "divert";
     String DOMAIN_UUID = "domain-uuid";
     String DOMAIN_ROLLOUT = "domain-rollout";
+    String DOWN = "DOWN";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
     String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
@@ -293,7 +296,10 @@ public interface ModelDescriptionConstants {
     String EXPORT_CERTIFICATE = "export-certificate";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
+    String EXPOSED_SUBSYSTEMS = "exposed-subsystems";
     String EXTENSION_POINT = "extension-point";
+    String EXTERNAL_JMS_QUEUE = "external-jms-queue";
+    String EXTERNAL_JMS_TOPIC = "external-jms-topic";
     String FAILED = "failed";
     String FAILED_OPERATION = "failed-operation";
     String FAILED_SERVICES = "failed-services";
@@ -310,6 +316,7 @@ public interface ModelDescriptionConstants {
     String FILTERS = "filters";
     String FIND_NON_PROGRESSING_OPERATION = "find-non-progressing-operation";
     String FIXED_PORT = "fixed-port";
+    String FLAG = "flag";
     String FLUSH_ALL_CONNECTION_IN_POOL = "flush-all-connection-in-pool";
     String FLUSH_GRACEFULLY_CONNECTION_IN_POOL = "flush-gracefully-connection-in-pool";
     String FLUSH_IDLE_CONNECTION_IN_POOL = "flush-idle-connection-in-pool";
@@ -391,6 +398,7 @@ public interface ModelDescriptionConstants {
     String IO_THREAD_COUNT = "io-thread-count";
     String IO_THREADS = "io-threads";
     String JACC_POLICY = "jacc-policy";
+    String JASPI_CONFIGURATION = "jaspi-configuration";
     String JAVA_METHOD = "java-method";
     String JAX_RS = "jaxrs";
     String JCA = "jca";
@@ -415,6 +423,7 @@ public interface ModelDescriptionConstants {
     String JPA = "jpa";
     String JSF = "jsf";
     String JSON = "json";
+    String JSON_FORMATTER = "json-formatter";
     String JSP = "jsp";
     String JSR77 = "jsr77";
     String JVM = "jvm";
@@ -455,6 +464,7 @@ public interface ModelDescriptionConstants {
     String LOCALE = "locale";
     String LOCATION = "location";
     String LOCKING = "locking";
+    String LOG_FILE = "log-file";
     String LOGGER = "logger";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
@@ -502,6 +512,8 @@ public interface ModelDescriptionConstants {
     String METADATA = "metadata";
     String METRIC = "metric";
     String MICROPROFILE_CONFIG_SMALLRYE = "microprofile-config-smallrye";
+    String MICROPROFILE_HEALTH_SMALLRYE = "microprofile-health-smallrye";
+    String MICROPROFILE_METRICS_SMALLRYE = "microprofile-metrics-smallrye";
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
     String MIN_POOL_SIZE = "min-pool-size";
@@ -549,6 +561,7 @@ public interface ModelDescriptionConstants {
     String NUMBER_OF_TRANSACTIONS = "number-of-transactions";
     String OBJECT = "object";
     String OFF_HEAP = "off-heap";
+    String OBTAIN_CERTIFICATE = "obtain-certificate";
     String OOB = "oob";
     String OP = "operation";
     String OPERATION = "operation";
@@ -726,6 +739,7 @@ public interface ModelDescriptionConstants {
     String RESULT = "result";
     String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
+    String REVOKE_CERTIFICATE = "revoke-certificate";
     String ROLE = "role";
     String ROLE_MAP = "role-map";
     String ROLE_MAPPING = "role-mapping";
@@ -764,11 +778,13 @@ public interface ModelDescriptionConstants {
     String SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS = "send-messages-to-dead-letter-address";
     String SENSITIVE = "sensitive";
     String SERVER = "server";
+    String SERVER_AUTH_MODULES = "server-auth-modules";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
     String SERVER_GROUP_SCOPED_ROLE = "server-group-scoped-role";
     String SERVER_GROUPS = "server-groups";
     String SERVER_SSL_CONTEXT = "server-ssl-context";
+    String SERVER_SSL_SNI_CONTEXT = "server-ssl-sni-context";
     String SERVER_STATE = "server-state";
     String SERVER_TYPE = "server-type";
     String SERVICE = "service";
@@ -789,6 +805,7 @@ public interface ModelDescriptionConstants {
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
     String SHARED_STORE_SLAVE = "shared-store-slave";
+    String SHOULD_RENEW_CERTIFICATE = "should-renew-certificate";
     String SHOW_HISTORY_OPERATION = "show-history";
     String SHUTDOWN = "shutdown";
     String SIMPLE_PERMISSION_MAPPER = "simple-permission-mapper";
@@ -807,6 +824,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SOCKET_BINDING_REF = "socket-binding-ref";
     String SOCKET_BINDINGS = "socket-bindings";
+    String SOCKET_HANDLER = "socket-handler";
     String SOCKET_TIMEOUT = "socket-timeout";
     String SOURCE = "source";
     String SOURCE_CREDENTIAL_REFERENCE = "source-credential-reference";
@@ -829,6 +847,7 @@ public interface ModelDescriptionConstants {
     String START_SERVERS = "start-servers";
     String START_TIME = "start-time";
     String STARTED = "started";
+    String STATE = "state";
     String STATE_TRANSFER = "state-transfer";
     String STATIC_CONNECTORS = "static-connectors";
     String STATISTICS_ENABLED = "statistics-enabled";
@@ -902,6 +921,7 @@ public interface ModelDescriptionConstants {
     String UNREGISTERED = "unregistered";
     String UPDATE_ACCOUNT = "update-account";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
+    String UP = "UP";
     String UPTIME = "uptime";
     String URL = "url";
     String USE_RECURSIVE_SEARCH = "use-recursive-search";
@@ -941,5 +961,6 @@ public interface ModelDescriptionConstants {
     String XA_DATASOURCE_CLASS = "xa-datasource-class";
     String XA_DATASOURCE_PROPERTIES = "xa-datasource-properties";
     String XML = "xml";
+    String XML_FORMATTER = "xml-formatter";
 }
 

@@ -76,7 +76,7 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .button(tableButtonFactory.add(configType.template, table -> presenter.addConfig()))
                 .button(tableButtonFactory.remove(configType.template,
                         table -> presenter.removeConfig(table.selectedRow().getName())))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(inlineActions)
                 .build();
 

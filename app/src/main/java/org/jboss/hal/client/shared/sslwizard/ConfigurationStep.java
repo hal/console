@@ -89,8 +89,12 @@ public class ConfigurationStep extends AbstractConfiguration {
             getFormItem(KEY_STORE).setRequired(false);
             getFormItem(KEY_STORE).setEnabled(false);
             getFormItem(PRIVATE_KEY_ALIAS).setRequired(true);
+            getFormItem(CAA_NAME).setRequired(false);
+            getFormItem(CAA_ALIAS).setRequired(false);
+            getFormItem(CAA_DOMAIN_NAMES).setRequired(false);
 
         } else if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS)) {
+
             getFormItem(KEY_STORE_NAME).setRequired(true);
             getFormItem(KEY_STORE_NAME).setEnabled(true);
             getFormItem(KEY_STORE_PASSWORD).setRequired(true);
@@ -100,6 +104,24 @@ public class ConfigurationStep extends AbstractConfiguration {
             getFormItem(KEY_STORE).setRequired(false);
             getFormItem(KEY_STORE).setEnabled(false);
             getFormItem(PRIVATE_KEY_ALIAS).setRequired(false);
+
+            getFormItem(CAA_NAME).setRequired(false);
+            getFormItem(CAA_ALIAS).setRequired(false);
+            getFormItem(CAA_DOMAIN_NAMES).setRequired(false);
+
+        } else if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_OBTAIN_LETSENCRYPT)) {
+            getFormItem(KEY_STORE_NAME).setRequired(true);
+            getFormItem(KEY_STORE_NAME).setEnabled(true);
+            getFormItem(KEY_STORE_PASSWORD).setRequired(true);
+            getFormItem(KEY_STORE_PATH).setRequired(true);
+            getFormItem(CAA_NAME).setRequired(true);
+            getFormItem(CAA_ALIAS).setRequired(true);
+            getFormItem(CAA_DOMAIN_NAMES).setRequired(true);
+            getFormItem(PRIVATE_KEY_ALIAS).setRequired(true);
+
+            // if the user goes back and forward, do not require an existing key-store
+            getFormItem(KEY_STORE).setRequired(false);
+            getFormItem(KEY_STORE).setEnabled(false);
         } else {
             getFormItem(KEY_STORE).setRequired(true);
             getFormItem(KEY_STORE).setEnabled(true);
@@ -110,6 +132,9 @@ public class ConfigurationStep extends AbstractConfiguration {
             getFormItem(KEY_STORE_NAME).setRequired(false);
             getFormItem(KEY_STORE_PATH).setRequired(false);
             getFormItem(PRIVATE_KEY_ALIAS).setRequired(false);
+            getFormItem(CAA_NAME).setRequired(false);
+            getFormItem(CAA_ALIAS).setRequired(false);
+            getFormItem(CAA_DOMAIN_NAMES).setRequired(false);
         }
 
         getFormItem(KEY_MANAGER).setRequired(true);

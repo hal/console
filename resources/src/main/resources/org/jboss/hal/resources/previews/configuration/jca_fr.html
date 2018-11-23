@@ -1,0 +1,17 @@
+<p>L'architecture Java EE Connector Architecture (JCA) définit une architecture standard de systèmes Java EE pour les systèmes d'information d'entreprise (EIS) externes hétérogènes. Les systèmes de planification des ressources d'entreprise (ERP) (Enterprise Resource Planning), le traitement des transactions de l'ordinateur central (TP) (Mainframe transaction processing), les bases de données et les systèmes de messagerie sont des exemples d'EIS. Un adaptateur de ressources est un composant qui implémente l'architecture de l'API Java EE Connector.</p>
+<p>JCA 1.7 offre des fonctions de gestion :</p>
+<ul>
+    <li>connexions</li>
+    <li>transactions</li>
+    <li>sécurité</li>
+    <li>cycle de vie</li>
+    <li>Instances de travail</li>
+    <li>Flux interne de transactions</li>
+    <li>Flux interne de messages</li>
+</ul>
+<p>JCA 1.7 a été développé dans le cadre du Processus de Communauté Java sous le nom de <a href="https://www.jcp.org/en/jsr/detail?id=322" rel="nofollow" target="_blank">JSR-322</a>.</p>
+
+<h2>Adaptateurs de ressources</h2>
+<p>Un adaptateur de ressources est un composant Java EE déployable qui assure la communication entre une application Java EE et un système d'information d'entreprise (EIS) en utilisant la spécification Java Connector Architecture (JCA). Un adaptateur de ressources est souvent fourni par les fournisseurs de SIE pour faciliter l'intégration de leurs produits avec les applications Java EE.</p>
+<p>Un système d'information d'entreprise (EIS) peut être n'importe quel système logiciel au sein d'une organisation. Les systèmes de planification des ressources de l'entreprise (ERP), les systèmes de base de données, les serveurs de messagerie électronique et les systèmes de messagerie propriétaires en sont des exemples.</p>
+<p>Un adaptateur de ressources est empaqueté dans un fichier RAR (Resource Adapter Archive) qui peut être déployé dans ${build.shortName}. Un fichier RAR peut également être inclus dans le déploiement d'une archive d'entreprise (EAR).</p>

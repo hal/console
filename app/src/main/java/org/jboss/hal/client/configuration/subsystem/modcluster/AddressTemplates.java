@@ -21,13 +21,15 @@ public interface AddressTemplates {
 
     String MODCLUSTER_ADDRESS = "/{selected.profile}/subsystem=modcluster";
     String PROXY_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*";
-    String DYNAMIC_LOAD_PROVIDER_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*/dynamic-load-provider=configuration";
-    String CUSTOM_LOAD_METRIC_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*/dynamic-load-provider=configuration/custom-load-metric=*";
-    String LOAD_METRIC_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*/dynamic-load-provider=configuration/load-metric=*";
+    String LOAD_PROVIDER_DYNAMIC_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*/load-provider=dynamic";
+    String LOAD_PROVIDER_SIMPLE_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*/load-provider=simple";
+    String CUSTOM_LOAD_METRIC_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*/load-provider=dynamic/custom-load-metric=*";
+    String LOAD_METRIC_ADDRESS = "/{selected.profile}/subsystem=modcluster/proxy=*/load-provider=dynamic/load-metric=*";
 
     AddressTemplate MODCLUSTER_TEMPLATE = AddressTemplate.of(MODCLUSTER_ADDRESS);
     AddressTemplate PROXY_TEMPLATE = AddressTemplate.of(PROXY_ADDRESS);
-    AddressTemplate DYNAMIC_LOAD_PROVIDER_TEMPLATE = AddressTemplate.of(DYNAMIC_LOAD_PROVIDER_ADDRESS);
+    AddressTemplate LOAD_PROVIDER_DYNAMIC_TEMPLATE = AddressTemplate.of(LOAD_PROVIDER_DYNAMIC_ADDRESS);
+    AddressTemplate LOAD_PROVIDER_SIMPLE_TEMPLATE = AddressTemplate.of(LOAD_PROVIDER_SIMPLE_ADDRESS);
     AddressTemplate CUSTOM_LOAD_METRIC_TEMPLATE = AddressTemplate.of(CUSTOM_LOAD_METRIC_ADDRESS);
     AddressTemplate LOAD_METRIC_TEMPLATE = AddressTemplate.of(LOAD_METRIC_ADDRESS);
 

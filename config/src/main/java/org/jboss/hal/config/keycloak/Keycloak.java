@@ -95,7 +95,7 @@ public class Keycloak {
         public String lastName;
         public String username;
 
-        public native Void success(SuccessCallback profile);
+        public native void success(SuccessCallback profile);
 
         @JsOverlay
         @Override

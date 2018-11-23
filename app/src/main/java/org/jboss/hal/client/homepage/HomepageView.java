@@ -76,20 +76,19 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
 
         if (standalone) {
             sections = Collections.singleton(HomepageSection.create(places, resources,
-                    Ids.HOMEPAGE_DEPLOYMENTS_SECTION, org.jboss.hal.meta.token.NameTokens.DEPLOYMENTS,
+                    Ids.HOMEPAGE_DEPLOYMENTS_SECTION, NameTokens.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSection(),
                     resources.constants().homepageDeploymentsStandaloneStepIntro(),
                     Arrays.asList(resources.constants().homepageDeploymentsStandaloneStep1(),
                             resources.constants().homepageDeploymentsStepEnable()), true));
             deployments = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.DEPLOYMENTS,
-                    Names.DEPLOYMENTS,
+                    Ids.HOMEPAGE_DEPLOYMENTS_MODULE, NameTokens.DEPLOYMENTS, Names.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSubHeader(),
                     resources.images().deployments(),
                     sections).asElement();
 
             sections = Collections.singleton(HomepageSection.create(places, resources,
-                    Ids.HOMEPAGE_CONFIGURATION_SECTION, org.jboss.hal.meta.token.NameTokens.CONFIGURATION,
+                    Ids.HOMEPAGE_CONFIGURATION_SECTION, NameTokens.CONFIGURATION,
                     resources.constants().homepageConfigurationSection(),
                     resources.constants().homepageConfigurationStepIntro(),
                     Arrays.asList(
@@ -97,29 +96,27 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                             resources.constants().homepageConfigurationStep2(),
                             resources.constants().homepageConfigurationStep3()), true));
             configuration = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.CONFIGURATION,
-                    Names.CONFIGURATION,
+                    Ids.HOMEPAGE_CONFIGURATION_MODULE, NameTokens.CONFIGURATION, Names.CONFIGURATION,
                     resources.constants().homepageConfigurationStandaloneSubHeader(),
                     resources.images().configuration(),
                     sections).asElement();
 
             sections = Collections.singleton(HomepageSection.create(places, resources,
-                    Ids.HOMEPAGE_RUNTIME_SECTION, org.jboss.hal.meta.token.NameTokens.RUNTIME,
+                    Ids.HOMEPAGE_RUNTIME_SECTION, NameTokens.RUNTIME,
                     resources.constants().homepageRuntimeStandaloneSection(),
                     resources.constants().homepageRuntimeStepIntro(),
                     Arrays.asList(
                             resources.constants().homepageRuntimeStandaloneStep1(),
                             resources.constants().homepageRuntimeStandaloneStep2()), true));
             runtime = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.RUNTIME,
-                    Names.RUNTIME,
+                    Ids.HOMEPAGE_RUNTIME_MODULE, NameTokens.RUNTIME, Names.RUNTIME,
                     resources.constants().homepageRuntimeStandaloneSubHeader(),
                     resources.images().runtime(),
                     sections).asElement();
 
         } else {
             sections = Collections.singleton(HomepageSection.create(places, resources,
-                    Ids.HOMEPAGE_DEPLOYMENTS_SECTION, org.jboss.hal.meta.token.NameTokens.DEPLOYMENTS,
+                    Ids.HOMEPAGE_DEPLOYMENTS_SECTION, NameTokens.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSection(),
                     resources.constants().homepageDeploymentsDomainStepIntro(),
                     Arrays.asList(
@@ -127,14 +124,13 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                             resources.constants().homepageDeploymentsDomainStep2(),
                             resources.constants().homepageDeploymentsStepEnable()), true));
             deployments = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.DEPLOYMENTS,
-                    Names.DEPLOYMENTS,
+                    Ids.HOMEPAGE_DEPLOYMENTS_MODULE, NameTokens.DEPLOYMENTS, Names.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSubHeader(),
                     resources.images().deployments(),
                     sections).asElement();
 
             sections = Collections.singleton(HomepageSection.create(places, resources,
-                    Ids.HOMEPAGE_CONFIGURATION_SECTION, org.jboss.hal.meta.token.NameTokens.CONFIGURATION,
+                    Ids.HOMEPAGE_CONFIGURATION_SECTION, NameTokens.CONFIGURATION,
                     resources.constants().homepageConfigurationSection(),
                     resources.constants().homepageConfigurationStepIntro(),
                     Arrays.asList(
@@ -142,37 +138,35 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                             resources.constants().homepageConfigurationStep2(),
                             resources.constants().homepageConfigurationStep3()), true));
             configuration = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.CONFIGURATION,
-                    Names.CONFIGURATION,
+                    Ids.HOMEPAGE_CONFIGURATION_MODULE, NameTokens.CONFIGURATION, Names.CONFIGURATION,
                     resources.constants().homepageConfigurationDomainSubHeader(),
                     resources.images().configuration(),
                     sections).asElement();
 
             sections = Arrays.asList(
                     HomepageSection.create(places, resources,
-                            Ids.HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION, org.jboss.hal.meta.token.NameTokens.RUNTIME,
+                            Ids.HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION, NameTokens.RUNTIME,
                             resources.constants().homepageRuntimeDomainServerGroupSection(),
                             resources.constants().homepageRuntimeDomainServerGroupStepIntro(),
                             Arrays.asList(
                                     resources.constants().homepageRuntimeDomainServerGroupStep1(),
                                     resources.constants().homepageRuntimeDomainServerGroupStep2()), true),
                     HomepageSection.create(places, resources,
-                            Ids.HOMEPAGE_RUNTIME_SERVER_SECTION, org.jboss.hal.meta.token.NameTokens.RUNTIME,
+                            Ids.HOMEPAGE_RUNTIME_SERVER_SECTION, NameTokens.RUNTIME,
                             resources.constants().homepageRuntimeDomainCreateServerSection(),
                             resources.constants().homepageRuntimeDomainCreateServerStepIntro(),
                             Arrays.asList(
                                     resources.constants().homepageRuntimeDomainCreateServerStep1(),
                                     resources.constants().homepageRuntimeDomainCreateServerStep2()), true),
                     HomepageSection.create(places, resources,
-                            Ids.HOMEPAGE_RUNTIME_MONITOR_SECTION, org.jboss.hal.meta.token.NameTokens.RUNTIME,
+                            Ids.HOMEPAGE_RUNTIME_MONITOR_SECTION, NameTokens.RUNTIME,
                             resources.constants().homepageRuntimeDomainMonitorServerSection(),
                             resources.constants().homepageRuntimeStepIntro(),
                             Arrays.asList(
                                     resources.constants().homepageRuntimeDomainMonitorServerStep1(),
                                     resources.constants().homepageRuntimeDomainMonitorServerStep2()), true));
             runtime = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.RUNTIME,
-                    Names.RUNTIME,
+                    Ids.HOMEPAGE_RUNTIME_MODULE, NameTokens.RUNTIME, Names.RUNTIME,
                     resources.constants().homepageRuntimeDomainSubHeader(),
                     resources.images().runtime(),
                     sections).asElement();
@@ -180,8 +174,8 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
 
         if (su) {
             if (ssoEnabled) {
-                accessControl = HomepageModule.create(places, NameTokens.ACCESS_CONTROL_SSO,
-                        Names.ACCESS_CONTROL, //NON-NLS
+                accessControl = HomepageModule.create(places,
+                        Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL_SSO, Names.ACCESS_CONTROL,
                         resources.constants().homepageAccessControlSsoSubHeader(),
                         resources.images().accessControl(), Collections.emptyList()).asElement();
             } else {
@@ -192,8 +186,8 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                         Arrays.asList(
                                 resources.constants().homepageAccessControlStep1(),
                                 resources.constants().homepageAccessControlStep2()), true));
-                accessControl = HomepageModule.create(places, NameTokens.ACCESS_CONTROL,
-                        Names.ACCESS_CONTROL, //NON-NLS
+                accessControl = HomepageModule.create(places,
+                        Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL, Names.ACCESS_CONTROL,
                         resources.constants().homepageAccessControlSubHeader(),
                         resources.images().accessControl(),
                         sections).asElement();
@@ -202,7 +196,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
 
             if (standalone) {
                 sections = Collections.singleton(HomepageSection.create(places, resources,
-                        Ids.HOMEPAGE_PATCHING_SECTION, org.jboss.hal.meta.token.NameTokens.PATCHING,
+                        Ids.HOMEPAGE_PATCHING_SECTION, NameTokens.PATCHING,
                         resources.constants().homepagePatchingSection(),
                         resources.messages().homepagePatchingStandaloneStepIntro(name),
                         Arrays.asList(
@@ -210,7 +204,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                                 resources.constants().homepagePatchingStepApply()), true));
             } else {
                 sections = Collections.singleton(HomepageSection.create(places, resources,
-                        Ids.HOMEPAGE_PATCHING_SECTION, org.jboss.hal.meta.token.NameTokens.PATCHING,
+                        Ids.HOMEPAGE_PATCHING_SECTION, NameTokens.PATCHING,
                         resources.constants().homepagePatchingSection(),
                         resources.messages().homepagePatchingDomainStepIntro(name),
                         Arrays.asList(
@@ -219,8 +213,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                                 resources.constants().homepagePatchingStepApply()), true));
             }
             patching = HomepageModule.create(places,
-                    org.jboss.hal.meta.token.NameTokens.PATCHING,
-                    "Patching", //NON-NLS
+                    Ids.HOMEPAGE_PATCHING_MODULE, NameTokens.PATCHING, Names.PATCHING,
                     resources.messages().homepagePatchingSubHeader(name),
                     resources.images().patching(),
                     sections).asElement();
@@ -253,7 +246,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
     }
 
     @Override
-    public void setPresenter(final HomepagePresenter presenter) {
+    public void setPresenter(HomepagePresenter presenter) {
         this.presenter = presenter;
     }
 }

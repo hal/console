@@ -1,0 +1,16 @@
+<p>Undertow 子系统可以用来配置 web 服务器和 servlet 容器的设置。它实现了 <a href="https://jcp.org/en/jsr/detail?id=340" target="_blank">Java Servlet 3.1 规范</a>，以及 websockets 并支持 HTTP 升级，它在 servlet 部署中使用高性能的非阻塞式的句柄。Undertow 子系统也可以作为一个支持 mod_cluster 的高性能反向代理。
+</p>
+
+<p>在 Undertow 子系统中，有 6 个主要组件需要配置：</p>
+<ol>
+    <li>全局设置</li>
+    <li>缓冲区高速缓存</li>
+    <li>服务器</li>
+    <li>Servlet 容器</li>
+    <li>过滤器</li>
+    <li>句柄</li>
+</ol>
+
+<p><strong>重要</strong><br/>
+    Undertow 子系统也依赖于 IO 子系统提供 XNIO worker 和缓冲池。IO 子系统需要被单独配置，并提供一个在大多数情况下都有最佳性能的默认配置。
+</p>

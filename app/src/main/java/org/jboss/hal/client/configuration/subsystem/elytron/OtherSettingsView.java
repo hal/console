@@ -58,6 +58,7 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResour
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.PROVIDER_LOADER;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SECURITY_DOMAIN;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SERVER_SSL_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SERVER_SSL_SNI_CONTEXT;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SYSLOG_AUDIT_LOG;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.TRUST_MANAGER;
@@ -192,6 +193,16 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(SERVER_SSL_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(SERVER_SSL_CONTEXT.resource));
 
+        addResourceElement(SERVER_SSL_SNI_CONTEXT,
+                SERVER_SSL_SNI_CONTEXT.resourceElementBuilder(mbuiContext,
+                        () -> presenter.reload(SERVER_SSL_SNI_CONTEXT.resource,
+                                nodes -> updateResourceElement(SERVER_SSL_SNI_CONTEXT.resource, nodes)))
+                        .onAdd(() -> presenter.addServerSslSniContext())
+                        .build(),
+                Ids.ELYTRON_SSL_ITEM,
+                Ids.build(SERVER_SSL_SNI_CONTEXT.baseId, Ids.ITEM),
+                labelBuilder.label(SERVER_SSL_SNI_CONTEXT.resource));
+
         addResourceElement(TRUST_MANAGER,
                 TRUST_MANAGER.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(TRUST_MANAGER.resource,
@@ -308,6 +319,21 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.ELYTRON_OTHER_ITEM,
                 Ids.build(DIR_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(DIR_CONTEXT.resource));
+
+        addResourceElement(ElytronResource.JASPI_CONFIGURATION,
+                ElytronResource.JASPI_CONFIGURATION.resourceElementBuilder(mbuiContext,
+                        () -> presenter.reload(ElytronResource.JASPI_CONFIGURATION.resource,
+                                nodes -> updateResourceElement(ElytronResource.JASPI_CONFIGURATION.resource, nodes)))
+                        .setComplexListAttribute(SERVER_AUTH_MODULES, asList(
+                                CLASS_NAME,
+                                MODULE,
+                                FLAG,
+                                "options"))
+                        .onAdd(() -> presenter.addJaspiConfiguration())
+                        .build(),
+                Ids.ELYTRON_OTHER_ITEM,
+                Ids.build(ElytronResource.JASPI_CONFIGURATION.baseId, Ids.ITEM),
+                labelBuilder.label(ElytronResource.JASPI_CONFIGURATION.resource));
 
         addResourceElement(ElytronResource.PERMISSION_SET,
                 ElytronResource.PERMISSION_SET.resourceElementBuilder(mbuiContext,

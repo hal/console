@@ -69,17 +69,13 @@ public class CompositeResult implements Iterable<ModelNode> {
         return steps.values().iterator();
     }
 
-    /**
-     * @return the number of steps
-     */
+    /** @return the number of steps */
     @JsProperty(name = "size")
     public int size() {
         return steps.size();
     }
 
-    /**
-     * @return whether this composite result contains steps
-     */
+    /** @return whether this composite result contains steps */
     @JsProperty
     public boolean isEmpty() {
         return steps.isEmpty();

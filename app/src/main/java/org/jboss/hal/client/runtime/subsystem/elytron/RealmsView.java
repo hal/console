@@ -60,7 +60,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
     private RealmsPresenter presenter;
 
     @Inject
-    public RealmsView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public RealmsView(MetadataRegistry metadataRegistry, Resources resources) {
 
         VerticalNavigation navigation = new VerticalNavigation();
         // -------------- caching realm
@@ -70,7 +70,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 .button(resources.constants().clearCache(),
                         table -> presenter.clearCache(table.selectedRow().getName()),
                         Constraint.executable(CACHING_REALM_TEMPLATE, CLEAR_CACHE))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         cachingRealmForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.ELYTRON, CACHING_REALM, FORM),
@@ -116,7 +116,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 Ids.build(ELYTRON_PROPERTIES_REALM, TABLE), propertiesRealmMetadata)
                 .button(resources.constants().load(), table -> presenter.loadProperties(table.selectedRow().getName()),
                         Constraint.executable(PROPERTIES_REALM_TEMPLATE, LOAD))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         propertiesRealmForm = new ModelNodeForm.Builder<NamedNode>(
@@ -160,7 +160,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final RealmsPresenter presenter) {
+    public void setPresenter(RealmsPresenter presenter) {
         this.presenter = presenter;
         filesystemResource.setPresenter(presenter);
         customModifiableResource.setPresenter(presenter);

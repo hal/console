@@ -57,7 +57,7 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, table -> presenter.addHandlerChain()))
                 .button(tableButtonFactory.remove(HANDLER_CHAIN_TEMPLATE,
                         table -> presenter.removeHandlerChain(table.selectedRow().getName())))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(Names.HANDLER, row -> presenter.showHandlers(row)))
                 .build();
 

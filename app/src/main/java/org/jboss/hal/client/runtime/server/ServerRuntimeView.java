@@ -80,7 +80,7 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
     private final HTMLElement headerElement;
 
     @Inject
-    public ServerRuntimeView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public ServerRuntimeView(MetadataRegistry metadataRegistry, Resources resources) {
         Metadata metadata = metadataRegistry.lookup(ServerRuntimePresenter.SERVER_RUNTIME_TEMPLATE);
         mainAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_RUNTIME_JVM_ATTRIBUTES_FORM, metadata)
                 .readOnly()
@@ -148,7 +148,7 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
     }
 
     @Override
-    public void update(final ModelNode modelNode) {
+    public void update(ModelNode modelNode) {
         List<Property> sp = modelNode.get(SYSTEM_PROPERTIES).asPropertyList();
         String pathSeparator = sp.stream()
                 .filter(p -> "path.separator".equals(p.getName())) //NON-NLS

@@ -24,6 +24,7 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.StatementContext;
 
 /** Base class for views generated using {@code @MbuiView}. */
 public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl implements MbuiView<P> {
@@ -85,5 +86,15 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl 
                 presenter.reload();
             }
         });
+    }
+
+    /**
+     * Subclasses may override this method to provide a custom {@code SelectionAwareStatementContext} that resolves
+     * a dynamic part of the address template. The .mbui.xml may define templates such as
+     * {@code /{selected.profile}/subsystem=logging/logging-profile={selection}/async-handler=*}
+     * where the {@code {selection}} is resolved with {@code SelectionAwareStatementContext}.
+     */
+    protected StatementContext statementContext() {
+        return mbuiContext.statementContext();
     }
 }

@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
@@ -32,9 +33,10 @@ public class CreateEmptyDialog {
 
     private final Dialog dialog;
     private final Form<ModelNode> form;
+    private final NameItem nameItem;
 
     public CreateEmptyDialog(Resources resources, Consumer<String> callback) {
-        NameItem nameItem = new NameItem();
+        nameItem = new NameItem();
         form = new ModelNodeForm.Builder<>(Ids.DEPLOYMENT_EMPTY_FORM, Metadata.empty())
                 .unboundFormItem(nameItem, 0)
                 .onSave((f, changedValues) -> callback.accept(nameItem.getValue()))
@@ -52,6 +54,10 @@ public class CreateEmptyDialog {
                 })
                 .build();
         dialog.registerAttachable(form);
+    }
+
+    public void addValidationHandlerForNameItem(FormItemValidation<String> validationHandler) {
+        nameItem.addValidationHandler(validationHandler);
     }
 
     public void show() {

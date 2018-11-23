@@ -105,7 +105,7 @@ public class SystemPropertiesView extends HalViewImpl implements SystemPropertie
     }
 
     @Override
-    public void update(final List<NamedNode> systemProperties) {
+    public void update(List<NamedNode> systemProperties) {
         form.clear();
         table.update(systemProperties);
     }

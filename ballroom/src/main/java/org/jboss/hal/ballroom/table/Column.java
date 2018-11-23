@@ -33,7 +33,7 @@ public class Column<T> {
 
     public String name;
     public String title;
-    public RenderCallback<T, ?> render;
+    public RenderCallback<T, String> render;
     public boolean orderable;
     public boolean searchable;
     public String className;

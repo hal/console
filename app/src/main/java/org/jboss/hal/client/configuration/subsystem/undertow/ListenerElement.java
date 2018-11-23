@@ -31,12 +31,12 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<ServerPresenter> {
 
@@ -57,7 +57,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(listenerType)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(listenerType, table.selectedRow().getName())))
-                .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM), metadata)
@@ -93,7 +93,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
     }
 
     @Override
-    public void setPresenter(final ServerPresenter presenter) {
+    public void setPresenter(ServerPresenter presenter) {
         this.presenter = presenter;
     }
 

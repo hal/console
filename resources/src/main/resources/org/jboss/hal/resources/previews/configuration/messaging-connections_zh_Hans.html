@@ -1,0 +1,26 @@
+<p>包含以下功能的配置：</p>
+<ul>
+    <li>Acceptor 和 Connector</li>
+    <li>Connector 服务</li>
+    <li>Connection Factories （池）</li>
+</ul>
+
+<h2>Acceptor 和 Connector</h2>
+<p>acceptor 定义了哪些类型的连接可以被 ${build.shortName} 内建的消息服务器接受。对于每个服务器，可以定义多个 acceptor。</p>
+
+<p>connector 定义了如何连接到一个内建的 ${build.shortName} 消息服务器，它被客户系统用来进行连接。</p>
+
+<p>如需了解更多与 acceptor 和 connector 相关的信息，请参阅 <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-8-configuring-the-messaging-transports">Acceptors and Connectors 一节</a>。
+</p>
+
+<h2>Connector 服务</h2>
+<p>connector 服务的功能是集成外部组件和 Apache ActiveMQ Artemis 来发送和接收消息。</p>
+
+<h2>Connection Factories</h2>
+<p>默认情况下，${build.shortName} 消息子系统提供 <code>InVmConnectionFactory</code> 和<code>RemoteConnectionFactory</code> connection factory，以及 <code>activemq-ra</code> （池）connection factory。</p>
+
+<p><code>InVmConnectionFactory</code> 指代一个 <code>in-vm-connector</code>，可以用来在客户端系统和服务器都在同一个 JVM 上运行时发送和接收消息。<code>RemoteConnectionFactory</code> 指代一个 <code>http-connector</code>，可以用来在客户端系统和服务器运行在不同的 JVM 上时，通过 HTTP 接收和发送消息。
+</p>
+
+<p>组成池的 connection factory 可以用来配置集成的 ActiveMQ Artemis 资源适配器的入站和出站的连接。如需了解更多相关信息，请参阅 <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">Using the Integrated Resource Adapter for Remote Connections</a>。
+</p>

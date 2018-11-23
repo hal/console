@@ -16,7 +16,6 @@
 package org.jboss.hal.ballroom;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -216,13 +215,8 @@ public class VerticalNavigation implements Attachable {
                 // TODO Could be simplified: The order of panes does not matter, only the order of items matters
                 LinkedHashMap<String, Item> reshuffledItems = new LinkedHashMap<>();
                 LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
-                Iterator<String> itemIterator = items.keySet().iterator();
-                Iterator<String> paneIterator = panes.keySet().iterator();
 
-                while (itemIterator.hasNext() && paneIterator.hasNext()) {
-                    String currentId = itemIterator.next();
-                    paneIterator.next();
-
+                for (String currentId: items.keySet()) {
                     if (currentId.equals(beforeId)) {
                         if (element != null) {
                             Pane pane = new Pane(id, element);
@@ -408,7 +402,9 @@ public class VerticalNavigation implements Attachable {
                 show(show.parentId);
             }
             for (Pane pane : panes.values()) {
-                Elements.setVisible(pane.asElement(), pane.id.equals(id));
+                if (pane != null) {
+                    Elements.setVisible(pane.asElement(), pane.id.equals(id));
+                }
             }
             show.asElement().click();
             if (callbacks.containsKey(id)) {

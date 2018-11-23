@@ -29,9 +29,8 @@
                             <attribute name="advertise-security-key"/>
                             <attribute name="advertise-socket"/>
                             <attribute name="balancer"/>
-                            <attribute name="connector"/>
+                            <attribute name="listener"/>
                             <attribute name="load-balancing-group"/>
-                            <attribute name="simple-load-provider"/>
                         </group>
                         <group id="sessions" title="Sessions">
                             <attribute name="sticky-session"/>
@@ -66,7 +65,7 @@
             </metadata>
         </item>
         <item id="custom-load-metrics-item" title="Custom Load Metrics" icon="pficon pficon-service">
-            <metadata address="/{selected.profile}/subsystem=modcluster/proxy=*/dynamic-load-provider=configuration/custom-load-metric=*">
+            <metadata address="/{selected.profile}/subsystem=modcluster/proxy=*/load-provider=dynamic/custom-load-metric=*">
             <h1>Custom Load Metrics</h1>
             <p>${metadata.getDescription().getDescription()}</p>
             <table id="custom-load-metrics-table" title="Custom Load Metrics"
@@ -87,7 +86,7 @@
             </metadata>
         </item>
         <item id="load-metrics-item" title="Load Metrics" icon="fa fa-map">
-            <metadata address="/{selected.profile}/subsystem=modcluster/proxy=*/dynamic-load-provider=configuration/load-metric=*">
+            <metadata address="/{selected.profile}/subsystem=modcluster/proxy=*/load-provider=dynamic/load-metric=*">
             <h1>Load Metrics</h1>
             <p>${metadata.getDescription().getDescription()}</p>
             <table id="load-metrics-table" title="Load Metrics"

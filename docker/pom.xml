@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>3.0.3.Final</version>
+        <version>3.1.0.Final</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -99,9 +99,11 @@
                 </executions>
             </plugin>
             <!--
-             Produce two docker images:
+             Produce three docker images:
                 1. halconsole/hal-standalone: Contains HAL standalone
-                2. halconsole/hal-wildfly: Contains latest WildFly and and HAL
+                2. halconsole/hal-wildfly: Contains latest WildFly and HAL
+                3. halconsole/hal-wildfly-nightly: Contains latest nightly
+                   build of WildFly with HAL 
             -->
             <plugin>
                 <groupId>io.fabric8</groupId>
@@ -136,6 +138,27 @@
                             <name>halconsole/hal-wildfly</name>
                             <build>
                                 <dockerFileDir>hal-wildfly</dockerFileDir>
+                                <assembly>
+                                    <mode>dir</mode>
+                                    <inline>
+                                        <fileSets>
+                                            <fileSet>
+                                                <directory>${project.build.directory}</directory>
+                                                <includes>
+                                                    <include>hal-console.jar</include>
+                                                </includes>
+                                                <outputDirectory>.</outputDirectory>
+                                            </fileSet>
+                                        </fileSets>
+                                    </inline>
+                                </assembly>
+                            </build>
+                        </image>
+                        <image>
+                            <alias>hal-wildfly-nightly</alias>
+                            <name>halconsole/hal-wildfly-nightly</name>
+                            <build>
+                                <dockerFileDir>hal-wildfly-nightly</dockerFileDir>
                                 <assembly>
                                     <mode>dir</mode>
                                     <inline>

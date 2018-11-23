@@ -29,8 +29,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String activeSessions();
     String add();
     String addAlias();
-    String addIdentity();
     String addContent();
+    String addIdentity();
     String address();
     String adminOnly();
     String aliases();
@@ -45,14 +45,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String attribute();
     String attributes();
     String average();
-
     String back();
     String backToNormalMode();
     String browse();
     String browseBy();
-
     String cacheMemory();
-
     String cacheStore();
     String callerThread();
     String cancel();
@@ -81,7 +78,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String closed();
     String collapse();
-    String configurationSslManagement();
     String committed();
     String completed();
     String completedExecutions();
@@ -89,11 +85,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String configuration();
     String configurationChanges();
     String configurationChangesNotEnabled();
+    String configurationSslManagement();
     String confirmation();
     String connectedTo();
     String connection();
-    String connections();
     String connectionPool();
+    String connections();
     String connectToServer();
     String consoleVersion();
     String content();
@@ -103,13 +100,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String copyToClipboard();
     String count();
     String counter();
-
     String create();
     String createAccount();
     String creationTime();
     String currentPage();
     String custom();
-
     String data();
     String day();
     String days();
@@ -123,10 +118,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String deploymentEmptyCreate();
     String deploymentError();
     String deploymentInProgress();
-    String deploymentSuccessful();
     String deployments();
+    String deploymentSuccessful();
     String description();
-
     String destroy();
     String details();
     String directory();
@@ -142,8 +136,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String download();
     String dropSubscriptions();
     String duplicateMacro();
+    String duplicateResource();
     String duration();
-
     String edit();
     String editIdentity();
     String editURL();
@@ -154,20 +148,20 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String enableRbac();
     String enableSSL();
     String enableSSLManagementErrorMsg();
-    String enableSSLManagementTitle();
     String enableSSLManagementInitialSetup();
+    String enableSSLManagementTitle();
     String enableStatistics();
-    String endpointSelectTitle();
-    String endpointSelectDescription();
-    String endpointConnect();
-    String endpointAddTitle();
     String endpointAddDescription();
+    String endpointAddTitle();
+    String endpointConnect();
+    String endpointSelectDescription();
+    String endpointSelectTitle();
     String entry();
     String environment();
     String error();
     String excludeRole();
-    String excludeUserGroup();
     String excludes();
+    String excludeUserGroup();
     String exclusiveRunningTime();
     String executionStatus();
     String expertMode();
@@ -175,13 +169,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String expiredSessions();
     String explode();
     String exploded();
+    String export();
     String exportCertificate();
     String expression();
     String expressionResolver();
     String extensionError();
     String extensionNotFound();
     String extensionProcessing();
-
     String failed();
     String failedExecutions();
     String filter();
@@ -196,133 +190,127 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formErrors();
     String formResetDesc();
     String fromDeployment();
-
-    String getMetadata();
+    String generate();
     String generateCSR();
     String generateKeyPair();
+    String getMetadata();
     String globalSettings();
     String gotoDeployment();
     String group();
     String groups();
-
     String help();
     String hiddenColumns();
     String hideSensitive();
     String hitCount();
-    String homepageNewToEap();
-    String homepageTakeATour();
-    String homepageDeploymentsSubHeader();
-    String homepageDeploymentsSection();
-    String homepageDeploymentsStandaloneStepIntro();
-    String homepageDeploymentsStandaloneStep1();
-    String homepageDeploymentsStepEnable();
-    String homepageDeploymentsDomainStepIntro();
-    String homepageDeploymentsDomainStep1();
-    String homepageDeploymentsDomainStep2();
-    String homepageConfigurationStandaloneSubHeader();
-    String homepageConfigurationDomainSubHeader();
-    String homepageConfigurationSection();
-    String homepageConfigurationStepIntro();
-    String homepageConfigurationStandaloneStep1();
-    String homepageConfigurationDomainStep1();
-    String homepageConfigurationStep2();
-    String homepageConfigurationStep3();
-    String homepageRuntimeStandaloneSubHeader();
-    String homepageRuntimeStandaloneSection();
-    String homepageRuntimeStepIntro();
-    String homepageRuntimeStandaloneStep1();
-    String homepageRuntimeStandaloneStep2();
-    String homepageRuntimeDomainSubHeader();
-    String homepageRuntimeDomainServerGroupSection();
-    String homepageRuntimeDomainServerGroupStepIntro();
-    String homepageRuntimeDomainServerGroupStep1();
-    String homepageRuntimeDomainServerGroupStep2();
-    String homepageRuntimeDomainCreateServerSection();
-    String homepageRuntimeDomainCreateServerStepIntro();
-    String homepageRuntimeDomainCreateServerStep1();
-    String homepageRuntimeDomainCreateServerStep2();
-    String homepageRuntimeDomainMonitorServerSection();
-    String homepageRuntimeDomainMonitorServerStep1();
-    String homepageRuntimeDomainMonitorServerStep2();
-    String homepageAccessControlSubHeader();
     String homepageAccessControlSection();
-    String homepageAccessControlStepIntro();
+    String homepageAccessControlSsoSubHeader();
     String homepageAccessControlStep1();
     String homepageAccessControlStep2();
-    String homepageAccessControlSsoSubHeader();
-    String homepagePatchingSection();
-    String homepagePatchingStep1();
-    String homepagePatchingDomainStep2();
-    String homepagePatchingStepApply();
-    String homepageHelpNeedHelp();
-    String homepageHelpGeneralResources();
-    String homepageHelpEapDocumentationText();
-    String homepageHelpEapDocumentationLink();
-    String homepageHelpLearnMoreEapText();
-    String homepageHelpLearnMoreEapLink();
-    String homepageHelpTroubleTicketText();
-    String homepageHelpTroubleTicketLink();
-    String homepageHelpTrainingText();
-    String homepageHelpTrainingLink();
-    String homepageHelpTutorialsLink();
-    String homepageHelpTutorialsText();
+    String homepageAccessControlStepIntro();
+    String homepageAccessControlSubHeader();
+    String homepageConfigurationDomainStep1();
+    String homepageConfigurationDomainSubHeader();
+    String homepageConfigurationSection();
+    String homepageConfigurationStandaloneStep1();
+    String homepageConfigurationStandaloneSubHeader();
+    String homepageConfigurationStep2();
+    String homepageConfigurationStep3();
+    String homepageConfigurationStepIntro();
+    String homepageDeploymentsDomainStep1();
+    String homepageDeploymentsDomainStep2();
+    String homepageDeploymentsDomainStepIntro();
+    String homepageDeploymentsSection();
+    String homepageDeploymentsStandaloneStep1();
+    String homepageDeploymentsStandaloneStepIntro();
+    String homepageDeploymentsStepEnable();
+    String homepageDeploymentsSubHeader();
+    String homepageHelpAdminGuideText();
+    String homepageHelpConsultingLink();
+    String homepageHelpConsultingText();
+    String homepageHelpDevelopersMailingListText();
     String homepageHelpEapCommunityLink();
     String homepageHelpEapCommunityText();
     String homepageHelpEapConfigurationsLink();
     String homepageHelpEapConfigurationsText();
-    String homepageHelpKnowledgebaseLink();
-    String homepageHelpKnowledgebaseText();
-    String homepageHelpConsultingLink();
-    String homepageHelpConsultingText();
-    String homepageHelpWilfdflyDocumentationText();
-    String homepageHelpAdminGuideText();
-    String homepageHelpWildflyIssuesText();
+    String homepageHelpEapDocumentationLink();
+    String homepageHelpEapDocumentationText();
+    String homepageHelpGeneralResources();
     String homepageHelpGetHelp();
     String homepageHelpIrcText();
-    String homepageHelpUserForumsText();
-    String homepageHelpDevelopersMailingListText();
-    String homepageHelpWildFlyHomeText();
-    String homepageHelpModelReferenceText();
+    String homepageHelpKnowledgebaseLink();
+    String homepageHelpKnowledgebaseText();
     String homepageHelpLatestNews();
+    String homepageHelpLearnMoreEapLink();
+    String homepageHelpLearnMoreEapText();
+    String homepageHelpModelReferenceText();
+    String homepageHelpNeedHelp();
+    String homepageHelpTrainingLink();
+    String homepageHelpTrainingText();
+    String homepageHelpTroubleTicketLink();
+    String homepageHelpTroubleTicketText();
+    String homepageHelpTutorialsLink();
+    String homepageHelpTutorialsText();
+    String homepageHelpUserForumsText();
+    String homepageHelpWildFlyHomeText();
+    String homepageHelpWildflyIssuesText();
+    String homepageHelpWilfdflyDocumentationText();
+    String homepageNewToEap();
+    String homepagePatchingDomainStep2();
+    String homepagePatchingSection();
+    String homepagePatchingStep1();
+    String homepagePatchingStepApply();
+    String homepageRuntimeDomainCreateServerSection();
+    String homepageRuntimeDomainCreateServerStep1();
+    String homepageRuntimeDomainCreateServerStep2();
+    String homepageRuntimeDomainCreateServerStepIntro();
+    String homepageRuntimeDomainMonitorServerSection();
+    String homepageRuntimeDomainMonitorServerStep1();
+    String homepageRuntimeDomainMonitorServerStep2();
+    String homepageRuntimeDomainServerGroupSection();
+    String homepageRuntimeDomainServerGroupStep1();
+    String homepageRuntimeDomainServerGroupStep2();
+    String homepageRuntimeDomainServerGroupStepIntro();
+    String homepageRuntimeDomainSubHeader();
+    String homepageRuntimeStandaloneSection();
+    String homepageRuntimeStandaloneStep1();
+    String homepageRuntimeStandaloneStep2();
+    String homepageRuntimeStandaloneSubHeader();
+    String homepageRuntimeStepIntro();
+    String homepageTakeATour();
     String hostNameChanged();
+    String hostScopedRole();
     String hostsUsingThisFilter();
     String hostsUsingThisHandler();
-    String hostScopedRole();
     String hour();
     String hours();
     String httpManagementInterface();
-
     String identity();
     String importCertificate();
+    String importt();
     String inactive();
     String includeRole();
-    String includeUserGroup();
     String includes();
     String includesAll();
     String includesAllDescription();
     String includesAllHeader();
+    String includeUserGroup();
     String initialize();
     String input();
     String instances();
+    String invalidate();
+    String invalidateSession();
     String invalidExpression();
     String invalidJson();
     String invalidMetadata();
-    String invalidate();
-    String invalidateSession();
-
     String jcaConfiguration();
-    String jgroupsRelayAlias();
     String jdbcDriver();
+    String jgroupsRelayAlias();
     String jndiNames();
     String jndiTree();
-
     String kill();
-
     String largest();
-
     String lastAccessedTime();
     String lastModified();
-
     String lastPage();
     String load();
     String loading();
@@ -330,26 +318,25 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logFile();
     String logFilePreviewError();
     String logFiles();
+    String loggingProfile();
     String logout();
-
     String macroEditor();
     String mainAttributes();
     String managed();
     String managementOperations();
     String managementVersion();
-
     String managementVersionMismatchDescription();
     String manyMessages();
     String markAllRead();
     String maxActiveSessions();
+    String maximum();
     String maxProcessingTime();
     String maxUsed();
-    String maximum();
     String membership();
     String membershipOfRole();
     String message();
-    String messages();
     String messageLarge();
+    String messages();
     String milliseconds();
     String minimum();
     String minute();
@@ -358,7 +345,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String modelBrowser();
     String monitor();
     String move();
-
     String nanoseconds();
     String nativeManagementInterface();
     String needsReload();
@@ -390,29 +376,29 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noRootLoggerDescription();
     String noRunningServers();
     String noStore();
-    String noTransport();
-    String noWrite();
     String notANumber();
     String notEnabled();
     String nothingSelected();
-
+    String noTransport();
+    String noWrite();
+    String obtain();
+    String obtainCertificate();
     String of();
     String ok();
     String opened();
     String openInExternalWindow();
     String openInModelBrowser();
+    String operation();
     String operationDate();
     String operationFailed();
     String operationMode();
-    String operationSuccessful();
-    String operation();
     String operations();
+    String operationSuccessful();
     String optionalFields();
     String or();
     String orDragItHere();
     String outcome();
     String output();
-
     String patchError();
     String patchInProgress();
     String patchSuccessful();
@@ -428,24 +414,23 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pool();
     String preparedStatementCache();
     String preview();
+    String previous();
     String previousPage();
+    String probe();
     String processingTime();
     String processors();
-    String probe();
     String productName();
     String productVersion();
     String providedBy();
     String prune();
     String pruneDisconnected();
     String pruneExpired();
-
     String queue();
-
     String readIdentity();
     String recovery();
-    String rejected();
     String references();
     String refresh();
+    String rejected();
     String rejectedSessions();
     String releaseName();
     String releaseVersion();
@@ -453,11 +438,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String reloadCRL();
     String reloadRequired();
     String reloadStandaloneTooltip();
+    String remoteActiveMQServer();
     String remoteAddress();
     String remove();
     String removeAlias();
-    String removeIdentity();
     String removeContent();
+    String removeIdentity();
     String rename();
     String replace();
     String replaceContent();
@@ -468,8 +454,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String requiredField();
     String reset();
     String resolve();
-    String resolveExpression();
     String resolvedValue();
+    String resolveExpression();
     String resourceRollback();
     String response();
     String restart();
@@ -483,6 +469,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String results();
     String resume();
     String review();
+    String revoke();
+    String revokeCertificate();
     String role();
     String roles();
     String rollback();
@@ -493,7 +481,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String runAsRoleTitle();
     String running();
     String runningTime();
-
     String sameOrigin();
     String save();
     String search();
@@ -506,12 +493,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String serverName();
     String serverUrlCustom();
     String serverUrlManagementModel();
-    String sessionTime();
     String sessionsAvgAliveTime();
     String sessionsMaxAliveTime();
+    String sessionTime();
     String setIdentityPasswordTitle();
-    String setSecret();
     String setPassword();
+    String setSecret();
     String settings();
     String showAll();
     String showSensitive();
@@ -522,8 +509,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String standaloneServer();
     String start();
     String startDelivery();
-    String startJob();
     String starting();
+    String startJob();
     String startMacro();
     String statements();
     String statisticsDisabled();
@@ -542,19 +529,16 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String supportsExpressions();
     String suspend();
     String suspended();
-    String systemRollback();
     String switchBehaviour();
-
-    String switchNearCache();
     String switchMemory();
+    String switchNearCache();
     String switchProvider();
     String switchStore();
     String switchToExpressionMode();
     String switchToNormalMode();
-
+    String systemRollback();
     String tags();
     String tailMode();
-
     String test();
     String testConnection();
     String testConnectionError();
@@ -569,7 +553,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String tracking();
     String transactions();
     String type();
-
     String undeploy();
     String undeployContent();
     String undeployed();
@@ -582,23 +565,22 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String updateAccount();
     String upload();
     String uploadContent();
-    String uploadPatch();
     String uploadDeployment();
     String uploadError();
     String uploadInProgress();
     String uploadNewDeployment();
+    String uploadPatch();
     String uploadSuccessful();
     String used();
     String user();
     String users();
-
     String validation();
+    String verifyRenew();
+    String verifyRenewCertificate();
     String view();
     String viewDetailsAlias();
     String viewInEditor();
-
     String xaProperties();
-
     String yes();
     //@formatter:on
 }

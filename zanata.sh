@@ -79,7 +79,7 @@ function pushPreviews {
     cp resources/src/main/zanata/previews/zanata.xml target/zanata/push/previews
     cp -R resources/src/main/resources/org/jboss/hal/resources/previews/ target/zanata/push/previews
     cd target/zanata/push/previews
-    zanata-cli push --batch-mode --file-types "HTML[html]"
+    zanata-cli push --batch-mode --push-type source --file-types "HTML[html]" --excludes "**/**_**.html"
     cd "${ROOT}"
 }
 

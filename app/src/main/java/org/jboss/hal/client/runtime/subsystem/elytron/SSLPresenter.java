@@ -53,8 +53,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
@@ -133,7 +131,6 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
     }
 
     // ----------------- certificate authority account
-static Logger _log = LoggerFactory.getLogger("org.jboss");
 
     void createAccount(String name) {
         Metadata metadata = metadataRegistry.lookup(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE)
@@ -224,7 +221,7 @@ static Logger _log = LoggerFactory.getLogger("org.jboss");
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().updateAccountQuestion(name)).asElement())
                 .add(form.asElement())
-                .primary(resources.constants().create(), form::save)
+                .primary(resources.constants().update(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
                 .cancel()
@@ -273,7 +270,7 @@ static Logger _log = LoggerFactory.getLogger("org.jboss");
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().changeAccountKeyQuestion(name)).asElement())
                 .add(form.asElement())
-                .primary(resources.constants().create(), form::save)
+                .primary(resources.constants().change(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
                 .cancel()
@@ -283,18 +280,35 @@ static Logger _log = LoggerFactory.getLogger("org.jboss");
         form.edit(new ModelNode());
     }
 
+    // ----------------- SSL
+
     void initKeyManager(String name) {
         Operation operation = new Operation.Builder(KEY_MANAGER_TEMPLATE.resolve(statementContext, name), INIT)
                 .build();
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initSuccess(name)));
+                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initKeyManagerSuccess(name)));
                     reload();
                 },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initError(name, failure))),
+                        Message.error(resources.messages().initKeyManagerError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initError(name, exception.getMessage()))));
+                        Message.error(resources.messages().initKeyManagerError(name, exception.getMessage()))));
     }
+
+    void initTrustManager(String name) {
+        Operation operation = new Operation.Builder(TRUST_MANAGER_TEMPLATE.resolve(statementContext, name), INIT)
+                .build();
+        dispatcher.execute(operation, result -> {
+                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initTrustManagerSuccess(name)));
+                    reload();
+                },
+                (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                        Message.error(resources.messages().initTrustManagerError(name, failure))),
+                (operation1, exception) -> MessageEvent.fire(getEventBus(),
+                        Message.error(resources.messages().initTrustManagerError(name, exception.getMessage()))));
+    }
+
+
 
     void reloadCRL(String name) {
         Operation operation = new Operation.Builder(TRUST_MANAGER_TEMPLATE.resolve(statementContext, name),

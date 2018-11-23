@@ -75,6 +75,10 @@ public class AddUnmanagedDialog {
                 });
     }
 
+    public Form<ModelNode> getForm() {
+        return dialog.getForm();
+    }
+
     public void show() {
         dialog.show();
     }

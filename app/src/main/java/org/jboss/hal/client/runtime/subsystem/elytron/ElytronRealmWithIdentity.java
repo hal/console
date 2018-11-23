@@ -75,7 +75,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
                 .button(resources.constants().addIdentity(), table -> presenter.addIdentity(template,
                         metadata, table.selectedRow().getName()),
                         Constraint.executable(template, ADD_IDENTITY))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(resources.constants().editIdentity(), this::showIdentityPage))
                 .build();
 

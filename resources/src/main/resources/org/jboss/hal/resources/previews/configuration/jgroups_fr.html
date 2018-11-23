@@ -1,0 +1,13 @@
+<p>JGroups est une boîte à outils pour une messagerie fiable qui peut être utilisé pour créer des clusters dont les nœuds peuvent s'envoyer des messages entre eux.</p>
+<p>Le sous-système <code>jgroups</code> fournit un support de communication de groupe pour les services de haute disponibilité dans ${build.shortName}. Il vous permet de configurer les canaux nommés et des piles de protocoles, ainsi que de visualiser les statistiques d'exécution des canaux. Le sous-système <code>jgroups</code> est disponible lorsqu'on utilise une configuration qui fournit des capacités de haute disponibilité, comme le profil <i>ha</i> ou <i>full-ha</i> dans un domaine géré, ou le fichier de configuration <code>standalone-ha.xml</code> ou <code>standalone-full-ha.xml</code> pour un serveur autonome.</p>
+<p>build.shortName} est préconfiguré avec deux piles JGroups :</p>
+<dl>
+    <dt>udp</dt>
+    <dd>Les nœuds du cluster utilisent la multidiffusion du protocole UDP (User Datagram Protocol) pour communiquer entre eux. C'est la pile par défaut.</dd>
+    <dt>tcp</dt>
+    <dd>Les nœuds du cluster utilisent le protocole TCP (Transmission Control Protocol) pour communiquer entre eux.</dd>
+</dl>
+<p>Vous pouvez utiliser les piles préconfigurées ou définir vos propres piles pour répondre aux besoins spécifiques de votre système.</p>
+<p><strong>Note :</strong><br/>
+    TCP a plus de frais généraux et est souvent considéré comme étant plus lent qu’ UDP puisqu'il gère la vérification des erreurs, l'ordre des paquets et le contrôle de la congestion lui-même. JGroups gère ces fonctionnalités pour UDP, alors que TCP les garantit lui-même. TCP est un bon choix lorsque vous utilisez JGroups sur des réseaux peu fiables ou à forte congestion, ou lorsque la multidiffusion n'est pas disponible.
+</p>

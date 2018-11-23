@@ -1,0 +1,4 @@
+<h2>Apache ActiveMQ Artemis</h2>
+<p>Apache ActiveMQ Artemis 是异步消息传递系统的一个开源项目。它是一个高性能、可嵌入、可进行集群并支持多种协议的系统。 ${build.shortName} 使用 Apache ActiveMQ Artemisuses 作为它的 JMS 代理，并被配置为使用 messaging-activemq 子系统。这完全取代了 HornetQ broker，但保留了与以前的版本协议的兼容性。</p>
+
+核心 ActiveMQ Artemis 与 JMS 没有直接关联，它提供了一个称为核心 API（core API）的非 JMS API。ActiveMQ Artemis 还提供了一个 JMS 客户端 API，它使用一个特殊的层来在核心 API 之上实现 JMS 环境。从本质上讲，与 JMS 的交互操作在客户端使用 JMS 客户端 API 转换为核心 API 操作。然后，所有操作都通过核心客户端 API 以及 Apache ActiveMQ wire 的格式进行送。服务器本身只使用核心API。如需了解更多相关信息，请参阅 <a target="_blank" href=http://activemq.apache.org/artemis/docs/1.1.0/using-core.html">ActiveMQ Artemis 文档</a>。

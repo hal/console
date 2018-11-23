@@ -64,12 +64,6 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.LOGGING_PROFILE, Names.LOGGING_PROFILES)
 
-                .columnAction(columnActionFactory.add(
-                        Ids.LOGGING_PROFILE_ADD,
-                        Names.LOGGING_PROFILE,
-                        LOGGING_PROFILE_TEMPLATE,
-                        Ids::loggingProfile))
-
                 .itemsProvider((context, callback) -> crud.readChildren(LOGGING_SUBSYSTEM_TEMPLATE, LOGGING_PROFILE, 1,
                         children -> callback.onSuccess(asNamedNodes(children))))
 
@@ -104,5 +98,12 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                                 LOGGING_PROFILE_TEMPLATE, LoggingProfileColumn.this));
             }
         });
+
+        addColumnAction(columnActionFactory.add(
+                Ids.LOGGING_PROFILE_ADD,
+                Names.LOGGING_PROFILE,
+                LOGGING_PROFILE_TEMPLATE,
+                Ids::loggingProfile,
+                this::createUniqueValidation));
     }
 }

@@ -45,7 +45,9 @@ class RollbackStep extends WizardStep<PatchContext, PatchState> {
                 .unsorted()
                 .build();
         form.getFormItem(PATCH_ID).setEnabled(false);
-        //form.edit(model);
+        // there is no default value of reset-configuration attribute on r-r-d
+        // so if the user doesn't set the value in the form, the form will fail to validate
+        model.get(RESET_CONFIGURATION).set(false);
 
         registerAttachable(form);
     }

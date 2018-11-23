@@ -75,6 +75,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -190,7 +191,7 @@ public class ContentColumn extends FinderColumn<Content> {
         setItemRenderer(item -> new ItemDisplay<Content>() {
             @Override
             public String getId() {
-                return Ids.content(item.getName());
+                return Strings.sanitize(Ids.content(item.getName()));
             }
 
             @Override
@@ -361,11 +362,12 @@ public class ContentColumn extends FinderColumn<Content> {
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                             }
                         }));
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 
     private void createEmpty() {
-        new CreateEmptyDialog(resources, name -> {
+        CreateEmptyDialog dialog = new CreateEmptyDialog(resources, name -> {
             ResourceAddress address = CONTENT_TEMPLATE.resolve(statementContext, name);
             ModelNode contentNode = new ModelNode();
             contentNode.get(EMPTY).set(true);
@@ -376,7 +378,9 @@ public class ContentColumn extends FinderColumn<Content> {
                 refresh(Ids.deployment(name));
                 MessageEvent.fire(eventBus, Message.success(resources.messages().deploymentEmptySuccess(name)));
             });
-        }).show();
+        });
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.show();
     }
 
     private void replace(Content content) {

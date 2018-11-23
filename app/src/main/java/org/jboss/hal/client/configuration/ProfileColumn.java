@@ -16,7 +16,6 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -56,6 +55,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLONE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDES;
@@ -74,23 +74,19 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
     private final Resources resources;
 
     @Inject
-    public ProfileColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final PlaceManager placeManager,
-            final Places places,
-            final FinderPathFactory finderPathFactory,
-            final CrudOperations crud,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final StatementContext statementContext,
-            final Resources resources) {
+    public ProfileColumn(Finder finder,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            PlaceManager placeManager,
+            Places places,
+            FinderPathFactory finderPathFactory,
+            CrudOperations crud,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            StatementContext statementContext,
+            Resources resources) {
 
         super(new Builder<NamedNode>(finder, Ids.PROFILE, Names.PROFILE)
-                .columnAction(columnActionFactory.add(Ids.PROFILE_ADD, Names.PROFILE, PROFILE_TEMPLATE,
-                        Collections.singletonList(INCLUDES)))
-                .columnAction(columnActionFactory.refresh(Ids.PROFILE_REFRESH))
-
                 .itemsProvider((context, callback) ->
                         crud.readChildren(ResourceAddress.root(), PROFILE, children ->
                                 callback.onSuccess(asNamedNodes(children))))
@@ -162,6 +158,10 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
                 return Ids.CONFIGURATION_SUBSYSTEM;
             }
         });
+
+        addColumnAction(columnActionFactory.add(Ids.PROFILE_ADD, Names.PROFILE,
+                PROFILE_TEMPLATE, singletonList(INCLUDES), this::createUniqueValidation));
+        addColumnAction(columnActionFactory.refresh(Ids.PROFILE_REFRESH));
     }
 
     private void cloneProfile(String from) {

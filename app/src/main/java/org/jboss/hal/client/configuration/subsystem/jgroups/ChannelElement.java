@@ -71,7 +71,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .button(tableButtonFactory.remove(CHANNEL_TEMPLATE,
                         table -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(new InlineAction<>(Names.FORK, row -> {
                     selectedChannel = row.getName();
                     presenter.showForks(row);

@@ -140,7 +140,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                     .button(tableButtonFactory.add(backupTemplate, table -> presenter.addBackup()))
                     .button(tableButtonFactory.remove(backupTemplate,
                             table -> presenter.removeBackup(table.selectedRow().getName())))
-                    .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                    .column(NAME, (cell, type, row, meta) -> row.getName())
                     .build();
 
             backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cacheType.baseId, BACKUPS, Ids.FORM),

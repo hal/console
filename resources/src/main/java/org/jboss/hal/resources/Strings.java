@@ -258,6 +258,10 @@ public final class Strings {
         return result;
     }
 
+    public static String sanitize(String str) {
+        return str != null ? str.replaceAll("[\\&\\#\\;\\(\\)\\.\\/\\=\\>\\<\"]", "") : null;
+    }
+
     private Strings() {
     }
 }

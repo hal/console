@@ -66,8 +66,8 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
     private String workmanager;
 
     @SuppressWarnings("ConstantConditions")
-    ThreadPoolsEditor(final String prefixId, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory, final Resources resources) {
+    ThreadPoolsEditor(String prefixId, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory, Resources resources) {
         attachables = new ArrayList<>();
 
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
@@ -77,7 +77,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
                 .button(tableButtonFactory.remove(WORKMANAGER_LRT_TEMPLATE,
                         table -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
                                 table.selectedRow())))
-                .column(NAME)
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
                 .build();
@@ -134,7 +134,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
     }
 
     @Override
-    public void setPresenter(final JcaPresenter presenter) {
+    public void setPresenter(JcaPresenter presenter) {
         this.presenter = presenter;
     }
 

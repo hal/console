@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.common.collect.Sets;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
@@ -485,7 +486,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
         this.updateBreadcrumb = updateBreadcrumb;
 
-        String resource = root.equals(ResourceAddress.root()) ? Names.MANAGEMENT_MODEL : root.lastValue();
+        String resource = root.equals(ResourceAddress.root()) ? Names.MANAGEMENT_MODEL
+                : SafeHtmlUtils.htmlEscapeAllowEntities(root.lastValue());
         if ("*".equals(resource)) {
             throw new IllegalArgumentException("Invalid root address: " + root +
                     ". ModelBrowser.setRoot() must be called with a concrete address.");

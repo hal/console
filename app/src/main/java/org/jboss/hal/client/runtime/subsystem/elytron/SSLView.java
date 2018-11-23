@@ -71,7 +71,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
     private SSLPresenter presenter;
 
     @Inject
-    public SSLView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public SSLView(MetadataRegistry metadataRegistry, Resources resources) {
 
         VerticalNavigation nav = new VerticalNavigation();
         LabelBuilder labelBuilder = new LabelBuilder();
@@ -79,28 +79,34 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
 
         // ----------------- certificate authority account
         Metadata certAuthorityMeta = metadataRegistry.lookup(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE);
+        String createAccDesc = certAuthorityMeta.forOperation(CREATE_ACCOUNT).getDescription().getDescription();
+        String deactivateAccDesc = certAuthorityMeta.forOperation(DEACTIVATE_ACCOUNT).getDescription().getDescription();
+        String updateAccDesc = certAuthorityMeta.forOperation(UPDATE_ACCOUNT).getDescription().getDescription();
+        String metadataAccDesc = certAuthorityMeta.forOperation(GET_METADATA).getDescription().getDescription();
+        String changeAccDesc = certAuthorityMeta.forOperation(CHANGE_ACCOUNT_KEY).getDescription().getDescription();
         caaTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT, TABLE),
                 certAuthorityMeta)
-                .button(new Button<>(cons.create(), cons.createAccount(),
+                .button(new Button<>(cons.create(), createAccDesc,
                         table -> presenter.createAccount(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CREATE_ACCOUNT)))
 
-                .button(new Button<>(cons.deactivate(), cons.deactivateAccount(),
+                .button(new Button<>(cons.deactivate(), deactivateAccDesc,
                         table -> presenter.deactivateAccount(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
 
-                .button(new Button<>(cons.update(), cons.updateAccount(),
+                .button(new Button<>(cons.update(), updateAccDesc,
                         table -> presenter.updateAccount(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
 
-                .button(cons.getMetadata(), table -> presenter.getMetadata(table.selectedRow().getName(),
-                        this::updateCertificateMetadata),
-                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, GET_METADATA))
+                .button(new Button<>(cons.getMetadata(), metadataAccDesc,
+                        table -> presenter.getMetadata(table.selectedRow().getName(), this::updateCertificateMetadata),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, GET_METADATA)))
 
-                .button(cons.changeAccountKey(), table -> presenter.changeAccountKey(table.selectedRow().getName()),
-                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY))
+                .button(new Button<>(cons.changeAccountKey(), changeAccDesc,
+                        table -> presenter.changeAccountKey(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY)))
 
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         caaMetadata = new PreTextItem(METADATA);
@@ -127,7 +133,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .button(resources.constants().initialize(),
                         table -> presenter.initKeyManager(table.selectedRow().getName()),
                         Constraint.executable(KEY_MANAGER_TEMPLATE, INIT))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         keyManagerForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(KEY_MANAGER, FORM), keyManagerMeta)
@@ -150,7 +156,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .button(resources.constants().readIdentity(),
                         table -> presenter.readIdentity(secDomainMeta, table.selectedRow().getName()),
                         Constraint.executable(SECURITY_DOMAIN_TEMPLATE, READ_IDENTITY))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         securityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(SECURITY_DOMAIN, FORM), secDomainMeta)
@@ -169,11 +175,15 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
 
         // ----------------- trust manager
         Metadata trustMeta = metadataRegistry.lookup(TRUST_MANAGER_TEMPLATE);
+        String initDesc = trustMeta.forOperation(INIT).getDescription().getDescription();
         trustManagerTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(TRUST_MANAGER, TABLE), trustMeta)
+                .button(new Button<>(resources.constants().initialize(), initDesc,
+                        table -> presenter.initTrustManager(table.selectedRow().getName()),
+                        Constraint.executable(TRUST_MANAGER_TEMPLATE, INIT)))
                 .button(new Button<>(resources.constants().reloadCRL(), labelBuilder.label(RELOAD_CERTIFICATE_REVOCATION_LIST),
                         table -> presenter.reloadCRL(table.selectedRow().getName()),
                         Constraint.executable(TRUST_MANAGER_TEMPLATE, RELOAD_CERTIFICATE_REVOCATION_LIST)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         trustManagerForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(TRUST_MANAGER, FORM), trustMeta)
@@ -235,7 +245,11 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
 
         trustManagerTable.bindForm(trustManagerForm);
         trustManagerTable.enableButton(0, false);
-        trustManagerTable.onSelectionChange(table -> table.enableButton(0, table.hasSelection()));
+        trustManagerTable.enableButton(1, false);
+        trustManagerTable.onSelectionChange(table -> {
+            table.enableButton(0, table.hasSelection());
+            table.enableButton(1, table.hasSelection());
+        });
     }
 
     private void updateCertificateMetadata(String data) {

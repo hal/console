@@ -1,17 +1,16 @@
-<p>The Undertow subsystem allows you to configure the web server and servlet container settings. It implements the
-    <a href="https://jcp.org/en/jsr/detail?id=340" target="_blank">Java Servlet 3.1 Specification</a> as well as websockets and supports HTTP Upgrade and using high performance non-blocking handlers in servlet deployments. The Undertow subsystem also has the ability to act as a high performance reverse proxy which supports mod_cluster.
+<p>Le sous-système Undertow vous permet de configurer les paramètres du serveur Web et du conteneur de servlet. Il implémente la <a href="https://jcp.org/en/jsr/detail?id=340" target="_blank">spécification Java Servlet 3.1</a> ainsi que les webockets et prend en charge la mise à niveau HTTP et l'utilisation de gestionnaires de haute performance non bloquants dans les déploiements de servlets. Le sous-système Undertow a également la capacité d'agir comme un proxy inversé de haute performance qui supporte mod_cluster.
 </p>
 
-<p>Within the Undertow subsystem, there are six main components to configure:</p>
+<p>Dans le sous-système Undertow, il y a six composants principaux à configurer :</p>
 <ol>
-    <li>Global Settings</li>
-    <li>Buffer Caches</li>
+    <li>Paramètres globaux</li>
+    <li>Caches tampons</li>
     <li>Serveur</li>
-    <li>Servlet Container</li>
+    <li>Conteneur de servlet</li>
     <li>Filtres</li>
-    <li>Gestionnaires</li>
+    <li>Handlers</li>
 </ol>
 
 <p><strong>Important</strong><br/>
-    The Undertow subsystem also relies on the IO subsystem to provide XNIO workers and buffer pools. The IO subsystem is configured separately and provides a default configuration which should give optimal performance in most cases.
+    Le sous-système Undertow s'appuie également sur le sous-système E/S pour fournir des workers XNIO et des pools tampons. Le sous-système E/S est configuré séparément et fournit une configuration par défaut qui devrait donner des performances optimales dans la plupart des cas.
 </p>

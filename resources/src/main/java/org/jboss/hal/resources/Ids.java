@@ -45,6 +45,9 @@ public interface Ids {
     String ABOUT_MODAL = "about-modal";
     String ABOUT_MODAL_TITLE = "about-modal-title";
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
+    String ACCESS_CONTROL_BROWSE_BY_GROUPS = "access-control-browse-by-groups";
+    String ACCESS_CONTROL_BROWSE_BY_ROLES = "access-control-browse-by-roles";
+    String ACCESS_CONTROL_BROWSE_BY_USERS = "access-control-browse-by-users";
     String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_OPERATION_EMPTY = "active-operation-empty";
     String ADD = "add";
@@ -225,6 +228,7 @@ public interface Ids {
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY = "elytron-http-authentication-factory";
     String ELYTRON_IDENTITY_REALM = "elytron-identity-realm";
     String ELYTRON_JACC_POLICY_FORM = "elytron-jacc-policy-form";
+    String ELYTRON_JASPI = "elytron-jaspi";
     String ELYTRON_JDBC_REALM = "elytron-jdbc-realm";
     String ELYTRON_KERBEROS_SECURITY_FACTORY = "elytron-kerberos-security-factory";
     String ELYTRON_KEY_MANAGER = "elytron-key-manager";
@@ -262,6 +266,7 @@ public interface Ids {
     String ELYTRON_SECURITY_DOMAIN = "elytron-security-domain";
     String ELYTRON_SECURITY_REALMS = "elytron-security-realms";
     String ELYTRON_SERVER_SSL_CONTEXT = "elytron-server-ssl-context";
+    String ELYTRON_SERVER_SSL_SNI_CONTEXT = "elytron-server-ssl-sni-context";
     String ELYTRON_SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY = "elytron-service-loader-http-server-mechanism-factory";
     String ELYTRON_SERVICE_LOADER_SASL_SERVER_FACTORY = "elytron-service-loader-sasl-server-factory";
     String ELYTRON_SIMPLE_PERMISSION_MAPPER = "elytron-simple-permission-mapper";
@@ -309,11 +314,16 @@ public interface Ids {
     String HEADER_EXTENSIONS_DROPDOWN = "header-extensions-dropdown";
     String HEADER_USERNAME = "header-username";
     String HOMEPAGE = "homepage";
+    String HOMEPAGE_ACCESS_CONTROL_MODULE = "homepage-access-control-module";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = "homepage-access-control-section";
+    String HOMEPAGE_CONFIGURATION_MODULE = "homepage-configuration-module";
     String HOMEPAGE_CONFIGURATION_SECTION = "homepage-configuration-section";
+    String HOMEPAGE_DEPLOYMENTS_MODULE = "homepage-deployments-module";
     String HOMEPAGE_DEPLOYMENTS_SECTION = "homepage-deployments-section";
+    String HOMEPAGE_PATCHING_MODULE = "homepage-patching-module";
     String HOMEPAGE_PATCHING_SECTION = "homepage-patching-section";
     String HOMEPAGE_RUNTIME_MONITOR_SECTION = "homepage-runtime-monitor-section";
+    String HOMEPAGE_RUNTIME_MODULE = "homepage-runtime-module";
     String HOMEPAGE_RUNTIME_SECTION = "homepage-runtime-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
@@ -487,6 +497,7 @@ public interface Ids {
     String MESSAGING_CORE_QUEUE = "messaging-core-queue";
     String MESSAGING_DISCOVERY_GROUP = "messaging-discovery-group";
     String MESSAGING_DIVERT = "messaging-divert";
+    String MESSAGING_REMOTE_ACTIVEMQ = "msg-remote-activemq";
     String MESSAGING_GLOBAL_SETTINGS = "messaging-global-settings";
     String MESSAGING_GROUPING_HANDLER = "messaging-grouping-handler";
     String MESSAGING_HA_CHOOSE_STRATEGY = "messaging-ha-choose-strategy";
@@ -539,6 +550,8 @@ public interface Ids {
     String MESSAGING_SERVER_RUNTIME = "msg-server-r";
     String MESSAGING_SERVER_RUNTIME_REFRESH = "msg-server-r-refresh";
     String MESSAGING_SERVER_SETTINGS = "msg-server-settings";
+    String MICRO_PROFILE_HEALTH = "microprofile-health";
+    String MICRO_PROFILE_METRICS_FORM = "microprofile-metrics-form";
     String MODCLUSTER_PROXY = "modcluster-proxy";
     String MODCLUSTER_PROXY_ADD = "modcluster-proxy-add";
     String MODCLUSTER_PROXY_REFRESH = "modcluster-proxy-refresh";
@@ -688,6 +701,9 @@ public interface Ids {
     String TOOLBAR = "toolbar";
     String TOOLBAR_ACTION_DROPDOWN = "toolbar-action-dropdown";
     String TOOLBAR_FILTER = "toolbar-filter";
+    String TOUR_BUTTON_BACK = "tour-button-back";
+    String TOUR_BUTTON_DONE = "tour-button-done";
+    String TOUR_BUTTON_NEXT = "tour-button-next";
     String TRANSACTION = "transaction";
     String TRANSACTION_PARTICIPANTS_PAGE = "transaction-Participants-page";
     String TRANSACTION_STATISTICS_DISABLED = "transaction-statistics-disabled";

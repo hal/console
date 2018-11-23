@@ -75,6 +75,7 @@ interface AddressTemplates {
 
     String IDENTITY_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/identity-realm=*";
 
+    String JASPI_CONFIGURATION_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/jaspi-configuration=*";
     String JDBC_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/jdbc-realm=*";
 
     String KERBEROS_SECURITY_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/kerberos-security-factory=*";
@@ -106,6 +107,7 @@ interface AddressTemplates {
     String SASL_AUTHENTICATION_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/sasl-authentication-factory=*";
     String SECURITY_DOMAIN_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/security-domain=*";
     String SERVER_SSL_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/server-ssl-context=*";
+    String SERVER_SSL_SNI_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/server-ssl-sni-context=*";
     String SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/service-loader-http-server-mechanism-factory=*";
     String SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/service-loader-sasl-server-factory=*";
     String SIMPLE_PERMISSION_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/simple-permission-mapper=*";
@@ -169,6 +171,7 @@ interface AddressTemplates {
 
     AddressTemplate IDENTITY_REALM_TEMPLATE = AddressTemplate.of(IDENTITY_REALM_ADDRESS);
 
+    AddressTemplate JASPI_CONFIGURATION_TEMPLATE = AddressTemplate.of(JASPI_CONFIGURATION_ADDRESS);
     AddressTemplate JDBC_REALM_TEMPLATE = AddressTemplate.of(JDBC_REALM_ADDRESS);
 
     AddressTemplate KERBEROS_SECURITY_FACTORY_TEMPLATE = AddressTemplate.of(KERBEROS_SECURITY_FACTORY_ADDRESS);
@@ -200,6 +203,7 @@ interface AddressTemplates {
     AddressTemplate SASL_AUTHENTICATION_FACTORY_TEMPLATE = AddressTemplate.of(SASL_AUTHENTICATION_FACTORY_ADDRESS);
     AddressTemplate SECURITY_DOMAIN_TEMPLATE = AddressTemplate.of(SECURITY_DOMAIN_ADDRESS);
     AddressTemplate SERVER_SSL_CONTEXT_TEMPLATE = AddressTemplate.of(SERVER_SSL_CONTEXT_ADDRESS);
+    AddressTemplate SERVER_SSL_SNI_CONTEXT_TEMPLATE = AddressTemplate.of(SERVER_SSL_SNI_CONTEXT_ADDRESS);
     AddressTemplate SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate.of(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
     AddressTemplate SERVICE_LOADER_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS);
     AddressTemplate SIMPLE_PERMISSION_MAPPER_TEMPLATE = AddressTemplate.of(SIMPLE_PERMISSION_MAPPER_ADDRESS);

@@ -40,6 +40,7 @@ import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment.Status;
@@ -89,6 +90,7 @@ import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.deployment.Deployment.Status.OK;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -112,18 +114,19 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
     private final Resources resources;
 
     @Inject
-    public ServerGroupDeploymentColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final Environment environment,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final Places places,
-            final ServerActions serverActions,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final @Footer Provider<Progress> progress,
-            final Resources resources) {
+    public ServerGroupDeploymentColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Environment environment,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            Places places,
+            CrudOperations crud,
+            ServerActions serverActions,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
 
         super(new FinderColumn.Builder<ServerGroupDeployment>(finder, Ids.SERVER_GROUP_DEPLOYMENT, Names.DEPLOYMENT)
                 .useFirstActionAsBreadcrumbHandler()
@@ -184,12 +187,12 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<ServerGroupDeployment>>() {
                     @Override
-                    public void onFailure(final Throwable caught) {
+                    public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
                     }
 
                     @Override
-                    public void onSuccess(final List<ServerGroupDeployment> result) {
+                    public void onSuccess(List<ServerGroupDeployment> result) {
                         // only running deployments w/ a reference server will show up in the breadcrumb dropdown
                         List<ServerGroupDeployment> deploymentsOnServer = result.stream()
                                 .filter(ServerGroupDeployment::runningWithReferenceServer)
@@ -274,8 +277,12 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 }
                 AddressTemplate template = SERVER_GROUP_DEPLOYMENT_TEMPLATE
                         .replaceWildcards(statementContext.selectedServerGroup());
-                actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(),
-                        template, SERVER_GROUP_DEPLOYMENT_TEMPLATE, ServerGroupDeploymentColumn.this));
+                actions.add(new ItemAction.Builder<ServerGroupDeployment>()
+                        .title(resources.constants().undeploy())
+                        .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), template,
+                                () -> refresh(CLEAR_SELECTION)))
+                        .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, REMOVE))
+                        .build());
                 return actions;
             }
         });
@@ -408,6 +415,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                 });
                     }
                 });
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 

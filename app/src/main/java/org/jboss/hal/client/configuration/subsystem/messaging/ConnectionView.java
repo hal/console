@@ -59,7 +59,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
     public static final String EQ_WILDCARD = "=*";
 
-    public static ConnectionView create(final MbuiContext mbuiContext) {
+    public static ConnectionView create(MbuiContext mbuiContext) {
         return new Mbui_ConnectionView(mbuiContext);
     }
 

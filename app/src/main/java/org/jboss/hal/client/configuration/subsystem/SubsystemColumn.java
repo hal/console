@@ -62,7 +62,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=*");
     private static final boolean DISABLE_EMPTY_SUBSYSTEM = true;
     private static final List<String> EMPTY_SUBSYSTEMS = asList("bean-validation", "ee-security", "jaxrs", "jdr",
-            "jsr77", "pojo", "sar");
+            "jsr77", "microprofile-opentracing-smallrye", "pojo", "sar");
 
     @Inject
     public SubsystemColumn(Finder finder,

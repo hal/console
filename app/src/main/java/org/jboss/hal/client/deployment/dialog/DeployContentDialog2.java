@@ -102,7 +102,7 @@ public class DeployContentDialog2 {
         dialog.show();
         Elements.setVisible(noContentSelected.asElement(), false);
         table.update(content);
-        SwitchBridge.Api.element(enable).setValue(false);
+        SwitchBridge.Api.element(enable).setValue(true);
     }
 
 

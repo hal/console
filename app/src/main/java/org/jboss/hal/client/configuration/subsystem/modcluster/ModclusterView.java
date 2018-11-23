@@ -42,8 +42,11 @@ import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.DYNAMIC_LOAD_PROVIDER_TEMPLATE;
-import static org.jboss.hal.resources.Names.DYNAMIC_LOAD_PROVIDER;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_DYNAMIC_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_SIMPLE_TEMPLATE;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.resources.Names.LOAD_PROVIDER_DYNAMIC;
+import static org.jboss.hal.resources.Names.LOAD_PROVIDER_SIMPLE;
 
 @MbuiView
 @SuppressWarnings("DuplicateStringLiteralInspection")
@@ -59,11 +62,13 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
     @MbuiElement("load-metrics-form") Form<NamedNode> loadMetricForm;
     @MbuiElement("custom-load-metrics-table") Table<NamedNode> customLoadMetricTable;
     @MbuiElement("custom-load-metrics-form") Form<NamedNode> customLoadMetricForm;
-    private Form<ModelNode> dynamicLoadProviderForm;
-    private Alert alertDynamicLoadProvider = new Alert(Icons.WARNING,
-            mbuiContext.resources().messages().dynamicLoadProviderWarning());
-    private Alert alertDynamicLoadProvider2 = new Alert(Icons.WARNING,
-            mbuiContext.resources().messages().dynamicLoadProviderWarning());
+    private Form<ModelNode> loadProviderSimpleForm;
+    private Form<ModelNode> loadProviderDynamicForm;
+    private Alert alertLoadProviderDynamic = new Alert(Icons.WARNING,
+            mbuiContext.resources().messages().loadProviderDynamicWarning());
+    private Alert alertLoadProviderDynamic2 = new Alert(Icons.WARNING,
+            mbuiContext.resources().messages().loadProviderDynamicWarning());
+
 
     ModclusterView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -71,37 +76,77 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
 
     @PostConstruct
     void init() {
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(DYNAMIC_LOAD_PROVIDER_TEMPLATE);
-        dynamicLoadProviderForm = new ModelNodeForm.Builder<>("dynamic-load-provider-form", metadata)
+
+        // --------- load-provider=dynamic
+
+        Metadata dynamicMetadata = mbuiContext.metadataRegistry().lookup(LOAD_PROVIDER_DYNAMIC_TEMPLATE);
+        loadProviderDynamicForm = new ModelNodeForm.Builder<>("load-provider-dynamic-form", dynamicMetadata)
                 .singleton(
-                        () -> presenter.dynamicLoadProviderOperation(),
-                        () -> presenter.addDynamicLoadProvider())
-                .prepareRemove(form -> presenter.removeDynamicLoadProvider())
+                        () -> presenter.loadProviderDynamicOperation(),
+                        () -> presenter.addLoadProviderDynamic())
+                .prepareRemove(form -> presenter.removeLoadProviderDynamic())
                 .onSave((form, changedValues) -> {
                     String name = presenter.getProxyName();
-                    AddressTemplate template = DYNAMIC_LOAD_PROVIDER_TEMPLATE.replaceWildcards(
+                    AddressTemplate template = LOAD_PROVIDER_DYNAMIC_TEMPLATE.replaceWildcards(
                             presenter.getProxyName());
-                    saveForm(Names.DYNAMIC_LOAD_PROVIDER, name, template.resolve(mbuiContext.statementContext(), name),
-                            changedValues, metadata);
+                    saveForm(Names.LOAD_PROVIDER_DYNAMIC, name, template.resolve(mbuiContext.statementContext(), name),
+                            changedValues, dynamicMetadata);
                 })
                 .prepareReset(form -> {
                     String name = presenter.getProxyName();
-                    AddressTemplate template = DYNAMIC_LOAD_PROVIDER_TEMPLATE.replaceWildcards(
+                    AddressTemplate template = LOAD_PROVIDER_DYNAMIC_TEMPLATE.replaceWildcards(
                             presenter.getProxyName());
-                    resetForm(Names.DYNAMIC_LOAD_PROVIDER, name, template.resolve(mbuiContext.statementContext(), name),
-                            form, metadata);
+                    resetForm(Names.LOAD_PROVIDER_DYNAMIC, name, template.resolve(mbuiContext.statementContext(), name),
+                            form, dynamicMetadata);
                 })
                 .build();
-        HTMLElement dynamicLoadProviderElement = section()
+        HTMLElement loadProviderDynamicElement = section()
                 .add(div()
-                        .add(h(1).textContent(Names.DYNAMIC_LOAD_PROVIDER))
-                        .add(p().textContent(metadata.getDescription().getDescription()))
+                        .add(h(1).textContent(Names.LOAD_PROVIDER_DYNAMIC))
+                        .add(p().textContent(dynamicMetadata.getDescription().getDescription()))
                         .asElement())
-                .add(dynamicLoadProviderForm)
+                .add(loadProviderDynamicForm)
                 .asElement();
-        navigation.insertPrimary("dynamic-load-provider-item", "custom-load-metrics-item", DYNAMIC_LOAD_PROVIDER,
-                "fa fa-shield", dynamicLoadProviderElement);
-        registerAttachable(dynamicLoadProviderForm);
+        navigation.insertPrimary("load-provider-dynamic-item", "custom-load-metrics-item", LOAD_PROVIDER_DYNAMIC,
+                "fa fa-shield", loadProviderDynamicElement);
+        registerAttachable(loadProviderDynamicForm);
+
+        // --------- load-provider=simple
+
+        Metadata simpleMetadata = mbuiContext.metadataRegistry().lookup(LOAD_PROVIDER_SIMPLE_TEMPLATE);
+        loadProviderSimpleForm = new ModelNodeForm.Builder<>("load-provider-simple-form", simpleMetadata)
+                .singleton(
+                        () -> presenter.loadProviderSimpleOperation(),
+                        () -> presenter.addLoadProviderSimple())
+                .prepareRemove(form -> presenter.removeLoadProviderSimple())
+                .onSave((form, changedValues) -> {
+                    String name = presenter.getProxyName();
+                    AddressTemplate template = LOAD_PROVIDER_SIMPLE_TEMPLATE.replaceWildcards(
+                            presenter.getProxyName());
+                    saveForm(LOAD_PROVIDER_SIMPLE, name, template.resolve(mbuiContext.statementContext(), name),
+                            changedValues, simpleMetadata);
+                })
+                .prepareReset(form -> {
+                    String name = presenter.getProxyName();
+                    AddressTemplate template = LOAD_PROVIDER_SIMPLE_TEMPLATE.replaceWildcards(
+                            presenter.getProxyName());
+                    resetForm(LOAD_PROVIDER_SIMPLE, name, template.resolve(mbuiContext.statementContext(), name),
+                            form, simpleMetadata);
+                })
+                .build();
+        HTMLElement loadProviderSimpleElement = section()
+                .add(div()
+                        .add(h(1).textContent(LOAD_PROVIDER_SIMPLE))
+                        .add(p().textContent(simpleMetadata.getDescription().getDescription()))
+                        .asElement())
+                .add(loadProviderSimpleForm)
+                .asElement();
+        navigation.insertPrimary("load-provider-simple-item", "load-provider-dynamic-item", LOAD_PROVIDER_SIMPLE,
+                "fa fa-exchange", loadProviderSimpleElement);
+        registerAttachable(loadProviderSimpleForm);
+
+
+
     }
 
     @Override
@@ -109,24 +154,25 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
         super.attach();
         Element customLoadMetricElement = asElement().querySelector("section[data-vn-item-for=custom-load-metrics-item] > div");
         Element loadMetricElement = asElement().querySelector("section[data-vn-item-for=load-metrics-item] > div");
-        loadMetricElement.appendChild(alertDynamicLoadProvider.asElement());
-        customLoadMetricElement.appendChild(alertDynamicLoadProvider2.asElement());
+        loadMetricElement.appendChild(alertLoadProviderDynamic.asElement());
+        customLoadMetricElement.appendChild(alertLoadProviderDynamic2.asElement());
     }
 
     @Override
     public void updateConfiguration(final ModelNode payload) {
         configurationForm.view(payload);
+        loadProviderSimpleForm.view(failSafeGet(payload, "load-provider/simple"));
     }
 
     @Override
-    public void updateDynamicLoadProvider(ModelNode payload) {
-        dynamicLoadProviderForm.view(payload);
-        // the dynamic-load-provider=configuration resource is a parent resource of the load-metrics tables
-        // disable the "add" buttons if there is no dynamic-load-provider=configuration
+    public void updateLoadProviderDynamic(ModelNode payload) {
+        loadProviderDynamicForm.view(payload);
+        // the load-provider=dynamic resource is a parent resource of the load-metrics tables
+        // disable the "add" buttons if there is no load-provider=dynamic
         customLoadMetricTable.enableButton(0, payload.isDefined());
         loadMetricTable.enableButton(0, payload.isDefined());
-        Elements.setVisible(alertDynamicLoadProvider.asElement(), !payload.isDefined());
-        Elements.setVisible(alertDynamicLoadProvider2.asElement(), !payload.isDefined());
+        Elements.setVisible(alertLoadProviderDynamic.asElement(), !payload.isDefined());
+        Elements.setVisible(alertLoadProviderDynamic2.asElement(), !payload.isDefined());
     }
 
     @Override

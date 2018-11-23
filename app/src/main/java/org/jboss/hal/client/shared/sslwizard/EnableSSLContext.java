@@ -21,6 +21,8 @@ class EnableSSLContext {
 
     enum Strategy {
 
+        // asks the user to create a key-store and obtain the certificate from letsencrypt
+        KEYSTORE_OBTAIN_LETSENCRYPT,
         // asks the user to create a key-store and generate a self-signed key
         KEYSTORE_CREATE,
         // the java key store file exists in the filesystem, asks to create a key-store elytron resource

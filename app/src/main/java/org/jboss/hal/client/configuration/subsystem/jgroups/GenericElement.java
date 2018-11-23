@@ -46,8 +46,8 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
     private HTMLElement section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    GenericElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
-            final Resources resources,
+    GenericElement(Metadata metadata, TableButtonFactory tableButtonFactory,
+            Resources resources,
             AddressTemplate template, String name, String resourceId) {
         this.resources = resources;
 
@@ -94,7 +94,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
     }
 
     @Override
-    public void setPresenter(final JGroupsPresenter presenter) {
+    public void setPresenter(JGroupsPresenter presenter) {
         this.presenter = presenter;
     }
 

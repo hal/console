@@ -47,8 +47,8 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     private WebservicePresenter presenter;
 
     @SuppressWarnings("ConstantConditions")
-    HandlerElement(final Config configType, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory) {
+    HandlerElement(Config configType, MetadataRegistry metadataRegistry,
+            TableButtonFactory tableButtonFactory) {
 
         String tableId = Ids.build(configType.baseId, "handler", Ids.TABLE);
         Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
@@ -56,7 +56,7 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .button(tableButtonFactory.add(HANDLER_TEMPLATE, table -> presenter.addHandler()))
                 .button(tableButtonFactory.remove(HANDLER_TEMPLATE,
                         table -> presenter.removeHandler(table.selectedRow().getName())))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
         String formId = Ids.build(configType.baseId, "handler", Ids.FORM);
@@ -92,11 +92,11 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     }
 
     @Override
-    public void setPresenter(final WebservicePresenter presenter) {
+    public void setPresenter(WebservicePresenter presenter) {
         this.presenter = presenter;
     }
 
-    void update(final List<NamedNode> handlers) {
+    void update(List<NamedNode> handlers) {
         form.clear();
         table.update(handlers);
     }

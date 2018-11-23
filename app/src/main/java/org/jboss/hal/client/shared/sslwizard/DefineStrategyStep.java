@@ -84,6 +84,9 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
         // because the operation to generate the self signed certificate is only available
         // on a runtime resource (/host=any/server=any/subsysem=elytron/key-store=any:generate-key-pair)
         // and it would generate a different certificate for each key-store
+        // The same problem applies to obtain a certificate from LetsEncrypt, this requires to call
+        // key-store=foo:obtain-certificate on a running server, but calling this op on different servers
+        // would obtain certificates with different checksums
         boolean generateSelfSigned = standaloneMode || !undertowHttps;
         if (generateSelfSigned) {
             builder.add(div().css(radio)
@@ -94,6 +97,15 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                                     .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_CREATE)
                                     .asElement())
                             .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateAll()))));
+
+            builder.add(div().css(radio)
+                    .add(label()
+                            .add(input(InputType.radio)
+                                    .id("strategy-obtain-from-letsencrypt")
+                                    .attr(UIConstants.NAME, radioStrategyName)
+                                    .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_OBTAIN_LETSENCRYPT)
+                                    .asElement())
+                            .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionObtainFromLetsEncrypt()))));
         }
 
         builder.add(div().css(radio)
@@ -103,15 +115,15 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                                 .attr(UIConstants.NAME, radioStrategyName)
                                 .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS)
                                 .asElement())
-                        .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateKeyStore()))))
-                .add(div().css(radio)
-                        .add(label()
-                                .add(input(InputType.radio)
-                                        .id("strategy-reuse-key-store")
-                                        .attr(UIConstants.NAME, radioStrategyName)
-                                        .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_RESOURCE_EXISTS)
-                                        .asElement())
-                                .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionReuseKeyStore()))));
+                        .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateKeyStore()))));
+        builder.add(div().css(radio)
+                .add(label()
+                        .add(input(InputType.radio)
+                                .id("strategy-reuse-key-store")
+                                .attr(UIConstants.NAME, radioStrategyName)
+                                .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_RESOURCE_EXISTS)
+                                .asElement())
+                        .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionReuseKeyStore()))));
 
         root = builder.asElement();
 

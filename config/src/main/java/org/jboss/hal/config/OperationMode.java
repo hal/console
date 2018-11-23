@@ -18,6 +18,7 @@ package org.jboss.hal.config;
 /** Enum for the operation mode. */
 public enum OperationMode {
 
+    EMBEDDED,
     SELF_CONTAINED, // WildFly Swarm
     STANDALONE,
     DOMAIN,

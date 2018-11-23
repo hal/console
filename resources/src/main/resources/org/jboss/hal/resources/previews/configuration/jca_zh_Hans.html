@@ -1,0 +1,17 @@
+<p>Java EE的连接器架构（JCA）为Java EE 系统定义了一个到外部异构企业信息系统（EIS）的标准体系结构。EIS的例子包括企业资源规划（ERP）系统，大型机事务处理（TP），数据库和消息传递系统。资源适配器是实现Java EE连接器API架构的组成部分。</p>
+<p>JCA 1.7 提供这些管理功能：</p>
+<ul>
+    <li>连接</li>
+    <li>事务</li>
+    <li>安全</li>
+    <li>生命周期</li>
+    <li>工作实例</li>
+    <li>事务流</li>
+    <li>消息流</li>
+</ul>
+<p>JCA 1.7是在Java Community Process 作为<a href="https://www.jcp.org/en/jsr/detail?id=322" rel="nofollow" target="_blank">JSR-322</a>开发的。</p>
+
+<h2>资源适配器</h2>
+<p>资源适配器是提供 Java EE 应用程序和使用 JCA 规格的 EIS 系统间通讯的可部署 Java EE 组件。EIS 厂商经常提供资源适配器，允许他们的产品与 Java EE 应用程序轻易集成。资源适配器通常是由EIS厂商提供，以方便自己的产品与 Java EE 应用程序进行集成。</p>
+<p>企业信息系统可以是一个组织内的任何其他软件系统。例如，企业资源规划（ERP）系统、数据库系统、电子邮件服务器和专有的消息传递系统。</p>
+<p>资源适配器被打包在可以部署到${build.shortName}的资源适配器归档（RAR）文件。一个RAR文件还可能会包含在企业归档（EAR）部署中。</p>

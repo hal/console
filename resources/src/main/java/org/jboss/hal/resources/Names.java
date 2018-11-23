@@ -103,7 +103,6 @@ public interface Names {
     String DISTRIBUTED_CACHE = "Distributed Cache";
     String DIVERT = "Divert";
     String DOMAIN_CONTROLLER = "Domain Controller";
-    String DYNAMIC_LOAD_PROVIDER = "Dynamic Load Provider";
 
     String EE = "EE";
     String EJB3 = "EJB";
@@ -117,6 +116,8 @@ public interface Names {
     String EXPIRATION = "Expiration";
     String EXTENSION = "Extension";
     String EXTENSIONS = "Extensions";
+    String EXTERNAL_JMS_QUEUE = "External JMS Queue";
+    String EXTERNAL_JMS_TOPIC = "External JMS Topic";
 
     String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";
@@ -138,6 +139,7 @@ public interface Names {
     String HANDLERS = "Handlers";
     String HANDLER_CHAIN = "Handler Chain";
     String HEAP = "Heap";
+    String HOMEPAGE = "Homepage";
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
@@ -195,6 +197,8 @@ public interface Names {
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
     String LOAD_METRIC = "Load Metric";
+    String LOAD_PROVIDER_DYNAMIC = "Load Provider Dynamic";
+    String LOAD_PROVIDER_SIMPLE = "Load Provider Simple";
     String LOCAL_CACHE = "Local Cache";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
@@ -215,7 +219,6 @@ public interface Names {
     String MASTER = "Master";
     String MAXIMUM_PERMISSIONS = "Maximum Permissions";
     String MB = "MB";
-    String MICROPROFILE_CONFIG = "Microprofile Config";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
     String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
@@ -223,6 +226,10 @@ public interface Names {
     String MEMORY = "Memory";
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MESSAGING = "Messaging";
+    String MESSAGING_REMOTE_ACTIVEMQ = "Remote ActiveMQ";
+    String MICROPROFILE_CONFIG = "Microprofile Config";
+    String MICROPROFILE_HEALTH = "MicroProfile Health";
+    String MICROPROFILE_METRICS = "MicroProfile Metrics";
     String MIME_MAPPING = "Mime Mapping";
     String MINIMUM_PERMISSIONS = "Minimum Permissions";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
@@ -327,6 +334,7 @@ public interface Names {
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
     String SMALLRYE = "Smallrye";
+    String SOCKET_ACTION_HANDLER = "Socket ActionHandler";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
@@ -340,6 +348,7 @@ public interface Names {
     String STORES = "Stores";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
+    String STATE = "State";
     String STATEFUL_SESSION_BEAN = "Stateful Session Bean";
     String STATELESS_SESSION_BEAN = "Stateless Session Bean";
     String SUB_RESOURCE_LOCATORS = "Sub Resource Locators";

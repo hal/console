@@ -1,0 +1,19 @@
+<p>Le fichier ${build.shortName} peut être suspendu ou fermé gracieusement. Cela permet aux demandes actives de se terminer normalement, sans accepter de nouvelles demandes. Une valeur de délai d'attente spécifie pendant combien de temps l'opération de mise en attente ou d'arrêt durera en attendant que les demandes actives soient terminées. Pendant que le serveur est suspendu, les demandes de gestion sont toujours traitées.</p>
+<p>Un arrêt en douceur est coordonné à l'échelle du serveur, principalement centré sur les points d'entrée par lesquels une requête entre dans le serveur. Les sous-systèmes suivants prennent en charge l'arrêt en douceur :</p>
+<dl>
+    <dt>Undertow</dt>
+    <dd>Le sous-système <code>Undertow</code> attendra que toutes les requêtes soient terminées.</dd>
+    <dt>Modcluster</dt>
+    <dd>Le sous-système <code>modcluster</code> avertira l'équilibreur de charge que le serveur est mis en attente dans la phase <code>PRE_SUSPEND</code>.
+    </dd>
+    <dt>EJB</dt>
+    <dd>Le sous-système <code>ejb3</code> attendra que toutes les requêtes EJB et que les livraisons de messages MDB à distance soient terminées. La livraison aux MDB est interrompue dans la phase <code>PRE_SUSPEND</code>. Les minuteries EJB sont suspendues et les minuteries manquées seront activées à la reprise du serveur.
+    </dd>
+    <dt>EE Concurrence </dt>
+    <dd>Le serveur attendra que tous les travaux actifs soient terminés. Tous les travaux en file d'attente seront ignorés. Simultanément, puisque la concurrence en matière d'EE n'a pas de persistance, les tâches en attente qui ont été ignorées seront perdues.<br/>Pendant que le serveur est dans un état suspendu, les tâches planifiées continueront à s'exécuter à leur heure prévue mais émettront une <code>exception java.lang.IllegalStateException</code>. Une fois que le serveur reprend, les tâches planifiées continueront à s'exécuter normalement et dans la plupart des cas, les tâches n'auront pas besoin d'être reprogrammées.
+    </dd>
+    <dt>Lot</dt>
+    <dd>Le serveur arrêtera tous les travaux en cours d'exécution pendant la période de temporisation et reportera tous les travaux planifiés.<br/>Un arrêt en douceur ne rejettera pas les transactions distribuées à distance ou les nouveaux messages JMS entrants. Les jobs par lots EE et les tâches simultanées EE programmées par l’activité en vol sont actuellement autorisées. Cependant, les tâches concurrentes EE soumises qui vont au delà de la fenêtre de temporisation sont simultanément en erreur lorsqu'elles sont exécutées.
+    </dd>
+</dl>
+<p>Les requêtes sont suivies par le sous-système request-controller. Sans ce sous-système, les capacités de suspension et de reprise sont limitées et le serveur n'attendra pas que les requêtes soient terminées avant de suspendre ou de fermer. Cependant, si vous n'avez pas besoin de cette capacité, le sous-système request-controller peut être retiré pour une petite amélioration des performances.</p>

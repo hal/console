@@ -53,8 +53,8 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
     private final HTMLElement root;
     private OtherSettingsPresenter presenter;
 
-    LdapKeyStoreElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    LdapKeyStoreElement(Metadata metadata, TableButtonFactory tableButtonFactory,
+            Resources resources) {
         table = new ModelNodeTable.Builder<NamedNode>(id(Ids.TABLE), metadata)
                 .button(tableButtonFactory.add(id(Ids.ADD), Names.LDAP_KEY_STORE, metadata.getTemplate(),
                         asList(DIR_CONTEXT, SEARCH_PATH), (n, a) -> presenter.reloadLdapKeyStores()))
@@ -124,7 +124,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
     }
 
     @Override
-    public void setPresenter(final OtherSettingsPresenter presenter) {
+    public void setPresenter(OtherSettingsPresenter presenter) {
         this.presenter = presenter;
     }
 

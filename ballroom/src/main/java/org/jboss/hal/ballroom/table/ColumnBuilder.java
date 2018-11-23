@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
 /**
  * Builder for a {@link Column}.
  *
@@ -24,20 +26,22 @@ public class ColumnBuilder<T> {
 
     private final String name;
     private final String title;
-    private final Column.RenderCallback<T, ?> render;
+    private final Column.RenderCallback<T, String> render;
 
     private boolean orderable;
     private boolean searchable;
+    private boolean safeHtml;
     private String type;
     private String width;
     private String className;
 
-    public ColumnBuilder(String name, String title, Column.RenderCallback<T, ?> render) {
+    public ColumnBuilder(String name, String title, Column.RenderCallback<T, String> render) {
         this.name = name;
         this.title = title;
         this.render = render;
         this.orderable = true;
         this.searchable = true;
+        this.safeHtml = false;
     }
 
     public ColumnBuilder<T> orderable(boolean orderable) {
@@ -47,6 +51,11 @@ public class ColumnBuilder<T> {
 
     public ColumnBuilder<T> searchable(boolean searchable) {
         this.searchable = searchable;
+        return this;
+    }
+
+    public ColumnBuilder<T> safeHtml() {
+        this.safeHtml = true;
         return this;
     }
 
@@ -66,10 +75,25 @@ public class ColumnBuilder<T> {
     }
 
     public Column<T> build() {
+        Column.RenderCallback<T, String> effectiveRender;
+        if (safeHtml) {
+            // use render callback as-is
+            effectiveRender = render;
+        } else {
+            // make sure the render escapes HTML
+            effectiveRender = (cell, type, row, meta) -> {
+                String value = ColumnBuilder.this.render.render(cell, type, row, meta);
+                if (value != null) {
+                    value = SafeHtmlUtils.htmlEscape(value);
+                }
+                return value;
+            };
+        }
+
         Column<T> column = new Column<>();
         column.name = name;
         column.title = title;
-        column.render = render;
+        column.render = effectiveRender;
         column.orderable = orderable;
         column.searchable = searchable;
         if (type != null) {

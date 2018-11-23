@@ -20,6 +20,7 @@ import java.util.Date;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.dmr.ModelNode;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeDate;
 
 class LogFile extends ModelNode {
@@ -27,7 +28,6 @@ class LogFile extends ModelNode {
     // TODO Move to ModelDescriptionConstants
     private static final String FILE_NAME = "file-name";
     private static final String FILE_SIZE = "file-size";
-    private static final String LAST_MODIFIED_DATE = "last-modified-date";
     private static final String LAST_MODIFIED_TIMESTAMP = "last-modified-timestamp";
 
     LogFile(ModelNode node) {
@@ -39,17 +39,22 @@ class LogFile extends ModelNode {
         get(FILE_NAME).set(name);
     }
 
+    LogFile(String name, String logProfile, ModelNode node) {
+        set(node);
+        get(FILE_NAME).set(name);
+        get(LOGGING_PROFILE).set(logProfile);
+    }
+
     public String getFilename() {
         return get(FILE_NAME).asString();
     }
 
+    public String getLoggingProfile() {
+        return hasDefined(LOGGING_PROFILE) ? get(LOGGING_PROFILE).asString() : null;
+    }
+
     public Date getLastModifiedDate() {
-        // first try LAST_MODIFIED_DATE then LAST_MODIFIED_TIMESTAMP
-        Date date = failSafeDate(this, LAST_MODIFIED_DATE);
-        if (date == null) {
-            date = failSafeDate(this, LAST_MODIFIED_TIMESTAMP);
-        }
-        return date;
+        return failSafeDate(this, LAST_MODIFIED_TIMESTAMP);
     }
 
     public String getFormattedLastModifiedDate() {

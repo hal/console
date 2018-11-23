@@ -136,7 +136,7 @@ public class DeployContentDialog1 {
         Elements.setVisible(noServerGroupSelected.asElement(), false);
         Elements.setVisible(enableContainer, deployCallback != null);
         table.update(serverGroups);
-        SwitchBridge.Api.element(enable).setValue(false);
+        SwitchBridge.Api.element(enable).setValue(true);
     }
 
 
@@ -158,7 +158,7 @@ public class DeployContentDialog1 {
 
         final String serverGroup;
 
-        ServerGroup(final String serverGroup) {
+        ServerGroup(String serverGroup) {
             this.serverGroup = serverGroup;
         }
     }

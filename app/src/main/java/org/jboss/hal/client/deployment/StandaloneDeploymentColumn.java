@@ -37,6 +37,7 @@ import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.deployment.wizard.UploadElement;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.Deployment.Status;
@@ -68,6 +69,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -79,6 +81,7 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -108,6 +111,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
             Environment environment,
             ServerActions serverActions,
             Dispatcher dispatcher,
+            CrudOperations crud,
             StatementContext statementContext,
             EventBus eventBus,
             MetadataRegistry metadataRegistry,
@@ -118,8 +122,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(ResourceAddress.root(),
-                            READ_CHILDREN_RESOURCES_OPERATION
-                    )
+                            READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE_DEPTH, 2)
@@ -168,7 +171,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         setItemRenderer(item -> new ItemDisplay<Deployment>() {
             @Override
             public String getId() {
-                return Ids.deployment(item.getName());
+                return Strings.sanitize(Ids.deployment(item.getName()));
             }
 
             @Override
@@ -234,8 +237,12 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, EXPLODE))
                             .build());
                 }
-                actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
-                        StandaloneDeploymentColumn.this));
+                actions.add(new ItemAction.Builder<Deployment>()
+                        .title(resources.constants().undeploy())
+                        .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
+                                () -> refresh(CLEAR_SELECTION)))
+                        .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, REMOVE))
+                        .build());
                 return actions;
             }
         });
@@ -347,11 +354,12 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                             }
                         }));
+        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 
     private void createEmpty() {
-        new CreateEmptyDialog(resources, name -> {
+        CreateEmptyDialog dialog = new CreateEmptyDialog(resources, name -> {
             ResourceAddress address = DEPLOYMENT_TEMPLATE.resolve(statementContext, name);
             ModelNode contentNode = new ModelNode();
             contentNode.get(EMPTY).set(true);
@@ -362,7 +370,9 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 refresh(Ids.deployment(name));
                 MessageEvent.fire(eventBus, Message.success(resources.messages().deploymentEmptySuccess(name)));
             });
-        }).show();
+        });
+        dialog.addValidationHandlerForNameItem(createUniqueValidation());
+        dialog.show();
     }
 
     void enable(Deployment deployment) {

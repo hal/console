@@ -100,7 +100,6 @@ public class AddResourceDialog {
         form.edit(new ModelNode());
     }
 
-
     @FunctionalInterface
     public interface Callback {
 

@@ -1,0 +1,3 @@
+<p>mod_cluster是一个基于httpd的负载平衡器。与 mod_jk 和 mod_proxy 一样，mod_cluster 使用一个通信信道把 httpd 的请求转发到一组应用服务器节点中的一个。与 mod_jk 和 mod_proxy 不同，mod_cluster 利用了应用服务器节点和 httpd 之间的附加连接。</p>
+
+<p>应用服务器节点使用此连接来传输服务器端的负载平衡因素，以及把生命周期事件传回到 http。这些操作通过使用一组称为 Mod-Cluster Management Protocol (MCMP) 的 HTTP 方法函数实现。这个额外的反馈信道为 mod_cluster 提供了其他负载均衡解决方案没有提供的智能级别和精细度。</p>

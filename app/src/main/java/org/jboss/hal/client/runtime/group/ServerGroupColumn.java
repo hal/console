@@ -84,10 +84,6 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
 
-                .columnAction(columnActionFactory.add(Ids.SERVER_GROUP_ADD, Names.SERVER_GROUP,
-                        AddressTemplate.of("/server-group=*"), Ids::serverGroup))
-                .columnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH))
-
                 .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
                         new TopologyTasks.ServerGroupsWithServerConfigs(environment, dispatcher),
                         new TopologyTasks.ServerGroupsStartedServers(environment, dispatcher))
@@ -115,6 +111,10 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 .withFilter()
                 .filterDescription(resources.messages().serverGroupColumnFilterDescription())
         );
+
+        addColumnAction(columnActionFactory.add(Ids.SERVER_GROUP_ADD, Names.SERVER_GROUP,
+                AddressTemplate.of("/server-group=*"), Ids::serverGroup, this::createUniqueValidation));
+        addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {
             @Override
