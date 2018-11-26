@@ -105,11 +105,11 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             @Override
             public List<ItemAction<Macro>> actions() {
                 return asList(
-                        new ItemAction<Macro>(PLAY_ACTION, resources.constants().play(),
+                        new ItemAction<>(PLAY_ACTION, resources.constants().play(),
                                 macro -> presenter.play(macro)),
-                        new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
-                                macro -> presenter.rename(macro)),
-                        new ItemAction<Macro>(REMOVE_ACTION, resources.constants().remove(),
+                        // new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
+                        //         macro -> presenter.rename(macro)),
+                        new ItemAction<>(REMOVE_ACTION, resources.constants().remove(),
                                 macro -> DialogFactory.showConfirmation(
                                         resources.messages().removeConfirmationTitle(macro.getName()),
                                         resources.messages().removeConfirmationQuestion(macro.getName()),
@@ -179,7 +179,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     }
 
     @Override
-    public void setPresenter(final MacroEditorPresenter presenter) {
+    public void setPresenter(MacroEditorPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -197,19 +197,19 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     }
 
     @Override
-    public void selectMacro(final Macro macro) {
+    public void selectMacro(Macro macro) {
         dataProvider.select(macro, true);
     }
 
     @Override
-    public void enableMacro(final Macro macro) {
+    public void enableMacro(Macro macro) {
         macroList.enableAction(macro, PLAY_ACTION);
         macroList.enableAction(macro, RENAME_ACTION);
         macroList.enableAction(macro, REMOVE_ACTION);
     }
 
     @Override
-    public void disableMacro(final Macro macro) {
+    public void disableMacro(Macro macro) {
         macroList.disableAction(macro, PLAY_ACTION);
         macroList.disableAction(macro, RENAME_ACTION);
         macroList.disableAction(macro, REMOVE_ACTION);
