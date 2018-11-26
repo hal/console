@@ -31,17 +31,17 @@ public class ModifyResourceDialog {
      * Uses an existing form for the dialog. If the form has a save callback it's overridden with {@link
      * Callback#onModify(Form, Map)}.
      */
-    public ModifyResourceDialog(final String title, final Form<ModelNode> form, final Callback callback) {
+    public ModifyResourceDialog(String title, Form<ModelNode> form, Callback callback) {
         this(title, form, callback, null);
     }
 
-    public ModifyResourceDialog(final String title, final Form<ModelNode> form, final Callback callback,
+    public ModifyResourceDialog(String title, Form<ModelNode> form, Callback callback,
             org.jboss.hal.spi.Callback closed) {
         form.setSaveCallback((f, changedValues) -> saveForm(callback, f, changedValues));
         init(title, form, closed);
     }
 
-    private void init(final String title, final Form<ModelNode> form, final org.jboss.hal.spi.Callback closed) {
+    private void init(String title, Form<ModelNode> form, org.jboss.hal.spi.Callback closed) {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
@@ -52,8 +52,7 @@ public class ModifyResourceDialog {
         this.dialog.registerAttachable(form);
     }
 
-    private void saveForm(final Callback callback, final Form<ModelNode> form,
-            final Map<String, Object> changedValues) {
+    private void saveForm(Callback callback, Form<ModelNode> form, Map<String, Object> changedValues) {
         callback.onModify(form, changedValues);
     }
 
