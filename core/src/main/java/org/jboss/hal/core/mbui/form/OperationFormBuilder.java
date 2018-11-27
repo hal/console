@@ -36,7 +36,7 @@ public class OperationFormBuilder<T extends ModelNode> {
     private final LinkedHashSet<String> includes;
     private final Set<String> excludes;
 
-    public OperationFormBuilder(@NonNls final String id, final Metadata metadata, final String operation) {
+    public OperationFormBuilder(@NonNls String id, Metadata metadata, String operation) {
         this.id = id;
         this.metadata = metadata;
         this.operation = operation;
@@ -44,33 +44,33 @@ public class OperationFormBuilder<T extends ModelNode> {
         this.excludes = new HashSet<>();
     }
 
-    public OperationFormBuilder<T> include(final String[] attributes) {
+    public OperationFormBuilder<T> include(String[] attributes) {
         includes.addAll(Arrays.asList(attributes));
         return this;
     }
 
-    public OperationFormBuilder<T> include(final Iterable<String> attributes) {
+    public OperationFormBuilder<T> include(Iterable<String> attributes) {
         //noinspection ResultOfMethodCallIgnored
         Iterables.addAll(includes, attributes);
         return this;
     }
 
-    public OperationFormBuilder<T> include(@NonNls final String first, @NonNls final String... rest) {
+    public OperationFormBuilder<T> include(@NonNls String first, @NonNls String... rest) {
         includes.addAll(Lists.asList(first, rest));
         return this;
     }
 
-    public OperationFormBuilder<T> exclude(final String[] attributes) {
+    public OperationFormBuilder<T> exclude(String[] attributes) {
         excludes.addAll(asList(attributes));
         return this;
     }
 
-    public OperationFormBuilder<T> exclude(final Iterable<String> attributes) {
+    public OperationFormBuilder<T> exclude(Iterable<String> attributes) {
         Iterables.addAll(excludes, attributes);
         return this;
     }
 
-    public OperationFormBuilder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
+    public OperationFormBuilder<T> exclude(@NonNls String first, @NonNls String... rest) {
         excludes.addAll(Lists.asList(first, rest));
         return this;
     }
