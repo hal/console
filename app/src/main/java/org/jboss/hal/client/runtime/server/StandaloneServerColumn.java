@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -44,14 +45,17 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
@@ -77,8 +81,8 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     @Inject
     public StandaloneServerColumn(Finder finder, EventBus eventBus, Dispatcher dispatcher,
             FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
-            ServerActions serverActions, PlaceManager placeManager, Places places,
-            Resources resources) {
+            ServerActions serverActions, PlaceManager placeManager, Places places, @Footer Provider<Progress> progress,
+            Resources resources, StatementContext statementContext) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER_COLUMN, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -101,8 +105,8 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     });
                 })
 
-                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
-                        resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
+                        statementContext, placeManager, places, finderPathFactory, resources))
         );
 
         this.finder = finder;

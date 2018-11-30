@@ -191,8 +191,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .showCount()
                 .withFilter()
                 .filterDescription(resources.messages().serverFilterDescription())
-                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
-                        resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
+                        statementContext, placeManager, places, finderPathFactory, resources))
         );
         this.finder = finder;
         this.dispatcher = dispatcher;

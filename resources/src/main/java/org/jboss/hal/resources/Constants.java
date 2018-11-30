@@ -388,6 +388,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String opened();
     String openInExternalWindow();
     String openInModelBrowser();
+    String openPorts();
     String operation();
     String operationDate();
     String operationFailed();
