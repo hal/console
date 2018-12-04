@@ -239,6 +239,7 @@ public interface ModelDescriptionConstants {
     String DESTINATION_PORT = "destination-port";
     String DESTROY = "destroy";
     String DESTROY_SERVERS = "destroy-servers";
+    String DIR = "dir";
     String DIR_CONTEXT = "dir-context";
     String DIRECT_VERIFICATION = "direct-verification";
     String DISABLED = "disabled";

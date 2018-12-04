@@ -273,7 +273,8 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="file"
+                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -325,7 +326,8 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="file"
+                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -378,7 +380,8 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="file"
+                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -433,7 +436,8 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file" provider="${new FileFormItem()}"/>
+                            <attribute name="file"
+                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>

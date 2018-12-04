@@ -129,7 +129,7 @@ public class OperationFactory {
                 // just collect for now and resolve later
                 conflicts.add(attribute);
                 conflicts.addAll(intersection);
-                logger.debug("Record conflict {} <-> {[]}", attribute, String.join(", ", intersection));
+                logger.debug("Record conflict {} <-> [{}]", attribute, String.join(", ", intersection));
             }
 
             alternatives.forEach(localChanges::remove);
@@ -138,7 +138,7 @@ public class OperationFactory {
         if (!conflicts.isEmpty()) {
             // try to resolve conflicts: only one of the conflicting attributes must have a value other than
             // null, empty or default
-            logger.debug("Try to resolve conflicts between alternatives {[]}", String.join(", ", conflicts));
+            logger.debug("Try to resolve conflicts between alternatives [{}]", String.join(", ", conflicts));
             Map<Boolean, List<String>> resolution = conflicts.stream().collect(groupingBy(conflict -> {
                 Object value = changeSet.get(conflict);
                 return isNullOrEmpty(value) || resourceDescription.isDefaultValue(ATTRIBUTES, conflict, value);
@@ -147,11 +147,11 @@ public class OperationFactory {
             List<String> write = resolution.getOrDefault(false, Collections.emptyList());
             if (write.size() > 1) {
                 logger.error(
-                        "More than one conflicting alternative attribute which is not null, empty or default: {[]}. This should have been caught by a form validation. Adding the write operations anyway to get an appropriate error message from the server.",
+                        "More than one conflicting alternative attribute which is not null, empty or default: [{}]. This should have been caught by a form validation. Adding the write operations anyway to get an appropriate error message from the server.",
                         String.join(", ", write));
             }
 
-            logger.debug("Add undefine operations for {[]}, write operation for {[]}",
+            logger.debug("Add undefine operations for [{}], write operation for [{}]",
                     String.join(", ", undefine), String.join(", ", write));
             undefine.forEach(u -> {
                 operations.putIfAbsent(u, undefineAttribute(address, u));
@@ -177,7 +177,7 @@ public class OperationFactory {
         }
 
         // handle the remaining attributes
-        logger.debug("Process remaining attributes {[]}", String.join(", ", localChanges.keySet()));
+        logger.debug("Process remaining attributes [{}]", String.join(", ", localChanges.keySet()));
         localChanges.forEach((name, value) ->
                 operations.putIfAbsent(name, writeAttribute(address, name, value, resourceDescription)));
         return new Composite(operations.values().stream().filter(Objects::nonNull).collect(toList()));
@@ -267,6 +267,7 @@ public class OperationFactory {
     private boolean isNullOrEmpty(Object value) {
         return (value == null
                 || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
+                || (value instanceof ModelNode && !((ModelNode) value).isDefined())
                 || (value instanceof List && ((List) value).isEmpty())
                 || (value instanceof Map && ((Map) value).isEmpty()));
     }

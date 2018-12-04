@@ -505,6 +505,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String showSensitive();
     String size();
     String sizing();
+    String source();
     String specifyNames();
     String specifyParameters();
     String standaloneServer();

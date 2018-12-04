@@ -428,7 +428,7 @@ public final class AddressTemplate implements Iterable<String> {
      * Resolve this address template against the specified statement context.
      *
      * @param context   the statement context
-     * @param wildcards An optional list of wildcards which are used to resolve any wildcards in this address template
+     * @param wildcards An optional list of values which are used to resolve any wildcards in this address template
      *                  from left to right
      *
      * @return a fully qualified resource address which might be empty, but which does not contain any tokens

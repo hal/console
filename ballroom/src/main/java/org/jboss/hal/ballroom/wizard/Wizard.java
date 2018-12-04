@@ -467,7 +467,7 @@ public class Wizard<C, S extends Enum<S>> {
             stepIndicators.put(status, li);
             stepsNames.appendChild(li);
 
-            HTMLDivElement wrapper = div().css(wizardPfContents).add(step.asElement()).asElement();
+            HTMLDivElement wrapper = div().css(wizardPfContents).add(step).asElement();
             step.attachables.forEach(Attachable::attach);
             Elements.setVisible(wrapper, false);
             mainContainer.appendChild(wrapper);

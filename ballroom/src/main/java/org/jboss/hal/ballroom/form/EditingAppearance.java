@@ -28,9 +28,9 @@ import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.*;
@@ -139,7 +139,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ apply decoration
 
     @Override
-    final <C> void safeApply(final Decoration decoration, final C context) {
+    final <C> void safeApply(Decoration decoration, C context) {
         switch (decoration) {
             case DEFAULT:
                 applyDefault(String.valueOf(context));
@@ -176,11 +176,11 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
     }
 
-    void applyDefault(final String defaultValue) {
+    void applyDefault(String defaultValue) {
         inputElement.placeholder = defaultValue;
     }
 
-    void applyDeprecated(final Deprecation deprecation) {
+    void applyDeprecated(Deprecation deprecation) {
         markAsDeprecated(deprecation);
     }
 
@@ -188,7 +188,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         inputElement.disabled = false;
     }
 
-    protected void applyExpression(final ExpressionContext expressionContext) {
+    protected void applyExpression(ExpressionContext expressionContext) {
         if (expressionContainer == null) {
             expressionContainer = span().css(inputGroupBtn)
                     .add(expressionButton = button().css(btn, btnDefault).title(CONSTANTS.resolveExpression())
@@ -213,7 +213,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                 event -> expressionContext.callback.resolveExpression(inputElement.value));
     }
 
-    void applyHint(final String hint) {
+    void applyHint(String hint) {
         if (hintMarker == null) {
             hintMarker = Appearance.hintMarker();
         }
@@ -226,7 +226,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         inputGroup.insertBefore(hintMarker, inputElement.nextElementSibling);
     }
 
-    void applyInvalid(final String errorMessage) {
+    void applyInvalid(String errorMessage) {
         helpBlock.textContent = errorMessage;
         root.classList.add(hasError);
         inputContainer.appendChild(helpBlock);
@@ -278,7 +278,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         mask();
     }
 
-    void applySuggestions(final SuggestHandler suggestHandler) {
+    void applySuggestions(SuggestHandler suggestHandler) {
         if (suggestContainer == null) {
             suggestContainer = span().css(inputGroupBtn)
                     .add(suggestButton = button()
@@ -303,7 +303,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ unapply decoration
 
     @Override
-    final void safeUnapply(final Decoration decoration) {
+    final void safeUnapply(Decoration decoration) {
         switch (decoration) {
             case DEFAULT:
                 unapplyDefault();
@@ -410,7 +410,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ properties & delegates
 
     @Override
-    public void setId(final String id) {
+    public void setId(String id) {
         this.id = Ids.build(id, EDITING.name().toLowerCase());
         root.dataset.set(FORM_ITEM_GROUP, this.id);
         inputElement.id = this.id;
@@ -418,7 +418,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void setName(final String name) {
+    public void setName(String name) {
         inputElement.name = name;
     }
 
@@ -428,12 +428,12 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void setAccessKey(final char key) {
+    public void setAccessKey(char key) {
         inputElement.accessKey = String.valueOf(key);
     }
 
     @Override
-    public void setFocus(final boolean focused) {
+    public void setFocus(boolean focused) {
         if (focused) {
             inputElement.focus();
         } else {
@@ -442,7 +442,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void setTabIndex(final int index) {
+    public void setTabIndex(int index) {
         inputElement.tabIndex = index;
     }
 }

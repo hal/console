@@ -27,6 +27,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
+import org.jboss.hal.ballroom.form.FileFormItem;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -887,7 +888,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()
                 .unboundFormItem(new NameItem(), 0)
-                .customFormItem("file", (attributeDescription) -> new FileFormItem())
+                .customFormItem("file", (attributeDescription) -> new FileFormItem(FILE, true))
                 .unsorted();
         if (attributes != null) {
             builder.include(asList(attributes));

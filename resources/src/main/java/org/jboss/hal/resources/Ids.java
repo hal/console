@@ -550,6 +550,7 @@ public interface Ids {
     String MESSAGING_SERVER_RUNTIME = "msg-server-r";
     String MESSAGING_SERVER_RUNTIME_REFRESH = "msg-server-r-refresh";
     String MESSAGING_SERVER_SETTINGS = "msg-server-settings";
+    String MICRO_PROFILE_CONFIG_SOURCE = "microprofile-config-source";
     String MICRO_PROFILE_HEALTH = "microprofile-health";
     String MICRO_PROFILE_METRICS_FORM = "microprofile-metrics-form";
     String MODCLUSTER_PROXY = "modcluster-proxy";

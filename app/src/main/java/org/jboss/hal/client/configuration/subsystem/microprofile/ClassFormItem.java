@@ -74,10 +74,10 @@ class ClassFormItem extends CompositeFormItem {
 
     @Override
     protected void persistModel(ModelNode modelNode) {
-        if (!name.isUndefined()) {
+        if (!name.isEmpty()) {
             modelNode.get(NAME).set(name.getValue());
         }
-        if (!module.isUndefined()) {
+        if (!module.isEmpty()) {
             modelNode.get(MODULE).set(module.getValue());
         }
     }

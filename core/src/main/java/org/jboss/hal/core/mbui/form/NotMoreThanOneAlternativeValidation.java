@@ -39,8 +39,8 @@ class NotMoreThanOneAlternativeValidation<T extends ModelNode> implements FormVa
     private final Messages messages;
     private final ModelNodeForm<T> form;
 
-    NotMoreThanOneAlternativeValidation(final Iterable<String> alternatives, final ModelNodeForm<T> form,
-            final Constants constants, final Messages messages) {
+    NotMoreThanOneAlternativeValidation(Iterable<String> alternatives, ModelNodeForm<T> form, Constants constants,
+            Messages messages) {
         this.alternatives = new TreeSet<>();
         Iterables.addAll(this.alternatives, alternatives);
         this.form = form;
@@ -49,7 +49,7 @@ class NotMoreThanOneAlternativeValidation<T extends ModelNode> implements FormVa
     }
 
     @Override
-    public ValidationResult validate(final Form<T> form) {
+    public ValidationResult validate(Form<T> form) {
         LabelBuilder labelBuilder = new LabelBuilder();
         List<String> nonEmptyItems = alternatives.stream()
                 .map(form::getFormItem)

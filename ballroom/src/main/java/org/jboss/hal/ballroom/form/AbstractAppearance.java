@@ -34,8 +34,6 @@ import static org.jboss.hal.resources.CSS.deprecated;
  */
 abstract class AbstractAppearance<T> implements Appearance<T> {
 
-    static final String LABEL_ELEMENT = "labelElement";
-    static final String INPUT_CONTAINER = "inputContainer";
     static final Messages MESSAGES = GWT.create(Messages.class);
     protected static final Constants CONSTANTS = GWT.create(Constants.class);
 
@@ -45,33 +43,26 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
     String label;
     HTMLLabelElement labelElement;
 
-    AbstractAppearance(final Set<Decoration> supportedDecorations) {
+    AbstractAppearance(Set<Decoration> supportedDecorations) {
         this.supportedDecorations = new HashSet<>(supportedDecorations);
         this.appliedDecorations = new HashSet<>();
-        applyDefaults(appliedDecorations);
-    }
 
-    protected void applyDefaults(final Set<Decoration> appliedDecorations) {
         // all appearances are enabled by default
-        appliedDecorations.add(Decoration.ENABLED);
+        this.appliedDecorations.add(Decoration.ENABLED);
     }
 
-    /**
-     * Calls {@link #safeApply(Decoration, Object)} if the decoration is supported and has not been applied yet.
-     */
+    /** Calls {@link #safeApply(Decoration, Object)} if the decoration is supported and has not been applied yet. */
     @Override
-    public final <C> void apply(final Decoration decoration, final C context) {
+    public final <C> void apply(Decoration decoration, C context) {
         if (supportedDecorations.contains(decoration) && !appliedDecorations.contains(decoration)) {
             safeApply(decoration, context);
             appliedDecorations.add(decoration);
         }
     }
 
-    /**
-     * Calls {@link #safeUnapply(Decoration)} if the decoration is supported and has been applied.
-     */
+    /** Calls {@link #safeUnapply(Decoration)} if the decoration is supported and has been applied. */
     @Override
-    public final void unapply(final Decoration decoration) {
+    public final void unapply(Decoration decoration) {
         if (supportedDecorations.contains(decoration) && appliedDecorations.contains(decoration)) {
             safeUnapply(decoration);
             appliedDecorations.remove(decoration);
@@ -106,7 +97,7 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
     }
 
     @Override
-    public void setLabel(final String label) {
+    public void setLabel(String label) {
         this.label = label;
         labelElement.title = label;
         labelElement.textContent = label;

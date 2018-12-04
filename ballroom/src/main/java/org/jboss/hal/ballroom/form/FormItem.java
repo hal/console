@@ -30,9 +30,7 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
 
     void clearValue();
 
-    /**
-     * @return if this form item has no value.
-     */
+    /** @return if this form item has no value. */
     boolean isEmpty();
 
     void setId(String id);

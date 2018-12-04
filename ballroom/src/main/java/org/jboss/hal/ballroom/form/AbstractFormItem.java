@@ -182,7 +182,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         appearances.values().forEach(a -> a.unapply(decoration));
     }
 
-    private Appearance<T> appearance(State state) {
+    Appearance<T> appearance(State state) {
         if (appearances.containsKey(state)) {
             return appearances.get(state);
         }
