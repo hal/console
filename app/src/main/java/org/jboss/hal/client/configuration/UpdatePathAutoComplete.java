@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent.ProfileSelectionHandler;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
@@ -34,8 +35,8 @@ public class UpdatePathAutoComplete implements ProfileSelectionHandler, ServerRe
     private final StatementContext statementContext;
 
     @Inject
-    public UpdatePathAutoComplete(final EventBus eventBus, final Environment environment, final Dispatcher dispatcher,
-            final StatementContext statementContext) {
+    public UpdatePathAutoComplete(EventBus eventBus, Environment environment, Dispatcher dispatcher,
+            StatementContext statementContext) {
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -45,12 +46,12 @@ public class UpdatePathAutoComplete implements ProfileSelectionHandler, ServerRe
     }
 
     @Override
-    public void onProfileSelection(final ProfileSelectionEvent event) {
+    public void onProfileSelection(ProfileSelectionEvent event) {
         PathsAutoComplete.updateOperation(environment, dispatcher, statementContext);
     }
 
     @Override
-    public void onServerResult(final ServerResultEvent event) {
+    public void onServerResult(ServerResultEvent event) {
         PathsAutoComplete.updateOperation(environment, dispatcher, statementContext);
     }
 }

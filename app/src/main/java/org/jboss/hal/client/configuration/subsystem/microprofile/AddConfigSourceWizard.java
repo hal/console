@@ -26,7 +26,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.RadioItem;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;

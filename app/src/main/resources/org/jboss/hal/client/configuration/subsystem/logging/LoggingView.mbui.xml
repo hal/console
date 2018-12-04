@@ -315,7 +315,7 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file"
-                                               provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                 </attributes>
@@ -337,7 +337,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -370,7 +370,7 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file"
-                                               provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                     <attribute name="suffix"/>
@@ -393,7 +393,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -427,7 +427,7 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file"
-                                               provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                     <attribute name="max-backup-index"/>
@@ -452,7 +452,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -489,7 +489,7 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file"
-                                               provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                     <attribute name="max-backup-index"/>
@@ -514,7 +514,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>

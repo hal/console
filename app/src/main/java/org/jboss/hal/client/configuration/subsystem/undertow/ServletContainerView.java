@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;

@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
 import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;

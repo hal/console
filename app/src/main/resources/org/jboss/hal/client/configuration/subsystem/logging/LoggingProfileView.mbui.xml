@@ -274,7 +274,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -327,7 +327,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -381,7 +381,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -437,7 +437,7 @@
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
                             <attribute name="file"
-                                       provider='${new org.jboss.hal.ballroom.form.FileFormItem("file", true)}'/>
+                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>

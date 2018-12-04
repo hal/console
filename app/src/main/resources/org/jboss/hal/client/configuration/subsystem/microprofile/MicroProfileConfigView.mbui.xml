@@ -40,7 +40,7 @@
                     <attributes>
                         <attribute name="class" provider="${new ClassFormItem()}"/>
                         <attribute name="dir"
-                                   provider='${new org.jboss.hal.ballroom.form.FileFormItem("dir", false)}'/>
+                                   provider='${new org.jboss.hal.core.ui.FileFormItem("dir", false)}'/>
                         <attribute name="properties"/>
                         <attribute name="ordinal"/>
                     </attributes>

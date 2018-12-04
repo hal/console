@@ -21,7 +21,7 @@ import java.util.function.BooleanSupplier;
 
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;

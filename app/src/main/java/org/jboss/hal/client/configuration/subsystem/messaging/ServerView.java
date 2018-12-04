@@ -25,7 +25,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.GroupedForm;
@@ -63,7 +63,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private ServerPresenter presenter;
 
     @Inject
-    ServerView(final MbuiContext mbuiContext, CredentialReference cr) {
+    ServerView(MbuiContext mbuiContext, CredentialReference cr) {
 
         VerticalNavigation verticalNavigation = new VerticalNavigation();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(SERVER_TEMPLATE);
@@ -287,7 +287,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void update(final NamedNode server) {
+    public void update(NamedNode server) {
         form.view(server);
         pagingDirectoryForm.view(failSafeGet(server, "path/paging-directory"));
         bindingsDirectoryForm.view(failSafeGet(server, "path/bindings-directory"));
@@ -297,7 +297,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final ServerPresenter presenter) {
+    public void setPresenter(ServerPresenter presenter) {
         this.presenter = presenter;
     }
 }

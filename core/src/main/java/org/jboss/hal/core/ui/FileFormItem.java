@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.form;
+package org.jboss.hal.core.ui;
 
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.ballroom.form.CompositeFormItem;
+import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 

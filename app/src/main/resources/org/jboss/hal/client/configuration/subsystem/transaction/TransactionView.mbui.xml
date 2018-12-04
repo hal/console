@@ -97,7 +97,7 @@
                     <attributes>
                         <attribute name="object-store-path"/>
                         <attribute name="object-store-relative-to"
-                                   suggest-handler="${new org.jboss.hal.client.configuration.PathsAutoComplete()}"/>
+                                   suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                     </attributes>
                 </form>
             </metadata>
