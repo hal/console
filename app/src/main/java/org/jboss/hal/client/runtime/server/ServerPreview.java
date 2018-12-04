@@ -65,6 +65,7 @@ class ServerPreview extends RuntimePreview<Server> {
 
     private static final AddressTemplate SELECTED_SERVER = AddressTemplate.of("{selected.host}/{selected.server}");
     private static final String ID_OPEN_PORTS = "open-ports";
+    private static final String ID_HEADER_OPEN_PORTS = "h2-open-ports";
 
     private final ServerActions serverActions;
     private Dispatcher dispatcher;
@@ -81,6 +82,7 @@ class ServerPreview extends RuntimePreview<Server> {
     private final HTMLElement serverUrl;
     private final PreviewAttributes<Server> attributes;
     private HTMLElement ulOpenPorts = ul().id(ID_OPEN_PORTS).css(listGroup).asElement();
+    private HTMLElement headerOpenPorts = h(2, resources.constants().openPorts()).id(ID_HEADER_OPEN_PORTS).asElement();
 
     ServerPreview(ServerActions serverActions,
             Server server,
@@ -193,7 +195,7 @@ class ServerPreview extends RuntimePreview<Server> {
         }
         previewBuilder().addAll(this.attributes);
         if (server.isRunning()) {
-            previewBuilder().add(h(2, resources.constants().openPorts()));
+            previewBuilder().add(this.headerOpenPorts);
             previewBuilder().add(this.ulOpenPorts);
         }
     }
@@ -290,7 +292,8 @@ class ServerPreview extends RuntimePreview<Server> {
         attributes.setVisible(SERVER_STATE, server.isStarted());
         attributes.setVisible(SUSPEND_STATE, server.isStarted());
 
-        if (server.isRunning()) {
+        boolean displayOpenPorts = server.isRunning();
+        if (displayOpenPorts) {
             List<Task<FlowContext>> tasks = new ArrayList<>();
             tasks.add(flowContext -> {
                 ResourceAddress address = SELECTED_SERVER.resolve(statementContext);
@@ -335,11 +338,10 @@ class ServerPreview extends RuntimePreview<Server> {
                             buildOpenPortsElement(openPorts);
                         }
                     });
-        }
-
-        if (server.isStarted()) {
             serverActions.readUrl(server, serverUrl);
         }
+        Elements.setVisible(headerOpenPorts, displayOpenPorts);
+        Elements.setVisible(ulOpenPorts, displayOpenPorts);
     }
 
     private void disableAllLinks() {
