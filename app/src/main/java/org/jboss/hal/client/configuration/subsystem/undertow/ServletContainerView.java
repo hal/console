@@ -111,9 +111,9 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_SERVLET_CONTAINER_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_TAB, resources.constants().attributes(),
-                configurationForm.asElement());
-        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB, Names.MIME_MAPPING, mimeMappingForm.asElement());
-        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB, Names.WELCOME_FILE, welcomeFileForm.asElement());
+                configurationForm.element());
+        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB, Names.MIME_MAPPING, mimeMappingForm.element());
+        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB, Names.WELCOME_FILE, welcomeFileForm.element());
 
         HTMLElement configurationSection = section()
                 .add(h(1).textContent(Names.CONFIGURATION))

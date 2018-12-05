@@ -15,11 +15,9 @@
  */
 package org.jboss.hal.client.deployment;
 
-import java.util.List;
+import java.util.Iterator;
 
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
@@ -29,6 +27,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -39,12 +38,12 @@ import static org.jboss.hal.resources.CSS.stopCircleO;
  * UI element to show the management model of a deployment in the model browser. Shows an empty state element in case
  * the deployment is inactive.
  */
-class DeploymentModelElement implements HasElements {
+class DeploymentModelElement implements Iterable<HTMLElement> {
 
     private final ModelBrowser modelBrowser;
     private final Resources resources;
     private final EmptyState notEnabled;
-    private final List<HTMLElement> elements;
+    private final Iterable<HTMLElement> elements;
 
     DeploymentModelElement(ModelBrowser modelBrowser, Resources resources) {
         this.modelBrowser = modelBrowser;
@@ -53,15 +52,15 @@ class DeploymentModelElement implements HasElements {
         notEnabled = new EmptyState.Builder(Ids.DEPLOYMENT_NOT_ENABLED_EMPTY, resources.constants().notEnabled())
                 .icon(fontAwesome(stopCircleO))
                 .build();
-        notEnabled.asElement().classList.add(marginTopLarge);
-        Elements.setVisible(notEnabled.asElement(), false);
+        notEnabled.element().classList.add(marginTopLarge);
+        setVisible(notEnabled.element(), false);
 
-        elements = asList(modelBrowser.asElement(), notEnabled.asElement());
+        elements = asList(modelBrowser.element(), notEnabled.element());
     }
 
     @Override
-    public Iterable<HTMLElement> asElements() {
-        return elements;
+    public Iterator<HTMLElement> iterator() {
+        return elements.iterator();
     }
 
     void setSurroundingHeight(int surroundingHeight) {
@@ -70,8 +69,8 @@ class DeploymentModelElement implements HasElements {
 
     void update(Deployment deployment, Callback enableAction) {
         boolean active = deployment.getStatus() == OK;
-        Elements.setVisible(notEnabled.asElement(), !active);
-        Elements.setVisible(modelBrowser.asElement(), active);
+        setVisible(notEnabled.element(), !active);
+        setVisible(modelBrowser.element(), active);
 
         if (active) {
             ResourceAddress address = deployment.getReferenceServer().getServerAddress()

@@ -88,7 +88,7 @@ public class HalBootstrapper implements Bootstrapper {
                     })
                     .doOnError(e -> {
                         logger.error("Bootstrap error: {}", e.getMessage());
-                        document.body.appendChild(BootstrapFailed.create(e.getMessage(), endpoints).asElement());
+                        document.body.appendChild(BootstrapFailed.create(e.getMessage(), endpoints).element());
                     })
                     .subscribe();
         });

@@ -61,8 +61,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keydown;
@@ -163,10 +163,10 @@ public class FinderColumn<T> implements IsElement, Attachable {
                                 .title(CONSTANTS.hiddenColumns())
                                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                                 .data(UIConstants.PLACEMENT, "bottom")
-                                .asElement())
-                        .add(headerElement = h(1, builder.title).title(builder.title).asElement())
-                        .asElement())
-                .asElement();
+                                .get())
+                        .add(headerElement = h(1, builder.title).title(builder.title).get())
+                        .get())
+                .get();
 
         // column actions
         List<ColumnAction<T>> allowedColumnActions = allowedActions(builder.columnActions);
@@ -179,7 +179,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                 actionsBuilder.add(newColumnButton(action));
             }
         }
-        columnActions = actionsBuilder.asElement();
+        columnActions = actionsBuilder.get();
         header.appendChild(columnActions);
 
         // filter box
@@ -196,10 +196,10 @@ public class FinderColumn<T> implements IsElement, Attachable {
                                     .attr(UIConstants.PLACEHOLDER,
                                             Strings.abbreviateMiddle(builder.filterDescription, 45))
                                     .attr(UIConstants.TITLE, builder.filterDescription)
-                                    .asElement())
+                                    .get())
                             .add(clearFilter)
-                            .asElement());
-            clearFilterElement = clearFilter.asElement();
+                            .get());
+            clearFilterElement = clearFilter.get();
             Elements.setVisible(clearFilterElement, false);
         } else {
             filterElement = null;
@@ -207,7 +207,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         }
 
         // rows
-        root.appendChild(ulElement = ul().asElement());
+        root.appendChild(ulElement = ul().get());
         if (pinnable) {
             ulElement.classList.add(CSS.pinnable);
         }
@@ -215,7 +215,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         // no items marker
         noItems = li().css(empty)
                 .add(span().css(itemText).textContent(CONSTANTS.noItems()))
-                .asElement();
+                .get();
     }
 
     @SuppressWarnings("Duplicates")
@@ -229,12 +229,12 @@ public class FinderColumn<T> implements IsElement, Attachable {
                             .id(action.id)
                             .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                             .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                            .asElement())
+                            .get())
                     .add(ul = ul().css(dropdownMenu)
                             .id(Ids.uniqueId())
                             .attr(UIConstants.ROLE, UIConstants.MENU)
                             .aria(UIConstants.LABELLED_BY, action.id)
-                            .asElement());
+                            .get());
             if (action.title != null) {
                 button.textContent = action.title;
             } else if (action.element != null) {
@@ -242,7 +242,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
             } else {
                 button.textContent = NOT_AVAILABLE;
             }
-            button.appendChild(span().css(caret).asElement());
+            button.appendChild(span().css(caret).get());
 
             for (ColumnAction<T> liAction : action.actions) {
                 HTMLElement a;
@@ -256,8 +256,8 @@ public class FinderColumn<T> implements IsElement, Attachable {
                                         liAction.handler.execute(this);
                                     }
                                 })
-                                .asElement())
-                        .asElement());
+                                .get())
+                        .get());
                 if (liAction.title != null) {
                     a.textContent = liAction.title;
                 } else if (liAction.element != null) {
@@ -283,7 +283,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                 builder.textContent(NOT_AVAILABLE);
             }
         }
-        return builder.asElement();
+        return builder.get();
     }
 
     private void updateHeader(int matched) {
@@ -408,7 +408,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                             FinderRow selectedRow = previousColumn.selectedRow();
                             if (selectedRow != null) {
                                 selectedRow.updatePreview();
-                                selectedRow.asElement().scrollIntoView(false);
+                                selectedRow.element().scrollIntoView(false);
                             }
                             finder.updateContext();
                             finder.updateHistory();
@@ -554,21 +554,21 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
     void unpin(FinderRow<T> row) {
-        row.asElement().classList.remove(pinned);
-        row.asElement().classList.add(unpinned);
+        row.element().classList.remove(pinned);
+        row.element().classList.add(unpinned);
 
         // move row to unpinned section
-        ulElement.removeChild(row.asElement());
+        ulElement.removeChild(row.element());
         NodeList<Element> nodes = ulElement.querySelectorAll(DOT + unpinned);
         if (nodes.getLength() == 0) {
             // no unpinned rows append to bottom
-            ulElement.appendChild(row.asElement());
+            ulElement.appendChild(row.element());
         } else {
             Element before = findPosition(nodes, row);
             if (before != null) {
-                ulElement.insertBefore(row.asElement(), before);
+                ulElement.insertBefore(row.element(), before);
             } else {
-                ulElement.appendChild(row.asElement());
+                ulElement.appendChild(row.element());
             }
         }
         adjustPinSeparator();
@@ -576,30 +576,30 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
     void pin(FinderRow<T> row) {
-        row.asElement().classList.remove(unpinned);
-        row.asElement().classList.add(pinned);
+        row.element().classList.remove(unpinned);
+        row.element().classList.add(pinned);
 
         // move row to pinned section
-        ulElement.removeChild(row.asElement());
+        ulElement.removeChild(row.element());
         NodeList<Element> nodes = ulElement.querySelectorAll(DOT + pinned);
         if (nodes.getLength() == 0) {
             // no pinned rows append to top
-            ulElement.insertBefore(row.asElement(), ulElement.firstChild);
+            ulElement.insertBefore(row.element(), ulElement.firstChild);
         } else {
             Element before = findPosition(nodes, row);
             if (before != null) {
-                ulElement.insertBefore(row.asElement(), before);
+                ulElement.insertBefore(row.element(), before);
             } else {
                 Element firstUnpinned = ulElement.querySelector(DOT + unpinned);
                 if (firstUnpinned != null) {
-                    ulElement.insertBefore(row.asElement(), firstUnpinned);
+                    ulElement.insertBefore(row.element(), firstUnpinned);
                 } else {
-                    ulElement.appendChild(row.asElement());
+                    ulElement.appendChild(row.element());
                 }
             }
         }
         adjustPinSeparator();
-        row.asElement().scrollIntoView(false);
+        row.element().scrollIntoView(false);
         storage.pinItem(row.getId());
     }
 
@@ -678,16 +678,16 @@ public class FinderColumn<T> implements IsElement, Attachable {
             FinderRow<T> row = new FinderRow<>(finder, this, item, true,
                     itemRenderer.render(item), previewCallback);
             rows.put(row.getId(), row);
-            ulElement.appendChild(row.asElement());
+            ulElement.appendChild(row.element());
             if (!iterator.hasNext()) {
-                row.asElement().classList.add(last);
+                row.element().classList.add(last);
             }
         }
         for (T item : unpinnedItems) {
             FinderRow<T> row = new FinderRow<>(finder, this, item, false,
                     itemRenderer.render(item), previewCallback);
             rows.put(row.getId(), row);
-            ulElement.appendChild(row.asElement());
+            ulElement.appendChild(row.element());
         }
         updateHeader(items.size());
         Tooltip.select(HASH + id + " [data-" + UIConstants.TOGGLE + "=" + UIConstants.TOOLTIP + "]").init(); //NON-NLS
@@ -722,7 +722,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                     .title(title)
                     .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                     .data(UIConstants.PLACEMENT, "bottom")
-                    .asElement();
+                    .get();
             ColumnAction<T> dropdownAction = new ColumnAction.Builder<T>(id)
                     .element(element)
                     .actions(actions)
@@ -791,7 +791,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         return new UniqueNameValidation<>(names);
     }
 
-    protected String getNameOfItem(T item) {
+    private String getNameOfItem(T item) {
         if (item instanceof NamedObject) {
            return ((NamedObject) item).getName();
         }
@@ -842,7 +842,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     private void assertNotAsElement(String method) {
         if (asElement) {
             throw new IllegalStateException("Illegal call to FinderColumn." + method +
-                    " after FinderColumn.asElement(). Make sure to setup the column before it's used as an element.");
+                    " after FinderColumn.element(). Make sure to setup the column before it's used as an element.");
         }
     }
 
@@ -850,7 +850,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     // ------------------------------------------------------ public API
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         asElement = true;
         return root;
     }
@@ -871,7 +871,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                         FinderRow<T> updatedRow = rows.get(oldRow.getId());
                         if (updatedRow != null) {
                             updatedRow.click();
-                            updatedRow.asElement().scrollIntoView(false);
+                            updatedRow.element().scrollIntoView(false);
                         } else {
                             finder.selectPreviousColumn(id);
                         }
@@ -975,6 +975,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static class Builder<T> {
 
         private final Finder finder;

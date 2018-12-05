@@ -55,7 +55,7 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
                 .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
                         Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
                 .build();
-        Elements.setVisible(noStatistics.asElement(), false);
+        Elements.setVisible(noStatistics.element(), false);
 
         descriptionPreview = section().asElement();
         Elements.setVisible(descriptionPreview, false);
@@ -74,7 +74,7 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
                 .build();
         dispatcher.execute(opWeb, result -> {
             boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
-            Elements.setVisible(noStatistics.asElement(), !statsEnabled);
+            Elements.setVisible(noStatistics.element(), !statsEnabled);
             Elements.setVisible(descriptionPreview, statsEnabled);
         });
     }

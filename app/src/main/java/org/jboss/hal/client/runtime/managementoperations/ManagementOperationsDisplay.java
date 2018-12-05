@@ -21,8 +21,6 @@ import java.util.List;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.listview.ItemAction;
@@ -31,8 +29,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.collect;
 import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.elements;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CANCEL_OPERATION;
@@ -93,29 +91,29 @@ class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public HasElements getAdditionalInfoElements() {
-        ElementsBuilder elements = elements();
+    public Iterable<HTMLElement> getAdditionalInfoElements() {
         Messages messages = resources.messages();
-        elements.add(div().css(halConfChangesAdditionalInfo)
-                .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
-                        .append(messages.accessMechanismLabel(operation.getAccessMechanism()))
-                        .append(messages
-                                .runningTimeLabel(
-                                        Format.humanReadableDurationNanoseconds(operation.getRunningTime())))
-                        .append(messages
-                                .exclusiveRunningTimeLabel(Format.humanReadableDurationNanoseconds(
-                                        operation.getExclusiveRunningTime())))
-                        .append(messages.cancelledLabel(operation.isCancelled()))
-                        .append(messages.domainRolloutLabel(operation.isDomainRollout()))
-                        .toSafeHtml())));
-        return elements;
+        return collect()
+                .add(div().css(halConfChangesAdditionalInfo)
+                        .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
+                                .append(messages.accessMechanismLabel(operation.getAccessMechanism()))
+                                .append(messages
+                                        .runningTimeLabel(
+                                                Format.humanReadableDurationNanoseconds(operation.getRunningTime())))
+                                .append(messages
+                                        .exclusiveRunningTimeLabel(Format.humanReadableDurationNanoseconds(
+                                                operation.getExclusiveRunningTime())))
+                                .append(messages.cancelledLabel(operation.isCancelled()))
+                                .append(messages.domainRolloutLabel(operation.isDomainRollout()))
+                                .toSafeHtml())))
+                .get();
     }
 
     @Override
     public List<ItemAction<ManagementOperations>> actions() {
         List<ItemAction<ManagementOperations>> actions = new ArrayList<>();
         String id = Ids.build(ACTIVE_OPERATION, operation.getName(), CANCEL_OPERATION);
-        actions.add(new ItemAction<>(id, resources.constants().cancel(), item -> presenter.cancel(item)));
+        actions.add(new ItemAction<>(id, resources.constants().cancel(), presenter::cancel));
         return actions;
     }
 

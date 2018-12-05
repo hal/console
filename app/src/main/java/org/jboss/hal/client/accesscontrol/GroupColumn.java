@@ -38,16 +38,16 @@ import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_ADDRES
 public class GroupColumn extends PrincipalColumn {
 
     @Inject
-    public GroupColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final User currentUser,
-            final AccessControl accessControl,
-            final AccessControlTokens tokens,
-            final AccessControlResources accessControlResources,
-            final Resources resources) {
+    public GroupColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            User currentUser,
+            AccessControl accessControl,
+            AccessControlTokens tokens,
+            AccessControlResources accessControlResources,
+            Resources resources) {
         super(finder, Ids.GROUP, resources.constants().group(), Principal.Type.GROUP,
                 columnActionFactory, dispatcher, eventBus, progress, currentUser, accessControl, tokens,
                 accessControlResources, resources);

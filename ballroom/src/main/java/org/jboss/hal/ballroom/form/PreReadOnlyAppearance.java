@@ -33,7 +33,7 @@ class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
         HTMLElement parent = (HTMLElement) valueContainer.parentNode;
         Elements.removeChildrenFrom(parent);
 
-        valueElement = pre().css(formControlStatic, wrap).asElement();
+        valueElement = pre().css(formControlStatic, wrap).get();
         parent.appendChild(valueElement);
     }
 
@@ -43,7 +43,7 @@ class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
     }
 
     @Override
-    protected <C> void safeApply(final Decoration decoration, final C context) {
+    protected <C> void safeApply(Decoration decoration, C context) {
         if (decoration == RESTRICTED) {
             valueElement.textContent = "";
             valueElement.textContent = CONSTANTS.restricted();

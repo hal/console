@@ -60,12 +60,12 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
     private final Resources resources;
 
     @Inject
-    public ExtensionColumn(final Finder finder,
-            final EventBus eventBus,
-            final ColumnActionFactory columnActionFactory,
-            final ExtensionRegistry extensionRegistry,
-            final ExtensionStorage extensionStorage,
-            final Resources resources) {
+    public ExtensionColumn(Finder finder,
+            EventBus eventBus,
+            ColumnActionFactory columnActionFactory,
+            ExtensionRegistry extensionRegistry,
+            ExtensionStorage extensionStorage,
+            Resources resources) {
 
         super(new Builder<InstalledExtension>(finder, Ids.EXTENSION, Names.EXTENSION)
 
@@ -101,7 +101,7 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 Extension.Point point = ModelNodeHelper.asEnumValue(item, EXTENSION_POINT,
                         Extension.Point::valueOf, CUSTOM);
                 return ItemDisplay.withSubtitle(item.getName(), point.title());

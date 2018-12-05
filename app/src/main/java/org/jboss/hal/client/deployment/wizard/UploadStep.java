@@ -29,8 +29,8 @@ abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    public HTMLElement asElement() {
-        return uploadElement.asElement();
+    public HTMLElement element() {
+        return uploadElement.element();
     }
 
     @Override

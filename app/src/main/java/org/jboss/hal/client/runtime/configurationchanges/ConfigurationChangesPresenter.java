@@ -189,7 +189,7 @@ public class ConfigurationChangesPresenter extends
                                 .build();
                         ModelNode changeModel = new ModelNode();
                         Dialog dialog = new Dialog.Builder(resources.constants().configurationChanges())
-                                .add(form.asElement())
+                                .add(form.element())
                                 .primary(resources.constants().yes(), () -> {
                                     boolean valid = form.save();
                                     // if the form contains validation error, don't close the dialog

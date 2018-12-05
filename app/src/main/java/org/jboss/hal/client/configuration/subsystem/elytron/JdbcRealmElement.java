@@ -94,13 +94,13 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .unsorted()
                 .onSave((f, changedValues) -> presenter.savePrincipalQuery(selectedJdbcRealm, pqIndex, changedValues))
                 .build();
-        tabs.add(id(PRINCIPAL_QUERY, TAB), resources.constants().attributes(), pqForm.asElement());
+        tabs.add(id(PRINCIPAL_QUERY, TAB), resources.constants().attributes(), pqForm.element());
 
         keyMappers = new LinkedHashMap<>();
         for (String keyMapper : RealmsPresenter.KEY_MAPPERS) {
             Form<ModelNode> form = keyMapperForm(pqMetadata, keyMapper);
             keyMappers.put(keyMapper, form);
-            tabs.add(id(PRINCIPAL_QUERY, keyMapper, TAB), new LabelBuilder().label(keyMapper), form.asElement());
+            tabs.add(id(PRINCIPAL_QUERY, keyMapper, TAB), new LabelBuilder().label(keyMapper), form.element());
         }
 
         HTMLElement pqSection = section()
@@ -136,8 +136,8 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
     }
 
     @Override
-    public HTMLElement asElement() {
-        return pages.asElement();
+    public HTMLElement element() {
+        return pages.element();
     }
 
     @Override

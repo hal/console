@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.microprofile.health;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
 
     private HTMLHeadingElement header;
     private final List<HTMLElement> elements = new ArrayList<>();
-    private HTMLElement section = section().id(Ids.uniqueId()).asElement();
+    private HTMLElement section = section().id(Ids.uniqueId()).get();
 
     public MicroprofileHealthPreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
         super(Names.MICROPROFILE_HEALTH);
@@ -87,9 +88,9 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
         dispatcher.execute(operation, result -> {
             String outcome = result.get(OUTCOME).asString();
             if (UP.equals(outcome)) {
-                section.appendChild(outcomeUp.asElement());
+                section.appendChild(outcomeUp.element());
             } else {
-                section.appendChild(outcomeDown.asElement());
+                section.appendChild(outcomeDown.element());
             }
             section.appendChild(p().textContent(resources.messages().microprofileHealthPreviewDescription()).asElement());
 
@@ -157,10 +158,10 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
     }
 
     @Override
-    public Iterable<HTMLElement> asElements() {
+    public Iterator<HTMLElement> iterator() {
         List<HTMLElement> coll = new ArrayList<>();
         coll.add(header);
         coll.addAll(elements);
-        return coll;
+        return coll.iterator();
     }
 }

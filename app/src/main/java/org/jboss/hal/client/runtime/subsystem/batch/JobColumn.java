@@ -131,7 +131,7 @@ public class JobColumn extends FinderColumn<JobNode> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return ItemDisplay.withSubtitle(item.getName(), item.getPath());
             }
 
@@ -236,7 +236,7 @@ public class JobColumn extends FinderColumn<JobNode> {
                 .include(JOB_XML_NAME, PROPERTIES)
                 .build();
         Dialog dialog = new Dialog.Builder(resources.constants().startJob())
-                .add(form.asElement())
+                .add(form.element())
                 .closeIcon(true)
                 .closeOnEsc(true)
                 .primary(resources.constants().start(), () -> {

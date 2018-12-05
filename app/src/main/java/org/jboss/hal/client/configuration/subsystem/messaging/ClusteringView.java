@@ -113,9 +113,9 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
         Tabs tabs = new Tabs(Ids.build(MESSAGING_SERVER, BRIDGE, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, ATTRIBUTES, Ids.TAB),
-                mbuiContext.resources().constants().attributes(), bridgeForm.asElement());
+                mbuiContext.resources().constants().attributes(), bridgeForm.element());
         tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, CREDENTIAL_REFERENCE, Ids.TAB),
-                Names.CREDENTIAL_REFERENCE, crForm.asElement());
+                Names.CREDENTIAL_REFERENCE, crForm.element());
 
         HTMLElement bridgeSection = section()
                 .add(h(1).textContent(Names.BRIDGE))

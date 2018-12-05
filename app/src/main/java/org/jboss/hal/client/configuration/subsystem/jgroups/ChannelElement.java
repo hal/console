@@ -113,8 +113,8 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     }
 
     @Override
-    public HTMLElement asElement() {
-        return innerPages.asElement();
+    public HTMLElement element() {
+        return innerPages.element();
     }
 
     @Override

@@ -120,8 +120,8 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     @Override
-    public HTMLElement asElement() {
-        return pages.asElement();
+    public HTMLElement element() {
+        return pages.element();
     }
 
     @Override

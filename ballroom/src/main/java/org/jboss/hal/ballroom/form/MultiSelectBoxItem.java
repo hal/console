@@ -29,7 +29,7 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
-    public MultiSelectBoxItem(final String name, final String label, List<String> options) {
+    public MultiSelectBoxItem(String name, String label, List<String> options) {
         super(name, label, null);
 
         // read-only appearance
@@ -41,7 +41,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
                     select.size = 1;
                     select.multiple = true;
                 })
-                .asElement();
+                .get();
         addAppearance(Form.State.EDITING, new MultiSelectBoxEditingAppearance(selectElement, options));
     }
 
@@ -68,7 +68,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
         }
 
         @Override
-        public String asString(final List<String> value) {
+        public String asString(List<String> value) {
             return String.join(", ", value);
         }
     }
@@ -76,7 +76,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
     private class MultiSelectBoxEditingAppearance extends SelectBoxEditingAppearance<List<String>> {
 
-        MultiSelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options) {
+        MultiSelectBoxEditingAppearance(HTMLSelectElement selectElement, List<String> options) {
             super(selectElement, options, true);
         }
 
@@ -93,14 +93,14 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
         }
 
         @Override
-        public void showValue(final List<String> value) {
+        public void showValue(List<String> value) {
             if (attached) {
                 Multi.element(selectElement).setValue(value);
             }
         }
 
         @Override
-        public String asString(final List<String> value) {
+        public String asString(List<String> value) {
             return String.join(", ", value);
         }
 

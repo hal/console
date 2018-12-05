@@ -54,8 +54,8 @@ class ReviewStep extends WizardStep<Context, State> {
     }
 
     @Override
-    public HTMLElement asElement() {
-        return form.asElement();
+    public HTMLElement element() {
+        return form.element();
     }
 
     @Override

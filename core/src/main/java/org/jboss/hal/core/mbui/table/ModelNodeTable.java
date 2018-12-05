@@ -125,7 +125,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     private void applySecurity() {
         AuthorisationDecision ad = AuthorisationDecision.from(Core.INSTANCE.environment(),
                 metadata.getSecurityContext());
-        ElementGuard.processElements(ad, asElement());
+        ElementGuard.processElements(ad, element());
     }
 
 
@@ -133,7 +133,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     @JsProperty(name = "element")
     public HTMLElement jsElement() {
-        return asElement();
+        return element();
     }
 
     @SuppressWarnings("unchecked")

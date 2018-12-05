@@ -130,10 +130,9 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.hasTransactionSupport()) {
-                    return ItemDisplay
-                            .withSubtitle(item.getName(), item.get(TRANSACTION_SUPPORT).asString());
+                    return ItemDisplay.withSubtitle(item.getName(), item.get(TRANSACTION_SUPPORT).asString());
                 }
                 return null;
             }

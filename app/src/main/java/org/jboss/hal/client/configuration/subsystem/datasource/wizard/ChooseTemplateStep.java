@@ -72,7 +72,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

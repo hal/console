@@ -158,10 +158,10 @@ public class RollbackWizard extends PatchWizard {
                     .param(OVERRIDE_MODULE, patchContext.overrideModules);
 
             if (patchContext.override != null) {
-                opBuilder.param(OVERRIDE, patchContext.override.toArray(new String[patchContext.override.size()]));
+                opBuilder.param(OVERRIDE, patchContext.override.toArray(new String[0]));
             }
             if (patchContext.preserve != null) {
-                opBuilder.param(PRESERVE, patchContext.preserve.toArray(new String[patchContext.preserve.size()]));
+                opBuilder.param(PRESERVE, patchContext.preserve.toArray(new String[0]));
             }
             Operation operation = opBuilder.build();
 

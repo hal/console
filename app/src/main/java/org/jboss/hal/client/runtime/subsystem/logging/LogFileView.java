@@ -107,7 +107,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         editorOptions.showPrintMargin = false;
         editor = new AceEditor(Ids.LOG_FILE_EDITOR, editorOptions);
         registerAttachable(editor);
-        editorContainer.replaceChild(editor.asElement(), editorPlaceholder);
+        editorContainer.replaceChild(editor.element(), editorPlaceholder);
 
         Clipboard clipboard = new Clipboard(copyToClipboard);
         clipboard.onCopy(event -> copyToClipboard(event.client));
@@ -158,7 +158,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         height -= 2 * MARGIN_BIG;
         height -= (header.offsetHeight + logFileControls.offsetHeight + 20);
         height = max(height, MIN_HEIGHT);
-        editor.asElement().style.height = CSS.height(px(height));
+        editor.element().style.height = CSS.height(px(height));
         editor.getEditor().resize();
     }
 
@@ -174,8 +174,8 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     public void loading() {
         status.textContent = resources().constants().loadingPleaseWait();
         status.title = resources().constants().loadingPleaseWait();
-        int top = (int) (loading.offsetHeight + editor.asElement().offsetHeight / 2);
-        loading.style.top = String.valueOf(-1 * top) + "px"; //NON-NLS
+        int top = (int) (loading.offsetHeight + editor.element().offsetHeight / 2);
+        loading.style.top = -1 * top + "px"; //NON-NLS
         editorContainer.classList.add(logFileLoading);
     }
 
@@ -222,7 +222,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         if (lineElement != null) {
             lineHeight = (int) lineElement.offsetHeight;
         }
-        return (int) (editor.asElement().offsetHeight / lineHeight);
+        return (int) (editor.element().offsetHeight / lineHeight);
     }
 
     private void statusUpdate(int lines) {

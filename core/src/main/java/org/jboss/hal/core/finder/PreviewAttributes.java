@@ -17,6 +17,7 @@ package org.jboss.hal.core.finder;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,6 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent;
@@ -46,7 +46,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
 /** Element to show the basic attributes of a resource inside the preview pane. */
-public class PreviewAttributes<T extends ModelNode> implements HasElements {
+public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElement> {
 
     private static final String LABEL = "label";
     private static final String VALUE = "value";
@@ -57,7 +57,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     private final HTMLElement description;
     private final HTMLUListElement ul;
     private final LabelBuilder lb;
-    private final ElementsBuilder eb;
+    private final Iterable<HTMLElement> elements;
     private final Map<String, HTMLLIElement> listItems;
     private final Map<String, PreviewAttributeFunction<T>> functions;
 
@@ -82,20 +82,21 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         this.functions = new HashMap<>();
         this.listItems = new HashMap<>();
         this.lb = new LabelBuilder();
-        this.eb = new ElementsBuilder();
 
+        ElementsBuilder builder = collect();
         if (header != null) {
-            eb.add(h(2, header));
+            builder.add(h(2, header));
         }
-        eb.add(this.description = p().asElement());
+        builder.add(this.description = p().get());
         if (description != null) {
             this.description.textContent = description;
         } else {
             Elements.setVisible(this.description, false);
         }
 
-        eb.add(this.ul = ul().css(listGroup).asElement());
+        builder.add(this.ul = ul().css(listGroup).get());
         attributes.forEach(this::append);
+        this.elements = builder.get();
     }
 
     public PreviewAttributes<T> append(String attribute) {
@@ -121,8 +122,8 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
         HTMLLIElement li = li().id(id).css(listGroupItem)
                 .add(span().id(labelId).css(key).textContent(previewAttribute.label))
-                .add(valueContainer = span().id(valueId).css(CSS.value).asElement())
-                .asElement();
+                .add(valueContainer = span().id(valueId).css(CSS.value).get())
+                .get();
 
         if (previewAttribute.elements != null || previewAttribute.element != null) {
             if (previewAttribute.elements != null) {
@@ -132,7 +133,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             }
         } else {
             if (previewAttribute.href != null) {
-                HTMLAnchorElement anchorElement = a(previewAttribute.href).asElement();
+                HTMLAnchorElement anchorElement = a(previewAttribute.href).get();
                 if (previewAttribute.target != null) {
                     anchorElement.target = previewAttribute.target;
                 }
@@ -148,8 +149,8 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
                             .title(CONSTANTS.resolveExpression())
                             .on(click, event -> Core.INSTANCE.eventBus()
                                     .fireEvent(new ResolveExpressionEvent(previewAttribute.value)))
-                            .asElement();
-                    HTMLElement nextValueContainer = span().asElement();
+                            .get();
+                    HTMLElement nextValueContainer = span().get();
                     valueContainer.appendChild(nextValueContainer);
                     valueContainer.appendChild(resolveExpression);
                     valueContainer = nextValueContainer;
@@ -240,8 +241,8 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
     @Override
-    public Iterable<HTMLElement> asElements() {
-        return eb.asElements();
+    public Iterator<HTMLElement> iterator() {
+        return elements.iterator();
     }
 
 

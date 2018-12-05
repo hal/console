@@ -92,7 +92,7 @@ public class DataTable<T> implements Table<T> {
     public DataTable(String id, Options<T> options) {
         this.id = id;
         this.options = options;
-        this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, tableHover).asElement();
+        this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, tableHover).get();
         if (options.buttons != null && options.buttons.buttons != null) {
             for (Api.Button<T> button : options.buttons.buttons) {
                 button.table = this;
@@ -101,7 +101,7 @@ public class DataTable<T> implements Table<T> {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return api == null ? tableElement : (HTMLElement) document.getElementById(id + WRAPPER_SUFFIX);
     }
 

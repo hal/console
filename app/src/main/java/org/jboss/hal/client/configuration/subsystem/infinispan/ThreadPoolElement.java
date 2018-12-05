@@ -57,7 +57,7 @@ class ThreadPoolElement implements IsElement<HTMLElement>, Attachable, HasPresen
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -72,7 +72,7 @@ class ThreadPoolElement implements IsElement<HTMLElement>, Attachable, HasPresen
     }
 
     @Override
-    public void setPresenter(final CacheContainerPresenter presenter) {
+    public void setPresenter(CacheContainerPresenter presenter) {
         this.presenter = presenter;
     }
 

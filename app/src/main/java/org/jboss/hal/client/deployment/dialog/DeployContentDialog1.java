@@ -117,7 +117,7 @@ public class DeployContentDialog1 {
 
     private boolean finish() {
         boolean hasSelection = table.hasSelection();
-        Elements.setVisible(noServerGroupSelected.asElement(), !hasSelection);
+        Elements.setVisible(noServerGroupSelected.element(), !hasSelection);
         if (hasSelection) {
             List<String> serverGroups = table.selectedRows().stream()
                     .map(usg -> usg.serverGroup)
@@ -133,7 +133,7 @@ public class DeployContentDialog1 {
 
     public void show() {
         dialog.show();
-        Elements.setVisible(noServerGroupSelected.asElement(), false);
+        Elements.setVisible(noServerGroupSelected.element(), false);
         Elements.setVisible(enableContainer, deployCallback != null);
         table.update(serverGroups);
         SwitchBridge.Api.element(enable).setValue(true);

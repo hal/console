@@ -172,8 +172,8 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
     }
 
     @Override
-    public HTMLElement asElement() {
-        return realmPages.asElement();
+    public HTMLElement element() {
+        return realmPages.element();
     }
 
     @Override

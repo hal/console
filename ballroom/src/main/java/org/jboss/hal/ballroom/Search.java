@@ -58,7 +58,7 @@ public class Search implements IsElement<HTMLElement> {
                                                 builder.onSearch.search(searchBox.value);
                                             }
                                         })
-                                        .asElement())
+                                        .get())
                                 .add(clearSearch = button().css(clear)
                                         .aria(UIConstants.HIDDEN, "true") //NON-NLS
                                         .on(click, event -> {
@@ -69,31 +69,31 @@ public class Search implements IsElement<HTMLElement> {
                                             focus();
                                         })
                                         .add(span().css(pfIcon("close")))
-                                        .asElement())))
+                                        .get())))
                 .add(buttons = div().css(formGroup, btnGroup)
                         .add(button().css(btn, btnDefault)
                                 .on(click, event -> builder.onSearch.search(searchBox.value))
                                 .add(span().css(fontAwesome("search"))))
-                        .asElement())
-                .asElement();
+                        .get())
+                .get();
 
         if (builder.onPrevious != null) {
             buttons.appendChild(button().css(btn, btnDefault)
                     .on(click, event -> builder.onPrevious.search(searchBox.value))
                     .add(span().css(fontAwesome("angle-left")))
-                    .asElement());
+                    .get());
         }
         if (builder.onNext != null) {
             buttons.appendChild(button().css(btn, btnDefault)
                     .on(click, event -> builder.onNext.search(searchBox.value))
                     .add(span().css(fontAwesome("angle-right")))
-                    .asElement());
+                    .get());
         }
         Elements.setVisible(clearSearch, false);
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

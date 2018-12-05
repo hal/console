@@ -15,14 +15,13 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.InlineAction;
@@ -59,14 +58,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /** Panel which holds the children of the selected resource. */
-class ChildrenPanel implements HasElements, Attachable {
+class ChildrenPanel implements Iterable<HTMLElement>, Attachable {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ChildrenPanel.class);
 
     private final Environment environment;
     private final Dispatcher dispatcher;
     private final MetadataProcessor metadataProcessor;
-    private final ElementsBuilder builder;
+    private final Iterable<HTMLElement> elements;
     private final HTMLElement header;
     private final Table<String> table;
     private Node<Context> parent;
@@ -93,14 +92,15 @@ class ChildrenPanel implements HasElements, Attachable {
                 .options();
 
         table = new DataTable<>(Ids.build(Ids.MODEL_BROWSER, "children", Ids.TABLE), options);
-        builder = Elements.elements()
-                .add(header = h(1).asElement())
-                .add(table);
+        elements = Elements.collect()
+                .add(header = h(1).get())
+                .add(table)
+                .get();
     }
 
     @Override
-    public Iterable<HTMLElement> asElements() {
-        return builder.asElements();
+    public Iterator<HTMLElement> iterator() {
+        return elements.iterator();
     }
 
     @Override
@@ -155,14 +155,14 @@ class ChildrenPanel implements HasElements, Attachable {
     }
 
     void show() {
-        for (HTMLElement element : asElements()) {
+        for (HTMLElement element : this) {
             Elements.setVisible(element, true);
         }
         table.show();
     }
 
     void hide() {
-        for (HTMLElement element : asElements()) {
+        for (HTMLElement element : this) {
             Elements.setVisible(element, false);
         }
         table.hide();

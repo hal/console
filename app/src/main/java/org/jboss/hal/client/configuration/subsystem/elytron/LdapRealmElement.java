@@ -133,13 +133,13 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .build();
 
         Tabs tabs = new Tabs(id(TAB_CONTAINER));
-        tabs.add(id(TAB), resources.constants().attributes(), ldapRealmForm.asElement());
-        tabs.add(id(IDENTITY_MAPPING, TAB), Names.IDENTITY_MAPPING, identityMappingForm.asElement());
-        tabs.add(id(USER_PASSWORD_MAPPER, TAB), Names.USER_PASSWORD_MAPPER, userPasswordMapperForm.asElement());
+        tabs.add(id(TAB), resources.constants().attributes(), ldapRealmForm.element());
+        tabs.add(id(IDENTITY_MAPPING, TAB), Names.IDENTITY_MAPPING, identityMappingForm.element());
+        tabs.add(id(USER_PASSWORD_MAPPER, TAB), Names.USER_PASSWORD_MAPPER, userPasswordMapperForm.element());
         tabs.add(id(OTP_CREDENTIAL_MAPPER, TAB), Names.OTP_CREDENTIAL_MAPPER,
-                otpCredentialMapperForm.asElement());
+                otpCredentialMapperForm.element());
         tabs.add(id(X509_CREDENTIAL_MAPPER, TAB), Names.X509_CREDENTIAL_MAPPER,
-                x509CredentialMapperForm.asElement());
+                x509CredentialMapperForm.element());
 
         HTMLElement ldapRealmSection = section()
                 .add(h(1).textContent(Names.LDAP_REALM))
@@ -182,8 +182,8 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
     }
 
     @Override
-    public HTMLElement asElement() {
-        return pages.asElement();
+    public HTMLElement element() {
+        return pages.element();
     }
 
     @Override

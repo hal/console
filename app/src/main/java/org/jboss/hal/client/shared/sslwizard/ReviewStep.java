@@ -53,7 +53,7 @@ public class ReviewStep extends AbstractConfiguration implements AsyncStep<Enabl
     }
 
     @Override
-    protected void onShow(final EnableSSLContext context) {
+    protected void onShow(EnableSSLContext context) {
         super.onShow(context);
         form.view(context.model);
     }
@@ -85,7 +85,7 @@ public class ReviewStep extends AbstractConfiguration implements AsyncStep<Enabl
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return section;
     }
 }

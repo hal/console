@@ -103,10 +103,10 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
                 .addAll(previewAttributes)
                 .add(h(2, resources.constants().processingTime()))
                 .add(processingTime)
-                .addAll(totalProcessingTimeAttribute.asElements())
+                .addAll(totalProcessingTimeAttribute)
                 .add(h(2, resources.constants().request() + " / " + resources.constants().response()))
                 .add(requests)
-                .addAll(responseAttribute.asElements());
+                .addAll(responseAttribute);
     }
 
     private PreviewAttributes.PreviewAttribute msAttribute(String attribute, ModelNode model) {

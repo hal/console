@@ -129,9 +129,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .build();
 
         Tabs tabs = new Tabs(Ids.JCA_TAB_CONTAINER);
-        tabs.add(Ids.JCA_CCM_TAB, ccmType, ccmForm.asElement());
-        tabs.add(Ids.JCA_ARCHIVE_VALIDATION_TAB, avType, avForm.asElement());
-        tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.asElement());
+        tabs.add(Ids.JCA_CCM_TAB, ccmType, ccmForm.element());
+        tabs.add(Ids.JCA_ARCHIVE_VALIDATION_TAB, avType, avForm.element());
+        tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.element());
 
         HTMLElement configLayout = div()
                 .add(h(1).textContent(Names.CONFIGURATION))
@@ -248,7 +248,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGES, Ids.JCA_WORKMANAGER_PAGE, wmLayout);
         wmPages.addPage(Ids.JCA_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(wmType) + ": " + selectedWorkmanager, () -> Names.THREAD_POOLS,
-                wmTpEditor.asElement());
+                wmTpEditor.element());
         pages.put(WORKMANAGER_TEMPLATE, wmPages);
 
         navigation.addPrimary(Ids.JCA_WORKMANAGER_ITEM, wmType, fontAwesome("cog"), wmPages);
@@ -316,7 +316,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 dwmLayout);
         dwmPages.addPage(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(dwmType) + ": " + selectedWorkmanager, () -> THREAD_POOLS,
-                dwmTpEditor.asElement());
+                dwmTpEditor.element());
         pages.put(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmPages);
 
         navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ITEM, dwmType, fontAwesome("cogs"), dwmPages);

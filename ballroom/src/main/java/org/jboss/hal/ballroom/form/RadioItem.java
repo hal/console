@@ -43,11 +43,6 @@ public class RadioItem extends AbstractFormItem<String> {
         addAppearances(map, inline);
     }
 
-    public RadioItem(String name, String label, LinkedHashMap<String, String> options, boolean inline) {
-        super(name, label, null);
-        addAppearances(options, inline);
-    }
-
     private void addAppearances(LinkedHashMap<String, String> options, boolean inline) {
         addAppearance(Form.State.READONLY, new RadioReadOnlyAppearance());
 

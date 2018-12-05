@@ -81,7 +81,7 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
                     }
 
                     @Override
-                    public HTMLElement asElement() {
+                    public HTMLElement element() {
                         HTMLElement element = ItemDisplay
                                 .withSubtitle(abbreviateFqClassName(item.getName()),
                                         item.getPath());

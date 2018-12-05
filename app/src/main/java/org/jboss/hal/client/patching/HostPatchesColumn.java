@@ -136,7 +136,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return _host.isDomainController() ? ItemDisplay
                         .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
             }
@@ -228,7 +228,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
 
     @Override
-    public void onHostAction(final HostActionEvent event) {
+    public void onHostAction(HostActionEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
             ItemMonitor.startProgress(Ids.host(host.getAddressName()));
@@ -238,7 +238,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
     @Override
     @SuppressWarnings("Duplicates")
-    public void onHostResult(final HostResultEvent event) {
+    public void onHostResult(HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
             ItemMonitor.stopProgress(Ids.host(host.getAddressName()));

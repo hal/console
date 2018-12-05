@@ -82,7 +82,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     presenter.addWrite(write);
                 })
                 .build();
-        emptyState.asElement().classList.add(marginTopLarge);
+        emptyState.element().classList.add(marginTopLarge);
 
         throughElement = div()
                 .add(p().css(marginTopLarge)
@@ -116,13 +116,13 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .add(behindElement)
                 .asElement();
 
-        Elements.setVisible(emptyState.asElement(), false);
+        Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(throughElement, false);
         Elements.setVisible(behindElement, false);
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -156,7 +156,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     private void switchBehaviour(Write write) {
-        Elements.setVisible(emptyState.asElement(), write == null);
+        Elements.setVisible(emptyState.element(), write == null);
         Elements.setVisible(throughElement, write == THROUGH);
         Elements.setVisible(behindElement, write == BEHIND);
     }

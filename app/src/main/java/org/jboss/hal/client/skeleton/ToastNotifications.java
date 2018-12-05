@@ -60,12 +60,12 @@ class ToastNotifications implements IsElement {
         this.resources = resources;
         this.messageIds = new HashMap<>();
         this.stickyMessages = new HashMap<>();
-        this.root = div().css(toastNotificationsListPf).asElement();
+        this.root = div().css(toastNotificationsListPf).get();
         document.body.appendChild(root);
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -75,7 +75,7 @@ class ToastNotifications implements IsElement {
 
         } else {
             String id = Ids.uniqueId();
-            HTMLElement element = new ToastNotificationElement(this, message, resources).asElement();
+            HTMLElement element = new ToastNotificationElement(this, message, resources).element();
             element.id = id;
             root.appendChild(element);
 

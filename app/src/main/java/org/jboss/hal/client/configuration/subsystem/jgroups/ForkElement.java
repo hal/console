@@ -80,7 +80,7 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return section;
     }
 

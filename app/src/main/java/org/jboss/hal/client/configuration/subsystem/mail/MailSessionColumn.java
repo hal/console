@@ -122,7 +122,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (!mailSession.getServers().isEmpty()) {
                     return ItemDisplay
                             .withSubtitle(mailSession.getName(), Joiner.on(", ").join(mailSession.getServers()));

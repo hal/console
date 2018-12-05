@@ -84,7 +84,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                 .onSave((form, changedValues) -> presenter.saveCache(changedValues))
                 .prepareReset(f -> presenter.resetCache(f))
                 .build();
-        tabs.add(Ids.build(cacheType.baseId, Ids.TAB), resources.constants().attributes(), form.asElement());
+        tabs.add(Ids.build(cacheType.baseId, Ids.TAB), resources.constants().attributes(), form.element());
         registerAttachable(form);
 
         components = new HashMap<>();
@@ -99,7 +99,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                     .prepareReset(f -> presenter.resetComponent(component, f))
                     .prepareRemove(f -> presenter.removeComponent(component, f))
                     .build();
-            tabs.add(tabId, component.type, cf.asElement());
+            tabs.add(tabId, component.type, cf.element());
             components.put(component, cf);
         }
         registerAttachables(components.values());

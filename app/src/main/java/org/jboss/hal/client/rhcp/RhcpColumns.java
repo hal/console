@@ -162,7 +162,7 @@ public class RhcpColumns {
                     })
                     .itemRenderer(item -> new ItemDisplay<JsonObject>() {
                         @Override
-                        public HTMLElement asElement() {
+                        public HTMLElement element() {
                             return ItemDisplay
                                     .withSubtitle(item.getString(TITLE), String.valueOf(item.getNumber(YEAR)));
                         }
@@ -179,13 +179,14 @@ public class RhcpColumns {
                     })
                     .onPreview(item -> new PreviewContent<>(item.getString(TITLE),
                             "Released " + item.getString("released"),
-                            elements()
+                            collect()
                                     .add(img(item.getString("cover")).css(preview))
                                     .add(p()
                                             .add(span().textContent("More infos: "))
                                             .add(a(item.getString("url"))
                                                     .attr("target", "_blank")
-                                                    .textContent(item.getString("url")))))));
+                                                    .textContent(item.getString("url"))))
+                                    .get())));
         }
     }
 
@@ -211,9 +212,9 @@ public class RhcpColumns {
                     })
                     .itemRenderer(item -> new ItemDisplay<JsonObject>() {
                         @Override
-                        public HTMLElement asElement() {
+                        public HTMLElement element() {
                             return ItemDisplay.withSubtitle(
-                                    String.valueOf(item.getNumber("track")) + ". " + item.getString(TITLE),
+                                    item.getNumber("track") + ". " + item.getString(TITLE),
                                     item.getString("length"));
                         }
 
@@ -236,7 +237,7 @@ public class RhcpColumns {
                         HTMLElement ul = ul()
                                 .add(li().css(listGroupItem).textContent("Album: " + album))
                                 .add(li().css(listGroupItem).textContent("Length: " + length))
-                                .asElement();
+                                .get();
                         if (item.hasKey("writer")) {
                             List<String> writers = new ArrayList<>();
                             for (int i = 0; i < item.getArray("writer").length(); i++) {
@@ -244,7 +245,7 @@ public class RhcpColumns {
                             }
                             ul.appendChild(li().css(listGroupItem)
                                     .textContent("Writer: " + String.join(", ", writers))
-                                    .asElement());
+                                    .get());
                         }
                         return new PreviewContent<>(item.getString(TITLE), ul);
                     }));

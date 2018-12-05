@@ -69,7 +69,7 @@ public class WorkerColumn extends FinderColumn<NamedNode> {
                     }
 
                     @Override
-                    public HTMLElement asElement() {
+                    public HTMLElement element() {
                         LabelBuilder labelBuilder = new LabelBuilder();
                         String threadPool = item.get(CORE_POOL_SIZE).asInt() + SLASH +
                                 item.get(MAX_POOL_SIZE).asInt() + SLASH +

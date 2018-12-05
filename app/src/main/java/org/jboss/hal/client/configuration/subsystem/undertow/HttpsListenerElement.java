@@ -97,7 +97,7 @@ class HttpsListenerElement extends ListenerElement {
     public void attach() {
         super.attach();
 
-        NodeList<Element> elems = table.asElement().getElementsByClassName(halTableButtons);
+        NodeList<Element> elems = table.element().getElementsByClassName(halTableButtons);
         if (elems.length > 0) {
             Element tableButtonsElement = elems.item(0);
             tableButtonsElement.appendChild(enableSslButton);

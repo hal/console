@@ -37,8 +37,8 @@ class PrincipalPreview extends PreviewContent<Principal> {
     private final HTMLElement noIncludes;
     private final HTMLElement includesUl;
 
-    PrincipalPreview(final AccessControl accessControl, final AccessControlTokens tokens, final Principal principal,
-            final Resources resources) {
+    PrincipalPreview(AccessControl accessControl, AccessControlTokens tokens, Principal principal,
+            Resources resources) {
         super((principal.getType() == Principal.Type.USER ? resources.constants().user() : resources.constants()
                         .group()) + " " + principal.getName(),
                 principal.getRealm() != null ? Names.REALM + " " + principal.getRealm() : null);
@@ -47,11 +47,11 @@ class PrincipalPreview extends PreviewContent<Principal> {
 
         previewBuilder()
                 .add(h(2).textContent(resources.constants().excludes()))
-                .add(noExcludes = p().textContent(resources.constants().noRolesExcluded()).asElement())
-                .add(excludesUl = ul().asElement())
+                .add(noExcludes = p().textContent(resources.constants().noRolesExcluded()).get())
+                .add(excludesUl = ul().get())
                 .add(h(2).textContent(resources.constants().includes()))
-                .add(noIncludes = p().textContent(resources.constants().noRolesIncluded()).asElement())
-                .add(includesUl = ul().asElement());
+                .add(noIncludes = p().textContent(resources.constants().noRolesIncluded()).get())
+                .add(includesUl = ul().get());
 
         Elements.setVisible(noExcludes, false);
         Elements.setVisible(excludesUl, false);
@@ -60,7 +60,7 @@ class PrincipalPreview extends PreviewContent<Principal> {
     }
 
     @Override
-    public void update(final Principal principal) {
+    public void update(Principal principal) {
         List<Role> excludes = accessControl.assignments().excludes(principal).map(Assignment::getRole)
                 .sorted(Roles.STANDARD_FIRST.thenComparing(Roles.BY_NAME)).collect(toList());
         List<Role> includes = accessControl.assignments().includes(principal).map(Assignment::getRole)
@@ -70,12 +70,12 @@ class PrincipalPreview extends PreviewContent<Principal> {
         Elements.setVisible(excludesUl, !excludes.isEmpty());
         Elements.removeChildrenFrom(excludesUl);
         excludes.forEach(role -> excludesUl.appendChild(li()
-                .add(a(tokens.role(role)).textContent(role.getName())).asElement()));
+                .add(a(tokens.role(role)).textContent(role.getName())).get()));
 
         Elements.setVisible(noIncludes, includes.isEmpty());
         Elements.setVisible(includesUl, !includes.isEmpty());
         Elements.removeChildrenFrom(includesUl);
         includes.forEach(role -> includesUl.appendChild(li()
-                .add(a(tokens.role(role)).textContent(role.getName())).asElement()));
+                .add(a(tokens.role(role)).textContent(role.getName())).get()));
     }
 }

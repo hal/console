@@ -141,8 +141,8 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     }
 
     @Override
-    public HTMLElement asElement() {
-        return innerPages.asElement();
+    public HTMLElement element() {
+        return innerPages.element();
     }
 
     @Override

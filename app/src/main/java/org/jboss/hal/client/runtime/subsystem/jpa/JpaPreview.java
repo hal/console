@@ -84,7 +84,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
                 .add(openedSessions)
                 .add(closedSessions);
 
-        Elements.setVisible(noStatistics.asElement(), false);
+        Elements.setVisible(noStatistics.element(), false);
     }
 
     @Override
@@ -100,11 +100,11 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     private void internalUpdate(JpaStatistic statistic) {
         boolean statisticsEnabled = statistic.isStatisticsEnabled();
 
-        Elements.setVisible(noStatistics.asElement(), !statisticsEnabled);
+        Elements.setVisible(noStatistics.element(), !statisticsEnabled);
         Elements.setVisible(refresh, statisticsEnabled);
         Elements.setVisible(header, statisticsEnabled);
-        Elements.setVisible(openedSessions.asElement(), statisticsEnabled);
-        Elements.setVisible(closedSessions.asElement(), statisticsEnabled);
+        Elements.setVisible(openedSessions.element(), statisticsEnabled);
+        Elements.setVisible(closedSessions.element(), statisticsEnabled);
 
         if (statisticsEnabled) {
             long sessions = statistic.get("connect-count").asLong();

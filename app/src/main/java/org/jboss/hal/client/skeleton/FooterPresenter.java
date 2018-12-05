@@ -81,8 +81,8 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     }
 
     @Override
-    public HTMLElement asElement() {
-        return getView().asElement();
+    public HTMLElement element() {
+        return getView().element();
     }
 
     @Override

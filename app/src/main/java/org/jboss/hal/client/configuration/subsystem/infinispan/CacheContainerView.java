@@ -84,10 +84,10 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
         threadPools.forEach((threadPool, threadPoolElement) ->
                 navigation.addSecondary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM,
                         Ids.build(threadPool.baseId, Ids.ITEM), threadPool.type,
-                        threadPoolElement.asElement()));
+                        threadPoolElement.element()));
 
         navigation.addPrimary(Ids.CACHE_CONTAINER_TRANSPORT_ITEM, Names.TRANSPORT, fontAwesome("road"),
-                transport.asElement());
+                transport.element());
 
         registerAttachable(navigation);
         registerAttachable(configurationForm);

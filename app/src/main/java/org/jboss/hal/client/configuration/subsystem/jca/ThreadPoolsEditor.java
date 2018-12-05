@@ -118,7 +118,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

@@ -35,7 +35,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     private final Form<ModelNode> form;
     private final Environment environment;
 
-    public NamesStep(final Environment environment, final Metadata metadata, final Resources resources) {
+    public NamesStep(Environment environment, Metadata metadata, Resources resources) {
         super(resources.constants().specifyNames());
         this.environment = environment;
 
@@ -53,19 +53,19 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    public HTMLElement asElement() {
-        return form.asElement();
+    public HTMLElement element() {
+        return form.element();
     }
 
     @Override
-    public void reset(final UploadContext context) {
+    public void reset(UploadContext context) {
         context.name = "";
         context.runtimeName = "";
         context.enabled = true;
     }
 
     @Override
-    protected void onShow(final UploadContext context) {
+    protected void onShow(UploadContext context) {
         String filename = context.file.name;
 
         form.edit(new ModelNode());
@@ -78,7 +78,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    protected boolean onNext(final UploadContext context) {
+    protected boolean onNext(UploadContext context) {
         boolean valid = form.save();
         if (valid) {
             context.name = nameItem.getValue();

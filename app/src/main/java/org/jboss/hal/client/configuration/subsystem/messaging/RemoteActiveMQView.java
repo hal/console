@@ -124,9 +124,9 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
 
         Tabs tabs = new Tabs(Ids.build(Ids.MESSAGING_REMOTE_ACTIVEMQ, POOLED_CONNECTION_FACTORY, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(Ids.MESSAGING_REMOTE_ACTIVEMQ, POOLED_CONNECTION_FACTORY, ATTRIBUTES, Ids.TAB),
-                mbuiContext.resources().constants().attributes(), pooledConnectionFactoryForm.asElement());
+                mbuiContext.resources().constants().attributes(), pooledConnectionFactoryForm.element());
         tabs.add(Ids.build(Ids.MESSAGING_REMOTE_ACTIVEMQ, POOLED_CONNECTION_FACTORY, CREDENTIAL_REFERENCE, Ids.TAB),
-                Names.CREDENTIAL_REFERENCE, crForm.asElement());
+                Names.CREDENTIAL_REFERENCE, crForm.element());
 
         HTMLElement htmlSection = section()
                 .add(h(1).textContent(Names.POOLED_CONNECTION_FACTORY))

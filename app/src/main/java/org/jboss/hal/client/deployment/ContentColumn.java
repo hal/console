@@ -200,7 +200,7 @@ public class ContentColumn extends FinderColumn<Content> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (!item.getServerGroupDeployments().isEmpty()) {
                     return ItemDisplay.withSubtitle(item.getName(), item.getServerGroupDeployments().stream()
                             .map(ServerGroupDeployment::getServerGroup)
@@ -219,7 +219,7 @@ public class ContentColumn extends FinderColumn<Content> {
             @Override
             public HTMLElement getIcon() {
                 String icon = item.isExploded() ? fontAwesome("folder-open") : fontAwesome("archive");
-                return span().css(icon).asElement();
+                return span().css(icon).get();
             }
 
             @Override
@@ -386,7 +386,7 @@ public class ContentColumn extends FinderColumn<Content> {
     private void replace(Content content) {
         UploadElement uploadElement = new UploadElement(resources.messages().noContent());
         Dialog dialog = new Dialog.Builder(resources.constants().replaceContent())
-                .add(uploadElement.asElement())
+                .add(uploadElement.element())
                 .cancel()
                 .primary(resources.constants().replace(), () -> {
                     boolean valid = uploadElement.validate();

@@ -117,8 +117,8 @@ class EjbPreview extends PreviewContent<EjbNode> {
                         maxRemaining = (int) round(t.get(TIME_REMAINING).asLong() / 1000.0);
                         remainingElement = new ProgressElement(NORMAL, INLINE, true);
                         remainingElement.reset(maxRemaining);
-                        remainingElement.asElement().style.marginBottom = MarginBottomUnionType.of(0);
-                        return new PreviewAttribute(labelBuilder.label(TIME_REMAINING), remainingElement.asElement());
+                        remainingElement.element().style.marginBottom = MarginBottomUnionType.of(0);
+                        return new PreviewAttribute(labelBuilder.label(TIME_REMAINING), remainingElement.element());
                     });
             previewBuilder().addAll(timer);
         }

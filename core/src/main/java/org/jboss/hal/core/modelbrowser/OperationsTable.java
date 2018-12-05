@@ -53,7 +53,7 @@ class OperationsTable implements IsElement {
     private final HTMLElement root;
     private final Resources resources;
 
-    OperationsTable(final List<Property> operations, final Resources resources) {
+    OperationsTable(List<Property> operations, Resources resources) {
         HTMLElement tbody;
 
         this.resources = resources;
@@ -64,8 +64,8 @@ class OperationsTable implements IsElement {
                                 .add(th().textContent(Names.NAME))
                                 .add(th().textContent(resources.constants().input()))
                                 .add(th().textContent(resources.constants().output()))))
-                .add(tbody = tbody().asElement())
-                .asElement();
+                .add(tbody = tbody().get())
+                .get();
 
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(operations)) {
             ModelNode operation = property.getValue();
@@ -86,15 +86,15 @@ class OperationsTable implements IsElement {
 
             // input
             HTMLElement inputTd;
-            builder.add(inputTd = td().asElement());
+            builder.add(inputTd = td().get());
             if (operation.hasDefined(REQUEST_PROPERTIES) && !operation.get(REQUEST_PROPERTIES).asPropertyList()
                     .isEmpty()) {
                 List<Property> input = operation.get(REQUEST_PROPERTIES).asPropertyList();
                 HTMLElement ul;
-                inputTd.appendChild(ul = ul().css(operationParameter).asElement());
+                inputTd.appendChild(ul = ul().css(operationParameter).get());
                 for (Property parameter : Ordering.natural().onResultOf(Property::getName).sortedCopy(input)) {
                     HTMLElement li;
-                    ul.appendChild(li = li().asElement());
+                    ul.appendChild(li = li().get());
                     buildParameter(li, parameter.getName(), parameter.getValue());
                 }
             } else {
@@ -103,14 +103,14 @@ class OperationsTable implements IsElement {
 
             // output
             HTMLElement outputTd;
-            builder.add(outputTd = td().asElement());
+            builder.add(outputTd = td().get());
             if (operation.hasDefined(REPLY_PROPERTIES) && !operation.get(REPLY_PROPERTIES).asList().isEmpty()) {
                 buildParameter(outputTd, null, operation.get(REPLY_PROPERTIES));
             } else {
                 outputTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
-            tbody.appendChild(builder.asElement());
+            tbody.appendChild(builder.get());
         }
     }
 
@@ -134,7 +134,7 @@ class OperationsTable implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 }

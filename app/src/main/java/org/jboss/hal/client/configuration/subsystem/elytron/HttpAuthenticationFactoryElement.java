@@ -139,8 +139,8 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     }
 
     @Override
-    public HTMLElement asElement() {
-        return pages.asElement();
+    public HTMLElement element() {
+        return pages.element();
     }
 
     @Override

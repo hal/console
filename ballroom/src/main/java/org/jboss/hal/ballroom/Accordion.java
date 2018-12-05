@@ -81,7 +81,7 @@ public class Accordion implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

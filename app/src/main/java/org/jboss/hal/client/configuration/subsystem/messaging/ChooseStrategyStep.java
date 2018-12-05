@@ -59,12 +59,12 @@ class ChooseStrategyStep extends WizardStep<HaPolicyWizard.Context, HaPolicyWiza
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    protected void onShow(final HaPolicyWizard.Context context) {
+    protected void onShow(HaPolicyWizard.Context context) {
         replicationRadio.checked = context.replication;
         sharedStoreRadio.checked = !context.replication;
     }

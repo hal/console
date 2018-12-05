@@ -21,7 +21,6 @@ import java.util.Map;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.chart.Donut;
@@ -41,6 +40,7 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_LISTENER_TYPE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_WEB_SERVER;
@@ -106,9 +106,9 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 .add(processingElement)
                 .add(requestsElement);
 
-        Elements.setVisible(noStatistics.asElement(), false);
-        Elements.setVisible(processingElement, false);
-        Elements.setVisible(requestsElement, false);
+        setVisible(noStatistics.element(), false);
+        setVisible(processingElement, false);
+        setVisible(requestsElement, false);
     }
 
     @Override
@@ -153,9 +153,9 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 noStatistics.setDescription(desc);
             }
 
-            Elements.setVisible(noStatistics.asElement(), !statisticsEnabled);
-            Elements.setVisible(processingElement, statisticsEnabled);
-            Elements.setVisible(requestsElement, statisticsEnabled);
+            setVisible(noStatistics.element(), !statisticsEnabled);
+            setVisible(processingElement, statisticsEnabled);
+            setVisible(requestsElement, statisticsEnabled);
         });
     }
 

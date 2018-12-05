@@ -78,7 +78,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .unsorted()
                 .build();
         injectRemove(customPolicyForm, () -> presenter.removePolicy(policyName, Names.CUSTOM_POLICY));
-        Elements.setVisible(customPolicyForm.asElement(), false);
+        Elements.setVisible(customPolicyForm.element(), false);
 
         // jacc policy
         Metadata jaccPolicyMetadata = metadata.forComplexAttribute(ModelDescriptionConstants.JACC_POLICY);
@@ -89,7 +89,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .unsorted()
                 .build();
         injectRemove(jaccPolicyForm, () -> presenter.removePolicy(policyName, Names.JACC_POLICY));
-        Elements.setVisible(jaccPolicyForm.asElement(), false);
+        Elements.setVisible(jaccPolicyForm.element(), false);
 
         root = section()
                 .add(header = h(1).asElement())
@@ -104,7 +104,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     private void injectRemove(Form<ModelNode> form, Callback callback) {
         // hacky way to inject the remove link into the form tools,  depends on FormLink internals!
         String linksId = Ids.build(form.getId(), "links");
-        Element formLinks = form.asElement().querySelector(HASH + linksId);
+        Element formLinks = form.element().querySelector(HASH + linksId);
         if (formLinks != null) {
             HTMLLIElement removeLink = li().add(a().css(clickable).on(click, event -> callback.execute())
                     .add(i().css(pfIcon("remove")))
@@ -116,7 +116,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -132,20 +132,20 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     void update(NamedNode policy) {
-        Elements.setVisible(emptyState.asElement(), policy == null);
+        Elements.setVisible(emptyState.element(), policy == null);
         if (policy == null) {
             policyName = null;
             Elements.setVisible(header, false);
             Elements.setVisible(description, false);
-            Elements.setVisible(customPolicyForm.asElement(), false);
-            Elements.setVisible(jaccPolicyForm.asElement(), false);
+            Elements.setVisible(customPolicyForm.element(), false);
+            Elements.setVisible(jaccPolicyForm.element(), false);
 
         } else {
             policyName = policy.getName();
             Elements.setVisible(header, true);
             Elements.setVisible(description, true);
-            Elements.setVisible(customPolicyForm.asElement(), policy.hasDefined(CUSTOM_POLICY));
-            Elements.setVisible(jaccPolicyForm.asElement(), policy.hasDefined(JACC_POLICY));
+            Elements.setVisible(customPolicyForm.element(), policy.hasDefined(CUSTOM_POLICY));
+            Elements.setVisible(jaccPolicyForm.element(), policy.hasDefined(JACC_POLICY));
             if (policy.hasDefined(CUSTOM_POLICY)) {
                 header.textContent = Names.CUSTOM_POLICY;
                 description.textContent = metadata.forComplexAttribute(CUSTOM_POLICY).getDescription().getDescription();

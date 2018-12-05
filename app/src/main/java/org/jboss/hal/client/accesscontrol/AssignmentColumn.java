@@ -153,7 +153,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.getRole().isScoped()) {
                     return ItemDisplay.withSubtitle(item.getRole().getName(),
                             item.getRole().getBaseRole().getName() + " / " +

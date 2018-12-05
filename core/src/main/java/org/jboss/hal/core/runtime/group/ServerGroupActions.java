@@ -156,7 +156,7 @@ public class ServerGroupActions {
                     Dialog dialog = DialogFactory.buildConfirmation(
                             resources.messages().suspend(serverGroup.getName()),
                             resources.messages().suspendServerGroupQuestion(serverGroup.getName()),
-                            form.asElement(),
+                            form.element(),
                             () -> {
 
                                 form.save();
@@ -232,7 +232,7 @@ public class ServerGroupActions {
                     Dialog dialog = DialogFactory.buildConfirmation(
                             resources.messages().stop(serverGroup.getName()),
                             resources.messages().stopServerGroupQuestion(serverGroup.getName()),
-                            form.asElement(),
+                            form.element(),
                             () -> {
 
                                 form.save();

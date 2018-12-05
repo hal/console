@@ -32,8 +32,8 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -111,7 +111,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
     private void adjustHeight() {
         int headerHeight = (int) header.offsetHeight;
-        int searchHeight = (int) search.asElement().offsetHeight;
+        int searchHeight = (int) search.element().offsetHeight;
         int offset = applicationOffset() + 2 * MARGIN_BIG + headerHeight + searchHeight + 2 * MARGIN_SMALL;
         treeContainer.style.height = vh(offset);
     }
@@ -144,15 +144,15 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
         tree = new Tree<>(Ids.JNDI_TREE, nodes);
         Elements.removeChildrenFrom(treeContainer);
-        treeContainer.appendChild(tree.asElement());
+        treeContainer.appendChild(tree.element());
 
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> {
             if (!"ready".equals(selectionContext.action)) {
                 boolean hasSelection = selectionContext.selected.length != 0;
                 boolean validSelection = hasSelection && selectionContext.node.data.hasDetails;
-                Elements.setVisible(hint, !validSelection);
-                Elements.setVisible(details.asElement(), validSelection);
+                setVisible(hint, !validSelection);
+                setVisible(details.element(), validSelection);
                 if (validSelection) {
                     JndiContext jndiContext = selectionContext.node.data;
                     ModelNode modelNode = new ModelNode();
@@ -170,7 +170,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
             }
         });
 
-        Elements.setVisible(hint, true);
-        Elements.setVisible(details.asElement(), false);
+        setVisible(hint, true);
+        setVisible(details.element(), false);
     }
 }

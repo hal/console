@@ -52,6 +52,7 @@ import org.jboss.hal.resources.Resources;
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
@@ -114,7 +115,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
             getLeadElement().appendChild(a(places.historyToken(placeRequest))
                     .textContent(dataSource.getPath())
                     .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                    .asElement());
+                    .get());
         }
 
         fromDeployment = new EmptyState.Builder(Ids.DATA_SOURCE_RUNTIME_STATISTICS_NOT_AVAILABLE,
@@ -176,21 +177,21 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 .add(needsReloadWarning)
                 .add(needsRestartWarning)
                 .add(disabledWarning)
-                .add(poolHeader = h(2).css(underline).textContent(resources.constants().connectionPool()).asElement())
+                .add(poolHeader = h(2).css(underline).textContent(resources.constants().connectionPool()).get())
                 .add(activeConnections)
                 .add(maxUsedConnections)
                 .add(cacheHeader = h(2).css(underline)
                         .textContent(resources.constants().preparedStatementCache())
-                        .asElement())
+                        .get())
                 .add(hitCount)
                 .add(missCount);
 
         // to prevent flickering we initially hide everything
-        Elements.setVisible(fromDeployment.asElement(), false);
-        Elements.setVisible(noStatistics.asElement(), false);
-        needsReloadWarning.asElement().classList.add(hidden);
-        needsRestartWarning.asElement().classList.add(hidden);
-        disabledWarning.asElement().classList.add(hidden);
+        setVisible(fromDeployment.element(), false);
+        setVisible(noStatistics.element(), false);
+        needsReloadWarning.element().classList.add(hidden);
+        needsRestartWarning.element().classList.add(hidden);
+        disabledWarning.element().classList.add(hidden);
     }
 
     @Override
@@ -199,19 +200,19 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
         // if the data source is from a deployment we don't need to refresh
         if (ds != null && ds.fromDeployment()) {
-            Elements.setVisible(fromDeployment.asElement(), ds.fromDeployment());
-            Elements.setVisible(noStatistics.asElement(), false);
-            Elements.setVisible(refresh, false);
-            Elements.setVisible(poolHeader, false);
-            Elements.setVisible(activeConnections.asElement(), false);
-            Elements.setVisible(maxUsedConnections.asElement(), false);
-            Elements.setVisible(cacheHeader, false);
-            Elements.setVisible(hitCount.asElement(), false);
-            Elements.setVisible(missCount.asElement(), false);
+            setVisible(fromDeployment.element(), ds.fromDeployment());
+            setVisible(noStatistics.element(), false);
+            setVisible(refresh, false);
+            setVisible(poolHeader, false);
+            setVisible(activeConnections.element(), false);
+            setVisible(maxUsedConnections.element(), false);
+            setVisible(cacheHeader, false);
+            setVisible(hitCount.element(), false);
+            setVisible(missCount.element(), false);
 
         } else {
             List<Operation> operations = new ArrayList<>();
-            Elements.setVisible(fromDeployment.asElement(), false);
+            setVisible(fromDeployment.element(), false);
             if (environment.isStandalone()) {
                 operations.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                         .param(INCLUDE_RUNTIME, true)
@@ -239,26 +240,26 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 }
 
                 boolean statisticsEnabled = dataSource.isStatisticsEnabled();
-                Elements.setVisible(noStatistics.asElement(), !statisticsEnabled);
-                Elements.setVisible(refresh, statisticsEnabled);
-                Elements.setVisible(poolHeader, statisticsEnabled);
-                Elements.setVisible(activeConnections.asElement(), statisticsEnabled);
-                Elements.setVisible(maxUsedConnections.asElement(), statisticsEnabled);
-                Elements.setVisible(cacheHeader, statisticsEnabled);
-                Elements.setVisible(hitCount.asElement(), statisticsEnabled);
-                Elements.setVisible(missCount.asElement(), statisticsEnabled);
+                setVisible(noStatistics.element(), !statisticsEnabled);
+                setVisible(refresh, statisticsEnabled);
+                setVisible(poolHeader, statisticsEnabled);
+                setVisible(activeConnections.element(), statisticsEnabled);
+                setVisible(maxUsedConnections.element(), statisticsEnabled);
+                setVisible(cacheHeader, statisticsEnabled);
+                setVisible(hitCount.element(), statisticsEnabled);
+                setVisible(missCount.element(), statisticsEnabled);
 
                 // Do not simply hide the links, but add the hidden CSS class.
                 // Important when constraints for the links are processed later.
-                needsReloadWarning.asElement().classList.add(hidden);
-                needsRestartWarning.asElement().classList.add(hidden);
-                disabledWarning.asElement().classList.add(hidden);
+                needsReloadWarning.element().classList.add(hidden);
+                needsRestartWarning.element().classList.add(hidden);
+                disabledWarning.element().classList.add(hidden);
                 if (statisticsEnabled) {
                     if (!dataSource.isEnabled()) {
-                        disabledWarning.asElement().classList.remove(hidden);
+                        disabledWarning.element().classList.remove(hidden);
                     } else {
-                        Elements.toggle(needsReloadWarning.asElement(), hidden, !server.needsReload());
-                        Elements.toggle(needsRestartWarning.asElement(), hidden, !server.needsRestart());
+                        Elements.toggle(needsReloadWarning.element(), hidden, !server.needsReload());
+                        Elements.toggle(needsRestartWarning.element(), hidden, !server.needsRestart());
                     }
 
                     // pool statistics

@@ -27,9 +27,9 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.form;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.InputType.file;
 import static org.jboss.hal.resources.CSS.*;
@@ -66,7 +66,7 @@ public class UploadElement implements IsElement<HTMLElement> {
                         .asElement())
                 .asElement();
 
-        Elements.setVisible(alert.asElement(), false);
+        Elements.setVisible(alert.element(), false);
         boolean advancedUpload = JsHelper.supportsAdvancedUpload();
         if (advancedUpload) {
             root.classList.add(uploadAdvanced);
@@ -82,7 +82,7 @@ public class UploadElement implements IsElement<HTMLElement> {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -90,17 +90,17 @@ public class UploadElement implements IsElement<HTMLElement> {
         if (files.getLength() > 0) {
             elemental2.dom.File file = files.item(0);
             labelElement.textContent = file.name;
-            Elements.setVisible(alert.asElement(), false);
+            Elements.setVisible(alert.element(), false);
         }
     }
 
     public void reset() {
-        Elements.setVisible(alert.asElement(), false);
+        Elements.setVisible(alert.element(), false);
     }
 
     public boolean validate() {
         boolean valid = fileInput.files.getLength() > 0;
-        Elements.setVisible(alert.asElement(), !valid);
+        Elements.setVisible(alert.element(), !valid);
         return valid;
     }
 

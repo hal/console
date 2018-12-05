@@ -29,7 +29,7 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 
 class AssignmentPreview extends PreviewContent<Assignment> {
 
-    AssignmentPreview(final AccessControlTokens tokens, final Role role, final Resources resources) {
+    AssignmentPreview(AccessControlTokens tokens, Role role, Resources resources) {
         // @formatter:off
         super(role.getName(), role.isScoped()
                 ? (role.getType() == Role.Type.HOST
@@ -40,7 +40,7 @@ class AssignmentPreview extends PreviewContent<Assignment> {
                 : null);
         // @formatter:on
 
-        HTMLElement roleDescription = p().asElement();
+        HTMLElement roleDescription = p().get();
         String roleName = role.isScoped() ? role.getBaseRole().getName() : role.getName();
         ExternalTextResource resource = resources.preview("rbac" + roleName);
         Previews.innerHtml(roleDescription, resource);

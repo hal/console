@@ -59,7 +59,7 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
                 .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
                         Constraint.writable(WEBSERVICES_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
                 .build();
-        Elements.setVisible(noStatistics.asElement(), false);
+        Elements.setVisible(noStatistics.element(), false);
 
         attributes = new PreviewAttributes<>(new ModelNode(), resources.constants().attributes(),
                 asList("modify-wsdl-address", "wsdl-host", "wsdl-path-rewrite-rule", "wsdl-port", "wsdl-secure-port",
@@ -83,7 +83,7 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
         dispatcher.execute(opSubsystem, result -> {
             boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
             attributes.refresh(result);
-            Elements.setVisible(noStatistics.asElement(), !statsEnabled);
+            Elements.setVisible(noStatistics.element(), !statsEnabled);
             Elements.setVisible(attributesElement, statsEnabled);
         });
     }

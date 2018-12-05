@@ -108,7 +108,7 @@ class WorkerPreview extends PreviewContent<NamedNode> {
                         return new PreviewAttribute(property.getName(), element);
                     });
                 }
-                attributes.asElements().forEach(connectionsContainer::appendChild);
+                attributes.forEach(connectionsContainer::appendChild);
             }
         });
     }

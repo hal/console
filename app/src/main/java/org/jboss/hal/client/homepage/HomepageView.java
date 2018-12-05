@@ -55,14 +55,14 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         HTMLElement deployments;
         HTMLElement configuration;
         HTMLElement runtime;
-        HTMLElement accessControl = div().asElement(); // to get rid of warning "might not be initialized"
-        HTMLElement patching = div().asElement();
+        HTMLElement accessControl = div().get(); // to get rid of warning "might not be initialized"
+        HTMLElement patching = div().get();
         HTMLElement help;
 
         if (community) {
             header = div().css(eapHomeTitle)
                     .add(h(1).textContent(resources.theme().getFullName()))
-                    .asElement();
+                    .get();
         } else {
             header = div().css(eapHomeTitle)
                     .add(p()
@@ -71,7 +71,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                                     .on(click, event -> presenter.launchGuidedTour())
                                     .textContent(resources.constants().homepageTakeATour())))
                     .add(h(1).textContent(resources.theme().getFullName()))
-                    .asElement();
+                    .get();
         }
 
         if (standalone) {
@@ -85,7 +85,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     Ids.HOMEPAGE_DEPLOYMENTS_MODULE, NameTokens.DEPLOYMENTS, Names.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSubHeader(),
                     resources.images().deployments(),
-                    sections).asElement();
+                    sections).element();
 
             sections = Collections.singleton(HomepageSection.create(places, resources,
                     Ids.HOMEPAGE_CONFIGURATION_SECTION, NameTokens.CONFIGURATION,
@@ -99,7 +99,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     Ids.HOMEPAGE_CONFIGURATION_MODULE, NameTokens.CONFIGURATION, Names.CONFIGURATION,
                     resources.constants().homepageConfigurationStandaloneSubHeader(),
                     resources.images().configuration(),
-                    sections).asElement();
+                    sections).element();
 
             sections = Collections.singleton(HomepageSection.create(places, resources,
                     Ids.HOMEPAGE_RUNTIME_SECTION, NameTokens.RUNTIME,
@@ -112,7 +112,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     Ids.HOMEPAGE_RUNTIME_MODULE, NameTokens.RUNTIME, Names.RUNTIME,
                     resources.constants().homepageRuntimeStandaloneSubHeader(),
                     resources.images().runtime(),
-                    sections).asElement();
+                    sections).element();
 
         } else {
             sections = Collections.singleton(HomepageSection.create(places, resources,
@@ -127,7 +127,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     Ids.HOMEPAGE_DEPLOYMENTS_MODULE, NameTokens.DEPLOYMENTS, Names.DEPLOYMENTS,
                     resources.constants().homepageDeploymentsSubHeader(),
                     resources.images().deployments(),
-                    sections).asElement();
+                    sections).element();
 
             sections = Collections.singleton(HomepageSection.create(places, resources,
                     Ids.HOMEPAGE_CONFIGURATION_SECTION, NameTokens.CONFIGURATION,
@@ -141,7 +141,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     Ids.HOMEPAGE_CONFIGURATION_MODULE, NameTokens.CONFIGURATION, Names.CONFIGURATION,
                     resources.constants().homepageConfigurationDomainSubHeader(),
                     resources.images().configuration(),
-                    sections).asElement();
+                    sections).element();
 
             sections = Arrays.asList(
                     HomepageSection.create(places, resources,
@@ -169,7 +169,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     Ids.HOMEPAGE_RUNTIME_MODULE, NameTokens.RUNTIME, Names.RUNTIME,
                     resources.constants().homepageRuntimeDomainSubHeader(),
                     resources.images().runtime(),
-                    sections).asElement();
+                    sections).element();
         }
 
         if (su) {
@@ -177,7 +177,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                 accessControl = HomepageModule.create(places,
                         Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL_SSO, Names.ACCESS_CONTROL,
                         resources.constants().homepageAccessControlSsoSubHeader(),
-                        resources.images().accessControl(), Collections.emptyList()).asElement();
+                        resources.images().accessControl(), Collections.emptyList()).element();
             } else {
                 sections = Collections.singleton(HomepageSection.create(places, resources,
                         Ids.HOMEPAGE_ACCESS_CONTROL_SECTION, NameTokens.ACCESS_CONTROL,
@@ -190,7 +190,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                         Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL, Names.ACCESS_CONTROL,
                         resources.constants().homepageAccessControlSubHeader(),
                         resources.images().accessControl(),
-                        sections).asElement();
+                        sections).element();
             }
 
 
@@ -216,31 +216,31 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     Ids.HOMEPAGE_PATCHING_MODULE, NameTokens.PATCHING, Names.PATCHING,
                     resources.messages().homepagePatchingSubHeader(name),
                     resources.images().patching(),
-                    sections).asElement();
+                    sections).element();
         }
 
-        help = HomepageHelp.create(environment, resources).asElement();
+        help = HomepageHelp.create(environment, resources).element();
 
         HTMLElement root = div()
                 .add(div().css(eapHomeRow)
                         .add(header)
                         .add(deployments)
                         .add(configuration))
-                .asElement();
+                .get();
         if (su) {
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
                     .add(accessControl)
-                    .asElement());
+                    .get());
             root.appendChild(div().css(eapHomeRow)
                     .add(patching)
                     .add(help)
-                    .asElement());
+                    .get());
         } else {
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
                     .add(help)
-                    .asElement());
+                    .get());
         }
         initElement(root);
     }

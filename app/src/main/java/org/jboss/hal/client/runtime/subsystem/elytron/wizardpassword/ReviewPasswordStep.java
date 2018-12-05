@@ -45,7 +45,7 @@ public class ReviewPasswordStep extends WizardStep<PasswordContext, PasswordStat
     private HTMLElement header;
     private HTMLElement description;
 
-    public ReviewPasswordStep(final Resources resources, Metadata metadata) {
+    public ReviewPasswordStep(Resources resources, Metadata metadata) {
         super(resources.constants().review());
         this.metadata = metadata;
 
@@ -56,7 +56,7 @@ public class ReviewPasswordStep extends WizardStep<PasswordContext, PasswordStat
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return section;
     }
 
@@ -76,7 +76,7 @@ public class ReviewPasswordStep extends WizardStep<PasswordContext, PasswordStat
             }
         });
         form = builder.build();
-        HTMLElement formElement = form.asElement();
+        HTMLElement formElement = form.element();
         form.attach();
         form.view(context.model);
         if (context.model.hasDefined(SALT)) {

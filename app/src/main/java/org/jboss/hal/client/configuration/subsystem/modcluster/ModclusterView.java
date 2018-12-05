@@ -21,7 +21,6 @@ import javax.annotation.PostConstruct;
 
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -38,10 +37,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_DYNAMIC_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_SIMPLE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -52,7 +48,7 @@ import static org.jboss.hal.resources.Names.LOAD_PROVIDER_SIMPLE;
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> implements ModclusterPresenter.MyView {
 
-    public static ModclusterView create(final MbuiContext mbuiContext) {
+    public static ModclusterView create(MbuiContext mbuiContext) {
         return new Mbui_ModclusterView(mbuiContext);
     }
 
@@ -70,7 +66,7 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
             mbuiContext.resources().messages().loadProviderDynamicWarning());
 
 
-    ModclusterView(final MbuiContext mbuiContext) {
+    ModclusterView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -152,14 +148,15 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
     @Override
     public void attach() {
         super.attach();
-        Element customLoadMetricElement = asElement().querySelector("section[data-vn-item-for=custom-load-metrics-item] > div");
-        Element loadMetricElement = asElement().querySelector("section[data-vn-item-for=load-metrics-item] > div");
-        loadMetricElement.appendChild(alertLoadProviderDynamic.asElement());
-        customLoadMetricElement.appendChild(alertLoadProviderDynamic2.asElement());
+        Element customLoadMetricElement = element().querySelector(
+                "section[data-vn-item-for=custom-load-metrics-item] > div");
+        Element loadMetricElement = element().querySelector("section[data-vn-item-for=load-metrics-item] > div");
+        loadMetricElement.appendChild(alertLoadProviderDynamic.element());
+        customLoadMetricElement.appendChild(alertLoadProviderDynamic2.element());
     }
 
     @Override
-    public void updateConfiguration(final ModelNode payload) {
+    public void updateConfiguration(ModelNode payload) {
         configurationForm.view(payload);
         loadProviderSimpleForm.view(failSafeGet(payload, "load-provider/simple"));
     }
@@ -171,8 +168,8 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
         // disable the "add" buttons if there is no load-provider=dynamic
         customLoadMetricTable.enableButton(0, payload.isDefined());
         loadMetricTable.enableButton(0, payload.isDefined());
-        Elements.setVisible(alertLoadProviderDynamic.asElement(), !payload.isDefined());
-        Elements.setVisible(alertLoadProviderDynamic2.asElement(), !payload.isDefined());
+        setVisible(alertLoadProviderDynamic.element(), !payload.isDefined());
+        setVisible(alertLoadProviderDynamic2.element(), !payload.isDefined());
     }
 
     @Override

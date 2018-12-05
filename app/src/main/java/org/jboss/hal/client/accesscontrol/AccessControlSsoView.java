@@ -104,7 +104,7 @@ public class AccessControlSsoView extends HalViewImpl implements AccessControlSs
     }
 
     private void toggleWarningVisible() {
-        Elements.setVisible(warning.asElement(), presenter.getEnvironment().getAccessControlProvider() == SIMPLE);
+        Elements.setVisible(warning.element(), presenter.getEnvironment().getAccessControlProvider() == SIMPLE);
     }
 
     @Override

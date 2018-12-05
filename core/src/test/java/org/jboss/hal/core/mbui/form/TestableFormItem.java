@@ -216,12 +216,12 @@ import org.jboss.hal.dmr.Deprecation;
 
 public class TestableFormItem implements FormItem<String> {
 
-    private final String name;
+    private String name;
 
-    TestableFormItem(final String name) {this.name = name;}
+    TestableFormItem(String name) {this.name = name;}
 
     @Override
-    public HTMLElement asElement(final Form.State state) {
+    public HTMLElement element(Form.State state) {
         return null;
     }
 
@@ -236,7 +236,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
+    public void registerSuggestHandler(SuggestHandler suggestHandler) {
 
     }
 
@@ -246,17 +246,17 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setId(final String id) {
+    public void setId(String id) {
 
     }
 
     @Override
-    public String getId(final Form.State state) {
+    public String getId(Form.State state) {
         return null;
     }
 
     @Override
-    public void addValidationHandler(final FormItemValidation<String> validationHandler) {
+    public void addValidationHandler(FormItemValidation<String> validationHandler) {
 
     }
 
@@ -271,7 +271,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void showError(final String message) {
+    public void showError(String message) {
 
     }
 
@@ -281,7 +281,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setExpressionValue(final String expressionValue) {
+    public void setExpressionValue(String expressionValue) {
 
     }
 
@@ -296,7 +296,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void addResolveExpressionHandler(final ResolveExpressionHandler handler) {
+    public void addResolveExpressionHandler(ResolveExpressionHandler handler) {
 
     }
 
@@ -306,7 +306,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setLabel(final String label) {
+    public void setLabel(String label) {
 
     }
 
@@ -316,7 +316,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setRequired(final boolean required) {
+    public void setRequired(boolean required) {
 
     }
 
@@ -326,7 +326,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setModified(final boolean modified) {
+    public void setModified(boolean modified) {
 
     }
 
@@ -336,7 +336,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setUndefined(final boolean undefined) {
+    public void setUndefined(boolean undefined) {
 
     }
 
@@ -346,7 +346,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setExpressionAllowed(final boolean expressionAllowed) {
+    public void setExpressionAllowed(boolean expressionAllowed) {
 
     }
 
@@ -356,7 +356,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setRestricted(final boolean restricted) {
+    public void setRestricted(boolean restricted) {
 
     }
 
@@ -366,7 +366,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setDeprecated(final Deprecation deprecation) {
+    public void setDeprecated(Deprecation deprecation) {
 
     }
 
@@ -376,17 +376,17 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setAccessKey(final char c) {
+    public void setAccessKey(char c) {
 
     }
 
     @Override
-    public void setFocus(final boolean b) {
+    public void setFocus(boolean b) {
 
     }
 
     @Override
-    public void setTabIndex(final int i) {
+    public void setTabIndex(int i) {
 
     }
 
@@ -396,12 +396,12 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setEnabled(final boolean b) {
+    public void setEnabled(boolean b) {
 
     }
 
     @Override
-    public void setName(final String s) {
+    public void setName(String s) {
 
     }
 
@@ -416,17 +416,17 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setValue(final String s) {
+    public void setValue(String s) {
 
     }
 
     @Override
-    public void setValue(final String s, final boolean b) {
+    public void setValue(String s, boolean b) {
 
     }
 
     @Override
-    public void assignDefaultValue(final String defaultValue) {
+    public void assignDefaultValue(String defaultValue) {
 
     }
 
@@ -441,12 +441,12 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler) {
         return null;
     }
 
     @Override
-    public void fireEvent(final GwtEvent<?> gwtEvent) {
+    public void fireEvent(GwtEvent<?> gwtEvent) {
 
     }
 }

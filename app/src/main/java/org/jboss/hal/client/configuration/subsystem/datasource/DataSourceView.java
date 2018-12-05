@@ -351,7 +351,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private void showHide(boolean xa) {
         Elements.setVisible(nonXaInfo, !xa);
         Elements.setVisible(xaInfo, xa);
-        Elements.setVisible(nonXaForm.asElement(), !xa);
-        Elements.setVisible(xaForm.asElement(), xa);
+        Elements.setVisible(nonXaForm.element(), !xa);
+        Elements.setVisible(xaForm.element(), xa);
     }
 }

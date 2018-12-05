@@ -39,10 +39,10 @@ class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
     private final HTMLElement root;
     private final HTMLInputElement firstRadio;
 
-    ChooseSingletonStep(final Node<Context> parent, final List<String> children, final Resources resources) {
+    ChooseSingletonStep(Node<Context> parent, List<String> children, Resources resources) {
         super(resources.constants().chooseSingleton());
 
-        this.root = div().asElement();
+        this.root = div().get();
         SortedSet<String> singletons = new TreeSet<>(parent.data.getSingletons());
         SortedSet<String> existing = new TreeSet<>(children);
         singletons.removeAll(existing);
@@ -54,9 +54,9 @@ class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
                             .add(input = input(InputType.radio)
                                     .attr("name", "singleton") //NON-NLS
                                     .attr("value", singleton)
-                                    .asElement())
+                                    .get())
                             .add(span().textContent(singleton)))
-                    .asElement());
+                    .get());
             bind(input, click, event -> wizard().getContext().singleton = input.value);
         }
 
@@ -65,12 +65,12 @@ class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
     }
 
     @Override
-    public void reset(final SingletonContext context) {
+    public void reset(SingletonContext context) {
         context.singleton = firstRadio.value;
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 }

@@ -132,12 +132,12 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         // remote connector tabs
         Tabs connectorTabs = new Tabs(Ids.REMOTING_CONNECTOR_TAB_CONTAINER);
         connectorTabs.add(Ids.REMOTING_CONNECTOR_TAB, mbuiContext.resources().constants().attributes(),
-                connectorForm.asElement());
+                connectorForm.element());
         connectorTabs.add(Ids.REMOTING_CONNECTOR_SECURITY_TAB, mbuiContext.resources().constants().security(),
-                connectorSecurityForm.asElement());
+                connectorSecurityForm.element());
         connectorTabs.add(Ids.REMOTING_CONNECTOR_SECURITY_POLICY_TAB, mbuiContext.resources().constants().policy(),
-                connectorSecurityPolicyForm.asElement());
-        connectorTable.asElement().parentNode.appendChild(connectorTabs.asElement());
+                connectorSecurityPolicyForm.element());
+        connectorTable.element().parentNode.appendChild(connectorTabs.element());
 
         // http connector
         Metadata httpConnectorMetadata = mbuiContext.metadataRegistry().lookup(HTTP_CONNECTOR_TEMPLATE);
@@ -187,13 +187,13 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         // http connector tabs
         Tabs httpConnectorTabs = new Tabs(Ids.REMOTING_HTTP_CONNECTOR_TAB_CONTAINER);
         httpConnectorTabs.add(Ids.REMOTING_HTTP_CONNECTOR_TAB, mbuiContext.resources().constants().attributes(),
-                httpConnectorForm.asElement());
+                httpConnectorForm.element());
         httpConnectorTabs.add(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_TAB, mbuiContext.resources().constants().security(),
-                httpConnectorSecurityForm.asElement());
+                httpConnectorSecurityForm.element());
         httpConnectorTabs
                 .add(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB, mbuiContext.resources().constants().policy(),
-                        httpConnectorSecurityPolicyForm.asElement());
-        httpConnectorTable.asElement().parentNode.appendChild(httpConnectorTabs.asElement());
+                        httpConnectorSecurityPolicyForm.element());
+        httpConnectorTable.element().parentNode.appendChild(httpConnectorTabs.element());
     }
 
     @Override

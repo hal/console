@@ -42,12 +42,12 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
      */
-    public static final long MIN_SAFE_LONG = -9007199254740991L;
+    private static final long MIN_SAFE_LONG = -9007199254740991L;
 
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
-    public static final long MAX_SAFE_LONG = 9007199254740991L;
+    private static final long MAX_SAFE_LONG = 9007199254740991L;
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(NumberDoubleItem.class);
     private static final Constants CONSTANTS = GWT.create(Constants.class);
@@ -65,7 +65,7 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
         addAppearance(Form.State.READONLY, new NumberReadOnlyAppearance());
 
         // editing appearance - type="number" not possible because of expression support
-        inputElement = input(text).css(formControl).asElement();
+        inputElement = input(text).css(formControl).get();
         addAppearance(Form.State.EDITING, new NumberEditingAppearance(inputElement));
     }
 

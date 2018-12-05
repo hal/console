@@ -25,8 +25,8 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -37,7 +37,7 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
     private EnableSSLContext.Strategy strategy;
     private HTMLDivElement errorMsg;
 
-    DefineStrategyStep(final Resources resources, boolean standaloneMode, boolean undertowHttps) {
+    DefineStrategyStep(Resources resources, boolean standaloneMode, boolean undertowHttps) {
         super(resources.constants().enableSSLManagementInitialSetup());
 
         SafeHtml description = resources.messages().enableManagementSSLDescription();
@@ -131,18 +131,18 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    public void reset(final EnableSSLContext context) {
+    public void reset(EnableSSLContext context) {
         mutual = null;
         strategy = null;
     }
 
     @Override
-    protected boolean onNext(final EnableSSLContext context) {
+    protected boolean onNext(EnableSSLContext context) {
         context.mutualAuthentication = mutual;
         context.strategy = strategy;
         boolean valid = strategy != null && mutual != null;

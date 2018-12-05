@@ -75,7 +75,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

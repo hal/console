@@ -145,7 +145,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.isRemote()) {
                     return item.hasDefined(DEFAULT_REMOTE_CLUSTER) ? ItemDisplay.withSubtitle(item.getName(),
                             item.get(DEFAULT_REMOTE_CLUSTER).asString()) : null;

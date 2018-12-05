@@ -574,7 +574,7 @@ public class ServerPresenter
 
         HTMLElement content = div()
                     .add(p().innerHtml(description))
-                    .add(form.asElement())
+                .add(form.element())
                     .asElement();
 
         Dialog dialog = new Dialog.Builder(resources.constants().disableSSL())

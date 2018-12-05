@@ -82,7 +82,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     }
 
                     @Override
-                    public HTMLElement asElement() {
+                    public HTMLElement element() {
                         return item.getSubtitle() != null ? ItemDisplay
                                 .withSubtitle(item.getTitle(), item.getSubtitle()) : null;
                     }
@@ -168,12 +168,12 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
                     @Override
-                    public void onFailure(final Throwable caught) {
+                    public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
                     }
 
                     @Override
-                    public void onSuccess(final List<SubsystemMetadata> result) {
+                    public void onSuccess(List<SubsystemMetadata> result) {
                         // only subsystems w/o next columns will show up in the breadcrumb dropdown
                         List<SubsystemMetadata> subsystemsWithTokens = result.stream()
                                 .filter(metadata -> metadata.getToken() != null || metadata.isGeneric())

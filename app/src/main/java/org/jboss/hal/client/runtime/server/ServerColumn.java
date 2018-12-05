@@ -306,7 +306,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return ItemDisplay.withSubtitle(item.getName(),
                         BrowseByColumn.browseByHosts(finder.getContext())
                                 ? item.getServerGroup()

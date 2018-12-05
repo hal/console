@@ -34,6 +34,7 @@ import org.jboss.hal.resources.Resources;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTANCE_COUNT;
@@ -69,7 +70,7 @@ class JobPreview extends PreviewContent<JobNode> {
                 .build();
         registerAttachable(executions);
 
-        Elements.setVisible(executions.asElement(), false);
+        setVisible(executions.element(), false);
 
         getHeaderContainer().appendChild(refreshLink(() -> column.refresh(RESTORE_SELECTION)));
         previewBuilder().addAll(empty, executions);
@@ -79,12 +80,12 @@ class JobPreview extends PreviewContent<JobNode> {
     public void update(JobNode item) {
         int instanceCount = item.get(INSTANCE_COUNT).asInt();
         if (instanceCount == 0) {
-            Elements.setVisible(empty.asElement(), true);
-            Elements.setVisible(executions.asElement(), false);
+            setVisible(empty.element(), true);
+            setVisible(executions.element(), false);
 
         } else {
-            Elements.setVisible(empty.asElement(), false);
-            Elements.setVisible(executions.asElement(), true);
+            setVisible(empty.element(), false);
+            setVisible(executions.element(), true);
 
             Map<String, Long> byBatchStatus = item.getExecutions().stream()
                     .collect(groupingBy(e -> e.getBatchStatus().name(), counting()));

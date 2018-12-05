@@ -92,7 +92,7 @@ class NearCacheElement implements IsElement<HTMLElement>, Attachable, HasPresent
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

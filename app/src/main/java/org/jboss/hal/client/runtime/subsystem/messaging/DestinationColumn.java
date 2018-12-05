@@ -167,7 +167,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.fromDeployment()) {
                     return ItemDisplay.withSubtitle(item.getName(), item.getPath());
                 }

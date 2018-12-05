@@ -34,9 +34,9 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.REMOVE;
@@ -87,9 +87,9 @@ public class FormLinks<T> implements IsElement {
         HTMLUListElement links;
         HTMLDivElement helpContent;
         HtmlContentBuilder<HTMLDivElement> rootBuilder = div().css(CSS.form, formHorizontal)
-                .add(links = ul().id(linksId).css(formLinks, clearfix).asElement())
+                .add(links = ul().id(linksId).css(formLinks, clearfix).get())
                 .add(div().id(helpId).css(formHelpContent, collapse)
-                        .add(helpContent = div().asElement()));
+                        .add(helpContent = div().get()));
 
         if (stateMachine.supports(EDIT)) {
             editLink = link(EDIT, CONSTANTS.edit(), pfIcon("edit"), onEdit);
@@ -114,13 +114,13 @@ public class FormLinks<T> implements IsElement {
                             .aria(UIConstants.CONTROLS, helpId)
                             .add(i().css(pfIcon("help")))
                             .add(span().css(formLinkLabel).textContent(CONSTANTS.help())))
-                    .asElement();
+                    .get();
             for (Map.Entry<String, SafeHtml> entry : helpTexts.entrySet()) {
                 helpContent.appendChild(help(entry.getKey(), entry.getValue()));
             }
             links.appendChild(helpLink);
         }
-        root = rootBuilder.asElement();
+        root = rootBuilder.get();
     }
 
     private HTMLLIElement link(Form.Operation operation, String text, String css, EventCallbackFn<MouseEvent> onclick) {
@@ -130,7 +130,7 @@ public class FormLinks<T> implements IsElement {
                         .on(click, onclick)
                         .add(i().css(css))
                         .add(span().css(formLinkLabel).textContent(text)))
-                .asElement();
+                .get();
     }
 
     private HTMLDivElement help(String label, SafeHtml description) {
@@ -140,11 +140,11 @@ public class FormLinks<T> implements IsElement {
                         .textContent(label))
                 .add(div().css(halFormInput)
                         .add(p().css(formControlStatic).innerHtml(description)))
-                .asElement();
+                .get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         if (editLink == null && resetLink == null && removeLink == null && helpTexts.isEmpty()) {
             Elements.setVisible(root, false);
         }

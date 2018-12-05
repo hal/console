@@ -74,7 +74,7 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

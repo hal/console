@@ -18,7 +18,6 @@ package org.jboss.hal.client.deployment;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
@@ -69,23 +68,24 @@ class ContentPreview extends PreviewContent<Content> {
         this.authorisationDecision = AuthorisationDecision.from(environment, serverGroupMetadata.getSecurityContext());
 
         if (!content.isManaged()) {
-            previewBuilder().add(new Alert(Icons.INFO, resources.messages().cannotBrowseUnmanaged()).asElement());
+            previewBuilder().add(new Alert(Icons.INFO, resources.messages().cannotBrowseUnmanaged()).element());
         }
         previewBuilder().add(
-                infoExplodedDiv = new Alert(Icons.INFO, resources.messages().cannotDownloadExploded()).asElement());
+                infoExplodedDiv = new Alert(Icons.INFO, resources.messages().cannotDownloadExploded()).element());
 
         LabelBuilder labelBuilder = new LabelBuilder();
         attributes = new PreviewAttributes<>(content, asList(NAME, RUNTIME_NAME));
         attributes.append(model -> {
             String label = String.join(", ", labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
-            ElementsBuilder elements = Elements.elements()
+            Iterable<HTMLElement> elements = collect()
                     .add(span()
                             .title(labelBuilder.label(MANAGED))
                             .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
                     .add(span()
                             .title(labelBuilder.label(EXPLODED))
-                            .css(flag(failSafeBoolean(model, EXPLODED))));
-            return new PreviewAttribute(label, elements.asElements());
+                            .css(flag(failSafeBoolean(model, EXPLODED))))
+                    .get();
+            return new PreviewAttribute(label, elements);
         });
         if (!content.isManaged()) {
             attributes.append(model -> {
@@ -100,17 +100,17 @@ class ContentPreview extends PreviewContent<Content> {
                 .add(h(2).textContent(resources.constants().deployments()))
                 .add(deploymentsDiv = div()
                         .add(p().innerHtml(resources.messages().deployedTo(content.getName())))
-                        .add(deploymentsUl = ul().asElement())
-                        .asElement())
+                        .add(deploymentsUl = ul().get())
+                        .get())
                 .add(undeployedContentDiv = div()
                         .add(p = p()
                                 .add(span()
                                         .innerHtml(resources.messages().undeployedContent(content.getName())))
-                                .asElement())
-                        .asElement());
+                                .get())
+                        .get());
         if (authorisationDecision.isAllowed(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))) {
             p.appendChild(a().css(clickable, marginLeft5).on(click, event -> column.deploy(content))
-                    .textContent(resources.constants().deploy()).asElement());
+                    .textContent(resources.constants().deploy()).get());
         }
     }
 
@@ -136,14 +136,14 @@ class ContentPreview extends PreviewContent<Content> {
                 String serverGroupToken = places.historyToken(serverGroupPlaceRequest);
                 HTMLElement li = li()
                         .add(a(serverGroupToken).textContent(serverGroup))
-                        .asElement();
+                        .get();
                 if (authorisationDecision.isAllowed(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))) {
-                    li.appendChild(span().textContent(" (").asElement());
+                    li.appendChild(span().textContent(" (").get());
                     li.appendChild(a().css(clickable)
                             .on(click, event -> column.undeploy(content, serverGroup))
                             .textContent(resources.constants().undeploy())
-                            .asElement());
-                    li.appendChild(span().textContent(")").asElement());
+                            .get());
+                    li.appendChild(span().textContent(")").get());
                 }
                 deploymentsUl.appendChild(li);
             });

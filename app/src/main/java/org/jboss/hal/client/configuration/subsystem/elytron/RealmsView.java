@@ -47,7 +47,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
 
     @Inject
     @SuppressWarnings("HardCodedStringLiteral")
-    public RealmsView(final MbuiContext mbuiContext) {
+    public RealmsView(MbuiContext mbuiContext) {
 
         elements = new HashMap<>();
         navigation = new VerticalNavigation();
@@ -112,7 +112,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         jdbcRealmElement = new JdbcRealmElement(metadata, mbuiContext.tableButtonFactory(), mbuiContext.resources());
         registerAttachable(jdbcRealmElement);
         navigation.addSecondary(primaryIdSecurityRealm, Ids.build(Ids.ELYTRON_JDBC_REALM, ITEM), Names.JDBC_REALM,
-                jdbcRealmElement.asElement());
+                jdbcRealmElement.element());
 
         addResourceElement(KEY_STORE_REALM,
                 KEY_STORE_REALM.resourceElement(mbuiContext,
@@ -126,7 +126,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         ldapRealmElement = new LdapRealmElement(mtLdapRealm, mbuiContext.tableButtonFactory(), mbuiContext.resources());
         registerAttachable(ldapRealmElement);
         navigation.addSecondary(primaryIdSecurityRealm, Ids.build(Ids.ELYTRON_LDAP_REALM, ITEM), Names.LDAP_REALM,
-                ldapRealmElement.asElement());
+                ldapRealmElement.element());
 
         addResourceElement(PROPERTIES_REALM,
                 PROPERTIES_REALM.resourceElementBuilder(mbuiContext,
@@ -195,7 +195,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
             String primaryId, String secondaryId, @NonNls String text) {
         elements.put(resource.resource, element);
         registerAttachable(element);
-        navigation.addSecondary(primaryId, secondaryId, text, element.asElement());
+        navigation.addSecondary(primaryId, secondaryId, text, element.element());
     }
 
     @Override
@@ -207,17 +207,17 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
     }
 
     @Override
-    public void updateJdbcRealm(final List<NamedNode> nodes) {
+    public void updateJdbcRealm(List<NamedNode> nodes) {
         jdbcRealmElement.update(nodes);
     }
 
     @Override
-    public void updateLdapRealm(final List<NamedNode> nodes) {
+    public void updateLdapRealm(List<NamedNode> nodes) {
         ldapRealmElement.update(nodes);
     }
 
     @Override
-    public void setPresenter(final RealmsPresenter presenter) {
+    public void setPresenter(RealmsPresenter presenter) {
         this.presenter = presenter;
         jdbcRealmElement.setPresenter(presenter);
         ldapRealmElement.setPresenter(presenter);

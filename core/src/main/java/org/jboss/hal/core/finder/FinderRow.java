@@ -81,7 +81,7 @@ class FinderRow<T> implements IsElement {
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent<>(
                 display.getTitle());
 
-        root = li().asElement();
+        root = li().get();
         folderElement = null;
         if (column.isPinnable()) {
             root.className = pinned ? CSS.pinned : unpinned;
@@ -131,12 +131,12 @@ class FinderRow<T> implements IsElement {
         }
 
         HTMLElement itemElement;
-        if (display.asElement() != null) {
-            itemElement = display.asElement();
+        if (display.element() != null) {
+            itemElement = display.element();
         } else if (display.getTitle() != null) {
-            itemElement = span().css(itemText).textContent(display.getTitle()).asElement();
+            itemElement = span().css(itemText).textContent(display.getTitle()).get();
         } else {
-            itemElement = span().css(itemText).textContent(NOT_AVAILABLE).asElement();
+            itemElement = span().css(itemText).textContent(NOT_AVAILABLE).get();
         }
         if (display.getTooltip() != null && itemElement != null) {
             itemElement.title = display.getTooltip();
@@ -151,16 +151,16 @@ class FinderRow<T> implements IsElement {
                     .title(CONSTANTS.unpin())
                     .on(click, e -> column.unpin(FinderRow.this))
                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                    .asElement());
+                    .get());
             root.appendChild(span().css(CSS.pin, pfIcon("thumb-tack-o"))
                     .title(CONSTANTS.pin())
                     .on(click, e -> column.pin(FinderRow.this))
                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                    .asElement());
+                    .get());
         }
 
         if (display.nextColumn() != null) {
-            folderElement = span().css(folder, fontAwesome("angle-right")).asElement();
+            folderElement = span().css(folder, fontAwesome("angle-right")).get();
             root.appendChild(folderElement);
         }
 
@@ -173,7 +173,7 @@ class FinderRow<T> implements IsElement {
                 HTMLUListElement ul = null;
                 boolean firstAction = true;
                 boolean ulCreated = false;
-                buttonContainer = div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE).asElement();
+                buttonContainer = div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE).get();
                 for (ItemAction<T> action : actions) {
                     if (firstAction) {
                         buttonContainer.appendChild(actionLink(action, false));
@@ -188,22 +188,22 @@ class FinderRow<T> implements IsElement {
                                 .add(span().css(srOnly)
                                         .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                                         .textContent(CONSTANTS.toggleDropdown()))
-                                .asElement());
+                                .get());
                         firstAction = false;
                     } else {
                         if (!ulCreated) {
                             buttonContainer.appendChild(ul = ul().css(dropdownMenu)
                                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                                    .asElement());
+                                    .get());
                             ulCreated = true;
                         }
                         if (action == ItemAction.SEPARATOR) {
-                            ul.appendChild(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).asElement());
+                            ul.appendChild(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).get());
                         } else {
                             ul.appendChild(li()
                                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                                     .add(actionLink(action, true))
-                                    .asElement());
+                                    .get());
                         }
                     }
                 }
@@ -232,7 +232,7 @@ class FinderRow<T> implements IsElement {
         if (!action.attributes.isEmpty()) {
             action.attributes.forEach(builder::attr);
         }
-        return builder.asElement();
+        return builder.get();
     }
 
     void click() {
@@ -285,7 +285,7 @@ class FinderRow<T> implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

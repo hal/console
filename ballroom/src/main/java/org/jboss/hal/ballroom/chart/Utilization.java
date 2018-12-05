@@ -59,7 +59,7 @@ public class Utilization implements IsElement {
     private final HTMLElement root;
     private long total;
 
-    public Utilization(final String label, final String unit, boolean inline, boolean thresholds) {
+    public Utilization(String label, String unit, boolean inline, boolean thresholds) {
         this.unit = unit;
         this.thresholds = thresholds;
         this.total = 0;
@@ -83,13 +83,13 @@ public class Utilization implements IsElement {
                                 .aria(VALUE_NOW, "0")
                                 .aria(VALUE_MAX, "0")
                                 .data(TOGGLE, TOOLTIP)
-                                .add(valueElement = span().asElement())
-                                .asElement())
+                                .add(valueElement = span().get())
+                                .get())
                         .add(remainingBar = div().css(progressBar, progressBarRemaining)
                                 .title(Names.NOT_AVAILABLE)
-                                .add(remainingElement = span().css(srOnly).asElement())
-                                .asElement()))
-                .asElement();
+                                .add(remainingElement = span().css(srOnly).get())
+                                .get()))
+                .get();
 
         if (inline) {
             valueElement.title = unit;
@@ -97,7 +97,7 @@ public class Utilization implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

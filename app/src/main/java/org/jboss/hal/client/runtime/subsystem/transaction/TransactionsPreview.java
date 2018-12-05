@@ -71,7 +71,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .primaryAction(cons.enableStatistics(), this::enableStatistics,
                         Constraint.writable(TRANSACTION_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
                 .build();
-        Elements.setVisible(noStatistics.asElement(), false);
+        Elements.setVisible(noStatistics.element(), false);
 
         attributes = new PreviewAttributes<>(new ModelNode(), cons.attributes())
                 .append(model -> {
@@ -104,7 +104,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .responsive(true)
                 .build();
         registerAttachable(transactions);
-        Elements.setVisible(transactions.asElement(), false);
+        Elements.setVisible(transactions.element(), false);
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()
@@ -121,7 +121,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .build();
         dispatcher.execute(opWeb, result -> {
             boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
-            Elements.setVisible(noStatistics.asElement(), !statsEnabled);
+            Elements.setVisible(noStatistics.element(), !statsEnabled);
 
             if (statsEnabled) {
                 attributes.refresh(result);
@@ -145,10 +145,10 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 transactions.update(txUpdates);
 
                 Elements.setVisible(attributesElement, true);
-                Elements.setVisible(transactions.asElement(), true);
+                Elements.setVisible(transactions.element(), true);
             } else {
                 Elements.setVisible(attributesElement, false);
-                Elements.setVisible(transactions.asElement(), false);
+                Elements.setVisible(transactions.element(), false);
             }
         });
     }

@@ -23,8 +23,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLPreElement;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.listview.ItemAction;
@@ -109,22 +107,22 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public HasElements getAdditionalInfoElements() {
-        ElementsBuilder elements = elements();
-        elements.add(div().css(halConfChangesAdditionalInfo)
-                .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
-                        .appendEscaped(resources.constants().accessMechanism() + COLON)
-                        .appendEscaped(item.getAccessMechanism())
-                        .appendHtmlConstant("<br/>")
+    public Iterable<HTMLElement> getAdditionalInfoElements() {
+        return collect()
+                .add(div().css(halConfChangesAdditionalInfo)
+                        .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
+                                .appendEscaped(resources.constants().accessMechanism() + COLON)
+                                .appendEscaped(item.getAccessMechanism())
+                                .appendHtmlConstant("<br/>")
 
-                        .appendEscaped(resources.constants().remoteAddress() + COLON)
-                        .appendEscaped(item.getRemoteAddress())
-                        .appendHtmlConstant("<br/>")
+                                .appendEscaped(resources.constants().remoteAddress() + COLON)
+                                .appendEscaped(item.getRemoteAddress())
+                                .appendHtmlConstant("<br/>")
 
-                        .appendEscaped(resources.constants().composite() + COLON)
-                        .appendEscaped(String.valueOf(item.isComposite()))
-                        .toSafeHtml())));
-        return elements;
+                                .appendEscaped(resources.constants().composite() + COLON)
+                                .appendEscaped(String.valueOf(item.isComposite()))
+                                .toSafeHtml())))
+                .get();
     }
 
     @Override

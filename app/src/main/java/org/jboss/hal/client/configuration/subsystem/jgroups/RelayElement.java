@@ -82,7 +82,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return section;
     }
 

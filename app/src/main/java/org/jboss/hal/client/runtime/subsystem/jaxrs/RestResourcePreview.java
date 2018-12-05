@@ -203,7 +203,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
         super.attach();
         PatternFly.prettyPrint();
         List<HTMLElement> linkContainers = new ArrayList<>();
-        asElements().forEach(e -> {
+        forEach(e -> {
             List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
                     .filter(htmlElements())
                     .map(asHtmlElement())
@@ -270,7 +270,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
         Form<ModelNode> form = builder.build();
         Dialog dialog = new Dialog.Builder(resources.constants().specifyParameters())
                 .add(p().innerHtml(resources.messages().specifyParameters(link)).asElement())
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().ok(), form::save)
                 .cancel()
                 .closeOnEsc(true)

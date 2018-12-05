@@ -135,7 +135,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return ItemDisplay.withSubtitle(item.getName(), item.getPath());
             }
 

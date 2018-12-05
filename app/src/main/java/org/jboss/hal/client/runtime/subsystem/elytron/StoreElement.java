@@ -122,7 +122,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

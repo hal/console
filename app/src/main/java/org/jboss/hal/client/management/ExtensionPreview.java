@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.management;
 
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.extension.ExtensionRegistry;
@@ -29,13 +28,14 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class ExtensionPreview extends PreviewContent<InstalledExtension> {
 
-    ExtensionPreview(final InstalledExtension extension,
-            final ExtensionRegistry extensionRegistry,
-            final Resources resources) {
+    ExtensionPreview(InstalledExtension extension,
+            ExtensionRegistry extensionRegistry,
+            Resources resources) {
 
         super(Names.EXTENSION);
 
@@ -62,7 +62,7 @@ class ExtensionPreview extends PreviewContent<InstalledExtension> {
                 .addAll(attributes);
 
         boolean injected = extensionRegistry.verifyScript(extension.getFqScript());
-        Elements.setVisible(scriptOk.asElement(), injected);
-        Elements.setVisible(scriptError.asElement(), !injected);
+        setVisible(scriptOk.element(), injected);
+        setVisible(scriptError.element(), !injected);
     }
 }

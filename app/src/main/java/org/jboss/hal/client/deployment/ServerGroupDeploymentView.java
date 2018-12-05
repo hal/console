@@ -50,11 +50,11 @@ public class ServerGroupDeploymentView extends HalViewImpl implements ServerGrou
                 resources.constants().noReferenceServer())
                 .icon(CSS.pfIcon("server"))
                 .build();
-        noReferenceServer.asElement().classList.add(marginTopLarge);
-        Elements.setVisible(noReferenceServer.asElement(), false);
+        noReferenceServer.element().classList.add(marginTopLarge);
+        Elements.setVisible(noReferenceServer.element(), false);
 
-        ArrayList<HTMLElement> elements = Lists.newArrayList(deploymentModel.asElements());
-        elements.add(noReferenceServer.asElement());
+        ArrayList<HTMLElement> elements = Lists.newArrayList(deploymentModel);
+        elements.add(noReferenceServer.element());
         initElements(elements);
     }
 
@@ -66,8 +66,8 @@ public class ServerGroupDeploymentView extends HalViewImpl implements ServerGrou
     @Override
     public void update(String serverGroup, ServerGroupDeployment sgd) {
         if (sgd.getDeployment() == null) {
-            Elements.setVisible(noReferenceServer.asElement(), true);
-            deploymentModel.asElements().forEach(element -> Elements.setVisible(element, false));
+            Elements.setVisible(noReferenceServer.element(), true);
+            deploymentModel.forEach(element -> Elements.setVisible(element, false));
 
             noReferenceServer.setDescription(
                     resources.messages().noReferenceServerEmptyState(sgd.getName(), serverGroup));
@@ -75,7 +75,7 @@ public class ServerGroupDeploymentView extends HalViewImpl implements ServerGrou
                     resources.messages().goTo(Names.SERVER_GROUP), () -> presenter.goToServerGroup());
 
         } else {
-            Elements.setVisible(noReferenceServer.asElement(), false);
+            Elements.setVisible(noReferenceServer.element(), false);
             handleActive(sgd.getDeployment());
         }
     }

@@ -154,7 +154,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().createAccountQuestion(name)).asElement())
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().create(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
@@ -187,7 +187,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().deactivateAccountQuestion(name)).asElement())
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().deactivate(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
@@ -220,7 +220,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().updateAccountQuestion(name)).asElement())
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().update(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
@@ -269,7 +269,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().changeAccountKeyQuestion(name)).asElement())
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().change(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)

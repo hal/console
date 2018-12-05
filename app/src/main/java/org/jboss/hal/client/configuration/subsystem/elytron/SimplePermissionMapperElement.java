@@ -203,8 +203,8 @@ public class SimplePermissionMapperElement
     }
 
     @Override
-    public HTMLElement asElement() {
-        return pages.asElement();
+    public HTMLElement element() {
+        return pages.element();
     }
 
     @Override

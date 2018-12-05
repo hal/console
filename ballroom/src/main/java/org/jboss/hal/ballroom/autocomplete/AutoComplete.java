@@ -60,7 +60,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
     @Override
     public void attach() {
         if (api == null) {
-            options.selector = formItem().asElement(EDITING).getElementsByClassName(formControl).getAt(0);
+            options.selector = formItem().element(EDITING).getElementsByClassName(formControl).getAt(0);
             options.onSelect = (event, item, renderedItem) -> {
                 if (formItem() instanceof AbstractFormItem) {
                     ((AbstractFormItem) formItem()).onSuggest(item);

@@ -383,7 +383,7 @@ public class ServerActions {
                         Dialog dialog = DialogFactory.buildConfirmation(
                                 resources.messages().suspend(server.getName()),
                                 resources.messages().suspendServerQuestion(server.getName()),
-                                form.asElement(),
+                                form.element(),
                                 Dialog.Size.MEDIUM,
                                 () -> {
 
@@ -457,7 +457,7 @@ public class ServerActions {
                         Dialog dialog = DialogFactory.buildConfirmation(
                                 resources.messages().stop(server.getName()),
                                 resources.messages().stopServerQuestion(server.getName()),
-                                form.asElement(),
+                                form.element(),
                                 Dialog.Size.MEDIUM,
                                 () -> {
 
@@ -652,22 +652,22 @@ public class ServerActions {
                 })
                 .build();
         Dialog dialog = new Dialog.Builder(resources.constants().editURL())
-                .add(alert.asElement())
+                .add(alert.element())
                 .add(info)
-                .add(form.asElement())
+                .add(form.element())
                 .primary(form::save)
                 .cancel()
                 .closeIcon(true)
                 .closeOnEsc(true)
                 .build();
         dialog.registerAttachable(form);
-        Elements.setVisible(alert.asElement(), false);
+        Elements.setVisible(alert.element(), false);
         Elements.setVisible(info, false);
 
         readUrl(server, new AsyncCallback<ServerUrl>() {
             @Override
             public void onFailure(Throwable caught) {
-                Elements.setVisible(alert.asElement(), true);
+                Elements.setVisible(alert.element(), true);
                 show(null);
             }
 

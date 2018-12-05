@@ -75,7 +75,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return section;
     }
 

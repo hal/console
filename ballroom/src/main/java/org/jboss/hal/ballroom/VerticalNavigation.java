@@ -26,7 +26,6 @@ import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
@@ -80,8 +79,8 @@ public class VerticalNavigation implements Attachable {
 
     static {
         root = div().css(navPfVertical, navPfVerticalHal)
-                .add(ul = ul().css(listGroup).asElement())
-                .asElement();
+                .add(ul = ul().css(listGroup).get())
+                .get();
         Elements.setVisible(root, false);
     }
 
@@ -114,7 +113,7 @@ public class VerticalNavigation implements Attachable {
         }
         items.values().stream()
                 .filter(item -> item.parentId == null)
-                .forEach(item -> ul.appendChild(item.asElement()));
+                .forEach(item -> ul.appendChild(item.element()));
         Elements.setVisible(root, true);
 
         Api.select().setupVerticalNavigation(true);
@@ -162,7 +161,7 @@ public class VerticalNavigation implements Attachable {
      * HTMLElement root = row()
      *     .add(column()
      *         .addAll(navigation.panes()))
-     *     .asElement();
+     *     .get();
      * </pre>
      */
     public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
@@ -186,7 +185,7 @@ public class VerticalNavigation implements Attachable {
      * to the DOM.</p>
      */
     public void insertPrimary(String id, String beforeId, String text, String iconClass, IsElement element) {
-        insertPrimary(id, beforeId, text, iconClass, element.asElement());
+        insertPrimary(id, beforeId, text, iconClass, element.element());
     }
 
     public void insertPrimary(String id, String beforeId, String text, String iconClass) {
@@ -206,7 +205,7 @@ public class VerticalNavigation implements Attachable {
             if (element != null) {
                 Pane pane = new Pane(id, element);
                 addPrimary(items, panes, id, text, iconClass, pane);
-                lastPane.asElement().parentNode.appendChild(pane.asElement());
+                lastPane.element().parentNode.appendChild(pane.element());
             } else {
                 addPrimary(items, panes, id, text, iconClass, null);
             }
@@ -222,7 +221,7 @@ public class VerticalNavigation implements Attachable {
                             Pane pane = new Pane(id, element);
                             addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, pane);
                             Pane refPane = panes.get(currentId);
-                            refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
+                            refPane.element().parentNode.insertBefore(pane.element(), refPane.element());
                         } else {
                             addPrimary(reshuffledItems, reshuffledPanes, id, text, iconClass, null);
                         }
@@ -250,16 +249,16 @@ public class VerticalNavigation implements Attachable {
         HTMLElement span;
         HTMLElement primary = li().css(listGroupItem)
                 .id(id)
-                .add(a = a().css(clickable).asElement())
-                .asElement();
+                .add(a = a().css(clickable).get())
+                .get();
 
         if (pane != null) {
             bind(a, click, event -> show(id));
         }
         if (iconClass != null) {
-            a.appendChild(span().css(iconClass).asElement());
+            a.appendChild(span().css(iconClass).get());
         }
-        a.appendChild(span = span().css(listGroupItemValue).textContent(text).asElement());
+        a.appendChild(span = span().css(listGroupItemValue).textContent(text).get());
         if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH) {
             span.title = text;
         }
@@ -289,7 +288,7 @@ public class VerticalNavigation implements Attachable {
      * HTMLElement root = row()
      *     .add(column()
      *         .addAll(navigation.panes()))
-     *     .asElement();
+     *     .get();
      * </pre>
      */
     public VerticalNavigation addSecondary(String primaryId, String id, String text, HTMLElement element) {
@@ -315,7 +314,7 @@ public class VerticalNavigation implements Attachable {
             // The order of panes does not matter.
             Pane pane = new Pane(id, element);
             Pane lastPane = panes.values().iterator().next();
-            lastPane.asElement().parentNode.appendChild(pane.asElement());
+            lastPane.element().parentNode.appendChild(pane.element());
 
             // The order of items does matter
             if (beforeId == null) {
@@ -337,14 +336,14 @@ public class VerticalNavigation implements Attachable {
         Item primaryItem = items.get(primaryId);
 
         if (primaryItem != null) {
-            HTMLElement secondaryUl = (HTMLElement) primaryItem.asElement()
+            HTMLElement secondaryUl = (HTMLElement) primaryItem.element()
                     .querySelector("." + navPfSecondaryNav + " > ul." + listGroup); //NON-NLS
 
             if (secondaryUl == null) {
                 // seems to be the first secondary item -> setup the secondary containers
                 String secondaryContainerId = Ids.build(primaryId, "secondary");
-                primaryItem.asElement().classList.add(secondaryNavItemPf);
-                primaryItem.asElement().dataset.set(UIConstants.TARGET, "#" + secondaryContainerId);
+                primaryItem.element().classList.add(secondaryNavItemPf);
+                primaryItem.element().dataset.set(UIConstants.TARGET, "#" + secondaryContainerId);
 
                 HTMLElement span;
                 HTMLElement div = div().css(navPfSecondaryNav, navPfSecondaryNavHal)
@@ -352,24 +351,24 @@ public class VerticalNavigation implements Attachable {
                         .add(div().css(navItemPfHeader)
                                 .add(a().css(secondaryCollapseTogglePf)
                                         .data(UIConstants.TOGGLE, "collapse-secondary-nav")) //NON-NLS
-                                .add(span = span().textContent(primaryItem.text).asElement()))
-                        .add(secondaryUl = ul().css(listGroup).asElement())
-                        .asElement();
+                                .add(span = span().textContent(primaryItem.text).get()))
+                        .add(secondaryUl = ul().css(listGroup).get())
+                        .get();
 
                 if (text.length() > SECONDARY_VISIBLE_TEXT_LENGTH) {
                     span.title = text;
                 }
-                primaryItem.asElement().appendChild(div);
+                primaryItem.element().appendChild(div);
             }
 
             HTMLElement li = li().id(id).css(listGroupItem)
                     .add(a().css(clickable).on(click, event -> show(id))
                             .add(span().css(listGroupItemValue).textContent(text)))
-                    .asElement();
+                    .get();
 
             primaryItem.addChild(id);
             Item secondaryItem = new Item(id, primaryId, text, li);
-            secondaryUl.appendChild(secondaryItem.asElement());
+            secondaryUl.appendChild(secondaryItem.element());
             items.put(id, secondaryItem);
             panes.put(id, pane);
 
@@ -403,23 +402,23 @@ public class VerticalNavigation implements Attachable {
             }
             for (Pane pane : panes.values()) {
                 if (pane != null) {
-                    Elements.setVisible(pane.asElement(), pane.id.equals(id));
+                    Elements.setVisible(pane.element(), pane.id.equals(id));
                 }
             }
-            show.asElement().click();
+            show.element().click();
             if (callbacks.containsKey(id)) {
                 callbacks.get(id).execute();
             }
 
             // highlight active item(s)
             for (Item item : items.values()) {
-                item.asElement().classList.remove(active);
+                item.element().classList.remove(active);
             }
-            show.asElement().classList.add(active);
+            show.element().classList.add(active);
             if (show.parentId != null) {
                 Item showParent = items.get(show.parentId);
                 if (showParent != null) {
-                    showParent.asElement().classList.add(active);
+                    showParent.element().classList.add(active);
                 }
             }
 
@@ -435,9 +434,9 @@ public class VerticalNavigation implements Attachable {
         Item item = items.get(id);
         Pane pane = panes.get(id);
         if (item != null && pane != null) {
-            Elements.setVisible(item.asElement(), visible);
-            if (!visible && Elements.isVisible(pane.asElement())) {
-                Elements.setVisible(pane.asElement(), false);
+            Elements.setVisible(item.element(), visible);
+            if (!visible && Elements.isVisible(pane.element())) {
+                Elements.setVisible(pane.element(), false);
             }
         } else {
             logger.error("Unable to hide item for id '{}': No such item!", id);
@@ -451,14 +450,14 @@ public class VerticalNavigation implements Attachable {
     public void updateBadge(String id, int count) {
         Item item = items.get(id);
         if (item != null) {
-            Element a = item.asElement().firstElementChild;
+            Element a = item.element().firstElementChild;
             HTMLElement badgeContainer = (HTMLElement) a.querySelector("." + badgeContainerPf);
             if (badgeContainer != null) {
                 a.removeChild(badgeContainer);
             }
             badgeContainer = div().css(badgeContainerPf)
                     .add(span().css(badge).textContent(String.valueOf(count)))
-                    .asElement();
+                    .get();
             a.appendChild(badgeContainer);
         } else {
             logger.error("Unable to find navigation item for id '{}'", id);
@@ -469,8 +468,8 @@ public class VerticalNavigation implements Attachable {
      * Returns the elements which were registered using the {@code add()} methods. Use this method to add those
      * elements to another container.
      */
-    public HasElements panes() {
-        return () -> panes.values().stream().map(Pane::asElement).collect(toList());
+    public Iterable<HTMLElement> panes() {
+        return panes.values().stream().map(Pane::element).collect(toList());
     }
 
     private boolean hasSecondary() {
@@ -505,7 +504,7 @@ public class VerticalNavigation implements Attachable {
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return element;
         }
 
@@ -536,12 +535,12 @@ public class VerticalNavigation implements Attachable {
 
         private Pane(String id, IsElement isElement) {
             this.id = id;
-            this.element = isElement.asElement();
+            this.element = isElement.element();
             this.element.dataset.set("vnItemFor", id);
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return element;
         }
     }

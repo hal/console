@@ -121,12 +121,12 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    protected void onShow(final HaPolicyWizard.Context context) {
+    protected void onShow(HaPolicyWizard.Context context) {
         Elements.setVisible(replicationForm, context.replication);
         Elements.setVisible(sharedStoreForm, !context.replication);
 

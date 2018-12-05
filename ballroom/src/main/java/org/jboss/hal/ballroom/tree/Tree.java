@@ -42,7 +42,7 @@ public class Tree<T> implements IsElement, Attachable {
     @SuppressWarnings("unchecked")
     public Tree(String id, Node<T> root, DataFunction<T> data) {
         this.id = id;
-        this.div = div().id(id).asElement();
+        this.div = div().id(id).get();
         this.options = initOptions();
         this.options.core.data = (DataFunction<T>) (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
@@ -62,7 +62,7 @@ public class Tree<T> implements IsElement, Attachable {
      */
     public Tree(String id, JsArray<Node<T>> nodes) {
         this.id = id;
-        this.div = div().id(id).asElement();
+        this.div = div().id(id).get();
         this.options = initOptions();
         this.options.core.data = nodes;
     }
@@ -84,7 +84,7 @@ public class Tree<T> implements IsElement, Attachable {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return div;
     }
 

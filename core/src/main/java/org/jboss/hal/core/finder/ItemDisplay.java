@@ -99,7 +99,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return {@code null} by default
      */
-    default HTMLElement asElement() {
+    default HTMLElement element() {
         return null;
     }
 
@@ -116,6 +116,6 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return span().css(itemText)
                 .add(span().textContent(title))
                 .add(small().css(CSS.subtitle).title(subtitle).textContent(subtitle))
-                .asElement();
+                .get();
     }
 }

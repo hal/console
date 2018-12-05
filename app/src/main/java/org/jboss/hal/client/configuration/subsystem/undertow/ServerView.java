@@ -125,10 +125,10 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         }
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB_CONTAINER);
-        tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
+        tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.element());
         for (HostSetting setting : HostSetting.values()) {
             tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
-                    hostSettingForms.get(setting).asElement());
+                    hostSettingForms.get(setting).element());
         }
 
         HTMLElement hostSection = section()
@@ -232,11 +232,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         navigation.addPrimary(Ids.UNDERTOW_HOST_ITEM, Names.HOSTS, pfIcon("enterprise"), hostPages);
         navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Names.LISTENER, fontAwesome("headphones"));
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(AJP.baseId, Ids.ITEM),
-                AJP.type, listener.get(AJP).asElement());
+                AJP.type, listener.get(AJP).element());
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTP.baseId, Ids.ITEM),
-                HTTP.type, listener.get(HTTP).asElement());
+                HTTP.type, listener.get(HTTP).element());
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTPS.baseId, Ids.ITEM),
-                HTTPS.type, listener.get(HTTPS).asElement());
+                HTTPS.type, listener.get(HTTPS).element());
 
         registerAttachable(navigation,
                 configurationForm,

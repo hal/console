@@ -49,8 +49,8 @@ class HostPreview extends RuntimePreview<Host> {
     private final Resources resources;
     private final LabelBuilder labelBuilder;
 
-    HostPreview(final HostActions hostActions, final Host host,
-            final Resources resources) {
+    HostPreview(HostActions hostActions, Host host,
+            Resources resources) {
         super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
         this.hostActions = hostActions;
         this.resources = resources;
@@ -96,7 +96,7 @@ class HostPreview extends RuntimePreview<Host> {
     }
 
     @Override
-    public void update(final Host host) {
+    public void update(Host host) {
         if (!host.isConnected()) {
             disconnected(resources.messages().hostDisconnected(host.getName()));
         } else if (hostActions.isPending(host)) {
@@ -121,7 +121,7 @@ class HostPreview extends RuntimePreview<Host> {
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
         if (host.isStarting()) {
-            attributes.asElements().forEach(element -> Elements.setVisible(element, false));
+            attributes.forEach(element -> Elements.setVisible(element, false));
         } else {
             attributes.setVisible(RELEASE_CODENAME, host.isConnected());
             attributes.setVisible(RELEASE_VERSION, host.isConnected());

@@ -108,7 +108,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
                 forms.add(form);
 
                 String tabId = Ids.build(group.id, Ids.TAB);
-                tabs.add(tabId, group.title, form.asElement());
+                tabs.add(tabId, group.title, form.element());
                 tabs.onShow(tabId, () -> currentForm = form);
 
             } else {
@@ -124,8 +124,8 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     // ------------------------------------------------------ element and attachable contract
 
     @Override
-    public HTMLElement asElement() {
-        return tabs.asElement();
+    public HTMLElement element() {
+        return tabs.element();
     }
 
     @Override
@@ -279,7 +279,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         final List<UnboundFormItem> unboundFormItems;
         final List<HTMLElement> elements;
 
-        private Group(final String id, final String title) {
+        private Group(String id, String title) {
             this.id = id;
             this.title = title;
             this.includes = new LinkedHashSet<>();
@@ -296,7 +296,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     }
 
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "WeakerAccess"})
     public static class Builder<T extends ModelNode> {
 
         private final String id;
@@ -411,7 +411,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
 
         public Builder<T> add(IsElement element) {
-            return add(element.asElement());
+            return add(element.element());
         }
 
         /**

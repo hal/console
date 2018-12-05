@@ -26,7 +26,7 @@ import org.jboss.hal.dmr.Deprecation;
 
 public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName, HasValue<T> {
 
-    HTMLElement asElement(Form.State state);
+    HTMLElement element(Form.State state);
 
     void clearValue();
 

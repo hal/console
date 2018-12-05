@@ -15,15 +15,17 @@
  */
 package org.jboss.hal.core.mvp;
 
+import java.util.Iterator;
+
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.header.HeaderModeEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The base presenter for HAL. Each presenter must extend from this presenter or one of its subclasses. Fires a {@link
@@ -34,7 +36,7 @@ import org.jboss.hal.core.header.HeaderModeEvent;
  */
 abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         extends Presenter<V, Proxy_>
-        implements IsElement, HasElements {
+        implements IsElement, Iterable<HTMLElement> {
 
     HalPresenter(EventBus eventBus, V view, Proxy_ proxy, GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
@@ -59,12 +61,13 @@ abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
     protected abstract HeaderModeEvent headerMode();
 
     @Override
-    public HTMLElement asElement() {
-        return getView().asElement();
+    public HTMLElement element() {
+        return getView().element();
     }
 
+    @NotNull
     @Override
-    public Iterable<HTMLElement> asElements() {
-        return getView().asElements();
+    public Iterator<HTMLElement> iterator() {
+        return getView().iterator();
     }
 }

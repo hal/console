@@ -141,7 +141,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                     .build();
             registerAttachable(form);
             mainForms.add(form);
-            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.asElement());
+            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.element());
         }
 
         HTMLElement section = section()
@@ -204,8 +204,8 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                         .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                 .add(span().css(fontAwesome("refresh"), marginRight5))
                                 .add(span().textContent(resources.constants().refresh()))))
-                .add(table.asElement())
-                .add(form.asElement())
+                .add(table.element())
+                .add(form.element())
                 .asElement();
     }
 

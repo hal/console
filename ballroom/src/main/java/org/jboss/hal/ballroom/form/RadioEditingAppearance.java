@@ -86,7 +86,7 @@ class RadioEditingAppearance extends AbstractAppearance<String> {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

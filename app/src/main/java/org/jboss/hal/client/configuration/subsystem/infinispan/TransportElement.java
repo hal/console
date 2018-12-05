@@ -70,12 +70,12 @@ class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .add(form)
                 .asElement();
 
-        Elements.setVisible(emptyState.asElement(), false);
-        Elements.setVisible(form.asElement(), false);
+        Elements.setVisible(emptyState.element(), false);
+        Elements.setVisible(form.element(), false);
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -104,12 +104,12 @@ class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresent
     }
 
     private void emptyStateMode() {
-        Elements.setVisible(emptyState.asElement(), true);
-        Elements.setVisible(form.asElement(), false);
+        Elements.setVisible(emptyState.element(), true);
+        Elements.setVisible(form.element(), false);
     }
 
     private void formMode() {
-        Elements.setVisible(emptyState.asElement(), false);
-        Elements.setVisible(form.asElement(), true);
+        Elements.setVisible(emptyState.element(), false);
+        Elements.setVisible(form.element(), true);
     }
 }

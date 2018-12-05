@@ -78,14 +78,14 @@ class LoggingPreview<T> extends PreviewContent<T> {
     public void update(T whatever) {
         dispatcher.execute(operation.get(),
                 (model) -> {
-                    for (HTMLElement element : attributes.asElements()) {
+                    for (HTMLElement element : attributes) {
                         Elements.setVisible(element, true);
                     }
                     Elements.setVisible(undefined, false);
                     attributes.refresh(model);
                 },
                 (operation1, failure) -> {
-                    for (HTMLElement element : attributes.asElements()) {
+                    for (HTMLElement element : attributes) {
                         Elements.setVisible(element, false);
                     }
                     Elements.setVisible(undefined, true);
