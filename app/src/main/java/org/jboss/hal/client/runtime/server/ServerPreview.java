@@ -194,7 +194,7 @@ class ServerPreview extends RuntimePreview<Server> {
                     .append(SUSPEND_STATE);
         }
         previewBuilder().addAll(this.attributes);
-        if (server.isRunning()) {
+        if (server.isRunning() || server.needsRestart() || server.needsReload()) {
             previewBuilder().add(this.headerOpenPorts);
             previewBuilder().add(this.ulOpenPorts);
         }
@@ -292,7 +292,7 @@ class ServerPreview extends RuntimePreview<Server> {
         attributes.setVisible(SERVER_STATE, server.isStarted());
         attributes.setVisible(SUSPEND_STATE, server.isStarted());
 
-        boolean displayOpenPorts = server.isRunning();
+        boolean displayOpenPorts = server.isRunning() || server.needsRestart() || server.needsReload();
         if (displayOpenPorts) {
             List<Task<FlowContext>> tasks = new ArrayList<>();
             tasks.add(flowContext -> {
