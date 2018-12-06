@@ -64,7 +64,7 @@ class WorkerPreview extends PreviewContent<NamedNode> {
         previewBuilder()
                 .add(h(2).textContent(Names.THREADS))
                 .addAll(corePoolSize, maxPoolSize, ioThreadCount)
-                .add(connectionsContainer = div().asElement());
+                .add(connectionsContainer = div().get());
     }
 
     @Override
@@ -104,7 +104,7 @@ class WorkerPreview extends PreviewContent<NamedNode> {
                                                 .title(labelBuilder.label(CONNECTION_LIMIT_HIGH_WATER_MARK))
                                                 .textContent(String.valueOf(highWaterMark)))
                                         .add(")"))
-                                .asElement();
+                                .get();
                         return new PreviewAttribute(property.getName(), element);
                     });
                 }

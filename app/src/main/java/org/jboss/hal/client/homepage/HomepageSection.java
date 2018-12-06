@@ -82,7 +82,7 @@ abstract class HomepageSection implements IsElement {
 
         Elements.removeChildrenFrom(sectionSteps);
         for (String step : steps()) {
-            HTMLLIElement li = li().innerHtml(SafeHtmlUtils.fromString(step)).asElement();
+            HTMLLIElement li = li().innerHtml(SafeHtmlUtils.fromString(step)).get();
             sectionSteps.appendChild(li);
         }
 

@@ -76,7 +76,7 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
                 .add(h(1).textContent(Names.FORK))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .asElement();
+                .get();
     }
 
     @Override

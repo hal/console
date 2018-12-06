@@ -74,7 +74,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .add(h(1).textContent(Names.JDBC_REALM))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(jdbcRealmTable)
-                .asElement();
+                .get();
 
         // principal query and key mappers
         Metadata pqMetadata = metadata.forComplexAttribute(PRINCIPAL_QUERY);
@@ -107,7 +107,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .add(h(1).textContent(Names.PRINCIPAL_QUERY))
                 .add(p().textContent(pqMetadata.getDescription().getDescription()))
                 .addAll(pqTable, tabs)
-                .asElement();
+                .get();
 
         pages = new Pages(id(PAGES), id(PAGE), jdbcRealmSection);
         pages.addPage(id(PAGE), id(PRINCIPAL_QUERY, PAGE),

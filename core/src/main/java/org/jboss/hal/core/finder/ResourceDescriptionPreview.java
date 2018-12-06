@@ -28,9 +28,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 /** Preview which shows the description of a {@code :read-resource-description} operation. */
 public class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata> {
 
-    public ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation rrd) {
+    public ResourceDescriptionPreview(String header, Dispatcher dispatcher, Operation rrd) {
         super(header);
-        HTMLElement content = section().asElement();
+        HTMLElement content = section().get();
         previewBuilder().add(content);
         dispatcher.execute(rrd, result -> {
             if (result.hasDefined(DESCRIPTION)) {

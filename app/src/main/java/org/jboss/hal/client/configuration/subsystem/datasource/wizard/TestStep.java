@@ -90,7 +90,7 @@ class TestStep extends WizardStep<Context, State> {
                                 .id(Ids.DATA_SOURCE_TEST_CONNECTION)
                                 .css(btn, btnLg, btnPrimary)
                                 .on(click, event -> testConnection())))
-                .asElement();
+                .get();
     }
 
     @Override

@@ -145,15 +145,15 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         }
 
         HTMLElement section = section()
-                .add(headerElement = h(1).asElement())
-                .add(leadElement = p().css(lead).asElement())
+                .add(headerElement = h(1).get())
+                .add(leadElement = p().css(lead).get())
                 .add(p().css(clearfix)
                         .add(span().textContent(metadata.getDescription().getDescription())
                                 .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                         .add(span().css(fontAwesome("refresh"), marginRight5))
                                         .add(span().textContent(resources.constants().refresh())))))
                 .add(mainAttributesTabs)
-                .asElement();
+                .get();
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -206,7 +206,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                                 .add(span().textContent(resources.constants().refresh()))))
                 .add(table.element())
                 .add(form.element())
-                .asElement();
+                .get();
     }
 
     @Override

@@ -58,20 +58,20 @@ class HostPreview extends RuntimePreview<Host> {
 
         previewBuilder()
                 .add(alertContainer = div()
-                        .add(alertIcon = span().asElement())
-                        .add(alertText = span().asElement())
+                        .add(alertIcon = span().get())
+                        .add(alertText = span().get())
                         .add(span().textContent(" "))
                         .add(reloadLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.reload(host))
                                 .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RELOAD).data())
                                 .textContent(resources.constants().reload())
-                                .asElement())
+                                .get())
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.restart(host))
                                 .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
                                 .textContent(resources.constants().restart())
-                                .asElement())
-                        .asElement());
+                                .get())
+                        .get());
 
         attributes = new PreviewAttributes<>(host,
                 asList(RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,

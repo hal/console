@@ -67,14 +67,14 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()
                 .add(p().css(lead)
-                        .add(osName = span().asElement())
-                        .add(osVersion = span().asElement())
-                        .add(processors = span().asElement())
+                        .add(osName = span().get())
+                        .add(osVersion = span().get())
+                        .add(processors = span().get())
                         .add(br())
-                        .add(jvm = span().asElement())
-                        .add(jvmVersion = span().asElement())
+                        .add(jvm = span().get())
+                        .add(jvmVersion = span().get())
                         .add(br())
-                        .add(uptime = span().asElement()))
+                        .add(uptime = span().get()))
                 .add(h(2).textContent(Names.HEAP))
                 .add(usedHeap)
                 .add(committedHeap)
@@ -84,7 +84,7 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void update(final SubsystemMetadata item) {
+    public void update(SubsystemMetadata item) {
         AddressTemplate mbean = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER, "core-service=platform-mbean");
         AddressTemplate osTmpl = mbean.append("type=operating-system");
         AddressTemplate runtimeTmpl = mbean.append("type=runtime");

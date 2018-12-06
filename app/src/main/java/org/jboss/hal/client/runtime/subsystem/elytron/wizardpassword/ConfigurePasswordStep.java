@@ -53,9 +53,9 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
         this.metadata = metadata;
 
         section = section()
-                .add(header = h(1).asElement())
-                .add(description = p().asElement())
-                .asElement();
+                .add(header = h(1).get())
+                .add(description = p().get())
+                .get();
     }
 
     @Override

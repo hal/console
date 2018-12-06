@@ -74,7 +74,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
         HTMLElement root = row()
                 .add(column(4)
-                        .add(header = h(1).textContent(resources.constants().jndiTree()).asElement())
+                        .add(header = h(1).textContent(resources.constants().jndiTree()).get())
                         .add(div().css(flexRow)
                                 .add(div().css(btnGroup, marginRightSmall)
                                         .add(button().css(btn, btnDefault)
@@ -89,12 +89,12 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
                                                 })
                                                 .add(i().css(fontAwesome("minus")))))
                                 .add(search))
-                        .add(treeContainer = div().css(CSS.treeContainer).asElement()))
+                        .add(treeContainer = div().css(CSS.treeContainer).get()))
                 .add(column(8)
                         .add(h(1).textContent(resources.constants().details()))
-                        .add(hint = p().textContent(resources.constants().noDetails()).asElement())
+                        .add(hint = p().textContent(resources.constants().noDetails()).get())
                         .add(details))
-                .asElement();
+                .get();
         initElement(root);
     }
 

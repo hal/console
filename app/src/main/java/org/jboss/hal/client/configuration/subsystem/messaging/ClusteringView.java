@@ -122,7 +122,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(bridgeTable)
                 .add(tabs)
-                .asElement();
+                .get();
 
         registerAttachable(bridgeTable, bridgeForm, crForm);
 

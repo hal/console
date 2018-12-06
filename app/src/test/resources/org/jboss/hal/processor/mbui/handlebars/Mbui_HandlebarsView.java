@@ -59,9 +59,9 @@ public final class Mbui_HandlebarsView extends HandlebarsView {
                 .add(column()
                         .add(html0 = div()
                                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Handlebars</h1><p>Current time: ${org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}</p>"))
-                                .asElement())
+                                .get())
                 )
-                .asElement();
+                .get();
         expressionElements.put("html0", html0);
 
         initElement(root);

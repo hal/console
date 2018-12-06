@@ -112,7 +112,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(form)
-                .asElement();
+                .get();
 
         verticalNavigation.addPrimary(Ids.build(MESSAGING_SERVER, Ids.ITEM), Names.CONFIGURATION,
                 "pficon pficon-settings", htmlSection);
@@ -226,25 +226,25 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.PAGING_DIRECTORY))
                 .add(p().textContent(pagingMetadata.getDescription().getDescription()))
                 .add(pagingDirectoryForm)
-                .asElement();
+                .get();
 
         HTMLElement bindingsDirectoryElement = section()
                 .add(h(1).textContent(Names.BINDINGS_DIRECTORY))
                 .add(p().textContent(bindingMetadata.getDescription().getDescription()))
                 .add(bindingsDirectoryForm)
-                .asElement();
+                .get();
 
         HTMLElement largeMessagesElement = section()
                 .add(h(1).textContent(Names.LARGE_MESSAGES_DIRECTORY))
                 .add(p().textContent(largeMetadata.getDescription().getDescription()))
                 .add(largeMessagesDirectoryForm)
-                .asElement();
+                .get();
 
         HTMLElement journalElement = section()
                 .add(h(1).textContent(Names.JOURNAL_DIRECTORY))
                 .add(p().textContent(journalMetadata.getDescription().getDescription()))
                 .add(journalDirectoryForm)
-                .asElement();
+                .get();
 
         verticalNavigation.addPrimary(MESSAGING_SERVER_DIRECTORY_ITEM, "Directories", "pficon pficon-repository");
         verticalNavigation.addSecondary(MESSAGING_SERVER_DIRECTORY_ITEM,
@@ -273,7 +273,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         HTMLElement root = row()
                 .add(column()
                         .addAll(verticalNavigation.panes()))
-                .asElement();
+                .get();
 
         initElement(root);
 

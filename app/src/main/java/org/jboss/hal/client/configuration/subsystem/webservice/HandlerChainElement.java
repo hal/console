@@ -68,10 +68,10 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .build();
 
         root = section()
-                .add(header = h(1).asElement())
+                .add(header = h(1).get())
                 .add(table)
                 .add(form)
-                .asElement();
+                .get();
     }
 
     @Override

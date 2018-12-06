@@ -66,7 +66,7 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
                         "wsdl-uri-scheme"));
         attributesElement = section()
                 .addAll(attributes)
-                .asElement();
+                .get();
 
         previewBuilder()
                 .add(noStatistics)

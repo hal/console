@@ -328,7 +328,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         model.get(ALIAS).set(alias);
         form.getFormItem(ALIAS).setEnabled(false);
         Dialog dialog = new Dialog.Builder(resources.constants().changeAlias())
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().change(), form::save)
                 .size(Dialog.Size.MEDIUM)
@@ -364,7 +364,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         model.get(ALIAS).set(alias);
         form.getFormItem(ALIAS).setEnabled(false);
         Dialog dialog = new Dialog.Builder(resources.constants().exportCertificate())
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().export(), form::save)
                 .size(Dialog.Size.MEDIUM)
@@ -401,7 +401,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         model.get(ALIAS).set(alias);
         form.getFormItem(ALIAS).setEnabled(false);
         Dialog dialog = new Dialog.Builder(resources.constants().generateCSR())
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().generate(), form::save)
                 .size(Dialog.Size.MEDIUM)
@@ -466,7 +466,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         });
 
         Dialog dialog = new Dialog.Builder(resources.constants().generateKeyPair())
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().generate(), form::save)
                 .size(Dialog.Size.MEDIUM)
@@ -542,7 +542,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         });
 
         Dialog dialog = new Dialog.Builder(resources.constants().importCertificate())
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().importt(), form::save)
                 .size(Dialog.Size.MEDIUM)
@@ -574,7 +574,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                             Message.error(resources.messages().obtainCertificateError(alias, name, ex.getMessage()))));
         });
         Dialog dialog = new Dialog.Builder(title)
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().obtain(), form::save)
                 .size(Dialog.Size.MEDIUM)
@@ -618,7 +618,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                             Message.error(resources.messages().revokeCertificateError(alias, name, ex.getMessage()))));
         });
         Dialog dialog = new Dialog.Builder(title)
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().revoke(), form::save)
                 .size(Dialog.Size.MEDIUM)
@@ -664,11 +664,11 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                         HTMLElement content;
                         if (days < 1) {
                             Alert warning = new Alert(Icons.WARNING, resources.messages().certificateExpired(alias));
-                            content = div().add(warning).asElement();
+                            content = div().add(warning).get();
                         } else {
                             SafeHtml description = resources.messages()
                                     .certificateShouldRenew(days, alias, Format.mediumDateTime(dueDate));
-                            content = p().innerHtml(description).asElement();
+                            content = p().innerHtml(description).get();
                         }
 
                         new Dialog.Builder(resources.constants().verifyRenewCertificate())
@@ -686,7 +686,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                             Message.error(resources.messages().verifyRenewError(alias, name, ex.getMessage()))));
         });
         Dialog dialog = new Dialog.Builder(resources.constants().verifyRenewCertificate())
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(form.element())
                 .primary(resources.constants().verifyRenew(), form::save)
                 .size(Dialog.Size.MEDIUM)

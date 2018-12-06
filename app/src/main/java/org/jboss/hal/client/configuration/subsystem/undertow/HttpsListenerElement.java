@@ -61,14 +61,14 @@ class HttpsListenerElement extends ListenerElement {
                 .textContent(resources.constants().enableSSL())
                 .css(org.jboss.hal.ballroom.Button.DEFAULT_CSS)
                 .data(CONSTRAINT, constraint.data())
-                .asElement();
+                .get();
         bind(enableSslButton, click, ev -> presenter.enableSsl(selectedHttps));
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
                 .css(org.jboss.hal.ballroom.Button.DEFAULT_CSS)
                 .data(CONSTRAINT, constraint.data())
-                .asElement();
+                .get();
         bind(disableSslButton, click, ev -> presenter.disableSsl(selectedHttps));
 
         Metadata metadata = metadataRegistry.lookup(template);
@@ -90,7 +90,7 @@ class HttpsListenerElement extends ListenerElement {
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-                .asElement();
+                .get();
     }
 
     @Override

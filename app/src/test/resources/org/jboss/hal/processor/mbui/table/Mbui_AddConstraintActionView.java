@@ -64,10 +64,10 @@ public final class Mbui_AddConstraintActionView extends AddConstraintActionView 
                 .add(column()
                         .add(html0 = div()
                                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Table</h1>"))
-                                .asElement())
+                                .get())
                         .add(table)
                 )
-                .asElement();
+                .get();
         expressionElements.put("html0", html0);
 
         registerAttachable(table);

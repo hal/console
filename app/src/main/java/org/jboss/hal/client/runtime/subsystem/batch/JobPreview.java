@@ -53,7 +53,7 @@ class JobPreview extends PreviewContent<JobNode> {
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(job.getPath())
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                .asElement());
+                .get());
 
         empty = new EmptyState.Builder(Ids.JOP_EXECUTION_EMPTY, resources.constants().noExecutions())
                 .description(resources.messages().noExecutions())

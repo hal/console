@@ -96,7 +96,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .append(model -> new PreviewAttributes.PreviewAttribute(new LabelBuilder().label(CONTEXT_ROOT),
                         span().textContent(model.get(CONTEXT_ROOT).asString())
                                 .data(LINK, "")
-                                .asElement()))
+                                .get()))
                 .append(model -> {
                     FinderPath path = finderPathFactory.deployment(deploymentResource.getDeployment());
                     PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
@@ -134,7 +134,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
         sessionsElement = section()
                 .add(h(2, Names.SESSIONS))
                 .add(sessions)
-                .asElement();
+                .get();
 
         // the order of rows is determined at update time.
         sessionTime = new GroupedBar.Builder(resources.constants().seconds())
@@ -150,7 +150,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .add(h(2, resources.constants().sessionTime()))
                 .add(maxSessions)
                 .add(sessionTime)
-                .asElement();
+                .get();
 
         previewBuilder().addAll(previewAttributes);
         previewBuilder()
@@ -252,7 +252,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                                 linkContainer.appendChild(a(url.getUrl() + link)
                                         .apply(a -> a.target = Ids.hostServer(host, server))
                                         .textContent(link)
-                                        .asElement());
+                                        .get());
                             }
                         }
                     });

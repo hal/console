@@ -47,7 +47,7 @@ public class ReviewStep extends AbstractConfiguration implements AsyncStep<Enabl
         section = section()
                 .add(p().textContent(resources.messages().enableSSLConfirmationDescription()))
                 .add(form)
-                .asElement();
+                .get();
         this.environment = environment;
         this.undertowHttps = undertowHttps;
     }

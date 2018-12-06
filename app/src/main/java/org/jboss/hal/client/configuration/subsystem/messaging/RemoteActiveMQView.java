@@ -133,7 +133,7 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(pooledConnectionFactoryTable)
                 .add(tabs)
-                .asElement();
+                .get();
 
         registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
 

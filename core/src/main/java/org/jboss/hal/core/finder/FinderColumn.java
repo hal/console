@@ -744,7 +744,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * not possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer
      * can be specified <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
      * attached to the DOM!
      */
     protected void setItemRenderer(ItemRenderer<T> itemRenderer) {
@@ -761,7 +761,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * is part of the builder which is passed to {@code super()}. In this case the items provider can be specified
      * <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
      * attached to the DOM!
      */
     protected void setItemsProvider(ItemsProvider<T> itemsProvider) {
@@ -803,7 +803,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * callback is part of the builder which is passed to {@code super()}. In this case the preview callback can be
      * specified <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
      * attached to the DOM!
      */
     protected void setPreviewCallback(PreviewCallback<T> previewCallback) {
@@ -815,7 +815,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
      * breadcrumb items provider is part of the builder which is passed to {@code super()}. In this case the breadcrumb
      * items provider can be specified <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
      * attached to the DOM!
      */
     protected void setBreadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {

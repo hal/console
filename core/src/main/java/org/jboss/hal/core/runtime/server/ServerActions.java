@@ -587,7 +587,7 @@ public class ServerActions {
                 element.appendChild(a(url.getUrl())
                         .apply(a -> a.target = server.getId())
                         .textContent(url.getUrl())
-                        .asElement());
+                        .get());
                 String icon;
                 String tooltip;
                 if (url.isCustom()) {
@@ -597,15 +597,9 @@ public class ServerActions {
                     icon = pfIcon("server");
                     tooltip = resources.constants().serverUrlManagementModel();
                 }
-                element.appendChild(
-                        span().css(icon, marginLeft5).style("cursor:help").title(tooltip).asElement()); //NON-NLS
+                element.appendChild(span().css(icon, marginLeft5).style("cursor:help").title(tooltip).get()); //NON-NLS
             }
         });
-    }
-
-    /** Reads the URL using the information from the specified server instance */
-    public void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
-        readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
     }
 
     /** Reads the URL using the provided parameters */
@@ -634,9 +628,14 @@ public class ServerActions {
         }
     }
 
+    /** Reads the URL using the information from the specified server instance */
+    private void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
+        readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
+    }
+
     public void editUrl(Server server, Callback callback) {
         Alert alert = new Alert(Icons.ERROR, resources.messages().serverUrlError());
-        HTMLElement info = p().asElement();
+        HTMLElement info = p().get();
         TextBoxItem urlItem = new TextBoxItem(URL, Names.URL);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SERVER_URL_FORM, Metadata.empty())
                 .unboundFormItem(urlItem)

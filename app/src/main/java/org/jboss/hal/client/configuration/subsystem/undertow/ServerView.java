@@ -97,7 +97,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(configurationForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ hosts
 
@@ -136,7 +136,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(hostMetadata.getDescription().getDescription()))
                 .add(hostTable)
                 .add(tabs)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ host filter refs
 
@@ -159,7 +159,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(filterRefMetadata.getDescription().getDescription()))
                 .add(filterRefTable)
                 .add(filterRefForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ host locations
 
@@ -183,7 +183,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(locationMetadata.getDescription().getDescription()))
                 .add(locationTable)
                 .add(locationForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ host location filter refs
 
@@ -209,7 +209,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(locationFilterRefMetadata.getDescription().getDescription()))
                 .add(locationFilterRefTable)
                 .add(locationFilterRefForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ pages, listener and navigation
 

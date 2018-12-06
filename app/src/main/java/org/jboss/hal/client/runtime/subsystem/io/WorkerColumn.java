@@ -80,7 +80,7 @@ public class WorkerColumn extends FinderColumn<NamedNode> {
                         return span().css(itemText)
                                 .add(span().textContent(item.getName()))
                                 .add(small().css(CSS.subtitle).title(threadPoolTitle).textContent(threadPool))
-                                .asElement();
+                                .get();
                     }
                 })
                 .onPreview(item -> new WorkerPreview(item, dispatcher, statementContext))

@@ -53,7 +53,7 @@ class ThreadPoolElement implements IsElement<HTMLElement>, Attachable, HasPresen
                 .add(h(1).textContent(threadPool.type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(form)
-                .asElement();
+                .get();
     }
 
     @Override

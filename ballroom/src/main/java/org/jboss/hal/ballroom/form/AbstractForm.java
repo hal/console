@@ -63,7 +63,7 @@ import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
  * A generic form with some reasonable UI defaults. Please note that all form items and help texts must be setup
- * before this form is added {@linkplain #asElement() as an element} to the DOM.
+ * before this form is added {@linkplain #element()}  as an element} to the DOM.
  * <p>
  * The form consists of {@linkplain FormLinks links} and three sections:
  * <ul>

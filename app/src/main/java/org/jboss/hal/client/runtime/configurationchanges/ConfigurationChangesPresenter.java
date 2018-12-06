@@ -243,13 +243,13 @@ public class ConfigurationChangesPresenter extends
     }
 
     void viewRawChange(ConfigurationChange change) {
-        HTMLPreElement elem = pre().css(formControlStatic, wrap).asElement();
+        HTMLPreElement elem = pre().css(formControlStatic, wrap).get();
         elem.textContent = change.asModelNode().toString();
 
         HTMLElement content = div()
                 .add(elem)
                 .style("overflow: scroll") //NON-NLS
-                .asElement();
+                .get();
 
         int maxheight = applicationHeight() - 6 * MARGIN_BIG;
         content.style.maxHeight = CSSProperties.MaxHeightUnionType.of(px(maxheight));

@@ -228,7 +228,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .add(p().textContent(jsonMetadata.getDescription().getDescription()))
                 .add(jsonFormatterTable)
                 .add(jsonTabs)
-                .asElement();
+                .get();
 
         registerAttachable(jsonFormatterTable, jsonFormatterForm, jsonKeyOverridesForm);
 
@@ -289,7 +289,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .add(p().textContent(xmlMetadata.getDescription().getDescription()))
                 .add(xmlFormatterTable)
                 .add(xmlTabs)
-                .asElement();
+                .get();
 
         registerAttachable(xmlFormatterTable, xmlFormatterForm, xmlKeyOverridesForm);
 

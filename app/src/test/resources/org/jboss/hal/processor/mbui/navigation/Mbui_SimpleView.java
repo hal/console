@@ -68,16 +68,16 @@ public final class Mbui_SimpleView extends SimpleView {
         HTMLElement itemElement = section()
                 .add(html0 = div()
                         .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
-                        .asElement())
+                        .get())
                 .add(form)
-                .asElement();
+                .get();
         expressionElements.put("html0", html0);
         navigation.addPrimary("item", "Form", "fa fa-list-ul", itemElement);
 
         HTMLElement root = row()
                 .add(column()
                         .addAll(navigation.panes()))
-                .asElement();
+                .get();
 
         registerAttachable(navigation);
         registerAttachable(form);

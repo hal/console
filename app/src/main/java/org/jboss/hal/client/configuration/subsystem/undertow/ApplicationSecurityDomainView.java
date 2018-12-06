@@ -85,7 +85,7 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
                 .add(h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN))
                 .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         registerAttachable(configurationForm, ssoForm, crForm);
 

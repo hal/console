@@ -89,7 +89,7 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
             default:
                 break;
         }
-        return builder.asElement();
+        return builder.get();
     }
 
     @Override

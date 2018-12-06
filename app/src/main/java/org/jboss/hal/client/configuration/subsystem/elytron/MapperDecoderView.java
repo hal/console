@@ -147,7 +147,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(mappedRoleMapperTable)
                 .add(mappedRoleMapperForm)
-                .asElement();
+                .get();
 
         registerAttachable(mappedRoleMapperTable, mappedRoleMapperForm);
 

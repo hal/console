@@ -71,7 +71,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-                .asElement();
+                .get();
     }
 
     @Override

@@ -137,7 +137,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(resources.constants().jcaConfiguration()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JCA_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
@@ -161,7 +161,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(h(1).textContent(tracerType))
                 .add(p().textContent(tracerMetadata.getDescription().getDescription()))
                 .add(tracerForm)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JCA_TRACER_ITEM, tracerType, fontAwesome("bug"), tracerLayout);
         registerAttachable(tracerForm);
@@ -208,7 +208,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(p().textContent(bcMetadata.getDescription().getDescription()))
                 .add(bcTable)
                 .add(bcForm)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ITEM, bcType, fontAwesome("play"), bcLayout);
         registerAttachable(bcTable, bcForm);
@@ -240,7 +240,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(h(1).textContent(wmType))
                 .add(p().textContent(wmMetadata.getDescription().getDescription()))
                 .add(wmTable)
-                .asElement();
+                .get();
 
         wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, tableButtonFactory, resources);
         registerAttachable(wmTpEditor);
@@ -306,7 +306,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(p().textContent(dwmMetadata.getDescription().getDescription()))
                 .add(dwmTable)
                 .add(dwmForm)
-                .asElement();
+                .get();
 
         dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, tableButtonFactory,
                 resources);

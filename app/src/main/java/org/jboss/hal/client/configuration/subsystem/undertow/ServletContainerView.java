@@ -119,7 +119,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         settings = new EnumMap<>(ServletContainerSetting.class);
         Map<ServletContainerSetting, HTMLElement> settingsSections = new EnumMap<>(ServletContainerSetting.class);
@@ -131,7 +131,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                     .add(h(1).textContent(setting.type))
                     .add(p().textContent(metadata.getDescription().getDescription()))
                     .add(form)
-                    .asElement());
+                    .get());
         }
 
         VerticalNavigation navigation = new VerticalNavigation();

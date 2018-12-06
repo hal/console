@@ -72,7 +72,7 @@ class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
         } else {
             builder.css(pfIcon(ok), listHalIconSuccess);
         }
-        return builder.asElement();
+        return builder.get();
     }
 
 

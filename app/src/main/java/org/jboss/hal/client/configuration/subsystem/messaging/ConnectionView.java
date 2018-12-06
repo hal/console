@@ -140,7 +140,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(pooledConnectionFactoryTable)
                 .add(tabs)
-                .asElement();
+                .get();
 
         registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
 

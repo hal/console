@@ -89,7 +89,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-                .asElement();
+                .get();
 
         Metadata identityMetadata = metadata.forOperation(READ_IDENTITY);
         SafeHtml identityAttributeHelp = resources.messages().identityAttributeHelp();
@@ -110,13 +110,13 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
         HTMLButtonElement setPasswordBtn = button().id(SET_PASSWORD)
                 .textContent(resources.constants().setPassword())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .asElement();
+                .get();
         bind(setPasswordBtn, click, ev -> presenter.launchSetPasswordWizard(metadata, selectedRealm, selectedIdentity));
         HTMLButtonElement removeIdentityBtn = button().id(REMOVE_IDENTITY)
                 .textContent(resources.constants().remove())
                 .css(Button.DEFAULT_CSS, pullRight)
                 .title(resources.constants().removeIdentity())
-                .asElement();
+                .get();
         bind(removeIdentityBtn, click, ev -> presenter.removeIdentity(metadata, selectedRealm, selectedIdentity, success -> {
             if (success) {
                 realmPages.showPage(id(PAGE));
@@ -130,7 +130,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
                         .add(setPasswordBtn)
                         .add(removeIdentityBtn))
                 .add(identityForm)
-                .asElement();
+                .get();
 
         realmPages = new Pages(id(PAGES), id(PAGE), mainSection);
         realmPages.addPage(id(PAGE), id(baseId),

@@ -122,13 +122,13 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                 .apply(l -> l.htmlFor = selectStoreId)
                                 .textContent(resources.constants().switchStore()))
                         .add(selectStore)
-                        .asElement())
+                        .get())
                 .add(h(1).textContent(Names.STORE)
-                        .add(currentStore = span().asElement()))
+                        .add(currentStore = span().get()))
                 .add(p().textContent(resources.constants().cacheStore()))
                 .add(emptyState)
                 .addAll(tabs.values().stream().map(Tabs::element).collect(toList()))
-                .asElement();
+                .get();
 
         Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(headerForm, false);
@@ -141,7 +141,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     s.multiple = false;
                     s.size = 1;
                 })
-                .asElement();
+                .get();
 
         for (Store store : Store.values()) {
             select.appendChild(Elements.option()
@@ -149,7 +149,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         o.value = store.resource;
                         o.text = store.type;
                     })
-                    .asElement());
+                    .get());
         }
         return select;
     }

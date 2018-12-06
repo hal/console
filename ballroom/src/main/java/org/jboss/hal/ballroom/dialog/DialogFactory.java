@@ -62,9 +62,9 @@ public final class DialogFactory {
             content = div()
                     .add(p().innerHtml(question))
                     .add(element)
-                    .asElement();
+                    .get();
         } else {
-            content = p().innerHtml(question).asElement();
+            content = p().innerHtml(question).get();
         }
 
         return new Dialog.Builder(title)
@@ -87,7 +87,7 @@ public final class DialogFactory {
     public static BlockingDialog buildBlocking(String title, Dialog.Size size, SafeHtml message) {
         HTMLElement element = div().css(centerBlock)
                 .add(p().style("text-align: center").innerHtml(message))
-                .asElement();
+                .get();
 
         return new BlockingDialog(new Dialog.Builder(title)
                 .size(size)
@@ -104,7 +104,7 @@ public final class DialogFactory {
         HTMLElement element = div().css(centerBlock)
                 .add(p().style("text-align: center").innerHtml(message))
                 .add(div().css(spinner, spinnerLg))
-                .asElement();
+                .get();
 
         return new BlockingDialog(new Dialog.Builder(title)
                 .size(SMALL)

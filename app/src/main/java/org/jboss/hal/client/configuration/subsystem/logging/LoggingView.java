@@ -181,7 +181,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                 .add(p().textContent(jsonMetadata.getDescription().getDescription()))
                 .add(jsonFormatterTable)
                 .add(jsonTabs)
-                .asElement();
+                .get();
 
         registerAttachable(jsonFormatterTable, jsonFormatterForm, jsonKeyOverridesForm);
 
@@ -241,7 +241,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                 .add(p().textContent(xmlMetadata.getDescription().getDescription()))
                 .add(xmlFormatterTable)
                 .add(xmlTabs)
-                .asElement();
+                .get();
 
         registerAttachable(xmlFormatterTable, xmlFormatterForm, xmlKeyOverridesForm);
 

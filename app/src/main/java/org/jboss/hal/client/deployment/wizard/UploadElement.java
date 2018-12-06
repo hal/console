@@ -52,19 +52,19 @@ public class UploadElement implements IsElement<HTMLElement> {
         this.root = form().css(upload)
                 .apply(f -> f.noValidate = true)
                 .add(alert)
-                .add(iconElement = div().css(uploadIcon, fontAwesome("upload", x4)).asElement())
+                .add(iconElement = div().css(uploadIcon, fontAwesome("upload", x4)).get())
                 .add(fileInput = input(file)
                         .id(Ids.UPLOAD_FILE_INPUT)
                         .css(uploadFile)
                         .on(change, event -> showFiles(fileInput.files))
-                        .asElement())
+                        .get())
                 .add(labelElement = label()
                         .apply(l -> l.htmlFor = Ids.UPLOAD_FILE_INPUT)
                         .css(clickable, link)
                         .textContent(CONSTANTS.chooseFile())
-                        .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).asElement())
-                        .asElement())
-                .asElement();
+                        .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).get())
+                        .get())
+                .get();
 
         Elements.setVisible(alert.element(), false);
         boolean advancedUpload = JsHelper.supportsAdvancedUpload();

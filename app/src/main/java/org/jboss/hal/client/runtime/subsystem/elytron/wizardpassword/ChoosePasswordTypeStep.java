@@ -50,10 +50,10 @@ public class ChoosePasswordTypeStep extends WizardStep<PasswordContext, Password
                                     .id(type.name())
                                     .attr(UIConstants.NAME, SET_PASSWORD)
                                     .on(click, e -> wizard().getContext().type = type)
-                                    .asElement())
+                                    .get())
                             .add(span().textContent(getDescription(type)))));
         }
-        root = builder.asElement();
+        root = builder.get();
     }
 
     private String getDescription(PasswordContext.PasswordType type) {

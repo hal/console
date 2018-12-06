@@ -62,7 +62,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(jpaStatistic.getPath())
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                .asElement());
+                .get());
 
         noStatistics = new EmptyState.Builder(Ids.JPA_RUNTIME_STATISTICS_DISABLED,
                 resources.constants().statisticsDisabledHeader())
@@ -80,7 +80,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         getHeaderContainer().appendChild(refresh = refreshLink(() -> update(jpaStatistic)));
         previewBuilder()
                 .add(noStatistics)
-                .add(header = h(2).textContent(Names.SESSIONS).asElement())
+                .add(header = h(2).textContent(Names.SESSIONS).get())
                 .add(openedSessions)
                 .add(closedSessions);
 

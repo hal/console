@@ -77,7 +77,7 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(configurationForm)
-                .asElement();
+                .get();
         navigation.addPrimary(Ids.CACHE_CONTAINER_ITEM, Names.CONFIGURATION, pfIcon("settings"), section);
 
         navigation.addPrimary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM, Names.THREAD_POOLS, pfIcon("resource-pool"));
