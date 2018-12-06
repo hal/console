@@ -150,8 +150,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     @Override
-    public HTMLElement asElement() {
-        return getView().asElement();
+    public HTMLElement element() {
+        return getView().element();
     }
 
     @Override
@@ -275,7 +275,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             keycloakHolder.getKeycloak().logout(null);
         } else {
             Dialog dialog = new Dialog.Builder(resources.constants().logout())
-                    .add(p().innerHtml(resources.messages().closeToLogout()).asElement())
+                    .add(p().innerHtml(resources.messages().closeToLogout()).get())
                     .primary(resources.constants().ok(), () -> true)
                     .build();
             dialog.show();

@@ -62,6 +62,7 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
         this(id, dataProvider, itemRenderer, stacked, multiSelect, new String[]{"60%", "40%"});
     }
 
+    @SuppressWarnings("WeakerAccess")
     public ListView(String id, DataProvider<T> dataProvider, ItemRenderer<T> itemRenderer,
             boolean stacked, boolean multiSelect, String[] contentWidths) {
         this.dataProvider = dataProvider;
@@ -74,11 +75,11 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
         if (stacked) {
             div.css(listPfStacked);
         }
-        this.root = div.asElement();
+        this.root = div.get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -90,7 +91,7 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
             ItemDisplay<T> display = itemRenderer.render(item);
             ListItem<T> listItem = new ListItem<>(this, item, multiSelect, display, contentWidths);
             currentListItems.put(listItem.id, listItem);
-            root.appendChild(listItem.asElement());
+            root.appendChild(listItem.element());
         }
     }
 
@@ -98,12 +99,12 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
     public void updateSelection(SelectionInfo<T> selectionInfo) {
         for (ListItem<T> item : currentListItems.values()) {
             if (selectionInfo.isSelected(item.item)) {
-                item.asElement().classList.add(active);
+                item.element().classList.add(active);
                 if (item.checkbox != null) {
                     item.checkbox.checked = true;
                 }
             } else {
-                item.asElement().classList.remove(active);
+                item.element().classList.remove(active);
                 if (item.checkbox != null) {
                     item.checkbox.checked = false;
                 }

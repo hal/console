@@ -83,19 +83,19 @@ class PrincipalColumn extends FinderColumn<Principal> {
     private final AccessControl accessControl;
     private final Resources resources;
 
-    PrincipalColumn(final Finder finder,
-            final String id,
-            final String title,
-            final Principal.Type type,
-            final ColumnActionFactory columnActionFactory,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final Provider<Progress> progress,
-            final User currentUser,
-            final AccessControl accessControl,
-            final AccessControlTokens tokens,
-            final AccessControlResources accessControlResources,
-            final Resources resources) {
+    PrincipalColumn(Finder finder,
+            String id,
+            String title,
+            Principal.Type type,
+            ColumnActionFactory columnActionFactory,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            Provider<Progress> progress,
+            User currentUser,
+            AccessControl accessControl,
+            AccessControlTokens tokens,
+            AccessControlResources accessControlResources,
+            Resources resources) {
 
         super(new Builder<Principal>(finder, id, title)
                 .onPreview(item -> new PrincipalPreview(accessControl, tokens, item, resources))
@@ -176,7 +176,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.getRealm() != null) {
                     return ItemDisplay.withSubtitle(item.getName(), item.getRealm());
                 }
@@ -229,7 +229,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
         });
     }
 
-    private void addPrincipal(final Principal.Type type, final String name, final ModelNode model) {
+    private void addPrincipal(Principal.Type type, String name, ModelNode model) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         collectTasks(tasks, type, name, true, model, INCLUDE);
         collectTasks(tasks, type, name, false, model, EXCLUDE);

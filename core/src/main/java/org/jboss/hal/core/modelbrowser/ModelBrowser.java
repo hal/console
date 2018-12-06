@@ -71,8 +71,8 @@ import rx.Completable;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -96,7 +96,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
-    static final HTMLElement PLACE_HOLDER_ELEMENT = div().asElement();
+    static final HTMLElement PLACE_HOLDER_ELEMENT = div().get();
 
     private final CrudOperations crud;
     private MetadataProcessor metadataProcessor;
@@ -146,30 +146,30 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                         .on(click, event -> filter(tree.getSelected()))
                         .title(resources.constants().filter())
                         .add(i().css(fontAwesome(CSS.filter)))
-                        .asElement())
+                        .get())
                 .add(refresh = button().css(btn, btnDefault)
                         .on(click, event -> refresh(tree.getSelected()))
                         .title(resources.constants().refresh())
                         .add(i().css(fontAwesome(CSS.refresh)))
-                        .asElement())
+                        .get())
                 .add(collapse = button().css(btn, btnDefault)
                         .on(click, event -> collapse(tree.getSelected()))
                         .title(resources.constants().collapse())
                         .add(i().css(fontAwesome("minus")))
-                        .asElement())
-                .asElement();
+                        .get())
+                .get();
 
-        treeContainer = div().css(CSS.treeContainer).asElement();
-        content = div().css(modelBrowserContent).asElement();
+        treeContainer = div().css(CSS.treeContainer).get();
+        content = div().css(modelBrowserContent).get();
 
         resourcePanel = new ResourcePanel(this, dispatcher, resources);
-        for (HTMLElement element : resourcePanel.asElements()) {
+        for (HTMLElement element : resourcePanel) {
             content.appendChild(element);
         }
         resourcePanel.hide();
 
         childrenPanel = new ChildrenPanel(this, environment, dispatcher, metadataProcessor, resources);
-        for (HTMLElement element : childrenPanel.asElements()) {
+        for (HTMLElement element : childrenPanel) {
             content.appendChild(element);
         }
         childrenPanel.hide();
@@ -179,7 +179,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                         .addAll(buttonGroup, treeContainer))
                 .add(column(8)
                         .add(content))
-                .asElement();
+                .get();
     }
 
     private void adjustHeight() {
@@ -198,7 +198,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 .build();
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, new ReadChildren(dispatcher));
         Elements.removeChildrenFrom(treeContainer);
-        treeContainer.appendChild(tree.asElement());
+        treeContainer.appendChild(tree.element());
 
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> onTreeSelection(selectionContext));
@@ -214,7 +214,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(new Node[0]));
         Elements.removeChildrenFrom(treeContainer);
-        treeContainer.appendChild(tree.asElement());
+        treeContainer.appendChild(tree.element());
         tree.attach();
         childrenPanel.hide();
         resourcePanel.hide();
@@ -241,7 +241,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                             .add(span().textContent(filter.filterText))
                             .add(a().css(clickable, tmTagRemove)
                                     .on(click, event -> clearFilter()).textContent("x"))) //NON-NLS
-                    .asElement();
+                    .get();
 
             if (oldFilterElement != null) {
                 buttonGroup.replaceChild(filterElement, oldFilterElement);
@@ -527,7 +527,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

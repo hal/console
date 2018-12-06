@@ -22,8 +22,6 @@ import java.util.function.Function;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
@@ -32,8 +30,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.collect;
 import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.elements;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.ballroom.Format.humanReadableDuration;
@@ -91,7 +89,7 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
             default:
                 break;
         }
-        return builder.asElement();
+        return builder.get();
     }
 
     @Override
@@ -114,29 +112,29 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public HasElements getAdditionalInfoElements() {
-        ElementsBuilder elements = elements();
-        elements.add(div().css(halExecutionTime)
-                .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
-                        .appendEscaped(resources.constants().start() + COLON)
-                        .appendEscaped(mediumDateTime(item.getCreateTime()))
-                        .appendHtmlConstant(BR)
-                        .appendEscaped(resources.constants().finished() + COLON)
-                        .appendEscaped(failsSafeTime(item, END_TIME,
-                                itm -> mediumDateTime(item.getEndTime())))
-                        .appendHtmlConstant(BR)
-                        .appendEscaped(resources.constants().lastModified() + COLON)
-                        .appendEscaped(failsSafeTime(item, LAST_UPDATED_TIME,
-                                itm -> mediumDateTime(item.getLastUpdatedTime())))
-                        .toSafeHtml())));
-        elements.add(div().css(halExecutionDuration)
-                .add(span()
-                        .css(fontAwesome("clock-o", x2), marginRight5)
-                        .title(resources.constants().duration()))
-                .add(p().css(CSS.lead).textContent(failsSafeTime(item, END_TIME, itm ->
-                        humanReadableDuration(
-                                itm.getEndTime().getTime() - item.getCreateTime().getTime())))));
-        return elements;
+    public Iterable<HTMLElement> getAdditionalInfoElements() {
+        return collect()
+                .add(div().css(halExecutionTime)
+                        .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
+                                .appendEscaped(resources.constants().start() + COLON)
+                                .appendEscaped(mediumDateTime(item.getCreateTime()))
+                                .appendHtmlConstant(BR)
+                                .appendEscaped(resources.constants().finished() + COLON)
+                                .appendEscaped(failsSafeTime(item, END_TIME,
+                                        itm -> mediumDateTime(item.getEndTime())))
+                                .appendHtmlConstant(BR)
+                                .appendEscaped(resources.constants().lastModified() + COLON)
+                                .appendEscaped(failsSafeTime(item, LAST_UPDATED_TIME,
+                                        itm -> mediumDateTime(item.getLastUpdatedTime())))
+                                .toSafeHtml())))
+                .add(div().css(halExecutionDuration)
+                        .add(span()
+                                .css(fontAwesome("clock-o", x2), marginRight5)
+                                .title(resources.constants().duration()))
+                        .add(p().css(CSS.lead).textContent(failsSafeTime(item, END_TIME, itm ->
+                                humanReadableDuration(
+                                        itm.getEndTime().getTime() - item.getCreateTime().getTime())))))
+                .get();
     }
 
     @Override

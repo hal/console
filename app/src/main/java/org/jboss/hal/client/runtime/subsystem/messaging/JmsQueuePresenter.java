@@ -172,7 +172,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                             List<JmsMessage> messages = context.get(MESSAGES);
                             if (count > MESSAGES_THRESHOLD) {
                                 logger.debug("More than {} messages in queue {}. Skip :list-messages operation.",
-                                        MESSAGES_THRESHOLD, queueAddress().toString());
+                                        MESSAGES_THRESHOLD, queueAddress());
                                 getView().showMany(count);
                             } else {
                                 getView().showAll(messages);
@@ -212,7 +212,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                     .build();
 
             Dialog dialog = new Dialog.Builder(resources.constants().changePriority())
-                    .add(form.asElement())
+                    .add(form.element())
                     .cancel()
                     .primary(resources.constants().ok(), () -> {
                         boolean valid = form.save();
@@ -246,7 +246,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
             form.edit(model);
             FormItem<Number> messageId = form.getFormItem(MESSAGE_ID);
             messageId.setValue(42L);
-            Elements.setVisible(messageId.asElement(Form.State.EDITING), false);
+            Elements.setVisible(messageId.element(Form.State.EDITING), false);
             FormItem<Number> priorityItem = form.getFormItem(NEW_PRIORITY);
             if (messages.size() == 1) {
                 priorityItem.setValue(messages.get(0).get(JMS_PRIORITY).asLong());
@@ -291,7 +291,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                     .build();
 
             Dialog dialog = new Dialog.Builder(resources.constants().move())
-                    .add(form.asElement())
+                    .add(form.element())
                     .cancel()
                     .primary(resources.constants().ok(), () -> {
                         boolean valid = form.save();
@@ -328,7 +328,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
             form.edit(model);
             FormItem<Number> messageId = form.getFormItem(MESSAGE_ID);
             messageId.setValue(42L);
-            Elements.setVisible(messageId.asElement(Form.State.EDITING), false);
+            Elements.setVisible(messageId.element(Form.State.EDITING), false);
             form.getFormItem(OTHER_QUEUE_NAME).setFocus(true);
         }
     }

@@ -74,7 +74,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .add(h(1).textContent(Names.JDBC_REALM))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(jdbcRealmTable)
-                .asElement();
+                .get();
 
         // principal query and key mappers
         Metadata pqMetadata = metadata.forComplexAttribute(PRINCIPAL_QUERY);
@@ -94,20 +94,20 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .unsorted()
                 .onSave((f, changedValues) -> presenter.savePrincipalQuery(selectedJdbcRealm, pqIndex, changedValues))
                 .build();
-        tabs.add(id(PRINCIPAL_QUERY, TAB), resources.constants().attributes(), pqForm.asElement());
+        tabs.add(id(PRINCIPAL_QUERY, TAB), resources.constants().attributes(), pqForm.element());
 
         keyMappers = new LinkedHashMap<>();
         for (String keyMapper : RealmsPresenter.KEY_MAPPERS) {
             Form<ModelNode> form = keyMapperForm(pqMetadata, keyMapper);
             keyMappers.put(keyMapper, form);
-            tabs.add(id(PRINCIPAL_QUERY, keyMapper, TAB), new LabelBuilder().label(keyMapper), form.asElement());
+            tabs.add(id(PRINCIPAL_QUERY, keyMapper, TAB), new LabelBuilder().label(keyMapper), form.element());
         }
 
         HTMLElement pqSection = section()
                 .add(h(1).textContent(Names.PRINCIPAL_QUERY))
                 .add(p().textContent(pqMetadata.getDescription().getDescription()))
                 .addAll(pqTable, tabs)
-                .asElement();
+                .get();
 
         pages = new Pages(id(PAGES), id(PAGE), jdbcRealmSection);
         pages.addPage(id(PAGE), id(PRINCIPAL_QUERY, PAGE),
@@ -136,8 +136,8 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
     }
 
     @Override
-    public HTMLElement asElement() {
-        return pages.asElement();
+    public HTMLElement element() {
+        return pages.element();
     }
 
     @Override

@@ -17,11 +17,11 @@ package org.jboss.hal.core.mvp;
 
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.gwt.elemento.core.HasElements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 
 /** Adapter between GWTPs views which are based on widgets and HAL views which are based on elements. */
-public interface HalView extends View, IsElement, HasElements {
+public interface HalView extends View, IsElement, Iterable<HTMLElement> {
 
     /**
      * This method should be called <em>after</em> the view's elements are attached to the DOM. Typically this method

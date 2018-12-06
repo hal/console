@@ -63,7 +63,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
                                 .on(click, event -> close()))
                         .add(header = h(3, resources.messages().notifications(0))
                                 .css(textCenter)
-                                .asElement()))
+                                .get()))
                 .add(div().css(panelGroup)
                         .add(div().css(panel, panelDefault)
                                 .add(div().css(panelHeading, hidden))
@@ -71,27 +71,27 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
                                         .aria(UIConstants.EXPANDED, UIConstants.TRUE)
                                         .add(panelBody = div().css(CSS.panelBody)
                                                 .style("overflow-y:auto")  //NON-NLS
-                                                .asElement())
+                                                .get())
                                         .add(empty = div().css(blankSlatePf)
                                                 .add(div().css(blankSlatePfIcon)
                                                         .add(span().css("pficon-info"))) //NON-NLS
                                                 .add(h(1, resources.constants().noNotifications()))
-                                                .asElement())
+                                                .get())
                                         .add(actions = div().css(drawerPfAction)
                                                 .add(markAllRead = div().css(drawerPfActionLink)
                                                         .add(button(resources.constants().markAllRead())
                                                                 .css(btn, btnLink)
                                                                 .id(Ids.NOTIFICATION_DRAWER_MARK_ALL_READ)
                                                                 .on(click, event -> markAllRead()))
-                                                        .asElement())
+                                                        .get())
                                                 .add(div().css(drawerPfActionLink)
                                                         .add(button().css(btn, btnLink)
                                                                 .id(Ids.NOTIFICATION_DRAWER_CLEAR_ALL)
                                                                 .on(click, event -> clear())
                                                                 .add(span().css(pfIcon("close")))
                                                                 .add(resources.constants().clearAll())))
-                                                .asElement()))))
-                .asElement();
+                                                .get()))))
+                .get();
 
         updateElements();
         window.onresize = (o) -> {
@@ -101,18 +101,18 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    public void setPresenter(final HeaderPresenter presenter) {
+    public void setPresenter(HeaderPresenter presenter) {
         this.presenter = presenter;
     }
 
     void add(Message message) {
         NotificationDrawerElement element = new NotificationDrawerElement(this, message, resources);
-        panelBody.insertBefore(element.asElement(), panelBody.firstElementChild);
+        panelBody.insertBefore(element.element(), panelBody.firstElementChild);
         updateElements();
         adjustHeight();
     }

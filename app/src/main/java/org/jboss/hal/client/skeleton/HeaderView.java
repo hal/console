@@ -81,7 +81,6 @@ import static org.jboss.hal.resources.FontAwesomeSize.large;
 import static org.jboss.hal.resources.Strings.abbreviateMiddle;
 import static org.jboss.hal.resources.UIConstants.HASH;
 
-@SuppressWarnings("WeakerAccess")
 @Templated("MainLayout.html#header")
 public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
@@ -142,13 +141,13 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @PostConstruct
     void init() {
         backPlaceRequest = HOMEPAGE;
-        HTMLElement root = asElement();
+        HTMLElement root = element();
         Elements.setVisible(reloadContainer, false);
         Elements.setVisible(breadcrumb, false);
 
         toastNotifications = new ToastNotifications(resources()); // adds itself to the body
         notificationDrawer = new NotificationDrawer(resources());
-        topLevelCategories.parentNode.insertBefore(notificationDrawer.asElement(), topLevelCategories);
+        topLevelCategories.parentNode.insertBefore(notificationDrawer.element(), topLevelCategories);
 
         boolean su = ac().isSuperUserOrAdministrator();
         if (!su) {
@@ -266,7 +265,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             HTMLElement activeRoles = li().css(static_, CSS.activeRoles)
                     .textContent(resources().messages().activeRoles(csr))
                     .title(resources().messages().activeRoles(csr))
-                    .asElement();
+                    .get();
             userDropdown.insertBefore(activeRoles, logoutItem);
             userDropdown.insertBefore(divider(), logoutItem);
 
@@ -274,7 +273,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 Set<String> runAsRoleSetting = settings.get(RUN_AS).asSet();
                 HTMLElement runAs = li().css(static_)
                         .textContent(resources().constants().runAs())
-                        .asElement();
+                        .get();
                 userDropdown.insertBefore(runAs, logoutItem);
 
                 stream(environment.getRoles().spliterator(), false)
@@ -284,10 +283,10 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                             HTMLElement runAsRole = li()
                                     .add(a().css(clickable).on(click, event -> presenter.runAs(role.getName()))
                                             .add(check = span().css(fontAwesome("check"), marginRight5)
-                                                    .asElement())
+                                                    .get())
                                             .add(name = span().textContent(role.getName())
-                                                    .asElement()))
-                                    .asElement();
+                                                    .get()))
+                                    .get();
                             if (!runAsRoleSetting.contains(role.getName())) {
                                 check.style.visibility = "hidden"; //NON-NLS
                             }
@@ -303,7 +302,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                             .add(a().css(clickable)
                                     .on(click, event -> presenter.clearRunAs())
                                     .textContent(resources().constants().clearRunAs()))
-                            .asElement();
+                            .get();
                     userDropdown.insertBefore(clearRunAs, logoutItem);
                 }
                 userDropdown.insertBefore(divider(), logoutItem);
@@ -312,7 +311,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     private HTMLElement divider() {
-        return li().css(CSS.divider).asElement();
+        return li().css(CSS.divider).get();
     }
 
     private void setLogo(String first, String last) {
@@ -422,7 +421,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @Override
     public void updateBreadcrumb(String title) {
         clearBreadcrumb();
-        HTMLElement li = li().textContent(title).asElement();
+        HTMLElement li = li().textContent(title).get();
         breadcrumb.insertBefore(li, breadcrumbToolsItem);
     }
 
@@ -452,7 +451,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 builder.css(active);
             }
 
-            HTMLElement key = span().css(CSS.key).asElement();
+            HTMLElement key = span().css(CSS.key).get();
             if (finderContext.getToken() != null) {
                 PlaceRequest keyRequest = new PlaceRequest.Builder()
                         .nameToken(finderContext.getToken())
@@ -460,14 +459,14 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         .build();
                 key.appendChild(a().css(clickable).on(click, event -> presenter.goTo(keyRequest))
                         .textContent(segment.getColumnTitle())
-                        .asElement());
+                        .get());
             } else {
                 key.textContent = segment.getColumnTitle();
             }
             builder.add(key)
                     .add(span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")));
 
-            HTMLElement value = span().css(CSS.value).asElement();
+            HTMLElement value = span().css(CSS.value).get();
             if (segment.supportsDropdown()) {
                 value.classList.add(dropdown);
 
@@ -479,7 +478,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
-                        .asElement());
+                        .get());
                 breadcrumbHandlers.add(bind(a, click, event -> {
                     Element ul = a.nextElementSibling;
                     segment.dropdown(finderContext, items -> {
@@ -487,7 +486,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         if (items.isEmpty()) {
                             HTMLElement empty = li().css(CSS.empty)
                                     .textContent(HeaderView.this.resources().constants().noItems())
-                                    .asElement();
+                                    .get();
                             ul.appendChild(empty);
                         } else {
                             for (DropdownItem<Object> dropdownItem : items) {
@@ -495,7 +494,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                                         .add(a().css(clickable)
                                                 .on(click, e -> dropdownItem.onSelect(finderContext))
                                                 .textContent(dropdownItem.getTitle()))
-                                        .asElement();
+                                        .get();
                                 ul.appendChild(element);
                             }
                         }
@@ -507,15 +506,15 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                     a.appendChild(span()
                             .textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH) + " ")
                             .title(breadcrumbValue)
-                            .asElement());
+                            .get());
                 } else {
-                    a.appendChild(span().textContent(breadcrumbValue + " ").asElement());
+                    a.appendChild(span().textContent(breadcrumbValue + " ").get());
                 }
-                a.appendChild(span().css(caret).asElement());
+                a.appendChild(span().css(caret).get());
                 value.appendChild(ul()
                         .css(dropdownMenu, valueDropdown)
                         .aria(UIConstants.LABELLED_BY, id)
-                        .asElement());
+                        .get());
             } else {
                 String breadcrumbValue = segment.getItemTitle();
                 if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
@@ -526,7 +525,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 }
             }
             builder.add(value);
-            breadcrumb.insertBefore(builder.asElement(), breadcrumbToolsItem);
+            breadcrumb.insertBefore(builder.get(), breadcrumbToolsItem);
         }
     }
 
@@ -535,7 +534,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         clearBreadcrumb();
         if (path == null || path.isEmpty()) {
             // deselection
-            breadcrumb.insertBefore(li().textContent(resources().constants().nothingSelected()).asElement(),
+            breadcrumb.insertBefore(li().textContent(resources().constants().nothingSelected()).get(),
                     breadcrumbToolsItem);
 
         } else {
@@ -553,12 +552,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                                         .on(click, event -> modelBrowser.select(key.id, true))
                                         .textContent(key.text)))
                         .add(span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")))
-                        .add(valueContainer = span().css(CSS.value).asElement())
-                        .asElement();
+                        .add(valueContainer = span().css(CSS.value).get())
+                        .get();
                 if (link) {
                     valueContainer.appendChild(valueContainer = a().css(clickable)
                             .on(click, event -> modelBrowser.select(value.id, true))
-                            .asElement());
+                            .get());
                 }
                 valueContainer.textContent = value.text;
                 breadcrumb.insertBefore(li, breadcrumbToolsItem);

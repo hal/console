@@ -105,19 +105,19 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
 
         LabelBuilder labelBuilder = new LabelBuilder();
         Tabs tabs = new Tabs(Ids.build(Ids.JMS_BRIDGE, Ids.TAB_CONTAINER));
-        tabs.add(Ids.JMS_BRIDGE_TAB, mbuiContext.resources().constants().attributes(), attributesForm.asElement());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), Names.SOURCE, sourceForm.asElement());
+        tabs.add(Ids.JMS_BRIDGE_TAB, mbuiContext.resources().constants().attributes(), attributesForm.element());
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), Names.SOURCE, sourceForm.element());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE_CREDENTIAL_REFERENCE, Ids.TAB),
-                labelBuilder.label(SOURCE_CREDENTIAL_REFERENCE), crSource.asElement());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET, Ids.TAB), Names.TARGET, targetForm.asElement());
+                labelBuilder.label(SOURCE_CREDENTIAL_REFERENCE), crSource.element());
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET, Ids.TAB), Names.TARGET, targetForm.element());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET_CREDENTIAL_REFERENCE, Ids.TAB),
-                labelBuilder.label(TARGET_CREDENTIAL_REFERENCE), crTarget.asElement());
+                labelBuilder.label(TARGET_CREDENTIAL_REFERENCE), crTarget.element());
 
         HTMLElement htmlSection = section()
                 .add(h(1).textContent(Names.JMS_BRIDGE))
                 .add(p().textContent(jmsBridgeMetadata.getDescription().getDescription()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         initElement(htmlSection);
     }

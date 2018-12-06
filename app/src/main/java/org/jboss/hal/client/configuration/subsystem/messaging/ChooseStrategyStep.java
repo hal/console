@@ -45,7 +45,7 @@ class ChooseStrategyStep extends WizardStep<HaPolicyWizard.Context, HaPolicyWiza
                                         .id(Ids.MESSAGING_HA_REPLICATION)
                                         .attr(UIConstants.NAME, Ids.MESSAGING_HA_CHOOSE_STRATEGY)
                                         .on(click, e -> wizard().getContext().replication = true)
-                                        .asElement())
+                                        .get())
                                 .add(span().innerHtml(resources.messages().replicationStrategy()))))
                 .add(div().css(radio)
                         .add(label()
@@ -53,18 +53,18 @@ class ChooseStrategyStep extends WizardStep<HaPolicyWizard.Context, HaPolicyWiza
                                         .id(Ids.MESSAGING_HA_SHARED_STORE)
                                         .attr(UIConstants.NAME, Ids.MESSAGING_HA_CHOOSE_STRATEGY)
                                         .on(click, e -> wizard().getContext().replication = false)
-                                        .asElement())
+                                        .get())
                                 .add(span().innerHtml(resources.messages().sharedStoreStrategy()))))
-                .asElement();
+                .get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    protected void onShow(final HaPolicyWizard.Context context) {
+    protected void onShow(HaPolicyWizard.Context context) {
         replicationRadio.checked = context.replication;
         sharedStoreRadio.checked = !context.replication;
     }

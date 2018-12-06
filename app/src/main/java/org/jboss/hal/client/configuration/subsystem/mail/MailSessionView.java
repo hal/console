@@ -93,8 +93,8 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
 
         HTMLElement mailSessionElement = section()
                 .add(p().textContent(mailSessionMetadata.getDescription().getDescription()))
-                .add(mailSessionForm.asElement())
-                .asElement();
+                .add(mailSessionForm.element())
+                .get();
         navigation.addPrimary(Ids.MAIL_SESSION_ITEM, resources.constants().attributes(),
                 fontAwesome("envelope"), mailSessionElement);
 
@@ -134,14 +134,14 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
 
         Tabs serverTabs = new Tabs(Ids.MAIL_SERVER_TAB_CONTAINER);
         serverTabs.add(Ids.build(Ids.MAIL_SERVER, SERVER, Ids.TAB), resources.constants().attributes(),
-                serverForm.asElement());
+                serverForm.element());
         serverTabs.add(Ids.build(Ids.MAIL_SERVER, CREDENTIAL_REFERENCE, Ids.TAB), Names.CREDENTIAL_REFERENCE,
-                crForm.asElement());
+                crForm.element());
 
         mailSessionElement = section()
                 .add(p().textContent(serverMetadata.getDescription().getDescription()))
                 .addAll(serverTable, serverTabs)
-                .asElement();
+                .get();
         navigation.addPrimary(Ids.MAIL_SERVER_ITEM, Names.SERVER, pfIcon("server"), mailSessionElement);
 
         // ============================================

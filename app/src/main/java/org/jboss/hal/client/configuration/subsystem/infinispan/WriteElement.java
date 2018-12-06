@@ -19,7 +19,6 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.form.Form;
@@ -57,13 +56,13 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     WriteElement(CacheType cacheType, Store store, MetadataRegistry metadataRegistry, Resources resources) {
         HTMLInputElement behindRadio;
         String radioName = Ids.build(cacheType.baseId, store.baseId, WRITE, "radio");
-        ElementsBuilder elements = elements()
+        Iterable<HTMLElement> elements = collect()
                 .add(div().css(CSS.radio)
                         .add(label()
                                 .add(behindRadio = input(radio)
                                         .attr(UIConstants.NAME, radioName)
                                         .attr(UIConstants.VALUE, BEHIND.resource)
-                                        .asElement())
+                                        .get())
                                 .add(span().textContent(BEHIND.type))))
                 .add(div().css(CSS.radio)
                         .add(label()
@@ -71,18 +70,19 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                         .attr(UIConstants.NAME, radioName)
                                         .attr(UIConstants.VALUE, THROUGH.resource)
                                         .attr(UIConstants.CHECKED, UIConstants.TRUE))
-                                .add(span().textContent(THROUGH.type))));
+                                .add(span().textContent(THROUGH.type))))
+                .get();
 
         emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, store.baseId, WRITE, Ids.EMPTY),
                 resources.constants().noWrite())
                 .description(resources.messages().noWrite())
-                .addAll(elements.asElements())
+                .addAll(elements)
                 .primaryAction(resources.constants().add(), () -> {
                     Write write = behindRadio.checked ? BEHIND : THROUGH;
                     presenter.addWrite(write);
                 })
                 .build();
-        emptyState.asElement().classList.add(marginTopLarge);
+        emptyState.element().classList.add(marginTopLarge);
 
         throughElement = div()
                 .add(p().css(marginTopLarge)
@@ -90,7 +90,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .add(button(resources.constants().switchBehaviour())
                         .css(btn, btnDefault)
                         .on(click, event -> presenter.switchWrite(THROUGH, BEHIND)))
-                .asElement();
+                .get();
 
         String id = Ids.build(cacheType.baseId, store.baseId, BEHIND.baseId, Ids.FORM);
         Metadata metadata = metadataRegistry.lookup(cacheType.template
@@ -108,21 +108,21 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .css(btn, btnDefault)
                         .on(click, event -> presenter.switchWrite(BEHIND, THROUGH)))
                 .add(behindForm)
-                .asElement();
+                .get();
 
         root = section()
                 .add(emptyState)
                 .add(throughElement)
                 .add(behindElement)
-                .asElement();
+                .get();
 
-        Elements.setVisible(emptyState.asElement(), false);
+        Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(throughElement, false);
         Elements.setVisible(behindElement, false);
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -156,7 +156,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     private void switchBehaviour(Write write) {
-        Elements.setVisible(emptyState.asElement(), write == null);
+        Elements.setVisible(emptyState.element(), write == null);
         Elements.setVisible(throughElement, write == THROUGH);
         Elements.setVisible(behindElement, write == BEHIND);
     }

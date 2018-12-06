@@ -74,17 +74,17 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         this.inputType = inputElement.type;
         this.masked = false;
         this.root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                .add(labelElement = label().css(controlLabel, halFormLabel).get())
                 .add(inputContainer = div().css(halFormInput)
                         .add(inputElement)
-                        .asElement())
-                .asElement();
+                        .get())
+                .get();
         this.inputGroup = Appearance.inputGroup();
         this.helpBlock = Appearance.helpBlock();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -191,8 +191,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             expressionContainer = span().css(inputGroupBtn)
                     .add(expressionButton = button().css(btn, btnDefault).title(CONSTANTS.resolveExpression())
                             .add(i().css(fontAwesome("link")))
-                            .asElement())
-                    .asElement();
+                            .get())
+                    .get();
         }
 
         if (!hasInputGroup()) {
@@ -264,9 +264,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                                     mask();
                                 }
                             })
-                            .add(peekIcon = i().css(fontAwesome("eye")).asElement())
-                            .asElement())
-                    .asElement();
+                            .add(peekIcon = i().css(fontAwesome("eye")).get())
+                            .get())
+                    .get();
         }
 
         if (!hasInputGroup()) {
@@ -284,8 +284,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                             .title(CONSTANTS.showAll())
                             .on(click, event -> suggestHandler.showAll())
                             .add(i().css(fontAwesome("angle-down")))
-                            .asElement())
-                    .asElement();
+                            .get())
+                    .get();
 
             if (!hasInputGroup()) {
                 wrapInputElement();

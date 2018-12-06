@@ -54,7 +54,7 @@ class NearCacheElement implements IsElement<HTMLElement>, Attachable, HasPresent
         undefinedElement = div()
                 .add(p().css(marginTopLarge)
                         .innerHtml(resources.messages().nearCacheUndefined()))
-                .asElement();
+                .get();
 
         noneElement = div()
                 .add(p().css(marginTopLarge)
@@ -62,7 +62,7 @@ class NearCacheElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .add(button(resources.constants().switchNearCache())
                         .css(btn, btnDefault)
                         .on(click, event -> presenter.switchNearCache(INVALIDATION)))
-                .asElement();
+                .get();
 
         String id = Ids.build(INVALIDATION.baseId, Ids.FORM);
         Metadata metadata = metadataRegistry.lookup(REMOTE_CACHE_CONTAINER_TEMPLATE.append("near-cache=invalidation"));
@@ -78,13 +78,13 @@ class NearCacheElement implements IsElement<HTMLElement>, Attachable, HasPresent
                         .css(btn, btnDefault)
                         .on(click, event -> presenter.switchNearCache(NONE)))
                 .add(invalidationForm)
-                .asElement();
+                .get();
 
         root = section()
                 .add(undefinedElement)
                 .add(noneElement)
                 .add(invalidationElement)
-                .asElement();
+                .get();
 
         Elements.setVisible(undefinedElement, false);
         Elements.setVisible(noneElement, false);
@@ -92,7 +92,7 @@ class NearCacheElement implements IsElement<HTMLElement>, Attachable, HasPresent
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

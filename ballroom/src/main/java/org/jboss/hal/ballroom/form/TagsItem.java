@@ -54,7 +54,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         addAppearance(Form.State.READONLY, new TagsReadOnlyAppearance());
 
         // editing appearance
-        editingAppearance = new TagsEditingAppearance(input(text).css(formControl, tags).asElement(), inputHelp,
+        editingAppearance = new TagsEditingAppearance(input(text).css(formControl, tags).get(), inputHelp,
                 editingDecorations, mapping);
         addAppearance(Form.State.EDITING, editingAppearance);
     }
@@ -106,7 +106,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
 
             tagsContainer = div().css(tagManagerContainer)
                     .id(Ids.build("tags", "container", uniqueId()))
-                    .asElement();
+                    .get();
 
             helpBlock.classList.add(CSS.hint);
             helpBlock.innerHTML = inputHelp.asString();
@@ -136,7 +136,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
             });
             api.onInvalid((event, cst) -> {
                 String message = allowedCharacters() != null ? MESSAGES.invalidTagFormat(allowedCharacters())
-                        :  MESSAGES.invalidFormat();
+                        : MESSAGES.invalidFormat();
                 showError(message);
             });
         }

@@ -127,7 +127,7 @@ public class ColumnActionFactory {
                 .title(title)
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
-                .asElement();
+                .get();
     }
 
     public <T> ColumnAction<T> refresh(String id) {
@@ -140,7 +140,7 @@ public class ColumnActionFactory {
                 .title(resources.constants().refresh())
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
-                .asElement();
+                .get();
         return new ColumnAction.Builder<T>(id)
                 .element(element)
                 .handler(handler)

@@ -68,7 +68,7 @@ import static org.jboss.hal.resources.UIConstants.*;
 public class Dialog implements IsElement {
 
     @JsIgnore public static final int PRIMARY_POSITION = 200;
-    static final int SECONDARY_POSITION = 100;
+    private static final int SECONDARY_POSITION = 100;
     private static final String SELECTOR_ID = HASH + Ids.HAL_MODAL;
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
@@ -90,12 +90,12 @@ public class Dialog implements IsElement {
                 .add(dialog = div().css(modalDialog).attr(ROLE, "document") //NON-NLS
                         .add(div().css(modalContent)
                                 .add(div().css(modalHeader)
-                                        .add(closeIcon = button().css(close).aria(LABEL, CONSTANTS.close()).asElement())
-                                        .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).asElement()))
-                                .add(body = div().css(modalBody).asElement())
-                                .add(footer = div().css(modalFooter).asElement()))
-                        .asElement())
-                .asElement();
+                                        .add(closeIcon = button().css(close).aria(LABEL, CONSTANTS.close()).get())
+                                        .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).get()))
+                                .add(body = div().css(modalBody).get())
+                                .add(footer = div().css(modalFooter).get()))
+                        .get())
+                .get();
 
         document.body.appendChild(root);
         initEventHandler();
@@ -136,7 +136,7 @@ public class Dialog implements IsElement {
 
     @Override
     @JsIgnore
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -188,7 +188,7 @@ public class Dialog implements IsElement {
                                 close();
                             }
                         })
-                        .asElement();
+                        .get();
                 Dialog.footer.appendChild(buttonElement);
                 buttons.put(position, buttonElement);
             }
@@ -325,6 +325,7 @@ public class Dialog implements IsElement {
          * callback.
          */
         @JsIgnore
+        @SuppressWarnings("WeakerAccess")
         public Builder yesNo(Callback yesCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), null, yesCallback, true));
@@ -337,6 +338,7 @@ public class Dialog implements IsElement {
          * callback.
          */
         @JsIgnore
+        @SuppressWarnings("WeakerAccess")
         public Builder okCancel(Callback okCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), null, okCallback, true));
@@ -427,7 +429,6 @@ public class Dialog implements IsElement {
         @JsIgnore
         public Builder add(Iterable<HTMLElement> elements) {
             if (elements != null) {
-                //noinspection ResultOfMethodCallIgnored
                 Iterables.addAll(this.elements, elements);
             }
             return this;

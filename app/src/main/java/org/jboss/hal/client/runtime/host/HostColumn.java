@@ -194,7 +194,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return item.isDomainController() ? ItemDisplay
                         .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
             }

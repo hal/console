@@ -113,7 +113,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     existingSubsystems.remove(LOGGING);
                 }
                 if (existingSubsystems.containsKey(MICROPROFILE_HEALTH_SMALLRYE)) {
-                    customPreviews.put(MICROPROFILE_HEALTH_SMALLRYE, new MicroprofileHealthPreview(dispatcher, statementContext, resources));
+                    customPreviews.put(MICROPROFILE_HEALTH_SMALLRYE,
+                            new MicroprofileHealthPreview(dispatcher, statementContext, resources));
                 }
 
                 // add server runtime as first item
@@ -153,9 +154,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             }
 
             @Override
-            public HTMLElement asElement() {
-                return item.getSubtitle() != null ? ItemDisplay
-                        .withSubtitle(item.getTitle(), item.getSubtitle()) : null;
+            public HTMLElement element() {
+                return item.getSubtitle() != null ? ItemDisplay.withSubtitle(item.getTitle(),
+                        item.getSubtitle()) : null;
             }
 
             @Override

@@ -199,7 +199,7 @@ class AddConfigSourceWizard {
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return root;
         }
 
@@ -314,20 +314,20 @@ class AddConfigSourceWizard {
             for (Form<ModelNode> f : forms.values()) {
                 builder.add(f);
                 registerAttachable(f);
-                setVisible(f.asElement(), false);
+                setVisible(f.element(), false);
             }
             root = builder.get();
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return root;
         }
 
         @Override
         protected void onShow(Context context) {
             descriptions.forEach((attribute, description) -> setVisible(description, context.source.equals(attribute)));
-            forms.forEach((attribute, form) -> setVisible(form.asElement(), context.source.equals(attribute)));
+            forms.forEach((attribute, form) -> setVisible(form.element(), context.source.equals(attribute)));
             forms.get(context.source).edit(context.modelNode);
         }
 
@@ -382,7 +382,7 @@ class AddConfigSourceWizard {
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return root;
         }
 

@@ -15,12 +15,12 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.Iterator;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.tree.Node;
@@ -44,14 +44,14 @@ import static org.jboss.hal.resources.CSS.lead;
  * Panel which holds the resource description, the model node form and a detailed description of the attributes and
  * operations.
  */
-class ResourcePanel implements HasElements {
+class ResourcePanel implements Iterable<HTMLElement> {
 
     private static final String RESOURCE = "resource";
 
     private final ModelBrowser modelBrowser;
     private final Dispatcher dispatcher;
     private final Resources resources;
-    private final ElementsBuilder builder;
+    private final Iterable<HTMLElement> elements;
     private final HTMLElement description;
     private final HTMLElement empty;
     private final String dataId;
@@ -75,16 +75,17 @@ class ResourcePanel implements HasElements {
         tabs.add(attributesId, resources.constants().attributes(), PLACE_HOLDER_ELEMENT);
         tabs.add(operationsId, resources.constants().operations(), PLACE_HOLDER_ELEMENT);
 
-        builder = Elements.elements()
-                .add(description = p().css(lead).asElement())
-                .add(empty = p().textContent(resources.constants().noAttributes()).asElement())
-                .add(tabs.asElement());
+        elements = Elements.collect()
+                .add(description = p().css(lead).get())
+                .add(empty = p().textContent(resources.constants().noAttributes()).get())
+                .add(tabs.element())
+                .get();
         Elements.setVisible(empty, false);
     }
 
     @Override
-    public Iterable<HTMLElement> asElements() {
-        return builder.asElements();
+    public Iterator<HTMLElement> iterator() {
+        return elements.iterator();
     }
 
     void update(Node<Context> node, ResourceAddress address, Metadata metadata) {
@@ -94,7 +95,7 @@ class ResourcePanel implements HasElements {
         tabs.setContent(dataId, PLACE_HOLDER_ELEMENT);
         tabs.setContent(attributesId, PLACE_HOLDER_ELEMENT);
         tabs.setContent(operationsId, PLACE_HOLDER_ELEMENT);
-        Elements.setVisible(tabs.asElement(), description.hasAttributes());
+        Elements.setVisible(tabs.element(), description.hasAttributes());
         Elements.setVisible(empty, !description.hasAttributes());
 
         if (description.hasAttributes()) {
@@ -109,17 +110,17 @@ class ResourcePanel implements HasElements {
                         .onSave((f, changedValues) -> modelBrowser.save(address, changedValues, metadata))
                         .prepareReset(f -> modelBrowser.reset(address, f, metadata))
                         .build();
-                tabs.setContent(dataId, form.asElement());
+                tabs.setContent(dataId, form.element());
                 PatternFly.initComponents();
                 form.attach();
                 form.view(result);
             });
 
             tabs.setContent(attributesId,
-                    new AttributesTable(metadata.getDescription().getAttributes(ATTRIBUTES), resources).asElement());
+                    new AttributesTable(metadata.getDescription().getAttributes(ATTRIBUTES), resources).element());
             if (!metadata.getDescription().getOperations().isEmpty()) {
                 tabs.setContent(operationsId,
-                        new OperationsTable(metadata.getDescription().getOperations(), resources).asElement());
+                        new OperationsTable(metadata.getDescription().getOperations(), resources).element());
             }
         }
     }
@@ -129,7 +130,7 @@ class ResourcePanel implements HasElements {
     }
 
     void hide() {
-        for (HTMLElement element : asElements()) {
+        for (HTMLElement element : elements) {
             Elements.setVisible(element, false);
         }
     }

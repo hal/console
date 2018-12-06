@@ -97,7 +97,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(configurationForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ hosts
 
@@ -125,10 +125,10 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         }
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB_CONTAINER);
-        tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
+        tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.element());
         for (HostSetting setting : HostSetting.values()) {
             tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
-                    hostSettingForms.get(setting).asElement());
+                    hostSettingForms.get(setting).element());
         }
 
         HTMLElement hostSection = section()
@@ -136,7 +136,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(hostMetadata.getDescription().getDescription()))
                 .add(hostTable)
                 .add(tabs)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ host filter refs
 
@@ -159,7 +159,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(filterRefMetadata.getDescription().getDescription()))
                 .add(filterRefTable)
                 .add(filterRefForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ host locations
 
@@ -183,7 +183,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(locationMetadata.getDescription().getDescription()))
                 .add(locationTable)
                 .add(locationForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ host location filter refs
 
@@ -209,7 +209,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(p().textContent(locationFilterRefMetadata.getDescription().getDescription()))
                 .add(locationFilterRefTable)
                 .add(locationFilterRefForm)
-                .asElement();
+                .get();
 
         // ------------------------------------------------------ pages, listener and navigation
 
@@ -232,11 +232,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         navigation.addPrimary(Ids.UNDERTOW_HOST_ITEM, Names.HOSTS, pfIcon("enterprise"), hostPages);
         navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Names.LISTENER, fontAwesome("headphones"));
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(AJP.baseId, Ids.ITEM),
-                AJP.type, listener.get(AJP).asElement());
+                AJP.type, listener.get(AJP).element());
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTP.baseId, Ids.ITEM),
-                HTTP.type, listener.get(HTTP).asElement());
+                HTTP.type, listener.get(HTTP).element());
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ITEM, Ids.build(HTTPS.baseId, Ids.ITEM),
-                HTTPS.type, listener.get(HTTPS).asElement());
+                HTTPS.type, listener.get(HTTPS).element());
 
         registerAttachable(navigation,
                 configurationForm,

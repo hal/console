@@ -80,26 +80,26 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         masked = false;
 
         root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                .add(labelElement = label().css(controlLabel, halFormLabel).get())
                 .add(div().css(halFormInput)
                         .add(valueContainer = p().css(formControlStatic)
-                                .add(valueElement = span().asElement())
-                                .asElement()))
-                .asElement();
+                                .add(valueElement = span().get())
+                                .get()))
+                .get();
 
-        hintElement = span().css(hint).asElement();
+        hintElement = span().css(hint).get();
         defaultValue = span()
                 .css(CSS.defaultValue)
                 .title(CONSTANTS.defaultValue())
-                .asElement();
+                .get();
         expressionLink = span()
                 .css(CSS.fontAwesome("link"), clickable)
                 .title(CONSTANTS.resolveExpression())
-                .asElement();
+                .get();
         restrictedMarker = span()
                 .add(span().css(fontAwesome("lock"), marginRight5).aria(HIDDEN, TRUE))
                 .add(span().textContent(CONSTANTS.restricted()))
-                .asElement();
+                .get();
         peekLink = span()
                 .css(fontAwesome("eye"), clickable)
                 .title(CONSTANTS.showSensitive())
@@ -110,12 +110,12 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                         mask();
                     }
                 })
-                .asElement();
+                .get();
         Elements.setVisible(peekLink, false);
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -128,7 +128,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ value
 
     @Override
-    public void showValue(final T value) {
+    public void showValue(T value) {
         String stringValue = asString(value);
         valueElement.textContent = stringValue;
         if (Strings.isNullOrEmpty(stringValue)) {
@@ -159,7 +159,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void showExpression(final String expression) {
+    public void showExpression(String expression) {
         valueElement.textContent = expression;
         if (Strings.isNullOrEmpty(expression)) {
             valueElement.classList.add(empty);
@@ -200,7 +200,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ decorations
 
     @Override
-    protected <C> void safeApply(final Decoration decoration, final C context) {
+    protected <C> void safeApply(Decoration decoration, C context) {
         switch (decoration) {
 
             case DEFAULT:
@@ -259,7 +259,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    protected void safeUnapply(final Decoration decoration) {
+    protected void safeUnapply(Decoration decoration) {
         switch (decoration) {
 
             case DEFAULT:
@@ -306,14 +306,14 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ properties & delegates
 
     @Override
-    public void setId(final String id) {
+    public void setId(String id) {
         this.id = Ids.build(id, READONLY.name().toLowerCase());
         root.dataset.set(FORM_ITEM_GROUP, this.id);
         valueElement.id = this.id;
     }
 
     @Override
-    public void setName(final String name) {
+    public void setName(String name) {
         // noop
     }
 
@@ -323,17 +323,17 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void setAccessKey(final char key) {
+    public void setAccessKey(char key) {
         // noop
     }
 
     @Override
-    public void setFocus(final boolean focused) {
+    public void setFocus(boolean focused) {
         // noop
     }
 
     @Override
-    public void setTabIndex(final int index) {
+    public void setTabIndex(int index) {
         // noop
     }
 }

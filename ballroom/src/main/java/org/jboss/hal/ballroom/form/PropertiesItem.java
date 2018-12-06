@@ -40,16 +40,17 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public PropertiesItem(final String name) {
+    public PropertiesItem(String name) {
         this(name, new LabelBuilder().label(name), MESSAGES.propertiesHint());
     }
 
-    public PropertiesItem(final String name, final String label) {
+    public PropertiesItem(String name, String label) {
         this(name, label, MESSAGES.propertiesHint());
     }
 
-    public PropertiesItem(final String name, final String label, final SafeHtml inputHelp) {
-        super(name, label, inputHelp, EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+    public PropertiesItem(String name, String label, SafeHtml inputHelp) {
+        super(name, label, inputHelp,
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
                 new MapMapping());
     }
 
@@ -75,7 +76,8 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
 
     private static class MapMapping implements TagsMapping<Map<String, String>> {
 
-        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\@\\;\\=\\?\\!\\#\\$\\%\\&]+)$"); //NON-NLS
+        private static final RegExp REGEX = RegExp.compile(
+                "^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\@\\;\\=\\?\\!\\#\\$\\%\\&]+)$"); //NON-NLS
         private static final String EQ = "=";
 
         @Override
@@ -84,7 +86,7 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         }
 
         @Override
-        public Map<String, String> parse(final String cst) {
+        public Map<String, String> parse(String cst) {
             if (cst != null) {
                 // split the full cst at the comma
                 Map<String, String> tags = new HashMap<>();
@@ -105,7 +107,7 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         }
 
         @Override
-        public List<String> tags(final Map<String, String> value) {
+        public List<String> tags(Map<String, String> value) {
             if (value.isEmpty()) {
                 return emptyList();
             }
@@ -117,7 +119,7 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         }
 
         @Override
-        public String asString(final Map<String, String> value) {
+        public String asString(Map<String, String> value) {
             // the \n line separator, works as there is a style: whitespace pre added in attach() method
             return value.entrySet().stream()
                     .map(entry -> entry.getKey() + " \u21D2 " + entry.getValue())

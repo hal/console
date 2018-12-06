@@ -185,7 +185,7 @@ public class RoleColumn extends FinderColumn<Role> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.isIncludeAll() && item.isScoped()) {
                     String scopedInfo = item.getBaseRole().getName() + " / " + String.join(", ", item.getScope());
                     return span().css(itemText)
@@ -197,7 +197,7 @@ public class RoleColumn extends FinderColumn<Role> {
                                             .appendHtmlConstant("<br/>") //NON-NLS
                                             .appendEscaped(scopedInfo)
                                             .toSafeHtml()))
-                            .asElement();
+                            .get();
 
                 } else if (item.isIncludeAll()) {
                     return ItemDisplay.withSubtitle(item.getName(), resources.constants().includesAll());

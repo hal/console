@@ -17,8 +17,8 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
-import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ExternalModelNode;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -65,10 +65,10 @@ public final class Mbui_SaveHandlerView extends SaveHandlerView {
                 .add(column()
                         .add(html0 = div()
                                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
-                                .asElement())
+                                .get())
                         .add(form)
                 )
-                .asElement();
+                .get();
         expressionElements.put("html0", html0);
 
         registerAttachable(form);

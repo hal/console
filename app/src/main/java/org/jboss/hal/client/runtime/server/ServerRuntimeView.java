@@ -116,20 +116,20 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
         registerAttachable(mainAttributes, bootstrapAttributes, systemProperties);
 
         HTMLElement mainAttributes = section()
-                .add(headerElement = h(1).asElement())
+                .add(headerElement = h(1).get())
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(this.mainAttributes)
-                .asElement();
+                .get();
 
         HTMLElement bootstrapSection = section()
                 .add(h(1).textContent(Names.BOOTSTRAP))
                 .add(bootstrapAttributes)
-                .asElement();
+                .get();
 
         HTMLElement systemPropertiesSection = section()
                 .add(h(1).textContent(Names.SYSTEM_PROPERTIES))
                 .add(systemProperties)
-                .asElement();
+                .get();
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);

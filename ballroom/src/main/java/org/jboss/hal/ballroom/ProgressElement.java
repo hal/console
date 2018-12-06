@@ -72,9 +72,9 @@ public class ProgressElement implements IsElement, Progress {
                         .aria("valuenow", "0")
                         .aria("valuemin", "0")
                         .aria("valuemax", "100")
-                        .add(valueElement = span().innerHtml(SafeHtmlUtils.EMPTY_SAFE_HTML).asElement())
-                        .asElement())
-                .asElement();
+                        .add(valueElement = span().innerHtml(SafeHtmlUtils.EMPTY_SAFE_HTML).get())
+                        .get())
+                .get();
 
         if (size != Size.NORMAL) {
             valueElement.classList.add(srOnly);
@@ -87,7 +87,7 @@ public class ProgressElement implements IsElement, Progress {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -132,8 +132,7 @@ public class ProgressElement implements IsElement, Progress {
                 value++;
                 double percent = min(round(((double) value / (double) max) * 100.0), 100.0);
                 progressBarElement.setAttribute(ARIA_VALUENOW, String.valueOf(percent));
-                progressBarElement.style.width = width(
-                        reverse ? String.valueOf(100 - percent) + "%" : String.valueOf(percent));
+                progressBarElement.style.width = width(reverse ? (100 - percent) + "%" : String.valueOf(percent));
                 if (label != null) {
                     valueElement.textContent = label;
                 } else {

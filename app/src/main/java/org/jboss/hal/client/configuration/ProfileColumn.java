@@ -130,7 +130,7 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.hasDefined(INCLUDES) && !item.get(INCLUDES).asList().isEmpty()) {
                     String includes = item.get(INCLUDES).asList().stream()
                             .map(ModelNode::asString)

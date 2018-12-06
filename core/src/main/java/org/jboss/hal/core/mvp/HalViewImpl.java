@@ -18,12 +18,12 @@ package org.jboss.hal.core.mvp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.Attachable;
@@ -53,26 +53,22 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
 
         // noinspection HardCodedStringLiteral
         element = div().css(marginTopLarge)
-                .add(new Alert(Icons.ERROR, SafeHtmlUtils.fromString("View not initialized")).asElement())
+                .add(new Alert(Icons.ERROR, SafeHtmlUtils.fromString("View not initialized")).element())
                 .add(p()
                         .add(span().textContent("The view is not initialized. Did you forget to call "))
                         .add(code().textContent("initElement(Element)"))
                         .add(span().textContent(" / "))
                         .add(code().textContent("initElements(Iterable<Element>)"))
                         .add(span().textContent("?")))
-                .asElement();
+                .get();
     }
 
     protected void initElement(IsElement element) {
-        initElement(element.asElement());
+        initElement(element.element());
     }
 
     protected void initElement(HTMLElement element) {
         this.element = element;
-    }
-
-    protected void initElements(HasElements elements) {
-        initElements(elements.asElements());
     }
 
     protected void initElements(Iterable<HTMLElement> elements) {
@@ -80,13 +76,13 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return element;
     }
 
     @Override
-    public Iterable<HTMLElement> asElements() {
-        return elements;
+    public Iterator<HTMLElement> iterator() {
+        return elements.iterator();
     }
 
     protected void registerAttachable(Attachable first, Attachable... rest) {

@@ -23,8 +23,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLPreElement;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.listview.ItemAction;
@@ -69,7 +67,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
         } else {
             builder.css(pfIcon(errorCircleO), listHalIconError);
         }
-        return builder.asElement();
+        return builder.get();
     }
 
     @Override
@@ -91,7 +89,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
                     resources.constants().operation() + ": <strong>" + op + "</strong><br/>"));
             html.append(SafeHtmlUtils.fromTrustedString(
                     resources.constants().address() + ": <strong>" + address + "</strong><br/>"));
-            HTMLPreElement elem = pre().css(formControlStatic, wrap).asElement();
+            HTMLPreElement elem = pre().css(formControlStatic, wrap).get();
             m.asPropertyList().forEach(prop -> {
                 boolean allowedProperties = !(prop.getName().equals(OPERATION) || prop.getName()
                         .equals(ADDRESS) || prop.getName().equals(OPERATION_HEADERS));
@@ -109,22 +107,22 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public HasElements getAdditionalInfoElements() {
-        ElementsBuilder elements = elements();
-        elements.add(div().css(halConfChangesAdditionalInfo)
-                .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
-                        .appendEscaped(resources.constants().accessMechanism() + COLON)
-                        .appendEscaped(item.getAccessMechanism())
-                        .appendHtmlConstant("<br/>")
+    public Iterable<HTMLElement> getAdditionalInfoElements() {
+        return collect()
+                .add(div().css(halConfChangesAdditionalInfo)
+                        .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
+                                .appendEscaped(resources.constants().accessMechanism() + COLON)
+                                .appendEscaped(item.getAccessMechanism())
+                                .appendHtmlConstant("<br/>")
 
-                        .appendEscaped(resources.constants().remoteAddress() + COLON)
-                        .appendEscaped(item.getRemoteAddress())
-                        .appendHtmlConstant("<br/>")
+                                .appendEscaped(resources.constants().remoteAddress() + COLON)
+                                .appendEscaped(item.getRemoteAddress())
+                                .appendHtmlConstant("<br/>")
 
-                        .appendEscaped(resources.constants().composite() + COLON)
-                        .appendEscaped(String.valueOf(item.isComposite()))
-                        .toSafeHtml())));
-        return elements;
+                                .appendEscaped(resources.constants().composite() + COLON)
+                                .appendEscaped(String.valueOf(item.isComposite()))
+                                .toSafeHtml())))
+                .get();
     }
 
     @Override

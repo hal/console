@@ -63,6 +63,7 @@ public class TagsManager {
         void onRefresh(Event event, String cst);
     }
 
+
     @JsFunction
     @FunctionalInterface
     interface InvalidListener {
@@ -72,6 +73,7 @@ public class TagsManager {
          */
         void onInvalid(Event event, String cst);
     }
+
 
     @JsFunction
     @FunctionalInterface
@@ -115,7 +117,9 @@ public class TagsManager {
         public static native Api element(HTMLInputElement element);
 
         public native void on(String event, RefreshListener refreshListener);
+
         public native void on(String event, InvalidListener invalidListener);
+
         public native void on(String event, DuplicatedListener duplicatedListener);
 
         @JsMethod(name = TAGS_MANAGER)

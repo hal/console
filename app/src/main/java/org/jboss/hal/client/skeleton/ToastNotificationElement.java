@@ -37,7 +37,7 @@ class ToastNotificationElement implements IsElement {
     ToastNotificationElement(ToastNotifications toastNotifications, Message message, Resources resources) {
         String[] cssIcon = cssIcon(message.getLevel());
         root = Elements.div().css(alert, cssIcon[0])
-                .asElement();
+                .get();
         root.appendChild(button()
                 .css(close)
                 .aria(HIDDEN, TRUE)
@@ -45,17 +45,17 @@ class ToastNotificationElement implements IsElement {
                 .data(DISMISS, ALERT)
                 .on(click, event -> toastNotifications.close(message))
                 .add(span().css(pfIcon(close)))
-                .asElement());
-        root.appendChild(span().css(pfIcon(cssIcon[1])).asElement());
-        root.appendChild(span().innerHtml(message.getMessage()).asElement());
+                .get());
+        root.appendChild(span().css(pfIcon(cssIcon[1])).get());
+        root.appendChild(span().innerHtml(message.getMessage()).get());
         if (message.hasAction() || message.getDetails() != null) {
             HTMLElement a;
             root.appendChild(span().css(marginLeft5)
                     .add(a = a()
                             .css(clickable, alertLink)
                             .data(DISMISS, ALERT)
-                            .asElement())
-                    .asElement());
+                            .get())
+                    .get());
             if (message.hasAction()) {
                 a.textContent = message.getActionTitle();
                 bind(a, click, event -> message.getCallback().execute());
@@ -71,7 +71,7 @@ class ToastNotificationElement implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

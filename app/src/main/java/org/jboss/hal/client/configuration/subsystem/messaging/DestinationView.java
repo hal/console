@@ -99,7 +99,7 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
                 .add(p().textContent(roleMetadata.getDescription().getDescription()))
                 .add(roleTable)
                 .add(roleForm)
-                .asElement();
+                .get();
 
         //noinspection HardCodedStringLiteral
         navigation.insertPrimary(Ids.MESSAGING_SECURITY_SETTING_ROLE_ITEM, "messaging-address-setting-item",

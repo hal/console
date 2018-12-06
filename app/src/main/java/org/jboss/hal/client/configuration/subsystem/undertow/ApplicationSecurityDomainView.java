@@ -76,16 +76,16 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB, resources.constants().attributes(),
-                configurationForm.asElement());
-        tabs.add(Ids.UNDERTOW_SINGLE_SIGN_ON_TAB, Names.SINGLE_SIGN_ON, ssoForm.asElement());
+                configurationForm.element());
+        tabs.add(Ids.UNDERTOW_SINGLE_SIGN_ON_TAB, Names.SINGLE_SIGN_ON, ssoForm.element());
         tabs.add(Ids.build(Ids.UNDERTOW_APP_SECURITY_DOMAIN, CREDENTIAL_REFERENCE, Ids.TAB),
-                Names.CREDENTIAL_REFERENCE, crForm.asElement());
+                Names.CREDENTIAL_REFERENCE, crForm.element());
 
         HTMLElement htmlSection = section()
                 .add(h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN))
                 .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         registerAttachable(configurationForm, ssoForm, crForm);
 

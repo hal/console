@@ -136,7 +136,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         if (!builder.coAttributes.isEmpty()) {
             Tabs tabs = new Tabs(Ids.build(builder.baseId, Ids.TAB_CONTAINER));
             tabs.add(Ids.build(builder.baseId, ATTRIBUTES, Ids.TAB),
-                    builder.mbuiContext.resources().constants().attributes(), form.asElement());
+                    builder.mbuiContext.resources().constants().attributes(), form.element());
 
             for (String complexAttribute : builder.coAttributes.keySet()) {
                 // is the complex attribute *itself* required?
@@ -202,7 +202,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     form.addFormValidation(coFormValidation);
                 }
 
-                tabs.add(Ids.build(builder.baseId, complexAttribute, Ids.TAB), type, form.asElement());
+                tabs.add(Ids.build(builder.baseId, complexAttribute, Ids.TAB), type, form.element());
                 coForms.put(complexAttribute, form);
             }
 
@@ -210,14 +210,14 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     .add(h(1).textContent(builder.type))
                     .add(p().textContent(builder.metadata.getDescription().getDescription()))
                     .addAll(table, tabs)
-                    .asElement();
+                    .get();
 
         } else {
             section = section()
                     .add(h(1).textContent(builder.type))
                     .add(p().textContent(builder.metadata.getDescription().getDescription()))
                     .addAll(table, form)
-                    .asElement();
+                    .get();
         }
 
         // complex attributes of type LIST
@@ -247,13 +247,13 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     .add(h(1).textContent(labelBuilder.label(builder.clAttribute)))
                     .add(p().textContent(metadata.getDescription().getDescription()))
                     .addAll(clTable, clForm)
-                    .asElement();
+                    .get();
 
             pages.addPage(mainPageId(), complexListPageId(),
                     () -> builder.type + ": " + selectedResource,
                     () -> labelBuilder.label(builder.clAttribute),
                     clSection);
-            root = pages.asElement();
+            root = pages.element();
 
         } else {
             pages = null;
@@ -264,7 +264,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -289,7 +289,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         });
         coForms.forEach((s, form1) -> form1.attach());
         if (Iterables.isEmpty(form.getFormItems())) {
-            Elements.setVisible(form.asElement(), false);
+            Elements.setVisible(form.element(), false);
         }
 
         if (clTable != null && clForm != null) {
@@ -363,6 +363,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
     }
 
 
+    @SuppressWarnings("unused")
     public static class Builder {
 
         private final String baseId;

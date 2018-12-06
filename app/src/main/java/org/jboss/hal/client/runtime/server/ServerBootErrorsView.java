@@ -33,15 +33,15 @@ public class ServerBootErrorsView extends HalViewImpl implements ServerBootError
     private final BootErrorsElement bootErrorsElement;
 
     @Inject
-    public ServerBootErrorsView(final MetadataRegistry metadataRegistry, final Capabilities capabilities,
-            final Resources resources) {
+    public ServerBootErrorsView(MetadataRegistry metadataRegistry, Capabilities capabilities,
+            Resources resources) {
         bootErrorsElement = new BootErrorsElement(MANAGEMENT_TEMPLATE, metadataRegistry, capabilities, resources);
         registerAttachable(bootErrorsElement);
-        initElement(bootErrorsElement.asElement());
+        initElement(bootErrorsElement.element());
     }
 
     @Override
-    public void update(final List<ModelNode> bootErrors) {
+    public void update(List<ModelNode> bootErrors) {
         bootErrorsElement.update(bootErrors);
     }
 }

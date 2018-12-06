@@ -53,7 +53,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
                     select.size = 1;
                     select.multiple = false;
                 })
-                .asElement();
+                .get();
         singleSelectBoxEditingAppearance = new SingleSelectBoxEditingAppearance(selectElement, options, allowEmpty);
         addAppearance(Form.State.EDITING, singleSelectBoxEditingAppearance);
     }

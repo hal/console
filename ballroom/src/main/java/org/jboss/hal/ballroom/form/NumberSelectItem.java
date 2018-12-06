@@ -39,11 +39,11 @@ import static org.jboss.hal.resources.CSS.*;
 /** A form item to select from a small set of distinct numbers using a button group. */
 public class NumberSelectItem extends AbstractFormItem<Long> {
 
-    public NumberSelectItem(final String name, final long[] numbers) {
+    public NumberSelectItem(String name, long[] numbers) {
         this(name, new LabelBuilder().label(name), numbers);
     }
 
-    private NumberSelectItem(final String name, final String label, final long[] numbers) {
+    private NumberSelectItem(String name, String label, long[] numbers) {
         super(name, label, null);
 
         // read-only appearance
@@ -79,7 +79,6 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
 
     private class NumberSelectEditingAppearance extends AbstractAppearance<Long> {
 
-        private static final String BUTTON_GROUP = "buttonGroup";
         private static final String NUMBER = "number";
 
         private final Map<Long, HTMLButtonElement> buttons;
@@ -93,13 +92,13 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
             this.buttons = new HashMap<>();
 
             root = div().css(formGroup)
-                    .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                    .add(labelElement = label().css(controlLabel, halFormLabel).get())
                     .add(inputContainer = div().css(halFormInput)
                             .add(buttonGroup = div().css(btnGroup)
                                     .attr(UIConstants.ROLE, UIConstants.GROUP)
-                                    .asElement())
-                            .asElement())
-                    .asElement();
+                                    .get())
+                            .get())
+                    .get();
             for (long number : numbers) {
                 String value = String.valueOf(number);
                 HTMLButtonElement button = button().css(btn, btnDefault)
@@ -109,7 +108,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
                             showValue(number);
                             modifyValue(number);
                         })
-                        .asElement();
+                        .get();
                 buttons.put(number, button);
                 buttonGroup.appendChild(button);
             }
@@ -127,12 +126,12 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return root;
         }
 
         @Override
-        public void setId(final String id) {
+        public void setId(String id) {
             this.id = Ids.build(id, EDITING.name().toLowerCase());
             root.dataset.set(FORM_ITEM_GROUP, this.id);
             buttonGroup.id = this.id;
@@ -140,12 +139,12 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        public void setName(final String name) {
+        public void setName(String name) {
             // noop
         }
 
         @Override
-        public void showValue(final Long value) {
+        public void showValue(Long value) {
             buttons.forEach((number, button) -> {
                 if (number.equals(value)) {
                     button.classList.remove(btnDefault);
@@ -163,7 +162,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        <C> void safeApply(final Decoration decoration, final C context) {
+        <C> void safeApply(Decoration decoration, C context) {
             switch (decoration) {
 
                 case DEPRECATED:
@@ -197,7 +196,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        void safeUnapply(final Decoration decoration) {
+        void safeUnapply(Decoration decoration) {
             switch (decoration) {
 
                 case DEPRECATED:
@@ -235,12 +234,12 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        public void setAccessKey(final char key) {
+        public void setAccessKey(char key) {
             // noop
         }
 
         @Override
-        public void setFocus(final boolean focused) {
+        public void setFocus(boolean focused) {
             if (focused) {
                 buttonGroup.focus();
             } else {
@@ -249,7 +248,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        public void setTabIndex(final int index) {
+        public void setTabIndex(int index) {
             buttonGroup.tabIndex = index;
         }
     }

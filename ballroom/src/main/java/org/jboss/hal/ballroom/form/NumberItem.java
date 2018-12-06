@@ -65,7 +65,7 @@ public class NumberItem extends AbstractFormItem<Long> {
         addAppearance(Form.State.READONLY, new NumberReadOnlyAppearance());
 
         // editing appearance - type="number" not possible because of expression support
-        inputElement = input(text).css(formControl).asElement();
+        inputElement = input(text).css(formControl).get();
         addAppearance(Form.State.EDITING, new NumberEditingAppearance(inputElement));
     }
 
@@ -121,7 +121,6 @@ public class NumberItem extends AbstractFormItem<Long> {
     }
 
     @Override
-    @SuppressWarnings("HardCodedStringLiteral")
     public void setExpressionAllowed(boolean expressionAllowed) {
         super.setExpressionAllowed(expressionAllowed);
         if (!expressionAllowed) {
@@ -181,7 +180,6 @@ public class NumberItem extends AbstractFormItem<Long> {
             // the attach method already bind numbers only values, so this validation would always returns numbers only
             if (!isExpressionValue() && inputElement.value != null) {
                 try {
-                    //noinspection ResultOfMethodCallIgnored
                     Long.parseLong(inputElement.value.trim());
                     return ValidationResult.OK;
                 } catch (NumberFormatException e) {

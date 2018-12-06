@@ -112,7 +112,7 @@ class AddExtensionWizard {
             urlItem = new TextBoxItem(ModelDescriptionConstants.URL);
             urlItem.setRequired(true);
 
-            ((HTMLInputElement) urlItem.asElement(EDITING).querySelector("input[type=text]")).type = "url"; //NON-NLS
+            ((HTMLInputElement) urlItem.element(EDITING).querySelector("input[type=text]")).type = "url"; //NON-NLS
             form = new ModelNodeForm.Builder<>(Ids.EXTENSION_URL_FORM, Metadata.empty())
                     .unboundFormItem(urlItem, 0, resources.messages().extensionUrl())
                     .addOnly()
@@ -121,8 +121,8 @@ class AddExtensionWizard {
         }
 
         @Override
-        public HTMLElement asElement() {
-            return form.asElement();
+        public HTMLElement element() {
+            return form.element();
         }
 
         @Override
@@ -214,8 +214,8 @@ class AddExtensionWizard {
         }
 
         @Override
-        public HTMLElement asElement() {
-            return form.asElement();
+        public HTMLElement element() {
+            return form.element();
         }
 
         @Override

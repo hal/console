@@ -55,7 +55,7 @@ import static org.jboss.hal.resources.Ids.*;
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class HostView extends MbuiViewImpl<HostPresenter> implements HostPresenter.MyView {
 
-    public static HostView create(final MbuiContext mbuiContext) {
+    public static HostView create(MbuiContext mbuiContext) {
         return new Mbui_HostView(mbuiContext);
     }
 
@@ -78,20 +78,20 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     private HTMLElement httpMgmtItemElement;
     private HTMLElement nativeMgmtItemElement;
 
-    HostView(final MbuiContext mbuiContext) {
+    HostView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         Resources resources = mbuiContext.resources();
         enableSslButton = button().id(ENABLE_SSL)
                 .textContent(resources.constants().enableSSL())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .asElement();
+                .get();
         bind(enableSslButton, click, ev -> presenter.launchEnableSSLWizard());
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .asElement();
+                .get();
         bind(disableSslButton, click, ev -> presenter.disableSSLWizard());
 
         String httpTitle = resources.constants().httpManagementInterface();
@@ -105,12 +105,12 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
 
         httpMgmtItemElement = section()
                 .add(div()
-                        .add(h(1).textContent(httpTitle).asElement())
-                        .add(p().textContent(httpMetadata.getDescription().getDescription()).asElement())
+                        .add(h(1).textContent(httpTitle).get())
+                        .add(p().textContent(httpMetadata.getDescription().getDescription()).get())
                         .add(enableSslButton)
                         .add(disableSslButton))
                 .add(httpInterfaceForm)
-                .asElement();
+                .get();
 
         String nativeTitle = resources.constants().nativeManagementInterface();
         Metadata nativeMetadata = mbuiContext.metadataRegistry().lookup(NATIVE_INTERFACE_TEMPLATE);
@@ -123,10 +123,10 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
 
         nativeMgmtItemElement = section()
                 .add(div()
-                        .add(h(1).textContent(nativeTitle).asElement())
-                        .add(p().textContent(nativeMetadata.getDescription().getDescription()).asElement()))
+                        .add(h(1).textContent(nativeTitle).get())
+                        .add(p().textContent(nativeMetadata.getDescription().getDescription()).get()))
                 .add(nativeInterfaceForm)
-                .asElement();
+                .get();
     }
 
     @PostConstruct
@@ -174,7 +174,7 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     }
 
     @Override
-    public void updateHost(final Host host) {
+    public void updateHost(Host host) {
         hostConfigurationForm.view(host);
         hostConfigurationForm.getFormItem(NAME).unmask(); // makes no sense that this is sensitive
         HTMLElement element = (HTMLElement) document.getElementById("host-configuration-title");
@@ -190,31 +190,31 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     }
 
     @Override
-    public void updateInterfaces(final List<NamedNode> interfaces) {
+    public void updateInterfaces(List<NamedNode> interfaces) {
         hostInterfaceForm.clear();
         hostInterfaceTable.update(interfaces);
     }
 
     @Override
-    public void updateJvms(final List<NamedNode> interfaces) {
+    public void updateJvms(List<NamedNode> interfaces) {
         hostJvmForm.clear();
         hostJvmTable.update(interfaces);
     }
 
     @Override
-    public void updatePaths(final List<NamedNode> paths) {
+    public void updatePaths(List<NamedNode> paths) {
         hostPathForm.clear();
         hostPathTable.update(paths);
     }
 
     @Override
-    public void updateSocketBindingGroups(final List<NamedNode> groups) {
+    public void updateSocketBindingGroups(List<NamedNode> groups) {
         hostSocketBindingGroupForm.clear();
         hostSocketBindingGroupTable.update(groups);
     }
 
     @Override
-    public void updateSystemProperties(final List<NamedNode> properties) {
+    public void updateSystemProperties(List<NamedNode> properties) {
         hostSystemPropertyForm.clear();
         hostSystemPropertyTable.update(properties);
     }

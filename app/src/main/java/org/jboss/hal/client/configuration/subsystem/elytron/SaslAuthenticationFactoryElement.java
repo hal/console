@@ -78,7 +78,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .add(h(1).textContent(Names.SASL_AUTHENTICATION_FACTORY))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .addAll(factoryTable, factoryForm)
-                .asElement();
+                .get();
 
         // mechanism configurations
         Metadata mcMetadata = metadata.forComplexAttribute(MECHANISM_CONFIGURATIONS);
@@ -100,7 +100,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .add(h(1).textContent(Names.MECHANISM_CONFIGURATIONS))
                 .add(p().textContent(mcMetadata.getDescription().getDescription()))
                 .addAll(mcTable, mcForm)
-                .asElement();
+                .get();
 
         // mechanism realm configurations
         Metadata mrcMetadata = mcMetadata.forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
@@ -121,7 +121,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .add(h(1).textContent(Names.MECHANISM_REALM_CONFIGURATIONS))
                 .add(p().textContent(mrcMetadata.getDescription().getDescription()))
                 .addAll(mrcTable, mrcForm)
-                .asElement();
+                .get();
 
         pages = new Pages(id(PAGES), id(PAGE), factorySection);
         pages.addPage(id(PAGE), id(MECHANISM_CONFIGURATIONS, PAGE),
@@ -139,8 +139,8 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     }
 
     @Override
-    public HTMLElement asElement() {
-        return pages.asElement();
+    public HTMLElement element() {
+        return pages.element();
     }
 
     @Override

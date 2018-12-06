@@ -18,7 +18,6 @@ package org.jboss.hal.client.runtime;
 import java.util.List;
 
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
@@ -45,6 +44,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -59,9 +59,8 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
     private final EmptyState noBootErrors;
     private final HTMLElement root;
 
-    public BootErrorsElement(final AddressTemplate template,
-            final MetadataRegistry metadataRegistry, final Capabilities capabilities,
-            final Resources resources) {
+    public BootErrorsElement(AddressTemplate template, MetadataRegistry metadataRegistry, Capabilities capabilities,
+            Resources resources) {
 
         // repackage the description and the value-type of the boot errors reply properties
         Metadata managementMetadata = metadataRegistry.lookup(template);
@@ -114,13 +113,13 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
                                 .add(p().textContent(resources.messages().bootErrors()))
                                 .add(table)
                                 .add(form)
-                                .asElement())
+                                .get())
                         .add(noBootErrors))
-                .asElement();
+                .get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -152,9 +151,9 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
         });
     }
 
-    public void update(final List<ModelNode> bootErrors) {
-        Elements.setVisible(bootErrorsSection, !bootErrors.isEmpty());
-        Elements.setVisible(noBootErrors.asElement(), bootErrors.isEmpty());
+    public void update(List<ModelNode> bootErrors) {
+        setVisible(bootErrorsSection, !bootErrors.isEmpty());
+        setVisible(noBootErrors.element(), bootErrors.isEmpty());
         if (!bootErrors.isEmpty()) {
             table.update(bootErrors);
             form.clear();

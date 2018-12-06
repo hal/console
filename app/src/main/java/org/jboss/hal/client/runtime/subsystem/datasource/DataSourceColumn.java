@@ -219,7 +219,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 List<String> subtitles = new ArrayList<>();
                 if (dataSource.isXa()) {
                     subtitles.add(Names.XA_DATASOURCE);
@@ -241,7 +241,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @Override
             public HTMLElement getIcon() {
                 if (dataSource.fromDeployment()) {
-                    return span().css(fontAwesome("archive")).asElement();
+                    return span().css(fontAwesome("archive")).get();
                 } else if (!dataSource.isStatisticsEnabled()) {
                     return Icons.unknown();
                 } else if (!dataSource.isEnabled()) {

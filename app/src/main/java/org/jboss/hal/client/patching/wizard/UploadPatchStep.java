@@ -23,28 +23,28 @@ public class UploadPatchStep extends WizardStep<PatchContext, PatchState> {
 
     private final PatchElement uploadElement;
 
-    public UploadPatchStep(final String title, final SafeHtml onError) {
+    public UploadPatchStep(String title, SafeHtml onError) {
         super(title);
         this.uploadElement = new PatchElement(onError);
     }
 
     @Override
-    public HTMLElement asElement() {
-        return uploadElement.asElement();
+    public HTMLElement element() {
+        return uploadElement.element();
     }
 
     @Override
-    public void reset(final PatchContext context) {
+    public void reset(PatchContext context) {
         context.file = null;
     }
 
     @Override
-    protected void onShow(final PatchContext context) {
+    protected void onShow(PatchContext context) {
         uploadElement.reset();
     }
 
     @Override
-    protected boolean onNext(final PatchContext context) {
+    protected boolean onNext(PatchContext context) {
         if (uploadElement.validate()) {
             context.file = uploadElement.getFiles().item(0);
             return true;

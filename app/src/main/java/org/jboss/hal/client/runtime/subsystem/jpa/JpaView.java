@@ -141,19 +141,19 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                     .build();
             registerAttachable(form);
             mainForms.add(form);
-            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.asElement());
+            mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.element());
         }
 
         HTMLElement section = section()
-                .add(headerElement = h(1).asElement())
-                .add(leadElement = p().css(lead).asElement())
+                .add(headerElement = h(1).get())
+                .add(leadElement = p().css(lead).get())
                 .add(p().css(clearfix)
                         .add(span().textContent(metadata.getDescription().getDescription())
                                 .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                         .add(span().css(fontAwesome("refresh"), marginRight5))
                                         .add(span().textContent(resources.constants().refresh())))))
                 .add(mainAttributesTabs)
-                .asElement();
+                .get();
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -204,9 +204,9 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                         .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                 .add(span().css(fontAwesome("refresh"), marginRight5))
                                 .add(span().textContent(resources.constants().refresh()))))
-                .add(table.asElement())
-                .add(form.asElement())
-                .asElement();
+                .add(table.element())
+                .add(form.element())
+                .get();
     }
 
     @Override

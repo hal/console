@@ -77,7 +77,7 @@ public class AddResourceDialog {
     private void init(String title, Form<ModelNode> form) {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
-                .add(form.asElement())
+                .add(form.element())
                 .primary(CONSTANTS.add(), form::save)
                 .size(Size.MEDIUM)
                 .cancel()

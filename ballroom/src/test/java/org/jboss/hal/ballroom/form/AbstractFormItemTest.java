@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Deprecation;
+import org.jboss.hal.dmr.ModelNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -35,22 +35,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "unchecked"})
 public class AbstractFormItemTest {
 
     static class TestableFormItemWithoutExpressionSupport extends AbstractFormItem<String> {
 
-        TestableFormItemWithoutExpressionSupport(final String name, final String label, final String hint,
-                final Appearance<String> readOnly, final Appearance<String> editing) {
+        TestableFormItemWithoutExpressionSupport(String name, String label, String hint,
+                Appearance<String> readOnly, Appearance<String> editing) {
             super(name, label, hint);
             addAppearance(Form.State.READONLY, readOnly);
-            addAppearance(Form.State.EDITING,editing);
+            addAppearance(Form.State.EDITING, editing);
         }
 
         @Override
@@ -77,11 +73,11 @@ public class AbstractFormItemTest {
 
     static class TestableFormItemWithExpressionSupport extends AbstractFormItem<String> {
 
-        TestableFormItemWithExpressionSupport(final String name, final String label, final String hint,
-                final Appearance<String> readOnly, final Appearance<String> editing) {
+        TestableFormItemWithExpressionSupport(String name, String label, String hint,
+                Appearance<String> readOnly, Appearance<String> editing) {
             super(name, label, hint);
             addAppearance(Form.State.READONLY, readOnly);
-            addAppearance(Form.State.EDITING,editing);
+            addAppearance(Form.State.EDITING, editing);
         }
 
         @Override
@@ -111,7 +107,7 @@ public class AbstractFormItemTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void setUp() throws Exception {
+    public void setUp() {
         readOnlyAppearance = mock(Appearance.class);
         editingAppearance = mock(Appearance.class);
         when(readOnlyAppearance.asString(anyString())).thenCallRealMethod();
@@ -122,14 +118,14 @@ public class AbstractFormItemTest {
     // ------------------------------------------------------ test methods
 
     @Test
-    public void hint() throws Exception {
+    public void hint() {
         formItem(false, "Hint");
         verify(readOnlyAppearance).apply(HINT, "Hint");
         verify(editingAppearance).apply(HINT, "Hint");
     }
 
     @Test
-    public void attach() throws Exception {
+    public void attach() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.attach();
         verify(readOnlyAppearance).attach();
@@ -137,7 +133,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void detach() throws Exception {
+    public void detach() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.detach();
         verify(readOnlyAppearance).detach();
@@ -145,7 +141,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void getId() throws Exception {
+    public void getId() {
         when(readOnlyAppearance.getId()).thenReturn("test-read-only");
         when(editingAppearance.getId()).thenReturn("test-editing");
         AbstractFormItem<String> formItem = formItem(false);
@@ -154,7 +150,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setId() throws Exception {
+    public void setId() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.setId("test");
         verify(readOnlyAppearance).setId("test");
@@ -162,7 +158,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setNullValue() throws Exception {
+    public void setNullValue() {
         AbstractFormItem<String> noExpression = formItem(false);
         noExpression.setValue(null);
         assertNull(noExpression.getValue());
@@ -183,7 +179,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setEmptyValue() throws Exception {
+    public void setEmptyValue() {
         AbstractFormItem<String> noExpression = formItem(false);
         noExpression.setValue("");
         assertEquals("", noExpression.getValue());
@@ -204,7 +200,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setValue() throws Exception {
+    public void setValue() {
         AbstractFormItem<String> noExpression = formItem(false);
         boolean modified = noExpression.isModified();
         boolean undefined = noExpression.isUndefined();
@@ -235,7 +231,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void clearValue() throws Exception {
+    public void clearValue() {
         AbstractFormItem<String> noExpression = formItem(false);
         boolean modified = noExpression.isModified();
         boolean undefined = noExpression.isUndefined();
@@ -270,7 +266,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void modifyValue() throws Exception {
+    public void modifyValue() {
         AbstractFormItem<String> noExpression = formItem(false);
         noExpression.setModified(false);
         noExpression.setUndefined(true);
@@ -301,7 +297,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void defaultValue() throws Exception {
+    public void defaultValue() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.assignDefaultValue("foo");
         formItem.clearValue();
@@ -317,7 +313,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setName() throws Exception {
+    public void setName() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.setName("foo");
         verify(readOnlyAppearance).setName("foo");
@@ -325,7 +321,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void requiresValidation() throws Exception {
+    public void requiresValidation() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.setUndefined(false);
         formItem.setRequired(true);
@@ -348,7 +344,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void valid() throws Exception {
+    public void valid() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.addValidationHandler(value -> ValidationResult.OK);
         formItem.setModified(true);
@@ -359,7 +355,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void invalid() throws Exception {
+    public void invalid() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.addValidationHandler(value -> ValidationResult.invalid("error"));
         formItem.setUndefined(false);
@@ -371,7 +367,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void isExpressionValue() throws Exception {
+    public void isExpressionValue() {
         AbstractFormItem<String> noExpression = formItem(false);
         assertFalse(noExpression.isExpressionValue());
 
@@ -392,7 +388,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setExpressionValue() throws Exception {
+    public void setExpressionValue() {
         AbstractFormItem<String> formItem = formItem(true);
         boolean modified = formItem.isModified();
         boolean undefined = formItem.isUndefined();
@@ -411,7 +407,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void modifyExpressionValue() throws Exception {
+    public void modifyExpressionValue() {
         AbstractFormItem<String> formItem = formItem(true);
         formItem.setModified(false);
         formItem.setUndefined(true);
@@ -427,11 +423,11 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void registerSuggestHandler() throws Exception {
+    public void registerSuggestHandler() {
         AbstractFormItem<String> formItem = formItem(false);
         SuggestHandler suggestHandler = new SuggestHandler() {
             @Override
-            public void setFormItem(final FormItem formItem) {
+            public void setFormItem(FormItem formItem) {
 
             }
 
@@ -451,7 +447,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setRestricted() throws Exception {
+    public void setRestricted() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.setRestricted(true);
         verify(readOnlyAppearance).apply(RESTRICTED, null);
@@ -465,7 +461,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setEnabled() throws Exception {
+    public void setEnabled() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.setEnabled(false);
         verify(readOnlyAppearance).unapply(ENABLED);
@@ -479,7 +475,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setRequired() throws Exception {
+    public void setRequired() {
         AbstractFormItem<String> formItem = formItem(false);
         formItem.setRequired(true);
         verify(readOnlyAppearance).apply(REQUIRED, null);
@@ -493,7 +489,7 @@ public class AbstractFormItemTest {
     }
 
     @Test
-    public void setDeprecated() throws Exception {
+    public void setDeprecated() {
         ModelNode modelNode = new ModelNode();
         modelNode.get(SINCE).set("1.2.3");
         modelNode.get(REASON).set("why not");

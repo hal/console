@@ -40,12 +40,12 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
     private final HTMLButtonElement button;
 
-    public ButtonItem(final String name, final String label) {
+    public ButtonItem(String name, String label) {
         super(name, label, null);
 
         addAppearance(Form.State.READONLY, new ButtonReadOnlyAppearance(label));
 
-        button = button().textContent(label).css(Button.DEFAULT_CSS).asElement();
+        button = button().textContent(label).css(Button.DEFAULT_CSS).get();
         addAppearance(Form.State.EDITING, new ButtonEditingAppearance(button));
     }
 
@@ -74,7 +74,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
         }
 
         @Override
-        public String asString(final Void value) {
+        public String asString(Void value) {
             return label;
         }
 
@@ -94,14 +94,14 @@ public class ButtonItem extends AbstractFormItem<Void> {
             super(EnumSet.of(DEPRECATED, ENABLED));
             this.button = button;
             this.root = div().css(formGroup)
-                    .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                    .add(labelElement = label().css(controlLabel, halFormLabel).get())
                     .add(div().css(halFormInput)
                             .add(button))
-                    .asElement();
+                    .get();
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return root;
         }
 
@@ -117,7 +117,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
 
         @Override
-        public void showValue(final Void value) {
+        public void showValue(Void value) {
             // noop
         }
 
@@ -127,22 +127,22 @@ public class ButtonItem extends AbstractFormItem<Void> {
         }
 
         @Override
-        public void setId(final String id) {
+        public void setId(String id) {
             button.id = id;
         }
 
         @Override
-        public void setName(final String name) {
+        public void setName(String name) {
             button.name = name;
         }
 
         @Override
-        public void setLabel(final String label) {
+        public void setLabel(String label) {
             labelElement.textContent = "";
         }
 
         @Override
-        <C> void safeApply(final Decoration decoration, final C context) {
+        <C> void safeApply(Decoration decoration, C context) {
             switch (decoration) {
 
                 case DEPRECATED:
@@ -169,7 +169,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
         }
 
         @Override
-        void safeUnapply(final Decoration decoration) {
+        void safeUnapply(Decoration decoration) {
             switch (decoration) {
 
                 case DEPRECATED:
@@ -201,12 +201,12 @@ public class ButtonItem extends AbstractFormItem<Void> {
         }
 
         @Override
-        public void setAccessKey(final char key) {
+        public void setAccessKey(char key) {
             button.accessKey = String.valueOf(key);
         }
 
         @Override
-        public void setFocus(final boolean focused) {
+        public void setFocus(boolean focused) {
             if (focused) {
                 button.focus();
             } else {
@@ -215,7 +215,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
         }
 
         @Override
-        public void setTabIndex(final int index) {
+        public void setTabIndex(int index) {
             button.tabIndex = index;
         }
     }

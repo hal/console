@@ -129,7 +129,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 mbuiContext.resources());
         registerAttachable(ldapKeyStoreElement);
         navigation.addSecondary(Ids.ELYTRON_STORE_ITEM, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE,
-                ldapKeyStoreElement.asElement());
+                ldapKeyStoreElement.element());
 
         // ==== SSL elements
 
@@ -352,7 +352,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         Metadata policyMetadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.POLICY_TEMPLATE);
         policyElement = new PolicyElement(policyMetadata, mbuiContext.resources());
         registerAttachable(policyElement);
-        navigation.addSecondary(Ids.ELYTRON_OTHER_ITEM, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.asElement());
+        navigation.addSecondary(Ids.ELYTRON_OTHER_ITEM, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.element());
 
 
         initElement(row()
@@ -365,7 +365,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
             String primaryId, String secondaryId, @NonNls String text) {
         elements.put(resource.resource, element);
         registerAttachable(element);
-        navigation.addSecondary(primaryId, secondaryId, text, element.asElement());
+        navigation.addSecondary(primaryId, secondaryId, text, element.element());
     }
 
 

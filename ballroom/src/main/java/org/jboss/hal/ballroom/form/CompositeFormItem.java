@@ -91,8 +91,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
                     appearance.setLabel(getLabel() + " / " + formItem.getLabel());
                 }
             }
-            editingContainer.appendChild(formItem.asElement(EDITING));
-            readOnlyContainer.appendChild(formItem.asElement(READONLY));
+            editingContainer.appendChild(formItem.element(EDITING));
+            readOnlyContainer.appendChild(formItem.element(READONLY));
             if (iterator.hasNext()) {
                 HTMLHRElement hr = hr().css(separator).get();
                 readOnlyContainer.appendChild(hr);
@@ -107,13 +107,13 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    public HTMLElement asElement(Form.State state) {
+    public HTMLElement element(Form.State state) {
         if (state == EDITING) {
             return editingContainer;
         } else if (state == READONLY) {
             return readOnlyContainer;
         } else {
-            throw new IllegalStateException("Unknown state in CompositeFormItem.asElement(" + state + ")");
+            throw new IllegalStateException("Unknown state in CompositeFormItem.element(" + state + ")");
         }
     }
 

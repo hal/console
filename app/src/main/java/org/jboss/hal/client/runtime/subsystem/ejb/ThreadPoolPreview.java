@@ -65,7 +65,7 @@ public class ThreadPoolPreview extends PreviewContent<SubsystemMetadata> {
                 .build();
         registerAttachable(tasks);
         threads = new Utilization(new LabelBuilder().label(CURRENT_THREAD_COUNT), Names.THREADS, false, false);
-        threads.asElement().style.marginTop = MarginTopUnionType.of(Skeleton.MARGIN_BIG + "px"); //NON-NLS
+        threads.element().style.marginTop = MarginTopUnionType.of(Skeleton.MARGIN_BIG + "px"); //NON-NLS
         previewBuilder()
                 .add(h(2, Names.THREAD_POOL))
                 .add(tasks)

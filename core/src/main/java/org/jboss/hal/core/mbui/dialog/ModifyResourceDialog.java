@@ -44,7 +44,7 @@ public class ModifyResourceDialog {
     private void init(String title, Form<ModelNode> form, org.jboss.hal.spi.Callback closed) {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
-                .add(form.asElement())
+                .add(form.element())
                 .saveCancel(form::save)
                 .size(Size.MEDIUM)
                 .closed(closed)

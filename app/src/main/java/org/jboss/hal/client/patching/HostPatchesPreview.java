@@ -48,8 +48,8 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
     private final Resources resources;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    HostPatchesPreview(final HostActions hostActions, final NamedNode host,
-            final Resources resources) {
+    HostPatchesPreview(HostActions hostActions, NamedNode host,
+            Resources resources) {
         super(host.getName(), host.get(MASTER).asBoolean() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER,
                 resources);
         this.hostActions = hostActions;
@@ -57,15 +57,15 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
 
         previewBuilder()
                 .add(alertContainer = div()
-                        .add(alertIcon = span().asElement())
-                        .add(alertText = span().asElement())
+                        .add(alertIcon = span().get())
+                        .add(alertText = span().get())
                         .add(span().textContent(" "))
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.restart(namedNodeToHost(host)))
                                 .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
                                 .textContent(resources.constants().restart())
-                                .asElement())
-                        .asElement());
+                                .get())
+                        .get());
 
         attributes = new PreviewAttributes<>(host)
                 .append(model -> {
@@ -83,7 +83,7 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
     }
 
     @Override
-    public void update(final NamedNode item) {
+    public void update(NamedNode item) {
         Host host = namedNodeToHost(item);
         if (hostActions.isPending(host)) {
             pending(resources.messages().hostPending(host.getName()));
@@ -105,6 +105,6 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
         // Important when constraints for the links are processed later.
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
-        attributes.asElements().forEach(element -> Elements.setVisible(element, !host.isStarting()));
+        attributes.forEach(element -> Elements.setVisible(element, !host.isStarting()));
     }
 }

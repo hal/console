@@ -16,7 +16,6 @@
 package org.jboss.hal.client.accesscontrol;
 
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
@@ -27,6 +26,7 @@ import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 
 class AccessControlPreview extends PreviewContent<Void> {
 
@@ -46,15 +46,15 @@ class AccessControlPreview extends PreviewContent<Void> {
         HTMLElement content;
         previewBuilder().add(warning);
         previewBuilder().add(warningSso);
-        previewBuilder().add(content = section().asElement());
+        previewBuilder().add(content = section().get());
         Previews.innerHtml(content, resources.previews().rbacOverview());
         update(null);
     }
 
     @Override
-    public void update(final Void item) {
-        Elements.setVisible(warning.asElement(),
+    public void update(Void item) {
+        setVisible(warning.element(),
                 environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
-        Elements.setVisible(warningSso.asElement(), environment.isSingleSignOn());
+        setVisible(warningSso.element(), environment.isSingleSignOn());
     }
 }

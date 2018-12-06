@@ -24,7 +24,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Deployment;
@@ -53,8 +52,8 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
     private Environment environment;
     private Deployment deployment;
 
-    DeploymentPreview(final String header, final ServerActions serverActions,
-            final Environment environment, final Deployment deployment) {
+    DeploymentPreview(String header, ServerActions serverActions,
+            Environment environment, Deployment deployment) {
         super(header);
         this.serverActions = serverActions;
         this.environment = environment;
@@ -69,7 +68,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
         attributes.append(model -> {
             String label = String.join(", ",
                     labelBuilder.label(ENABLED), labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
-            ElementsBuilder elements = elements()
+            Iterable<HTMLElement> elements = collect()
                     .add(span()
                             .title(labelBuilder.label(ENABLED))
                             .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))
@@ -78,8 +77,9 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                             .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
                     .add(span()
                             .title(labelBuilder.label(EXPLODED))
-                            .css(flag(failSafeBoolean(model, EXPLODED))));
-            return new PreviewAttribute(label, elements.asElements());
+                            .css(flag(failSafeBoolean(model, EXPLODED))))
+                    .get();
+            return new PreviewAttribute(label, elements);
         });
     }
 
@@ -91,9 +91,9 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
         HTMLElement ul;
         previewBuilder()
                 .add(h(2).textContent(Names.SUBDEPLOYMENTS))
-                .add(ul = ul().asElement());
+                .add(ul = ul().get());
         deployment.getSubdeployments().forEach(
-                subdeployment -> ul.appendChild(li().textContent(subdeployment.getName()).asElement()));
+                subdeployment -> ul.appendChild(li().textContent(subdeployment.getName()).get()));
     }
 
     void contextRoot(PreviewAttributes<T> attributes, Deployment deployment) {
@@ -103,11 +103,11 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                 attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOT,
                         span().textContent(contextRoot.asString())
                                 .data(LINK, "")
-                                .asElement()));
+                                .get()));
             }
 
         } else if (deployment.hasNestedSubsystem(UNDERTOW)) {
-            HTMLElement ul = ul().asElement();
+            HTMLElement ul = ul().get();
             for (Subdeployment subdeployment : deployment.getSubdeployments()) {
                 ModelNode contextRoot = failSafeGet(subdeployment, String.join("/", SUBSYSTEM, UNDERTOW, CONTEXT_ROOT));
                 if (contextRoot.isDefined()) {
@@ -118,7 +118,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                             .appendHtmlConstant("&rarr;") //NON-NLS
                             .append(contextHtml)
                             .toSafeHtml();
-                    ul.appendChild(li().innerHtml(safeHtml).asElement());
+                    ul.appendChild(li().innerHtml(safeHtml).get());
                 }
             }
             attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOTS, ul));
@@ -133,7 +133,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
 
     private void injectUrls() {
         List<HTMLElement> linkContainers = new ArrayList<>();
-        asElements().forEach(e -> {
+        forEach(e -> {
             List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
                     .filter(htmlElements())
                     .map(asHtmlElement())
@@ -160,7 +160,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                                 linkContainer.appendChild(a(url.getUrl() + link)
                                         .apply(a -> a.target = Ids.hostServer(host, server))
                                         .textContent(link)
-                                        .asElement());
+                                        .get());
                             }
                         }
                     });

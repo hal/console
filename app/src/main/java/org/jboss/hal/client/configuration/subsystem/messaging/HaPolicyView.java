@@ -72,7 +72,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
                 .description(resources.messages().addHaPolicy())
                 .primaryAction(resources.messages().addResourceTitle(Names.HA_POLICY), () -> presenter.addHaPolicy())
                 .build();
-        emptyState.asElement().classList.add(marginTopLarge);
+        emptyState.element().classList.add(marginTopLarge);
 
         policyElements = new HashMap<>();
         policyForms = new HashMap<>();
@@ -86,7 +86,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         createSimple(HaPolicy.SHARED_STORE_MASTER);
         createSimple(HaPolicy.SHARED_STORE_SLAVE);
 
-        root = div().asElement();
+        root = div().get();
         initElement(root);
     }
 
@@ -101,7 +101,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
                         .textContent(resources.constants().remove()))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(form)
-                .asElement();
+                .get();
 
         policyForms.put(haPolicy, form);
         policyElements.put(haPolicy, element);
@@ -115,9 +115,9 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
 
         Tabs tabs = new Tabs(Ids.build(haPolicy.baseId, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(haPolicy.baseId, Ids.TAB), resources.constants().attributes(),
-                colocatedForm.asElement());
-        tabs.add(Ids.build(haPolicy.master.baseId, Ids.TAB), Names.MASTER, masterForm.asElement());
-        tabs.add(Ids.build(haPolicy.slave.baseId, Ids.TAB), Names.SLAVE, slaveForm.asElement());
+                colocatedForm.element());
+        tabs.add(Ids.build(haPolicy.master.baseId, Ids.TAB), Names.MASTER, masterForm.element());
+        tabs.add(Ids.build(haPolicy.slave.baseId, Ids.TAB), Names.SLAVE, slaveForm.element());
 
         HTMLElement element = section().css(clearfix)
                 .add(h(1).textContent(haPolicy.type))
@@ -126,7 +126,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
                         .textContent(resources.constants().remove()))
                 .add(p().textContent(colocatedMetadata.getDescription().getDescription()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         policyForms.put(haPolicy, colocatedForm);
         policyForms.put(haPolicy.master, masterForm);
@@ -169,7 +169,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
     public void empty() {
         detachForms();
         Elements.removeChildrenFrom(root);
-        root.appendChild(emptyState.asElement());
+        root.appendChild(emptyState.element());
     }
 
     @Override

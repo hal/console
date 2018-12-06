@@ -26,7 +26,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -39,7 +38,7 @@ class AboutDialog {
 
     private static final String SELECTOR_ID = HASH + Ids.ABOUT_MODAL;
 
-    AboutDialog(final Environment environment, final Endpoints endpoints, final Resources resources) {
+    AboutDialog(Environment environment, Endpoints endpoints, Resources resources) {
         if (document.getElementById(Ids.ABOUT_MODAL) == null) {
             ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder()
                     .put(resources.constants().productName(), failSafe(environment.getInstanceInfo().productName()))
@@ -58,8 +57,8 @@ class AboutDialog {
             }
             List<HTMLElement> elements = new ArrayList<>();
             builder.build().forEach((key, value) -> {
-                elements.add(dt().textContent(key).asElement());
-                elements.add(dd().textContent(value).asElement());
+                elements.add(dt().textContent(key).get());
+                elements.add(dd().textContent(value).get());
             });
 
             HTMLElement about = div().id(Ids.ABOUT_MODAL).css(modal, fade, in)
@@ -81,21 +80,13 @@ class AboutDialog {
                                                             .addAll(elements))))
                                     .add(div().css(modalFooter)
                                             .add(img(resources.theme().logos().about().getSafeUri().asString())))))
-                    .asElement();
+                    .get();
             document.body.appendChild(about);
         }
     }
 
     private String failSafe(String value) {
         return value != null && !UNDEFINED.equals(value) ? value : Names.NOT_AVAILABLE;
-    }
-
-    private List<HTMLElement> line(@NonNls String title, String value) {
-        List<HTMLElement> elements = new ArrayList<>();
-        String failSafeValue = value != null && !UNDEFINED.equals(value) ? value : Names.NOT_AVAILABLE;
-        elements.add(dt().textContent(title).asElement());
-        elements.add(dd().textContent(failSafeValue).asElement());
-        return elements;
     }
 
     void show() {

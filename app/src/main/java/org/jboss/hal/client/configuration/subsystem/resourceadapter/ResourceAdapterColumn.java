@@ -130,10 +130,9 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.hasTransactionSupport()) {
-                    return ItemDisplay
-                            .withSubtitle(item.getName(), item.get(TRANSACTION_SUPPORT).asString());
+                    return ItemDisplay.withSubtitle(item.getName(), item.get(TRANSACTION_SUPPORT).asString());
                 }
                 return null;
             }
@@ -141,8 +140,8 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
             @Override
             public HTMLElement getIcon() {
                 return item.getAdapterType() == AdapterType.ARCHIVE
-                        ? span().css(fontAwesome("archive")).asElement()
-                        : span().css(fontAwesome("cubes")).asElement();
+                        ? span().css(fontAwesome("archive")).get()
+                        : span().css(fontAwesome("cubes")).get();
             }
 
             @Override

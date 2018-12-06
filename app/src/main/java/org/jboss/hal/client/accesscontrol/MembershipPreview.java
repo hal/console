@@ -28,7 +28,7 @@ class MembershipPreview extends PreviewContent<Assignment> {
 
     private static final String SPACE = " ";
 
-    MembershipPreview(final AccessControlTokens tokens, final Principal principal, final Resources resources) {
+    MembershipPreview(AccessControlTokens tokens, Principal principal, Resources resources) {
         super((principal.getType() == Principal.Type.USER
                         ? resources.constants().user()
                         : resources.constants().group()) + SPACE + principal.getName(),
@@ -37,13 +37,13 @@ class MembershipPreview extends PreviewContent<Assignment> {
                         : null);
 
         HTMLElement p;
-        previewBuilder().add(p = p().asElement());
+        previewBuilder().add(p = p().get());
         if (principal.getType() == Principal.Type.USER) {
-            p.appendChild(span().textContent(resources.constants().assignmentsOfUser() + SPACE).asElement());
+            p.appendChild(span().textContent(resources.constants().assignmentsOfUser() + SPACE).get());
         } else {
-            p.appendChild(span().textContent(resources.constants().assignmentsOfGroup() + SPACE).asElement());
+            p.appendChild(span().textContent(resources.constants().assignmentsOfGroup() + SPACE).get());
         }
-        p.appendChild(a(tokens.principal(principal)).textContent(principal.getName()).asElement());
-        p.appendChild(span().textContent(".").asElement());
+        p.appendChild(a(tokens.principal(principal)).textContent(principal.getName()).get());
+        p.appendChild(span().textContent(".").get());
     }
 }

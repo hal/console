@@ -116,7 +116,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, ITEM),
                 "mappers-decoders-custom-permission-mapper-item",
                 "Constant Permission Mapper",
-                constantPermissionMapperElement.asElement());
+                constantPermissionMapperElement.element());
 
         registerAttachable(constantPermissionMapperElement);
 
@@ -147,7 +147,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(mappedRoleMapperTable)
                 .add(mappedRoleMapperForm)
-                .asElement();
+                .get();
 
         registerAttachable(mappedRoleMapperTable, mappedRoleMapperForm);
 
@@ -164,7 +164,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, ITEM),
                 "mappers-decoders-simple-permission-mapper-item",
                 "Simple Permission Mapper",
-                simplePermissionMapperElement.asElement());
+                simplePermissionMapperElement.element());
 
         registerAttachable(simplePermissionMapperElement);
     }

@@ -35,7 +35,7 @@ public class ChoosePasswordTypeStep extends WizardStep<PasswordContext, Password
     private final HTMLElement root;
     private Resources resources;
 
-    ChoosePasswordTypeStep(final Resources resources) {
+    ChoosePasswordTypeStep(Resources resources) {
         super(resources.constants().chooseIdentityPasswordTitle());
         this.resources = resources;
 
@@ -50,10 +50,10 @@ public class ChoosePasswordTypeStep extends WizardStep<PasswordContext, Password
                                     .id(type.name())
                                     .attr(UIConstants.NAME, SET_PASSWORD)
                                     .on(click, e -> wizard().getContext().type = type)
-                                    .asElement())
+                                    .get())
                             .add(span().textContent(getDescription(type)))));
         }
-        root = builder.asElement();
+        root = builder.get();
     }
 
     private String getDescription(PasswordContext.PasswordType type) {
@@ -88,17 +88,17 @@ public class ChoosePasswordTypeStep extends WizardStep<PasswordContext, Password
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    public void reset(final PasswordContext context) {
+    public void reset(PasswordContext context) {
         context.type = null;
     }
 
     @Override
-    protected boolean onNext(final PasswordContext context) {
+    protected boolean onNext(PasswordContext context) {
         return context.type != null;
     }
 }

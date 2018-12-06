@@ -89,19 +89,19 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     private final DataSourceTemplates templates;
 
     @Inject
-    public DataSourceColumn(final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final EventBus eventBus,
-            final StatementContext statementContext,
-            final Environment environment,
-            final @Footer Provider<Progress> progress,
-            final Resources resources,
-            final Places places,
-            final DataSourceTemplates templates,
-            final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory) {
+    public DataSourceColumn(MetadataRegistry metadataRegistry,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            EventBus eventBus,
+            StatementContext statementContext,
+            Environment environment,
+            @Footer Provider<Progress> progress,
+            Resources resources,
+            Places places,
+            DataSourceTemplates templates,
+            Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory) {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_CONFIGURATION, Names.DATASOURCE)
                 .withFilter()
@@ -157,7 +157,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
             }
 
@@ -228,7 +228,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         setPreviewCallback(item -> new DataSourcePreview(this, item, resources));
     }
 
-    private void prepareWizard(final boolean xa) {
+    private void prepareWizard(boolean xa) {
         Task<FlowContext> readDataSources = context ->
                 crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE)
                         .doOnSuccess(children -> {
@@ -261,7 +261,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 });
     }
 
-    private void showWizard(List<DataSource> dataSources, List<JdbcDriver> drivers, final boolean xa) {
+    private void showWizard(List<DataSource> dataSources, List<JdbcDriver> drivers, boolean xa) {
         DataSourceWizard wizard = new DataSourceWizard(this, metadataRegistry, dispatcher, eventBus,
                 statementContext, environment, progress, resources, templates, dataSources, drivers, xa);
         wizard.show();
@@ -273,11 +273,11 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
     }
 
-    void disable(final DataSource dataSource) {
+    void disable(DataSource dataSource) {
         setEnabled(dataSourceAddress(dataSource), false, resources.messages().dataSourceDisabled(dataSource.getName()));
     }
 
-    void enable(final DataSource dataSource) {
+    void enable(DataSource dataSource) {
         setEnabled(dataSourceAddress(dataSource), true, resources.messages().dataSourceEnabled(dataSource.getName()));
     }
 
@@ -292,7 +292,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         });
     }
 
-    private void testConnection(final DataSource dataSource) {
+    private void testConnection(DataSource dataSource) {
         if (environment.isStandalone()) {
             ResourceAddress address = new ResourceAddress()
                     .add(SUBSYSTEM, DATASOURCES)

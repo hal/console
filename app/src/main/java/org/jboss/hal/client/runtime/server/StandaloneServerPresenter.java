@@ -224,7 +224,7 @@ public class StandaloneServerPresenter
                 .unboundFormItem(reload)
                 .build();
         form.attach();
-        HTMLElement formElement = form.asElement();
+        HTMLElement formElement = form.element();
 
         ModelNode model = new ModelNode();
         model.setEmptyObject();

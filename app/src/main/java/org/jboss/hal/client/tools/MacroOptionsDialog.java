@@ -51,7 +51,7 @@ public class MacroOptionsDialog {
                 ? ValidationResult.invalid(resources.constants().duplicateMacro()) : ValidationResult.OK);
 
         dialog = new Dialog.Builder(resources.constants().startMacro())
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().ok(), form::save)
                 .cancel()
                 .build();

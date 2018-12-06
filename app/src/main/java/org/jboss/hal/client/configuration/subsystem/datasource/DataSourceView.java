@@ -198,14 +198,14 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         Form.PrepareReset<DataSource> prepareReset = (f) -> presenter.resetDataSource(f);
 
         Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
-        nonXaInfo = p().textContent(nonXaMeta.getDescription().getDescription()).asElement();
+        nonXaInfo = p().textContent(nonXaMeta.getDescription().getDescription()).get();
         GroupedForm.Builder<DataSource> nonXaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.DATA_SOURCE_FORM,
                 nonXaMeta)
                 .onSave(saveCallback)
                 .prepareReset(prepareReset);
 
         Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
-        xaInfo = p().textContent(xaMeta.getDescription().getDescription()).asElement();
+        xaInfo = p().textContent(xaMeta.getDescription().getDescription()).get();
         GroupedForm.Builder<DataSource> xaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.XA_DATA_SOURCE_FORM,
                 xaMeta).onSave(saveCallback);
 
@@ -271,12 +271,12 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         initElement(row()
                 .add(column()
-                        .add(header = h(1).textContent(Names.DATASOURCE).asElement())
+                        .add(header = h(1).textContent(Names.DATASOURCE).get())
                         .add(nonXaInfo)
                         .add(xaInfo)
                         .add(nonXaForm)
                         .add(xaForm))
-                .asElement());
+                .get());
     }
 
     @Override
@@ -351,7 +351,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private void showHide(boolean xa) {
         Elements.setVisible(nonXaInfo, !xa);
         Elements.setVisible(xaInfo, xa);
-        Elements.setVisible(nonXaForm.asElement(), !xa);
-        Elements.setVisible(xaForm.asElement(), xa);
+        Elements.setVisible(nonXaForm.element(), !xa);
+        Elements.setVisible(xaForm.element(), xa);
     }
 }

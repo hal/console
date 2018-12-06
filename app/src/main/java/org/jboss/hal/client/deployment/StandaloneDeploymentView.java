@@ -56,15 +56,15 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
 
         if (supportsReadContent) {
             tabs = new Tabs(Ids.DEPLOYMENT_TAB_CONTAINER)
-                    .add(Ids.CONTENT_TAB, resources.constants().content(), browseContent.asElement())
-                    .add(Ids.DEPLOYMENT_TAB, Names.MANAGEMENT_MODEL, deploymentModel.asElements());
-            ((HTMLElement) tabs.asElement().querySelector("." + navTabsHal)).style.marginTop =
+                    .add(Ids.CONTENT_TAB, resources.constants().content(), browseContent.element())
+                    .add(Ids.DEPLOYMENT_TAB, Names.MANAGEMENT_MODEL, deploymentModel);
+            ((HTMLElement) tabs.element().querySelector("." + navTabsHal)).style.marginTop =
                     CSSProperties.MarginTopUnionType.of(0);
-            initElement(tabs.asElement());
+            initElement(tabs.element());
         } else {
             tabs = null;
-            HTMLElement root = div().asElement();
-            deploymentModel.asElements().forEach(root::appendChild);
+            HTMLElement root = div().get();
+            deploymentModel.forEach(root::appendChild);
             initElement(root);
         }
     }
@@ -75,7 +75,7 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
         if (supportsReadContent) {
             browseContent.attach();
 
-            HTMLElement ul = (HTMLElement) tabs.asElement().querySelector("ul." + navTabsHal); //NON-NLS
+            HTMLElement ul = (HTMLElement) tabs.element().querySelector("ul." + navTabsHal); //NON-NLS
             if (ul != null) {
                 int tabsHeight = (int) (ul.offsetHeight + 5);
                 browseContent.setSurroundingHeight(tabsHeight);

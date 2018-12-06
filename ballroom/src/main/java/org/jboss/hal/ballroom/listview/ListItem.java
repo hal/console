@@ -25,6 +25,8 @@ import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLUListElement;
+import elemental2.dom.MouseEvent;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
@@ -67,12 +69,12 @@ class ListItem<T> implements IsElement {
                             .aria(UIConstants.CONTROLS, idLongPanel)
                             .attr(UIConstants.ROLE, UIConstants.BUTTON)
                             .add(container = div().css(listPfContainer)
-                                    .asElement()))
-                    .asElement();
+                                    .get()))
+                    .get();
         } else {
             root = div().id(id).css(listPfItem)
-                    .add(container = div().css(listPfContainer).asElement())
-                    .asElement();
+                    .add(container = div().css(listPfContainer).get())
+                    .get();
 
         }
         if (checkbox) {
@@ -82,8 +84,8 @@ class ListItem<T> implements IsElement {
                                 HTMLInputElement element = (HTMLInputElement) event.target;
                                 listView.selectListItem(ListItem.this, element.checked);
                             })
-                            .asElement())
-                    .asElement());
+                            .get())
+                    .get());
         } else {
             this.checkbox = null;
             bind(root, click, event -> listView.selectListItem(this, true));
@@ -94,40 +96,41 @@ class ListItem<T> implements IsElement {
         HTMLElement contentWrapper;
         HTMLElement mainContent;
         HTMLElement title;
-        container.appendChild(content = div().css(listPfContent, listPfContentFlex).asElement());
+        container.appendChild(content = div().css(listPfContent, listPfContentFlex).get());
         if (display.getStatusElement() != null) {
             content.appendChild(div().css(listPfLeft)
                     .add(display.getStatusElement())
-                    .asElement());
+                    .get());
         } else if (display.getStatusIcon() != null) {
             HTMLElement status;
             content.appendChild(div().css(listPfLeft)
                     .add(status = span().css(listPfIcon, listPfIconBordered, listPfIconSmall)
-                            .asElement())
-                    .asElement());
+                            .get())
+                    .get());
+            //noinspection UnstableApiUsage
             List<String> classes = Splitter.on(' ')
                     .omitEmptyStrings()
                     .trimResults()
                     .splitToList(display.getStatusIcon());
-            status.classList.add(classes.toArray(new String[classes.size()]));
+            status.classList.add(classes.toArray(new String[0]));
         }
         content.appendChild(contentWrapper = div().css(listPfContentWrapper)
                 .add(mainContent = div().css(listPfMainContent, listHalMainContent)
                         .style("flex-basis:" + contentWidths[0]) //NON-NLS
                         .add(title = div().css(listPfTitle)
-                                .asElement())
-                        .asElement())
-                .asElement());
+                                .get())
+                        .get())
+                .get());
         if (display.getTitleElements() != null) {
-            for (HTMLElement element : display.getTitleElements().asElements()) {
+            for (HTMLElement element : display.getTitleElements()) {
                 title.appendChild(element);
             }
         } else if (display.getTitleHtml() != null) {
-            title.appendChild(h(3).innerHtml(display.getTitleHtml()).asElement());
+            title.appendChild(h(3).innerHtml(display.getTitleHtml()).get());
         } else if (display.getTitle() != null) {
-            title.appendChild(h(3, display.getTitle()).asElement());
+            title.appendChild(h(3, display.getTitle()).get());
         } else {
-            title.appendChild(h(3, Names.NOT_AVAILABLE).asElement());
+            title.appendChild(h(3, Names.NOT_AVAILABLE).get());
         }
 
         // logic to display the description content
@@ -136,10 +139,10 @@ class ListItem<T> implements IsElement {
                 display.getDescription() != null) {
             HTMLElement description;
             mainContent.appendChild(description = div().css(listPfDescription)
-                    .asElement());
+                    .get());
 
             HTMLDivElement textContentElem = div().id(idLongPanel).css(listPfContainer, listPfContainerLong)
-                    .asElement();
+                    .get();
             if (display.hideDescriptionWhenLarge()) {
                 description.textContent = CONSTANTS.messageLarge();
             }
@@ -147,11 +150,11 @@ class ListItem<T> implements IsElement {
             if (display.getDescriptionElements() != null) {
 
                 if (display.hideDescriptionWhenLarge()) {
-                    for (HTMLElement element : display.getDescriptionElements().asElements()) {
+                    for (HTMLElement element : display.getDescriptionElements()) {
                         textContentElem.appendChild(element);
                     }
                 } else {
-                    for (HTMLElement element : display.getDescriptionElements().asElements()) {
+                    for (HTMLElement element : display.getDescriptionElements()) {
                         description.appendChild(element);
                     }
                 }
@@ -183,9 +186,9 @@ class ListItem<T> implements IsElement {
             HTMLElement additionalInfo;
             contentWrapper.appendChild(additionalInfo = div().css(listPfAdditionalContent, listHalAdditionalContent)
                     .style("flex-basis:" + contentWidths[1]) //NON-NLS
-                    .asElement());
+                    .get());
             if (display.getAdditionalInfoElements() != null) {
-                for (HTMLElement element : display.getAdditionalInfoElements().asElements()) {
+                for (HTMLElement element : display.getAdditionalInfoElements()) {
                     additionalInfo.appendChild(element);
                 }
             } else if (display.getAdditionalInfoHtml() != null) {
@@ -199,21 +202,22 @@ class ListItem<T> implements IsElement {
         if (!allowedActions.isEmpty()) {
             HTMLElement actionsContainer;
             content.appendChild(actionsContainer = div().css(listPfActions, listHalActions)
-                    .asElement());
+                    .get());
             int index = 0;
             HTMLUListElement ul = null;
             for (ItemAction<T> action : allowedActions) {
                 HTMLElement actionElement;
                 String actionId = Ids.build(this.id, action.id);
 
+                EventCallbackFn<MouseEvent> eventHandler = event -> action.handler.execute(item);
                 if (index == 0) {
                     // first action is a button
                     actionsContainer.appendChild(actionElement = button()
                             .id(actionId)
                             .css(btn, btnDefault)
                             .textContent(action.title)
-                            .on(click, event -> action.handler.execute(item))
-                            .asElement());
+                            .on(click, eventHandler)
+                            .get());
 
                 } else {
                     // remaining actions are inside the kebab menu
@@ -230,15 +234,15 @@ class ListItem<T> implements IsElement {
                                                 .add(span().css(fontAwesome("ellipsis-v"))))
                                         .add(ul = ul().css(dropdownMenu, dropdownMenuRight)
                                                 .aria(UIConstants.LABELLED_BY, id)
-                                                .asElement())
-                                        .asElement());
+                                                .get())
+                                        .get());
                     }
                     //noinspection ConstantConditions
                     ul.appendChild(actionElement = li()
                             .add(a().css(clickable)
                                     .textContent(action.title)
-                                    .on(click, (event -> action.handler.execute(item))))
-                            .asElement());
+                                    .on(click, eventHandler))
+                            .get());
                 }
 
                 this.actions.put(action.id, actionElement);
@@ -248,18 +252,18 @@ class ListItem<T> implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
-    void enableAction(final String actionId) {
+    void enableAction(String actionId) {
         HTMLElement action = actions.get(actionId);
         if (action != null) {
             action.classList.remove(disabled);
         }
     }
 
-    void disableAction(final String actionId) {
+    void disableAction(String actionId) {
         HTMLElement action = actions.get(actionId);
         if (action != null) {
             action.classList.add(disabled);

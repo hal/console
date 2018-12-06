@@ -48,23 +48,23 @@ class ProfilePreview extends PreviewContent<NamedNode> {
     private final HTMLElement includesElement;
     private final HTMLElement serverGroupsElement;
 
-    ProfilePreview(final Dispatcher dispatcher, FinderPathFactory finderPathFactory, final Places places,
-            final Resources resources, final NamedNode profile) {
+    ProfilePreview(Dispatcher dispatcher, FinderPathFactory finderPathFactory, Places places,
+            Resources resources, NamedNode profile) {
         super(profile.getName());
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
         this.places = places;
         this.resources = resources;
 
-        includesElement = p().asElement();
-        serverGroupsElement = p().asElement();
+        includesElement = p().get();
+        serverGroupsElement = p().get();
         previewBuilder()
                 .add(includesElement)
                 .add(serverGroupsElement);
     }
 
     @Override
-    public void update(final NamedNode item) {
+    public void update(NamedNode item) {
         if (item.hasDefined(INCLUDES) && !item.get(INCLUDES).asList().isEmpty()) {
             String includes = item.get(INCLUDES).asList().stream()
                     .map(ModelNode::asString)

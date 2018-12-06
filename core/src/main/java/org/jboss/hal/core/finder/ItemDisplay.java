@@ -99,12 +99,12 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return {@code null} by default
      */
-    default HTMLElement asElement() {
+    default HTMLElement element() {
         return null;
     }
 
     /**
-     * Factory methods which can be used when overriding {@link #asElement()}. Creates a {@code <div>} element with two
+     * Factory methods which can be used when overriding {@link #element()}. Creates a {@code <div>} element with two
      * nested {@code <span>} elements. One for the title and a smaller one for the subtitle.
      *
      * @param title
@@ -116,6 +116,6 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return span().css(itemText)
                 .add(span().textContent(title))
                 .add(small().css(CSS.subtitle).title(subtitle).textContent(subtitle))
-                .asElement();
+                .get();
     }
 }

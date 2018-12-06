@@ -33,7 +33,7 @@ import static org.jboss.hal.resources.Urls.*;
 abstract class HomepageHelp implements IsElement {
 
     // @formatter:off
-    static HomepageHelp create(final Environment environment, final Resources resources) {
+    static HomepageHelp create( Environment environment, Resources resources) {
         return new Templated_HomepageHelp(environment, resources);
     }
 
@@ -88,7 +88,7 @@ abstract class HomepageHelp implements IsElement {
         }
     }
 
-    private HTMLElement helpLink(final String href, final String text) {
-        return li().add(a(href).textContent(text)).asElement();
+    private HTMLElement helpLink(String href, String text) {
+        return li().add(a(href).textContent(text)).get();
     }
 }

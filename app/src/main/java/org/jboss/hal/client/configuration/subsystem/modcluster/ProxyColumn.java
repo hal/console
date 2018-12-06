@@ -125,9 +125,8 @@ public class ProxyColumn extends FinderColumn<NamedNode> {
             }
 
             @Override
-            public HTMLElement asElement() {
-                return ItemDisplay
-                        .withSubtitle(proxyNode.getName(), proxyNode.get(CONNECTOR).asString());
+            public HTMLElement element() {
+                return ItemDisplay.withSubtitle(proxyNode.getName(), proxyNode.get(CONNECTOR).asString());
             }
 
             @Override

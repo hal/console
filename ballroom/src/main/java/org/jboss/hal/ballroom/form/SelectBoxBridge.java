@@ -133,7 +133,7 @@ public class SelectBoxBridge {
 
         @JsOverlay
         public final void setValue(List<String> value) {
-            selectpicker(VAL, value.toArray(new String[value.size()]));
+            selectpicker(VAL, value.toArray(new String[0]));
         }
 
         @JsOverlay
