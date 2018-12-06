@@ -26,7 +26,6 @@ import org.jboss.hal.spi.Message;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.CSS.time;
 import static org.jboss.hal.resources.CSS.*;
 
 /** One item in {@link NotificationDrawer} */

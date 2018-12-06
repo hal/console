@@ -41,7 +41,6 @@ import static org.jboss.hal.client.runtime.server.StandaloneServerPresenter.ROOT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.pullRight;
-import static org.jboss.hal.resources.Ids.ATTRIBUTES;
 import static org.jboss.hal.resources.Ids.*;
 
 public class StandaloneServerView extends HalViewImpl implements StandaloneServerPresenter.MyView {
