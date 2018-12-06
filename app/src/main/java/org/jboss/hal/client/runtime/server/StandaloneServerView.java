@@ -57,7 +57,7 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
         registerAttachable(navigation);
 
         Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE);
-        String attributesFormId = Ids.build(Ids.STANDALONE_SERVER_COLUMN, ATTRIBUTES, FORM);
+        String attributesFormId = Ids.build(Ids.STANDALONE_SERVER_COLUMN, Ids.ATTRIBUTES, FORM);
         attributesForm = new ModelNodeForm.Builder<>(attributesFormId, metadata)
                 .includeRuntime()
                 .onSave((form, changedValues) -> presenter.save(resources.constants().standaloneServer(), ROOT_TEMPLATE,
@@ -78,7 +78,7 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
                 .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(attributesForm)
                 .get();
-        String attributesItemId = Ids.build(ATTRIBUTES, ITEM);
+        String attributesItemId = Ids.build(Ids.ATTRIBUTES, ITEM);
         navigation.addPrimary(attributesItemId, resources.constants().configuration(), pfIcon("settings"),
                 attributesElement);
 
