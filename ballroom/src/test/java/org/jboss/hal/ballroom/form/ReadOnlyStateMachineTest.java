@@ -4,8 +4,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
-import static org.jboss.hal.ballroom.form.Form.State.*;
-import static org.junit.Assert.*;
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ReadOnlyStateMachineTest {
 

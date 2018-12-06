@@ -46,7 +46,7 @@ public class AbstractFormItemTest {
                 Appearance<String> readOnly, Appearance<String> editing) {
             super(name, label, hint);
             addAppearance(Form.State.READONLY, readOnly);
-            addAppearance(Form.State.EDITING,editing);
+            addAppearance(Form.State.EDITING, editing);
         }
 
         @Override
@@ -77,7 +77,7 @@ public class AbstractFormItemTest {
                 Appearance<String> readOnly, Appearance<String> editing) {
             super(name, label, hint);
             addAppearance(Form.State.READONLY, readOnly);
-            addAppearance(Form.State.EDITING,editing);
+            addAppearance(Form.State.EDITING, editing);
         }
 
         @Override

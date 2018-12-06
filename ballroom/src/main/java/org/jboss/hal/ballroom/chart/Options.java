@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NonNls;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-@SuppressWarnings("SpellCheckingInspection")
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 class Options {
 

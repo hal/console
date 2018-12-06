@@ -31,16 +31,16 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.form;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.submit;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.i;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * PatternFly pager. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list
@@ -185,7 +185,6 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
 
     // ------------------------------------------------------ event handler
 
-    @SuppressWarnings("HardCodedStringLiteral")
     private void setPageSize(int pageSize) {
         dataProvider.setPageSize(pageSize);
     }

@@ -215,7 +215,7 @@ public class VerticalNavigation implements Attachable {
                 LinkedHashMap<String, Item> reshuffledItems = new LinkedHashMap<>();
                 LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
 
-                for (String currentId: items.keySet()) {
+                for (String currentId : items.keySet()) {
                     if (currentId.equals(beforeId)) {
                         if (element != null) {
                             Pane pane = new Pane(id, element);

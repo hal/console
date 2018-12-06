@@ -121,7 +121,6 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
     }
 
     @Override
-    @SuppressWarnings("HardCodedStringLiteral")
     public void setExpressionAllowed(boolean expressionAllowed) {
         super.setExpressionAllowed(expressionAllowed);
         if (!expressionAllowed) {
@@ -179,7 +178,6 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
         public ValidationResult validate(Double value) {
             if (!isExpressionValue() && !isEmpty()) {
                 try {
-                    //noinspection ResultOfMethodCallIgnored
                     Double.parseDouble(inputElement.value);
                     return ValidationResult.OK;
                 } catch (NumberFormatException e) {

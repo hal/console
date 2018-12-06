@@ -32,8 +32,8 @@ import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -141,7 +141,7 @@ public class EmptyState implements IsElement<HTMLElement> {
         public final Callback callback;
         private final Constraint constraint;
 
-        Action(final String title, final Callback callback, final Constraint constraint) {
+        Action(String title, Callback callback, Constraint constraint) {
             this.title = title;
             this.callback = callback;
             this.constraint = constraint;

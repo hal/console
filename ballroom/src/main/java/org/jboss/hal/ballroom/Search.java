@@ -25,8 +25,8 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.search;
@@ -122,7 +122,7 @@ public class Search implements IsElement<HTMLElement> {
         private SearchHandler onPrevious;
         private SearchHandler onNext;
 
-        public Builder(final String id, final SearchHandler onSearch) {
+        public Builder(String id, SearchHandler onSearch) {
             this.id = id;
             this.onSearch = onSearch;
         }

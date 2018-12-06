@@ -429,7 +429,6 @@ public class Dialog implements IsElement {
         @JsIgnore
         public Builder add(Iterable<HTMLElement> elements) {
             if (elements != null) {
-                //noinspection ResultOfMethodCallIgnored
                 Iterables.addAll(this.elements, elements);
             }
             return this;

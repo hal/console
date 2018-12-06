@@ -114,7 +114,7 @@ public class Utilization implements IsElement {
 
             valueBar.setAttribute(aria(VALUE_NOW), String.valueOf(current));
             valueBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            valueBar.style.width = width(String.valueOf(currentPercent) + "%");
+            valueBar.style.width = width(currentPercent + "%");
             Tooltip.element(valueBar).setTitle(MESSAGES.used(currentPercent));
             //noinspection HardCodedStringLiteral
             valueElement.innerHTML = new SafeHtmlBuilder()
@@ -126,7 +126,7 @@ public class Utilization implements IsElement {
 
             remainingBar.setAttribute(aria(VALUE_NOW), String.valueOf(remaining));
             remainingBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            remainingBar.style.width = width(String.valueOf(remainingPercent) + "%");
+            remainingBar.style.width = width(remainingPercent + "%");
             Tooltip.element(remainingBar).setTitle(MESSAGES.available(remainingPercent));
             remainingElement.textContent = MESSAGES.available(remainingPercent);
 

@@ -136,7 +136,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
             });
             api.onInvalid((event, cst) -> {
                 String message = allowedCharacters() != null ? MESSAGES.invalidTagFormat(allowedCharacters())
-                        :  MESSAGES.invalidFormat();
+                        : MESSAGES.invalidFormat();
                 showError(message);
             });
         }

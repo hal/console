@@ -120,7 +120,6 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         api().load(dataMap);
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void resize(int width) {
         JsPropertyMap<Object> dimension = JsPropertyMap.of();
         dimension.set(UIConstants.WIDTH, width);

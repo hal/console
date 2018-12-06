@@ -154,7 +154,6 @@ class Api<T> {
      * @author Harald Pehl
      * @see <a href="https://datatables.net/extensions/buttons/custom">https://datatables.net/extensions/buttons/custom</a>
      */
-    @SuppressWarnings("WeakerAccess")
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Button<T> {
 
