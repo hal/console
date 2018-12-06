@@ -25,7 +25,6 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
-import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;

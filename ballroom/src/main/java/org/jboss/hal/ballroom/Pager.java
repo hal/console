@@ -31,15 +31,12 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.gwt.elemento.core.Elements.form;
-import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.submit;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.resources.CSS.i;
 import static org.jboss.hal.resources.CSS.*;
 
 /**

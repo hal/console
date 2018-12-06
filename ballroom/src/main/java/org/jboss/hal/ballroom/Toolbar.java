@@ -45,14 +45,11 @@ import rx.Subscription;
 import static com.intendia.rxgwt.elemento.RxElemento.fromEvent;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.form;
-import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.resources.CSS.label;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
