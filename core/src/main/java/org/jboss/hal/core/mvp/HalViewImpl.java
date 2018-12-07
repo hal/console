@@ -44,7 +44,7 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
 
     private final List<Attachable> attachables;
     private HTMLElement element;
-    private Iterable<HTMLElement> elements;
+    private Iterable<HTMLElement> elements = Collections.emptyList();
     private boolean attached;
 
     protected HalViewImpl() {

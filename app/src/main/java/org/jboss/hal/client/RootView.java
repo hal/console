@@ -52,7 +52,6 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {
-
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
             HTMLElement element = content instanceof IsElement ?
@@ -75,10 +74,8 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             if (content instanceof Iterable) {
                 //noinspection unchecked
                 Iterable<HTMLElement> elements = (Iterable<HTMLElement>) content;
-                if (elements != null) {
-                    for (HTMLElement element : elements) {
-                        rootContainer.appendChild(element);
-                    }
+                for (HTMLElement element : elements) {
+                    rootContainer.appendChild(element);
                     finished = true;
                 }
             }
