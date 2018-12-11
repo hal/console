@@ -246,7 +246,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
 
     private String messageServer() {
         String server = UNDEFINED;
-        FinderSegment segment = getFinder().getContext().getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
+        FinderSegment<?> segment = getFinder().getContext().getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
         if (segment != null) {
             server = Ids.extractMessagingServer(segment.getItemId());
         }

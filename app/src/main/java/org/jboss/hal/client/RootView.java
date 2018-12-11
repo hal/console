@@ -51,6 +51,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
@@ -72,7 +73,6 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             Elements.removeChildrenFrom(rootContainer);
 
             if (content instanceof Iterable) {
-                //noinspection unchecked
                 Iterable<HTMLElement> elements = (Iterable<HTMLElement>) content;
                 for (HTMLElement element : elements) {
                     rootContainer.appendChild(element);
@@ -82,7 +82,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
             if (!finished) {
                 HTMLElement element = content instanceof IsElement
-                        ? ((IsElement) content).element()
+                        ? ((IsElement<HTMLElement>) content).element()
                         : Widgets.element(content);
                 rootContainer.appendChild(element);
             }

@@ -47,7 +47,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl implements CacheView<P> {
+abstract class CacheViewImpl<P extends CachePresenter<?, ?>> extends HalViewImpl implements CacheView<P> {
 
     private VerticalNavigation navigation;
     private Form<Cache> form;

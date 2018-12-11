@@ -41,6 +41,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -51,7 +52,7 @@ import static org.jboss.hal.resources.CSS.*;
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
  * that we need to take care of {@code store=none}.
  */
-class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
+class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter<?, ?>> {
 
     private final EmptyState emptyState;
     private final HTMLElement currentStore;
@@ -63,7 +64,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final Map<Store, WriteElement> writeElements;
     private final Map<StoreTable, Form<ModelNode>> tableForms;
     private final HTMLElement root;
-    private CachePresenter presenter;
+    private CachePresenter<?, ?> presenter;
 
     StoreElement(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
         this.tabs = new HashMap<>();
@@ -210,7 +211,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(CachePresenter presenter) {
+    public void setPresenter(CachePresenter<?, ?> presenter) {
         this.presenter = presenter;
         writeElements.values().forEach(we -> we.setPresenter(presenter));
     }

@@ -46,9 +46,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * Implementation note: Not based on MBUI XML due to special cache container singleton resources.
- */
+/** Implementation note: Not based on MBUI XML due to special cache container singleton resources. */
 public class CacheContainerView extends HalViewImpl implements CacheContainerPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;

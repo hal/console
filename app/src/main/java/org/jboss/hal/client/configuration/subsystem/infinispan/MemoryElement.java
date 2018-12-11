@@ -38,6 +38,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
@@ -45,7 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MEMORY;
 import static org.jboss.hal.resources.CSS.*;
 
 /** Element to view and modify the {@code memory=*} singletons of a cache. */
-class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
+class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter<?, ?>> {
 
     private final HTMLElement currentMemory;
     private final HTMLElement headerForm;
@@ -53,7 +54,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     private final HTMLSelectElement selectMemory;
     private final Map<Memory, Form<ModelNode>> memoryForms;
     private final HTMLElement root;
-    private CachePresenter presenter;
+    private CachePresenter<?, ?> presenter;
 
     MemoryElement(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
         memoryForms = new HashMap<>();
@@ -138,7 +139,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     @Override
-    public void setPresenter(CachePresenter presenter) {
+    public void setPresenter(CachePresenter<?, ?> presenter) {
         this.presenter = presenter;
     }
 

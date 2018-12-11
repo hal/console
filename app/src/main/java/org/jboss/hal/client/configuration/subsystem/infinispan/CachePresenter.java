@@ -54,7 +54,7 @@ import org.jboss.hal.spi.MessageEvent;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-abstract class CachePresenter<V extends CacheView, Proxy_ extends ProxyPlace<?>>
+abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<?>>
         extends ApplicationFinderPresenter<V, Proxy_>
         implements SupportsExpertMode {
 

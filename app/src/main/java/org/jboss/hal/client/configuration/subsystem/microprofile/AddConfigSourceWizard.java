@@ -237,6 +237,7 @@ class AddConfigSourceWizard {
         private final Map<String, Form<ModelNode>> forms;
         private final HTMLElement root;
 
+        @SuppressWarnings("unchecked")
         InputStep(Metadata configSourceMeta, Resources resources) {
             super(resources.constants().attributes());
             descriptions = new LinkedHashMap<>();
@@ -294,7 +295,6 @@ class AddConfigSourceWizard {
             form = new ModelNodeForm.Builder<>(id, configSourceMeta)
                     .include(attribute)
                     .onSave((f, changedValues) -> {
-                        //noinspection unchecked
                         Map<String, String> properties = (Map<String, String>) changedValues.get(PROPERTIES);
                         if (properties != null) {
                             properties.forEach((key, value) ->

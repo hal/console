@@ -44,14 +44,14 @@ import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnDefault;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
+class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter<?, ?>> {
 
     private final EmptyState emptyState;
     private final HTMLElement throughElement;
     private final HTMLElement behindElement;
     private final Form<ModelNode> behindForm;
     private final HTMLElement root;
-    private CachePresenter presenter;
+    private CachePresenter<?, ?> presenter;
 
     WriteElement(CacheType cacheType, Store store, MetadataRegistry metadataRegistry, Resources resources) {
         HTMLInputElement behindRadio;
@@ -137,7 +137,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(CachePresenter presenter) {
+    public void setPresenter(CachePresenter<?, ?> presenter) {
         this.presenter = presenter;
     }
 
