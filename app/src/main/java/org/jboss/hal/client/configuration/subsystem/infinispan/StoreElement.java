@@ -41,7 +41,6 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
