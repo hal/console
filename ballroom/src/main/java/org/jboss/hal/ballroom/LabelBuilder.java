@@ -54,6 +54,7 @@ public class LabelBuilder {
             .put("iiop", "IIOP")
             .put("iiop-ssl", "IIOP SSL")
             .put("io", "IO")
+            .put("ip", "IP")
             .put("jaas", "JAAS")
             .put("jacc", "JACC")
             .put("jaspi", "JASPI")
@@ -161,10 +162,10 @@ public class LabelBuilder {
     }
 
     private String capitalize(String str) {
-        final char[] buffer = str.toCharArray();
+        char[] buffer = str.toCharArray();
         boolean capitalizeNext = true;
         for (int i = 0; i < buffer.length; i++) {
-            final char ch = buffer[i];
+            char ch = buffer[i];
             if (Character.isWhitespace(ch)) {
                 capitalizeNext = true;
             } else if (capitalizeNext) {

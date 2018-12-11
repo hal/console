@@ -15,41 +15,68 @@
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.MESSAGING_SERVER_RUNTIME)
+@Requires(value = MESSAGING_SERVER_ADDRESS, recursive = false)
 public class ServerColumn extends FinderColumn<NamedNode> {
+
+    private final MetadataRegistry metadataRegistry;
+    private final EventBus eventBus;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final Resources resources;
 
     @Inject
     public ServerColumn(Finder finder,
             ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            MetadataRegistry metadataRegistry,
             PlaceManager placeManager,
             Places places,
+            EventBus eventBus,
             Dispatcher dispatcher,
-            StatementContext statementContext) {
+            StatementContext statementContext,
+            Resources resources) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_RUNTIME, Names.SERVER)
                 .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_RUNTIME_REFRESH))
@@ -67,23 +94,74 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                     PlaceRequest place = places.replaceParameter(current, Ids.MESSAGING_SERVER, item.getName()).build();
                     placeManager.revealPlace(place);
                 })
-                .itemRenderer(item -> new ItemDisplay<NamedNode>() {
-                    @Override
-                    public String getId() {
-                        return Ids.messagingServer(item.getName());
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return item.getName();
-                    }
-
-                    @Override
-                    public String nextColumn() {
-                        return Ids.MESSAGING_SERVER_DESTINATION_RUNTIME;
-                    }
-                })
                 .onPreview(ServerPreview::new)
         );
+        this.metadataRegistry = metadataRegistry;
+        this.eventBus = eventBus;
+        this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
+        this.resources = resources;
+
+        setItemRenderer(item -> new ItemDisplay<NamedNode>() {
+            @Override
+            public String getId() {
+                return Ids.messagingServer(item.getName());
+            }
+
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public String nextColumn() {
+                return Ids.MESSAGING_SERVER_DESTINATION_RUNTIME;
+            }
+
+            @Override
+            public List<ItemAction<NamedNode>> actions() {
+                List<ItemAction<NamedNode>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.MESSAGING_SERVER_RUNTIME,
+                        Ids.MESSAGING_SERVER, getTitle()));
+                actions.add(new ItemAction.Builder<NamedNode>()
+                        .title(resources.constants().forceFailover())
+                        .constraint(Constraint.executable(MESSAGING_SERVER_TEMPLATE, FORCE_FAILOVER))
+                        .handler(itm -> {
+                            ResourceAddress address = MESSAGING_SERVER_TEMPLATE.resolve(statementContext,
+                                    itm.getName());
+                            Operation operation = new Operation.Builder(address, FORCE_FAILOVER).build();
+                            dispatcher.execute(operation, result -> MessageEvent.fire(eventBus,
+                                    Message.success(resources.messages().forceFailoverSuccess())));
+                        })
+                        .build());
+                Constraints constraints = Constraints.and(
+                        Constraint.executable(MESSAGING_SERVER_TEMPLATE, RESET_ALL_MESSAGE_COUNTER_HISTORIES),
+                        Constraint.executable(MESSAGING_SERVER_TEMPLATE, RESET_ALL_MESSAGE_COUNTERS));
+                actions.add(new ItemAction.Builder<NamedNode>()
+                        .title(resources.constants().reset())
+                        .constraints(constraints)
+                        .handler(itm -> openResetServerDialog(itm.getName()))
+                        .build());
+                return actions;
+            }
+        });
+    }
+
+    private void openResetServerDialog(String messagingServer) {
+        Metadata metadata = metadataRegistry.lookup(MESSAGING_SERVER_TEMPLATE);
+        new ResetServerDialog(this, metadata, resources).reset(messagingServer);
+    }
+
+    void resetServer(String messagingServer, boolean messageCounters, boolean messageCounterHistories) {
+        ResourceAddress address = MESSAGING_SERVER_TEMPLATE.resolve(statementContext, messagingServer);
+        Composite composite = new Composite();
+        if (messageCounters) {
+            composite.add(new Operation.Builder(address, RESET_ALL_MESSAGE_COUNTERS).build());
+        }
+        if (messageCounterHistories) {
+            composite.add(new Operation.Builder(address, RESET_ALL_MESSAGE_COUNTER_HISTORIES).build());
+        }
+        dispatcher.execute(composite, (CompositeResult result) -> MessageEvent.fire(eventBus,
+                Message.success(resources.messages().resetMessageCounterSuccess(messagingServer))));
     }
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -153,6 +154,14 @@ public class Tabs implements IsElement<HTMLElement> {
             selectedTab = (HTMLElement) tabs.querySelector("li > a[href='#" + id + "']"); //NON-NLS
         }
         return selectedTab;
+    }
+
+    public String getSelectedId() {
+        Element a = tabs.querySelector("li." + active + " > a");
+        if (a != null) {
+            return a.getAttribute("aria-controls");
+        }
+        return null;
     }
 
 

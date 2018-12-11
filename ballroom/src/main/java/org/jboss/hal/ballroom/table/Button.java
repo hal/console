@@ -16,6 +16,7 @@
 package org.jboss.hal.ballroom.table;
 
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 
 /** A table button */
 public class Button<T> {
@@ -24,29 +25,41 @@ public class Button<T> {
     final String title;
     final ButtonHandler<T> handler;
     final Scope scope;
-    final Constraint constraint;
+    final Constraints constraints;
 
     public Button(String name, ButtonHandler<T> handler) {
-        this(name, null, handler, null, null);
+        this(name, null, handler, null, Constraints.empty());
     }
 
     public Button(String name, ButtonHandler<T> handler, Scope scope) {
-        this(name, null, handler, scope, null);
+        this(name, null, handler, scope, Constraints.empty());
     }
 
     public Button(String name, ButtonHandler<T> handler, Constraint constraint) {
-        this(name, null, handler, null, constraint);
+        this(name, null, handler, null, Constraints.single(constraint));
+    }
+
+    public Button(String name, ButtonHandler<T> handler, Constraints constraints) {
+        this(name, null, handler, null, constraints);
     }
 
     public Button(String name, String title, ButtonHandler<T> handler, Constraint constraint) {
-        this(name, title, handler, null, constraint);
+        this(name, title, handler, null, Constraints.single(constraint));
+    }
+
+    public Button(String name, String title, ButtonHandler<T> handler, Constraints constraints) {
+        this(name, title, handler, null, constraints);
     }
 
     public Button(String name, String title, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
+        this(name, title, handler, scope, Constraints.single(constraint));
+    }
+
+    public Button(String name, String title, ButtonHandler<T> handler, Scope scope, Constraints constraints) {
         this.name = name;
         this.title = title;
         this.scope = scope;
         this.handler = handler;
-        this.constraint = constraint;
+        this.constraints = constraints;
     }
 }

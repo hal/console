@@ -1,0 +1,31 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Producer.",
+    "attributes" => {
+        "connection-id" => {
+            "type" => STRING,
+            "description" => "The connection ID.",
+            "nillable" => true
+        },
+        "session-id" => {
+            "type" => STRING,
+            "description" => "The session ID.",
+            "nillable" => true
+        },
+         "destination" => {
+             "type" => STRING,
+             "description" => "The destination.",
+             "nillable" => true
+         },
+         "last-uuid-sent" => {
+             "type" => STRING,
+             "description" => "The unique identifier of the last sent message.",
+             "nillable" => true
+         },
+         "msg-sent" => {
+             "type" => LONG,
+             "description" => "The number of messages sent so far.",
+             "nillable" => true
+         }
+    }
+}

@@ -33,7 +33,7 @@ import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.page;
 
 /**
- * A structural element to manage a main and any number of nested page elements. The nested page elements provide a
+ * A structural element to manage a main and a number of nested page elements. The nested page elements provide a
  * {@linkplain Breadcrumb breadcrumb} to navigate back and forth.
  * <p>
  * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain

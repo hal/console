@@ -20,7 +20,7 @@ import org.jboss.hal.dmr.ModelNode;
 public class DefaultMapping<T> implements DataMapping<T> {
 
     @Override
-    public void newModel(final T model, final Form<T> form) {
+    public void newModel(T model, Form<T> form) {
         for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearError();
             formItem.clearValue();
@@ -30,30 +30,30 @@ public class DefaultMapping<T> implements DataMapping<T> {
     }
 
     @Override
-    public void populateFormItems(final T model, final Form<T> form) {
+    public void populateFormItems(T model, Form<T> form) {
         // empty
     }
 
     @Override
-    public void populateFormItem(final String id, String name, final ModelNode attributeDescription,
-            final ModelNode value, final FormItem formItem) {
+    public void populateFormItem(String id, String name, ModelNode attributeDescription, ModelNode value,
+            FormItem formItem) {
         // empty
     }
 
     @Override
-    public void clearFormItems(final Form<T> form) {
+    public void clearFormItems(Form<T> form) {
         for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearValue();
         }
     }
 
     @Override
-    public void persistModel(final T model, final Form<T> form) {
+    public void persistModel(T model, Form<T> form) {
         // empty
     }
 
     @Override
-    public void persistModel(String id, final T model, final Iterable<FormItem> formItems) {
+    public void persistModel(String id, T model, Iterable<FormItem> formItems) {
         // empty
     }
 }

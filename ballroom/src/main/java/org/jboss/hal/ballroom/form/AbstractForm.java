@@ -57,6 +57,7 @@ import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
+import static org.jboss.hal.resources.CSS.form;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
@@ -270,7 +271,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                             .on(click, event -> {
                                 // toggle the fa-angle-down to show either angle-right or angle-down
                                 expanderElement.classList.toggle(faAngleDown);
-                                optionalFields.forEach(field -> Elements.setVisible(field,
+                                optionalFields.forEach(field -> setVisible(field,
                                         expanderElement.classList.contains(faAngleDown)));
                             }))
                     .get();
@@ -280,7 +281,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                     HTMLElement field = formItem.element(EDITING);
                     optionalFields.add(field);
                     fieldsetElement.appendChild(field);
-                    Elements.setVisible(field, false);
+                    setVisible(field, false);
                 }
             }
             editPanel.appendChild(fieldsetElement);
@@ -564,8 +565,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
         panels.values().stream()
                 .filter(panel -> panel != panels.get(state))
-                .forEach(panel -> Elements.setVisible(panel, false));
-        Elements.setVisible(panels.get(state), true);
+                .forEach(panel -> setVisible(panel, false));
+        setVisible(panels.get(state), true);
     }
 
 
@@ -640,7 +641,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         }
         errorMessage.textContent = "";
         Elements.removeChildrenFrom(errorMessages);
-        Elements.setVisible(errorPanel, false);
+        setVisible(errorPanel, false);
     }
 
     private void showErrors(List<String> messages) {
@@ -654,7 +655,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                     errorMessages.appendChild(li().textContent(message).get());
                 }
             }
-            Elements.setVisible(errorPanel, true);
+            setVisible(errorPanel, true);
         }
     }
 }

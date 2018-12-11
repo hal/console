@@ -639,6 +639,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 org.jboss.hal.client.runtime.server.Mbui_ServerView.class,
                 org.jboss.hal.client.runtime.server.ServerPresenter.MyProxy.class);
 
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.messaging.ServerPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.messaging.ServerPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.messaging.ServerView.class,
+                org.jboss.hal.client.runtime.subsystem.messaging.ServerPresenter.MyProxy.class);
+
         bindPresenter(ServerBootErrorsPresenter.class,
                 ServerBootErrorsPresenter.MyView.class,
                 ServerBootErrorsView.class,
