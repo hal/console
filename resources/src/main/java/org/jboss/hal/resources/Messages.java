@@ -215,6 +215,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml loadPropertiesRealmSuccess(String name);
     SafeHtml loadProviderDynamicWarning();
     SafeHtml logFileError(String name);
+    SafeHtml longRunningManagementOperations();
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
     SafeHtml managementOperationsFindNoResult();

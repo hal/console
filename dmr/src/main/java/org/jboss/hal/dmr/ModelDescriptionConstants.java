@@ -487,6 +487,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MANAGEMENT_NOTIFICATION_ADDRESS = "management-notification-address";
+    String MANAGEMENT_OPERATIONS = "management-operations";
     String MANAGEMENT_SPEC_VERSION = "management-spec-version";
     String MANAGEMENT_VERSION = "management-version";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
