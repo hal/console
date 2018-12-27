@@ -39,6 +39,13 @@
     </div>
     <div class="collapse navbar-collapse hal-header-collapse">
         <ul class="nav navbar-nav navbar-utility">
+            <li data-element="nonProgressingOperationContainer">
+                <!-- The 15s timeout is hardcoded in FindNonProgressingOperationHandler class of wildfly-core -->
+                <a class="clickable" data-element="nonProgressingOperationLink" data-toggle="tooltip" data-placement="bottom" data-container="body" title="There is an operation in progress, longer than 15s, it may be a non progressing operation. Click to navigate to the Management Operations view to check in more detail.">
+                    <span class="pficon pficon-warning-triangle-o"></span>
+                    <span data-element="nonProgressingOperationLabel">Non Progressing Operation</span>
+                </a>
+            </li>
             <li data-element="reloadContainer">
                 <a class="clickable" data-element="reloadLink" data-toggle="tooltip" data-placement="bottom" data-container="body" title="n/a">
                     <span class="pficon pficon-restart"></span>

@@ -35,6 +35,8 @@ public class Settings {
     @Inject public static Settings INSTANCE; // use only if no DI is available!
     public static final String DEFAULT_LOCALE = "en";
     public static final int DEFAULT_PAGE_SIZE = 10;
+    // keep in sync with the poll-time attribute of settings.dmr
+    public static final int DEFAULT_POLL_TIME = 10;
     public static final int[] PAGE_SIZE_VALUES = new int[]{10, 20, 50};
     private static final int EXPIRES = 365; // days
 
@@ -86,6 +88,8 @@ public class Settings {
         COLLECT_USER_DATA("collect-user-data", true),
         LOCALE("locale", true),
         PAGE_SIZE("page-size", true),
+        POLL("poll", true),
+        POLL_TIME("poll-time", true),
         RUN_AS("run-as", false); // can contain multiple roles separated by ","
 
         public static Key from(@NonNls String key) {
@@ -96,6 +100,10 @@ public class Settings {
                     return LOCALE;
                 case "page-size":
                     return PAGE_SIZE;
+                case "poll":
+                    return POLL;
+                case "poll-time":
+                    return POLL_TIME;
                 case "run-as":
                     return RUN_AS;
                 default:

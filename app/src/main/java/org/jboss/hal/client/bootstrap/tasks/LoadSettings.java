@@ -25,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
-import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
-import static org.jboss.hal.config.Settings.Key.LOCALE;
-import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
-import static org.jboss.hal.config.Settings.Key.RUN_AS;
+import static org.jboss.hal.config.Settings.Key.*;
 
 /**
  * Loads the settings. Please make sure this is one of the last bootstrap function. This function loads the run-as role
@@ -53,6 +50,8 @@ public class LoadSettings implements BootstrapTask {
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);
         settings.load(PAGE_SIZE, Settings.DEFAULT_PAGE_SIZE);
+        settings.load(POLL, true);
+        settings.load(POLL_TIME, Settings.DEFAULT_POLL_TIME);
         settings.load(RUN_AS, null);
         logger.debug("Load settings: {}", settings);
         return Completable.complete();

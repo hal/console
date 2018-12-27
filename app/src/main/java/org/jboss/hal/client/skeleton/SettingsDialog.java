@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.NumberSelectItem;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
@@ -34,11 +37,10 @@ import org.jboss.hal.resources.Resources;
 
 import static elemental2.dom.DomGlobal.window;
 import static java.util.Comparator.naturalOrder;
-import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
-import static org.jboss.hal.config.Settings.Key.LOCALE;
-import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
+import static org.jboss.hal.config.Settings.Key.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 
 class SettingsDialog {
 
@@ -48,6 +50,8 @@ class SettingsDialog {
     private final ModifyResourceDialog dialog;
     private final boolean multipleLocales;
     private boolean changes;
+    private FormItem<Long> pollTimeFormItem;
+    private int defaultPollTime;
 
     SettingsDialog(Environment environment, Settings settings, Resources resources) {
         this.settings = settings;
@@ -58,13 +62,13 @@ class SettingsDialog {
         multipleLocales = locales.size() > 1;
 
         Metadata metadata = Metadata.staticDescription(RESOURCES.settings());
+        defaultPollTime = metadata.getDescription().get(ATTRIBUTES).get(POLL_TIME.key()).get(DEFAULT).asInt();
         if (multipleLocales) {
             Property locale = metadata.getDescription().findAttribute(ATTRIBUTES, LOCALE.key());
             if (locale != null && locale.getValue().hasDefined(ALLOWED)) {
                 locales.forEach(l -> locale.getValue().get(ALLOWED).add(l));
             }
         }
-
         List<String> attributes = new ArrayList<>();
         attributes.add(COLLECT_USER_DATA.key());
         if (multipleLocales) {
@@ -75,11 +79,15 @@ class SettingsDialog {
         for (int i = 0; i < values.length; i++) {
             values[i] = Settings.PAGE_SIZE_VALUES[i];
         }
+        attributes.add(POLL.key());
+        attributes.add(POLL_TIME.key());
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SETTINGS_FORM, metadata)
                 .include(attributes)
                 .customFormItem(PAGE_SIZE.key(),
                         attributeDescription -> new NumberSelectItem(PAGE_SIZE.key(), values))
                 .build();
+        form.<Boolean>getFormItem(POLL.key()).addValueChangeHandler(ev -> togglePollTime(ev.getValue()));
+        pollTimeFormItem = form.getFormItem(POLL_TIME.key());
 
         dialog = new ModifyResourceDialog(resources.constants().settings(), form,
                 (f, changedValues) -> {
@@ -97,10 +105,23 @@ class SettingsDialog {
     void show() {
         ModelNode modelNode = new ModelNode();
         modelNode.get(COLLECT_USER_DATA.key()).set(settings.get(COLLECT_USER_DATA).asBoolean());
+        boolean pollEnabled = settings.get(POLL).asBoolean();
+        modelNode.get(POLL.key()).set(pollEnabled);
+        togglePollTime(pollEnabled);
+        modelNode.get(POLL_TIME.key()).set(settings.get(POLL_TIME).asInt(defaultPollTime));
         if (multipleLocales) {
             modelNode.get(LOCALE.key()).set(settings.get(LOCALE).value());
         }
         modelNode.get(PAGE_SIZE.key()).set(settings.get(PAGE_SIZE).asInt(Settings.DEFAULT_PAGE_SIZE));
         dialog.show(modelNode);
+    }
+
+    private void togglePollTime(boolean enableAllValue) {
+        Elements.setVisible(pollTimeFormItem.element(Form.State.EDITING), enableAllValue);
+        if (enableAllValue) {
+            pollTimeFormItem.setValue((long) settings.get(POLL_TIME).asInt(defaultPollTime));
+        } else {
+            pollTimeFormItem.clearValue();
+        }
     }
 }
