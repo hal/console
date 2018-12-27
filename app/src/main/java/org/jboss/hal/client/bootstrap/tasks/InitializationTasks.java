@@ -23,10 +23,11 @@ public class InitializationTasks {
     private final InitializedTask[] tasks;
 
     @Inject
-    public InitializationTasks(CheckForUpdate checkForUpdate, CheckTargetVersion checkTargetVersion) {
+    public InitializationTasks(CheckForUpdate checkForUpdate, CheckTargetVersion checkTargetVersion, PollingTasks pollingTasks) {
         this.tasks = new InitializedTask[]{
                 checkForUpdate,
                 checkTargetVersion,
+                pollingTasks
         };
     }
 

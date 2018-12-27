@@ -115,6 +115,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement HTMLElement reloadContainer;
     @DataElement HTMLElement reloadLink;
     @DataElement HTMLElement reloadLabel;
+    @DataElement HTMLElement nonProgressingOperationContainer;
+    @DataElement HTMLElement nonProgressingOperationLink;
+    @DataElement HTMLElement nonProgressingOperationLabel;
     @DataElement HTMLElement messages;
     @DataElement HTMLElement badgeIcon;
     @DataElement HTMLElement userName;
@@ -143,6 +146,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         backPlaceRequest = HOMEPAGE;
         HTMLElement root = element();
         Elements.setVisible(reloadContainer, false);
+        Elements.setVisible(nonProgressingOperationContainer, false);
         Elements.setVisible(breadcrumb, false);
 
         toastNotifications = new ToastNotifications(resources()); // adds itself to the body
@@ -198,6 +202,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         handlers.addAll(asList(
                 bind(logoLink, click, event -> presenter.goTo(NameTokens.HOMEPAGE)),
                 bind(backLink, click, event -> presenter.goTo(backPlaceRequest)),
+                bind(nonProgressingOperationLink, click, event -> presenter.goTo(NameTokens.MANAGEMENT_OPERATIONS)),
                 bind(reloadLink, click, event -> presenter.reload()),
                 bind(messages, click, event -> notificationDrawer.toggle()),
                 bind(logout, click, event -> presenter.logout()),
@@ -375,6 +380,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         messages.title = resources().messages().notifications(unreadCount);
     }
 
+    public void onNonProgressingOperation(boolean display) {
+        Elements.setVisible(nonProgressingOperationContainer, display);
+    }
 
     // ------------------------------------------------------ modes
 

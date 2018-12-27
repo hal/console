@@ -48,6 +48,7 @@ import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent.ModelBrowserPathHan
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.NonProgressingOperationEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupResultEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupResultEvent.ServerGroupResultHandler;
 import org.jboss.hal.core.runtime.host.HostResultEvent;
@@ -107,7 +108,8 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements
         MessageHandler, HeaderModeHandler, FinderContextHandler, ModelBrowserPathHandler,
         HostResultHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler,
-        ProcessStateHandler, UserChangedHandler, RolesChangedHandler, IsElement {
+        ProcessStateHandler, UserChangedHandler, RolesChangedHandler,
+        NonProgressingOperationEvent.NonProgressingOperationHandler, IsElement {
 
     static final int MAX_BREADCRUMB_VALUE_LENGTH = 20;
 
@@ -125,6 +127,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     private PlaceRequest normalMode;
     private FinderContext lastFinderContext;
     private ServerState serverState;
+    // to display the message only once as it is fired by a polling mechanism
+    private boolean nonProgressingOpDisplayedOnce;
 
     @Inject
     public HeaderPresenter(EventBus eventBus,
@@ -171,6 +175,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         registerHandler(getEventBus().addHandler(ModelBrowserPathEvent.getType(), this));
         registerHandler(getEventBus().addHandler(UserChangedEvent.getType(), this));
         registerHandler(getEventBus().addHandler(RolesChangedEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(NonProgressingOperationEvent.getType(), this));
     }
 
     @Override
@@ -282,6 +287,18 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         }
     }
 
+    @Override
+    public void onNonProgressingOperation(NonProgressingOperationEvent event) {
+        if (event.isNonProgressingOperation() && !nonProgressingOpDisplayedOnce) {
+            MessageEvent.fire(getEventBus(),
+                    Message.warning(resources.messages().longRunningManagementOperations(), true));
+            nonProgressingOpDisplayedOnce = true;
+        }
+        if (!event.isNonProgressingOperation() && nonProgressingOpDisplayedOnce) {
+            nonProgressingOpDisplayedOnce = false;
+        }
+        getView().onNonProgressingOperation(event.isNonProgressingOperation());
+    }
 
     // ------------------------------------------------------ tlc & breadcrumb
 
@@ -410,6 +427,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         void hideReload();
         void hideReconnect();
 
+        void onNonProgressingOperation(boolean display);
         void onMessage(Message message);
         void onMarkAllAsRead();
         void onClearMessage();
