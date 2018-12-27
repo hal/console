@@ -263,6 +263,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml obtainCertificateError(String alias, String resource, String error);
     SafeHtml obtainCertificateSuccess(String alias, String resource);
     SafeHtml operationLabel(String name);
+    SafeHtml operationHost(String name);
+    SafeHtml operationServer(String name);
     SafeHtml pageNotFound(String invalidHistoryToken);
     SafeHtml patchAddError(String patchId, String error);
     SafeHtml patchHostNeedsRestart(String hostname);

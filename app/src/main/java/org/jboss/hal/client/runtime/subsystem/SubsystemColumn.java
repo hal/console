@@ -122,6 +122,10 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 items.add(new SubsystemMetadata.Builder(Ids.SERVER_RUNTIME_STATUS, resources.constants().status())
                         .token(NameTokens.SERVER_RUNTIME)
                         .build());
+                items.add(new SubsystemMetadata.Builder(Ids.MANAGEMENT_OPERATIONS, resources.constants().managementOperations())
+                        .token(NameTokens.MANAGEMENT_OPERATIONS)
+                        .preview(resources.previews().runtimeManagementOperations())
+                        .build());
                 items.addAll(existingSubsystems.values().stream()
                         .sorted(comparing(SubsystemMetadata::getTitle))
                         .collect(toList()));

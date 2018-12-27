@@ -482,6 +482,7 @@ public interface Ids {
     String MAIL_SESSION_ITEM = "mail-session-item";
     String MAIL_SESSION_REFRESH = "mail-session-refresh";
     String MANAGEMENT = "management";
+    String MANAGEMENT_OPERATIONS = "mgmt-operations";
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_EXCLUDE = "membership-exclude";
     String MEMBERSHIP_INCLUDE = "membership-include";
