@@ -26,6 +26,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.FinderSegment;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
@@ -36,6 +37,7 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -75,6 +77,7 @@ public class BrowseByColumn extends StaticItemColumn {
             SecurityContextRegistry securityContextRegistry,
             @Footer Provider<Progress> progress,
             EventBus eventBus,
+            ItemActionFactory itemActionFactory,
             Dispatcher dispatcher,
             Places places,
             FinderPathFactory finderPathFactory,
@@ -97,6 +100,11 @@ public class BrowseByColumn extends StaticItemColumn {
                                 .nextColumn(Ids.SERVER_GROUP)
                                 .onPreview(new PreviewContent<>(Names.SERVER_GROUPS,
                                         resources.previews().runtimeServerGroups()))
+                                .build(),
+                        new StaticItem.Builder(Names.MANAGEMENT_OPERATIONS)
+                                .onPreview(new PreviewContent<>(Names.MANAGEMENT_OPERATIONS,
+                                        resources.previews().runtimeManagementOperations()))
+                                .action(itemActionFactory.view(NameTokens.MANAGEMENT_OPERATIONS))
                                 .build()
                 ));
     }

@@ -215,6 +215,7 @@ public interface Names {
     String MANAGEMENT_INTERFACE = "Management Interface";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
+    String MANAGEMENT_OPERATIONS = "Management Operations";
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";

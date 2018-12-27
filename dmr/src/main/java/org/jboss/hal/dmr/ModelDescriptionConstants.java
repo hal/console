@@ -337,9 +337,13 @@ public interface ModelDescriptionConstants {
     String GROUPING_HANDLER = "grouping-handler";
     String HA_POLICY = "ha-policy";
     // HAL_* attributes are used internally only!
+    String HAL_ACTIVE_OP_ADDRESS = "hal-active-op-address";
+    String HAL_ACTIVE_ADDRESS_HOST = "hal-active-address-host";
+    String HAL_ACTIVE_ADDRESS_SERVER = "hal-active-address-server";
     String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
     String HAL_LENGTH = "hal-length";
+    String HAL_NON_PROGRESSING = "hal-non-progressing";
     String HAL_RECURSIVE = "hal-recursive";
     String HANDLER = "handler";
     String HANDLERS = "handlers";

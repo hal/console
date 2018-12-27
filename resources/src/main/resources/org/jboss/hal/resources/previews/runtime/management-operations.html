@@ -1,0 +1,5 @@
+<p>A management operation is an operation that is performed on the ${build.shortName} and is related to administration scope. The HTTP handling related to application usage (ejb, rest, jms, etc) are not registered as a management operation.</p>
+<p>Adding a deployment, changing of datasource's password, increasing thread-pools are examples of management operations.</p>
+<p>There are management operations that needs exclusive locks to write to resources, if this exlcusive lock is held more than 15s, it is considered a non progressing operation and it will be reported in this view.</p>
+<p>The management operations view, allows the administrator to list all running management operations of a standalone server or all hosts and servers of the domain. It also allows to cancel any active management operation or cancel all the non progressing operations.</p>
+

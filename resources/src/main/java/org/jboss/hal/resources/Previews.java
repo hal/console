@@ -281,7 +281,7 @@ public interface Previews extends ClientBundleWithLookup {
     ExternalTextResource managementExtensions();
 
 
-    // ------------------------------------------------------ runtime
+    // ------------------------------------------------------ patching
 
     @Source("previews/patching/patching.html")
     ExternalTextResource patching();
@@ -323,6 +323,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/runtime/logfiles.html")
     ExternalTextResource runtimeLogFiles();
+
+    @Source("previews/runtime/management-operations.html")
+    ExternalTextResource runtimeManagementOperations();
 
     @Source("previews/runtime/messaging-server.html")
     ExternalTextResource runtimeMessagingServer();

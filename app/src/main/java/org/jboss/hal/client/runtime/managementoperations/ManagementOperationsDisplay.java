@@ -81,6 +81,12 @@ class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
     public SafeHtml getDescriptionHtml() {
         SafeHtmlBuilder html = new SafeHtmlBuilder();
         html.append(resources.messages().operationLabel(operation.getOperation()));
+        if (operation.getActiveAddressHost() != null) {
+            html.append(resources.messages().operationHost(operation.getActiveAddressHost()));
+        }
+        if (operation.getActiveAddressServer() != null) {
+            html.append(resources.messages().operationServer(operation.getActiveAddressServer()));
+        }
         html.append(resources.messages().addressLabel(operation.getAddress()));
         html.append(resources.messages().callerThreadLabel(operation.getCallerThread()));
         html.append(resources.messages()
