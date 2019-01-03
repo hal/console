@@ -504,6 +504,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String available(double value);
     String blacklist(String blacklist);
     String bootErrors();
+    String cancelNonProgressingOperation();
     String changeAccountKeyQuestion(String name);
     String chooseTemplate(String custom);
     String cleanPatchHistory();
@@ -535,6 +536,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String exactlyOneAlternativesError(String alternatives);
     String extensionColumnFilterDescription();
     String filterBy(String name);
+    String findNonProgressingOperation();
     String goTo(String name);
     String homepagePatchingDomainStepIntro(String name);
     String homepagePatchingStandaloneStepIntro(String name);

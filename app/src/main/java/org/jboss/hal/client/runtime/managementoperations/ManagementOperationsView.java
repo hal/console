@@ -34,9 +34,7 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.ACTIVE_OPERATIONS_TEMPLATE;
-import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.Ids.ACTIVE_OPERATION;
 
 public class ManagementOperationsView extends HalViewImpl implements ManagementOperationsPresenter.MyView {
@@ -50,11 +48,8 @@ public class ManagementOperationsView extends HalViewImpl implements ManagementO
         dataProvider = new DataProvider<>(ManagementOperations::getName, false);
 
         Metadata metadata = metadataRegistry.lookup(ACTIVE_OPERATIONS_TEMPLATE);
-        Metadata metadataMO = metadataRegistry.lookup(MANAGEMENT_OPERATIONS_TEMPLATE);
-        String findDescription = failSafeGet(metadataMO.getDescription(),
-                "operations/" + FIND_NON_PROGRESSING_OPERATION + "/description").asString();
-        String cancelDescription = failSafeGet(metadataMO.getDescription(),
-                "operations/" + CANCEL_NON_PROGRESSING_OPERATION + "/description").asString();
+        String findDescription = resources.messages().findNonProgressingOperation();
+        String cancelDescription = resources.messages().cancelNonProgressingOperation();
 
         Messages messages = resources.messages();
         EmptyState emptyState = new EmptyState.Builder(Ids.ACTIVE_OPERATION_EMPTY, resources.constants().noItems())
