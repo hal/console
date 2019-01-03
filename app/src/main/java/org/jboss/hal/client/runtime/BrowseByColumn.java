@@ -102,6 +102,7 @@ public class BrowseByColumn extends StaticItemColumn {
                                         resources.previews().runtimeServerGroups()))
                                 .build(),
                         new StaticItem.Builder(Names.MANAGEMENT_OPERATIONS)
+                                .id(Ids.MANAGEMENT_OPERATIONS)
                                 .onPreview(new PreviewContent<>(Names.MANAGEMENT_OPERATIONS,
                                         resources.previews().runtimeManagementOperations()))
                                 .action(itemActionFactory.view(NameTokens.MANAGEMENT_OPERATIONS))

@@ -73,10 +73,9 @@ public class ManagementOperationsPresenter extends
     private static final String EQ = "=";
     private static final String WILDCARD = "*";
     private static final String WFLYDM_0089 = "WFLYDM0089";
-    private AddressTemplate MGMT_OPERATIONS_TEMPLATE = AddressTemplate.of("/core-service=management/service=management-operations");
-    public static final String MANAGEMENT_OPERATIONS_ADDRESS = "{selected.host}/core-service=management/service=management-operations";
-    private static final String ACTIVE_OPERATIONS_ADDRESS = "{selected.host}/core-service=management/service=management-operations/active-operation=*";
-    public static final AddressTemplate MANAGEMENT_OPERATIONS_TEMPLATE = AddressTemplate.of(MANAGEMENT_OPERATIONS_ADDRESS);
+    public static final String MANAGEMENT_OPERATIONS_ADDRESS = "/core-service=management/service=management-operations";
+    static final String ACTIVE_OPERATIONS_ADDRESS = "{domain.controller}/" + MANAGEMENT_OPERATIONS_ADDRESS + "/active-operation=*";
+    private static final AddressTemplate MANAGEMENT_OPERATIONS_TEMPLATE = AddressTemplate.of(MANAGEMENT_OPERATIONS_ADDRESS);
     static final AddressTemplate ACTIVE_OPERATIONS_TEMPLATE = AddressTemplate.of(ACTIVE_OPERATIONS_ADDRESS);
 
     private final FinderPathFactory finderPathFactory;
@@ -121,7 +120,7 @@ public class ManagementOperationsPresenter extends
             // generic type is Server, doesn't accomodate a static option to add the Management Operations
             // and changing the column to a StaticItemColumn would require too much change for little return
             return finderPathFactory.runtimeServerPath()
-                    .append(Ids.RUNTIME_SUBSYSTEM, MANAGEMENT_OPERATIONS,
+                    .append(Ids.RUNTIME_SUBSYSTEM, Ids.MANAGEMENT_OPERATIONS,
                             resources.constants().monitor(), Names.MANAGEMENT_OPERATIONS);
         } else {
             return new FinderPath()
@@ -227,7 +226,7 @@ public class ManagementOperationsPresenter extends
                 if (!servers.isEmpty()) {
                     for (String server : servers) {
                         ResourceAddress address = AddressTemplate.of(server)
-                                .append(MGMT_OPERATIONS_TEMPLATE)
+                                .append(MANAGEMENT_OPERATIONS_TEMPLATE)
                                 .resolve(statementContext);
                         Operation findOp = new Operation.Builder(address, FIND_NON_PROGRESSING_OPERATION).build();
                         composite.add(findOp);
@@ -397,7 +396,7 @@ public class ManagementOperationsPresenter extends
                     // call cancel-non-progressing-operation on each server
                     Task<FlowContext> task = context -> {
                         ResourceAddress serverAddress = AddressTemplate.of(server)
-                                .append(MGMT_OPERATIONS_TEMPLATE)
+                                .append(MANAGEMENT_OPERATIONS_TEMPLATE)
                                 .resolve(statementContext);
                         return buildCancelOperation(serverAddress, context);
                     };
@@ -478,7 +477,7 @@ public class ManagementOperationsPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(MANAGEMENT_OPERATIONS)
-    @Requires({MANAGEMENT_OPERATIONS_ADDRESS, ACTIVE_OPERATIONS_ADDRESS})
+    @Requires({ACTIVE_OPERATIONS_ADDRESS})
     public interface MyProxy extends ProxyPlace<ManagementOperationsPresenter> {
     }
 
