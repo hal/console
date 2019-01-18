@@ -57,7 +57,6 @@ import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.jboss.hal.resources.CSS.form;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
