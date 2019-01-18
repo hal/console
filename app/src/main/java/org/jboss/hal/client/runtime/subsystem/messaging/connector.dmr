@@ -1,0 +1,28 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Connector.",
+    "attributes" => {
+        "name" => {
+            "type" => STRING,
+            "description" => "The name of the connector.",
+            "nillable" => true
+        },
+        "factory-class-name" => {
+            "type" => STRING,
+            "description" => "The factory classname.",
+            "nillable" => true
+        },
+        "params" => {
+            "type" => OBJECT,
+            "description" => "Additional parameter of the connector.",
+            "nillable" => true,
+            "value-type" => STRING
+        },
+        "extra-props" => {
+            "type" => OBJECT,
+            "description" => "Extra properties of the connector.",
+            "nillable" => true,
+            "value-type" => STRING
+        }
+    }
+}

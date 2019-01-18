@@ -73,6 +73,8 @@ public interface Names {
     String CONNECTION_DEFINITION = "Connection Definition";
     String CONNECTIONS = "Connections";
     String CONNECTOR_SERVICE = "Connector Service";
+    String CONNECTORS = "Connectors";
+    String CONSUMERS = "Consumers";
     String CONSOLE_ACTION_HANDLER = "Console ActionHandler";
     String CONTENT = "Content";
     String CONTEXT = "Context";
@@ -278,6 +280,7 @@ public interface Names {
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
     String PRINCIPAL_QUERY = "Principal Query";
+    String PRODUCERS = "Producers";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
     String PROPERTIES_REALM = "Properties Realm";

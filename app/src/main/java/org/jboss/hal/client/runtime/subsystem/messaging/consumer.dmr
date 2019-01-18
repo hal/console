@@ -1,0 +1,61 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Consumer.",
+    "attributes" => {
+        "consumer-id" => {
+            "type" => LONG,
+            "description" => "The consumer ID.",
+            "nillable" => true
+        },
+        "connection-id" => {
+            "type" => STRING,
+            "description" => "The connection ID.",
+            "nillable" => true
+        },
+        "session-id" => {
+            "type" => STRING,
+            "description" => "The session ID.",
+            "nillable" => true
+        },
+        "queue-name" => {
+            "type" => STRING,
+            "description" => "The queue name.",
+            "nillable" => true
+        },
+        "browse-only" => {
+            "type" => BOOLEAN,
+            "description" => "Whether the consumer can only browse messages.",
+            "nillable" => true
+        },
+        "creation-timestamp" => {
+            "type" => LONG,
+            "description" => "When the consumer has been created.",
+            "nillable" => true
+        },
+        "creation-time" => {
+            "type" => STRING,
+            "description" => "When the consumer has been created.",
+            "nillable" => true
+        },
+         "delivering-count" => {
+             "type" => LONG,
+             "description" => "The number of messages delivered.",
+             "nillable" => true
+         },
+         "durable" => {
+             "type" => BOOLEAN,
+             "description" => "Whether the consumer is durable.",
+             "nillable" => true
+         },
+         "destination-type" => {
+             "type" => STRING,
+             "description" => "The type of the destination.",
+             "nillable" => true
+         },
+         "destination-name" => {
+             "type" => STRING,
+             "description" => "The destination name.",
+             "nillable" => true
+         }
+    }
+}

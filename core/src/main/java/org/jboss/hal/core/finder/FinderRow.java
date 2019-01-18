@@ -292,7 +292,7 @@ class FinderRow<T> implements IsElement {
 
     // ------------------------------------------------------ getter
 
-    public String getId() {
+    String getId() {
         return id;
     }
 

@@ -66,7 +66,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml clearCacheError(String name, String error);
     SafeHtml clearCacheSuccess(String name);
     SafeHtml cloneProfileSuccess(String from, String to);
+    SafeHtml closeConnectionsSuccess();
     SafeHtml closeToLogout();
+    SafeHtml commitTransactionSuccess(String transactionId);
     SafeHtml configuredMailServer(String servers);
     SafeHtml contentAdded(@PluralCount int size);
     SafeHtml contentAlreadyDeployedToAllServerGroups(String name);
@@ -167,6 +169,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml extensionUrl();
     SafeHtml failedReadKeycloak(String address, String errorMessage);
     SafeHtml failedRedirectConsole(String url, String message);
+    SafeHtml forceFailoverSuccess();
     SafeHtml flushConnectionSuccess();
     SafeHtml generateCSRError(String alias, String path, String resource, String error);
     SafeHtml generateCSRSuccess(String alias, String path, String resource);
@@ -247,6 +250,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noItems();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
+    SafeHtml noMatchingConnections();
     SafeHtml noMatchingItems();
     SafeHtml noMessagesSelected();
     SafeHtml noPolicy();
@@ -344,6 +348,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml requiredMarker();
     SafeHtml requires(String requires);
     SafeHtml resetConfirmationQuestion(String name);
+    SafeHtml resetMessageCounterSuccess(String name);
     SafeHtml resetResourceSuccess(String type, String name);
     SafeHtml resetSingletonConfirmationQuestion();
     SafeHtml resetSingletonSuccess(String type);
@@ -377,6 +382,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml rollbackError(String failure);
     SafeHtml rollbackInProgress(String patchid);
     SafeHtml rollbackSucessful(String patchId);
+    SafeHtml rollbackTransactionSuccess(String transactionId);
     SafeHtml runningTimeLabel(String name);
     SafeHtml saveContentSuccess(String deployment, String file);
     SafeHtml saveIdentityError(String identity, String realm, String error);

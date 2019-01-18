@@ -1,0 +1,26 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Session.",
+    "attributes" => {
+        "session-id" => {
+            "type" => STRING,
+            "description" => "The session ID.",
+            "nillable" => true
+        },
+        "creation-timestamp" => {
+            "type" => LONG,
+            "description" => "When the session has been created.",
+            "nillable" => true
+        },
+        "creation-time" => {
+            "type" => STRING,
+            "description" => "When the session has been created.",
+            "nillable" => true
+        },
+         "consumer-count" => {
+             "type" => LONG,
+             "description" => "The number of sessions.",
+             "nillable" => true
+         }
+    }
+}

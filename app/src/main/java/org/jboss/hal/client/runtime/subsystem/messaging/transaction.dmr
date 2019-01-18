@@ -1,0 +1,11 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Transaction.",
+    "attributes" => {
+        "transaction-id" => {
+            "type" => STRING,
+            "description" => "The transaction ID.",
+            "nillable" => true
+        }
+    }
+}

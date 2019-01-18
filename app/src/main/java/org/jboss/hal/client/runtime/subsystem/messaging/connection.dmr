@@ -1,0 +1,36 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Connection.",
+    "attributes" => {
+        "connection-id" => {
+            "type" => STRING,
+            "description" => "The connection ID.",
+            "nillable" => true
+        },
+        "client-address" => {
+            "type" => STRING,
+            "description" => "The client address.",
+            "nillable" => true
+        },
+        "creation-timestamp" => {
+            "type" => LONG,
+            "description" => "When the connection has been created.",
+            "nillable" => true
+        },
+        "creation-time" => {
+            "type" => STRING,
+            "description" => "When the connection has been created.",
+            "nillable" => true
+        },
+        "implementation" => {
+            "type" => STRING,
+            "description" => "The implementation.",
+            "nillable" => true
+        },
+         "session-count" => {
+             "type" => LONG,
+             "description" => "The number of sessions.",
+             "nillable" => true
+         }
+    }
+}

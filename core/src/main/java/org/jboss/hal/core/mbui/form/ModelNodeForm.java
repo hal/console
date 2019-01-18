@@ -47,7 +47,6 @@ import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
-import org.jboss.hal.ballroom.form.DataMapping;
 import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -102,10 +101,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     protected ModelNodeForm(Builder<T> builder) {
         super(builder.id, builder.stateMachine(),
-                builder.dataMapping != null
-                        ? builder.dataMapping
-                        : new ModelNodeMapping<>(
-                        builder.metadata.getDescription().getAttributes(builder.attributePath)),
+                new ModelNodeMapping<>(builder.metadata.getDescription().getAttributes(builder.attributePath)),
                 builder.emptyState);
 
         this.addOnly = builder.addOnly;
@@ -350,7 +346,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             ModelNode attributeDescription = attributeDescriptions.get(name);
             if (attributeDescription != null) {
                 if (attributeDescription.hasDefined(DEFAULT)) {
-                    emptyOrDefault = resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
+                    emptyOrDefault = resourceDescription.isDefaultValue(attributePath, name,
+                            value) || formItem.isEmpty();
                 } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
                     emptyOrDefault = value == null || !(Boolean) value;
                 } else {
@@ -406,7 +403,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         CancelCallback<T> cancelCallback;
         PrepareReset<T> prepareReset;
         PrepareRemove<T> prepareRemove;
-        DataMapping<T> dataMapping;
         boolean panelForOptionalAttributes;
 
 
