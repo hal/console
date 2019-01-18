@@ -42,6 +42,7 @@ import static org.jboss.hal.dmr.ModelType.INT;
 
 public final class Json {
 
+    private static final String EMPTY_JSON = "Empty JSON '{}'";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Json.class);
 
     @SuppressWarnings("unchecked")
@@ -59,11 +60,11 @@ public final class Json {
                 }
                 return nodes;
             } else {
-                logger.warn("Empty JSON '{}'", json);
+                logger.warn(EMPTY_JSON, json);
                 return emptyList();
             }
         } else {
-            logger.warn("Empty JSON '{}'", json);
+            logger.warn(EMPTY_JSON, json);
             return emptyList();
         }
     }
@@ -76,11 +77,11 @@ public final class Json {
             if (map != null) {
                 return iterateMap(map, metadata, mappping);
             } else {
-                logger.warn("Empty JSON '{}'", json);
+                logger.warn(EMPTY_JSON, json);
                 return new ModelNode();
             }
         } else {
-            logger.warn("Empty JSON '{}'", json);
+            logger.warn(EMPTY_JSON, json);
             return new ModelNode();
         }
     }
