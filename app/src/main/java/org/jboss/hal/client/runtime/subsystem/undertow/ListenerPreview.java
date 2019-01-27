@@ -124,7 +124,7 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         dispatcher.execute(operation, result -> {
             NamedNode listenerResult = new NamedNode(result);
             previewAttributes.refresh(listenerResult);
-            boolean statisticsEnabled = listenerResult.get(RECORD_REQUEST_START_TIME).asBoolean();
+            boolean statisticsEnabled = listenerResult.get(RECORD_REQUEST_START_TIME).asBoolean(false);
 
             if (statisticsEnabled) {
                 Map<String, Long> processingTimes = new HashMap<>();

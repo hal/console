@@ -123,7 +123,7 @@ public class Deployment extends Content {
     public boolean isEnabled() {
         ModelNode enabled = get(ENABLED);
         //noinspection SimplifiableConditionalExpression
-        return enabled.isDefined() ? enabled.asBoolean() : false;
+        return enabled.isDefined() ? enabled.asBoolean(false) : false;
     }
 
     public Status getStatus() {

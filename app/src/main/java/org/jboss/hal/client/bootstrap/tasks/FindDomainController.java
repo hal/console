@@ -71,8 +71,7 @@ public class FindDomainController implements BootstrapTask {
                                     firstHost = property.getName();
                                 }
                                 if (property.getValue().get(MASTER).isDefined() && property.getValue()
-                                        .get(MASTER)
-                                        .asBoolean()) {
+                                        .get(MASTER).asBoolean()) {
                                     domainController = property.getName();
                                     break;
                                 }

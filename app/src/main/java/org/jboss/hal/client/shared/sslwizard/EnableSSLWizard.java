@@ -308,8 +308,8 @@ public class EnableSSLWizard {
                                     .param(ALIAS, asString(model, AbstractConfiguration.CLIENT_CERTIFICATE_ALIAS))
                                     .param(PATH, asString(model, AbstractConfiguration.CLIENT_CERTIFICATE_PATH))
                                     .param(CREDENTIAL_REFERENCE, tsCredRef)
-                                    .param(VALIDATE, model.get(AbstractConfiguration.CLIENT_CERTIFICATE_VALIDATE).asBoolean())
-                                    .param(TRUST_CACERTS, model.get(AbstractConfiguration.CLIENT_CERTIFICATE_TRUST).asBoolean())
+                                    .param(VALIDATE, model.get(AbstractConfiguration.CLIENT_CERTIFICATE_VALIDATE).asBoolean(false))
+                                    .param(TRUST_CACERTS, model.get(AbstractConfiguration.CLIENT_CERTIFICATE_TRUST).asBoolean(false))
                                     .build();
                             composite.add(importCertOp);
 

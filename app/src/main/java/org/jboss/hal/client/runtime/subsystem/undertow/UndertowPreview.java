@@ -73,7 +73,7 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
                 .param(INCLUDE_RUNTIME, true)
                 .build();
         dispatcher.execute(opWeb, result -> {
-            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
+            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean(false);
             Elements.setVisible(noStatistics.element(), !statsEnabled);
             Elements.setVisible(descriptionPreview, statsEnabled);
         });
