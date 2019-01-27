@@ -42,7 +42,7 @@ public class Content extends NamedNode {
                 managed = false;
             }
             if (content.hasDefined(ARCHIVE)) {
-                archived = content.get(ARCHIVE).asBoolean();
+                archived = content.get(ARCHIVE).asBoolean(false);
             }
         }
         // simplify access and set the flags directly into the model node

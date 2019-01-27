@@ -63,7 +63,7 @@ public class ServerGroupDeployment extends Content {
     }
 
     public boolean isEnabled() {
-        return hasDefined(ENABLED) && get(ENABLED).asBoolean();
+        return hasDefined(ENABLED) && get(ENABLED).asBoolean(false);
     }
 
     public String getServerGroup() {

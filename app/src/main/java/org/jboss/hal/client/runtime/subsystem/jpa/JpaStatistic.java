@@ -32,7 +32,7 @@ class JpaStatistic extends DeploymentResource {
     }
 
     boolean isStatisticsEnabled() {
-        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean();
+        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean(false);
     }
 
     public String getPersistenceUnit() {

@@ -81,7 +81,7 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
                 .param(RESOLVE_EXPRESSIONS, true)
                 .build();
         dispatcher.execute(opSubsystem, result -> {
-            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
+            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean(false);
             attributes.refresh(result);
             Elements.setVisible(noStatistics.asElement(), !statsEnabled);
             Elements.setVisible(attributesElement, statsEnabled);
