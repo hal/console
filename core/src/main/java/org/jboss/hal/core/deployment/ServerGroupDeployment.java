@@ -29,13 +29,13 @@ public class ServerGroupDeployment extends Content {
     private final String serverGroup;
     private Deployment deployment; // might be null if there's no reference server available
 
-    public ServerGroupDeployment(final String serverGroup, final ModelNode node) {
+    public ServerGroupDeployment(String serverGroup, ModelNode node) {
         super(node);
         this.serverGroup = serverGroup;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
