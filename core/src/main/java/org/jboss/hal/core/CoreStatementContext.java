@@ -134,11 +134,11 @@ public class CoreStatementContext implements StatementContext,
 
     @Override
     public String selectedServerConfig() {
-        return environment.isStandalone() ? null : context.get(SELECTED_SERVER_CONFIG);
+        return context.get(SELECTED_SERVER_CONFIG);
     }
 
     @Override
     public String selectedServer() {
-        return environment.isStandalone() ? null : context.get(SELECTED_SERVER);
+        return context.get(SELECTED_SERVER);
     }
 }

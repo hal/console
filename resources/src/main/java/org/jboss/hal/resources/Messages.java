@@ -169,7 +169,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml extensionUrl();
     SafeHtml failedReadKeycloak(String address, String errorMessage);
     SafeHtml failedRedirectConsole(String url, String message);
-    SafeHtml forceFailoverSuccess();
+    SafeHtml forceFailoverQuestion(String server);
+    SafeHtml forceFailoverSuccess(String server);
     SafeHtml flushConnectionSuccess();
     SafeHtml generateCSRError(String alias, String path, String resource, String error);
     SafeHtml generateCSRSuccess(String alias, String path, String resource);
@@ -225,6 +226,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml managementVersionMismatch(String managementVersion, String targetVersion);
     SafeHtml manyMessages(long number);
     SafeHtml mappingHint();
+    SafeHtml messageServerStarted(String name);
+    SafeHtml messageServerStopped(String name, String server);
     SafeHtml metadataError();
     SafeHtml microprofileHealthOutcome(String outcome);
     SafeHtml modifyResourceSuccess(String type, String name);

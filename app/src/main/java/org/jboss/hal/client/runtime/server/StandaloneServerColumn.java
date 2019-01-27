@@ -40,6 +40,7 @@ import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
+import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
@@ -104,6 +105,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     });
                 })
 
+                .onItemSelect(server -> eventBus.fireEvent(new ServerSelectionEvent(server.getName())))
                 .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
                         statementContext, placeManager, places, finderPathFactory, resources))
         );
@@ -195,7 +197,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     }
 
     @Override
-    public void onServerAction(final ServerActionEvent event) {
+    public void onServerAction(ServerActionEvent event) {
         if (isVisible()) {
             refreshPath = finder.getContext().getPath().copy();
             ItemMonitor.startProgress(event.getServer().getId());
@@ -204,7 +206,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     }
 
     @Override
-    public void onServerResult(final ServerResultEvent event) {
+    public void onServerResult(ServerResultEvent event) {
         //noinspection Duplicates
         if (isVisible()) {
             ItemMonitor.stopProgress(event.getServer().getId());
