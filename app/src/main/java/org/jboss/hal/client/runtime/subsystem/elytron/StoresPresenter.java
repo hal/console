@@ -557,7 +557,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
     void obtainCertificate(Metadata metadata, String name) {
         metadata = metadata.forOperation(OBTAIN_CERTIFICATE);
         String id = Ids.build(KEY_STORE, OBTAIN_CERTIFICATE, FORM);
-        String title = new LabelBuilder().label(CERTIFICATE_AUTHORITY_ACCOUNT);
+        String title = new LabelBuilder().label(OBTAIN_CERTIFICATE);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .build();
         form.setSaveCallback((form1, changedValues) -> {
