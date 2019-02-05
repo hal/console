@@ -19,107 +19,79 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
-import static org.jboss.hal.meta.security.Permission.EXECUTABLE;
-import static org.jboss.hal.meta.security.Permission.WRITABLE;
-import static org.jboss.hal.meta.security.Target.ATTRIBUTE;
-import static org.jboss.hal.meta.security.Target.OPERATION;
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class ConstraintTest {
 
-    private AddressTemplate template;
+    private static final AddressTemplate TEMPLATE = AddressTemplate.of("j/l/p");
+    private static final String OPERATION = "engage";
+    private static final String ATTRIBUTE = "NCC-1701-D";
+    private static final String ENGAGE_DATA = "executable(j/l/p:engage)";
+    private static final String NCC_DATA = "writable(j/l/p@NCC-1701-D)";
+
+    private Constraint ex, wr;
 
     @Before
-    public void setUp() throws Exception {
-        template = AddressTemplate.of("{selected.profile}/subsystem=datasources/data-source=*");
+    public void setUp() {
+        ex = Constraint.executable(TEMPLATE, OPERATION);
+        wr = Constraint.writable(TEMPLATE, ATTRIBUTE);
+    }
+
+    @Test
+    public void name() {
+        assertEquals(OPERATION, ex.getName());
+        assertEquals(ATTRIBUTE, wr.getName());
+    }
+
+    @Test
+    public void permission() {
+        assertEquals(Permission.EXECUTABLE, ex.getPermission());
+        assertEquals(Permission.WRITABLE, wr.getPermission());
+    }
+
+    @Test
+    public void target() {
+        assertEquals(Target.OPERATION, ex.getTarget());
+        assertEquals(Target.ATTRIBUTE, wr.getTarget());
+    }
+
+    @Test
+    public void tamplate() {
+        assertEquals(TEMPLATE, ex.getTemplate());
+        assertEquals(TEMPLATE, wr.getTemplate());
+    }
+
+    @Test
+    public void data() {
+        assertEquals(ENGAGE_DATA, ex.data());
+        assertEquals(ENGAGE_DATA, ex.toString());
+        assertEquals(NCC_DATA, wr.data());
+        assertEquals(NCC_DATA, wr.toString());
+    }
+
+    @Test
+    public void parse() {
+        assertEquals(ex, Constraint.parse(ENGAGE_DATA));
+        assertEquals(wr, Constraint.parse(NCC_DATA));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseNull() throws Exception {
+    public void parseNull() {
         Constraint.parse(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseEmpty() throws Exception {
+    public void parseEmpty() {
         Constraint.parse("");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseBlank() throws Exception {
+    public void parseBlank() {
         Constraint.parse("   ");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseInvalid() throws Exception {
-        Constraint.parse("foo");
-    }
-
-    @Test
-    public void parseOperation() throws Exception {
-        String input = "executable({selected.profile}/subsystem=datasources/data-source=*:add)";
-        Constraint constraint = Constraint.parse(input);
-
-        assertEquals(Constraint.executable(template, ADD), constraint);
-    }
-
-    @Test
-    public void parseAttribute() throws Exception {
-        String input = "writable({selected.profile}/subsystem=datasources/data-source=*@enabled)";
-        Constraint constraint = Constraint.parse(input);
-
-        assertEquals(Constraint.writable(template, ENABLED), constraint);
-    }
-
-    @Test
-    public void executable() throws Exception {
-        Constraint constraint = Constraint.executable(template, ADD);
-
-        assertEquals(template, constraint.getTemplate());
-        assertEquals(ADD, constraint.getName());
-        assertEquals(OPERATION, constraint.getTarget());
-        assertEquals(EXECUTABLE, constraint.getPermission());
-    }
-
-    @Test
-    public void writable() throws Exception {
-        Constraint constraint = Constraint.writable(template, ENABLED);
-
-        assertEquals(template, constraint.getTemplate());
-        assertEquals(ENABLED, constraint.getName());
-        assertEquals(ATTRIBUTE, constraint.getTarget());
-        assertEquals(WRITABLE, constraint.getPermission());
-    }
-
-    @Test
-    public void operationData() throws Exception {
-        assertEquals("executable({selected.profile}/subsystem=datasources/data-source=*:add)",
-                Constraint.executable(template, ADD).data());
-    }
-
-    @Test
-    public void attributeData() throws Exception {
-        assertEquals("writable({selected.profile}/subsystem=datasources/data-source=*@enabled)",
-                Constraint.writable(template, ENABLED).data());
-    }
-
-    @Test
-    public void operationRoundTrip() throws Exception {
-        Constraint constraint1 = Constraint.executable(template, ADD);
-        String data = constraint1.data();
-        Constraint constraint2 = Constraint.parse(data);
-
-        assertEquals(constraint1, constraint2);
-    }
-
-    @Test
-    public void attributeRoundTrip() throws Exception {
-        Constraint constraint1 = Constraint.writable(template, ENABLED);
-        String data = constraint1.data();
-        Constraint constraint2 = Constraint.parse(data);
-
-        assertEquals(constraint1, constraint2);
+    public void parseIllegal() {
+        Constraint.parse("not a constraint");
     }
 }
