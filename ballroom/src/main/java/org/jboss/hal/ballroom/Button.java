@@ -38,14 +38,14 @@ public class Button implements IsElement {
     }
 
     public Button(final String label, final String css, final EventCallbackFn<MouseEvent> listener) {
-        element = button().textContent(label).on(click, listener).asElement();
+        element = button().textContent(label).on(click, listener).get();
         if (css != null) {
             element.className = css;
         }
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return element;
     }
 }

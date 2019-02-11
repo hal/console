@@ -102,7 +102,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .add(p().textContent(inboundMetadata.getDescription().getDescription()))
                 .add(inboundTable)
                 .add(inboundForm)
-                .asElement();
+                .get();
 
         Metadata clientMappingsMetadata = inboundMetadata.forComplexAttribute(CLIENT_MAPPINGS);
 
@@ -116,7 +116,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .column(Names.DESTINATION, (cell, type, row, meta) -> {
                     String address = row.get(DESTINATION_ADDRESS).asString();
                     if (row.hasDefined(DESTINATION_PORT)) {
-                        address += ":" + String.valueOf(row.get(DESTINATION_PORT).asInt());
+                        address += ":" + row.get(DESTINATION_PORT).asInt();
                     }
                     return address;
                 })
@@ -135,7 +135,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .add(p().textContent(clientMappingsMetadata.getDescription().getDescription()))
                 .add(clientMappingTable)
                 .add(clientMappingForm)
-                .asElement();
+                .get();
 
         String id = Ids.build(INBOUND.baseId, Ids.PAGES);
         String parentId = Ids.build(INBOUND.baseId, Ids.PAGE);

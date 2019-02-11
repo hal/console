@@ -66,7 +66,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml clearCacheError(String name, String error);
     SafeHtml clearCacheSuccess(String name);
     SafeHtml cloneProfileSuccess(String from, String to);
+    SafeHtml closeConnectionsSuccess();
     SafeHtml closeToLogout();
+    SafeHtml commitTransactionSuccess(String transactionId);
     SafeHtml configuredMailServer(String servers);
     SafeHtml contentAdded(@PluralCount int size);
     SafeHtml contentAlreadyDeployedToAllServerGroups(String name);
@@ -167,6 +169,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml extensionUrl();
     SafeHtml failedReadKeycloak(String address, String errorMessage);
     SafeHtml failedRedirectConsole(String url, String message);
+    SafeHtml forceFailoverQuestion(String server);
+    SafeHtml forceFailoverSuccess(String server);
     SafeHtml flushConnectionSuccess();
     SafeHtml generateCSRError(String alias, String path, String resource, String error);
     SafeHtml generateCSRSuccess(String alias, String path, String resource);
@@ -215,12 +219,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml loadPropertiesRealmSuccess(String name);
     SafeHtml loadProviderDynamicWarning();
     SafeHtml logFileError(String name);
+    SafeHtml longRunningManagementOperations();
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
     SafeHtml managementOperationsFindNoResult();
     SafeHtml managementVersionMismatch(String managementVersion, String targetVersion);
     SafeHtml manyMessages(long number);
     SafeHtml mappingHint();
+    SafeHtml messageServerStarted(String name);
+    SafeHtml messageServerStopped(String name, String server);
     SafeHtml metadataError();
     SafeHtml microprofileHealthOutcome(String outcome);
     SafeHtml modifyResourceSuccess(String type, String name);
@@ -246,6 +253,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noItems();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
+    SafeHtml noMatchingConnections();
     SafeHtml noMatchingItems();
     SafeHtml noMessagesSelected();
     SafeHtml noPolicy();
@@ -263,6 +271,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml obtainCertificateError(String alias, String resource, String error);
     SafeHtml obtainCertificateSuccess(String alias, String resource);
     SafeHtml operationLabel(String name);
+    SafeHtml operationHost(String name);
+    SafeHtml operationServer(String name);
     SafeHtml pageNotFound(String invalidHistoryToken);
     SafeHtml patchAddError(String patchId, String error);
     SafeHtml patchHostNeedsRestart(String hostname);
@@ -341,6 +351,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml requiredMarker();
     SafeHtml requires(String requires);
     SafeHtml resetConfirmationQuestion(String name);
+    SafeHtml resetMessageCounterSuccess(String name);
     SafeHtml resetResourceSuccess(String type, String name);
     SafeHtml resetSingletonConfirmationQuestion();
     SafeHtml resetSingletonSuccess(String type);
@@ -374,6 +385,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml rollbackError(String failure);
     SafeHtml rollbackInProgress(String patchid);
     SafeHtml rollbackSucessful(String patchId);
+    SafeHtml rollbackTransactionSuccess(String transactionId);
     SafeHtml runningTimeLabel(String name);
     SafeHtml saveContentSuccess(String deployment, String file);
     SafeHtml saveIdentityError(String identity, String realm, String error);
@@ -501,6 +513,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String available(double value);
     String blacklist(String blacklist);
     String bootErrors();
+    String cancelNonProgressingOperation();
     String changeAccountKeyQuestion(String name);
     String chooseTemplate(String custom);
     String cleanPatchHistory();
@@ -532,6 +545,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String exactlyOneAlternativesError(String alternatives);
     String extensionColumnFilterDescription();
     String filterBy(String name);
+    String findNonProgressingOperation();
     String goTo(String name);
     String homepagePatchingDomainStepIntro(String name);
     String homepagePatchingStandaloneStepIntro(String name);

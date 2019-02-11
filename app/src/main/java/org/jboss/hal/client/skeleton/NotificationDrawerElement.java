@@ -27,7 +27,6 @@ import org.jboss.hal.spi.Message;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.CSS.time;
 
 /** One item in {@link NotificationDrawer} */
 class NotificationDrawerElement implements IsElement {
@@ -59,13 +58,13 @@ class NotificationDrawerElement implements IsElement {
                                         .add(a().css(clickable)
                                                 .on(click, event -> notificationDrawer.remove(id))
                                                 .textContent(resources.constants().remove())))))
-                .add(iconContainer = span().css(pullLeft).asElement())
+                .add(iconContainer = span().css(pullLeft).get())
                 .add(div().css(drawerPfNotificationContent)
                         .add(span().css(drawerPfNotificationMessage).innerHtml(message.getMessage()))
                         .add(div().css(drawerPfNotificationInfo)
                                 .add(span().css(date).textContent(message.getDate()))
                                 .add(span().css(time).textContent(message.getTime()))))
-                .asElement();
+                .get();
 
         String css = null;
         switch (message.getLevel()) {
@@ -88,7 +87,7 @@ class NotificationDrawerElement implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

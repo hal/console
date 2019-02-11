@@ -94,7 +94,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
     }
 
     @Override
-    protected void doRevealPlace(final PlaceRequest request, final boolean updateBrowserUrl) {
+    protected void doRevealPlace(PlaceRequest request, boolean updateBrowserUrl) {
         // Special treatment for statement context relevant parameters: The {selected.*} tokens in the @Requires
         // annotations on proxy places need to have a value in the statement context *before* the metadata processor
         // kicks in. Thus we need to look into the place request for well-known parameters and trigger a selection.
@@ -107,7 +107,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
 
         metadataProcessor.process(request.getNameToken(), progress.get(), new AsyncCallback<Void>() {
             @Override
-            public void onFailure(final Throwable throwable) {
+            public void onFailure(Throwable throwable) {
                 unlock();
                 if (firstRequest) {
                     revealDefaultPlace();
@@ -123,7 +123,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
             }
 
             @Override
-            public void onSuccess(final Void whatever) {
+            public void onSuccess(Void whatever) {
                 HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
                 firstRequest = false;
             }
@@ -131,7 +131,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
     }
 
     @Override
-    public void revealErrorPlace(final String invalidHistoryToken) {
+    public void revealErrorPlace(String invalidHistoryToken) {
         MessageEvent.fire(getEventBus(), Message.error(resources.messages().pageNotFound(invalidHistoryToken)));
         if (firstRequest) {
             // TODO find a more elegant way to get hold of the very first request
@@ -140,7 +140,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
     }
 
     @Override
-    public void revealUnauthorizedPlace(final String unauthorizedHistoryToken) {
+    public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
         MessageEvent.fire(getEventBus(), Message.error(resources.messages().unauthorized()));
         if (firstRequest) {
             // TODO find a more elegant way to get hold of the very first request

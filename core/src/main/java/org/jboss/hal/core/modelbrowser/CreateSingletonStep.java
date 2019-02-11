@@ -54,16 +54,16 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
         this.progress = progress;
         this.eventBus = eventBus;
         this.resources = resources;
-        this.root = div().asElement();
+        this.root = div().get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    protected void onShow(final SingletonContext context) {
+    protected void onShow(SingletonContext context) {
         Elements.removeChildrenFrom(root);
         Node<Context> parent = wizard().getContext().parent;
         ResourceAddress singletonAddress = parent.data.getAddress().getParent()
@@ -71,18 +71,18 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
         AddressTemplate template = ModelBrowser.asGenericTemplate(parent, singletonAddress);
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
-            public void onError(final Throwable error) {
+            public void onError(Throwable error) {
                 MessageEvent.fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
             }
 
             @Override
-            public void onMetadata(final Metadata metadata) {
+            public void onMetadata(Metadata metadata) {
                 String id = Ids.build(Ids.MODEL_BROWSER_CREATE_SINGLETON_FORM, Ids.FORM);
                 form = new ModelNodeForm.Builder<>(id, metadata)
                         .fromRequestProperties()
                         .onSave((f, changedValues) -> wizard().getContext().modelNode = f.getModel())
                         .build();
-                root.appendChild(form.asElement());
+                root.appendChild(form.element());
                 PatternFly.initComponents();
                 form.attach();
                 form.edit(new ModelNode());
@@ -91,7 +91,7 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
     }
 
     @Override
-    protected boolean onNext(final SingletonContext context) {
+    protected boolean onNext(SingletonContext context) {
         return form != null && form.save();
     }
 }

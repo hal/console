@@ -86,7 +86,7 @@ public class SystemPropertiesView extends HalViewImpl implements SystemPropertie
                         .add(p().textContent(metadata.getDescription().getDescription()))
                         .add(table)
                         .add(form))
-                .asElement();
+                .get();
 
         registerAttachable(table);
         registerAttachable(form);

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -49,16 +50,16 @@ public class Tabs implements IsElement<HTMLElement> {
                 .add(tabs = ul()
                         .css(nav, navTabs, navTabsPf, navTabsHal)
                         .attr(UIConstants.ROLE, UIConstants.TABLIST)
-                        .asElement())
-                .add(panes = div().css(tabContent).asElement())
-                .asElement();
+                        .get())
+                .add(panes = div().css(tabContent).get())
+                .get();
 
         indexToId = new HashMap<>();
         paneElements = new HashMap<>();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -84,8 +85,8 @@ public class Tabs implements IsElement<HTMLElement> {
                             showTab(id);
                         })
                         .textContent(title))
-                .asElement();
-        HTMLElement pane = div().id(id).css(tabPane).attr(UIConstants.ROLE, "tabpanel").asElement(); //NON-NLS
+                .get();
+        HTMLElement pane = div().id(id).css(tabPane).attr(UIConstants.ROLE, "tabpanel").get(); //NON-NLS
 
         tabs.appendChild(tab);
         panes.appendChild(pane);
@@ -120,6 +121,7 @@ public class Tabs implements IsElement<HTMLElement> {
         showTab(indexToId.get(index));
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void showTab(String id) {
         if (id != null) {
             Api.select("a[href='#" + id + "']").tab("show"); //NON-NLS
@@ -152,6 +154,14 @@ public class Tabs implements IsElement<HTMLElement> {
             selectedTab = (HTMLElement) tabs.querySelector("li > a[href='#" + id + "']"); //NON-NLS
         }
         return selectedTab;
+    }
+
+    public String getSelectedId() {
+        Element a = tabs.querySelector("li." + active + " > a");
+        if (a != null) {
+            return a.getAttribute("aria-controls");
+        }
+        return null;
     }
 
 

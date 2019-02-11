@@ -70,7 +70,7 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(deploymentResource.getPath())
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                .asElement());
+                .get());
 
         previewAttributes = new PreviewAttributes<>(deploymentResource, asList(CLASS, TYPE, CONTEXT));
         previewAttributes.append(model -> {
@@ -103,14 +103,14 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
                 .addAll(previewAttributes)
                 .add(h(2, resources.constants().processingTime()))
                 .add(processingTime)
-                .addAll(totalProcessingTimeAttribute.asElements())
+                .addAll(totalProcessingTimeAttribute)
                 .add(h(2, resources.constants().request() + " / " + resources.constants().response()))
                 .add(requests)
-                .addAll(responseAttribute.asElements());
+                .addAll(responseAttribute);
     }
 
     private PreviewAttributes.PreviewAttribute msAttribute(String attribute, ModelNode model) {
-        Long value = model.get(attribute).asLong();
+        long value = model.get(attribute).asLong();
         return new PreviewAttributes.PreviewAttribute(lblBuilder.label(attribute), value + " ms"); //NON-NLS
     }
 

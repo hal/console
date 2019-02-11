@@ -46,9 +46,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * Implementation note: Not based on MBUI XML due to special cache container singleton resources.
- */
+/** Implementation note: Not based on MBUI XML due to special cache container singleton resources. */
 public class CacheContainerView extends HalViewImpl implements CacheContainerPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;
@@ -77,17 +75,17 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(configurationForm)
-                .asElement();
+                .get();
         navigation.addPrimary(Ids.CACHE_CONTAINER_ITEM, Names.CONFIGURATION, pfIcon("settings"), section);
 
         navigation.addPrimary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM, Names.THREAD_POOLS, pfIcon("resource-pool"));
         threadPools.forEach((threadPool, threadPoolElement) ->
                 navigation.addSecondary(Ids.CACHE_CONTAINER_THREAD_POOLS_ITEM,
                         Ids.build(threadPool.baseId, Ids.ITEM), threadPool.type,
-                        threadPoolElement.asElement()));
+                        threadPoolElement.element()));
 
         navigation.addPrimary(Ids.CACHE_CONTAINER_TRANSPORT_ITEM, Names.TRANSPORT, fontAwesome("road"),
-                transport.asElement());
+                transport.element());
 
         registerAttachable(navigation);
         registerAttachable(configurationForm);

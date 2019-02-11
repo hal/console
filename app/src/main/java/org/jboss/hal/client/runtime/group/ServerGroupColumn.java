@@ -128,7 +128,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return ItemDisplay.withSubtitle(item.getName(), item.getProfile());
             }
 

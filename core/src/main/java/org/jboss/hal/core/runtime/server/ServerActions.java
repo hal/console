@@ -383,7 +383,7 @@ public class ServerActions {
                         Dialog dialog = DialogFactory.buildConfirmation(
                                 resources.messages().suspend(server.getName()),
                                 resources.messages().suspendServerQuestion(server.getName()),
-                                form.asElement(),
+                                form.element(),
                                 Dialog.Size.MEDIUM,
                                 () -> {
 
@@ -457,7 +457,7 @@ public class ServerActions {
                         Dialog dialog = DialogFactory.buildConfirmation(
                                 resources.messages().stop(server.getName()),
                                 resources.messages().stopServerQuestion(server.getName()),
-                                form.asElement(),
+                                form.element(),
                                 Dialog.Size.MEDIUM,
                                 () -> {
 
@@ -587,7 +587,7 @@ public class ServerActions {
                 element.appendChild(a(url.getUrl())
                         .apply(a -> a.target = server.getId())
                         .textContent(url.getUrl())
-                        .asElement());
+                        .get());
                 String icon;
                 String tooltip;
                 if (url.isCustom()) {
@@ -597,15 +597,9 @@ public class ServerActions {
                     icon = pfIcon("server");
                     tooltip = resources.constants().serverUrlManagementModel();
                 }
-                element.appendChild(
-                        span().css(icon, marginLeft5).style("cursor:help").title(tooltip).asElement()); //NON-NLS
+                element.appendChild(span().css(icon, marginLeft5).style("cursor:help").title(tooltip).get()); //NON-NLS
             }
         });
-    }
-
-    /** Reads the URL using the information from the specified server instance */
-    public void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
-        readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
     }
 
     /** Reads the URL using the provided parameters */
@@ -634,9 +628,14 @@ public class ServerActions {
         }
     }
 
+    /** Reads the URL using the information from the specified server instance */
+    private void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
+        readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
+    }
+
     public void editUrl(Server server, Callback callback) {
         Alert alert = new Alert(Icons.ERROR, resources.messages().serverUrlError());
-        HTMLElement info = p().asElement();
+        HTMLElement info = p().get();
         TextBoxItem urlItem = new TextBoxItem(URL, Names.URL);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SERVER_URL_FORM, Metadata.empty())
                 .unboundFormItem(urlItem)
@@ -652,22 +651,22 @@ public class ServerActions {
                 })
                 .build();
         Dialog dialog = new Dialog.Builder(resources.constants().editURL())
-                .add(alert.asElement())
+                .add(alert.element())
                 .add(info)
-                .add(form.asElement())
+                .add(form.element())
                 .primary(form::save)
                 .cancel()
                 .closeIcon(true)
                 .closeOnEsc(true)
                 .build();
         dialog.registerAttachable(form);
-        Elements.setVisible(alert.asElement(), false);
+        Elements.setVisible(alert.element(), false);
         Elements.setVisible(info, false);
 
         readUrl(server, new AsyncCallback<ServerUrl>() {
             @Override
             public void onFailure(Throwable caught) {
-                Elements.setVisible(alert.asElement(), true);
+                Elements.setVisible(alert.element(), true);
                 show(null);
             }
 

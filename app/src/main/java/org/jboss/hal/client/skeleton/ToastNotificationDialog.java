@@ -33,7 +33,7 @@ class ToastNotificationDialog {
 
     ToastNotificationDialog(Message message) {
         String[] cssIcon = ToastNotificationElement.cssIcon(message.getLevel());
-        ElementsBuilder builder = elements();
+        ElementsBuilder builder = collect();
 
         // header
         builder.add(div().css(alert, cssIcon[0])
@@ -51,7 +51,7 @@ class ToastNotificationDialog {
 
         dialog = new Dialog.Builder(CONSTANTS.message())
                 .closeOnly()
-                .add(builder.asElements())
+                .add(builder.get())
                 .build();
     }
 

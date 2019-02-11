@@ -36,11 +36,11 @@ public class AceEditor implements IsElement, Attachable {
     public AceEditor(String id, Options options) {
         this.id = id;
         this.options = options;
-        this.preElement = pre().id(id).css(CSS.editor).asElement();
+        this.preElement = pre().id(id).css(CSS.editor).get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return preElement;
     }
 

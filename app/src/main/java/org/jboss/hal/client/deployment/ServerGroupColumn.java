@@ -49,12 +49,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
     @Inject
-    public ServerGroupColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final PlaceManager placeManager,
-            final Places places,
-            final Resources resources) {
+    public ServerGroupColumn(Finder finder,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            PlaceManager placeManager,
+            Places places,
+            Resources resources) {
 
         super(new FinderColumn.Builder<ServerGroup>(finder, Ids.DEPLOYMENT_SERVER_GROUP, Names.SERVER_GROUP)
 
@@ -84,7 +84,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return ItemDisplay.withSubtitle(item.getName(), item.getProfile());
             }
 

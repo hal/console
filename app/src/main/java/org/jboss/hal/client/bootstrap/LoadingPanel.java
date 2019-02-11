@@ -36,7 +36,7 @@ public class LoadingPanel implements IsElement {
         if (instance == null) {
             instance = new LoadingPanel();
             instance.off();
-            document.body.appendChild(instance.asElement());
+            document.body.appendChild(instance.element());
         }
         return instance;
     }
@@ -50,11 +50,11 @@ public class LoadingPanel implements IsElement {
                 .add(div().css(loading)
                         .add(h(3).textContent(CONSTANTS.loading()))
                         .add(div().css(spinner)))
-                .asElement();
+                .get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

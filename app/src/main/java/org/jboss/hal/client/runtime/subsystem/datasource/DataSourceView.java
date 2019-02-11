@@ -132,39 +132,39 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 .exclude(STATISTICS_ENABLED)
                 .exclude(XA_ATTRIBUTES)
                 .build();
-        nonXaTabs.add(Ids.DATA_SOURCE_RUNTIME_POOL_TAB, resources.constants().pool(), poolForm.asElement());
+        nonXaTabs.add(Ids.DATA_SOURCE_RUNTIME_POOL_TAB, resources.constants().pool(), poolForm.element());
 
         xaPoolForm = new ModelNodeForm.Builder<>(Ids.XA_DATA_SOURCE_RUNTIME_POOL_FORM, poolMeta)
                 .readOnly()
                 .includeRuntime()
                 .exclude(STATISTICS_ENABLED)
                 .build();
-        xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_POOL_TAB, resources.constants().pool(), xaPoolForm.asElement());
+        xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_POOL_TAB, resources.constants().pool(), xaPoolForm.element());
 
         jdbcForm = new ModelNodeForm.Builder<>(Ids.DATA_SOURCE_RUNTIME_JDBC_FORM, jdbcMeta)
                 .readOnly()
                 .includeRuntime()
                 .exclude(STATISTICS_ENABLED)
                 .build();
-        nonXaTabs.add(Ids.DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, jdbcForm.asElement());
+        nonXaTabs.add(Ids.DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, jdbcForm.element());
 
         xaJdbcForm = new ModelNodeForm.Builder<>(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_FORM, jdbcMeta)
                 .readOnly()
                 .includeRuntime()
                 .exclude(STATISTICS_ENABLED)
                 .build();
-        xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, xaJdbcForm.asElement());
+        xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, xaJdbcForm.element());
 
         HTMLElement root = row()
                 .add(column()
-                        .add(header = h(1).textContent(Names.DATASOURCE).asElement())
+                        .add(header = h(1).textContent(Names.DATASOURCE).get())
                         .add(p().css(clearfix)
                                 .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                         .add(span().css(fontAwesome("refresh"), marginRight5))
                                         .add(span().textContent(resources.constants().refresh()))))
                         .add(nonXaTabs)
                         .add(xaTabs))
-                .asElement();
+                .get();
 
         registerAttachables(asList(poolForm, xaPoolForm, jdbcForm, xaJdbcForm));
         initElement(root);
@@ -190,8 +190,8 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     private void showHide(boolean xa) {
-        Elements.setVisible(nonXaTabs.asElement(), !xa);
-        Elements.setVisible(xaTabs.asElement(), xa);
+        Elements.setVisible(nonXaTabs.element(), !xa);
+        Elements.setVisible(xaTabs.element(), xa);
     }
 
     private void refresh() {

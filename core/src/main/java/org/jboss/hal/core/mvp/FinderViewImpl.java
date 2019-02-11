@@ -20,8 +20,8 @@ import org.jboss.hal.core.finder.Finder;
 public class FinderViewImpl extends HalViewImpl implements FinderView {
 
     @Override
-    public void setFinder(final Finder finder) {
+    public void setFinder(Finder finder) {
         registerAttachable(finder);
-        initElement(finder.asElement());
+        initElement(finder.element());
     }
 }

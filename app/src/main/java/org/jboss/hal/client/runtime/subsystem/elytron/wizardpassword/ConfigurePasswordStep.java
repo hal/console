@@ -47,19 +47,19 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
     private HTMLElement header;
     private HTMLElement description;
 
-    public ConfigurePasswordStep(final Resources resources, Metadata metadata) {
+    public ConfigurePasswordStep(Resources resources, Metadata metadata) {
         super(resources.constants().configuration());
         this.resources = resources;
         this.metadata = metadata;
 
         section = section()
-                .add(header = h(1).asElement())
-                .add(description = p().asElement())
-                .asElement();
+                .add(header = h(1).get())
+                .add(description = p().get())
+                .get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return section;
     }
 
@@ -92,7 +92,7 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
             }
         });
         form = builder.build();
-        HTMLElement formElement = form.asElement();
+        HTMLElement formElement = form.element();
         form.attach();
         form.edit(new ModelNode());
 

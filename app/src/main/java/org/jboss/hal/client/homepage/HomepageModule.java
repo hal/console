@@ -59,7 +59,7 @@ abstract class HomepageModule implements IsElement {
 
         int i = 0;
         for (HomepageSection section : sections()) {
-            moduleBody.appendChild(section.asElement());
+            moduleBody.appendChild(section.element());
             if (i > 0) {
                 section.toggle();
             }

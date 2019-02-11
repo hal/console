@@ -47,7 +47,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     private Donut(Builder builder) {
         this.builder = builder;
 
-        root = div().id().asElement();
+        root = div().id().get();
         options = Charts.get().defaultDonutOptions();
         options.bindto = HASH + root.id;
         options.data = new Options.Data();
@@ -96,7 +96,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -120,7 +120,6 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         api().load(dataMap);
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void resize(int width) {
         JsPropertyMap<Object> dimension = JsPropertyMap.of();
         dimension.set(UIConstants.WIDTH, width);

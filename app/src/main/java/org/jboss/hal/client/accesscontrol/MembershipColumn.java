@@ -154,7 +154,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 if (item.getPrincipal().getRealm() != null) {
                     return ItemDisplay
                             .withSubtitle(item.getPrincipal().getName(), item.getPrincipal().getRealm());
@@ -169,7 +169,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
 
             @Override
             public HTMLElement getIcon() {
-                HTMLElement icon = span().asElement();
+                HTMLElement icon = span().get();
                 if (item.isInclude()) {
                     icon.className = fontAwesome("plus");
                 } else {

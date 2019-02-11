@@ -33,7 +33,7 @@ import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.page;
 
 /**
- * A structural element to manage a main and any number of nested page elements. The nested page elements provide a
+ * A structural element to manage a main and a number of nested page elements. The nested page elements provide a
  * {@linkplain Breadcrumb breadcrumb} to navigate back and forth.
  * <p>
  * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain
@@ -49,7 +49,7 @@ public class Pages implements IsElement {
 
     /** Create a new instance with the main page id and element. */
     public Pages(String id, String mainId, IsElement element) {
-        this(id, mainId, element.asElement());
+        this(id, mainId, element.element());
     }
 
     /** Create a new instance with the main page id and element. */
@@ -62,21 +62,21 @@ public class Pages implements IsElement {
         if (Strings.isNullOrEmpty(mainPage.id)) {
             mainPage.id = mainId;
         }
-        breadcrumb.asElement().classList.add(page);
-        breadcrumb.asElement().id = Ids.build(id, Ids.BREADCRUMB);
+        breadcrumb.element().classList.add(page);
+        breadcrumb.element().id = Ids.build(id, Ids.BREADCRUMB);
 
         root = div().id(id)
                 .add(mainPage)
                 .add(breadcrumb)
-                .asElement();
+                .get();
         showMain();
     }
 
     private void showMain() {
         Elements.setVisible(mainPage, true);
-        Elements.setVisible(breadcrumb.asElement(), false);
+        Elements.setVisible(breadcrumb.element(), false);
         for (Page page : pages.values()) {
-            Elements.setVisible(page.asElement(), false);
+            Elements.setVisible(page.element(), false);
         }
     }
 
@@ -91,7 +91,7 @@ public class Pages implements IsElement {
      */
     public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
             IsElement element) {
-        addPage(parentId, id, parentTitle, title, element.asElement());
+        addPage(parentId, id, parentTitle, title, element.element());
     }
 
     /**
@@ -106,10 +106,10 @@ public class Pages implements IsElement {
     public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
             HTMLElement element) {
         Page page = new Page(parentId, parentTitle, id, title, element);
-        Elements.setVisible(page.asElement(), false);
+        Elements.setVisible(page.element(), false);
 
         pages.put(id, page);
-        root.appendChild(page.asElement());
+        root.appendChild(page.element());
     }
 
     /**
@@ -147,8 +147,8 @@ public class Pages implements IsElement {
                 }
 
                 Elements.setVisible(mainPage, false);
-                Elements.setVisible(breadcrumb.asElement(), true);
-                pages.forEach((pageId, page3) -> Elements.setVisible(page3.asElement(), id.equals(pageId)));
+                Elements.setVisible(breadcrumb.element(), true);
+                pages.forEach((pageId, page3) -> Elements.setVisible(page3.element(), id.equals(pageId)));
             }
         }
     }
@@ -158,7 +158,7 @@ public class Pages implements IsElement {
             return mainId;
         } else {
             for (Map.Entry<String, Page> entry : pages.entrySet()) {
-                if (Elements.isVisible(entry.getValue().asElement())) {
+                if (Elements.isVisible(entry.getValue().element())) {
                     return entry.getKey();
                 }
             }
@@ -167,7 +167,7 @@ public class Pages implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -192,7 +192,7 @@ public class Pages implements IsElement {
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             return element;
         }
     }

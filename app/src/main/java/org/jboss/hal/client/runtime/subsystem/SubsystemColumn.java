@@ -32,6 +32,7 @@ import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroprofileHe
 import org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPreview;
 import org.jboss.hal.client.runtime.subsystem.undertow.UndertowPreview;
 import org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPreview;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Version;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -78,6 +79,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             StatementContext statementContext,
             ItemActionFactory itemActionFactory,
             Subsystems subsystems,
+            Environment environment,
             Resources resources) {
         super(new Builder<SubsystemMetadata>(finder, Ids.RUNTIME_SUBSYSTEM, resources.constants().monitor())
                 .useFirstActionAsBreadcrumbHandler());
@@ -113,14 +115,23 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     existingSubsystems.remove(LOGGING);
                 }
                 if (existingSubsystems.containsKey(MICROPROFILE_HEALTH_SMALLRYE)) {
-                    customPreviews.put(MICROPROFILE_HEALTH_SMALLRYE, new MicroprofileHealthPreview(dispatcher, statementContext, resources));
+                    customPreviews.put(MICROPROFILE_HEALTH_SMALLRYE,
+                            new MicroprofileHealthPreview(dispatcher, statementContext, resources));
                 }
 
-                // add server runtime as first item
+                // add the following items on top of the subsystems
                 List<SubsystemMetadata> items = new ArrayList<>();
                 items.add(new SubsystemMetadata.Builder(Ids.SERVER_RUNTIME_STATUS, resources.constants().status())
                         .token(NameTokens.SERVER_RUNTIME)
                         .build());
+                if (environment.isStandalone()) {
+                    // HAL-1564: For domain we already have the management operations in the "Browse By" column
+                    items.add(new SubsystemMetadata.Builder(Ids.MANAGEMENT_OPERATIONS,
+                            resources.constants().managementOperations())
+                            .token(NameTokens.MANAGEMENT_OPERATIONS)
+                            .preview(resources.previews().runtimeManagementOperations())
+                            .build());
+                }
                 items.addAll(existingSubsystems.values().stream()
                         .sorted(comparing(SubsystemMetadata::getTitle))
                         .collect(toList()));
@@ -153,9 +164,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             }
 
             @Override
-            public HTMLElement asElement() {
-                return item.getSubtitle() != null ? ItemDisplay
-                        .withSubtitle(item.getTitle(), item.getSubtitle()) : null;
+            public HTMLElement element() {
+                return item.getSubtitle() != null ? ItemDisplay.withSubtitle(item.getTitle(),
+                        item.getSubtitle()) : null;
             }
 
             @Override

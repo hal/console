@@ -39,13 +39,13 @@ public class URLItem extends TextBoxItem {
             HTMLElement parent = (HTMLElement) valueContainer.parentNode;
             Elements.removeChildrenFrom(parent);
 
-            anchorElement = a().attr("target", "_blank").asElement();
+            anchorElement = a().attr("target", "_blank").get();
             valueElement = anchorElement;
             parent.appendChild(valueElement);
         }
 
         @Override
-        public String asString(final String value) {
+        public String asString(String value) {
             anchorElement.href = value;
             return value;
         }
@@ -56,7 +56,7 @@ public class URLItem extends TextBoxItem {
         }
     }
 
-    public URLItem(final String name) {
+    public URLItem(String name) {
         super(name, new LabelBuilder().label(name));
 
         // replace read-only appearance

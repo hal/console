@@ -58,7 +58,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
     private GroupedBar(Builder builder) {
         this.builder = builder;
 
-        root = div().id().asElement();
+        root = div().id().get();
         options = Charts.get().defaultGroupedBarOptions();
         options.axis = new Options.Axis();
         options.axis.rotated = builder.orientation == Orientation.HORIZONTAL;
@@ -119,12 +119,11 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     /** Use this method if you created the bar chart with a single category. */
-    @SuppressWarnings("unchecked")
     public void update(Map<String, Long> data) {
         ArrayListMultimap<String, Long> multimap = ArrayListMultimap.create();
         for (Map.Entry<String, Long> entry : data.entrySet()) {
@@ -155,7 +154,6 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
         api().load(dataMap);
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void resize(int width) {
         JsPropertyMap<Object> dimension = JsPropertyMap.of();
         dimension.set(UIConstants.WIDTH, width);

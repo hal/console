@@ -17,9 +17,9 @@ package org.jboss.hal.client.deployment.dialog;
 
 import java.util.List;
 
+import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
@@ -70,18 +70,19 @@ public class DeployContentDialog2 {
                 .options();
         table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
-        ElementsBuilder elements = elements()
+        Iterable<HTMLElement> elements = collect()
                 .add(div().add(noContentSelected))
                 .add(p().innerHtml(resources.messages().chooseContentToDeploy(serverGroup)))
                 .add(table)
                 .add(div().css(marginTopLarge)
-                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).asElement())
+                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).get())
                         .add(label().css(CSS.marginLeft5)
                                 .apply(l -> l.htmlFor = Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                                .textContent(resources.constants().enableDeployment())));
+                                .textContent(resources.constants().enableDeployment())))
+                .get();
 
         dialog = new Dialog.Builder(resources.constants().deployContent())
-                .add(elements.asElements())
+                .add(elements)
                 .primary(resources.constants().deploy(), this::finish)
                 .cancel()
                 .build();
@@ -90,7 +91,7 @@ public class DeployContentDialog2 {
 
     private boolean finish() {
         boolean hasSelection = table.hasSelection();
-        Elements.setVisible(noContentSelected.asElement(), !hasSelection);
+        Elements.setVisible(noContentSelected.element(), !hasSelection);
         if (hasSelection) {
             List<Content> content = table.selectedRows();
             deployCallback.deploy(serverGroup, content, SwitchBridge.Api.element(enable).getValue());
@@ -100,7 +101,7 @@ public class DeployContentDialog2 {
 
     public void show() {
         dialog.show();
-        Elements.setVisible(noContentSelected.asElement(), false);
+        Elements.setVisible(noContentSelected.element(), false);
         table.update(content);
         SwitchBridge.Api.element(enable).setValue(true);
     }

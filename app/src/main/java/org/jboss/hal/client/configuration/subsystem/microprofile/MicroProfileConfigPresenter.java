@@ -30,8 +30,11 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.MICRO_PROFILE_CONFIG_ADDRESS;
@@ -42,22 +45,31 @@ public class MicroProfileConfigPresenter
         extends MbuiPresenter<MicroProfileConfigPresenter.MyView, MicroProfileConfigPresenter.MyProxy>
         implements SupportsExpertMode {
 
+    private final Dispatcher dispatcher;
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
+    private final Resources resources;
 
     @Inject
     public MicroProfileConfigPresenter(EventBus eventBus,
             MyView view,
             MyProxy myProxy,
             Finder finder,
+            Dispatcher dispatcher,
             CrudOperations crud,
             FinderPathFactory finderPathFactory,
-            StatementContext statementContext) {
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
+        this.dispatcher = dispatcher;
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
+        this.resources = resources;
     }
 
     @Override
@@ -80,6 +92,12 @@ public class MicroProfileConfigPresenter
     protected void reload() {
         crud.readRecursive(MICRO_PROFILE_CONFIG_TEMPLATE.resolve(statementContext),
                 result -> getView().update(result));
+    }
+
+    void add() {
+        AddConfigSourceWizard wizard = new AddConfigSourceWizard(this, dispatcher,
+                metadataRegistry, statementContext, resources);
+        wizard.show();
     }
 
 

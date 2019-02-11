@@ -75,16 +75,26 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected void addFormItems(List<FormItem> formItems) {
         this.formItems = new ArrayList<>(formItems);
 
-        editingContainer = div().asElement();
-        readOnlyContainer = div().asElement();
+        editingContainer = div().get();
+        readOnlyContainer = div().get();
 
         for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
-            editingContainer.appendChild(formItem.asElement(EDITING));
-            readOnlyContainer.appendChild(formItem.asElement(READONLY));
+            if (formItem instanceof AbstractFormItem) {
+                AbstractFormItem afi = (AbstractFormItem) formItem;
+                Appearance appearance = afi.appearance(EDITING);
+                if (appearance != null) {
+                    appearance.setLabel(getLabel() + " / " + formItem.getLabel());
+                }
+                appearance = afi.appearance(READONLY);
+                if (appearance != null) {
+                    appearance.setLabel(getLabel() + " / " + formItem.getLabel());
+                }
+            }
+            editingContainer.appendChild(formItem.element(EDITING));
+            readOnlyContainer.appendChild(formItem.element(READONLY));
             if (iterator.hasNext()) {
-                HTMLHRElement hr = hr().asElement();
-                hr.classList.add(separator);
+                HTMLHRElement hr = hr().css(separator).get();
                 readOnlyContainer.appendChild(hr);
             }
         }
@@ -97,13 +107,13 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    public HTMLElement asElement(Form.State state) {
+    public HTMLElement element(Form.State state) {
         if (state == EDITING) {
             return editingContainer;
         } else if (state == READONLY) {
             return readOnlyContainer;
         } else {
-            throw new IllegalStateException("Unknown state in CompositeFormItem.asElement(" + state + ")");
+            throw new IllegalStateException("Unknown state in CompositeFormItem.element(" + state + ")");
         }
     }
 
@@ -143,7 +153,9 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
 
     @Override
     public void clearValue() {
-        formItems.forEach(FormItem::clearValue);
+        for (FormItem formItem : formItems) {
+            formItem.clearValue();
+        }
     }
 
     @Override
@@ -210,7 +222,9 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
 
     @Override
     public void setRestricted(boolean restricted) {
-        formItems.forEach(formItem -> formItem.setRestricted(restricted));
+        for (FormItem formItem : formItems) {
+            formItem.setRestricted(restricted);
+        }
     }
 
     @Override
@@ -225,7 +239,9 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
 
     @Override
     public void setEnabled(boolean enabled) {
-        formItems.forEach(formItem -> formItem.setEnabled(enabled));
+        for (FormItem formItem : formItems) {
+            formItem.setEnabled(enabled);
+        }
     }
 
     @Override
@@ -266,7 +282,9 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
 
     @Override
     public void setUndefined(boolean undefined) {
-        formItems.forEach(formItem -> formItem.setUndefined(undefined));
+        for (FormItem formItem : formItems) {
+            formItem.setUndefined(undefined);
+        }
     }
 
 

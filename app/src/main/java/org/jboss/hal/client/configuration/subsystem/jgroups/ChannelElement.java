@@ -91,7 +91,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-                .asElement();
+                .get();
 
         forkElement = new ForkElement(metadataRegistry, tableButtonFactory, resources);
         protocolElement = new GenericElement(metadataRegistry.lookup(CHANNEL_FORK_PROTOCOL_TEMPLATE),
@@ -113,8 +113,8 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
     }
 
     @Override
-    public HTMLElement asElement() {
-        return innerPages.asElement();
+    public HTMLElement element() {
+        return innerPages.element();
     }
 
     @Override

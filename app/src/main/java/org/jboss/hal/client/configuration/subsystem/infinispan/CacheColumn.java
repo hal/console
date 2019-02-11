@@ -167,7 +167,7 @@ public class CacheColumn extends FinderColumn<Cache> {
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return ItemDisplay.withSubtitle(item.getName(), item.type().type);
             }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -39,26 +40,29 @@ import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
+import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;
-import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -77,8 +81,8 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     @Inject
     public StandaloneServerColumn(Finder finder, EventBus eventBus, Dispatcher dispatcher,
             FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
-            ServerActions serverActions, PlaceManager placeManager, Places places,
-            Resources resources) {
+            ServerActions serverActions, PlaceManager placeManager, Places places, @Footer Provider<Progress> progress,
+            Resources resources, StatementContext statementContext) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER_COLUMN, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -101,8 +105,9 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     });
                 })
 
-                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
-                        resources))
+                .onItemSelect(server -> eventBus.fireEvent(new ServerSelectionEvent(server.getName())))
+                .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
+                        statementContext, placeManager, places, finderPathFactory, resources))
         );
 
         this.finder = finder;
@@ -176,11 +181,6 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                         actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
                                 ccPlaceRequest, Constraint.executable(HOST_CONFIGURATION_CHANGES_TEMPLATE, ADD)));
                     }
-                    PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
-                            .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();
-                    actions.add(itemActionFactory.placeRequest(resources.constants().managementOperations(),
-                            moPlaceRequest, Constraint.executable(MANAGEMENT_OPERATIONS_TEMPLATE,
-                                    READ_RESOURCE_OPERATION)));
                     actions.add(new ItemAction.Builder<Server>()
                             .title(resources.constants().editURL())
                             .handler(itm -> serverActions.editUrl(itm, () -> refresh(RESTORE_SELECTION)))
@@ -197,7 +197,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     }
 
     @Override
-    public void onServerAction(final ServerActionEvent event) {
+    public void onServerAction(ServerActionEvent event) {
         if (isVisible()) {
             refreshPath = finder.getContext().getPath().copy();
             ItemMonitor.startProgress(event.getServer().getId());
@@ -206,7 +206,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     }
 
     @Override
-    public void onServerResult(final ServerResultEvent event) {
+    public void onServerResult(ServerResultEvent event) {
         //noinspection Duplicates
         if (isVisible()) {
             ItemMonitor.stopProgress(event.getServer().getId());

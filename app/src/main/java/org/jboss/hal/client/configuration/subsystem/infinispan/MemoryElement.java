@@ -39,14 +39,13 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MEMORY;
 import static org.jboss.hal.resources.CSS.*;
 
 /** Element to view and modify the {@code memory=*} singletons of a cache. */
-class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
+class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter<?, ?>> {
 
     private final HTMLElement currentMemory;
     private final HTMLElement headerForm;
@@ -54,7 +53,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     private final HTMLSelectElement selectMemory;
     private final Map<Memory, Form<ModelNode>> memoryForms;
     private final HTMLElement root;
-    private CachePresenter presenter;
+    private CachePresenter<?, ?> presenter;
 
     MemoryElement(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
         memoryForms = new HashMap<>();
@@ -70,7 +69,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                     .onSave((f, changedValues) -> presenter.saveMemory(memory, changedValues))
                     .prepareReset(f -> presenter.resetMemory(memory, f))
                     .build();
-            Elements.setVisible(form.asElement(), false);
+            Elements.setVisible(form.element(), false);
             memoryForms.put(memory, form);
         }
 
@@ -80,12 +79,12 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                                 .apply(l -> l.htmlFor = selectMemoryId)
                                 .textContent(resources.constants().switchMemory()))
                         .add(selectMemory)
-                        .asElement())
+                        .get())
                 .add(h(1).textContent(Names.MEMORY)
-                        .add(currentMemory = span().asElement()))
+                        .add(currentMemory = span().get()))
                 .add(p().textContent(resources.constants().cacheMemory()))
-                .addAll(memoryForms.values().stream().map(Form::asElement).collect(toList()))
-                .asElement();
+                .addAll(memoryForms.values().stream().map(Form::element).collect(toList()))
+                .get();
     }
 
     private HTMLSelectElement memorySelect() {
@@ -94,7 +93,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                     s.multiple = false;
                     s.size = 1;
                 })
-                .asElement();
+                .get();
 
         for (Memory memory : Memory.values()) {
             select.appendChild(Elements.option()
@@ -102,13 +101,13 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                         o.value = memory.resource;
                         o.text = memory.type;
                     })
-                    .asElement());
+                    .get());
         }
         return select;
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -139,7 +138,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     }
 
     @Override
-    public void setPresenter(CachePresenter presenter) {
+    public void setPresenter(CachePresenter<?, ?> presenter) {
         this.presenter = presenter;
     }
 
@@ -152,6 +151,6 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
             ModelNode memoryNode = memories.get(0).getValue();
             memoryForms.get(memory).view(memoryNode);
         }
-        memoryForms.forEach((m, f) -> Elements.setVisible(f.asElement(), m == memory));
+        memoryForms.forEach((m, f) -> Elements.setVisible(f.element(), m == memory));
     }
 }

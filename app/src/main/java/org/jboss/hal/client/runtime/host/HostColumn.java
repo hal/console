@@ -75,7 +75,6 @@ import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationCha
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.client.runtime.host.HostColumn.HOST_MANAGEMENT_OPERATIONS_ADDRESS;
-import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
@@ -194,7 +193,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             }
 
             @Override
-            public HTMLElement asElement() {
+            public HTMLElement element() {
                 return item.isDomainController() ? ItemDisplay
                         .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
             }
@@ -267,11 +266,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
                                     ccPlaceRequest, Constraint.executable(HOST_CONFIGURATION_CHANGES_TEMPLATE, ADD)));
                         }
-                        PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
-                                .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();
-                        actions.add(itemActionFactory.placeRequest(resources.constants().managementOperations(),
-                                moPlaceRequest, Constraint.executable(MANAGEMENT_OPERATIONS_TEMPLATE,
-                                        READ_RESOURCE_OPERATION)));
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                         actions.add(ItemAction.separator());
                         actions.add(new ItemAction.Builder<Host>()

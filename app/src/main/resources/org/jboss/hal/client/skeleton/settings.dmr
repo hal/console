@@ -24,6 +24,19 @@
             "type" => INT,
             "description" => "The number of items which are displayed in table pages.",
             "nillable" => true
+        },
+        "poll" => {
+            "type" => BOOLEAN,
+            "description" => "There are services that may poll the server for management reasons, this flag enable the polling mechanism to work. Currently the polling actions are: Find non progressing operations.",
+            "nillable" => true
+        },
+        "poll-time" => {
+            "type" => INT,
+            "description" => "The number of seconds to elapse for HAL (Web Console) to perform a remote network call to Wildfly/EAP management interface. This only works for tasks that uses the polling mechanism.",
+            "default" => 10L,
+            "nillable" => true,
+            "min" => 5L,
+            "max" => 300L
         }
     }
 }

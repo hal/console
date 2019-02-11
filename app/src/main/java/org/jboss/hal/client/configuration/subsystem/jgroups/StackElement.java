@@ -106,7 +106,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-                .asElement();
+                .get();
 
         relayElement = new RelayElement(metadataRegistry, tableButtonFactory, resources);
         remoteSiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE), tableButtonFactory,
@@ -141,8 +141,8 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
     }
 
     @Override
-    public HTMLElement asElement() {
-        return innerPages.asElement();
+    public HTMLElement element() {
+        return innerPages.element();
     }
 
     @Override

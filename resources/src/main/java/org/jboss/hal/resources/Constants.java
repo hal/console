@@ -32,6 +32,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String addContent();
     String addIdentity();
     String address();
+    String addressMatch();
     String adminOnly();
     String aliases();
     String allMessagesAlways();
@@ -60,6 +61,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String changeAccountKey();
     String changeAlias();
     String changePriority();
+    String chooseConnectionsToClose();
     String chooseFile();
     String chooseIdentityPasswordTitle();
     String choosePolicy();
@@ -78,6 +80,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String closed();
     String collapse();
+    String commit();
     String committed();
     String completed();
     String completedExecutions();
@@ -93,6 +96,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String connections();
     String connectToServer();
     String consoleVersion();
+    String consumersForAddress();
     String content();
     String contentRepository();
     String copied();
@@ -156,6 +160,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointConnect();
     String endpointSelectDescription();
     String endpointSelectTitle();
+    String enterAddressMatch();
     String entry();
     String environment();
     String error();
@@ -187,6 +192,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String flushGracefully();
     String flushIdle();
     String flushInvalid();
+    String forAddress();
+    String forUser();
+    String forceFailover();
     String formErrors();
     String formResetDesc();
     String fromDeployment();
@@ -194,6 +202,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String generateCSR();
     String generateKeyPair();
     String getMetadata();
+    String getRoles();
     String globalSettings();
     String gotoDeployment();
     String group();
@@ -388,6 +397,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String opened();
     String openInExternalWindow();
     String openInModelBrowser();
+    String openPorts();
     String operation();
     String operationDate();
     String operationFailed();
@@ -504,6 +514,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String showSensitive();
     String size();
     String sizing();
+    String source();
     String specifyNames();
     String specifyParameters();
     String standaloneServer();

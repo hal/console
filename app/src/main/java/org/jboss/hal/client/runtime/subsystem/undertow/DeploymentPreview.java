@@ -96,7 +96,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .append(model -> new PreviewAttributes.PreviewAttribute(new LabelBuilder().label(CONTEXT_ROOT),
                         span().textContent(model.get(CONTEXT_ROOT).asString())
                                 .data(LINK, "")
-                                .asElement()))
+                                .get()))
                 .append(model -> {
                     FinderPath path = finderPathFactory.deployment(deploymentResource.getDeployment());
                     PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
@@ -134,7 +134,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
         sessionsElement = section()
                 .add(h(2, Names.SESSIONS))
                 .add(sessions)
-                .asElement();
+                .get();
 
         // the order of rows is determined at update time.
         sessionTime = new GroupedBar.Builder(resources.constants().seconds())
@@ -150,7 +150,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .add(h(2, resources.constants().sessionTime()))
                 .add(maxSessions)
                 .add(sessionTime)
-                .asElement();
+                .get();
 
         previewBuilder().addAll(previewAttributes);
         previewBuilder()
@@ -158,9 +158,9 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .add(sessionsElement)
                 .add(maxTimeElement);
 
-        Elements.setVisible(noStatistics.asElement(), false);
-        Elements.setVisible(sessionsElement, false);
-        Elements.setVisible(maxTimeElement, false);
+        setVisible(noStatistics.element(), false);
+        setVisible(sessionsElement, false);
+        setVisible(maxTimeElement, false);
     }
 
     @Override
@@ -185,7 +185,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
             DeploymentResource deploymentStats = new DeploymentResource(item.getAddress(), deploymentResult);
             previewAttributes.refresh(deploymentStats);
 
-            boolean statsEnabled = subsystemResult.get(STATISTICS_ENABLED).asBoolean();
+            boolean statsEnabled = subsystemResult.get(STATISTICS_ENABLED).asBoolean(false);
             if (statsEnabled) {
                 Map<String, Long> updatedSession = new HashMap<>();
                 updatedSession.put(ACTIVE_SESSIONS, deploymentStats.get(ACTIVE_SESSIONS).asLong());
@@ -197,9 +197,9 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 if (deploymentStats.get(MAX_ACTIVE_SESSIONS).asInt() > -1) {
                     maxSessions.update(deploymentStats.get(ACTIVE_SESSIONS).asLong(),
                             deploymentStats.get(MAX_ACTIVE_SESSIONS).asLong());
-                    Elements.setVisible(maxSessions.asElement(), true);
+                    setVisible(maxSessions.element(), true);
                 } else {
-                    Elements.setVisible(maxSessions.asElement(), false);
+                    setVisible(maxSessions.element(), false);
                 }
 
                 Map<String, Long> updatedTime = new HashMap<>();
@@ -207,9 +207,9 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 updatedTime.put(SESSION_AVG_ALIVE_TIME, deploymentStats.get(SESSION_AVG_ALIVE_TIME).asLong());
                 sessionTime.update(updatedTime);
             }
-            Elements.setVisible(noStatistics.asElement(), !statsEnabled);
-            Elements.setVisible(sessionsElement, statsEnabled);
-            Elements.setVisible(maxTimeElement, statsEnabled);
+            setVisible(noStatistics.element(), !statsEnabled);
+            setVisible(sessionsElement, statsEnabled);
+            setVisible(maxTimeElement, statsEnabled);
             injectUrls();
         });
     }
@@ -225,7 +225,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
 
     private void injectUrls() {
         List<HTMLElement> linkContainers = new ArrayList<>();
-        asElements().forEach(e -> {
+        forEach(e -> {
             List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
                     .filter(htmlElements())
                     .map(asHtmlElement())
@@ -252,7 +252,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                                 linkContainer.appendChild(a(url.getUrl() + link)
                                         .apply(a -> a.target = Ids.hostServer(host, server))
                                         .textContent(link)
-                                        .asElement());
+                                        .get());
                             }
                         }
                     });

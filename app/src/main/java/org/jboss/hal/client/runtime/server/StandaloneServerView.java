@@ -42,7 +42,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.pullRight;
 import static org.jboss.hal.resources.Ids.*;
-import static org.jboss.hal.resources.Ids.ATTRIBUTES;
 
 public class StandaloneServerView extends HalViewImpl implements StandaloneServerPresenter.MyView {
 
@@ -58,7 +57,7 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
         registerAttachable(navigation);
 
         Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE);
-        String attributesFormId = Ids.build(Ids.STANDALONE_SERVER_COLUMN, ATTRIBUTES, FORM);
+        String attributesFormId = Ids.build(Ids.STANDALONE_SERVER_COLUMN, Ids.ATTRIBUTES, FORM);
         attributesForm = new ModelNodeForm.Builder<>(attributesFormId, metadata)
                 .includeRuntime()
                 .onSave((form, changedValues) -> presenter.save(resources.constants().standaloneServer(), ROOT_TEMPLATE,
@@ -75,11 +74,11 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
         registerAttachable(attributesForm);
 
         HTMLElement attributesElement = section()
-                .add(h(1).textContent(resources.constants().attributes()).asElement())
-                .add(p().textContent(metadata.getDescription().getDescription()).asElement())
+                .add(h(1).textContent(resources.constants().attributes()).get())
+                .add(p().textContent(metadata.getDescription().getDescription()).get())
                 .add(attributesForm)
-                .asElement();
-        String attributesItemId = Ids.build(ATTRIBUTES, ITEM);
+                .get();
+        String attributesItemId = Ids.build(Ids.ATTRIBUTES, ITEM);
         navigation.addPrimary(attributesItemId, resources.constants().configuration(), pfIcon("settings"),
                 attributesElement);
 
@@ -95,23 +94,23 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
         enableSslButton = button().id(ENABLE_SSL)
                 .textContent(resources.constants().enableSSL())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .asElement();
+                .get();
         bind(enableSslButton, click, ev -> presenter.launchEnableSSLWizard());
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .asElement();
+                .get();
         bind(disableSslButton, click, ev -> presenter.disableSSLWizard());
 
         HTMLElement httpMgmtItemElement = section()
                 .add(div()
-                        .add(h(1).textContent(httpTitle).asElement())
-                        .add(p().textContent(httpMetadata.getDescription().getDescription()).asElement())
+                        .add(h(1).textContent(httpTitle).get())
+                        .add(p().textContent(httpMetadata.getDescription().getDescription()).get())
                         .add(enableSslButton)
                         .add(disableSslButton))
                 .add(httpInterfaceForm)
-                .asElement();
+                .get();
         registerAttachable(httpInterfaceForm);
 
         navigation.addPrimary(HTTP_INTERFACE_ITEM, resources.constants().httpManagementInterface(),

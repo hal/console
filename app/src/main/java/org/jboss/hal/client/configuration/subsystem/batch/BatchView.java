@@ -28,12 +28,12 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
 public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements BatchPresenter.MyView {
 
     // ------------------------------------------------------ initialization
 
-    public static BatchView create(final MbuiContext mbuiContext) {
+    public static BatchView create(MbuiContext mbuiContext) {
         return new Mbui_BatchView(mbuiContext);
     }
 
@@ -47,7 +47,7 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
     @MbuiElement("batch-thread-pool-table") Table<NamedNode> threadPoolTable;
     @MbuiElement("batch-thread-pool-form") Form<NamedNode> threadPoolForm;
 
-    BatchView(final MbuiContext mbuiContext) {
+    BatchView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -60,24 +60,24 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
     }
 
     @Override
-    public void updateInMemoryJobRepository(final List<NamedNode> items) {
+    public void updateInMemoryJobRepository(List<NamedNode> items) {
         inMemoryJobRepoTable.update(items);
     }
 
     @Override
-    public void updateJdbcJobRepository(final List<NamedNode> items) {
+    public void updateJdbcJobRepository(List<NamedNode> items) {
         jdbcJobRepoForm.clear();
         jdbcJobRepoTable.update(items);
     }
 
     @Override
-    public void updateThreadFactory(final List<NamedNode> items) {
+    public void updateThreadFactory(List<NamedNode> items) {
         threadFactoryForm.clear();
         threadFactoryTable.update(items);
     }
 
     @Override
-    public void updateThreadPool(final List<NamedNode> items) {
+    public void updateThreadPool(List<NamedNode> items) {
         threadPoolForm.clear();
         threadPoolTable.update(items);
     }

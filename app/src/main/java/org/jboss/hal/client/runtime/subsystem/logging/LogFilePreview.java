@@ -44,13 +44,13 @@ class LogFilePreview extends PreviewContent<LogFile> {
         HTMLElement container, icon, message;
         previewBuilder()
                 .add(container = div()
-                        .add(icon = span().asElement())
-                        .add(message = span().asElement())
+                        .add(icon = span().get())
+                        .add(message = span().get())
                         .add(" ")
                         .add(a(logFiles.downloadUrl(logFile.getFilename(), logFile.getLoggingProfile())).css(alertLink)
                                 .apply(a -> a.download = logFile.getFilename())
                                 .textContent(resources.constants().download()))
-                        .asElement());
+                        .get());
         if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
             container.classList.add(CSS.alert, alertWarning);
             icon.className = Icons.WARNING;
@@ -78,19 +78,19 @@ class LogFilePreview extends PreviewContent<LogFile> {
                 .add(div().css(clearfix)
                         .add(refreshLink(() -> update(logFile)))
                         .add(p().textContent(resources.messages().logFilePreview(PREVIEW_LINES))))
-                .add(preview = pre().css(logFilePreview).asElement());
+                .add(preview = pre().css(logFilePreview).get());
     }
 
     @Override
-    public void update(final LogFile item) {
+    public void update(LogFile item) {
         logFiles.tail(item.getFilename(), item.getLoggingProfile(), PREVIEW_LINES, new AsyncCallback<String>() {
             @Override
-            public void onFailure(final Throwable caught) {
+            public void onFailure(Throwable caught) {
                 preview.textContent = resources.constants().logFilePreviewError();
             }
 
             @Override
-            public void onSuccess(final String result) {
+            public void onSuccess(String result) {
                 preview.textContent = result;
             }
         });

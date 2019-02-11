@@ -31,8 +31,10 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.TRANSPORT_THREAD_POOL_DEFAULT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 
 class TransportElement extends GenericElement {
 
@@ -60,7 +62,7 @@ class TransportElement extends GenericElement {
                 })
                 .build();
 
-        HTMLElement parentElement = (HTMLElement) table.asElement().parentNode;
+        HTMLElement parentElement = (HTMLElement) table.element().parentNode;
         // as we are reusing the GenericElement, the form is already added to the section element, then we need to
         // retrieve the form element and add it to the tab
         HTMLElement form1 = (HTMLElement) parentElement.lastElementChild;
@@ -70,9 +72,9 @@ class TransportElement extends GenericElement {
         Tabs threadPoolTabs = new Tabs(Ids.JGROUPS_TRANSPORT_THREADPOOL_TAB_CONTAINER);
         threadPoolTabs.add(Ids.build("jgroups-transport", Ids.FORM), resources.constants().attributes(), form1);
         threadPoolTabs.add(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_TAB, "Thread Pool Default",
-                threadPoolDefaultForm.asElement());
+                threadPoolDefaultForm.element());
 
-        parentElement.appendChild(threadPoolTabs.asElement());
+        parentElement.appendChild(threadPoolTabs.element());
     }
 
     @Override

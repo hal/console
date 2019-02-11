@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration;
+package org.jboss.hal.core.configuration;
 
 import java.util.List;
 
@@ -60,11 +60,9 @@ public class PathsAutoComplete extends AutoComplete {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(PathsAutoComplete.class);
     private static Operation operation = defaultOperation();
 
-    /**
-     * Updates the static operation which is used by this typeahead.
-     */
-    static void updateOperation(final Environment environment, final Dispatcher dispatcher,
-            final StatementContext statementContext) {
+    /** Updates the static operation which is used by this typeahead. */
+    public static void updateOperation(Environment environment, Dispatcher dispatcher,
+            StatementContext statementContext) {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();
         } else {

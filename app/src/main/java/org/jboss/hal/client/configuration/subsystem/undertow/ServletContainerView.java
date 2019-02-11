@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -111,15 +111,15 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_SERVLET_CONTAINER_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_TAB, resources.constants().attributes(),
-                configurationForm.asElement());
-        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB, Names.MIME_MAPPING, mimeMappingForm.asElement());
-        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB, Names.WELCOME_FILE, welcomeFileForm.asElement());
+                configurationForm.element());
+        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB, Names.MIME_MAPPING, mimeMappingForm.element());
+        tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB, Names.WELCOME_FILE, welcomeFileForm.element());
 
         HTMLElement configurationSection = section()
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         settings = new EnumMap<>(ServletContainerSetting.class);
         Map<ServletContainerSetting, HTMLElement> settingsSections = new EnumMap<>(ServletContainerSetting.class);
@@ -131,7 +131,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                     .add(h(1).textContent(setting.type))
                     .add(p().textContent(metadata.getDescription().getDescription()))
                     .add(form)
-                    .asElement());
+                    .get());
         }
 
         VerticalNavigation navigation = new VerticalNavigation();

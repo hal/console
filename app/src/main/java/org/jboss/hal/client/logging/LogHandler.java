@@ -23,7 +23,7 @@ import static elemental2.dom.DomGlobal.console;
 
 public class LogHandler extends Handler {
 
-    public LogHandler() {
+    LogHandler() {
         setFormatter(new LogFormatter());
         setLevel(Level.ALL);
     }

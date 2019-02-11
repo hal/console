@@ -232,6 +232,9 @@ class DefaultFormItemProvider implements FormItemProvider {
                 }
                 if (readOnly) {
                     formItem.setEnabled(false);
+                    // if the attribute is read-only and required, the form validation prevents to save the form
+                    // remove the required constraint to allow the save operation.
+                    formItem.setRequired(false);
                 }
             }
         }

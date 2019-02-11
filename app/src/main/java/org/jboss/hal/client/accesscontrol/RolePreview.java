@@ -26,7 +26,6 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 
@@ -42,8 +41,8 @@ class RolePreview extends PreviewContent<Role> {
     private final HTMLElement noIncludes;
     private final HTMLElement includesUl;
 
-    RolePreview(final AccessControl accessControl, final AccessControlTokens tokens, final Role role,
-            final Resources resources) {
+    RolePreview(AccessControl accessControl, AccessControlTokens tokens, Role role,
+            Resources resources) {
         // @formatter:off
         super(role.getName(), role.isScoped()
                 ? (role.getType() == Role.Type.HOST
@@ -60,22 +59,22 @@ class RolePreview extends PreviewContent<Role> {
                 .add(includeAllDiv = div()
                         .add(h(2).textContent(resources.constants().includesAllHeader()))
                         .add(p().textContent(resources.constants().includesAllDescription()))
-                        .asElement())
+                        .get())
                 .add(notIncludeAllDiv = div()
                         .add(h(2).textContent(resources.constants().excludes()))
-                        .add(noExcludes = p().textContent(resources.constants().noPrincipalsExcluded()).asElement())
-                        .add(excludesUl = ul().asElement())
+                        .add(noExcludes = p().textContent(resources.constants().noPrincipalsExcluded()).get())
+                        .add(excludesUl = ul().get())
                         .add(h(2).textContent(resources.constants().includes()))
-                        .add(noIncludes = p().textContent(resources.constants().noPrincipalsIncluded()).asElement())
-                        .add(includesUl = ul().asElement())
-                        .asElement());
+                        .add(noIncludes = p().textContent(resources.constants().noPrincipalsIncluded()).get())
+                        .add(includesUl = ul().get())
+                        .get());
 
         Elements.setVisible(noExcludes, false);
         Elements.setVisible(excludesUl, false);
         Elements.setVisible(noIncludes, false);
         Elements.setVisible(includesUl, false);
 
-        HTMLElement roleDescription = p().asElement();
+        HTMLElement roleDescription = p().get();
         String roleName = role.isScoped() ? role.getBaseRole().getName() : role.getName();
         ExternalTextResource resource = resources.preview("rbac" + roleName);
         Previews.innerHtml(roleDescription, resource);
@@ -85,12 +84,12 @@ class RolePreview extends PreviewContent<Role> {
     }
 
     @Override
-    public void update(final Role role) {
+    public void update(Role role) {
         Comparator<Principal> byType = Comparator.comparingInt(p -> p.getType().ordinal());
         List<Principal> excludes = accessControl.assignments().excludes(role).map(Assignment::getPrincipal)
-                .sorted(byType.thenComparing(comparing(Principal::getName))).collect(toList());
+                .sorted(byType.thenComparing(Principal::getName)).collect(toList());
         List<Principal> includes = accessControl.assignments().includes(role).map(Assignment::getPrincipal)
-                .sorted(byType.thenComparing(comparing(Principal::getName))).collect(toList());
+                .sorted(byType.thenComparing(Principal::getName)).collect(toList());
 
         Elements.setVisible(includeAllDiv, role.isIncludeAll());
         Elements.setVisible(notIncludeAllDiv, !role.isIncludeAll());
@@ -112,6 +111,6 @@ class RolePreview extends PreviewContent<Role> {
         ul.appendChild(li()
                 .add(span().textContent(type + " "))
                 .add(a(tokens.principal(principal)).textContent(principal.getName()))
-                .asElement());
+                .get());
     }
 }

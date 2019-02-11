@@ -64,6 +64,7 @@ public interface Names {
     String CLUSTER_CONNECTION = "Cluster Connection";
     String CLUSTERING = "Clustering";
     String COLLECTION = "Collection";
+    String CONFIG_SOURCE = "Config Source";
     String CONFIGURATION = "Configuration";
     String CONFIGURATION_CHANGES = "Configuration Changes";
     String CONNECTION = "Connection";
@@ -72,6 +73,8 @@ public interface Names {
     String CONNECTION_DEFINITION = "Connection Definition";
     String CONNECTIONS = "Connections";
     String CONNECTOR_SERVICE = "Connector Service";
+    String CONNECTORS = "Connectors";
+    String CONSUMERS = "Consumers";
     String CONSOLE_ACTION_HANDLER = "Console ActionHandler";
     String CONTENT = "Content";
     String CONTEXT = "Context";
@@ -214,6 +217,7 @@ public interface Names {
     String MANAGEMENT_INTERFACE = "Management Interface";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
+    String MANAGEMENT_OPERATIONS = "Management Operations";
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";
@@ -276,6 +280,7 @@ public interface Names {
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
     String PRINCIPAL_QUERY = "Principal Query";
+    String PRODUCERS = "Producers";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
     String PROPERTIES_REALM = "Properties Realm";

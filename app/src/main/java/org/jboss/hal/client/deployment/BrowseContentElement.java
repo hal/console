@@ -76,7 +76,6 @@ import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -192,7 +191,7 @@ class BrowseContentElement implements IsElement, Attachable {
         treeSearch = new Search.Builder(Ids.CONTENT_TREE_SEARCH, query -> tree.search(query))
                 .onClear(() -> tree.clearSearch())
                 .build();
-        treeSearch.asElement().classList.add(marginLeftSmall);
+        treeSearch.element().classList.add(marginLeftSmall);
 
         Options editorOptions = new Options();
         editorOptions.showGutter = true;
@@ -205,7 +204,7 @@ class BrowseContentElement implements IsElement, Attachable {
                 .onPrevious(query -> editor.getEditor().findPrevious())
                 .onNext(query -> editor.getEditor().findNext())
                 .build();
-        contentSearch.asElement().classList.add(marginRightSmall);
+        contentSearch.element().classList.add(marginRightSmall);
 
         pleaseSelect = new EmptyState.Builder(Ids.BROWSE_CONTENT_SELECT_EMPTY, resources.constants().nothingSelected())
                 .icon(Icons.INFO)
@@ -251,40 +250,40 @@ class BrowseContentElement implements IsElement, Attachable {
                                                         })
                                                         .title(resources.constants().collapse())
                                                         .add(i().css(fontAwesome("minus")))
-                                                        .asElement()))
+                                                        .get()))
                                         .add(crudContainer = div().css(btnGroup)
                                                 .add(downloadContentLink = a().css(btn, btnDefault)
                                                         .title(resources.constants().download())
                                                         .attr(UIConstants.TARGET, "_blank") //NON-NLS
                                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                                                         .add(span().css(fontAwesome("download")))
-                                                        .asElement())
-                                                .asElement()))
+                                                        .get())
+                                                .get()))
                                 .add(treeSearch))
-                        .add(treeContainer = div().css(CSS.treeContainer).asElement()))
+                        .add(treeContainer = div().css(CSS.treeContainer).get()))
                 .add(column(8)
                         .add(div().css(marginTopLarge, marginBottomLarge)
                                 .add(previewContainer = div()
                                         .add(previewHeader = h(1)
                                                 .textContent(resources.constants().preview())
-                                                .asElement())
+                                                .get())
                                         .add(previewImageContainer = div()
                                                 .style("overflow: scroll") //NON-NLS
-                                                .add(previewImage = img().css(imgResponsive, imgThumbnail).asElement())
-                                                .asElement())
-                                        .asElement())
+                                                .add(previewImage = img().css(imgResponsive, imgThumbnail).get())
+                                                .get())
+                                        .get())
                                 .add(editorControls = div().css(CSS.editorControls, marginBottomSmall)
                                         .add(contentSearch)
                                         .add(div().add(editorStatus = span()
                                                 .textContent(resources.constants().nothingSelected())
-                                                .asElement()))
-                                        .asElement())
+                                                .get()))
+                                        .get())
                                 .add(editor)
                                 .add(pleaseSelect)
                                 .add(deploymentPreview)
                                 .add(explodedPreview)
                                 .add(unsupportedFileType)))
-                .asElement();
+                .get();
 
         boolean supported = !(Browser.isEdge() || Browser.isIE());
         AuthorisationDecision ad = AuthorisationDecision.from(environment, metadata.getSecurityContext());
@@ -293,21 +292,21 @@ class BrowseContentElement implements IsElement, Attachable {
                     .on(click, event -> addContent())
                     .title(resources.constants().newContent())
                     .add(i().css(fontAwesome("file-o")))
-                    .asElement());
+                    .get());
             uploadContentButton = Optional.of(button().css(btn, btnDefault)
                     .on(click, event -> uploadContent())
                     .title(resources.constants().uploadContent())
                     .title(resources.constants().addContent())
                     .add(i().css(fontAwesome("upload")))
-                    .asElement());
+                    .get());
             saveContentButton = Optional.of(button().css(btn, btnDefault, marginRightSmall)
                     .on(click, event -> saveContent())
                     .title(resources.constants().save())
                     .add(span().css(fontAwesome("floppy-o")))
-                    .asElement());
+                    .get());
             crudContainer.insertBefore(addContentButton.get(), downloadContentLink);
             crudContainer.insertBefore(uploadContentButton.get(), downloadContentLink);
-            editorControls.insertBefore(saveContentButton.get(), contentSearch.asElement());
+            editorControls.insertBefore(saveContentButton.get(), contentSearch.element());
 
         } else {
             addContentButton = Optional.empty();
@@ -319,20 +318,20 @@ class BrowseContentElement implements IsElement, Attachable {
                     .on(click, event -> removeContent())
                     .title(resources.constants().removeContent())
                     .add(i().css(pfIcon("remove")))
-                    .asElement());
+                    .get());
             crudContainer.appendChild(removeContentButton.get());
         } else {
             removeContentButton = Optional.empty();
         }
 
         saveContentButton.ifPresent(button -> button.disabled = true);
-        Elements.setVisible(pleaseSelect.asElement(), true);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(explodedPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
+        setVisible(pleaseSelect.element(), true);
+        setVisible(editorControls, false);
+        setVisible(editor.element(), false);
+        setVisible(deploymentPreview.element(), false);
+        setVisible(explodedPreview.element(), false);
+        setVisible(unsupportedFileType.element(), false);
+        setVisible(previewContainer, false);
     }
 
     @Override
@@ -354,7 +353,7 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -366,7 +365,7 @@ class BrowseContentElement implements IsElement, Attachable {
 
     private void adjustHeight() {
         int treeOffset = (int) (applicationOffset() +
-                2 * MARGIN_BIG + treeSearch.asElement().offsetHeight + MARGIN_SMALL + surroundingHeight);
+                2 * MARGIN_BIG + treeSearch.element().offsetHeight + MARGIN_SMALL + surroundingHeight);
         int previewHeaderHeight = (int) previewHeader.offsetHeight;
         int previewOffset = applicationOffset() +
                 2 * MARGIN_BIG + MARGIN_SMALL + previewHeaderHeight + surroundingHeight;
@@ -379,8 +378,8 @@ class BrowseContentElement implements IsElement, Attachable {
         int editorHeight = (int) (applicationHeight() -
                 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.offsetHeight - surroundingHeight);
 
-        if (Elements.isVisible(editor.asElement())) {
-            editor.asElement().style.height = height(px(max(editorHeight, MIN_HEIGHT)));
+        if (Elements.isVisible(editor.element())) {
+            editor.element().style.height = height(px(max(editorHeight, MIN_HEIGHT)));
             editor.getEditor().resize();
         }
     }
@@ -414,10 +413,10 @@ class BrowseContentElement implements IsElement, Attachable {
     @SuppressWarnings("ConstantConditions")
     void setContent(Content content) {
         this.content = content;
-        Elements.setVisible(addContentButton.orElse(null), content.isExploded());
-        Elements.setVisible(uploadContentButton.orElse(null), content.isExploded());
-        Elements.setVisible(removeContentButton.orElse(null), content.isExploded());
-        Elements.setVisible(saveContentButton.orElse(null), content.isExploded());
+        setVisible(addContentButton.orElse(null), content.isExploded());
+        setVisible(uploadContentButton.orElse(null), content.isExploded());
+        setVisible(removeContentButton.orElse(null), content.isExploded());
+        setVisible(saveContentButton.orElse(null), content.isExploded());
         editor.getEditor().setReadOnly(!content.isExploded());
 
         browseContent().subscribe(this::noSelection);
@@ -506,8 +505,8 @@ class BrowseContentElement implements IsElement, Attachable {
         });
 
         Dialog dialog = new Dialog.Builder(resources.constants().uploadContent())
-                .add(p().innerHtml(resources.messages().uploadContentDescription()).asElement())
-                .add(form.asElement())
+                .add(p().innerHtml(resources.messages().uploadContentDescription()).get())
+                .add(form.element())
                 .primary(resources.constants().upload(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .cancel()
@@ -539,7 +538,7 @@ class BrowseContentElement implements IsElement, Attachable {
                     }
                     tree = new Tree<>(Ids.CONTENT_TREE, nodes);
                     Elements.removeChildrenFrom(treeContainer);
-                    treeContainer.appendChild(tree.asElement());
+                    treeContainer.appendChild(tree.element());
                     tree.attach();
                     tree.onSelectionChange((event, selectionContext) -> {
                         if (!"ready".equals(selectionContext.action)) { //NON-NLS
@@ -654,13 +653,13 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.classList.add(disabled);
         removeContentButton.ifPresent(button -> button.disabled = true);
 
-        Elements.setVisible(pleaseSelect.asElement(), true);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(explodedPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
+        setVisible(pleaseSelect.element(), true);
+        setVisible(editorControls, false);
+        setVisible(editor.element(), false);
+        setVisible(deploymentPreview.element(), false);
+        setVisible(explodedPreview.element(), false);
+        setVisible(unsupportedFileType.element(), false);
+        setVisible(previewContainer, false);
     }
 
     private void deploymentPreview() {
@@ -675,13 +674,13 @@ class BrowseContentElement implements IsElement, Attachable {
         }
         removeContentButton.ifPresent(button -> button.disabled = true);
 
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), !content.isExploded());
-        Elements.setVisible(explodedPreview.asElement(), content.isExploded());
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
+        setVisible(pleaseSelect.element(), false);
+        setVisible(editorControls, false);
+        setVisible(editor.element(), false);
+        setVisible(deploymentPreview.element(), !content.isExploded());
+        setVisible(explodedPreview.element(), content.isExploded());
+        setVisible(unsupportedFileType.element(), false);
+        setVisible(previewContainer, false);
 
         deploymentPreview.setHeader(content.getName());
         deploymentPreview.setPrimaryAction(resources.constants().download(),
@@ -694,13 +693,13 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.classList.add(disabled);
         removeContentButton.ifPresent(button -> button.disabled = true);
 
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(explodedPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
+        setVisible(pleaseSelect.element(), false);
+        setVisible(editorControls, false);
+        setVisible(editor.element(), false);
+        setVisible(deploymentPreview.element(), false);
+        setVisible(explodedPreview.element(), false);
+        setVisible(unsupportedFileType.element(), false);
+        setVisible(previewContainer, false);
     }
 
     private void viewInEditor(ContentEntry contentEntry) {
@@ -709,13 +708,13 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.classList.remove(disabled);
         removeContentButton.ifPresent(button -> button.disabled = false);
 
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, true);
-        Elements.setVisible(editor.asElement(), true);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(explodedPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, false);
+        setVisible(pleaseSelect.element(), false);
+        setVisible(editorControls, true);
+        setVisible(editor.element(), true);
+        setVisible(deploymentPreview.element(), false);
+        setVisible(explodedPreview.element(), false);
+        setVisible(unsupportedFileType.element(), false);
+        setVisible(previewContainer, false);
         adjustEditorHeight();
 
         editorStatus.textContent = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
@@ -735,13 +734,13 @@ class BrowseContentElement implements IsElement, Attachable {
         removeContentButton.ifPresent(button -> button.disabled = false);
         previewImage.src = downloadUrl(contentEntry);
 
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(explodedPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), false);
-        Elements.setVisible(previewContainer, true);
+        setVisible(pleaseSelect.element(), false);
+        setVisible(editorControls, false);
+        setVisible(editor.element(), false);
+        setVisible(deploymentPreview.element(), false);
+        setVisible(explodedPreview.element(), false);
+        setVisible(unsupportedFileType.element(), false);
+        setVisible(previewContainer, true);
     }
 
     private void unsupportedFileType(ContentEntry contentEntry) {
@@ -750,13 +749,13 @@ class BrowseContentElement implements IsElement, Attachable {
         downloadContentLink.classList.remove(disabled);
         removeContentButton.ifPresent(button -> button.disabled = false);
 
-        Elements.setVisible(pleaseSelect.asElement(), false);
-        Elements.setVisible(editorControls, false);
-        Elements.setVisible(editor.asElement(), false);
-        Elements.setVisible(deploymentPreview.asElement(), false);
-        Elements.setVisible(explodedPreview.asElement(), false);
-        Elements.setVisible(unsupportedFileType.asElement(), true);
-        Elements.setVisible(previewContainer, false);
+        setVisible(pleaseSelect.element(), false);
+        setVisible(editorControls, false);
+        setVisible(editor.element(), false);
+        setVisible(deploymentPreview.element(), false);
+        setVisible(explodedPreview.element(), false);
+        setVisible(unsupportedFileType.element(), true);
+        setVisible(previewContainer, false);
     }
 
 

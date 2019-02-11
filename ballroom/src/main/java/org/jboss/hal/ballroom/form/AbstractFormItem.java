@@ -123,11 +123,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ element and appearance
 
     @Override
-    public HTMLElement asElement(State state) {
+    public HTMLElement element(State state) {
         if (appearances.containsKey(state)) {
-            return appearances.get(state).asElement();
+            return appearances.get(state).element();
         } else {
-            throw new IllegalStateException("Unknown state in FormItem.asElement(" + state + ")");
+            throw new IllegalStateException("Unknown state in FormItem.element(" + state + ")");
         }
     }
 
@@ -182,7 +182,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         appearances.values().forEach(a -> a.unapply(decoration));
     }
 
-    private Appearance<T> appearance(State state) {
+    Appearance<T> appearance(State state) {
         if (appearances.containsKey(state)) {
             return appearances.get(state);
         }
@@ -333,8 +333,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         return singletonList(new RequiredValidation<>(this));
     }
 
-    @SuppressWarnings("SimplifiableIfStatement")
-    final boolean requiresValidation() {
+    @SuppressWarnings({"SimplifiableIfStatement", "WeakerAccess"})
+    boolean requiresValidation() {
         if (isRequired()) {
             return true;
         }

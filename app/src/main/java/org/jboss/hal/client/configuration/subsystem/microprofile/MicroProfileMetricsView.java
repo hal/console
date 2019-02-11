@@ -84,7 +84,7 @@ public class MicroProfileMetricsView extends HalViewImpl implements MicroProfile
                         .add(h(1).textContent(Names.MICROPROFILE_METRICS))
                         .add(p().textContent(metadata.getDescription().getDescription()))
                         .add(form))
-                .asElement();
+                .get();
         initElement(root);
     }
 
@@ -105,7 +105,7 @@ public class MicroProfileMetricsView extends HalViewImpl implements MicroProfile
     }
 
     private void toggleSubsystems(boolean enableAllValue) {
-        Elements.setVisible(exposedSubsystems.asElement(Form.State.EDITING), !enableAllValue);
+        Elements.setVisible(exposedSubsystems.element(Form.State.EDITING), !enableAllValue);
         if (enableAllValue) {
             exposedSubsystems.setValue(asList("*"));
         } else {

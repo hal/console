@@ -44,13 +44,13 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
     private final List<Property> attributeDescriptions;
 
-    ModelNodeMapping(final List<Property> attributeDescriptions) {
+    ModelNodeMapping(List<Property> attributeDescriptions) {
         this.attributeDescriptions = attributeDescriptions;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void populateFormItems(final T model, final Form<T> form) {
+    public void populateFormItems(T model, Form<T> form) {
         String id = id(form);
         for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearError();
@@ -93,8 +93,8 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public void populateFormItem(final String id, String name, final ModelNode attributeDescription,
-            final ModelNode value, final FormItem formItem) {
+    public void populateFormItem(String id, String name, ModelNode attributeDescription, ModelNode value,
+            FormItem formItem) {
 
         ModelType descriptionType = attributeDescription.get(TYPE).asType();
         try {
@@ -185,13 +185,13 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void persistModel(final T model, final Form<T> form) {
+    public void persistModel(T model, Form<T> form) {
         persistModel(id(form), model, form.getBoundFormItems());
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void persistModel(String id, final T model, final Iterable<FormItem> formItems) {
+    public void persistModel(String id, T model, Iterable<FormItem> formItems) {
         for (FormItem formItem : formItems) {
             String name = formItem.getName();
 
@@ -319,7 +319,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
         }
     }
 
-    private ModelNode findAttribute(final String name) {
+    private ModelNode findAttribute(String name) {
         for (Property property : attributeDescriptions) {
             if (name.equals(property.getName())) {
                 return property.getValue();

@@ -47,7 +47,6 @@ import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
-import org.jboss.hal.ballroom.form.DataMapping;
 import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -100,13 +99,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private final String attributePath;
     private Metadata metadata;
 
-    @SuppressWarnings("unchecked")
     protected ModelNodeForm(Builder<T> builder) {
         super(builder.id, builder.stateMachine(),
-                builder.dataMapping != null
-                        ? builder.dataMapping
-                        : new ModelNodeMapping<>(
-                        builder.metadata.getDescription().getAttributes(builder.attributePath)),
+                new ModelNodeMapping<>(builder.metadata.getDescription().getAttributes(builder.attributePath)),
                 builder.emptyState);
 
         this.addOnly = builder.addOnly;
@@ -269,8 +264,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         if (Iterables.isEmpty(getFormItems())) {
             Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
-            Elements.removeChildrenFrom(asElement());
-            asElement().appendChild(alert.asElement());
+            Elements.removeChildrenFrom(element());
+            element().appendChild(alert.element());
         }
 
         if (singleton && ping != null && ping.get() != null) {
@@ -293,7 +288,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         switch (state) {
             case EMPTY:
                 ElementGuard.processElements(
-                        AuthorisationDecision.from(Core.INSTANCE.environment(), securityContext), asElement());
+                        AuthorisationDecision.from(Core.INSTANCE.environment(), securityContext), element());
                 break;
 
             case READONLY:
@@ -351,7 +346,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             ModelNode attributeDescription = attributeDescriptions.get(name);
             if (attributeDescription != null) {
                 if (attributeDescription.hasDefined(DEFAULT)) {
-                    emptyOrDefault = resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
+                    emptyOrDefault = resourceDescription.isDefaultValue(attributePath, name,
+                            value) || formItem.isEmpty();
                 } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
                     emptyOrDefault = value == null || !(Boolean) value;
                 } else {
@@ -369,7 +365,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     @JsProperty(name = "element")
     public HTMLElement jsElement() {
-        return asElement();
+        return element();
     }
 
 
@@ -380,6 +376,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
      * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes
      * with <code>"storage" =&gt; "configuration"</code>.
      */
+    @SuppressWarnings("unused")
     @JsType(namespace = "hal.ui", name = "FormBuilder")
     public static class Builder<T extends ModelNode> {
 
@@ -406,7 +403,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         CancelCallback<T> cancelCallback;
         PrepareReset<T> prepareReset;
         PrepareRemove<T> prepareRemove;
-        DataMapping<T> dataMapping;
         boolean panelForOptionalAttributes;
 
 

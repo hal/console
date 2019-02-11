@@ -31,7 +31,7 @@ public class Macro {
     private List<Operation> operations;
     private boolean sealed;
 
-    public Macro(final String name, final String description) {
+    public Macro(String name, String description) {
         this.name = name;
         this.description = description;
         this.operations = new ArrayList<>();
@@ -39,7 +39,7 @@ public class Macro {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -70,7 +70,7 @@ public class Macro {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -78,7 +78,7 @@ public class Macro {
         return description;
     }
 
-    public void setDescription(final String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

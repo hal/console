@@ -102,6 +102,18 @@ public class ResourceDescription extends ModelNode {
     }
 
     @JsIgnore
+    public Property findOperation(String name) {
+        if (hasDefined(OPERATIONS)) {
+            for (Property property : get(OPERATIONS).asPropertyList()) {
+                if (name.equals(property.getName())) {
+                    return property;
+                }
+            }
+        }
+        return null;
+    }
+
+    @JsIgnore
     public Property findAttribute(String path, String name) {
         for (Property property : getAttributes(path)) {
             if (name.equals(property.getName())) {

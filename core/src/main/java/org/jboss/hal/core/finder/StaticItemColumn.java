@@ -41,7 +41,7 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         }
 
         @Override
-        public HTMLElement asElement() {
+        public HTMLElement element() {
             if (item.getSubtitle() != null) {
                 return ItemDisplay.withSubtitle(item.getTitle(), item.getSubtitle());
             }

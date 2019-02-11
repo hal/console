@@ -58,12 +58,11 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.CSS.form;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
  * A generic form with some reasonable UI defaults. Please note that all form items and help texts must be setup
- * before this form is added {@linkplain #asElement() as an element} to the DOM.
+ * before this form is added {@linkplain #element()}  as an element} to the DOM.
  * <p>
  * The form consists of {@linkplain FormLinks links} and three sections:
  * <ul>
@@ -157,7 +156,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     @Override
     protected HTMLElement createElement() {
-        HTMLElement section = section().id(id).css(formSection).asElement();
+        HTMLElement section = section().id(id).css(formSection).get();
 
         formLinks = new FormLinks<>(this, stateMachine, helpTexts,
                 event -> edit(getModel()),
@@ -175,17 +174,17 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                         remove();
                     }
                 });
-        section.appendChild(formLinks.asElement());
+        section.appendChild(formLinks.element());
 
         errorPanel = div().css(alert, alertDanger)
                 .add(span().css(Icons.ERROR))
-                .add(errorMessage = span().asElement())
-                .add(errorMessages = ul().asElement())
-                .asElement();
+                .add(errorMessage = span().get())
+                .add(errorMessages = ul().get())
+                .get();
         clearErrors();
 
         if (stateMachine.supports(EMPTY)) {
-            panels.put(EMPTY, emptyState.asElement());
+            panels.put(EMPTY, emptyState.element());
         }
         if (stateMachine.supports(READONLY)) {
             panels.put(READONLY, viewPanel());
@@ -222,12 +221,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         HTMLDivElement viewPanel = div()
                 .id(Ids.build(id, READONLY.name().toLowerCase()))
                 .css(form, formHorizontal, readonly)
-                .asElement();
+                .get();
         for (Iterator<FormItem> iterator = getFormItems().iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
-            viewPanel.appendChild(formItem.asElement(READONLY));
+            viewPanel.appendChild(formItem.element(READONLY));
             if (iterator.hasNext()) {
-                HTMLHRElement hr = hr().css(separator).asElement();
+                HTMLHRElement hr = hr().css(separator).get();
                 viewPanel.appendChild(hr);
             }
         }
@@ -238,13 +237,13 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         HTMLElement editPanel = div()
                 .id(Ids.build(id, EDITING.name().toLowerCase()))
                 .css(form, formHorizontal, editing)
-                .asElement();
+                .get();
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;
         boolean hasOptionalField = false;
         for (FormItem formItem : getFormItems()) {
             if (formItem.isRequired() || !separateOptionalFields) {
-                editPanel.appendChild(formItem.asElement(EDITING));
+                editPanel.appendChild(formItem.element(EDITING));
             }
             hasRequiredField = hasRequiredField || formItem.isRequired();
             hasOptionalField = hasOptionalField || !formItem.isRequired();
@@ -253,15 +252,15 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
             editPanel.appendChild(div().css(formGroup)
                     .add(div().css(halFormOffset)
                             .add(span().css(helpBlock).innerHtml(MESSAGES.requiredHelp())))
-                    .asElement());
+                    .get());
         }
         // if separateOptionalFields=true and there are non-required attributes, they are placed in a collapsible
         // panel
         if (separateOptionalFields && hasOptionalField) {
             List<HTMLElement> optionalFields = new ArrayList<>();
-            HTMLFieldSetElement fieldsetElement = fieldset().css(fieldsSectionPf).asElement();
+            HTMLFieldSetElement fieldsetElement = fieldset().css(fieldsSectionPf).get();
             HTMLElement expanderElement = span().css(fontAwesome("angle-right"), fontAwesome("angle-down"),
-                    fieldSectionTogglePf).asElement();
+                    fieldSectionTogglePf).get();
             // as we add fa-angle-right and fa-angle-down, remove the later so the angle-right becomes visible
             expanderElement.classList.remove(faAngleDown);
             HTMLLegendElement legend = legend().css(fieldsSectionHeaderPf)
@@ -271,17 +270,17 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                             .on(click, event -> {
                                 // toggle the fa-angle-down to show either angle-right or angle-down
                                 expanderElement.classList.toggle(faAngleDown);
-                                optionalFields.forEach(field -> Elements.setVisible(field,
+                                optionalFields.forEach(field -> setVisible(field,
                                         expanderElement.classList.contains(faAngleDown)));
                             }))
-                    .asElement();
+                    .get();
             fieldsetElement.appendChild(legend);
             for (FormItem formItem : getFormItems()) {
                 if (!formItem.isRequired()) {
-                    HTMLElement field = formItem.asElement(EDITING);
+                    HTMLElement field = formItem.element(EDITING);
                     optionalFields.add(field);
                     fieldsetElement.appendChild(field);
-                    Elements.setVisible(field, false);
+                    setVisible(field, false);
                 }
             }
             editPanel.appendChild(fieldsetElement);
@@ -297,7 +296,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                                         .css(btn, btnHal, btnPrimary)
                                         .textContent(CONSTANTS.save())
                                         .on(click, event -> save()))))
-                .asElement();
+                .get();
         editPanel.appendChild(buttons);
 
         return editPanel;
@@ -536,6 +535,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
+    @SuppressWarnings("WeakerAccess")
     protected void prepareEditState() {
     }
 
@@ -564,8 +564,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
         panels.values().stream()
                 .filter(panel -> panel != panels.get(state))
-                .forEach(panel -> Elements.setVisible(panel, false));
-        Elements.setVisible(panels.get(state), true);
+                .forEach(panel -> setVisible(panel, false));
+        setVisible(panels.get(state), true);
     }
 
 
@@ -640,7 +640,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         }
         errorMessage.textContent = "";
         Elements.removeChildrenFrom(errorMessages);
-        Elements.setVisible(errorPanel, false);
+        setVisible(errorPanel, false);
     }
 
     private void showErrors(List<String> messages) {
@@ -651,10 +651,10 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
             } else {
                 errorMessage.textContent = CONSTANTS.formErrors();
                 for (String message : messages) {
-                    errorMessages.appendChild(li().textContent(message).asElement());
+                    errorMessages.appendChild(li().textContent(message).get());
                 }
             }
-            Elements.setVisible(errorPanel, true);
+            setVisible(errorPanel, true);
         }
     }
 }

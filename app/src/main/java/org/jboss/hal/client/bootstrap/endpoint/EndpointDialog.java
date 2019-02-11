@@ -87,8 +87,8 @@ class EndpointDialog {
 
         selectPage = div()
                 .add(p().textContent(CONSTANTS.endpointSelectDescription()))
-                .add(table.asElement())
-                .asElement();
+                .add(table.element())
+                .get();
 
         alert = new Alert();
         ButtonItem ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
@@ -99,13 +99,13 @@ class EndpointDialog {
                 public void onFailure(Throwable throwable) {
                     alert.setIcon(Icons.ERROR)
                             .setText(MESSAGES.endpointError(endpoint.getUrl(), Endpoints.getBaseUrl()));
-                    Elements.setVisible(alert.asElement(), true);
+                    Elements.setVisible(alert.element(), true);
                 }
 
                 @Override
                 public void onSuccess(Void aVoid) {
                     alert.setIcon(Icons.OK).setText(MESSAGES.endpointOk(endpoint.getUrl()));
-                    Elements.setVisible(alert.asElement(), true);
+                    Elements.setVisible(alert.element(), true);
                 }
             });
         });
@@ -133,8 +133,8 @@ class EndpointDialog {
         addPage = div()
                 .add(p().textContent(CONSTANTS.endpointAddDescription()))
                 .add(alert)
-                .add(form.asElement())
-                .asElement();
+                .add(form.element())
+                .get();
 
         dialog = new Dialog.Builder(CONSTANTS.endpointSelectTitle())
                 .add(selectPage, addPage)
@@ -184,7 +184,7 @@ class EndpointDialog {
 
         } else if (mode == ADD) {
             dialog.setTitle(CONSTANTS.endpointAddTitle());
-            Elements.setVisible(alert.asElement(), false);
+            Elements.setVisible(alert.element(), false);
             form.edit(new Endpoint());
             primaryButton.textContent = CONSTANTS.add();
             primaryButton.disabled = false;

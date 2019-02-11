@@ -36,7 +36,7 @@ public class ConfigurationStep extends WizardStep<PatchContext, PatchState> {
 
     private final Form<ModelNode> form;
 
-    public ConfigurationStep(final Metadata metadata, final Resources resources) {
+    ConfigurationStep(Metadata metadata, Resources resources) {
         super(resources.messages().configurePatchTitle());
 
         form = new ModelNodeForm.Builder<>(Ids.PATCH_UPLOAD_NAMES_FORM, metadata)
@@ -47,12 +47,12 @@ public class ConfigurationStep extends WizardStep<PatchContext, PatchState> {
     }
 
     @Override
-    public HTMLElement asElement() {
-        return form.asElement();
+    public HTMLElement element() {
+        return form.element();
     }
 
     @Override
-    public void reset(final PatchContext context) {
+    public void reset(PatchContext context) {
         context.overrideAll = false;
         context.overrideModules = false;
         context.override = new ArrayList<>();
@@ -60,12 +60,12 @@ public class ConfigurationStep extends WizardStep<PatchContext, PatchState> {
     }
 
     @Override
-    protected void onShow(final PatchContext context) {
+    protected void onShow(PatchContext context) {
         form.edit(new ModelNode());
     }
 
     @Override
-    protected boolean onNext(final PatchContext context) {
+    protected boolean onNext(PatchContext context) {
         boolean valid = form.save();
         if (valid) {
             context.overrideAll = form.getFormItem(OVERRIDE_ALL).isUndefined() ? false

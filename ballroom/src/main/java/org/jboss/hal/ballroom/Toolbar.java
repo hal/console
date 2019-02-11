@@ -46,14 +46,11 @@ import static com.intendia.rxgwt.elemento.RxElemento.fromEvent;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.form;
-import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.CSS.label;
 
 /**
  * PatternFly toolbar. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list
@@ -122,9 +119,9 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         HTMLElement resultContainer;
         this.root = div().css(row, toolbarPf)
                 .add(column()
-                        .add(controlContainer = form().css(toolbarPfActions).asElement())
-                        .add(resultContainer = div().css(row, toolbarPfResults).asElement()))
-                .asElement();
+                        .add(controlContainer = form().css(toolbarPfActions).get())
+                        .add(resultContainer = div().css(row, toolbarPfResults).get()))
+                .get();
 
         // filter
         List<Attribute<T>> filterAttributes = attributes.stream()
@@ -139,10 +136,10 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                     .add(filterLabel = label()
                             .css(srOnly)
                             .apply(l -> l.htmlFor = Ids.TOOLBAR_FILTER)
-                            .asElement())
+                            .get())
                     .add(inputGroup = div().css(CSS.inputGroup)
-                            .asElement())
-                    .asElement());
+                            .get())
+                    .get());
 
             if (filterAttributes.size() > 1) {
                 inputGroup.appendChild(div().css(inputGroupBtn)
@@ -150,22 +147,22 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                                 .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                                 .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                                .add(filterButtonText = span().css(marginRight5).asElement())
+                                .add(filterButtonText = span().css(marginRight5).get())
                                 .add(span().css(caret)))
-                        .add(filterUl = ul().css(dropdownMenu).asElement())
-                        .asElement());
+                        .add(filterUl = ul().css(dropdownMenu).get())
+                        .get());
                 for (Attribute<T> attribute : filterAttributes) {
                     filterUl.appendChild(li()
                             .data(DATA_FILTER, attribute.name)
                             .add(a().css(clickable)
                                     .on(click, e -> setSelectedFilter(attribute))
-                                    .textContent(attribute.title)).asElement());
+                                    .textContent(attribute.title)).get());
                 }
             }
             inputGroup.appendChild(filterInput = input(text)
                     .css(formControl)
                     .id(Ids.TOOLBAR_FILTER)
-                    .asElement());
+                    .get());
         }
 
         // sort
@@ -175,33 +172,33 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         if (!sortAttributes.isEmpty()) {
             HTMLElement formGroup;
             controlContainer.appendChild(formGroup = div().css(CSS.formGroup)
-                    .asElement());
+                    .get());
             if (sortAttributes.size() > 1) {
                 formGroup.appendChild(div().css(dropdown, btnGroup)
                         .add(button().css(btn, btnDefault, dropdownToggle)
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                                 .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                                 .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                                .add(sortButtonText = span().css(marginRight5).asElement())
+                                .add(sortButtonText = span().css(marginRight5).get())
                                 .add(span().css(caret)))
-                        .add(sortUl = ul().css(dropdownMenu).asElement())
-                        .asElement());
+                        .add(sortUl = ul().css(dropdownMenu).get())
+                        .get());
                 for (Attribute<T> attribute : sortAttributes) {
                     sortUl.appendChild(li()
                             .data(DATA_SORT, attribute.name)
                             .add(a().css(clickable)
                                     .on(click, e -> sort(attribute))
-                                    .textContent(attribute.title)).asElement());
+                                    .textContent(attribute.title)).get());
                 }
             } else {
-                formGroup.appendChild(sortStaticText = span().css(formControlStatic).asElement());
+                formGroup.appendChild(sortStaticText = span().css(formControlStatic).get());
             }
             asc = true;
             formGroup.appendChild(button().css(btn, btnLink)
                     .apply(b -> b.type = UIConstants.BUTTON)
                     .on(click, e -> toggleSortOrder())
-                    .add(sortOrderIcon = span().asElement())
-                    .asElement());
+                    .add(sortOrderIcon = span().get())
+                    .get());
         }
 
         // actions
@@ -209,8 +206,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
             HTMLElement actionsContainer;
             controlContainer.appendChild(div().css(toolbarPfActionRight)
                     .add(actionsContainer = div().css(formGroup)
-                            .asElement())
-                    .asElement());
+                            .get())
+                    .get());
             int i = 0;
             HTMLElement ul = null;
             for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); i++) {
@@ -224,7 +221,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .title(action.title)
                             .on(click, e -> action.callback.execute())
                             .apply(b -> b.type = UIConstants.BUTTON)
-                            .asElement());
+                            .get());
                     if (i == 2) {
                         actionsContainer.appendChild(div().css(dropdown, btnGroup, dropdownKebabPf)
                                 .add(button().css(btn, btnLink, dropdownToggle)
@@ -235,8 +232,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                         .add(span().css(fontAwesome("ellipsis-v"))))
                                 .add(ul = ul().css(dropdownMenu, dropdownMenuRight)
                                         .aria(UIConstants.LABELLED_BY, Ids.TOOLBAR_ACTION_DROPDOWN)
-                                        .asElement())
-                                .asElement());
+                                        .get())
+                                .get());
                     }
                 } else {
                     //noinspection ConstantConditions
@@ -244,7 +241,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .add(a().css(clickable)
                                     .on(click, e -> action.callback.execute())
                                     .textContent(action.text))
-                            .asElement());
+                            .get());
                 }
             }
         }
@@ -253,18 +250,18 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
         // results
         resultContainer.appendChild(column(9)
-                .add(results = h(5).textContent(MESSAGES.results(0)).asElement())
+                .add(results = h(5).textContent(MESSAGES.results(0)).get())
                 .add(filters = span()
                         .add(p().css(marginRight5).textContent(CONSTANTS.activeFilters()))
-                        .add(activeFiltersUl = ul().css(listInline).asElement())
+                        .add(activeFiltersUl = ul().css(listInline).get())
                         .add(p().add(a()
                                 .css(clickable)
                                 .textContent(CONSTANTS.clearAllFilters())
                                 .on(click, e -> clearAllFilters())))
-                        .asElement())
-                .asElement());
+                        .get())
+                .get());
         resultContainer.appendChild(selection = column(3).css(listHalSelected)
-                .asElement());
+                .get());
 
         // initial reset
         filterInput.value = "";
@@ -289,7 +286,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -358,7 +355,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                 .add(a().css(clickable)
                                         .on(click, e -> clearFilter(attribute))
                                         .add(span().css(pfIcon("close")))))
-                        .asElement());
+                        .get());
             }
             Elements.setVisible(filters, dataProvider.hasFilters());
             dataProvider.addFilter(attribute.name, new FilterValue<>(attribute.filter, filterInput.value));

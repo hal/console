@@ -84,29 +84,29 @@ public class Wizard<C, S extends Enum<S>> {
                                         .add(closeIcon = button().css(close)
                                                 .aria(UIConstants.LABEL, CONSTANTS.close())
                                                 .add(span().css(pfIcon("close")).aria(HIDDEN, TRUE))
-                                                .asElement())
+                                                .get())
                                         .add(titleElement = h(4).css(modalTitle)
                                                 .id(Ids.HAL_WIZARD_TITLE)
-                                                .asElement()))
+                                                .get()))
                                 .add(div().css(modalBody, wizardPfBody, clearfix)
                                         .add(div().css(wizardPfSteps)
-                                                .add(stepsNames = ul().css(wizardPfStepsIndicator).asElement()))
+                                                .add(stepsNames = ul().css(wizardPfStepsIndicator).get()))
                                         .add(div().css(wizardPfRow)
                                                 .add(mainContainer = div().css(wizardPfMain, wizardHalNoSidebar)
-                                                        .add(blankSlate = div().css(blankSlatePf).asElement())
-                                                        .asElement())))
+                                                        .add(blankSlate = div().css(blankSlatePf).get())
+                                                        .get())))
                                 .add(div().css(modalFooter, wizardPfFooter)
                                         .add(cancelButton = button().css(btn, btnDefault, btnCancel)
-                                                .textContent(CONSTANTS.cancel()).asElement())
+                                                .textContent(CONSTANTS.cancel()).get())
                                         .add(backButton = button().css(btn, btnDefault)
                                                 .add(span().css(fontAwesome("angle-left")))
                                                 .add(span().textContent(CONSTANTS.back()))
-                                                .asElement())
+                                                .get())
                                         .add(nextButton = button().css(btn, btnPrimary)
-                                                .add(nextText = span().textContent(CONSTANTS.next()).asElement())
-                                                .add(nextIcon = span().css(fontAwesome("angle-right")).asElement())
-                                                .asElement()))))
-                .asElement();
+                                                .add(nextText = span().textContent(CONSTANTS.next()).get())
+                                                .add(nextIcon = span().css(fontAwesome("angle-right")).get())
+                                                .get()))))
+                .get();
 
         document.body.appendChild(root);
         initEventHandler();
@@ -148,7 +148,7 @@ public class Wizard<C, S extends Enum<S>> {
     private boolean finishCanClose;
     private S state;
 
-    private Wizard(final Builder<C, S> builder) {
+    private Wizard(Builder<C, S> builder) {
         this.context = builder.context;
         this.steps = new LinkedHashMap<>(builder.steps);
         this.steps.values().forEach(step -> step.init(this));
@@ -201,14 +201,14 @@ public class Wizard<C, S extends Enum<S>> {
         pushState(state);
     }
 
-    public void showProgress(final String title, final SafeHtml text) {
+    public void showProgress(String title, SafeHtml text) {
         blankSlate.classList.remove(wizardPfComplete);
         blankSlate.classList.add(wizardPfProcess);
         Elements.removeChildrenFrom(blankSlate);
 
-        blankSlate.appendChild(div().css(spinner, spinnerLg, blankSlatePfIcon).asElement());
-        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).asElement());
-        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).asElement());
+        blankSlate.appendChild(div().css(spinner, spinnerLg, blankSlatePfIcon).get());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).get());
+        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).get());
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
         Elements.setVisible(blankSlate, true);
@@ -217,39 +217,42 @@ public class Wizard<C, S extends Enum<S>> {
         nextButton.disabled = true;
     }
 
-    public void showSuccess(final String title, final SafeHtml text) {
+    public void showSuccess(String title, SafeHtml text) {
         showSuccess(title, text, null, null, true);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, boolean lastStep) {
         showSuccess(title, text, null, null, lastStep);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, CloseAction<C> closeAction, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, CloseAction<C> closeAction) {
+        showSuccess(title, text, null, null, closeAction, true);
+    }
+
+    public void showSuccess(String title, SafeHtml text, CloseAction<C> closeAction, boolean lastStep) {
         showSuccess(title, text, null, null, closeAction, lastStep);
     }
 
-    public void showSuccess(final String title, final SafeHtml text,
-            final String successButton, SuccessAction<C> successAction) {
+    public void showSuccess(String title, SafeHtml text, String successButton, SuccessAction<C> successAction) {
         showSuccess(title, text, successButton, successAction, true);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, final String successButton,
-            SuccessAction<C> successAction, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, String successButton, SuccessAction<C> successAction,
+            boolean lastStep) {
         showSuccess(title, text, successButton, successAction, null, lastStep);
     }
 
-    public void showSuccess(final String title, final SafeHtml text, final String successButton,
-            SuccessAction<C> successAction, CloseAction<C> closeAction, final boolean lastStep) {
+    public void showSuccess(String title, SafeHtml text, String successButton, SuccessAction<C> successAction,
+            CloseAction<C> closeAction, boolean lastStep) {
         blankSlate.classList.remove(wizardPfProcess);
         blankSlate.classList.add(wizardPfComplete);
         Elements.removeChildrenFrom(blankSlate);
 
         blankSlate.appendChild(div().css(wizardPfSuccessIcon)
                 .add(span().css(glyphicon("ok-circle")))
-                .asElement());
-        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).asElement());
-        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).asElement());
+                .get());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).get());
+        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).get());
 
         if (successButton != null && successAction != null) {
             blankSlate.appendChild(button().css(btn, btnLg, btnPrimary)
@@ -258,7 +261,7 @@ public class Wizard<C, S extends Enum<S>> {
                         successAction.execute(context);
                         close();
                     })
-                    .asElement());
+                    .get());
         }
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
@@ -274,7 +277,7 @@ public class Wizard<C, S extends Enum<S>> {
         if (closeAction != null) {
             nextButton.onclick = event -> {
                 closeAction.execute(context);
-                return  null;
+                return null;
             };
         } else {
             nextButton.onclick = null;
@@ -282,30 +285,30 @@ public class Wizard<C, S extends Enum<S>> {
         finishCanClose = lastStep;
     }
 
-    public void showError(final String title, final SafeHtml text) {
+    public void showError(String title, SafeHtml text) {
         showError(title, text, null, true);
     }
 
-    public void showError(final String title, final SafeHtml text, final boolean lastStep) {
+    public void showError(String title, SafeHtml text, boolean lastStep) {
         showError(title, text, null, lastStep);
     }
 
-    public void showError(final String title, final SafeHtml text, final String error) {
+    public void showError(String title, SafeHtml text, String error) {
         showError(title, text, error, true);
     }
 
-    public void showError(final String title, final SafeHtml text, final String error, final boolean lastStep) {
+    public void showError(String title, SafeHtml text, String error, boolean lastStep) {
         blankSlate.classList.remove(wizardPfProcess);
         blankSlate.classList.add(wizardPfComplete);
         Elements.removeChildrenFrom(blankSlate);
 
         blankSlate.appendChild(div().css(wizardPfErrorIcon)
                 .add(span().css(glyphicon("remove-circle")))
-                .asElement());
-        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).asElement());
+                .get());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).get());
         HTMLParagraphElement p = p().css(blankSlatePfSecondaryAction)
                 .innerHtml(text)
-                .asElement();
+                .get();
         blankSlate.appendChild(p);
         if (error != null) {
             String id = Ids.uniqueId();
@@ -314,10 +317,10 @@ public class Wizard<C, S extends Enum<S>> {
                     .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                     .aria(UIConstants.CONTROLS, id)
                     .textContent(CONSTANTS.details())
-                    .asElement());
+                    .get());
             p.appendChild(div().css(collapse).id(id).aria(UIConstants.EXPANDED, UIConstants.FALSE)
                     .add(pre().css(wizardHalErrorText).textContent(error))
-                    .asElement());
+                    .get());
         }
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
@@ -375,7 +378,7 @@ public class Wizard<C, S extends Enum<S>> {
         if (showsError) {
             pushState(state);
         } else {
-            final S previousState = back.back(context, state);
+            S previousState = back.back(context, state);
             if (previousState != null) {
                 pushState(previousState);
             }
@@ -399,7 +402,7 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     private void next() {
-        final S nextState = next.next(context, state);
+        S nextState = next.next(context, state);
         if (nextState != null) {
             pushState(nextState);
         } else {
@@ -421,7 +424,7 @@ public class Wizard<C, S extends Enum<S>> {
      *
      * @param state the next state
      */
-    private void pushState(final S state) {
+    private void pushState(S state) {
         this.state = state;
         this.showsError = false;
 
@@ -460,11 +463,11 @@ public class Wizard<C, S extends Enum<S>> {
                     .add(a()
                             .add(span().css(wizardPfStepNumber).textContent(String.valueOf(index)))
                             .add(span().css(wizardPfStepTitle).textContent(step.title)))
-                    .asElement();
+                    .get();
             stepIndicators.put(status, li);
             stepsNames.appendChild(li);
 
-            HTMLDivElement wrapper = div().css(wizardPfContents).add(step.asElement()).asElement();
+            HTMLDivElement wrapper = div().css(wizardPfContents).add(step).get();
             step.attachables.forEach(Attachable::attach);
             Elements.setVisible(wrapper, false);
             mainContainer.appendChild(wrapper);
@@ -506,6 +509,7 @@ public class Wizard<C, S extends Enum<S>> {
 
         void execute(C context);
     }
+
 
     /**
      * An action executed when the user clicks on the close button of the success page.
@@ -557,7 +561,7 @@ public class Wizard<C, S extends Enum<S>> {
         private CancelCallback<C> cancelCallback;
         private boolean stayOpenAfterFinish;
 
-        public Builder(final String title, final C context) {
+        public Builder(String title, C context) {
             this.title = title;
             this.context = context;
             this.steps = new LinkedHashMap<>();

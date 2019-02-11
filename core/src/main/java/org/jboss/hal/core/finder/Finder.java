@@ -119,12 +119,12 @@ public class Finder implements IsElement, Attachable {
                 .add(previewColumn = div()
                         .id(Ids.PREVIEW_ID)
                         .css(finderPreview, column(12))
-                        .asElement())
-                .asElement();
+                        .get())
+                .get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -175,19 +175,19 @@ public class Finder implements IsElement, Attachable {
     private void appendColumn(FinderColumn<?> column, AsyncCallback<FinderColumn> callback) {
         column.resetSelection();
         column.markHiddenColumns(false);
-        Elements.setVisible(column.asElement(), true);
+        Elements.setVisible(column.element(), true);
 
         columns.put(column.getId(), column);
         if (visibleColumns() >= MAX_VISIBLE_COLUMNS) {
             int index = 0;
             int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
             for (FinderColumn c : columns.values()) {
-                Elements.setVisible(c.asElement(), index >= hideUntilHere);
+                Elements.setVisible(c.element(), index >= hideUntilHere);
                 index++;
             }
             if (hideUntilHere > 0) {
                 for (FinderColumn c : columns.values()) {
-                    if (Elements.isVisible(c.asElement())) {
+                    if (Elements.isVisible(c.element())) {
                         c.markHiddenColumns(true);
                         break;
                     }
@@ -195,23 +195,23 @@ public class Finder implements IsElement, Attachable {
             }
         }
 
-        root.insertBefore(column.asElement(), previewColumn);
+        root.insertBefore(column.element(), previewColumn);
         column.attach();
         column.setItems(callback);
         resizePreview();
     }
 
     private long visibleColumns() {
-        return columns.values().stream().filter(column -> Elements.isVisible(column.asElement())).count();
+        return columns.values().stream().filter(column -> Elements.isVisible(column.element())).count();
     }
 
     private void markHiddenColumns() {
         Optional<FinderColumn> hiddenColumn = columns.values().stream()
-                .filter(column -> !Elements.isVisible(column.asElement()))
+                .filter(column -> !Elements.isVisible(column.element()))
                 .findAny();
         if (hiddenColumn.isPresent()) {
             columns.values().stream()
-                    .filter(column -> Elements.isVisible(column.asElement()))
+                    .filter(column -> Elements.isVisible(column.element()))
                     .findAny()
                     .ifPresent(firstVisibleColumn -> firstVisibleColumn.markHiddenColumns(true));
         }
@@ -220,10 +220,10 @@ public class Finder implements IsElement, Attachable {
     void revealHiddenColumns(FinderColumn firstVisibleColumn) {
         // show the last hidden column
         List<FinderColumn> hiddenColumns = columns.values().stream()
-                .filter(column -> !Elements.isVisible(column.asElement()))
+                .filter(column -> !Elements.isVisible(column.element()))
                 .collect(toList());
         if (!hiddenColumns.isEmpty()) {
-            Elements.setVisible(Iterables.getLast(hiddenColumns).asElement(), true);
+            Elements.setVisible(Iterables.getLast(hiddenColumns).element(), true);
         }
         firstVisibleColumn.markHiddenColumns(false);
         firstVisibleColumn.selectedRow().click();
@@ -246,7 +246,7 @@ public class Finder implements IsElement, Attachable {
         boolean removeFromHere = false;
         for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
             HTMLElement element = iterator.next();
-            if (element == column.asElement()) {
+            if (element == column.element()) {
                 removeFromHere = true;
                 continue;
             }
@@ -259,7 +259,7 @@ public class Finder implements IsElement, Attachable {
                 removeColumn.detach();
             }
         }
-        Elements.setVisible(column.asElement(), true);
+        Elements.setVisible(column.element(), true);
         resizePreview();
     }
 
@@ -293,7 +293,7 @@ public class Finder implements IsElement, Attachable {
     void selectColumn(String columnId) {
         FinderColumn finderColumn = columns.get(columnId);
         if (finderColumn != null) {
-            finderColumn.asElement().focus();
+            finderColumn.element().focus();
         }
     }
 
@@ -323,13 +323,11 @@ public class Finder implements IsElement, Attachable {
         return columns.size();
     }
 
-    @SuppressWarnings("unchecked")
-    void showPreview(PreviewContent preview) {
+    void showPreview(PreviewContent<?> preview) {
         clearPreview();
         currentPreview = preview;
         if (preview != null) {
-            Iterable<HTMLElement> elements = preview.asElements();
-            for (HTMLElement element : elements) {
+            for (HTMLElement element : preview) {
                 previewColumn.appendChild(element);
             }
             preview.attach();
@@ -380,7 +378,7 @@ public class Finder implements IsElement, Attachable {
         appendColumn(initialColumn, callback);
         selectColumn(initialColumn);
         for (FinderColumn column : columns.values()) {
-            Elements.setVisible(column.asElement(), true);
+            Elements.setVisible(column.element(), true);
             column.markHiddenColumns(false);
         }
         showPreview(initialPreview);
@@ -416,7 +414,7 @@ public class Finder implements IsElement, Attachable {
                         public void onSuccess(FlowContext context) {
                             if (!context.emptyStack()) {
                                 FinderColumn column = context.pop();
-                                column.asElement().focus();
+                                column.element().focus();
                                 if (column.selectedRow() != null) {
                                     column.selectedRow().click();
                                 }
@@ -496,7 +494,7 @@ public class Finder implements IsElement, Attachable {
 
                         @SuppressWarnings("SpellCheckingInspection")
                         private void f1nally(FinderColumn column) {
-                            column.asElement().focus();
+                            column.element().focus();
                             column.refresh(RefreshMode.RESTORE_SELECTION);
                         }
                     });
@@ -535,7 +533,7 @@ public class Finder implements IsElement, Attachable {
                         public void onSuccess(FinderColumn column) {
                             if (column.contains(segment.getItemId())) {
                                 column.markSelected(segment.getItemId());
-                                column.row(segment.getItemId()).asElement().scrollIntoView(false);
+                                column.row(segment.getItemId()).element().scrollIntoView(false);
                                 updateContext();
                                 context.push(column);
                                 emitter.onCompleted();

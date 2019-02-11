@@ -29,17 +29,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
- * Form item used in the microprofile-config subsystem to configure the complex attribute {@code class} which is roughly
- * defined as
+ * Form item used in the microprofile-config subsystem to configure the complex attribute {@code class} defined as
  * <pre>
  * "class" => {
  *     "type" => OBJECT,
  *     "value-type" => {
  *         "name" => {
  *             "type" => STRING,
+ *             ...
  *         },
  *         "module" => {
  *             "type" => STRING,
+ *             ...
  *         }
  *     },
  * }
@@ -73,10 +74,10 @@ class ClassFormItem extends CompositeFormItem {
 
     @Override
     protected void persistModel(ModelNode modelNode) {
-        if (!name.isUndefined()) {
+        if (!name.isEmpty()) {
             modelNode.get(NAME).set(name.getValue());
         }
-        if (!module.isUndefined()) {
+        if (!module.isEmpty()) {
             modelNode.get(MODULE).set(module.getValue());
         }
     }

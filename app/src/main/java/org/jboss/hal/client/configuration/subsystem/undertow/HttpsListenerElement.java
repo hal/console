@@ -61,14 +61,14 @@ class HttpsListenerElement extends ListenerElement {
                 .textContent(resources.constants().enableSSL())
                 .css(org.jboss.hal.ballroom.Button.DEFAULT_CSS)
                 .data(CONSTRAINT, constraint.data())
-                .asElement();
+                .get();
         bind(enableSslButton, click, ev -> presenter.enableSsl(selectedHttps));
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
                 .css(org.jboss.hal.ballroom.Button.DEFAULT_CSS)
                 .data(CONSTRAINT, constraint.data())
-                .asElement();
+                .get();
         bind(disableSslButton, click, ev -> presenter.disableSsl(selectedHttps));
 
         Metadata metadata = metadataRegistry.lookup(template);
@@ -90,14 +90,14 @@ class HttpsListenerElement extends ListenerElement {
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-                .asElement();
+                .get();
     }
 
     @Override
     public void attach() {
         super.attach();
 
-        NodeList<Element> elems = table.asElement().getElementsByClassName(halTableButtons);
+        NodeList<Element> elems = table.element().getElementsByClassName(halTableButtons);
         if (elems.length > 0) {
             Element tableButtonsElement = elems.item(0);
             tableButtonsElement.appendChild(enableSslButton);

@@ -77,7 +77,7 @@ public class RestResourceColumn extends FinderColumn<RestResource> {
                     }
 
                     @Override
-                    public HTMLElement asElement() {
+                    public HTMLElement element() {
                         HTMLElement element = ItemDisplay.withSubtitle(abbreviateFqClassName(item.getName()),
                                 item.getPath());
                         element.classList.add(breakTooltip);

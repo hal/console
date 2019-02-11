@@ -25,7 +25,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 class Bridge<T> {
 
     @JsMethod(namespace = GLOBAL, name = "$")
-    static native  <T> Bridge<T> select(String selector);
+    static native <T> Bridge<T> select(String selector);
 
     native void jstree(Options options);
 

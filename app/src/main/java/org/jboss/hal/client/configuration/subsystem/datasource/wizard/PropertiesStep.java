@@ -94,8 +94,8 @@ class PropertiesStep extends WizardStep<Context, State> {
     }
 
     @Override
-    public HTMLElement asElement() {
-        return form.asElement();
+    public HTMLElement element() {
+        return form.element();
     }
 
     @Override
@@ -111,7 +111,7 @@ class PropertiesStep extends WizardStep<Context, State> {
         form.edit(dummy);
     }
 
-    private void readJdbcDriverProperties(boolean isXa, final String dsClassname, String driverName,
+    private void readJdbcDriverProperties(boolean isXa, String dsClassname, String driverName,
             Consumer<List<String>> callback) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
 
@@ -157,7 +157,7 @@ class PropertiesStep extends WizardStep<Context, State> {
                     public void onSuccess(FlowContext flowContext) {
                         ModelNode result = flowContext.get(RESULT);
                         List<String> properties = Collections.emptyList();
-                        final String datasourceClassname;
+                        String datasourceClassname;
                         if (dsClassname == null) {
                             String attribute = isXa ? DRIVER_XA_DATASOURCE_CLASS_NAME : DRIVER_DATASOURCE_CLASS_NAME;
                             datasourceClassname = result.get(attribute).asString();

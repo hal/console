@@ -20,8 +20,10 @@ import org.jboss.hal.meta.AddressTemplate;
 interface AddressTemplates {
 
     String MICRO_PROFILE_CONFIG_ADDRESS = "/{selected.profile}/subsystem=microprofile-config-smallrye";
+    String CONFIG_SOURCE_ADDRESS = MICRO_PROFILE_CONFIG_ADDRESS + "/config-source=*";
     String MICRO_PROFILE_METRICS_ADDRESS = "/{selected.profile}/subsystem=microprofile-metrics-smallrye";
 
     AddressTemplate MICRO_PROFILE_CONFIG_TEMPLATE = AddressTemplate.of(MICRO_PROFILE_CONFIG_ADDRESS);
+    AddressTemplate CONFIG_SOURCE_TEMPLATE = AddressTemplate.of(CONFIG_SOURCE_ADDRESS);
     AddressTemplate MICRO_PROFILE_METRICS_TEMPLATE = AddressTemplate.of(MICRO_PROFILE_METRICS_ADDRESS);
 }

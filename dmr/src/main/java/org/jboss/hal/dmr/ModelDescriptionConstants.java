@@ -47,6 +47,7 @@ public interface ModelDescriptionConstants {
     String ADD_PREFIX_ROLE_MAPPER = "add-prefix-role-mapper";
     String ADD_SUFFIX_ROLE_MAPPER = "add-suffix-role-mapper";
     String ADDRESS = "address";
+    String ADDRESS_MATCH = "address-match";
     String ADDRESS_SETTING = "address-setting";
     String ADMIN_OBJECTS = "admin-objects";
     String ADMIN_ONLY = "admin-only";
@@ -105,7 +106,9 @@ public interface ModelDescriptionConstants {
     String BOUND_PORT = "bound-port";
     String BRIDGE = "bridge";
     String BROADCAST_GROUP = "broadcast-group";
+    String BROWSE = "browse";
     String BROWSE_CONTENT = "browse-content";
+    String BROWSE_ONLY = "browse-only";
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
     String BUNDLED = "bundled";
@@ -137,12 +140,17 @@ public interface ModelDescriptionConstants {
     String CLASS_PATH = "class-path";
     String CLEAR_CACHE = "clear-cache";
     String CLEAR_TEXT = "clear-text";
+    String CLIENT_ADDRESS = "client-address";
     String CLIENT_CONFIG = "client-config";
     String CLIENT_MAPPINGS = "client-mappings";
     String CLIENT_SSL_CONTEXT = "client-ssl-context";
     String CLONE = "clone";
+    String CLOSE_CONNECTIONS_FOR_ADDRESS = "close-connections-for-address";
+    String CLOSE_CONNECTIONS_FOR_USER = "close-connections-for-user";
+    String CLOSE_CONSUMER_CONNECTIONS_FOR_ADDRESS = "close-consumer-connections-for-address";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
+    String COMMIT_PREPARED_TRANSACTION = "commit-prepared-transaction";
     String COMPLETED_TASK_COUNT = "completed-task-count";
     String COMPONENT = "component";
     String COMPONENT_CLASS_NAME = "component-class-name";
@@ -154,6 +162,7 @@ public interface ModelDescriptionConstants {
     String CONFIGURATION = "configuration";
     String CONNECTED = "connected";
     String CONNECTION_COUNT = "connection-count";
+    String CONNECTION_ID = "connection-id";
     String CONNECTION_LIMIT_HIGH_WATER_MARK = "connection-limit-high-water-mark";
     String CONNECTION_LIMIT_LOW_WATER_MARK = "connection-limit-low-water-mark";
     String CONNECTION_DEFINITIONS = "connection-definitions";
@@ -171,7 +180,9 @@ public interface ModelDescriptionConstants {
     String CONSTANT_PRINCIPAL_TRANSFORMER = "constant-principal-transformer";
     String CONSTANT_REALM_MAPPER = "constant-realm-mapper";
     String CONSTANT_ROLE_MAPPER = "constant-role-mapper";
+    String CONSUME = "consume";
     String CONSUMES = "consumes";
+    String CONSUMER_ID = "consumer-id";
     String CONSUMER_COUNT = "consumer-count";
     String CONTENT = "content";
     String CONTEXT = "context";
@@ -185,8 +196,12 @@ public interface ModelDescriptionConstants {
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CREATE = "create";
     String CREATE_ACCOUNT = "create-account";
+    String CREATE_ADDRESS = "createAddress"; // no typo!
+    String CREATE_DURABLE_QUEUE = "create-durable-queue";
+    String CREATE_NON_DURABLE_QUEUE = "create-non-durable-queue";
     String CREATE_TIME = "create-time";
     String CREATION_TIME = "creation-time";
+    String CREATION_TIMESTAMP = "creation-timestamp";
     String CREDENTIAL_REFERENCE = "credential-reference";
     String CREDENTIAL_STORE = "credential-store";
     String CURRENT_THREAD_COUNT = "current-thread-count";
@@ -225,6 +240,9 @@ public interface ModelDescriptionConstants {
     String DEFAULT_SLSB_INSTANCE_POOL = "default-slsb-instance-pool";
     String DEFAULT_THREAD_POOL = "default-thread-pool";
     String DEFAULT_WEB_MODULE = "default-web-module";
+    String DELETE_ADDRESS = "deleteAddress"; // no typo!
+    String DELETE_DURABLE_QUEUE = "delete-durable-queue";
+    String DELETE_NON_DURABLE_QUEUE = "delete-non-durable-queue";
     String DELIVERING_COUNT = "delivering-count";
     String DELIVERY_ACTIVE = "delivery-active";
     String DEPENDENT_ADDRESS = "dependent-address";
@@ -235,10 +253,14 @@ public interface ModelDescriptionConstants {
     String DEPLOYMENT_SCANNER = "deployment-scanner";
     String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
+    String DESTINATION = "destination";
     String DESTINATION_ADDRESS = "destination-address";
+    String DESTINATION_NAME = "destination-name";
     String DESTINATION_PORT = "destination-port";
+    String DESTINATION_TYPE = "destination-type";
     String DESTROY = "destroy";
     String DESTROY_SERVERS = "destroy-servers";
+    String DIR = "dir";
     String DIR_CONTEXT = "dir-context";
     String DIRECT_VERIFICATION = "direct-verification";
     String DISABLED = "disabled";
@@ -300,6 +322,8 @@ public interface ModelDescriptionConstants {
     String EXTENSION_POINT = "extension-point";
     String EXTERNAL_JMS_QUEUE = "external-jms-queue";
     String EXTERNAL_JMS_TOPIC = "external-jms-topic";
+    String EXTRA_PROPS = "extra-props";
+    String FACTORY_CLASS_NAME = "factory-class-name";
     String FAILED = "failed";
     String FAILED_OPERATION = "failed-operation";
     String FAILED_SERVICES = "failed-services";
@@ -321,13 +345,16 @@ public interface ModelDescriptionConstants {
     String FLUSH_GRACEFULLY_CONNECTION_IN_POOL = "flush-gracefully-connection-in-pool";
     String FLUSH_IDLE_CONNECTION_IN_POOL = "flush-idle-connection-in-pool";
     String FLUSH_INVALID_CONNECTION_IN_POOL = "flush-invalid-connection-in-pool";
+    String FORCE_FAILOVER = "force-failover";
     String FORK = "fork";
     String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
-    String GET_METADATA = "get-metadata";
     String GENERATE_CERTIFICATE_SIGNING_REQUEST = "generate-certificate-signing-request";
     String GENERATE_KEY_PAIR = "generate-key-pair";
+    String GET_CONNECTORS_AS_JSON = "get-connectors-as-json";
+    String GET_METADATA = "get-metadata";
+    String GET_ROLES = "get-roles";
     String GET_SESSION_CREATION_TIME = "get-session-creation-time";
     String GET_SESSION_LAST_ACCESSED_TIME = "get-session-last-accessed-time";
     String GLOBAL_MODULES = "global-modules";
@@ -336,9 +363,13 @@ public interface ModelDescriptionConstants {
     String GROUPING_HANDLER = "grouping-handler";
     String HA_POLICY = "ha-policy";
     // HAL_* attributes are used internally only!
+    String HAL_ACTIVE_OP_ADDRESS = "hal-active-op-address";
+    String HAL_ACTIVE_ADDRESS_HOST = "hal-active-address-host";
+    String HAL_ACTIVE_ADDRESS_SERVER = "hal-active-address-server";
     String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
     String HAL_LENGTH = "hal-length";
+    String HAL_NON_PROGRESSING = "hal-non-progressing";
     String HAL_RECURSIVE = "hal-recursive";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
@@ -369,6 +400,7 @@ public interface ModelDescriptionConstants {
     String IDENTITY_MAPPING = "identity-mapping";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
+    String IMPLEMENTATION = "implementation";
     String IMPORT_CERTIFICATE = "import-certificate";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
     String IN_VM_CONNECTOR = "in-vm-connector";
@@ -442,6 +474,7 @@ public interface ModelDescriptionConstants {
     String LAST_ACCESSED_TIME = "last-accessed-time";
     String LAST_CONNECTED = "last-connected";
     String LAST_UPDATED_TIME = "last-updated-time";
+    String LAST_UUID_SENT = "last-uuid-sent";
     String LAUNCH_TYPE = "launch-type";
     String LDAP_KEY_STORE = "ldap-key-store";
     String LDAP_REALM = "ldap-realm";
@@ -451,11 +484,17 @@ public interface ModelDescriptionConstants {
     String LINK = "link";
     String LINES = "lines";
     String LIST_ADD_OPERATION = "list-add";
+    String LIST_ALL_CONSUMERS_AS_JSON = "list-all-consumers-as-json";
     String LIST_CHANGES_OPERATION = "list-changes";
+    String LIST_CONNECTIONS_AS_JSON = "list-connections-as-json";
+    String LIST_CONSUMERS_AS_JSON = "list-consumers-as-json";
     String LIST_MESSAGES = "list-messages";
+    String LIST_PREPARED_TRANSACTION_DETAILS_AS_JSON = "list-prepared-transaction-details-as-json";
+    String LIST_PRODUCERS_INFO_AS_JSON = "list-producers-info-as-json";
     String LIST_REMOVE_OPERATION = "list-remove";
     String LIST_SESSION_ATTRIBUTES = "list-session-attributes";
     String LIST_SESSIONS = "list-sessions";
+    String LIST_SESSIONS_AS_JSON = "list-sessions-as-json";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOAD = "load";
@@ -473,6 +512,7 @@ public interface ModelDescriptionConstants {
     String LOGIN_MODULE = "login-module";
     String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
+    String MANAGE = "manage";
     String MANAGED = "managed";
     String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
@@ -486,6 +526,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MANAGEMENT_NOTIFICATION_ADDRESS = "management-notification-address";
+    String MANAGEMENT_OPERATIONS = "management-operations";
     String MANAGEMENT_SPEC_VERSION = "management-spec-version";
     String MANAGEMENT_VERSION = "management-version";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
@@ -528,6 +569,7 @@ public interface ModelDescriptionConstants {
     String MODULE_SLOT = "module-slot";
     String MOVE_MESSAGE = "move-message";
     String MOVE_MESSAGES = "move-messages";
+    String MSG_SENT = "msg-sent";
     String MULTICAST_ADDRESS = "multicast-address";
     String MULTICAST_PORT = "multicast-port";
     String NAME = "name";
@@ -568,6 +610,7 @@ public interface ModelDescriptionConstants {
     String OPERATION_DATE = "operation-date";
     String OPERATION_HEADERS = "operation-headers";
     String OPERATIONS = "operations";
+    String ORDINAL = "ordinal";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
     String OTHER_QUEUE_NAME = "other-queue-name";
@@ -575,6 +618,7 @@ public interface ModelDescriptionConstants {
     String OVERRIDE = "override";
     String OVERRIDE_ALL = "override-all";
     String OVERRIDE_MODULE = "override-modules";
+    String PARAMS = "params";
     String PARTICIPANTS = "partitcipants";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
@@ -717,6 +761,8 @@ public interface ModelDescriptionConstants {
     String REQUEST_PROPERTIES = "request-properties";
     String REQUIRED = "required";
     String REQUIRES = "requires";
+    String RESET_ALL_MESSAGE_COUNTER_HISTORIES = "reset-all-message-counter-histories";
+    String RESET_ALL_MESSAGE_COUNTERS = "reset-all-message-counters";
     String RESET_CONFIGURATION = "reset-configuration";
     String RESET_STATISTICS_OPERATION = "reset-statistics";
     String RESOLVE_EXPRESSION = "resolve-expression";
@@ -745,6 +791,7 @@ public interface ModelDescriptionConstants {
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "roles";
     String ROLLBACK_OPERATION = "rollback";
+    String ROLLBACK_PREPARED_TRANSACTION = "rollback-prepared-transaction";
     String ROLLBACK_TO = "rollback-to";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
@@ -774,6 +821,7 @@ public interface ModelDescriptionConstants {
     String SEGMENTS = "segments";
     String SELECT = "select";
     String SELECTOR = "selector";
+    String SEND = "send";
     String SEND_MESSAGE_TO_DEAD_LETTER_ADDRESS = "send-message-to-dead-letter-address";
     String SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS = "send-messages-to-dead-letter-address";
     String SENSITIVE = "sensitive";
@@ -797,6 +845,7 @@ public interface ModelDescriptionConstants {
     String SETTING = "setting";
     String SESSION_AVG_ALIVE_TIME = "session-avg-alive-time";
     String SESSION_COOKIE = "session-cookie";
+    String SESSION_COUNT = "session-count";
     String SESSION_ID = "session-id";
     String SESSION_MAX_ALIVE_TIME = "session-max-alive-time";
     String SESSIONS_CREATED = "sessions-created";
@@ -903,6 +952,7 @@ public interface ModelDescriptionConstants {
     String TOTAL_SIZE = "total-size";
     String TOKEN_REALM = "token-realm";
     String TRANSACTION = "transaction";
+    String TRANSACTION_ID = "transaction-id";
     String TRANSACTION_SUPPORT = "transaction-support";
     String TRANSACTION_TIMEOUT = "transaction-timeout";
     String TRANSACTION_TIMEOUT_SCAN_PERIOD = "transaction-timeout-scan-period";

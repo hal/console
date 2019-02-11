@@ -91,7 +91,7 @@ class EjbPreview extends PreviewContent<EjbNode> {
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(ejb.getPath())
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                .asElement());
+                .get());
 
         attributes = new PreviewAttributes<>(ejb,
                 asList(COMPONENT_CLASS_NAME, INVOCATIONS, EXECUTION_TIME, DELIVERY_ACTIVE));
@@ -100,9 +100,9 @@ class EjbPreview extends PreviewContent<EjbNode> {
         poolSection = section().add(h(2, Names.POOL))
                 .add(poolUtilization = new Utilization(resources.constants().size(), resources.constants().instances(),
                         false, true))
-                .asElement();
+                .get();
         statefulSection = section().addAll(statefulAttributes = new PreviewAttributes<>(ejb, STATEFUL.type,
-                asList(CACHE_SIZE, PASSIVATED_COUNT, TOTAL_SIZE))).asElement();
+                asList(CACHE_SIZE, PASSIVATED_COUNT, TOTAL_SIZE))).get();
         previewBuilder().addAll(poolSection, statefulSection);
 
         ModelNode firstTimer = firstTimer(ejb);
@@ -110,15 +110,15 @@ class EjbPreview extends PreviewContent<EjbNode> {
             timer = new PreviewAttributes<>(firstTimer, Names.TIMER)
                     .append(t -> {
                         String nextTimeout = Format.mediumDateTime(new Date(t.get(NEXT_TIMEOUT).asLong()));
-                        nextTimeoutElement = span().textContent(nextTimeout).asElement();
+                        nextTimeoutElement = span().textContent(nextTimeout).get();
                         return new PreviewAttribute(labelBuilder.label(NEXT_TIMEOUT), nextTimeoutElement);
                     })
                     .append(t -> {
                         maxRemaining = (int) round(t.get(TIME_REMAINING).asLong() / 1000.0);
                         remainingElement = new ProgressElement(NORMAL, INLINE, true);
                         remainingElement.reset(maxRemaining);
-                        remainingElement.asElement().style.marginBottom = MarginBottomUnionType.of(0);
-                        return new PreviewAttribute(labelBuilder.label(TIME_REMAINING), remainingElement.asElement());
+                        remainingElement.element().style.marginBottom = MarginBottomUnionType.of(0);
+                        return new PreviewAttribute(labelBuilder.label(TIME_REMAINING), remainingElement.element());
                     });
             previewBuilder().addAll(timer);
         }

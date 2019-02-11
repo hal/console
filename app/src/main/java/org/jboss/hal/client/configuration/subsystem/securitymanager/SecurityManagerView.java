@@ -89,7 +89,7 @@ public class SecurityManagerView extends HalViewImpl implements SecurityManagerP
                 .description(resources.messages().noDeploymentPermissions())
                 .primaryAction(resources.constants().add(), () -> presenter.addDeploymentPermissions(), constraint)
                 .build();
-        emptyState.asElement().classList.add(marginTopLarge);
+        emptyState.element().classList.add(marginTopLarge);
         emptyStates.put(permission, emptyState);
 
         Table<ModelNode> table = new ModelNodeTable.Builder<>(Ids.build(permission.baseId, Ids.TABLE), metadata)
@@ -118,8 +118,8 @@ public class SecurityManagerView extends HalViewImpl implements SecurityManagerP
                         .add(p().textContent(metadata.getDescription().getDescription()))
                         .add(table)
                         .add(form)
-                        .asElement())
-                .asElement();
+                        .get())
+                .get();
         masterDetails.put(permission, masterDetail);
         navigation.addPrimary(Ids.build(permission.baseId, Ids.ITEM), permission.type, permission.icon, section);
     }
@@ -138,7 +138,7 @@ public class SecurityManagerView extends HalViewImpl implements SecurityManagerP
     @Override
     public void update(boolean defined, Map<Permission, List<ModelNode>> permissions) {
         for (Permission permission : Permission.values()) {
-            Elements.setVisible(emptyStates.get(permission).asElement(), !defined);
+            Elements.setVisible(emptyStates.get(permission).element(), !defined);
             Elements.setVisible(masterDetails.get(permission), defined);
         }
         permissions.forEach((permission, nodes) -> {

@@ -51,54 +51,54 @@ public class Alert implements IsElement {
         this(null, null, null, null);
     }
 
-    public Alert(final String icon, final SafeHtml text) {
+    public Alert(String icon, SafeHtml text) {
         this(icon, text, null, null);
     }
 
-    public Alert(final String icon, final SafeHtml text, String additionalText) {
+    public Alert(String icon, SafeHtml text, String additionalText) {
         this(icon, text, additionalText, null, null, null);
     }
 
-    public Alert(final String icon, final SafeHtml text, final String linkText,
-            final EventCallbackFn<MouseEvent> linkHandler) {
+    public Alert(String icon, SafeHtml text, String linkText,
+            EventCallbackFn<MouseEvent> linkHandler) {
         this(icon, text, linkText, linkHandler, null);
     }
 
-    public Alert(final String icon, final SafeHtml text, final String linkText,
-            final EventCallbackFn<MouseEvent> linkHandler, final Constraint constraint) {
+    public Alert(String icon, SafeHtml text, String linkText,
+            EventCallbackFn<MouseEvent> linkHandler, Constraint constraint) {
         this(icon, text, null, linkText, linkHandler, constraint);
 
     }
 
-    public Alert(final String icon, final SafeHtml text, String additionalText, final String linkText,
-            final EventCallbackFn<MouseEvent> linkHandler, final Constraint constraint) {
+    public Alert(String icon, SafeHtml text, String additionalText, String linkText,
+            EventCallbackFn<MouseEvent> linkHandler, Constraint constraint) {
         this.root = div().css(alert, alertCss(icon))
-                .add(this.icon = span().css(icon).asElement())
-                .add(this.text = span().asElement())
-                .asElement();
+                .add(this.icon = span().css(icon).get())
+                .add(this.text = span().get())
+                .get();
 
         if (text != null) {
             this.text.innerHTML = text.asString();
         }
         if (linkText != null && linkHandler != null) {
             HTMLElement a;
-            this.root.appendChild(span().textContent(" ").asElement());
+            this.root.appendChild(span().textContent(" ").get());
             this.root.appendChild(a = a().css(clickable, alertLink)
                     .on(click, linkHandler)
                     .textContent(linkText)
-                    .asElement());
+                    .get());
             if (constraint != null) {
                 a.dataset.set(UIConstants.CONSTRAINT, constraint.data());
             }
         }
         if (additionalText != null) {
-            HTMLElement additionalDescription = span().asElement();
+            HTMLElement additionalDescription = span().get();
             this.root.appendChild(additionalDescription);
             additionalDescription.innerHTML = additionalText;
         }
     }
 
-    private String alertCss(final String icon) {
+    private String alertCss(String icon) {
         String alertCss = null;
         if (Icons.OK.equals(icon)) {
             alertCss = alertSuccess;
@@ -125,7 +125,7 @@ public class Alert implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 }

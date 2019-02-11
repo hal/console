@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
@@ -50,7 +49,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return null;
     }
 
-    default HasElements getTitleElements() {
+    default Iterable<HTMLElement> getTitleElements() {
         return null;
     }
 
@@ -62,7 +61,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return null;
     }
 
-    default HasElements getDescriptionElements() {
+    default Iterable<HTMLElement> getDescriptionElements() {
         return null;
     }
 
@@ -74,7 +73,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return null;
     }
 
-    default HasElements getAdditionalInfoElements() {
+    default Iterable<HTMLElement> getAdditionalInfoElements() {
         return null;
     }
 
@@ -106,7 +105,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return {@code null} by default
      */
-    default HTMLElement asElement() {
+    default HTMLElement element() {
         return null;
     }
 }

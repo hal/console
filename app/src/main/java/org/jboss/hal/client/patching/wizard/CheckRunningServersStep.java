@@ -41,7 +41,7 @@ public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState
     private Boolean restartServers;
     private List<Property> servers;
 
-    public CheckRunningServersStep(final Resources resources, List<Property> servers, String host) {
+    CheckRunningServersStep(Resources resources, List<Property> servers, String host) {
         super(resources.messages().patchStopAllServersTitle());
         this.servers = servers;
 
@@ -63,7 +63,7 @@ public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState
                                             restartServers = true;
                                             //restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
                                         })
-                                        .asElement())
+                                        .get())
                                 .add(span().innerHtml(resources.messages().patchStopServersDialogMessage1()))))
                 .add(div().css(radio)
                         .add(label()
@@ -74,24 +74,24 @@ public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState
                                             restartServers = false;
                                             //restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
                                         })
-                                        .asElement())
+                                        .get())
                                 .add(span().innerHtml(resources.messages().patchStopServersDialogMessage2()))))
-                .asElement();
+                .get();
 
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
     @Override
-    public void reset(final PatchContext context) {
+    public void reset(PatchContext context) {
         restartServers = null;
     }
 
     @Override
-    protected boolean onNext(final PatchContext context) {
+    protected boolean onNext(PatchContext context) {
         context.restartServers = restartServers != null && restartServers;
         context.servers = servers;
         // only navigates to next screen if the user selected one of the radio options

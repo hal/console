@@ -50,7 +50,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
 
     @Inject
     @SuppressWarnings("HardCodedStringLiteral")
-    FactoriesView(final MbuiContext mbuiContext) {
+    FactoriesView(MbuiContext mbuiContext) {
         elements = new HashMap<>();
         navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -94,7 +94,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                 mbuiContext.tableButtonFactory());
         registerAttachable(httpAuthenticationFactoryElement);
         navigation.addSecondary(primaryIdHttpFactories, Ids.build(HTTP_AUTHENTICATION_FACTORY.baseId, Ids.ITEM),
-                Names.HTTP_AUTHENTICATION_FACTORY, httpAuthenticationFactoryElement.asElement());
+                Names.HTTP_AUTHENTICATION_FACTORY, httpAuthenticationFactoryElement.element());
 
         addResourceElement(PROVIDER_HTTP_SERVER_MECHANISM_FACTORY,
                 PROVIDER_HTTP_SERVER_MECHANISM_FACTORY.resourceElement(mbuiContext,
@@ -164,7 +164,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                 mbuiContext.tableButtonFactory());
         registerAttachable(saslAuthenticationFactoryElement);
         navigation.addSecondary(primaryIdSaslFactories, Ids.build(SASL_AUTHENTICATION_FACTORY.baseId, Ids.ITEM),
-                Names.SASL_AUTHENTICATION_FACTORY, saslAuthenticationFactoryElement.asElement());
+                Names.SASL_AUTHENTICATION_FACTORY, saslAuthenticationFactoryElement.element());
 
         addResourceElement(SERVICE_LOADER_SASL_SERVER_FACTORY,
                 SERVICE_LOADER_SASL_SERVER_FACTORY.resourceElement(mbuiContext,
@@ -254,10 +254,10 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
             String primaryId, String secondaryId, @NonNls String text) {
         elements.put(resource.resource, element);
         registerAttachable(element);
-        navigation.addSecondary(primaryId, secondaryId, text, element.asElement());
+        navigation.addSecondary(primaryId, secondaryId, text, element.element());
     }
 
-    public void setPresenter(final FactoriesPresenter presenter) {
+    public void setPresenter(FactoriesPresenter presenter) {
         this.presenter = presenter;
         httpAuthenticationFactoryElement.setPresenter(presenter);
         saslAuthenticationFactoryElement.setPresenter(presenter);
@@ -277,7 +277,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
     }
 
     @Override
-    public void updateSaslAuthentication(final List<NamedNode> nodes) {
+    public void updateSaslAuthentication(List<NamedNode> nodes) {
         saslAuthenticationFactoryElement.update(nodes);
     }
 }

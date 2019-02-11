@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Skeleton;
@@ -47,8 +46,8 @@ import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.collect;
 import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.elements;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -82,7 +81,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 .icon(CSS.fontAwesome("dot-circle-o"))
                 .description(resources.messages().noMacrosDescription(resources.constants().startMacro()))
                 .build();
-        empty.asElement().classList.add(noMacros);
+        empty.element().classList.add(noMacros);
 
         ItemRenderer<Macro> itemRenderer = macro -> new ItemDisplay<Macro>() {
             @Override
@@ -96,20 +95,21 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             }
 
             @Override
-            public HasElements getAdditionalInfoElements() {
-                return elements().add(div()
+            public Iterable<HTMLElement> getAdditionalInfoElements() {
+                return collect().add(div()
                         .add(span().css(pfIcon("image"), marginRight5))
-                        .add(span().textContent(resources.messages().operations(macro.getOperationCount()))));
+                        .add(span().textContent(resources.messages().operations(macro.getOperationCount()))))
+                        .get();
             }
 
             @Override
             public List<ItemAction<Macro>> actions() {
                 return asList(
-                        new ItemAction<Macro>(PLAY_ACTION, resources.constants().play(),
+                        new ItemAction<>(PLAY_ACTION, resources.constants().play(),
                                 macro -> presenter.play(macro)),
-                        new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
-                                macro -> presenter.rename(macro)),
-                        new ItemAction<Macro>(REMOVE_ACTION, resources.constants().remove(),
+                        // new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
+                        //         macro -> presenter.rename(macro)),
+                        new ItemAction<>(REMOVE_ACTION, resources.constants().remove(),
                                 macro -> DialogFactory.showConfirmation(
                                         resources.messages().removeConfirmationTitle(macro.getName()),
                                         resources.messages().removeConfirmationQuestion(macro.getName()),
@@ -117,7 +117,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             }
         };
         macroList = new ListView<>(Ids.MACRO_LIST, dataProvider, itemRenderer, true, false);
-        macroList.asElement().classList.add(CSS.macroList);
+        macroList.element().classList.add(CSS.macroList);
         dataProvider.addDisplay(macroList);
 
         Options editorOptions = new Options();
@@ -133,9 +133,9 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                         .data(UIConstants.PLACEMENT, "left") //NON-NLS
                         .title(resources.constants().copyToClipboard())
                         .add(span().css(fontAwesome("clipboard")))
-                        .asElement())
+                        .get())
                 .add(editor)
-                .asElement();
+                .get();
         Clipboard clipboard = new Clipboard(copyToClipboard);
         clipboard.onCopy(event -> copyToClipboard(event.client));
 
@@ -144,10 +144,10 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                         .add(macroList))
                 .add(column(8)
                         .add(editorContainer))
-                .asElement();
+                .get();
 
         registerAttachable(editor);
-        initElements(asList(empty.asElement(), row));
+        initElements(asList(empty.element(), row));
     }
 
     @Override
@@ -169,47 +169,47 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
 
     private void adjustHeight() {
         int offset = Skeleton.applicationOffset() + 2 * MARGIN_BIG + 1;
-        macroList.asElement().style.height = vh(offset);
+        macroList.element().style.height = vh(offset);
     }
 
     private void adjustEditorHeight() {
         int height = max(Skeleton.applicationHeight() - 2 * MARGIN_BIG - 1, MIN_HEIGHT);
-        editor.asElement().style.height = CSS.height(px(height));
+        editor.element().style.height = CSS.height(px(height));
         editor.getEditor().resize();
     }
 
     @Override
-    public void setPresenter(final MacroEditorPresenter presenter) {
+    public void setPresenter(MacroEditorPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     public void empty() {
-        Elements.setVisible(empty.asElement(), true);
+        Elements.setVisible(empty.element(), true);
         Elements.setVisible(row, false);
     }
 
     @Override
     public void setMacros(Iterable<Macro> macros) {
-        Elements.setVisible(empty.asElement(), false);
+        Elements.setVisible(empty.element(), false);
         Elements.setVisible(row, true);
         dataProvider.update(macros);
     }
 
     @Override
-    public void selectMacro(final Macro macro) {
+    public void selectMacro(Macro macro) {
         dataProvider.select(macro, true);
     }
 
     @Override
-    public void enableMacro(final Macro macro) {
+    public void enableMacro(Macro macro) {
         macroList.enableAction(macro, PLAY_ACTION);
         macroList.enableAction(macro, RENAME_ACTION);
         macroList.enableAction(macro, REMOVE_ACTION);
     }
 
     @Override
-    public void disableMacro(final Macro macro) {
+    public void disableMacro(Macro macro) {
         macroList.disableAction(macro, PLAY_ACTION);
         macroList.disableAction(macro, RENAME_ACTION);
         macroList.disableAction(macro, REMOVE_ACTION);

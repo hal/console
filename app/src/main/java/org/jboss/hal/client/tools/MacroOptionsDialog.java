@@ -32,10 +32,7 @@ import static org.jboss.hal.dmr.macro.MacroOptions.OMIT_READ_OPERATIONS;
 import static org.jboss.hal.dmr.macro.MacroOptions.OPEN_IN_EDITOR;
 import static org.jboss.hal.dmr.macro.MacroOptions.RESOURCES;
 
-/**
- * Dialog to record a new macro.
- * TODO Add a form validation to check for duplicate macro names.
- */
+/** Dialog to record a new macro. */
 public class MacroOptionsDialog {
 
     private final Dialog dialog;
@@ -45,7 +42,6 @@ public class MacroOptionsDialog {
         Metadata metadata = Metadata.staticDescription(RESOURCES.macroOptions());
 
         form = new ModelNodeForm.Builder<MacroOptions>(Ids.MACRO_OPTIONS, metadata)
-                .addOnly()
                 .include(NAME, DESCRIPTION, OMIT_READ_OPERATIONS, OPEN_IN_EDITOR)
                 .unsorted()
                 .onSave((form, changedValues) -> callback.onOptions(form.getModel()))
@@ -55,7 +51,7 @@ public class MacroOptionsDialog {
                 ? ValidationResult.invalid(resources.constants().duplicateMacro()) : ValidationResult.OK);
 
         dialog = new Dialog.Builder(resources.constants().startMacro())
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().ok(), form::save)
                 .cancel()
                 .build();
@@ -63,8 +59,8 @@ public class MacroOptionsDialog {
     }
 
     public void show() {
-        form.edit(new MacroOptions());
         dialog.show();
+        form.edit(new MacroOptions());
     }
 
 

@@ -338,6 +338,7 @@ public interface CSS {
     String pulse = "pulse";
 
     String radio = "radio";
+    String radioInline = "radio-inline";
     String rbacHidden = "rbac-hidden";
     String readonly = "readonly";
     String refresh = "refresh";

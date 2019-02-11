@@ -105,20 +105,20 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
 
         Tabs tabs = new Tabs(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TAB_CONTAINER))
                 .add(Ids.build(prefixId, Ids.JCA_THREAD_POOL_ATTRIBUTES_TAB), resources.constants().attributes(),
-                        attributesForm.asElement())
+                        attributesForm.element())
                 .add(Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_TAB), resources.constants().sizing(),
-                        sizingForm.asElement());
+                        sizingForm.element());
 
         root = section()
                 .add(h(1).textContent(THREAD_POOLS))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(tabs)
-                .asElement();
+                .get();
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

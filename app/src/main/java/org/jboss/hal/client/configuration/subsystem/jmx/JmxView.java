@@ -100,7 +100,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(configMetadata.getDescription().getDescription()))
                 .add(configForm)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JMX_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(configForm);
@@ -149,7 +149,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .add(h(1).textContent(Names.AUDIT_LOG))
                 .add(p().textContent(alMetadata.getDescription().getDescription()))
                 .add(this.alForm)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JMX_AUDIT_LOG_ITEM, Names.AUDIT_LOG, fontAwesome("file-text-o"), alLayout);
         registerAttachable(this.alForm);
@@ -186,7 +186,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .add(h(1).textContent(type))
                 .add(p().textContent(rcMetadata.getDescription().getDescription()))
                 .add(this.rcForm)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JMX_REMOTING_CONNECTOR_ITEM, type, pfIcon("topology"), rcLayout);
         registerAttachable(this.rcForm);

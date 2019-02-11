@@ -47,7 +47,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl implements CacheView<P> {
+abstract class CacheViewImpl<P extends CachePresenter<?, ?>> extends HalViewImpl implements CacheView<P> {
 
     private VerticalNavigation navigation;
     private Form<Cache> form;
@@ -84,7 +84,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                 .onSave((form, changedValues) -> presenter.saveCache(changedValues))
                 .prepareReset(f -> presenter.resetCache(f))
                 .build();
-        tabs.add(Ids.build(cacheType.baseId, Ids.TAB), resources.constants().attributes(), form.asElement());
+        tabs.add(Ids.build(cacheType.baseId, Ids.TAB), resources.constants().attributes(), form.element());
         registerAttachable(form);
 
         components = new HashMap<>();
@@ -99,7 +99,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                     .prepareReset(f -> presenter.resetComponent(component, f))
                     .prepareRemove(f -> presenter.removeComponent(component, f))
                     .build();
-            tabs.add(tabId, component.type, cf.asElement());
+            tabs.add(tabId, component.type, cf.element());
             components.put(component, cf);
         }
         registerAttachables(components.values());
@@ -108,7 +108,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                 .add(h(1).textContent(cacheType.type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(tabs)
-                .asElement();
+                .get();
         navigation.addPrimary(Ids.build(cacheType.baseId, Ids.ITEM), Names.CONFIGURATION, pfIcon("settings"),
                 section);
     }
@@ -155,7 +155,7 @@ abstract class CacheViewImpl<P extends CachePresenter> extends HalViewImpl imple
                     .add(p().textContent(backupMeta.getDescription().getDescription()))
                     .add(backupTable)
                     .add(backupForm)
-                    .asElement();
+                    .get();
             navigation.addPrimary(Ids.build(cacheType.baseId, BACKUP, Ids.ITEM), Names.BACKUP, fontAwesome("life-ring"),
                     backupSection);
             registerAttachable(backupTable, backupForm);

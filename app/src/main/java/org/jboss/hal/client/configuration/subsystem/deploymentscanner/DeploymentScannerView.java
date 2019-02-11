@@ -21,7 +21,7 @@ import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.NamedNode;
@@ -37,14 +37,14 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
 
     // ------------------------------------------------------ initialization
 
-    public static DeploymentScannerView create(final MbuiContext mbuiContext) {
+    public static DeploymentScannerView create(MbuiContext mbuiContext) {
         return new Mbui_DeploymentScannerView(mbuiContext);
     }
 
     @MbuiElement("deployment-scanner-table") Table<NamedNode> table;
     @MbuiElement("deployment-scanner-form") Form<NamedNode> form;
 
-    DeploymentScannerView(final MbuiContext mbuiContext) {
+    DeploymentScannerView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -56,7 +56,7 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
     // ------------------------------------------------------ scanners
 
     @Override
-    public void updateScanners(final List<NamedNode> items) {
+    public void updateScanners(List<NamedNode> items) {
         form.clear();
         table.update(items);
     }

@@ -84,6 +84,7 @@ public interface NameTokens {
     String MESSAGING_SERVER_CONNECTION = "messaging-server-connection";
     String MESSAGING_SERVER_CLUSTERING = "messaging-server-clustering";
     String MESSAGING_SERVER_DESTINATION = "messaging-server-destination";
+    String MESSAGING_SERVER_RUNTIME = "messaging-server-runtime";
     String MESSAGING_SERVER_HA_POLICY = "messaging-server-ha-policy";
     String MICRO_PROFILE_CONFIG = "micro-profile-config";
     String MICRO_PROFILE_HEALTH = "micro-profile-health";

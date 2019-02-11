@@ -112,8 +112,8 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
     }
 
     @Override
-    public HTMLElement asElement() {
-        return form.asElement();
+    public HTMLElement element() {
+        return form.element();
     }
 
     @Override
@@ -246,7 +246,7 @@ public class AbstractConfiguration extends WizardStep<EnableSSLContext, EnableSS
         if (editMode) {
             state = Form.State.EDITING;
         }
-        HTMLElement formItemElement = item.asElement(state);
+        HTMLElement formItemElement = item.element(state);
         Elements.setVisible(formItemElement, show);
         if (!editMode) {
             // for read-only mode, there are the <hr> separators, we should hide it too

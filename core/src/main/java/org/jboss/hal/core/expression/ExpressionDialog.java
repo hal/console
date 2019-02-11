@@ -60,8 +60,8 @@ public class ExpressionDialog {
     private final StaticItem resolvedValue;
     private final Dialog dialog;
 
-    public ExpressionDialog(final ExpressionResolver expressionResolver, final Environment environment,
-            final Resources resources) {
+    public ExpressionDialog(ExpressionResolver expressionResolver, Environment environment,
+            Resources resources) {
         this.expressionResolver = expressionResolver;
         this.standalone = environment.isStandalone();
         this.resources = resources;
@@ -79,7 +79,7 @@ public class ExpressionDialog {
         form = builder.build();
 
         FormItem<String> expressionItem = form.getFormItem(EXPRESSION);
-        HTMLInputElement inputElement = (HTMLInputElement) expressionItem.asElement(EDITING)
+        HTMLInputElement inputElement = (HTMLInputElement) expressionItem.element(EDITING)
                 .querySelector("." + formControl);
         if (inputElement != null) {
             bind(inputElement, keydown, event -> {
@@ -96,8 +96,8 @@ public class ExpressionDialog {
         }
 
         dialog = new Dialog.Builder(resources.constants().resolveExpression())
-                .add(alert.asElement())
-                .add(form.asElement())
+                .add(alert.element())
+                .add(form.element())
                 .primary(resources.constants().resolve(), () -> {
                     if (!form.save()) { // calls the save handler from above upon successful validation
                         clearValue();
@@ -131,7 +131,7 @@ public class ExpressionDialog {
             Expression expression = Expression.of(value);
             expressionResolver.resolve(expression, new AsyncCallback<Map<String, String>>() {
                 @Override
-                public void onSuccess(final Map<String, String> result) {
+                public void onSuccess(Map<String, String> result) {
                     if (result.isEmpty()) {
                         warning(resources.messages().expressionWarning(value));
                     } else {
@@ -144,7 +144,7 @@ public class ExpressionDialog {
                 }
 
                 @Override
-                public void onFailure(final Throwable caught) {
+                public void onFailure(Throwable caught) {
                     clearValue();
                     error(resources.messages().expressionError(value));
                 }
@@ -160,18 +160,18 @@ public class ExpressionDialog {
     }
 
     private void noAlert() {
-        Elements.setVisible(alert.asElement(), false);
+        Elements.setVisible(alert.element(), false);
     }
 
     private void error(SafeHtml message) {
         alert.setIcon(Icons.ERROR);
         alert.setText(message);
-        Elements.setVisible(alert.asElement(), true);
+        Elements.setVisible(alert.element(), true);
     }
 
     private void warning(SafeHtml message) {
         alert.setIcon(Icons.WARNING);
         alert.setText(message);
-        Elements.setVisible(alert.asElement(), true);
+        Elements.setVisible(alert.element(), true);
     }
 }

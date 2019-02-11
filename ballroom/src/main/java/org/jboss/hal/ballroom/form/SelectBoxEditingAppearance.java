@@ -50,8 +50,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     final boolean allowEmpty;
     boolean attached;
 
-    SelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options,
-            final boolean allowEmpty) {
+    SelectBoxEditingAppearance(HTMLSelectElement selectElement, List<String> options, boolean allowEmpty) {
         super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED));
 
         this.selectElement = selectElement;
@@ -60,11 +59,11 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
         this.allowEmpty = allowEmpty;
         this.helpBlock = Appearance.helpBlock();
         this.root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                .add(labelElement = label().css(controlLabel, halFormLabel).get())
                 .add(inputContainer = div().css(halFormInput)
                         .add(selectElement)
-                        .asElement())
-                .asElement();
+                        .get())
+                .get();
 
         List<String> localOptions = options;
         if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
@@ -72,7 +71,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             localOptions.add(0, "");
         }
         for (String option : localOptions) {
-            HTMLOptionElement optionElement = Elements.option(option).asElement();
+            HTMLOptionElement optionElement = Elements.option(option).get();
             if (emptyToNull(option) == null) {
                 optionElement.title = UNDEFINED;
             }
@@ -91,17 +90,17 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
-    public void updateOptions(List<String> values) {
+    void updateOptions(List<String> values) {
         double childElementCount = this.selectElement.childElementCount;
         for (int i = 0; i < childElementCount; i++) {
             this.selectElement.removeChild(this.selectElement.firstElementChild);
         }
         for (String option : values) {
-            HTMLOptionElement optionElement = Elements.option(option).asElement();
+            HTMLOptionElement optionElement = Elements.option(option).get();
             if (emptyToNull(option) == null) {
                 optionElement.title = UNDEFINED;
             }
@@ -115,7 +114,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ apply decoration
 
     @Override
-    <C> void safeApply(final Decoration decoration, final C context) {
+    <C> void safeApply(Decoration decoration, C context) {
         switch (decoration) {
 
             case DEFAULT:
@@ -154,7 +153,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
                                 input.value = CONSTANTS.restricted();
                                 input.readOnly = true;
                             })
-                            .asElement();
+                            .get();
                     restrictedMarker = Appearance.restrictedMarker();
 
                     inputGroup = Appearance.inputGroup();
@@ -169,6 +168,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             // not supported
             case EXPRESSION:
             case HINT:
+            case SENSITIVE:
             case SUGGESTIONS:
                 break;
             default:
@@ -180,7 +180,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ unapply decoration
 
     @Override
-    void safeUnapply(final Decoration decoration) {
+    void safeUnapply(Decoration decoration) {
         switch (decoration) {
 
             case DEFAULT:
@@ -221,6 +221,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             // not supported
             case EXPRESSION:
             case HINT:
+            case SENSITIVE:
             case SUGGESTIONS:
                 break;
             default:
@@ -232,7 +233,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     // ------------------------------------------------------ properties & delegates
 
     @Override
-    public void setId(final String id) {
+    public void setId(String id) {
         this.id = Ids.build(id, EDITING.name().toLowerCase());
         root.dataset.set(FORM_ITEM_GROUP, this.id);
         selectElement.id = this.id;
@@ -240,7 +241,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void setName(final String name) {
+    public void setName(String name) {
         selectElement.name = name;
     }
 
@@ -250,12 +251,12 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void setAccessKey(final char key) {
+    public void setAccessKey(char key) {
         // noop
     }
 
     @Override
-    public void setFocus(final boolean focused) {
+    public void setFocus(boolean focused) {
         if (focused) {
             selectElement.focus();
         } else {
@@ -264,7 +265,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public void setTabIndex(final int index) {
+    public void setTabIndex(int index) {
         selectElement.tabIndex = index;
     }
 }

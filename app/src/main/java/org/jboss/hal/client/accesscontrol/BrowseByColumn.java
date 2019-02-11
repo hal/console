@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.resources.client.ExternalTextResource;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
@@ -37,6 +36,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
 
 @AsyncColumn(Ids.ACCESS_CONTROL_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
@@ -55,15 +55,14 @@ public class BrowseByColumn extends StaticItemColumn {
                     event -> accessControl.switchProvider());
 
             previewBuilder().add(warning);
-            HTMLElement content = div().asElement();
+            HTMLElement content = div().get();
             Previews.innerHtml(content, resource);
             previewBuilder().add(content);
         }
 
         @Override
         public void update(StaticItem item) {
-            Elements.setVisible(warning.asElement(),
-                    environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
+            setVisible(warning.element(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
         }
     }
 

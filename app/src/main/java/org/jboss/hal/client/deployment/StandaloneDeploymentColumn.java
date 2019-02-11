@@ -196,7 +196,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
             @Override
             public HTMLElement getIcon() {
                 String icon = item.isExploded() ? fontAwesome("folder-open") : fontAwesome("archive");
-                return span().css(icon).asElement();
+                return span().css(icon).get();
             }
 
             @Override
@@ -308,7 +308,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private void replace(Deployment deployment) {
         UploadElement uploadElement = new UploadElement(resources.messages().noDeployment());
         Dialog dialog = new Dialog.Builder(resources.constants().replaceDeployment())
-                .add(uploadElement.asElement())
+                .add(uploadElement.element())
                 .cancel()
                 .primary(resources.constants().replace(), () -> {
                     boolean valid = uploadElement.validate();

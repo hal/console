@@ -42,7 +42,6 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -52,7 +51,7 @@ import static org.jboss.hal.resources.CSS.*;
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
  * that we need to take care of {@code store=none}.
  */
-class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
+class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter<?, ?>> {
 
     private final EmptyState emptyState;
     private final HTMLElement currentStore;
@@ -64,7 +63,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private final Map<Store, WriteElement> writeElements;
     private final Map<StoreTable, Form<ModelNode>> tableForms;
     private final HTMLElement root;
-    private CachePresenter presenter;
+    private CachePresenter<?, ?> presenter;
 
     StoreElement(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
         this.tabs = new HashMap<>();
@@ -99,18 +98,18 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     .build();
             storeForms.put(store, form);
             storeTabs.add(Ids.build(cacheType.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
-                    resources.constants().attributes(), form.asElement());
+                    resources.constants().attributes(), form.element());
 
             WriteElement writeElement = new WriteElement(cacheType, store, metadataRegistry, resources);
             storeTabs.add(Ids.build(cacheType.baseId, store.baseId, WRITE, Ids.TAB), Names.WRITE_BEHAVIOUR,
-                    writeElement.asElement());
+                    writeElement.element());
             writeElements.put(store, writeElement);
 
             if (store.tables != null) {
                 for (Table table : store.tables) {
                     Form<ModelNode> tableForm = tableForm(cacheType, store, table, metadataRegistry);
                     storeTabs.add(Ids.build(cacheType.baseId, store.baseId, table.baseId, Ids.TAB), table.type,
-                            tableForm.asElement());
+                            tableForm.element());
                     tableForms.put(new StoreTable(store, table), tableForm);
                 }
             }
@@ -122,17 +121,17 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                 .apply(l -> l.htmlFor = selectStoreId)
                                 .textContent(resources.constants().switchStore()))
                         .add(selectStore)
-                        .asElement())
+                        .get())
                 .add(h(1).textContent(Names.STORE)
-                        .add(currentStore = span().asElement()))
+                        .add(currentStore = span().get()))
                 .add(p().textContent(resources.constants().cacheStore()))
                 .add(emptyState)
-                .addAll(tabs.values().stream().map(Tabs::asElement).collect(toList()))
-                .asElement();
+                .addAll(tabs.values().stream().map(Tabs::element).collect(toList()))
+                .get();
 
-        Elements.setVisible(emptyState.asElement(), false);
+        Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(headerForm, false);
-        tabs.values().forEach(t -> Elements.setVisible(t.asElement(), false));
+        tabs.values().forEach(t -> Elements.setVisible(t.element(), false));
     }
 
     private HTMLSelectElement storeSelect() {
@@ -141,7 +140,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                     s.multiple = false;
                     s.size = 1;
                 })
-                .asElement();
+                .get();
 
         for (Store store : Store.values()) {
             select.appendChild(Elements.option()
@@ -149,7 +148,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         o.value = store.resource;
                         o.text = store.type;
                     })
-                    .asElement());
+                    .get());
         }
         return select;
     }
@@ -175,7 +174,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
@@ -189,7 +188,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             presenter.switchStore(store);
         });
         selectStore.previousElementSibling.classList.add(dropdownMenuRight);
-        autoWidth(emptyState.asElement());
+        autoWidth(emptyState.element());
         autoWidth(headerForm);
         storeForms.values().forEach(Attachable::attach);
         writeElements.values().forEach(Attachable::attach);
@@ -211,7 +210,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     @Override
-    public void setPresenter(CachePresenter presenter) {
+    public void setPresenter(CachePresenter<?, ?> presenter) {
         this.presenter = presenter;
         writeElements.values().forEach(we -> we.setPresenter(presenter));
     }
@@ -248,15 +247,15 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     private void emptyStateMode() {
-        Elements.setVisible(emptyState.asElement(), true);
+        Elements.setVisible(emptyState.element(), true);
         Elements.setVisible(headerForm, false);
-        tabs.values().forEach(t -> Elements.setVisible(t.asElement(), false));
+        tabs.values().forEach(t -> Elements.setVisible(t.element(), false));
     }
 
     private void formMode(Store store) {
-        Elements.setVisible(emptyState.asElement(), false);
+        Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(headerForm, true);
-        tabs.forEach((s, t) -> Elements.setVisible(t.asElement(), s == store));
+        tabs.forEach((s, t) -> Elements.setVisible(t.element(), s == store));
     }
 
 

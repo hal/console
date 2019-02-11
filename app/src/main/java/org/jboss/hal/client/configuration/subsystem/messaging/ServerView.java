@@ -25,7 +25,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.client.configuration.PathsAutoComplete;
+import org.jboss.hal.core.configuration.PathsAutoComplete;
 import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.GroupedForm;
@@ -63,7 +63,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private ServerPresenter presenter;
 
     @Inject
-    ServerView(final MbuiContext mbuiContext, CredentialReference cr) {
+    ServerView(MbuiContext mbuiContext, CredentialReference cr) {
 
         VerticalNavigation verticalNavigation = new VerticalNavigation();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(SERVER_TEMPLATE);
@@ -112,7 +112,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(form)
-                .asElement();
+                .get();
 
         verticalNavigation.addPrimary(Ids.build(MESSAGING_SERVER, Ids.ITEM), Names.CONFIGURATION,
                 "pficon pficon-settings", htmlSection);
@@ -226,25 +226,25 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.PAGING_DIRECTORY))
                 .add(p().textContent(pagingMetadata.getDescription().getDescription()))
                 .add(pagingDirectoryForm)
-                .asElement();
+                .get();
 
         HTMLElement bindingsDirectoryElement = section()
                 .add(h(1).textContent(Names.BINDINGS_DIRECTORY))
                 .add(p().textContent(bindingMetadata.getDescription().getDescription()))
                 .add(bindingsDirectoryForm)
-                .asElement();
+                .get();
 
         HTMLElement largeMessagesElement = section()
                 .add(h(1).textContent(Names.LARGE_MESSAGES_DIRECTORY))
                 .add(p().textContent(largeMetadata.getDescription().getDescription()))
                 .add(largeMessagesDirectoryForm)
-                .asElement();
+                .get();
 
         HTMLElement journalElement = section()
                 .add(h(1).textContent(Names.JOURNAL_DIRECTORY))
                 .add(p().textContent(journalMetadata.getDescription().getDescription()))
                 .add(journalDirectoryForm)
-                .asElement();
+                .get();
 
         verticalNavigation.addPrimary(MESSAGING_SERVER_DIRECTORY_ITEM, "Directories", "pficon pficon-repository");
         verticalNavigation.addSecondary(MESSAGING_SERVER_DIRECTORY_ITEM,
@@ -273,7 +273,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         HTMLElement root = row()
                 .add(column()
                         .addAll(verticalNavigation.panes()))
-                .asElement();
+                .get();
 
         initElement(root);
 
@@ -287,7 +287,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void update(final NamedNode server) {
+    public void update(NamedNode server) {
         form.view(server);
         pagingDirectoryForm.view(failSafeGet(server, "path/paging-directory"));
         bindingsDirectoryForm.view(failSafeGet(server, "path/bindings-directory"));
@@ -297,7 +297,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final ServerPresenter presenter) {
+    public void setPresenter(ServerPresenter presenter) {
         this.presenter = presenter;
     }
 }

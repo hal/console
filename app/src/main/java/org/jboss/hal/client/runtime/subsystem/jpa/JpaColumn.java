@@ -75,7 +75,7 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                     }
 
                     @Override
-                    public HTMLElement asElement() {
+                    public HTMLElement element() {
                         return ItemDisplay.withSubtitle(item.getPersistenceUnit(), item.getPath());
                     }
 

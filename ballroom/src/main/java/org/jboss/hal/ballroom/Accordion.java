@@ -37,14 +37,14 @@ public class Accordion implements IsElement {
     private final String id;
     private final HTMLDivElement root;
 
-    public Accordion(final String id) {
+    public Accordion(String id) {
         this.id = id;
         root = div()
                 .id(id)
                 .css(panelGroup)
                 .aria("multiselectable", UIConstants.TRUE)
                 .attr(UIConstants.ROLE, UIConstants.TABLIST)
-                .asElement();
+                .get();
     }
 
     public void add(String id, String title, HTMLElement first, HTMLElement... rest) {
@@ -64,8 +64,8 @@ public class Accordion implements IsElement {
                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                                         .textContent(title))))
                 .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : null).aria("labelledby", headerId)
-                        .add(body = div().css(panelBody).asElement()))
-                .asElement();
+                        .add(body = div().css(panelBody).get()))
+                .get();
 
         fillBody(body, first, rest);
         root.appendChild(div);
@@ -81,23 +81,23 @@ public class Accordion implements IsElement {
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 
-    public void showPanel(final String id) {
+    public void showPanel(String id) {
         Api.select(UIConstants.HASH + id).collapse("show"); //NON-NLS
     }
 
-    public void hidePanel(final String id) {
+    public void hidePanel(String id) {
         Api.select(UIConstants.HASH + id).collapse("hide"); //NON-NLS
     }
 
-    public void togglePanel(final String id) {
+    public void togglePanel(String id) {
         Api.select(UIConstants.HASH + id).collapse("toggle"); //NON-NLS
     }
 
-    public void setContent(final String id, Element first, Element... rest) {
+    public void setContent(String id, Element first, Element... rest) {
         if (id != null) {
             Element body = document.querySelector(UIConstants.HASH + id + " > ." + panelBody);
             if (body != null) {

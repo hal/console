@@ -123,7 +123,7 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                     .build();
             forms.add(form);
             tabs.add(Ids.build(entry.getKey(), Ids.TAB), new LabelBuilder().label(entry.getKey()),
-                    form.asElement());
+                    form.element());
         }
 
         AddressTemplate template = AddressTemplate.of(
@@ -150,7 +150,7 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                                         .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
                                         .toSafeHtml()))
                         .add(tabs))
-                .asElement();
+                .get();
         initElement(layout);
     }
 

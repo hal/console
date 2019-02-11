@@ -25,14 +25,8 @@
                 <table id="microprofile-config-source-table" title="Config Source"
                        form-ref="microprofile-config-source-form">
                     <actions>
-                        <action handler-ref="add-resource">
-                            <attributes>
-                                <attribute name="class" provider="${new ClassFormItem()}"/>
-                                <attribute name="dir"/>
-                                <attribute name="properties"/>
-                                <attribute name="ordinal"/>
-                            </attributes>
-                        </action>
+                        <action title="${mbuiContext.resources().constants().add()}" handler="${presenter.add()}"
+                                constraint="add"/>
                         <action handler-ref="remove-resource" scope="selected"
                                 name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
@@ -45,7 +39,8 @@
                       name-resolver="${form.getModel().getName()}">
                     <attributes>
                         <attribute name="class" provider="${new ClassFormItem()}"/>
-                        <attribute name="dir"/>
+                        <attribute name="dir"
+                                   provider='${new org.jboss.hal.core.ui.FileFormItem("dir", false)}'/>
                         <attribute name="properties"/>
                         <attribute name="ordinal"/>
                     </attributes>

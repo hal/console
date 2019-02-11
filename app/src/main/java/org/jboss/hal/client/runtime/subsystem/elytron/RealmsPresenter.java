@@ -252,7 +252,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
         form.attach();
 
         Dialog dialog = new Dialog.Builder(title)
-                .add(form.asElement())
+                .add(form.element())
                 .primary(resources.constants().search(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .cancel()

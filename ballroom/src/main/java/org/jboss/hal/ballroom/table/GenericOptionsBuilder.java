@@ -24,6 +24,7 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -93,8 +94,16 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         return button(new Button<>(text, handler, constraint));
     }
 
+    public B button(String text, ButtonHandler<T> handler, Constraints constraints) {
+        return button(new Button<>(text, handler, constraints));
+    }
+
     public B button(String text, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
         return button(new Button<>(text, null, handler, scope, constraint));
+    }
+
+    public B button(String text, ButtonHandler<T> handler, Scope scope, Constraints constraints) {
+        return button(new Button<>(text, null, handler, scope, constraints));
     }
 
     public B button(Button<T> button) {
@@ -107,8 +116,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         if (button.scope != null) {
             apiButton.extend = button.scope.selector();
         }
-        if (button.constraint != null) {
-            apiButton.constraint = button.constraint.data();
+        if (button.constraints != null && !button.constraints.isEmpty()) {
+            apiButton.constraint = button.constraints.data();
         }
 
         buttons.add(apiButton);

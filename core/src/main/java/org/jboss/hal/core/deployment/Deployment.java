@@ -51,7 +51,7 @@ public class Deployment extends Content {
     private final List<Subdeployment> subdeployments;
     private final List<Subsystem> subsystems;
 
-    public Deployment(final Server referenceServer, final ModelNode node) {
+    public Deployment(Server referenceServer, ModelNode node) {
         super(node);
         this.referenceServer = referenceServer;
         this.subdeployments = new ArrayList<>();
@@ -70,7 +70,7 @@ public class Deployment extends Content {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -123,7 +123,7 @@ public class Deployment extends Content {
     public boolean isEnabled() {
         ModelNode enabled = get(ENABLED);
         //noinspection SimplifiableConditionalExpression
-        return enabled.isDefined() ? enabled.asBoolean() : false;
+        return enabled.isDefined() ? enabled.asBoolean(false) : false;
     }
 
     public Status getStatus() {

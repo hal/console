@@ -57,7 +57,6 @@ import rx.Subscription;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
@@ -117,7 +116,7 @@ public class HostActions {
                     question = resources.messages().reloadHostControllerQuestion(host.getName());
                 }
                 Dialog dialog = DialogFactory.buildConfirmation(
-                        resources.messages().reload(host.getName()), question, form.asElement(), MEDIUM,
+                        resources.messages().reload(host.getName()), question, form.element(), MEDIUM,
                         () -> {
                             form.save();
                             boolean restartServers = form.getModel().get(RESTART_SERVERS).asBoolean();
@@ -305,13 +304,12 @@ public class HostActions {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
 
         if (host.hasServers(Server::isStarted)) {
-            List<Operation> pingServer = host.getServers(Server::isStarted).stream()
+            Operation[] operations = host.getServers(Server::isStarted).stream()
                     .map(server -> {
                         ResourceAddress serverAddress = host.getAddress().add(SERVER, server.getName());
                         return new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION).build();
-                    })
-                    .collect(toList());
-            operation = new Composite(operation, pingServer.toArray(new Operation[pingServer.size()]));
+                    }).toArray(Operation[]::new);
+            operation = new Composite(operation, operations);
         } else {
             operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         }

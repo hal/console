@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Widgets;
 import org.jboss.hal.core.mvp.Slots;
@@ -47,18 +46,18 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     public RootView() {
         slots = new HashMap<>();
-        rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).asElement();
-        initWidget(Widgets.asWidget(rootContainer));
+        rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).get();
+        initWidget(Widgets.widget(rootContainer));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setInSlot(Object slot, IsWidget content) {
-
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
             HTMLElement element = content instanceof IsElement ?
-                    ((IsElement) content).asElement() :
-                    Widgets.asElement(content);
+                    ((IsElement) content).element() :
+                    Widgets.element(content);
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
                 // append all three building blocks to the document body
@@ -73,20 +72,18 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             boolean finished = false;
             Elements.removeChildrenFrom(rootContainer);
 
-            if (content instanceof HasElements) {
-                Iterable<HTMLElement> elements = ((HasElements) content).asElements();
-                if (elements != null) {
-                    for (HTMLElement element : elements) {
-                        rootContainer.appendChild(element);
-                    }
+            if (content instanceof Iterable) {
+                Iterable<HTMLElement> elements = (Iterable<HTMLElement>) content;
+                for (HTMLElement element : elements) {
+                    rootContainer.appendChild(element);
                     finished = true;
                 }
             }
 
             if (!finished) {
                 HTMLElement element = content instanceof IsElement
-                        ? ((IsElement) content).asElement()
-                        : Widgets.asElement(content);
+                        ? ((IsElement<HTMLElement>) content).element()
+                        : Widgets.element(content);
                 rootContainer.appendChild(element);
             }
 

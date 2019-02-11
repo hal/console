@@ -26,7 +26,6 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -40,7 +39,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
     private final SwitchEditingAppearance editingAppearance;
 
-    public SwitchItem(final String name, final String label) {
+    public SwitchItem(String name, String label) {
         super(name, label, null);
 
         // read-only appearance
@@ -62,7 +61,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     }
 
     @Override
-    public void setExpressionAllowed(final boolean expressionAllowed) {
+    public void setExpressionAllowed(boolean expressionAllowed) {
         super.setExpressionAllowed(expressionAllowed);
         editingAppearance.setExpressionAllowed(expressionAllowed);
     }
@@ -98,12 +97,12 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
         SwitchEditingAppearance() {
             super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, INVALID, REQUIRED, RESTRICTED),
-                    input(checkbox).asElement());
+                    input(checkbox).get());
 
             // put the <input type="checkbox"/> into an extra div
             // this makes switching between normal and expression mode easier
             inputContainer.removeChild(inputElement);
-            normalModeContainer = div().asElement();
+            normalModeContainer = div().get();
             normalModeContainer.appendChild(inputElement);
             inputContainer.appendChild(normalModeContainer);
 
@@ -118,21 +117,21 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                     .add(expressionModeInput = input(text)
                             .css(formControl)
                             .apply(input -> input.placeholder = CONSTANTS.expression())
-                            .asElement())
+                            .get())
                     .add(span().css(inputGroupBtn)
                             .add(resolveExpressionButton = button()
                                     .css(btn, btnDefault)
                                     .title(CONSTANTS.resolveExpression())
                                     .add(i().css(fontAwesome("link")))
-                                    .asElement()))
-                    .asElement();
+                                    .get()))
+                    .get();
 
             switchToExpressionButton = button()
                     .css(btn, btnDefault, expressionModeSwitcher)
                     .title(CONSTANTS.switchToExpressionMode())
                     .on(click, event -> switchToExpressionMode())
                     .add(i().css(fontAwesome("link")))
-                    .asElement();
+                    .get();
             expressionHandler = bind(expressionModeInput, change,
                     event -> modifyExpressionValue(expressionModeInput.value));
 
@@ -190,7 +189,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         // ------------------------------------------------------ value
 
         @Override
-        public void showValue(final Boolean value) {
+        public void showValue(Boolean value) {
             if (attached) {
                 SwitchBridge.Api.element(inputElement).setValue(value);
             } else {
@@ -199,7 +198,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         }
 
         @Override
-        public void showExpression(final String expression) {
+        public void showExpression(String expression) {
             expressionModeInput.value = expression;
         }
 
@@ -216,7 +215,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         // ------------------------------------------------------ decorations
 
         @Override
-        void applyDefault(final String defaultValue) {
+        void applyDefault(String defaultValue) {
             if (attached) {
                 SwitchBridge.Api.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
             } else {
@@ -225,7 +224,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         }
 
         @Override
-        protected void applyExpression(final ExpressionContext expressionContext) {
+        protected void applyExpression(ExpressionContext expressionContext) {
             Elements.failSafeRemove(inputContainer, normalModeContainer);
             Elements.lazyAppend(inputContainer, expressionModeContainer);
             if (resolveHandler == null) {
@@ -246,7 +245,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             removeValidationHandler(expressionValidation);
         }
 
-        void setExpressionAllowed(final boolean expressionAllowed) {
+        void setExpressionAllowed(boolean expressionAllowed) {
             Elements.setVisible(switchToExpressionButton, expressionAllowed);
             if (expressionAllowed) {
                 Elements.lazyInsertBefore(normalModeContainer, switchToExpressionButton,
@@ -260,7 +259,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         // ------------------------------------------------------ properties & delegates
 
         @Override
-        public void setId(final String id) {
+        public void setId(String id) {
             super.setId(id);
             // the checkbox item and the expression input have the same id
             // make sure only one is part of the DOM!
@@ -268,7 +267,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         }
 
         @Override
-        public void setName(final String name) {
+        public void setName(String name) {
             inputElement.name = name;
             expressionModeInput.name = name;
         }
@@ -283,13 +282,13 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         }
 
         @Override
-        public void setAccessKey(final char key) {
+        public void setAccessKey(char key) {
             super.setAccessKey(key);
             expressionModeInput.accessKey = String.valueOf(key);
         }
 
         @Override
-        public void setFocus(final boolean focused) {
+        public void setFocus(boolean focused) {
             if (isApplied(EXPRESSION)) {
                 if (focused) {
                     expressionModeInput.focus();
@@ -306,7 +305,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         }
 
         @Override
-        public void setTabIndex(final int index) {
+        public void setTabIndex(int index) {
             super.setTabIndex(index);
             expressionModeInput.tabIndex = index;
         }

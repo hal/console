@@ -16,8 +16,8 @@
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -38,7 +38,7 @@ import org.jboss.hal.resources.Resources;
 import static elemental2.dom.DomGlobal.document;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.elements;
+import static org.jboss.gwt.elemento.core.Elements.collect;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
@@ -69,7 +69,7 @@ class DestinationPreview extends PreviewContent<Destination> {
             getLeadElement().appendChild(a(places.historyToken(placeRequest))
                     .textContent(destination.getPath())
                     .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                    .asElement());
+                    .get());
         }
 
         PreviewAttributeFunction<Destination> jndiNamesFn = model -> {
@@ -91,14 +91,15 @@ class DestinationPreview extends PreviewContent<Destination> {
                     .append(PAUSED)
                     .append(model -> {
                         String label = labelBuilder.label(DURABLE) + ", " + labelBuilder.label(TEMPORARY);
-                        ElementsBuilder elements = elements()
+                        Iterable<HTMLElement> elements = collect()
                                 .add(span()
                                         .title(labelBuilder.label(DURABLE))
                                         .css(flag(failSafeBoolean(model, DURABLE)), marginRight5))
                                 .add(span()
                                         .title(labelBuilder.label(TEMPORARY))
-                                        .css(flag(failSafeBoolean(model, TEMPORARY))));
-                        return new PreviewAttribute(label, elements.asElements());
+                                        .css(flag(failSafeBoolean(model, TEMPORARY))))
+                                .get();
+                        return new PreviewAttribute(label, elements);
                     });
             messages.append(MESSAGES_ADDED)
                     .append(MESSAGE_COUNT)

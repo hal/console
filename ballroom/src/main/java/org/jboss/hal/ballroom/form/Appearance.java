@@ -39,30 +39,28 @@ import static org.jboss.hal.resources.CSS.inputGroupAddon;
  */
 interface Appearance<T> extends IsElement, Attachable, Focusable {
 
-    /**
-     * Used as a {@code data-} attribute in the root element of the appearances.
-     */
+    /** Used as a {@code data-} attribute in the root element of the appearances. */
     String FORM_ITEM_GROUP = "formItemGroup";
 
 
     // ------------------------------------------------------ static builder methods
 
     static HTMLElement inputGroup() {
-        return div().css(inputGroup).asElement();
+        return div().css(inputGroup).get();
     }
 
     static HTMLElement helpBlock() {
-        return span().css(helpBlock).asElement();
+        return span().css(helpBlock).get();
     }
 
     static HTMLElement restrictedMarker() {
         return span().css(inputGroupAddon)
                 .add(i().css(fontAwesome("lock")))
-                .asElement();
+                .get();
     }
 
     static HTMLElement hintMarker() {
-        return span().css(inputGroupAddon).asElement();
+        return span().css(inputGroupAddon).get();
     }
 
 

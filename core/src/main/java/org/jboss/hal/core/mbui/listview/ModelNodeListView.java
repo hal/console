@@ -17,6 +17,7 @@ package org.jboss.hal.core.mbui.listview;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +26,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.CSSProperties.MarginTopUnionType;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Pager;
@@ -63,7 +62,7 @@ import static org.jboss.hal.resources.CSS.vh;
  * <p>Please note that the {@code ModelNodeListView} uses its own {@code <div class="row"/>} element. This is important
  * if you add the toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}</p>
  */
-public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasElements, Attachable {
+public class ModelNodeListView<T extends ModelNode> implements Display<T>, Iterable<HTMLElement>, Attachable {
 
     private static final String NO_ITEMS = "org.jboss.hal.core.mbui.listview.NoItems";
     private static final String NO_MATCHING_ITEMS = "org.jboss.hal.core.mbui.listview.NoMatchingItems";
@@ -74,7 +73,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     private final Toolbar<T> toolbar;
     private final ListView<T> listView;
     private final Pager<T> pager;
-    private final ElementsBuilder elements;
+    private final Iterable<HTMLElement> elements;
     private final Map<String, HTMLElement> emptyStates;
     private int surroundingHeight;
 
@@ -109,22 +108,23 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         builder.emptyStates.get(NO_MATCHING_ITEMS).setPrimaryAction(CONSTANTS.clearAllFilters(),
                 toolbar::clearAllFilters);
         builder.emptyStates.forEach((key, emptyState) -> {
-            HTMLElement element = emptyState.asElement();
+            HTMLElement element = emptyState.element();
             element.style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
             emptyStates.put(key, element);
         });
-        HTMLElement emptyStatesContainer = div().asElement();
+        HTMLElement emptyStatesContainer = div().get();
         for (HTMLElement element : emptyStates.values()) {
             emptyStatesContainer.appendChild(element);
         }
 
         // root elements
-        elements = Elements.elements();
-        elements.add(toolbar)
+        elements = Elements.collect()
+                .add(toolbar)
                 .add(row()
                         .add(column()
-                                .addAll(listView.asElement(), emptyStatesContainer)))
-                .add(pager);
+                                .addAll(listView.element(), emptyStatesContainer)))
+                .add(pager)
+                .get();
         surroundingHeight = 0;
 
         // wire displays
@@ -135,8 +135,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     }
 
     @Override
-    public Iterable<HTMLElement> asElements() {
-        return elements.asElements();
+    public Iterator<HTMLElement> iterator() {
+        return elements.iterator();
     }
 
     @Override
@@ -155,11 +155,11 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     }
 
     private void adjustHeight() {
-        int toolbarHeight = (int) (toolbar.asElement().offsetHeight);
-        int pagerHeight = (int) pager.asElement().offsetHeight;
-        listView.asElement().style.height = vh(
+        int toolbarHeight = (int) (toolbar.element().offsetHeight);
+        int pagerHeight = (int) pager.element().offsetHeight;
+        listView.element().style.height = vh(
                 applicationOffset() + toolbarHeight + pagerHeight + surroundingHeight + 2);
-        listView.asElement().style.overflow = "scroll"; //NON-NLS
+        listView.element().style.overflow = "scroll"; //NON-NLS
     }
 
     /**
@@ -168,6 +168,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
      *
      * @param surroundingHeight the sum of the height of all surrounding elements
      */
+    @SuppressWarnings("unused")
     public void setSurroundingHeight(int surroundingHeight) {
         this.surroundingHeight = surroundingHeight;
         adjustHeight();
@@ -178,15 +179,15 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         if (pageInfo.getTotal() == 0) {
             if (dataProvider.hasFilters()) {
                 showEmptyState(NO_MATCHING_ITEMS);
-                Elements.setVisible(toolbar.asElement(), true);
+                Elements.setVisible(toolbar.element(), true);
             } else {
                 showEmptyState(NO_ITEMS);
             }
 
         } else {
             hideEmptyStates();
-            Elements.setVisible(toolbar.asElement(), true);
-            Elements.setVisible(pager.asElement(), pageInfo.getPages() > 1);
+            Elements.setVisible(toolbar.element(), true);
+            Elements.setVisible(pager.element(), pageInfo.getPages() > 1);
         }
         adjustHeight();
     }
@@ -198,9 +199,9 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
     public void showEmptyState(String name) {
         if (emptyStates.containsKey(name)) {
-            Elements.setVisible(toolbar.asElement(), false);
-            Elements.setVisible(listView.asElement(), false);
-            Elements.setVisible(pager.asElement(), false);
+            Elements.setVisible(toolbar.element(), false);
+            Elements.setVisible(listView.element(), false);
+            Elements.setVisible(pager.element(), false);
             emptyStates.forEach((n, element) -> Elements.setVisible(element, n.equals(name)));
         }
     }
@@ -209,7 +210,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         for (HTMLElement element : emptyStates.values()) {
             Elements.setVisible(element, false);
         }
-        Elements.setVisible(listView.asElement(), true);
+        Elements.setVisible(listView.element(), true);
     }
 
 

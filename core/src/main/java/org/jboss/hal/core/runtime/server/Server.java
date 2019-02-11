@@ -36,8 +36,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 public class Server extends NamedNode {
 
     public static final Server STANDALONE = new Server(Ids.STANDALONE_HOST, Ids.STANDALONE_SERVER_COLUMN,
-            new ModelNode(),
-            true);
+            new ModelNode(), true);
 
     private final boolean standalone;
     private Version managementVersion;

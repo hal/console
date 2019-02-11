@@ -28,7 +28,7 @@ public class ListItem extends TagsItem<List<String>> {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public ListItem(final String name, final String label) {
+    public ListItem(String name, String label) {
         super(name, label, MESSAGES.listHint(),
                 EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
                 new ListMapping());
@@ -43,7 +43,8 @@ public class ListItem extends TagsItem<List<String>> {
     private static class ListMapping implements TagsMapping<List<String>> {
 
         @Override
-        public List<String> parse(final String cst) {
+        public List<String> parse(String cst) {
+            //noinspection UnstableApiUsage
             return Splitter.on(',')
                     .trimResults()
                     .omitEmptyStrings()
@@ -51,12 +52,12 @@ public class ListItem extends TagsItem<List<String>> {
         }
 
         @Override
-        public List<String> tags(final List<String> value) {
+        public List<String> tags(List<String> value) {
             return value;
         }
 
         @Override
-        public String asString(final List<String> value) {
+        public String asString(List<String> value) {
             return String.join(", ", value);
         }
     }

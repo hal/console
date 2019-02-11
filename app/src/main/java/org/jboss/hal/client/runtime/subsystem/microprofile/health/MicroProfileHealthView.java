@@ -77,7 +77,7 @@ public class MicroProfileHealthView extends HalViewImpl implements MicroProfileH
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(checkTable)
                 .add(checkForm)
-                .asElement();
+                .get();
 
         registerAttachable(checkTable, checkForm);
 
@@ -102,8 +102,8 @@ public class MicroProfileHealthView extends HalViewImpl implements MicroProfileH
         checkForm.clear();
 
         String outcome = result.get(OUTCOME).asString();
-        Elements.setVisible(outcomeUp.asElement(), UP.equals(outcome));
-        Elements.setVisible(outcomeDown.asElement(), DOWN.equals(outcome));
+        Elements.setVisible(outcomeUp.element(), UP.equals(outcome));
+        Elements.setVisible(outcomeDown.element(), DOWN.equals(outcome));
         checkTable.update(result.get(CHECKS).asList());
     }
 

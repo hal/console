@@ -129,15 +129,15 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .build();
 
         Tabs tabs = new Tabs(Ids.JCA_TAB_CONTAINER);
-        tabs.add(Ids.JCA_CCM_TAB, ccmType, ccmForm.asElement());
-        tabs.add(Ids.JCA_ARCHIVE_VALIDATION_TAB, avType, avForm.asElement());
-        tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.asElement());
+        tabs.add(Ids.JCA_CCM_TAB, ccmType, ccmForm.element());
+        tabs.add(Ids.JCA_ARCHIVE_VALIDATION_TAB, avType, avForm.element());
+        tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.element());
 
         HTMLElement configLayout = div()
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(resources.constants().jcaConfiguration()))
                 .add(tabs)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JCA_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
@@ -161,7 +161,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(h(1).textContent(tracerType))
                 .add(p().textContent(tracerMetadata.getDescription().getDescription()))
                 .add(tracerForm)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JCA_TRACER_ITEM, tracerType, fontAwesome("bug"), tracerLayout);
         registerAttachable(tracerForm);
@@ -208,7 +208,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(p().textContent(bcMetadata.getDescription().getDescription()))
                 .add(bcTable)
                 .add(bcForm)
-                .asElement();
+                .get();
 
         navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ITEM, bcType, fontAwesome("play"), bcLayout);
         registerAttachable(bcTable, bcForm);
@@ -240,7 +240,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(h(1).textContent(wmType))
                 .add(p().textContent(wmMetadata.getDescription().getDescription()))
                 .add(wmTable)
-                .asElement();
+                .get();
 
         wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, tableButtonFactory, resources);
         registerAttachable(wmTpEditor);
@@ -248,7 +248,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGES, Ids.JCA_WORKMANAGER_PAGE, wmLayout);
         wmPages.addPage(Ids.JCA_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(wmType) + ": " + selectedWorkmanager, () -> Names.THREAD_POOLS,
-                wmTpEditor.asElement());
+                wmTpEditor.element());
         pages.put(WORKMANAGER_TEMPLATE, wmPages);
 
         navigation.addPrimary(Ids.JCA_WORKMANAGER_ITEM, wmType, fontAwesome("cog"), wmPages);
@@ -306,7 +306,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(p().textContent(dwmMetadata.getDescription().getDescription()))
                 .add(dwmTable)
                 .add(dwmForm)
-                .asElement();
+                .get();
 
         dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, tableButtonFactory,
                 resources);
@@ -316,7 +316,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 dwmLayout);
         dwmPages.addPage(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE,
                 () -> labelBuilder.label(dwmType) + ": " + selectedWorkmanager, () -> THREAD_POOLS,
-                dwmTpEditor.asElement());
+                dwmTpEditor.element());
         pages.put(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmPages);
 
         navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ITEM, dwmType, fontAwesome("cogs"), dwmPages);

@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 
-interface CacheView<P extends CachePresenter> extends HalView, HasPresenter<P> {
+interface CacheView<P extends CachePresenter<?, ?>> extends HalView, HasPresenter<P> {
 
     void update(Cache cache);
 }

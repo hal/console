@@ -55,9 +55,8 @@ class ManagementOperations extends NamedNode {
 
 
     private String address;
-    private boolean nonProgressing;
 
-    ManagementOperations(NamedNode node, String nonProgressingId) {
+    ManagementOperations(NamedNode node) {
         super(node.getName(), node.asModelNode());
         StringBuilder builder = new StringBuilder();
         builder.append("/");
@@ -69,7 +68,6 @@ class ManagementOperations extends NamedNode {
             }
         }
         this.address = builder.toString();
-        this.nonProgressing = nonProgressingId != null && nonProgressingId.equals(node.getName());
     }
 
     public String getAccessMechanism() {
@@ -81,7 +79,19 @@ class ManagementOperations extends NamedNode {
     }
 
     public boolean isNonProgressing() {
-        return nonProgressing;
+        return hasDefined(HAL_NON_PROGRESSING) && get(HAL_NON_PROGRESSING).asBoolean();
+    }
+
+    public void setAsNonProgressing() {
+        get(HAL_NON_PROGRESSING).set(true);
+    }
+
+    public String getActiveAddressHost() {
+        return hasDefined(HAL_ACTIVE_ADDRESS_HOST) ? get(HAL_ACTIVE_ADDRESS_HOST).asString() : null;
+    }
+
+    public String getActiveAddressServer() {
+        return hasDefined(HAL_ACTIVE_ADDRESS_SERVER) ? get(HAL_ACTIVE_ADDRESS_SERVER).asString() : null;
     }
 
     public String getCallerThread() {

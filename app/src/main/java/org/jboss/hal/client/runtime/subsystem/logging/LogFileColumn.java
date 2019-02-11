@@ -55,13 +55,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class LogFileColumn extends FinderColumn<LogFile> {
 
     @Inject
-    public LogFileColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final LogFiles logFiles,
-            final Resources resources) {
+    public LogFileColumn(Finder finder,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            LogFiles logFiles,
+            Resources resources) {
         super(new Builder<LogFile>(finder, Ids.LOG_FILE, resources.constants().logFile())
 
                 .columnAction(columnActionFactory.refresh(Ids.LOG_FILE_REFRESH))
@@ -114,7 +114,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                     }
 
                     @Override
-                    public HTMLElement asElement() {
+                    public HTMLElement element() {
                         if (item.getLoggingProfile() != null) {
                             return ItemDisplay
                                     .withSubtitle(item.getFilename(), item.getLoggingProfile());

@@ -41,7 +41,7 @@ class AttributesTable implements IsElement {
 
     private final HTMLElement root;
 
-    AttributesTable(final List<Property> attributes, final Resources resources) {
+    AttributesTable(List<Property> attributes, Resources resources) {
 
         HTMLElement tbody;
         this.root = table()
@@ -52,8 +52,8 @@ class AttributesTable implements IsElement {
                                 .add(th().textContent(resources.constants().type()))
                                 .add(th().textContent(resources.constants().storage()))
                                 .add(th().textContent(resources.constants().accessType()))))
-                .add(tbody = tbody().asElement())
-                .asElement();
+                .add(tbody = tbody().get())
+                .get();
 
         HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(attributes)) {
@@ -84,14 +84,14 @@ class AttributesTable implements IsElement {
 
             // storage
             HTMLElement storageTd;
-            builder.add(storageTd = td().asElement());
+            builder.add(storageTd = td().get());
             if (attribute.hasDefined(STORAGE)) {
                 switch (attribute.get(STORAGE).asString()) {
                     case CONFIGURATION:
-                        storageTd.appendChild(i().css(fontAwesome("database")).title(CONFIGURATION).asElement());
+                        storageTd.appendChild(i().css(fontAwesome("database")).title(CONFIGURATION).get());
                         break;
                     case RUNTIME:
-                        storageTd.appendChild(i().css(pfIcon("memory")).title(RUNTIME).asElement());
+                        storageTd.appendChild(i().css(pfIcon("memory")).title(RUNTIME).get());
                         break;
                     default:
                         storageTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
@@ -103,17 +103,17 @@ class AttributesTable implements IsElement {
 
             // access type
             HTMLElement accessTypeTd;
-            builder.add(accessTypeTd = td().asElement());
+            builder.add(accessTypeTd = td().get());
             if (attribute.hasDefined(ACCESS_TYPE)) {
                 switch (attribute.get(ACCESS_TYPE).asString()) {
                     case READ_WRITE:
-                        accessTypeTd.appendChild(i().css(pfIcon("edit")).title(READ_WRITE).asElement());
+                        accessTypeTd.appendChild(i().css(pfIcon("edit")).title(READ_WRITE).get());
                         break;
                     case READ_ONLY:
-                        accessTypeTd.appendChild(i().css(fontAwesome("lock")).title(READ_ONLY).asElement());
+                        accessTypeTd.appendChild(i().css(fontAwesome("lock")).title(READ_ONLY).get());
                         break;
                     case METRIC:
-                        accessTypeTd.appendChild(i().css(pfIcon("trend-up")).title(METRIC).asElement());
+                        accessTypeTd.appendChild(i().css(pfIcon("trend-up")).title(METRIC).get());
                         break;
                     default:
                         accessTypeTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
@@ -123,12 +123,12 @@ class AttributesTable implements IsElement {
                 builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
             }
 
-            tbody.appendChild(builder.asElement());
+            tbody.appendChild(builder.get());
         }
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 }

@@ -29,7 +29,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class MicroProfileConfigView extends MbuiViewImpl<MicroProfileConfigPresenter>
         implements MicroProfileConfigPresenter.MyView {
 

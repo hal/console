@@ -73,7 +73,7 @@ public class ElementGuard {
     public static class Visible implements Predicate<Element> {
 
         @Override
-        public boolean test(final Element element) {
+        public boolean test(Element element) {
             return element != null && !element.classList.contains(hidden);
         }
     }
@@ -84,12 +84,12 @@ public class ElementGuard {
 
         private final AuthorisationDecision authorisationDecision;
 
-        public Toggle(final AuthorisationDecision authorisationDecision) {
+        public Toggle(AuthorisationDecision authorisationDecision) {
             this.authorisationDecision = authorisationDecision;
         }
 
         @Override
-        public void accept(final Element element) {
+        public void accept(Element element) {
             if (element instanceof HTMLElement) {
                 HTMLElement htmlElement = (HTMLElement) element;
                 String data = String.valueOf(htmlElement.dataset.get(UIConstants.CONSTRAINT));

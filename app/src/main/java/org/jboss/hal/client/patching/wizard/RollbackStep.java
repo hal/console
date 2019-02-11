@@ -34,8 +34,8 @@ class RollbackStep extends WizardStep<PatchContext, PatchState> {
     private final Form<ModelNode> form;
     private ModelNode model;
 
-    RollbackStep(final Metadata metadata, final Resources resources, final String host,
-            final String patchId) {
+    RollbackStep(Metadata metadata, Resources resources, String host,
+            String patchId) {
         super(resources.constants().rollback());
 
         model = new ModelNode();
@@ -53,12 +53,12 @@ class RollbackStep extends WizardStep<PatchContext, PatchState> {
     }
 
     @Override
-    public HTMLElement asElement() {
-        return form.asElement();
+    public HTMLElement element() {
+        return form.element();
     }
 
     @Override
-    public void reset(final PatchContext context) {
+    public void reset(PatchContext context) {
         context.rollbackTo = false;
         context.resetConfiguration = false;
         context.overrideAll = false;
@@ -69,12 +69,12 @@ class RollbackStep extends WizardStep<PatchContext, PatchState> {
     }
 
     @Override
-    protected void onShow(final PatchContext context) {
+    protected void onShow(PatchContext context) {
         form.edit(model);
     }
 
     @Override
-    protected boolean onNext(final PatchContext context) {
+    protected boolean onNext(PatchContext context) {
         boolean valid = form.save();
         if (valid) {
             context.rollbackTo = form.getFormItem(ROLLBACK_TO).isUndefined() ? false

@@ -24,7 +24,6 @@ import org.jboss.hal.ballroom.Toolbar;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Constants;
@@ -34,11 +33,8 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.ACTIVE_OPERATIONS_TEMPLATE;
-import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.Ids.ACTIVE_OPERATION;
 
 public class ManagementOperationsView extends HalViewImpl implements ManagementOperationsPresenter.MyView {
@@ -52,11 +48,8 @@ public class ManagementOperationsView extends HalViewImpl implements ManagementO
         dataProvider = new DataProvider<>(ManagementOperations::getName, false);
 
         Metadata metadata = metadataRegistry.lookup(ACTIVE_OPERATIONS_TEMPLATE);
-        Metadata metadataMO = metadataRegistry.lookup(MANAGEMENT_OPERATIONS_TEMPLATE);
-        String findDescription = failSafeGet(metadataMO.getDescription(),
-                "operations/" + FIND_NON_PROGRESSING_OPERATION + "/description").asString();
-        String cancelDescription = failSafeGet(metadataMO.getDescription(),
-                "operations/" + CANCEL_NON_PROGRESSING_OPERATION + "/description").asString();
+        String findDescription = resources.messages().findNonProgressingOperation();
+        String cancelDescription = resources.messages().cancelNonProgressingOperation();
 
         Messages messages = resources.messages();
         EmptyState emptyState = new EmptyState.Builder(Ids.ACTIVE_OPERATION_EMPTY, resources.constants().noItems())
@@ -73,13 +66,17 @@ public class ManagementOperationsView extends HalViewImpl implements ManagementO
                 .toolbarAttribute(new Toolbar.Attribute<>(ACCESS_MECHANISM, constants.accessMechanism(),
                         (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
                         comparing(ManagementOperations::getAccessMechanism)))
-                .toolbarAttribute(new Toolbar.Attribute<>(OPERATION, resources.constants().operation(),
-                        (model, filter) -> model.getOperation().contains(filter), null))
                 .toolbarAttribute(new Toolbar.Attribute<>(ADDRESS, resources.constants().address(),
-                        (model, filter) -> model.getAddress().contains(filter), null))
+                        // filter by three address attributes: address, host and server
+                        (model, filter) -> model.getAddress().contains(filter)
+                                || (model.getActiveAddressHost() != null && model.getActiveAddressHost().contains(filter))
+                                || (model.getActiveAddressServer() != null && model.getActiveAddressServer().contains(filter)),
+                        null))
                 .toolbarAttribute(new Toolbar.Attribute<>(EXECUTION_STATUS, resources.constants().executionStatus(),
                         (node, filter) -> node.getExecutionStatus().toLowerCase().contains(filter.toLowerCase()),
                         comparing(ManagementOperations::getExecutionStatus)))
+                .toolbarAttribute(new Toolbar.Attribute<>(OPERATION, resources.constants().operation(),
+                        (model, filter) -> model.getOperation().contains(filter), null))
                 .toolbarAction(new Toolbar.Action(Ids.build(ACTIVE_OPERATION, Ids.REFRESH),
                         constants.reload(), findDescription, () -> presenter.reload()))
                 .toolbarAction(new Toolbar.Action(Ids.build(ACTIVE_OPERATION, Ids.CANCEL_NON_PROGRESSING_OPERATION),
@@ -98,12 +95,9 @@ public class ManagementOperationsView extends HalViewImpl implements ManagementO
     }
 
     @Override
-    public void update(List<NamedNode> nodes, String nonProgressingOperation) {
-        List<ManagementOperations> operations = nodes.stream()
-                .map((NamedNode node) -> new ManagementOperations(node, nonProgressingOperation))
-                .collect(toList());
-        dataProvider.update(operations);
-        if (operations.isEmpty()) {
+    public void update(List<ManagementOperations> activeOperations) {
+        dataProvider.update(activeOperations);
+        if (activeOperations.isEmpty()) {
             listView.showEmptyState(EMPTY);
         }
     }

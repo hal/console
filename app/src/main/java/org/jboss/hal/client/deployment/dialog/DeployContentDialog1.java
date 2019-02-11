@@ -22,7 +22,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
@@ -93,22 +92,23 @@ public class DeployContentDialog1 {
                 .chooseServerGroupsToDeploy(content.getName()) : resources.messages()
                 .chooseServerGroupsToUndeploy(content.getName());
 
-        ElementsBuilder elements = elements()
+        Iterable<HTMLElement> elements = collect()
                 .add(div().add(noServerGroupSelected))
                 .add(p().innerHtml(description))
                 .add(table)
                 .add(enableContainer = div().css(marginTopLarge)
-                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).asElement())
+                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).get())
                         .add(label().css(CSS.marginLeft5)
                                 .apply(l -> l.htmlFor = Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
                                 .textContent(resources.constants().enableDeployment()))
-                        .asElement());
+                        .get())
+                .get();
 
         String title = deployCallback != null ? resources.constants().deployContent() : resources.constants()
                 .undeployContent();
         String primary = deployCallback != null ? resources.constants().deploy() : resources.constants().undeploy();
         dialog = new Dialog.Builder(title)
-                .add(elements.asElements())
+                .add(elements)
                 .primary(primary, this::finish)
                 .cancel()
                 .build();
@@ -117,7 +117,7 @@ public class DeployContentDialog1 {
 
     private boolean finish() {
         boolean hasSelection = table.hasSelection();
-        Elements.setVisible(noServerGroupSelected.asElement(), !hasSelection);
+        Elements.setVisible(noServerGroupSelected.element(), !hasSelection);
         if (hasSelection) {
             List<String> serverGroups = table.selectedRows().stream()
                     .map(usg -> usg.serverGroup)
@@ -133,7 +133,7 @@ public class DeployContentDialog1 {
 
     public void show() {
         dialog.show();
-        Elements.setVisible(noServerGroupSelected.asElement(), false);
+        Elements.setVisible(noServerGroupSelected.element(), false);
         Elements.setVisible(enableContainer, deployCallback != null);
         table.update(serverGroups);
         SwitchBridge.Api.element(enable).setValue(true);

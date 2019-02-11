@@ -36,8 +36,9 @@ public class Breadcrumb implements IsElement<HTMLElement> {
 
     private final HTMLElement root;
 
+    @SuppressWarnings("WeakerAccess")
     public Breadcrumb() {
-        root = ol().css(breadcrumb).asElement();
+        root = ol().css(breadcrumb).get();
     }
 
     public void clear() {
@@ -49,17 +50,17 @@ public class Breadcrumb implements IsElement<HTMLElement> {
                 .add(a().css(clickable)
                         .textContent(segment)
                         .on(click, e -> handler.onClick()))
-                .asElement());
+                .get());
         return this;
     }
 
     public Breadcrumb append(String segment) {
-        root.appendChild(li().css(active).textContent(segment).asElement());
+        root.appendChild(li().css(active).textContent(segment).get());
         return this;
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

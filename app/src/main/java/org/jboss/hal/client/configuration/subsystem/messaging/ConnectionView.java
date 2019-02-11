@@ -131,16 +131,16 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
         Tabs tabs = new Tabs(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ATTRIBUTES, Ids.TAB),
-                mbuiContext.resources().constants().attributes(), pooledConnectionFactoryForm.asElement());
+                mbuiContext.resources().constants().attributes(), pooledConnectionFactoryForm.element());
         tabs.add(Ids.build(Ids.MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, CREDENTIAL_REFERENCE, Ids.TAB),
-                Names.CREDENTIAL_REFERENCE, crForm.asElement());
+                Names.CREDENTIAL_REFERENCE, crForm.element());
 
         HTMLElement htmlSection = section()
                 .add(h(1).textContent(Names.POOLED_CONNECTION_FACTORY))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(pooledConnectionFactoryTable)
                 .add(tabs)
-                .asElement();
+                .get();
 
         registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
 

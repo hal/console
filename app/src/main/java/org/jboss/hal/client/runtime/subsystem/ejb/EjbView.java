@@ -48,15 +48,15 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
         forms = new HashMap<>();
         for (EjbNode.Type type : EjbNode.Type.values()) {
             Form<EjbNode> form = ejbForm(type, metadataRegistry);
-            Elements.setVisible(form.asElement(), false);
+            Elements.setVisible(form.element(), false);
             forms.put(type, form);
         }
 
         initElement(row()
                 .add(column()
-                        .add(header = h(1).asElement())
-                        .add(lead = p().css(CSS.lead).asElement())
-                        .addAll(forms.values().toArray(new IsElement[forms.values().size()]))));
+                        .add(header = h(1).get())
+                        .add(lead = p().css(CSS.lead).get())
+                        .addAll(forms.values().toArray(new IsElement[0]))));
     }
 
     private Form<EjbNode> ejbForm(EjbNode.Type type, MetadataRegistry metadataRegistry) {
@@ -73,6 +73,6 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
         header.textContent = ejb.getName();
         lead.textContent = ejb.type.type;
         forms.get(ejb.type).view(ejb);
-        forms.forEach((type, form) -> Elements.setVisible(form.asElement(), type == ejb.type));
+        forms.forEach((type, form) -> Elements.setVisible(form.element(), type == ejb.type));
     }
 }

@@ -38,6 +38,7 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.ui.FileFormItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -166,10 +167,10 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .icon(fontAwesome("sitemap"))
                 .primaryAction(constants.add(), this::addRootLogger)
                 .build();
-        noRootLogger.asElement().classList.add(marginTopLarge);
+        noRootLogger.element().classList.add(marginTopLarge);
 
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
-        rootLoggerForm.asElement().parentNode.appendChild(noRootLogger.asElement());
+        rootLoggerForm.element().parentNode.appendChild(noRootLogger.element());
         rootLoggerVisibility(false);
 
         // --------------------------- json formatter
@@ -218,16 +219,16 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
         Tabs jsonTabs = new Tabs(Ids.build(LOGGING_PROFILE, FORMATTER, JSON, TAB_CONTAINER));
         jsonTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, JSON, ATTRIBUTES, TAB), constants.attributes(),
-                jsonFormatterForm.asElement());
+                jsonFormatterForm.element());
         jsonTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, JSON, KEY_OVERRIDES, TAB), Names.KEY_OVERRIDES,
-                jsonKeyOverridesForm.asElement());
+                jsonKeyOverridesForm.element());
 
         HTMLElement jsonSection = section()
                 .add(h(1).textContent(Names.JSON_FORMATTER))
                 .add(p().textContent(jsonMetadata.getDescription().getDescription()))
                 .add(jsonFormatterTable)
                 .add(jsonTabs)
-                .asElement();
+                .get();
 
         registerAttachable(jsonFormatterTable, jsonFormatterForm, jsonKeyOverridesForm);
 
@@ -279,16 +280,16 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
         Tabs xmlTabs = new Tabs(Ids.build(LOGGING_PROFILE, FORMATTER, XML, TAB_CONTAINER));
         xmlTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, XML, ATTRIBUTES, TAB), constants.attributes(),
-                xmlFormatterForm.asElement());
+                xmlFormatterForm.element());
         xmlTabs.add(Ids.build(LOGGING_PROFILE, FORMATTER, XML, KEY_OVERRIDES, TAB), Names.KEY_OVERRIDES,
-                xmlKeyOverridesForm.asElement());
+                xmlKeyOverridesForm.element());
 
         HTMLElement xmlSection = section()
                 .add(h(1).textContent(Names.XML_FORMATTER))
                 .add(p().textContent(xmlMetadata.getDescription().getDescription()))
                 .add(xmlFormatterTable)
                 .add(xmlTabs)
-                .asElement();
+                .get();
 
         registerAttachable(xmlFormatterTable, xmlFormatterForm, xmlKeyOverridesForm);
 
@@ -351,8 +352,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 visible);
         Elements.setVisible((HTMLElement) document.getElementById(Ids.LOGGING_PROFILE + "-root-logger-description"),
                 visible);
-        Elements.setVisible(rootLoggerForm.asElement(), visible);
-        Elements.setVisible(noRootLogger.asElement(), !visible);
+        Elements.setVisible(rootLoggerForm.element(), visible);
+        Elements.setVisible(noRootLogger.element(), !visible);
     }
 
     private void addRootLogger() {
@@ -887,7 +888,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()
                 .unboundFormItem(new NameItem(), 0)
-                .customFormItem("file", (attributeDescription) -> new FileFormItem())
+                .customFormItem("file", (attributeDescription) -> new FileFormItem(FILE, true))
                 .unsorted();
         if (attributes != null) {
             builder.include(asList(attributes));

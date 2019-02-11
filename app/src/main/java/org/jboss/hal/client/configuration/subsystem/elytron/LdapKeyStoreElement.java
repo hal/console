@@ -87,14 +87,14 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .build();
 
         Tabs tabs = new Tabs(id(TAB_CONTAINER));
-        tabs.add(id(TAB), resources.constants().attributes(), attributes.asElement());
-        tabs.add(id(NEW_ITEM_TEMPLATE, TAB), Names.NEW_ITEM_TEMPLATE, newItemTemplate.asElement());
+        tabs.add(id(TAB), resources.constants().attributes(), attributes.element());
+        tabs.add(id(NEW_ITEM_TEMPLATE, TAB), Names.NEW_ITEM_TEMPLATE, newItemTemplate.element());
 
         root = section()
                 .add(h(1).textContent(Names.LDAP_KEY_STORE))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .addAll(table, tabs)
-                .asElement();
+                .get();
     }
 
     private String id(@NonNls String... ids) {
@@ -102,7 +102,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
     }
 
     @Override
-    public HTMLElement asElement() {
+    public HTMLElement element() {
         return root;
     }
 

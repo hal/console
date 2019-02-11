@@ -44,7 +44,7 @@ public class ManagementInterfacePresenter
         extends MbuiPresenter<ManagementInterfacePresenter.MyView, ManagementInterfacePresenter.MyProxy>
         implements SupportsExpertMode {
 
-    static final String HTTP_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=http-interface";
+    private static final String HTTP_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=http-interface";
     static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
     @NonNls private static Logger logger = LoggerFactory.getLogger(ManagementInterfacePresenter.class);
 
