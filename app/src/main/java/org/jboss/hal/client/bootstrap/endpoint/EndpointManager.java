@@ -66,6 +66,7 @@ public class EndpointManager {
     private KeycloakHolder keycloakHolder;
 
     private Callback callback;
+    private EndpointDialog endpointDialog;
 
     @Inject
     public EndpointManager(Endpoints endpoints, EndpointStorage storage, KeycloakHolder keycloakHolder) {
@@ -143,7 +144,8 @@ public class EndpointManager {
     }
 
     private void openDialog() {
-        new EndpointDialog(this, storage).show();
+        endpointDialog = new EndpointDialog(this, storage);
+        endpointDialog.show();
     }
 
     private String getKeycloakAdapterUrl(String baseUrl) {
@@ -192,7 +194,9 @@ public class EndpointManager {
                 logger.error("Keycloak adapter '{}' doesn't exist - status: {}", keycloakAdapterUrl, status);
                 wildflyCallback.execute();
             }
+            endpointDialog.close();
         };
+        xhr.addEventListener("error", evt -> endpointDialog.showConnectError());
         xhr.open(GET.name(), keycloakAdapterUrl, true);
         xhr.send();
     }

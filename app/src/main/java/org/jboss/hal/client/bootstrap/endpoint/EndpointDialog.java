@@ -22,6 +22,7 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.Form;
@@ -63,11 +64,12 @@ class EndpointDialog {
     private final HTMLElement selectPage;
     private final HTMLElement addPage;
     private final Alert alert;
+    private final Alert connectAlert;
     private final Form<Endpoint> form;
 
     private Mode mode;
     private Table<Endpoint> table;
-    private Dialog dialog;
+    private BlockingDialog dialog;
 
     EndpointDialog(EndpointManager manager, EndpointStorage storage) {
         this.manager = manager;
@@ -84,10 +86,12 @@ class EndpointDialog {
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl())
                 .build();
+        connectAlert = new Alert(Icons.ERROR, MESSAGES.endpointConnectError());
 
         selectPage = div()
                 .add(p().textContent(CONSTANTS.endpointSelectDescription()))
                 .add(table.element())
+                .add(connectAlert)
                 .get();
 
         alert = new Alert();
@@ -136,13 +140,12 @@ class EndpointDialog {
                 .add(form.element())
                 .get();
 
-        dialog = new Dialog.Builder(CONSTANTS.endpointSelectTitle())
+        dialog = new BlockingDialog(new Dialog.Builder(CONSTANTS.endpointSelectTitle())
                 .add(selectPage, addPage)
                 .primary(CONSTANTS.endpointConnect(), this::onPrimary)
                 .secondary(this::onSecondary)
                 .closeIcon(false)
-                .closeOnEsc(false)
-                .build();
+                .closeOnEsc(false));
         dialog.registerAttachable(form, table);
     }
 
@@ -190,6 +193,7 @@ class EndpointDialog {
             primaryButton.disabled = false;
             Elements.setVisible(selectPage, false);
             Elements.setVisible(addPage, true);
+            Elements.setVisible(connectAlert.element(), false);
         }
         this.mode = mode;
     }
@@ -197,10 +201,8 @@ class EndpointDialog {
     private boolean onPrimary() {
         if (mode == SELECT) {
             manager.onConnect(table.selectedRow());
-            return true;
         } else if (mode == ADD) {
             form.save();
-            return false;
         }
         return false;
     }
@@ -217,6 +219,7 @@ class EndpointDialog {
 
     void show() {
         dialog.show();
+        Elements.setVisible(connectAlert.element(), false);
 
         table.onSelectionChange(t -> dialog.getButton(PRIMARY_POSITION).disabled = !t.hasSelection());
         table.update(storage.list());
@@ -228,6 +231,13 @@ class EndpointDialog {
                 .ifPresent(this::select);
     }
 
+    void close() {
+        dialog.close();
+    }
+
+    void showConnectError() {
+        Elements.setVisible(connectAlert.element(), true);
+    }
 
     enum Mode {
         SELECT, ADD

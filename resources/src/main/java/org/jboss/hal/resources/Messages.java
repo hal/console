@@ -147,6 +147,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml enableSSLStrategyQuestionReuseKeyStore();
     SafeHtml enableSSLSuccess();
     SafeHtml enableUndertowSSLDescription();
+    SafeHtml endpointConnectError();
     SafeHtml endpointError(String interfce, String url);
     SafeHtml endpointOk(String url);
     SafeHtml exclusiveRunningTimeLabel(String name);
