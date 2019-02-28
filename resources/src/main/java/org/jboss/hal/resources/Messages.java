@@ -357,6 +357,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resetSingletonSuccess(String type);
     SafeHtml resetStatisticsQuestion(String connector);
     SafeHtml resetStatisticsSuccess(String connector);
+    SafeHtml resolveSocketBindingError(String socketBinding, String message);
     SafeHtml resourceAdapterProvidedBy(String type, String name);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
@@ -600,6 +601,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String removeConfirmationTitle(String name);
     String resetConfirmationTitle(String type);
     String resetStatisticsTitle();
+    String resolveSocketBindingDomainDescription();
+    String resolveSocketBindingNoRunningServer();
     String resourceAdapterColumnFilterDescription();
     String restart(String name);
     String restColumnFilterDescription();

@@ -313,9 +313,9 @@ class ServerPreview extends RuntimePreview<Server> {
                         .add(SOCKET_BINDING_GROUP, socketBnding)
                         .add(SOCKET_BINDING, "*");
                 ModelNode select = new ModelNode();
-                select.add("bound-port").add(NAME);
+                select.add(BOUND_PORT).add(NAME);
                 ModelNode where = new ModelNode();
-                where.set("bound", true);
+                where.set(BOUND, true);
                 Operation operation = new Operation.Builder(address, QUERY)
                         .param(SELECT, select)
                         .param(WHERE, where)

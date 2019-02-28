@@ -18,11 +18,14 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
+import elemental2.dom.HTMLElement;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 public class StaticItem extends AbstractFormItem<String> {
 
@@ -42,6 +45,15 @@ public class StaticItem extends AbstractFormItem<String> {
         return false;
     }
 
+    @Override
+    public void attach() {
+        super.attach();
+        HTMLElement element = (HTMLElement) document.getElementById(getId(READONLY));
+        if (element != null) {
+            // this pre style allows the \n line separator in the MapMapping.asString method
+            element.style.whiteSpace = "pre";
+        }
+    }
 
     private static class StaticAppearance extends ReadOnlyAppearance<String> {
 

@@ -28,8 +28,6 @@ import org.jboss.hal.ballroom.form.ReadOnlyAppearance;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.resources.CSS;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.bind;
@@ -40,7 +38,6 @@ import static org.jboss.hal.resources.CSS.clickable;
 public class SocketBindingTextItem extends TextBoxItem {
 
     private SocketBindingReadOnlyAppearance appearance;
-    static Logger _log = LoggerFactory.getLogger("org.jboss");
 
     public SocketBindingTextItem(String name) {
         this(name, new LabelBuilder().label(name), null);
@@ -67,7 +64,6 @@ public class SocketBindingTextItem extends TextBoxItem {
         if (value != null) {
             SocketBindingTextItem.ResolveSocketBindingContext ctx = new ResolveSocketBindingContext(value,
                     name1 -> {
-                        _log.info("  AbstractFormItem.setValue and socket-binding: {}", name1);
                         ResolveSocketBindingEvent ev = new ResolveSocketBindingEvent(name1);
                         Core.INSTANCE.eventBus().fireEvent(ev);
                     });
@@ -141,7 +137,6 @@ public class SocketBindingTextItem extends TextBoxItem {
 
         void resolve(String name);
     }
-
 
     static class ResolveSocketBindingContext {
 

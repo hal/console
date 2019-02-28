@@ -288,6 +288,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageTakeATour();
     String hostNameChanged();
     String hostScopedRole();
+    String hostServerPort();
     String hostsUsingThisFilter();
     String hostsUsingThisHandler();
     String hour();

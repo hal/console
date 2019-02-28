@@ -643,6 +643,7 @@ public interface Ids {
     String REPLICATED_CACHE = "replicated-cache";
     String RESET_MESSAGE_COUNTERS = "reset-message-counters";
     String RESOLVE_EXPRESSION_FORM = "resolve-expression-form";
+    String RESOLVE_SOCKET_BINDING_FORM = "resolve-socket-binding-form";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTER_ADD = "resource-adapter-add";
     String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = "resource-adapter-admin-object-add";

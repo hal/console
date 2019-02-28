@@ -15,90 +15,91 @@
  */
 package org.jboss.hal.core.socketbinding;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.SuccessfulOutcome;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.hal.spi.Footer;
+import rx.Completable;
 
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.core.runtime.RunningState.RUNNING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 
 public class SocketBindingResolver implements ResolveSocketBindingEvent.ResolveSocketBindingHandler {
 
     private static final AddressTemplate SOCKET_BINDING_GROUP_TEMPLATE = AddressTemplate.of(
             "/socket-binding-group=*/socket-binding=*");
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(SocketBindingResolver.class);
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Environment environment;
     private final Resources resources;
     private StatementContext statementContext;
+    private Provider<Progress> progress;
 
     @Inject
     public SocketBindingResolver(final EventBus eventBus, final Environment environment, final Dispatcher dispatcher,
-            final Resources resources, StatementContext statementContext) {
+            final Resources resources, StatementContext statementContext, @Footer Provider<Progress> progress) {
         this.eventBus = eventBus;
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.resources = resources;
         this.statementContext = statementContext;
+        this.progress = progress;
 
         eventBus.addHandler(ResolveSocketBindingEvent.getType(), this);
     }
 
     @Override
     public void onResolveSocketBinding(ResolveSocketBindingEvent event) {
-        // logger.info("  SocketBindingResolver.onResolveSocketBinding");
         new SocketBindingPortDialog(this, environment, resources).showAndResolve(event.getSocketBinding());
     }
 
-    void resolve(final String socketBinding, final AsyncCallback<String> callback) {
-        // logger.debug("Resolving socket-binding {}", socketBinding);
+    void resolve(final String socketBinding, final AsyncCallback<ModelNode> callback) {
         if (environment.isStandalone()) {
-
             // read the socket-binding-group name
             Operation readSbgOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                     .build();
             dispatcher.execute(readSbgOp, result -> {
-                // logger.info(" SocketBindingResolver sbg: {}", result);
                 String sbg = result.asList().get(0).asString();
-                // String httpsBinding = context.model.get(SECURE_SOCKET_BINDING).asString();
                 ResourceAddress address = SOCKET_BINDING_GROUP_TEMPLATE.resolve(statementContext, sbg, socketBinding);
                 Operation readSocketBindingOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                         .param(INCLUDE_RUNTIME, true)
                         .param(RESOLVE_EXPRESSIONS, true)
                         .build();
-                // logger.info(" SocketBindingResolver read socket binding op: {}", readSocketBindingOp);
                 dispatcher.execute(readSocketBindingOp,
                         response -> {
-                            // logger.info("  response: {}", response);
-                            String port;
+                            ModelNode port;
                             // multicast ports are not displayed as bound-port attribute, so use the multicast-port
                             if (response.hasDefined(MULTICAST_PORT)) {
-                                port = response.get(MULTICAST_PORT).asString();
+                                port = response.get(MULTICAST_PORT);
                             } else {
                                 boolean bound = response.get(BOUND).asBoolean();
                                 if (bound) {
-                                    port = response.get(BOUND_PORT).asString();
+                                    port = response.get(BOUND_PORT);
                                 } else {
-                                    port = response.get(PORT).asString();
+                                    port = response.get(PORT);
                                 }
                             }
                             callback.onSuccess(port);
@@ -107,32 +108,110 @@ public class SocketBindingResolver implements ResolveSocketBindingEvent.ResolveS
                         (op2, exception) -> callback.onFailure(exception));
             });
         } else {
-            // Operation operation = new Operation.Builder(ResourceAddress.root(), RESOLVE_EXPRESSION_ON_DOMAIN)
-            //         .param(EXPRESSION, expression.toString())
-            //         .build();
-            // dispatcher.executeDMR(operation,
-            //         (res) -> callback.onSuccess(parseServerGroups(res.get(SERVER_GROUPS))),
-            //         (op1, failure) -> callback.onFailure(new RuntimeException(failure)),
-            //         (op2, exception) -> callback.onFailure(exception));
-        }
-    }
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(flowContext -> {
+                // /host=*/server=*:query(select=[host,name],where={suspend-state=RUNNING, profile-name=full-ha})
+                ModelNode select = new ModelNode();
+                select.add(HOST).add(NAME);
+                ModelNode where = new ModelNode();
+                where.get(SUSPEND_STATE).set(RUNNING.name());
+                where.get(PROFILE_NAME).set(statementContext.selectedProfile());
+                ResourceAddress address = new ResourceAddress()
+                        .add(HOST, "*")
+                        .add(SERVER, "*");
+                Operation operation = new Operation.Builder(address, QUERY)
+                        .param(SELECT, select)
+                        .param(WHERE, where)
+                        .build();
+                return dispatcher.execute(operation)
+                        .doOnSuccess(result -> {
+                            if (result.asList().size() > 0) {
+                                // aggregate as a list of host/server strings
+                                List<String> hostsServers = result.asList().stream()
+                                        .filter(res -> res.get(OUTCOME).asString().equals(SUCCESS)
+                                                && res.get(RESULT).isDefined())
+                                        .map(r -> r.get(RESULT).get(HOST).asString() + "/"
+                                                + r.get(RESULT).get(NAME).asString())
+                                        .collect(toList());
+                                flowContext.push(hostsServers);
+                            }
+                        })
+                        .toCompletable();
+            });
 
-    private Map<String, String> parseServerGroups(ModelNode serverGroups) {
-        Map<String, String> values = new HashMap<>();
-        if (serverGroups.isDefined()) {
-            List<Property> groups = serverGroups.asPropertyList();
-            for (Property serverGroup : groups) {
-                List<Property> hosts = serverGroup.getValue().get(HOST).asPropertyList();
-                for (Property host : hosts) {
-                    List<Property> servers = host.getValue().asPropertyList();
-                    for (Property server : servers) {
-                        values.put(server.getName(),
-                                server.getValue().get(RESPONSE).get(RESULT).asString()
-                        );
-                    }
+            tasks.add(flowContext -> {
+                if (flowContext.emptyStack()) {
+                    return Completable.complete();
+                } else {
+                    List<String> hostsServers = flowContext.pop();
+                    Composite composite = new Composite();
+                    hostsServers.forEach(hostServer -> {
+                        int idx = hostServer.indexOf("/");
+                        String host = hostServer.substring(0, idx);
+                        String server = hostServer.substring(idx + 1);
+                        ResourceAddress address = new ResourceAddress()
+                                .add(HOST, host)
+                                .add(SERVER, server)
+                                .add(SOCKET_BINDING_GROUP, "*")
+                                .add(SOCKET_BINDING, socketBinding);
+                        Operation operation = new Operation.Builder(address, QUERY)
+                                .param(INCLUDE_RUNTIME, true)
+                                .param(RESOLVE_EXPRESSIONS, true)
+                                .build();
+                        composite.add(operation);
+                    });
+                    return dispatcher.execute(composite)
+                            .doOnSuccess((CompositeResult compositeResult) -> {
+                                ModelNode hostServerPorts = new ModelNode();
+                                for (ModelNode res: compositeResult) {
+                                    if (res.hasDefined(OUTCOME) && res.get(OUTCOME).asString().equals(SUCCESS)) {
+                                        // result is a list of socket-binding-group
+                                        // there is only one socket-binding-group per server, it is safe to get the first one
+                                        ModelNode sbRes = res.get(RESULT).asList().get(0);
+                                        StringBuilder hostServer = new StringBuilder();
+                                        sbRes.get(ADDRESS).asPropertyList().forEach(p -> {
+                                            if (HOST.equals(p.getName())) {
+                                                hostServer.append(p.getValue().asString());
+                                            }
+                                            if (SERVER.equals(p.getName())) {
+                                                hostServer.append("/").append(p.getValue().asString());
+                                            }
+                                        });
+                                        ModelNode sbNode = sbRes.get(RESULT);
+                                        String port;
+                                        // multicast ports are not displayed as bound-port attribute, so use the multicast-port
+                                        if (sbNode.hasDefined(MULTICAST_PORT)) {
+                                            port = sbNode.get(MULTICAST_PORT).asString();
+                                        } else {
+                                            boolean bound = sbNode.get(BOUND).asBoolean();
+                                            if (bound) {
+                                                port = sbNode.get(BOUND_PORT).asString();
+                                            } else {
+                                                port = sbNode.get(PORT).asString();
+                                            }
+                                        }
+                                        hostServerPorts.get(hostServer.toString()).set(port);
+                                    }
+                                }
+                                flowContext.push(hostServerPorts);
+                            })
+                            .toCompletable();
                 }
-            }
+            });
+
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                        @Override
+                        public void onSuccess(FlowContext flowContext) {
+                            if (flowContext.emptyStack()) {
+                                callback.onFailure(new RuntimeException(
+                                        resources.messages().resolveSocketBindingNoRunningServer()));
+                            } else {
+                                ModelNode hostServerPorts = flowContext.pop();
+                                callback.onSuccess(hostServerPorts);
+                            }
+                        }
+                    });
         }
-        return values;
     }
 }
