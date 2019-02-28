@@ -69,7 +69,7 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
         }
     }
 
-    boolean isApplied(Decoration decoration) {
+    protected boolean isApplied(Decoration decoration) {
         return appliedDecorations.contains(decoration);
     }
 

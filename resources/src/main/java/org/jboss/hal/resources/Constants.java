@@ -466,6 +466,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String resolve();
     String resolvedValue();
     String resolveExpression();
+    String resolveSocketBinding();
     String resourceRollback();
     String response();
     String restart();

@@ -38,6 +38,7 @@ import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerUrlStorage;
+import org.jboss.hal.core.socketbinding.SocketBindingResolver;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.flow.Progress;
@@ -72,6 +73,7 @@ public class CoreModule extends AbstractGinModule {
         bind(ServerGroupActions.class).in(Singleton.class);
         bind(ServerUrlStorage.class).in(Singleton.class);
         bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event handler
+        bind(SocketBindingResolver.class).asEagerSingleton(); // to register the event handler
         bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);
         bind(MbuiContext.class).in(Singleton.class);

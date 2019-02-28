@@ -28,6 +28,8 @@ import org.jboss.hal.meta.ManagementModel;
 /** Provides access to static fall-back capabilities for servers which don't support a capabilities-registry. */
 public class Capabilities {
 
+    public static final String SOCKET_BINDING = "org.wildfly.network.socket-binding";
+
     private final Environment environment;
     private final Map<String, Capability> registry;
 

@@ -34,6 +34,7 @@ import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.Core;
+import org.jboss.hal.core.socketbinding.SocketBindingTextItem;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -183,16 +184,24 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case STRING: {
                     List<String> allowedValues = stringValues(attributeDescription, ALLOWED);
                     if (allowedValues.isEmpty()) {
-                        FormItem<String> textBoxItem = new TextBoxItem(name, label, null);
+
+                        if (attributeDescription.hasDefined(CAPABILITY_REFERENCE)
+                                && Capabilities.SOCKET_BINDING.equals(
+                                        attributeDescription.get(CAPABILITY_REFERENCE).asString())) {
+                            // add specific socket-binding form item with decoration to show the socket binding port
+                            formItem = new SocketBindingTextItem(name, label);
+                        } else {
+                            TextBoxItem textBoxItem = new TextBoxItem(name, label, null);
+                            if (attributeDescription.hasDefined(DEFAULT)) {
+                                textBoxItem.assignDefaultValue(attributeDescription.get(DEFAULT).asString());
+                            }
+                            formItem = textBoxItem;
+                        }
                         boolean sensitive = failSafeGet(attributeDescription,
                                 ACCESS_CONSTRAINTS + "/" + SENSITIVE).isDefined();
                         if (PASSWORD.equals(name) || sensitive) {
-                            textBoxItem.mask();
+                            formItem.mask();
                         }
-                        if (attributeDescription.hasDefined(DEFAULT)) {
-                            textBoxItem.assignDefaultValue(attributeDescription.get(DEFAULT).asString());
-                        }
-                        formItem = textBoxItem;
                         checkCapabilityReference(attributeDescription, formItem);
                     } else {
                         SingleSelectBoxItem singleSelectBoxItem = new SingleSelectBoxItem(name, label,

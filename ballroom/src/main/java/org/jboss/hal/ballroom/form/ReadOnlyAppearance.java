@@ -63,10 +63,10 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  */
 public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
-    final HTMLElement valueContainer;
+    protected final HTMLElement valueContainer;
     HTMLElement valueElement;
     private final HTMLElement root;
-    private final HTMLElement hintElement;
+    protected final HTMLElement hintElement;
     private final HTMLElement defaultValue;
     private final HTMLElement expressionLink;
     private final HTMLElement restrictedMarker;
@@ -304,6 +304,10 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
 
     // ------------------------------------------------------ properties & delegates
+
+    protected String getValueIfMasked() {
+        return masked ? backupValue : valueElement.textContent;
+    }
 
     @Override
     public void setId(String id) {
