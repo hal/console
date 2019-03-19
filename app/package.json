@@ -7,7 +7,7 @@
   "dependencies": {
     "ace-builds": "~1.4.3",
     "autocompleter": "~4.0.2",
-    "bootstrap": "~3.3.7",
+    "bootstrap": "~3.4.1",
     "bootstrap-switch": "~3.3.4",
     "datatables.net": "~1.10.19",
     "datatables.net-buttons": "~1.5.6",
