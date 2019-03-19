@@ -26,12 +26,21 @@ import static io.undertow.predicate.Predicates.suffixes;
 
 /**
  * Start a web server for the console at <a href="http://localhost:9090">http://localhost:9090</a>. Please make sure to
- * add {@code http://localhost:9090} as allowed origin in WildFly.
+ * add {@code http://localhost:9090} as allowed origin in WildFly. You can specify a different port as command line
+ * argument.
  */
 public class Main {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public static void main(String[] args) {
+        int port = 9090;
+        if (args != null && args.length > 0) {
+            try {
+                port = Integer.parseInt(args[0]);
+            } catch (NumberFormatException ignore) {
+                // ignore
+            }
+        }
 
         ClassPathResourceManager resource = new ClassPathResourceManager(Main.class.getClassLoader(), "hal");
         ResourceHandler handler = new ResourceHandler(resource)
@@ -40,11 +49,11 @@ public class Main {
                 .setCachable(not(suffixes(".nocache.js", "index.html")));
 
         Undertow server = Undertow.builder()
-                .addHttpListener(9090, "0.0.0.0")
+                .addHttpListener(port, "0.0.0.0")
                 .setHandler(handler)
                 .build();
         server.start();
-        Logger.getLogger("HAL").info("HAL listening on port 9090");
+        Logger.getLogger("HAL").info("HAL listening on port " + port);
     }
 
     private Main() {

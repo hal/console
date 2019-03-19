@@ -28,7 +28,7 @@
 
     <artifactId>hal-docker</artifactId>
     <name>HAL :: Docker</name>
-    <description>Builds a docker container to run a independent console</description>
+    <description>Builds a docker container to run HAL in standalone mode</description>
     <packaging>docker-build</packaging>
 
     <dependencies>
@@ -88,10 +88,10 @@
                     <logDate>default</logDate>
                     <images>
                         <image>
-                            <alias>hal-standalone</alias>
-                            <name>halconsole/hal-standalone:%l</name>
+                            <alias>hal</alias>
+                            <name>halconsole/hal:%l</name>
                             <build>
-                                <dockerFileDir>hal-standalone</dockerFileDir>
+                                <dockerFileDir>hal</dockerFileDir>
                                 <assembly>
                                     <mode>dir</mode>
                                     <inline>

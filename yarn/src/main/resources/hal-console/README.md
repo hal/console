@@ -17,4 +17,4 @@ yarn install -g hal-console
 hal-console
 ```
 
-For more details see https://github.com/hal/hal.next.
+See also https://hal.github.io/documentation/get-started/#yarn-npm

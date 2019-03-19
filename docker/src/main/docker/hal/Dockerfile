@@ -1,4 +1,4 @@
-FROM jboss/base-jdk:8
+FROM jboss/base-jdk:11
 
 LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
 

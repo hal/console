@@ -28,6 +28,6 @@
   },
   "homepage": "https://hal.github.io/",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "~4.16.4"
   }
 }

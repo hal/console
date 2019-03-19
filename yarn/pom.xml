@@ -28,7 +28,7 @@
 
     <artifactId>hal-yarn</artifactId>
     <name>HAL :: Yarn</name>
-    <description>Yarn setup to run HAL as a node application.</description>
+    <description>Runs HAL as a standalone application</description>
     <packaging>pom</packaging>
 
     <dependencies>
