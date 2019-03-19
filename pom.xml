@@ -124,7 +124,6 @@
         <module>db</module>
         <module>dmr</module>
         <module>flow</module>
-        <module>fraction</module>
         <module>js</module>
         <module>meta</module>
         <module>parent-with-dependencies</module>
@@ -249,6 +248,18 @@
             </modules>
         </profile>
         <profile>
+            <id>i18n</id>
+            <properties>
+                <gwt.module>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.module>
+            </properties>
+        </profile>
+        <profile>
+            <id>npm</id>
+            <modules>
+                <module>npm</module>
+            </modules>
+        </profile>
+        <profile>
             <id>prod</id>
             <properties>
                 <gwt.draftCompile>false</gwt.draftCompile>
@@ -315,12 +326,6 @@
             </build>
         </profile>
         <profile>
-            <id>i18n</id>
-            <properties>
-                <gwt.module>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.module>
-            </properties>
-        </profile>
-        <profile>
             <id>theme-eap</id>
             <properties>
                 <theme.name>eap</theme.name>
@@ -340,12 +345,6 @@
             <properties>
                 <theme.name>wildfly</theme.name>
             </properties>
-        </profile>
-        <profile>
-            <id>yarn</id>
-            <modules>
-                <module>yarn</module>
-            </modules>
         </profile>
     </profiles>
 

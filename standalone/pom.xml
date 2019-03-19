@@ -28,7 +28,7 @@
 
     <artifactId>hal-standalone</artifactId>
     <name>HAL :: Standalone</name>
-    <description>Runs HAL as a standalone application</description>
+    <description>Bootstraps HAL with a local Undertow server to run in standalone mode</description>
 
     <dependencies>
         <dependency>
