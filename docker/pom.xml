@@ -28,21 +28,10 @@
 
     <artifactId>hal-docker</artifactId>
     <name>HAL :: Docker</name>
-    <description>Builds various docker containers</description>
+    <description>Builds a docker container to run a independent console</description>
     <packaging>docker-build</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-console</artifactId>
-            <classifier>resources</classifier>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-standalone</artifactId>
@@ -80,14 +69,6 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>hal-console</artifactId>
-                                    <classifier>resources</classifier>
-                                    <version>${project.version}</version>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                    <destFileName>hal-console.jar</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>hal-standalone</artifactId>
                                     <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
@@ -98,13 +79,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-             Produce three docker images:
-                1. halconsole/hal-standalone: Contains HAL standalone
-                2. halconsole/hal-wildfly: Contains latest WildFly and HAL
-                3. halconsole/hal-wildfly-nightly: Contains latest nightly
-                   build of WildFly with HAL 
-            -->
+            <!-- Produce halconsole/hal-standalone which contains the a standalone HAL standalone -->
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -114,7 +89,7 @@
                     <images>
                         <image>
                             <alias>hal-standalone</alias>
-                            <name>halconsole/hal-standalone</name>
+                            <name>halconsole/hal-standalone:%l</name>
                             <build>
                                 <dockerFileDir>hal-standalone</dockerFileDir>
                                 <assembly>
@@ -125,48 +100,6 @@
                                                 <directory>${project.build.directory}</directory>
                                                 <includes>
                                                     <include>hal-standalone.jar</include>
-                                                </includes>
-                                                <outputDirectory>.</outputDirectory>
-                                            </fileSet>
-                                        </fileSets>
-                                    </inline>
-                                </assembly>
-                            </build>
-                        </image>
-                        <image>
-                            <alias>hal-wildfly</alias>
-                            <name>halconsole/hal-wildfly</name>
-                            <build>
-                                <dockerFileDir>hal-wildfly</dockerFileDir>
-                                <assembly>
-                                    <mode>dir</mode>
-                                    <inline>
-                                        <fileSets>
-                                            <fileSet>
-                                                <directory>${project.build.directory}</directory>
-                                                <includes>
-                                                    <include>hal-console.jar</include>
-                                                </includes>
-                                                <outputDirectory>.</outputDirectory>
-                                            </fileSet>
-                                        </fileSets>
-                                    </inline>
-                                </assembly>
-                            </build>
-                        </image>
-                        <image>
-                            <alias>hal-wildfly-nightly</alias>
-                            <name>halconsole/hal-wildfly-nightly</name>
-                            <build>
-                                <dockerFileDir>hal-wildfly-nightly</dockerFileDir>
-                                <assembly>
-                                    <mode>dir</mode>
-                                    <inline>
-                                        <fileSets>
-                                            <fileSet>
-                                                <directory>${project.build.directory}</directory>
-                                                <includes>
-                                                    <include>hal-console.jar</include>
                                                 </includes>
                                                 <outputDirectory>.</outputDirectory>
                                             </fileSet>
