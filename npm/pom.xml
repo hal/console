@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>3.0.14.Final</version>
+        <version>3.2.0-SNAPSHOT</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
-    <artifactId>hal-yarn</artifactId>
-    <name>HAL :: Yarn</name>
-    <description>Yarn setup to run HAL as a node application.</description>
+    <artifactId>hal-npm</artifactId>
+    <name>HAL :: NPM</name>
+    <description>Packages HAL as node application to run in standalone mode</description>
     <packaging>pom</packaging>
 
     <dependencies>
@@ -103,13 +103,13 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <configuration>
                     <nodeVersion>${node.version}</nodeVersion>
-                    <yarnVersion>${yarn.version}</yarnVersion>
+                    <npmVersion>${npm.version}</npmVersion>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>install node and yarn</id>
+                        <id>install node and npm</id>
                         <goals>
-                            <goal>install-node-and-yarn</goal>
+                            <goal>install-node-and-npm</goal>
                         </goals>
                     </execution>
                     <execution>

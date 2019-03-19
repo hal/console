@@ -1,21 +1,19 @@
 {
-  "name": "hal-console",
-  "version": "3.0.14",
-  "description": "Management console for WildFly / JBoss EAP",
+  "name": "hal-edk",
+  "version": "3.2.0",
+  "description": "HAL extension development kit",
   "keywords": [
     "hal",
     "management",
     "console",
     "wildfly",
     "jboss",
-    "eap"
+    "eap",
+    "extension"
   ],
-  "bin": {
-    "hal-console": "./server.js"
-  },
-  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "mv index.html ../.. && mv extension.js ../.. && mv extension.json ../.."
   },
   "repository": {
     "type": "git",
@@ -26,8 +24,5 @@
   "bugs": {
     "url": "https://issues.jboss.org/projects/HAL/issues"
   },
-  "homepage": "https://hal.github.io/",
-  "dependencies": {
-    "express": "^4.14.0"
-  }
+  "homepage": "https://hal.github.io/"
 }

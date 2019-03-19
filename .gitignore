@@ -14,6 +14,5 @@ hs_err*
 js/.DS_Store
 js/mbui/
 js/mvp/
-npm
 out
 target

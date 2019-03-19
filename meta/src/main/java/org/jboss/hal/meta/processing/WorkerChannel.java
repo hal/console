@@ -47,23 +47,19 @@ public class WorkerChannel {
     }
 
     void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription, boolean recursive) {
-        if (worker != null) {
-            resourceDescription.get(HAL_RECURSIVE).set(recursive);
-            UpdateMessage message = new UpdateMessage();
-            message.database = resourceDescriptionDatabase.name();
-            message.document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
-            worker.postMessage(message);
-        }
+        resourceDescription.get(HAL_RECURSIVE).set(recursive);
+        UpdateMessage message = new UpdateMessage();
+        message.database = resourceDescriptionDatabase.name();
+        message.document = resourceDescriptionDatabase.asDocument(address, resourceDescription);
+        worker.postMessage(message);
     }
 
     void postSecurityContext(ResourceAddress address, SecurityContext securityContext, boolean recursive) {
-        if (worker != null) {
-            securityContext.get(HAL_RECURSIVE).set(recursive);
-            UpdateMessage message = new UpdateMessage();
-            message.database = securityContextDatabase.name();
-            message.document = securityContextDatabase.asDocument(address, securityContext);
-            worker.postMessage(message);
-        }
+        securityContext.get(HAL_RECURSIVE).set(recursive);
+        UpdateMessage message = new UpdateMessage();
+        message.database = securityContextDatabase.name();
+        message.document = securityContextDatabase.asDocument(address, securityContext);
+        worker.postMessage(message);
     }
 
 

@@ -6,7 +6,7 @@
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ https://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,13 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>26</version>
+        <version>35</version>
     </parent>
 
     <groupId>org.jboss.hal</groupId>
@@ -31,11 +31,11 @@
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
-    <url>http://hal.github.io/</url>
+    <url>https://hal.github.io/</url>
 
     <organization>
         <name>JBoss, a division of Red Hat</name>
-        <url>http://www.jboss.org</url>
+        <url>https://developer.jboss.org/</url>
     </organization>
 
     <developers>
@@ -61,12 +61,12 @@
     <licenses>
         <license>
             <name>Apache License 2.0</name>
-            <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+            <url>https://repository.jboss.org/licenses/apache-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
         <license>
             <name>MIT License</name>
-            <url>http://repository.jboss.org/licenses/mit.txt</url>
+            <url>https://repository.jboss.org/licenses/mit.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -100,7 +100,7 @@
 
         <plugin.buildhelper.version>3.0.0</plugin.buildhelper.version>
         <plugin.degraph.version>3.0.1</plugin.degraph.version>
-        <plugin.docker.version>0.22.1</plugin.docker.version>
+        <plugin.docker.version>0.30.0</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
@@ -124,7 +124,6 @@
         <module>db</module>
         <module>dmr</module>
         <module>flow</module>
-        <module>fraction</module>
         <module>js</module>
         <module>meta</module>
         <module>parent-with-dependencies</module>
@@ -249,6 +248,18 @@
             </modules>
         </profile>
         <profile>
+            <id>i18n</id>
+            <properties>
+                <gwt.module>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.module>
+            </properties>
+        </profile>
+        <profile>
+            <id>npm</id>
+            <modules>
+                <module>npm</module>
+            </modules>
+        </profile>
+        <profile>
             <id>prod</id>
             <properties>
                 <gwt.draftCompile>false</gwt.draftCompile>
@@ -315,12 +326,6 @@
             </build>
         </profile>
         <profile>
-            <id>i18n</id>
-            <properties>
-                <gwt.module>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.module>
-            </properties>
-        </profile>
-        <profile>
             <id>theme-eap</id>
             <properties>
                 <theme.name>eap</theme.name>
@@ -340,12 +345,6 @@
             <properties>
                 <theme.name>wildfly</theme.name>
             </properties>
-        </profile>
-        <profile>
-            <id>yarn</id>
-            <modules>
-                <module>yarn</module>
-            </modules>
         </profile>
     </profiles>
 
@@ -372,7 +371,7 @@
         </repository>
         <repository>
             <id>jboss-nexus</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
+            <url>https://repository.jboss.org/nexus/content/groups/public</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

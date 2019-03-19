@@ -50,16 +50,13 @@
         <jdom.version>2.0.2</jdom.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
-        <node.version>v8.11.3</node.version>
+        <node.version>v9.11.2</node.version>
+        <npm.version>6.9.0</npm.version>
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <undertow.version>2.0.7.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
-        <wildfly.version>12.0.0.Final</wildfly.version>
-        <wildfly-core.version>4.0.0.Final</wildfly-core.version>
-        <wildfly-swarm.version>2018.5.0</wildfly-swarm.version>
-        <yarn.version>v1.9.2</yarn.version>
     </properties>
 
     <!-- Do not declare any build settings here! Declare them in hal-parent. -->
@@ -182,26 +179,7 @@
                 </exclusions>
             </dependency>
 
-            <!-- WildFly -->
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom-all</artifactId>
-                <version>${wildfly-swarm.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>spi</artifactId>
-                <version>${wildfly-swarm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly.core</groupId>
-                <artifactId>wildfly-core-feature-pack</artifactId>
-                <version>${wildfly-core.version}</version>
-                <type>zip</type>
-                <scope>provided</scope>
-            </dependency>
+            <!-- Undertow -->
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-core</artifactId>
