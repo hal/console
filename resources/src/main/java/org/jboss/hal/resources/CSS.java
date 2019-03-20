@@ -56,6 +56,7 @@ public interface CSS {
     String bootstrapError = "bootstrap-error";
     String bootstrapSelect = "bootstrap-select";
     String bootstrapSwitch = "bootstrap-switch";
+    String bootstrapSwitchContainer = "bootstrap-switch-container";
     String breadcrumb = "breadcrumb";
     String breakTooltip = "break-tooltip";
     String btn = "btn";

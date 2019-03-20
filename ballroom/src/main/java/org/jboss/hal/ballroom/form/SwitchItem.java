@@ -25,6 +25,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.change;
@@ -161,8 +162,13 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void attach() {
             super.attach();
-            inputElement.classList.add(bootstrapSwitch);
-            SwitchBridge.Api.element(inputElement).onChange((event, state) -> modifyValue(state));
+            HTMLElement editElement = SwitchItem.this.element(EDITING);
+            if (Elements.isVisible(editElement) && editElement.querySelector("." + bootstrapSwitchContainer) == null) {
+                inputElement.classList.add(bootstrapSwitch);
+                SwitchBridge.Api api = SwitchBridge.Api.element(inputElement);
+                api.bootstrapSwitch();
+                api.onChange((event, state) -> modifyValue(state));
+            }
         }
 
         @Override
