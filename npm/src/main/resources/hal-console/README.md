@@ -13,8 +13,8 @@ Starts a local web server listening to http://localhost:3000. Please make sure t
 To install and run HAL use
 
 ```
-yarn install -g hal-console
-hal-console
+npm install hal-console
+[PORT=dddd] node hal-console
 ```
 
-See also https://hal.github.io/documentation/get-started/#yarn-npm
+See also https://hal.github.io/documentation/get-started/#npm
