@@ -10,7 +10,7 @@ HAL is a client side RIA without server side dependencies. It is a GWT applicati
 In a nutshell the console uses the following technical stack:
 
 - Java 8
-- [GWT](http://www.gwtproject.org/) 
+- [GWT](https://www.gwtproject.org/) 
 - [GWTP](https://dev.arcbees.com/gwtp/)
 - [Elemento](https://github.com/hal/elemento)
 - [RxGWT](https://github.com/intendia-oss/rxgwt)
@@ -106,6 +106,6 @@ If you want to replace the console of an existing WildFly installation use the f
 
 # Licenses
 
-* [Apache License 2.0](http://repository.jboss.org/licenses/apache-2.0.txt)
-* [MIT License](http://repository.jboss.org/licenses/mit.txt)
+* [Apache License 2.0](https://repository.jboss.org/licenses/apache-2.0.txt)
+* [MIT License](https://repository.jboss.org/licenses/mit.txt)
 

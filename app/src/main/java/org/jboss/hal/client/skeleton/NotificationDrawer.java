@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,7 +37,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * Container which holds the last n messages. The user can review and clear the messages.
  *
- * @see <a href="http://www.patternfly.org/pattern-library/communication/notification-drawer/">http://www.patternfly.org/pattern-library/communication/notification-drawer/</a>
+ * @see <a href="https://www.patternfly.org/pattern-library/communication/notification-drawer/">https://www.patternfly.org/pattern-library/communication/notification-drawer/</a>
  */
 class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
 

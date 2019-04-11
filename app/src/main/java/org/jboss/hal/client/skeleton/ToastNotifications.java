@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,7 @@ import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
  * Prevents overlapping of simultaneous messages and handles the mouse over / out events in order to pause the
  * automatic fade out time.
  *
- * @see <a href="http://www.patternfly.org/pattern-library/communication/toast-notifications/">http://www.patternfly.org/pattern-library/communication/toast-notifications/</a>
+ * @see <a href="https://www.patternfly.org/pattern-library/communication/toast-notifications/">https://www.patternfly.org/pattern-library/communication/toast-notifications/</a>
  */
 class ToastNotifications implements IsElement {
 

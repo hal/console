@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/hal/console.git"
   },
-  "author": "Harald Pehl <hpehl@redhat.com> (http://hpehl.info)",
+  "author": "Harald Pehl <hpehl@redhat.com> (https://hpehl.info)",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://issues.jboss.org/projects/HAL/issues"

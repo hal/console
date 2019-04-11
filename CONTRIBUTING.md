@@ -10,7 +10,7 @@ If you don't have one already, head to https://github.com/
 
 ## Git Flow
 
-We use [Git Flow](https://github.com/nvie/gitflow) to manage branches. Although it's no requirement, it helps if you've read and understood the [basic ideas](http://nvie.com/posts/a-successful-git-branching-model/) behind Git Flow. The most important fact is that development happens in the `develop` branch and that the latest stable version is always available in branch `master`.
+We use [Git Flow](https://github.com/nvie/gitflow) to manage branches. Although it's no requirement, it helps if you've read and understood the [basic ideas](https://nvie.com/posts/a-successful-git-branching-model/) behind Git Flow. The most important fact is that development happens in the `develop` branch and that the latest stable version is always available in branch `master`.
 
 ## Fork HAL
 
@@ -115,5 +115,5 @@ git push origin
 
 Here are some tips on increasing the chance that your pull request is accepted:
 
- * Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
+ * Write a [good commit message](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
  * Include tests that fail without your code, and pass with it

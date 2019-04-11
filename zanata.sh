@@ -116,7 +116,7 @@ function pullPreviews {
 }
 
 # Verify Zanata client is available
-command -v zanata-cli >/dev/null 2>&1 || { echo >&2 "Zanata client not found. Follow the instructions at http://zanata-client.readthedocs.org/en/latest/#zanata-command-line-client to install the client."; exit 1; }
+command -v zanata-cli >/dev/null 2>&1 || { echo >&2 "Zanata client not found. Follow the instructions at https://docs.zanata.org/en/release/client/ to install the client."; exit 1; }
 
 # Check
 if [[ ${ARGS} -eq 0 ]]

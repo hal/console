@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -173,7 +173,8 @@ public class HostPresenter
                 .build();
 
         dispatcher.execute(
-                new Composite(hostOp, interfacesOp, jvmsOp, pathsOp, socketBindingGroupsOp, systemPropertiesOp, mgmtInterfacesOp),
+                new Composite(hostOp, interfacesOp, jvmsOp, pathsOp, socketBindingGroupsOp, systemPropertiesOp,
+                        mgmtInterfacesOp),
                 (CompositeResult result) -> {
                     getView().updateHost(new Host(result.step(0).get(RESULT)));
                     getView().updateInterfaces(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
@@ -315,7 +316,8 @@ public class HostPresenter
                                         String port = value.get(PORT).asString();
                                         if (port.contains("$")) {
                                             // if it contains an expression value, resolve it at host level
-                                            ResourceAddress address = AddressTemplate.of("/host=" + environment.getDomainController())
+                                            ResourceAddress address = AddressTemplate.of(
+                                                    "/host=" + environment.getDomainController())
                                                     .resolve(statementContext);
                                             Operation readPort = new Operation.Builder(address, RESOLVE_EXPRESSION)
                                                     .param(EXPRESSION, port)
@@ -377,6 +379,7 @@ public class HostPresenter
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
                                         // the location to redirect the browser to the unsecure URL
+                                        // TODO Replace hardcoded scheme
                                         String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
                                         Host host = flowContext.get(HOST);
                                         reloadServer(host, location);
@@ -390,7 +393,8 @@ public class HostPresenter
                                 @Override
                                 public void onError(FlowContext context, Throwable throwable) {
                                     MessageEvent.fire(getEventBus(),
-                                            Message.error(resources.messages().disableSSLManagementError(throwable.getMessage())));
+                                            Message.error(resources.messages()
+                                                    .disableSSLManagementError(throwable.getMessage())));
                                 }
                             });
                 })
