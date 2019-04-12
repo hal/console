@@ -25,6 +25,20 @@ import jsinterop.annotations.JsType;
 @JsType
 public interface Environment {
 
+    /** @return the name. */
+    @JsProperty
+    String getName();
+
+    @JsIgnore
+    void setName(String name);
+
+    /** @return the organization. */
+    @JsProperty
+    String getOrganization();
+
+    @JsIgnore
+    void setOrganization(String organization);
+
     /** @return the HAL version. */
     @JsProperty
     Version getHalVersion();
@@ -40,9 +54,7 @@ public interface Environment {
     InstanceInfo getInstanceInfo();
 
     @JsIgnore
-    void setInstanceInfo(String productName, String productVersion,
-            String releaseName, String releaseVersion,
-            String serverName);
+    void setInstanceInfo(String productName, String productVersion, String releaseName, String releaseVersion);
 
     @JsIgnore
     OperationMode getOperationMode();

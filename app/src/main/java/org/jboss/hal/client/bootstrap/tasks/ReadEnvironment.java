@@ -84,15 +84,7 @@ public class ReadEnvironment implements BootstrapTask {
 
         return dispatcher.execute(new Composite(ops))
                 .doOnSuccess((CompositeResult result) -> {
-
-                    // server info
                     ModelNode node = result.step(0).get(RESULT);
-                    String serverName = node.get(NAME).asString();
-                    environment.setInstanceInfo(node.get(PRODUCT_NAME).asString(),
-                            node.get(PRODUCT_VERSION).asString(),
-                            node.get(RELEASE_CODENAME).asString(), node.get(RELEASE_VERSION).asString(),
-                            serverName);
-                    logger.debug("Server info: {}", serverName);
 
                     // operation mode
                     //noinspection Convert2MethodRef (conflicts with second method reference below)
@@ -100,6 +92,21 @@ public class ReadEnvironment implements BootstrapTask {
                             OperationMode.UNDEFINED);
                     environment.setOperationMode(operationMode);
                     logger.debug("Operation mode: {}", operationMode);
+
+                    // name and org
+                    if (node.get(NAME).isDefined()) {
+                        String name = node.get(NAME).asString();
+                        environment.setName(name);
+                    }
+                    String orgAttribute = environment.isStandalone() ? ORGANIZATION : DOMAIN_ORGANIZATION;
+                    if (node.get(orgAttribute).isDefined()) {
+                        String org = node.get(orgAttribute).asString();
+                        environment.setOrganization(org);
+                    }
+
+                    // server info
+                    environment.setInstanceInfo(node.get(PRODUCT_NAME).asString(), node.get(PRODUCT_VERSION).asString(),
+                            node.get(RELEASE_CODENAME).asString(), node.get(RELEASE_VERSION).asString());
 
                     // management version
                     Version version = ManagementModel.parseVersion(node);
@@ -133,7 +140,7 @@ public class ReadEnvironment implements BootstrapTask {
                             }
                         }
                     }
-                    logger.debug("User info: {}", user.getName(), user.getRoles());
+                    logger.debug("User info: {} {}", user.getName(), user.getRoles());
                 })
                 .toCompletable();
     }

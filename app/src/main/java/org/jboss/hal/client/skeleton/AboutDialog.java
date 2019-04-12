@@ -41,6 +41,8 @@ class AboutDialog {
     AboutDialog(Environment environment, Endpoints endpoints, Resources resources) {
         if (document.getElementById(Ids.ABOUT_MODAL) == null) {
             ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder()
+                    .put(resources.constants().name(), failSafe(environment.getName()))
+                    .put(resources.constants().organization(), failSafe(environment.getOrganization()))
                     .put(resources.constants().productName(), failSafe(environment.getInstanceInfo().productName()))
                     .put(resources.constants().productVersion(),
                             failSafe(environment.getInstanceInfo().productVersion()))
@@ -50,8 +52,7 @@ class AboutDialog {
                     .put(resources.constants().managementVersion(),
                             failSafe(environment.getManagementVersion().toString()))
                     .put(resources.constants().consoleVersion(), failSafe(environment.getHalVersion().toString()))
-                    .put(resources.constants().operationMode(), failSafe(environment.getOperationMode().name()))
-                    .put(resources.constants().serverName(), failSafe(environment.getInstanceInfo().serverName()));
+                    .put(resources.constants().operationMode(), failSafe(environment.getOperationMode().name()));
             if (!endpoints.isSameOrigin()) {
                 builder.put(resources.constants().connectedTo(), failSafe(endpoints.dmr()));
             }

@@ -85,6 +85,7 @@ public class Settings {
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
     public enum Key {
+        TITLE("title", true),
         COLLECT_USER_DATA("collect-user-data", true),
         LOCALE("locale", true),
         PAGE_SIZE("page-size", true),
@@ -94,6 +95,8 @@ public class Settings {
 
         public static Key from(@NonNls String key) {
             switch (key) {
+                case "title":
+                    return TITLE;
                 case "collect-user-data":
                     return COLLECT_USER_DATA;
                 case "locale":

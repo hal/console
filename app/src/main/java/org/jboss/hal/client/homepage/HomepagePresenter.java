@@ -118,8 +118,7 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
                     // place requests for standalone mode
                     PlaceRequest configuration = places.finderPlace(NameTokens.CONFIGURATION,
                             new FinderPath().append(Ids.CONFIGURATION, Ids.asId(Names.SUBSYSTEMS))).build();
-                    String serverId = Ids.hostServer(Server.STANDALONE.getHost(),
-                            environment.getInstanceInfo().serverName());
+                    String serverId = Ids.hostServer(Server.STANDALONE.getHost(), environment.getName());
                     PlaceRequest monitor = places.finderPlace(NameTokens.RUNTIME,
                             new FinderPath().append(Ids.STANDALONE_SERVER_COLUMN, serverId)).build();
 

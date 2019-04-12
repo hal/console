@@ -270,8 +270,9 @@ public interface ModelDescriptionConstants {
     String DISTINGUISHED_NAME = "distinguished-name";
     String DISTRIBUTED_CACHE = "distributed-cache";
     String DIVERT = "divert";
-    String DOMAIN_UUID = "domain-uuid";
+    String DOMAIN_ORGANIZATION = "domain-organization";
     String DOMAIN_ROLLOUT = "domain-rollout";
+    String DOMAIN_UUID = "domain-uuid";
     String DOWN = "DOWN";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
@@ -610,6 +611,7 @@ public interface ModelDescriptionConstants {
     String OPERATION_DATE = "operation-date";
     String OPERATION_HEADERS = "operation-headers";
     String OPERATIONS = "operations";
+    String ORGANIZATION = "organization";
     String ORDINAL = "ordinal";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";

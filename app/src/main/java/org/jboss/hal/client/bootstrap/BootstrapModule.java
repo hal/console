@@ -29,6 +29,7 @@ import org.jboss.hal.client.bootstrap.tasks.ReadAuthentication;
 import org.jboss.hal.client.bootstrap.tasks.ReadEnvironment;
 import org.jboss.hal.client.bootstrap.tasks.ReadExtensions;
 import org.jboss.hal.client.bootstrap.tasks.RegisterStaticCapabilities;
+import org.jboss.hal.client.bootstrap.tasks.SetTitle;
 import org.jboss.hal.client.bootstrap.tasks.StartAnalytics;
 import org.jboss.hal.spi.GinModule;
 
@@ -50,5 +51,6 @@ public class BootstrapModule extends AbstractGinModule {
         bind(ReadExtensions.class).in(Singleton.class);
         bind(RegisterStaticCapabilities.class).in(Singleton.class);
         bind(StartAnalytics.class).in(Singleton.class);
+        bind(SetTitle.class).in(Singleton.class);
     }
 }
