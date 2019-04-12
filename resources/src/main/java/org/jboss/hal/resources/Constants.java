@@ -354,6 +354,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String modelBrowser();
     String monitor();
     String move();
+    String name();
     String nanoseconds();
     String nativeManagementInterface();
     String needsReload();
@@ -407,6 +408,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String optionalFields();
     String or();
     String orDragItHere();
+    String organization();
     String outcome();
     String output();
     String patchError();

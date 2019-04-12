@@ -1,6 +1,11 @@
 {
     "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd. Please keep the attributes in sync with org.jboss.hal.config.Settings.Key",
     "attributes" => {
+        "title" => {
+            "type" => STRING,
+            "description" => "The title of the browser window / tab. Leave blank to use the built in title. Can contain '%n' for the name and '%o' for the (domain-)organization attributes of the root resource.",
+            "nillable" => true
+        },
         "collect-user-data" => {
             "type" => BOOLEAN,
             "description" => "Enable Usage Data Collection: The Admin Console has the capability to collect usage data via Google Analytics. This data will be used exclusively by Red Hat to improve the console in future releases.",

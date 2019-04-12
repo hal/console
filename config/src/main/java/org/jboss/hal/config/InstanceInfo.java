@@ -31,7 +31,6 @@ public class InstanceInfo {
     private String productVersion;
     private String releaseName;
     private String releaseVersion;
-    private String serverName;
 
     @JsIgnore
     InstanceInfo() {
@@ -39,57 +38,38 @@ public class InstanceInfo {
         this.productVersion = Names.NOT_AVAILABLE;
         this.releaseName = Names.NOT_AVAILABLE;
         this.releaseVersion = Names.NOT_AVAILABLE;
-        this.serverName = Names.NOT_AVAILABLE;
     }
 
-    /**
-     * @return the product name.
-     */
+    /** @return the product name. */
     @JsProperty(name = "productName")
     public String productName() {
         return productName;
     }
 
-    /**
-     * @return the product version.
-     */
+    /** @return the product version. */
     @JsProperty(name = "productVersion")
     public String productVersion() {
         return productVersion;
     }
 
-    /**
-     * @return the release name.
-     */
+    /** @return the release name. */
     @JsProperty(name = "releaseName")
     public String releaseName() {
         return releaseName;
     }
 
-    /**
-     * @return the release version.
-     */
+    /** @return the release version. */
     @JsProperty(name = "releaseVersion")
     public String releaseVersion() {
         return releaseVersion;
     }
 
-    /**
-     * @return the server name.
-     */
-    @JsProperty(name = "serverName")
-    public String serverName() {
-        return serverName;
-    }
-
     @JsIgnore
-    public void update(final String productName, final String productVersion,
-            final String releaseName, final String releaseVersion,
-            final String serverName) {
+    public void update(String productName, String productVersion,
+            String releaseName, String releaseVersion) {
         this.productName = productName;
         this.productVersion = productVersion;
         this.releaseName = releaseName;
         this.releaseVersion = releaseVersion;
-        this.serverName = serverName;
     }
 }

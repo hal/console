@@ -22,6 +22,7 @@ public class BootstrapTasks {
 
     private final BootstrapTask[] tasks;
 
+    // Don't change the order unless you know what you're doing!
     @Inject
     public BootstrapTasks(ReadEnvironment readEnvironment,
             ReadAuthentication readAuthentication,
@@ -29,6 +30,7 @@ public class BootstrapTasks {
             RegisterStaticCapabilities registerStaticCapabilities,
             ReadExtensions readExtensions,
             LoadSettings loadSettings,
+            SetTitle setTitle,
             StartAnalytics startAnalytics) {
         this.tasks = new BootstrapTask[]{
                 readEnvironment,
@@ -37,6 +39,7 @@ public class BootstrapTasks {
                 registerStaticCapabilities,
                 readExtensions,
                 loadSettings,
+                setTitle,
                 startAnalytics,
         };
     }

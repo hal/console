@@ -39,6 +39,8 @@ public abstract class AbstractEnvironment implements Environment {
     private final Roles roles;
     private final boolean devMode;
     private final boolean productionMode;
+    private String name;
+    private String organization;
     private OperationMode operationMode;
     private String domainController;
     private Version managementVersion;
@@ -55,6 +57,8 @@ public abstract class AbstractEnvironment implements Environment {
         String pathname = window.location.getPathname();
         this.productionMode = pathname.equals("/") || pathname.endsWith("index.html");
         this.operationMode = STANDALONE;
+        this.name = null;
+        this.organization = null;
         this.domainController = null;
         this.managementVersion = Version.EMPTY_VERSION;
         this.accessControlProvider = AccessControlProvider.SIMPLE;
@@ -81,9 +85,28 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
-    public void setInstanceInfo(String productName, String productVersion, String releaseName, String releaseVersion,
-            String serverName) {
-        instanceInfo.update(productName, productVersion, releaseName, releaseVersion, serverName);
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getOrganization() {
+        return organization;
+    }
+
+    @Override
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    @Override
+    public void setInstanceInfo(String productName, String productVersion, String releaseName, String releaseVersion) {
+        instanceInfo.update(productName, productVersion, releaseName, releaseVersion);
     }
 
     @Override
