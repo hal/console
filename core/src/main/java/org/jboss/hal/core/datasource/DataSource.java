@@ -74,14 +74,14 @@ public class DataSource extends NamedNode {
     }
 
     public boolean isEnabled() {
-        return hasDefined(ENABLED) && get(ENABLED).asBoolean();
+        return hasDefined(ENABLED) && get(ENABLED).asBoolean(false);
     }
 
     public boolean isStatisticsEnabled() {
-        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean();
+        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean(false);
     }
 
-    public void setDriver(final JdbcDriver driver) {
+    public void setDriver(JdbcDriver driver) {
         get(DRIVER_NAME).set(driver.getName());
         get(DRIVER_CLASS).set(driver.get(DRIVER_CLASS_NAME));
     }

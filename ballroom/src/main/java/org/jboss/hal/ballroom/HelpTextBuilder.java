@@ -73,8 +73,8 @@ public class HelpTextBuilder {
         SafeHtmlBuilder help = new SafeHtmlBuilder();
         ModelNode attribute = property.getValue();
         boolean supportsExpression = attribute.hasDefined(EXPRESSIONS_ALLOWED) && attribute.get(EXPRESSIONS_ALLOWED)
-                .asBoolean();
-        boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
+                .asBoolean(false);
+        boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean(false);
         List<String> requires = attribute.hasDefined(REQUIRES)
                 ? attribute.get(REQUIRES).asList().stream().map(ModelNode::asString).collect(toList())
                 : Collections.emptyList();

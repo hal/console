@@ -214,4 +214,11 @@ class ExpressionValue extends ModelValue {
     ModelValue resolve() {
         return new StringModelValue(replaceProperties(expressionString));
     }
+
+    // ------------------------------------------------------ code not in jboss-dmr
+
+    @Override
+    boolean asBoolean(boolean defVal) {
+        return defVal;
+    }
 }

@@ -185,7 +185,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
             DeploymentResource deploymentStats = new DeploymentResource(item.getAddress(), deploymentResult);
             previewAttributes.refresh(deploymentStats);
 
-            boolean statsEnabled = subsystemResult.get(STATISTICS_ENABLED).asBoolean();
+            boolean statsEnabled = subsystemResult.get(STATISTICS_ENABLED).asBoolean(false);
             if (statsEnabled) {
                 Map<String, Long> updatedSession = new HashMap<>();
                 updatedSession.put(ACTIVE_SESSIONS, deploymentStats.get(ACTIVE_SESSIONS).asLong());

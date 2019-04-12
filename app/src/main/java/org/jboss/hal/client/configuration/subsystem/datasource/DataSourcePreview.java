@@ -38,7 +38,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
     DataSourcePreview(final DataSourceColumn column, final DataSource dataSource, final Resources resources) {
         super(dataSource.getName(), dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE);
-        boolean enabled = dataSource.hasDefined(ENABLED) && dataSource.get(ENABLED).asBoolean();
+        boolean enabled = dataSource.hasDefined(ENABLED) && dataSource.get(ENABLED).asBoolean(false);
         String type = dataSource.isXa() ? XA_DATASOURCE : DATASOURCE;
 
         if (enabled) {

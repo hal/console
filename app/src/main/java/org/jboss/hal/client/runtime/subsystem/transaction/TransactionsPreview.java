@@ -120,7 +120,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .param(INCLUDE_RUNTIME, true)
                 .build();
         dispatcher.execute(opWeb, result -> {
-            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean();
+            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean(false);
             Elements.setVisible(noStatistics.asElement(), !statsEnabled);
 
             if (statsEnabled) {
