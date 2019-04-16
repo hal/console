@@ -32,15 +32,13 @@ public class PatternFly {
     @JsProperty(name = "pfPaletteColors")
     public static Colors colors;
 
-    /** Same as {@code initComponents(false, null)} */
     @JsOverlay
     public static void initComponents() {
         init(null);
     }
 
-    /** Same as {@code initComponents(false, parent)} */
     @JsOverlay
-    public static void initComponents(final String parent) {
+    public static void initComponents(String parent) {
         init(parent);
     }
 
