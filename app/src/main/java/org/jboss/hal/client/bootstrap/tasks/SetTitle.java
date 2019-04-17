@@ -62,7 +62,7 @@ public class SetTitle implements BootstrapTask {
                     } else {
                         logger.error("Value for placeholder '{}' in custom title is undefined. " +
                                 "Fall back to built in title.", entry.getKey());
-                        title = Names.BROWSER_TITLE;
+                        title = Names.BROWSER_FALLBACK_TITLE;
                         break;
                     }
                 }

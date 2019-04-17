@@ -49,7 +49,8 @@ public interface Names {
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
     String BROADCAST_GROUP = "Broadcast Group";
-    String BROWSER_TITLE = "HAL Management Console";
+    String BROWSER_DEFAULT_TITLE = "%n | Management Console";
+    String BROWSER_FALLBACK_TITLE = "HAL Management Console";
     String BUFFER_CACHES = "Buffer Caches";
     String BUNDLED_EXTENSION = "Bundled Extension";
     String BYTE_BUFFER_POOL = "Byte Buffer Pool";
