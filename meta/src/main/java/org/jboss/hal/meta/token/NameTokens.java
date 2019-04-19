@@ -41,6 +41,7 @@ public interface NameTokens {
     String DEPLOYMENTS = "deployments";
     String DISTRIBUTED_CACHE = ModelDescriptionConstants.DISTRIBUTED_CACHE;
     String EE = ModelDescriptionConstants.EE;
+    String ERROR = "error";
     String ELYTRON = ModelDescriptionConstants.ELYTRON;
     String ELYTRON_FACTORIES_TRANSFORMERS = "elytron-factories-transformers";
     String ELYTRON_MAPPERS_DECODERS = "elytron-mappers";
@@ -114,6 +115,7 @@ public interface NameTokens {
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
     String TRANSACTIONS_RUNTIME = "transactions-runtime";
+    String UNAUTHORIZED = "unauthorized";
     String UNDERTOW = "undertow";
     String UNDERTOW_APPLICATION_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";

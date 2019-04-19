@@ -34,11 +34,11 @@ import org.jetbrains.annotations.NotNull;
  * The presenter calls {@link HalView#attach()} when it's {@linkplain #onReveal() revealed} and {@link
  * HalView#detach()} when it's {@linkplain #onHide() hidden}.
  */
-abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
+public abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         extends Presenter<V, Proxy_>
         implements IsElement, Iterable<HTMLElement> {
 
-    HalPresenter(EventBus eventBus, V view, Proxy_ proxy, GwtEvent.Type<RevealContentHandler<?>> slot) {
+    protected HalPresenter(EventBus eventBus, V view, Proxy_ proxy, GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
     }
 

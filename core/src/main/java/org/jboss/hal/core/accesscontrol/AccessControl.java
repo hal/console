@@ -36,7 +36,7 @@ public class AccessControl {
     private final User user;
 
     @Inject
-    public AccessControl(final Environment environment, final Settings settings, final User user) {
+    public AccessControl(Environment environment, Settings settings, User user) {
         this.environment = environment;
         this.settings = settings;
         this.user = user;
