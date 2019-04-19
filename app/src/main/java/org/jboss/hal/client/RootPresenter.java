@@ -55,6 +55,7 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
 
     @Override
     protected void onBind() {
+        super.onBind();
         if (!places.isExternal(placeManager.getCurrentPlaceRequest())) {
             setInSlot(SLOT_HEADER_CONTENT, headerPresenter);
             setInSlot(SLOT_FOOTER_CONTENT, footerPresenter);

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +17,23 @@ package org.jboss.hal.core.accesscontrol;
 
 import javax.inject.Inject;
 
+import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
+import org.jboss.hal.config.User;
 
-/** A gatekeeper which needs {@link AccessControl#isSuperUserOrAdministrator()} to pass. */
-public class SensitiveGatekeeper implements Gatekeeper {
+/** Default gatekeeper which makes sure the current user is {@linkplain User#isAuthenticated() authenticated}. */
+@DefaultGatekeeper
+public class AuthenticatedGatekeeper implements Gatekeeper {
 
-    private final AccessControl accessControl;
+    private final User user;
 
     @Inject
-    public SensitiveGatekeeper(AccessControl accessControl) {
-        this.accessControl = accessControl;
+    public AuthenticatedGatekeeper(User user) {
+        this.user = user;
     }
 
     @Override
     public boolean canReveal() {
-        return accessControl.isSuperUserOrAdministrator();
+        return user.isAuthenticated();
     }
 }

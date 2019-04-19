@@ -207,8 +207,8 @@ public class ConsoleModule extends AbstractPresenterModule {
         install(defaultModule);
 
         bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.ERROR);
+        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.UNAUTHORIZED);
 
 
         // ------------------------------------------------------ misc
@@ -358,6 +358,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 EEPresenter.MyView.class,
                 EEView.class,
                 EEPresenter.MyProxy.class);
+
+        bindPresenter(ErrorPresenter.class,
+                ErrorPresenter.MyView.class,
+                Templated_ErrorView.class,
+                ErrorPresenter.MyProxy.class);
 
         bindPresenter(ExpertModePresenter.class,
                 ExpertModePresenter.MyView.class,
@@ -713,6 +718,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 UnderTheBridgePresenter.MyView.class,
                 UnderTheBridgeView.class,
                 UnderTheBridgePresenter.MyProxy.class);
+
+        bindPresenter(UnauthorizedPresenter.class,
+                UnauthorizedPresenter.MyView.class,
+                Templated_UnauthorizedView.class,
+                UnauthorizedPresenter.MyProxy.class);
 
         bindPresenter(UndertowSubsystemPresenter.class,
                 UndertowSubsystemPresenter.MyView.class,
