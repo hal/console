@@ -149,7 +149,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 List<ItemAction<ServerGroup>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(Ids.serverGroup(item.getName()), placeRequest));
 
-                // Order is: reload, restart, suspend, resume, stop, start
+                // Order is: reload, restart, suspend, resume, stop, start, remove, copy
                 if (item.hasServers(Server::isStarted)) {
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().reload())
@@ -191,6 +191,13 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                             .constraints(constraints(item, START_SERVERS))
                             .build());
                 }
+                if (!item.hasServers(Server::isStarted)) {
+                    actions.add(new ItemAction.Builder<ServerGroup>()
+                            .title(resources.constants().remove())
+                            .handler(serverGroupActions::remove)
+                            .constraints(constraints(item, REMOVE))
+                            .build());
+                }
                 // add destroy and kill action regardless of state
                 // to destroy and kill servers which might show a wrong state
                 actions.add(new ItemAction.Builder<ServerGroup>()
@@ -202,6 +209,12 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                         .title(resources.constants().kill())
                         .handler(serverGroupActions::kill)
                         .constraints(constraints(item, KILL))
+                        .build());
+                // add copy to all servers
+                actions.add(new ItemAction.Builder<ServerGroup>()
+                        .title(resources.constants().copy())
+                        .handler(itm -> serverGroupActions.copy(itm, createUniqueValidation()))
+                        .constraint(Constraint.executable(serverGroupTemplate(item), ADD))
                         .build());
                 return actions;
             }
