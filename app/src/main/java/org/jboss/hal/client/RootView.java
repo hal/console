@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.hal.client.RootPresenter.CLEAR_FOOTER;
-import static org.jboss.hal.client.RootPresenter.CLEAR_HEADER;
 import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
 import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
 import static org.jboss.hal.resources.CSS.containerFluid;
@@ -55,17 +53,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     @Override
     @SuppressWarnings("unchecked")
     public void setInSlot(Object slot, IsWidget content) {
-        if (slot == CLEAR_HEADER) {
-            HTMLElement element = slots.get(SLOT_HEADER_CONTENT);
-            if (element != null) {
-                document.body.removeChild(element);
-            }
-        } else if (slot == CLEAR_FOOTER) {
-            HTMLElement element = slots.get(SLOT_FOOTER_CONTENT);
-            if (element != null) {
-                document.body.removeChild(element);
-            }
-        } else if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
+        if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
             HTMLElement element = content instanceof IsElement ?
                     ((IsElement) content).element() :

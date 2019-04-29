@@ -36,6 +36,5 @@ public abstract class ErrorView extends HalViewImpl implements ErrorPresenter.My
 
     @PostConstruct
     void init() {
-
     }
 }

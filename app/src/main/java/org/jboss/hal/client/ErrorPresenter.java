@@ -23,25 +23,16 @@ import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.header.HeaderModeEvent;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.HalPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.meta.token.NameTokens;
 
-import static org.jboss.hal.client.RootPresenter.CLEAR_FOOTER;
-import static org.jboss.hal.client.RootPresenter.CLEAR_HEADER;
-
-public class ErrorPresenter extends ApplicationPresenter<ErrorPresenter.MyView, ErrorPresenter.MyProxy> {
+public class ErrorPresenter extends HalPresenter<ErrorPresenter.MyView, ErrorPresenter.MyProxy> {
 
     @Inject
     public ErrorPresenter(EventBus eventBus, MyView view, MyProxy proxy) {
-        super(eventBus, view, proxy);
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        clearSlot(CLEAR_HEADER);
-        clearSlot(CLEAR_FOOTER);
+        super(eventBus, view, proxy, Slots.MAIN);
     }
 
     @Override

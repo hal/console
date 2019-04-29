@@ -50,7 +50,7 @@ import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Kind of presenter which holds code to read and parseSingle the RBAC related management model.
+ * Kind of presenter which holds code to read and parse  the RBAC related management model.
  * <p>
  * TODO Sync roles with environment and header
  */
@@ -71,11 +71,11 @@ public class AccessControl {
     private final Assignments assignments;
 
     @Inject
-    public AccessControl(final Environment environment,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final User currentUser,
-            final Resources resources) {
+    public AccessControl(Environment environment,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            User currentUser,
+            Resources resources) {
         this.environment = environment;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
@@ -96,14 +96,16 @@ public class AccessControl {
                     () -> dispatcher.execute(builder.param(VALUE, RBAC.name().toLowerCase()).build(), result -> {
                         environment.setAccessControlProvider(RBAC);
                         MessageEvent
-                                .fire(eventBus, Message.success(resources.messages().switchProviderSuccess(SIMPLE.name(), RBAC.name())));
+                                .fire(eventBus, Message.success(
+                                        resources.messages().switchProviderSuccess(SIMPLE.name(), RBAC.name())));
                     }));
         } else {
             DialogFactory.showConfirmation(resources.constants().switchProvider(),
                     resources.messages().switchToSimpleProvider(),
                     () -> dispatcher.execute(builder.param(VALUE, SIMPLE.name().toLowerCase()).build(), result -> {
                         environment.setAccessControlProvider(SIMPLE);
-                        MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess(RBAC.name(), SIMPLE.name())));
+                        MessageEvent.fire(eventBus, Message.success(
+                                resources.messages().switchProviderSuccess(RBAC.name(), SIMPLE.name())));
                     }));
         }
     }
@@ -199,7 +201,7 @@ public class AccessControl {
         return new Role(property.getName(), baseRole, type, scope);
     }
 
-    private void addAssignment(final Property property, final Role role, final boolean include) {
+    private void addAssignment(Property property, Role role, boolean include) {
         String resourceName = property.getName();
         ModelNode node = property.getValue();
 
