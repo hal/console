@@ -36,6 +36,5 @@ public abstract class UnauthorizedView extends HalViewImpl implements Unauthoriz
 
     @PostConstruct
     void init() {
-
     }
 }
