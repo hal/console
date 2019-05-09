@@ -20,7 +20,7 @@ package org.jboss.hal.core.runtime;
  * operations, but for the various GWT events.
  */
 public enum Action {
-    RELOAD, RESTART, SUSPEND, RESUME, START, STOP, DESTROY, KILL;
+    RELOAD, RESTART, SUSPEND, RESUME, START, STOP, DESTROY, KILL, REMOVE, COPY;
 
     public static boolean isStarting(Action action) {
         return action == RELOAD || action == RESTART || action == RESUME || action == START;
