@@ -18,27 +18,19 @@ package org.jboss.hal.client;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.header.HeaderModeEvent;
-import org.jboss.hal.core.mvp.HalPresenter;
 import org.jboss.hal.core.mvp.HalView;
-import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.meta.token.NameTokens;
 
-public class UnauthorizedPresenter
-        extends HalPresenter<UnauthorizedPresenter.MyView, UnauthorizedPresenter.MyProxy> {
+public class UnauthorizedPresenter extends Presenter<UnauthorizedPresenter.MyView, UnauthorizedPresenter.MyProxy> {
 
     @Inject
     public UnauthorizedPresenter(EventBus eventBus, MyView view, MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
-    }
-
-    @Override
-    protected HeaderModeEvent headerMode() {
-        return null;
+        super(eventBus, view, proxy, RevealType.Root);
     }
 
     // @formatter:off

@@ -18,23 +18,19 @@ package org.jboss.hal.client;
 import javax.annotation.PostConstruct;
 
 import org.jboss.gwt.elemento.template.Templated;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.resources.Resources;
+
+import static org.jboss.gwt.elemento.core.Widgets.widget;
 
 @Templated
 public abstract class ErrorView extends HalViewImpl implements ErrorPresenter.MyView {
 
-    // @formatter:off
-    public static ErrorView create(Environment environment, Resources resources) {
-        return new Templated_ErrorView(environment, resources);
+    public static ErrorView create() {
+        return new Templated_ErrorView();
     }
-
-    public abstract Environment environment();
-    public abstract Resources resources();
-    // @formatter:on
 
     @PostConstruct
     void init() {
+        initWidget(widget(element()));
     }
 }

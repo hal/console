@@ -14,7 +14,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <!--suppress HtmlUnknownTarget -->
 <html class="bootstrap-error layout-pf layout-pf-fixed">
 <head lang="en">
@@ -45,15 +44,23 @@
                 <div>
                     <p>The management console could not be loaded.</p>
                     <ul>
-                        <li><p>Make sure the server is <strong>up and running</strong>. Please check the log files for possible errors during startup.</p>
+                        <li><p>Make sure the server is
+                            <strong>up and running</strong>. Please check the log files for possible errors during startup.
+                        </p>
                         </li>
-                        <li><p>Verify you have <strong>added users</strong> which are able to access the admin console.</p>
+                        <li><p>Verify you have <strong>added users</strong> which are able to access the admin console.
+                        </p>
                             <p>To add a new user execute the
                                 <code>add-user.sh</code> script within the bin folder of your installation and enter the requested information.
                             </p>
                         </li>
-                        <li data-element="allowedOriginServer"><p>Check that the management endpoint at <a href="${endpoints().dmr()}" target="_blank">${endpoints().dmr()}</a> is available.</p></li>
-                        <li data-element="allowedOriginConfig"><p>Make sure you've added ${org.jboss.hal.config.Endpoints.getBaseUrl()} as <strong>allowed origin</strong> and reload the server. Use one of of the following CLI commands to add allowed origins:</p>
+                        <li data-element="allowedOriginServer"><p>Check that the management endpoint at
+                            <a href="${endpoints().dmr()}" target="_blank">${endpoints().dmr()}</a> is available.</p>
+                        </li>
+                        <li data-element="allowedOriginConfig">
+                            <p>Make sure you've added ${org.jboss.hal.config.Endpoints.getBaseUrl()} as
+                                <strong>allowed origin</strong> and reload the server. Use one of of the following CLI commands to add allowed origins:
+                            </p>
                             <ul>
                                 <li><p>Standalone:</p>
                                     <pre>/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=${org.jboss.hal.config.Endpoints.getBaseUrl()})</pre>

@@ -18,23 +18,24 @@ package org.jboss.hal.client;
 import javax.annotation.PostConstruct;
 
 import org.jboss.gwt.elemento.template.Templated;
-import org.jboss.hal.config.Environment;
+import org.jboss.hal.client.bootstrap.LoadingPanel;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.resources.Resources;
+
+import static elemental2.dom.DomGlobal.document;
+import static org.jboss.gwt.elemento.core.Widgets.widget;
+import static org.jboss.hal.resources.CSS.bootstrapError;
 
 @Templated
 public abstract class UnauthorizedView extends HalViewImpl implements UnauthorizedPresenter.MyView {
 
-    // @formatter:off
-    public static UnauthorizedView create(Environment environment, Resources resources) {
-        return new Templated_UnauthorizedView(environment, resources);
+    public static UnauthorizedView create() {
+        return new Templated_UnauthorizedView();
     }
-
-    public abstract Environment environment();
-    public abstract Resources resources();
-    // @formatter:on
 
     @PostConstruct
     void init() {
+        initWidget(widget(element()));
+        LoadingPanel.get().off();
+        document.documentElement.classList.add(bootstrapError);
     }
 }
