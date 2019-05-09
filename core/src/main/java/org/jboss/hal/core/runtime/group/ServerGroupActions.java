@@ -71,6 +71,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.runtime.Action.RESUME;
 import static org.jboss.hal.core.runtime.SuspendState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
+import static org.jboss.hal.core.runtime.Timeouts.serverGroupTimeout;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
@@ -82,7 +83,6 @@ import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatCompositeUntil;
 /** TODO Fire events for the servers of a server group as well. */
 public class ServerGroupActions {
 
-    private static final int DEFAULT_TIMEOUT = 10; // seconds
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerGroupActions.class);
 
     private static AddressTemplate serverGroupTemplate(ServerGroup serverGroup) {
@@ -140,8 +140,10 @@ public class ServerGroupActions {
         if (!startedServers.isEmpty()) {
             DialogFactory.showConfirmation(title, question, () -> {
                 prepare(serverGroup, startedServers, action);
-                dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, action),
-                        readServerConfigStatus(startedServers), checkServerConfigStatus(startedServers.size(), STARTED))
+                dispatcher.execute(operation,
+                        result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, action),
+                                readServerConfigStatus(startedServers),
+                                checkServerConfigStatus(startedServers.size(), STARTED))
                                 .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers, successMessage)),
                         new ServerGroupFailedCallback(serverGroup, startedServers, errorMessage),
                         new ServerGroupExceptionCallback(serverGroup, startedServers, errorMessage));
@@ -171,7 +173,7 @@ public class ServerGroupActions {
                                 form.save();
                                 int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                         () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
+                                int uiTimeout = timeout + serverGroupTimeout(serverGroup, Action.SUSPEND);
 
                                 prepare(serverGroup, startedServers, Action.SUSPEND);
                                 Operation operation = new Operation.Builder(serverGroup.getAddress(), SUSPEND_SERVERS)
@@ -213,8 +215,9 @@ public class ServerGroupActions {
         if (!suspendedServers.isEmpty()) {
             prepare(serverGroup, suspendedServers, RESUME);
             Operation operation = new Operation.Builder(serverGroup.getAddress(), RESUME_SERVERS).build();
-            dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, RESUME),
-                    readSuspendState(suspendedServers), checkSuspendState(suspendedServers.size(), RUNNING))
+            dispatcher.execute(operation,
+                    result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, RESUME),
+                            readSuspendState(suspendedServers), checkSuspendState(suspendedServers.size(), RUNNING))
                             .subscribe(new ServerGroupTimeoutCallback(serverGroup, suspendedServers,
                                     resources.messages().resumeServerGroupSuccess(serverGroup.getName()))),
                     new ServerGroupFailedCallback(serverGroup, suspendedServers,
@@ -247,7 +250,7 @@ public class ServerGroupActions {
                                 form.save();
                                 int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                         () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                int uiTimeout = timeout + timeout(serverGroup, Action.STOP);
+                                int uiTimeout = timeout + serverGroupTimeout(serverGroup, Action.STOP);
 
                                 prepare(serverGroup, startedServers, Action.STOP);
                                 Operation operation = new Operation.Builder(serverGroup.getAddress(), STOP_SERVERS
@@ -294,7 +297,7 @@ public class ServerGroupActions {
                     .param(BLOCKING, false)
                     .build();
             dispatcher.execute(operation,
-                    result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, Action.START),
+                    result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.START),
                             readServerConfigStatus(downServers), checkServerConfigStatus(downServers.size(), STARTED))
                             .subscribe(new ServerGroupTimeoutCallback(serverGroup, downServers,
                                     resources.messages().startServerGroupSuccess(serverGroup.getName()))),
@@ -317,7 +320,7 @@ public class ServerGroupActions {
                     prepare(serverGroup, startedServers, Action.DESTROY);
                     Operation operation = new Operation.Builder(serverGroup.getAddress(), DESTROY_SERVERS).build();
                     dispatcher.execute(operation,
-                            result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, Action.DESTROY),
+                            result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.DESTROY),
                                     readServerConfigStatus(startedServers),
                                     checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
                                     .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
@@ -337,7 +340,7 @@ public class ServerGroupActions {
                     prepare(serverGroup, startedServers, Action.KILL);
                     Operation operation = new Operation.Builder(serverGroup.getAddress(), KILL_SERVERS).build();
                     dispatcher.execute(operation,
-                            result -> repeatCompositeUntil(dispatcher, timeout(serverGroup, Action.KILL),
+                            result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.KILL),
                                     readServerConfigStatus(startedServers),
                                     checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
                                     .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
@@ -360,7 +363,7 @@ public class ServerGroupActions {
 
                     Composite comp = new Composite();
 
-                    for (Server server: stoppedServers) {
+                    for (Server server : stoppedServers) {
                         comp.add(new Operation.Builder(server.getServerConfigAddress(), REMOVE).build());
                     }
 
@@ -370,7 +373,8 @@ public class ServerGroupActions {
                     dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
                             stoppedServers,
                             Result.SUCCESS,
-                            Message.success(resources.messages().removeResourceSuccess(Names.SERVER_GROUP, serverGroup.getName()))
+                            Message.success(resources.messages()
+                                    .removeResourceSuccess(Names.SERVER_GROUP, serverGroup.getName()))
                     ), (operation1, failure) -> finish(serverGroup,
                             stoppedServers,
                             Result.ERROR,
@@ -378,7 +382,8 @@ public class ServerGroupActions {
                     ), (operation1, exception) -> finish(serverGroup,
                             stoppedServers,
                             Result.ERROR,
-                            Message.error(resources.messages().removeError(serverGroup.getName(), exception.getMessage()))
+                            Message.error(
+                                    resources.messages().removeError(serverGroup.getName(), exception.getMessage()))
                     ));
                 });
     }
@@ -389,7 +394,8 @@ public class ServerGroupActions {
         newNameItem.setValue(serverGroup.getName() + "_" + COPY);
         newNameItem.addValidationHandler(nameItemValidator);
 
-        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(COPY, serverGroup.getName(), Ids.FORM), Metadata.empty())
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(COPY, serverGroup.getName(), Ids.FORM),
+                Metadata.empty())
                 .fromRequestProperties()
                 .unboundFormItem(newNameItem, 0)
                 .requiredOnly()
@@ -416,7 +422,8 @@ public class ServerGroupActions {
                 dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
                         Collections.emptyList(),
                         Result.SUCCESS,
-                        Message.success(resources.messages().addResourceSuccess(Names.SERVER_GROUP, newNameItem.getValue()))
+                        Message.success(
+                                resources.messages().addResourceSuccess(Names.SERVER_GROUP, newNameItem.getValue()))
                 ), (operation1, failure) -> finish(serverGroup,
                         Collections.emptyList(),
                         Result.ERROR,
@@ -424,7 +431,8 @@ public class ServerGroupActions {
                 ), (operation1, exception) -> finish(serverGroup,
                         Collections.emptyList(),
                         Result.ERROR,
-                        Message.error(resources.messages().addResourceError(newNameItem.getValue(), exception.getMessage()))
+                        Message.error(
+                                resources.messages().addResourceError(newNameItem.getValue(), exception.getMessage()))
                 ));
             });
         });
@@ -436,14 +444,14 @@ public class ServerGroupActions {
     }
 
     private static void addChildOperations(Composite composite, ModelNode rootModel,
-                                           ModelNode baseAddress, int depth) {
+            ModelNode baseAddress, int depth) {
         if (depth <= 0) {
             return;
         }
 
-        for (Property property: rootModel.asPropertyList()) {
+        for (Property property : rootModel.asPropertyList()) {
             if (ModelType.OBJECT.equals(property.getValue().getType())) {
-                for (Property resource: property.getValue().asPropertyList()) {
+                for (Property resource : property.getValue().asPropertyList()) {
                     if (ModelType.OBJECT.equals(resource.getValue().getType())) {
                         ModelNode resourceAddress = baseAddress.clone().add(property.getName(), resource.getName());
 
@@ -458,46 +466,6 @@ public class ServerGroupActions {
                 }
             }
         }
-    }
-
-    private int timeout(ServerGroup serverGroup, Action action) {
-        int timeout = DEFAULT_TIMEOUT;
-        switch (action) {
-            case RELOAD:
-                if (serverGroup.hasServers(Server::isStarted)) {
-                    timeout = serverGroup.getServers(Server::isStarted).size() * ServerActions.SERVER_RELOAD_TIMEOUT;
-                }
-                break;
-            case RESTART:
-                if (serverGroup.hasServers(Server::isStarted)) {
-                    timeout = serverGroup.getServers(Server::isStarted).size() * ServerActions.SERVER_RESTART_TIMEOUT;
-                }
-                break;
-            case SUSPEND:
-                if (serverGroup.hasServers(Server::isStarted)) {
-                    timeout = serverGroup.getServers(Server::isStarted).size() * ServerActions.SERVER_SUSPEND_TIMEOUT;
-                }
-                break;
-            case RESUME:
-                if (serverGroup.hasServers(Server::isSuspended)) {
-                    timeout = serverGroup.getServers(Server::isSuspended).size() * ServerActions.SERVER_RESUME_TIMEOUT;
-                }
-                break;
-            case START:
-                if (serverGroup.hasServers(server -> server.isStopped() || server.isFailed())) {
-                    timeout = serverGroup.getServers(server -> server.isStopped() || server.isFailed())
-                            .size() * ServerActions.SERVER_START_TIMEOUT;
-                }
-                break;
-            case STOP:
-                if (serverGroup.hasServers(Server::isStarted)) {
-                    timeout = serverGroup.getServers(Server::isStarted).size() * ServerActions.SERVER_STOP_TIMEOUT;
-                }
-                break;
-            default:
-                break;
-        }
-        return timeout;
     }
 
     private void prepare(ServerGroup serverGroup, List<Server> servers, Action action) {

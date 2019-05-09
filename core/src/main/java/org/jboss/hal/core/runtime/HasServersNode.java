@@ -56,7 +56,7 @@ public abstract class HasServersNode extends NamedNode {
         return servers;
     }
 
-    public List<Server> getServers(final Predicate<Server> predicate) {
+    public List<Server> getServers(Predicate<Server> predicate) {
         return servers.stream().filter(predicate).collect(toList());
     }
 }
