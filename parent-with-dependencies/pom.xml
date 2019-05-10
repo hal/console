@@ -50,7 +50,7 @@
         <jdom.version>2.0.2</jdom.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
-        <node.version>v10.15.3</node.version>
+        <node.version>v8.16.0</node.version>
         <npm.version>6.4.1</npm.version>
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
