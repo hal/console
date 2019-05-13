@@ -25,6 +25,8 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static elemental2.dom.DomGlobal.setTimeout;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.change;
@@ -34,6 +36,7 @@ import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class SwitchItem extends AbstractFormItem<Boolean> {
 
@@ -91,6 +94,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         private Boolean backup;
         private HandlerRegistration expressionHandler;
         private HandlerRegistration resolveHandler;
+        private SwitchBridge.Api api;
 
 
         // ------------------------------------------------------ ui code
@@ -162,13 +166,18 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             modifyExpressionValue(expressionModeInput.value);
         }
 
+        private SwitchBridge.Api api() {
+            if (api == null) {
+                throw new IllegalStateException("Switch item has not been attached!");
+            }
+            return api;
+        }
+
         @Override
         public void attach() {
             super.attach();
-            HTMLElement editElement = SwitchItem.this.element(EDITING);
-            if (Elements.isVisible(editElement) && editElement.querySelector("." + bootstrapSwitchContainer) == null) {
-                SwitchBridge.Api.element(inputElement).onChange((event, state) -> modifyValue(state));
-            }
+            api = SwitchBridge.Api.element(inputElement);
+            api.onChange((event, state) -> modifyValue(state));
         }
 
         @Override
@@ -182,7 +191,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                     resolveHandler.removeHandler();
                 }
                 inputElement.classList.remove(bootstrapSwitch);
-                SwitchBridge.Api.element(inputElement).destroy();
+                api().destroy();
             }
         }
 
@@ -197,7 +206,9 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void showValue(Boolean value) {
             if (attached) {
-                SwitchBridge.Api.element(inputElement).setValue(value);
+                // bootstrap switch item needs some time to set the correct state
+
+                setTimeout(o -> api().setValue(value), SHORT_TIMEOUT);
             } else {
                 inputElement.checked = value;
             }
@@ -211,7 +222,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void clearValue() {
             if (attached) {
-                SwitchBridge.Api.element(inputElement).setValue(false);
+                api().setValue(false);
             } else {
                 inputElement.checked = false;
             }
@@ -223,7 +234,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         void applyDefault(String defaultValue) {
             if (attached) {
-                SwitchBridge.Api.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
+                api().setValue(Boolean.parseBoolean(defaultValue));
             } else {
                 inputElement.checked = Boolean.parseBoolean(defaultValue);
             }

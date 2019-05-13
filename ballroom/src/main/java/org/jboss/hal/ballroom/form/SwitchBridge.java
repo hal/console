@@ -47,8 +47,6 @@ public class SwitchBridge {
         @JsMethod(namespace = GLOBAL, name = "$")
         public static native Api element(HTMLInputElement element);
 
-        public native boolean bootstrapSwitch();
-
         public native boolean bootstrapSwitch(String method);
 
         public native void bootstrapSwitch(String method, boolean param);
