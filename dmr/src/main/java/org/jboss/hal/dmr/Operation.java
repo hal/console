@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -95,33 +95,25 @@ public class Operation extends ModelNode {
         }
     }
 
-    /**
-     * @return the name of the operation
-     */
+    /** @return the name of the operation */
     @JsProperty
     public String getName() {
         return get(OP).asString();
     }
 
-    /**
-     * @return the address of the operation
-     */
+    /** @return the address of the operation */
     @JsProperty
     public ResourceAddress getAddress() {
         return address;
     }
 
-    /**
-     * @return the parameters of the operation
-     */
+    /** @return the parameters of the operation */
     @JsProperty
     public ModelNode getParameter() {
         return parameter;
     }
 
-    /**
-     * @return the header of the operation
-     */
+    /** @return the header of the operation */
     @JsProperty
     public ModelNode getHeader() {
         return header;
@@ -142,17 +134,13 @@ public class Operation extends ModelNode {
         return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
 
-    /**
-     * @return the string representation of the operation as used in the CLI
-     */
+    /** @return the string representation of the operation as used in the CLI */
     @Override
     public String toString() {
         return asCli();
     }
 
-    /**
-     * @return the string representation of the operation as used in the CLI
-     */
+    /** @return the string representation of the operation as used in the CLI */
     public String asCli() {
         StringBuilder builder = new StringBuilder();
         if (address.isDefined() && !address.asList().isEmpty()) {
@@ -185,11 +173,7 @@ public class Operation extends ModelNode {
     }
 
 
-    /**
-     * A builder for operations.
-     *
-     * @author Harald Pehl
-     */
+    /** A builder for operations. */
     @JsType(name = "OperationBuilder")
     public static class Builder {
 

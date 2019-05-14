@@ -25,12 +25,7 @@ RUN sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/
     && sed "s/<http-interface security-realm=\"ManagementRealm\">/<http-interface>/" $JBOSS_HOME/domain/configuration/host.xml > $JBOSS_HOME/domain/configuration/host-insecure.xml \
     && $JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent
 
-# Expose the ports we're interested in
 EXPOSE 8080
-
 EXPOSE 9090
-
-# Set the default command to run on boot
-# This will boot WildFly in the standalone mode and bind to all interface
 
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,13 +26,13 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class Popover {
 
-
     private final Bridge bridge;
 
     private Popover(Builder builder) {
         Options options = new Options();
         options.content = builder.content.asString();
         options.html = true;
+        options.sanitize = false;
         options.placement = builder.placement.id;
         if (builder.template != null) {
             options.template = builder.template.asString();
@@ -158,6 +158,7 @@ public class Popover {
 
         String content;
         boolean html;
+        boolean sanitize;
         String placement;
         String template;
         String title;

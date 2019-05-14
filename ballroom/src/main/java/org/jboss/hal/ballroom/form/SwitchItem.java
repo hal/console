@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.change;
@@ -34,6 +35,7 @@ import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class SwitchItem extends AbstractFormItem<Boolean> {
 
@@ -91,6 +93,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         private Boolean backup;
         private HandlerRegistration expressionHandler;
         private HandlerRegistration resolveHandler;
+        private SwitchBridge.Api api;
 
 
         // ------------------------------------------------------ ui code
@@ -99,12 +102,16 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, INVALID, REQUIRED, RESTRICTED),
                     input(checkbox).get());
 
-            // put the <input type="checkbox"/> into an extra div
-            // this makes switching between normal and expression mode easier
-            inputContainer.removeChild(inputElement);
-            normalModeContainer = div().get();
-            normalModeContainer.appendChild(inputElement);
-            inputContainer.appendChild(normalModeContainer);
+            inputElement.classList.add(bootstrapSwitch);
+            normalModeContainer = div()
+                    .add(switchToExpressionButton = button()
+                            .css(btn, btnDefault, expressionModeSwitcher)
+                            .title(CONSTANTS.switchToExpressionMode())
+                            .on(click, event -> switchToExpressionMode())
+                            .add(i().css(fontAwesome("link")))
+                            .get())
+                    .add(inputElement)
+                    .get();
 
             expressionModeContainer = div().css(CSS.inputGroup)
                     .add(span().css(inputGroupBtn)
@@ -126,12 +133,12 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                                     .get()))
                     .get();
 
-            switchToExpressionButton = button()
-                    .css(btn, btnDefault, expressionModeSwitcher)
-                    .title(CONSTANTS.switchToExpressionMode())
-                    .on(click, event -> switchToExpressionMode())
-                    .add(i().css(fontAwesome("link")))
-                    .get();
+            // Append both the <input type=checkbox/> for the normal mode
+            // and the <input type=text/> for the expression mode
+            inputContainer.appendChild(normalModeContainer);
+            inputContainer.appendChild(expressionModeContainer);
+            Elements.setVisible(expressionModeContainer, false);
+
             expressionHandler = bind(expressionModeInput, change,
                     event -> modifyExpressionValue(expressionModeInput.value));
 
@@ -158,11 +165,18 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             modifyExpressionValue(expressionModeInput.value);
         }
 
+        private SwitchBridge.Api api() {
+            if (api == null) {
+                throw new IllegalStateException("Switch item has not been attached!");
+            }
+            return api;
+        }
+
         @Override
         public void attach() {
             super.attach();
-            inputElement.classList.add(bootstrapSwitch);
-            SwitchBridge.Api.element(inputElement).onChange((event, state) -> modifyValue(state));
+            api = SwitchBridge.Api.element(inputElement);
+            api.onChange((event, state) -> modifyValue(state));
         }
 
         @Override
@@ -176,7 +190,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                     resolveHandler.removeHandler();
                 }
                 inputElement.classList.remove(bootstrapSwitch);
-                SwitchBridge.Api.element(inputElement).destroy();
+                api().destroy();
             }
         }
 
@@ -191,7 +205,9 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void showValue(Boolean value) {
             if (attached) {
-                SwitchBridge.Api.element(inputElement).setValue(value);
+                // bootstrap switch item needs some time to set the correct state
+
+                setTimeout(o -> api().setValue(value), SHORT_TIMEOUT);
             } else {
                 inputElement.checked = value;
             }
@@ -205,7 +221,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void clearValue() {
             if (attached) {
-                SwitchBridge.Api.element(inputElement).setValue(false);
+                api().setValue(false);
             } else {
                 inputElement.checked = false;
             }
@@ -217,7 +233,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         void applyDefault(String defaultValue) {
             if (attached) {
-                SwitchBridge.Api.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
+                api().setValue(Boolean.parseBoolean(defaultValue));
             } else {
                 inputElement.checked = Boolean.parseBoolean(defaultValue);
             }
@@ -225,8 +241,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
         @Override
         protected void applyExpression(ExpressionContext expressionContext) {
-            Elements.failSafeRemove(inputContainer, normalModeContainer);
-            Elements.lazyAppend(inputContainer, expressionModeContainer);
+            Elements.setVisible(normalModeContainer, false);
+            Elements.setVisible(expressionModeContainer, true);
             if (resolveHandler == null) {
                 resolveHandler = bind(resolveExpressionButton, click,
                         event -> expressionContext.callback.resolveExpression(expressionModeInput.value));
@@ -240,19 +256,13 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                 resolveHandler.removeHandler();
                 resolveHandler = null;
             }
-            Elements.failSafeRemove(inputContainer, expressionModeContainer);
-            Elements.lazyAppend(inputContainer, normalModeContainer);
+            Elements.setVisible(expressionModeContainer, false);
+            Elements.setVisible(normalModeContainer, true);
             removeValidationHandler(expressionValidation);
         }
 
         void setExpressionAllowed(boolean expressionAllowed) {
             Elements.setVisible(switchToExpressionButton, expressionAllowed);
-            if (expressionAllowed) {
-                Elements.lazyInsertBefore(normalModeContainer, switchToExpressionButton,
-                        normalModeContainer.firstElementChild);
-            } else {
-                Elements.failSafeRemove(normalModeContainer, switchToExpressionButton);
-            }
         }
 
 

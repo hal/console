@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,7 +34,7 @@ module.exports = function (grunt) {
             node: 'node_modules',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
-            version: '3.1.2',
+            version: '3.2.0',
         },
 
         clean: {
@@ -109,9 +109,9 @@ module.exports = function (grunt) {
             polyfill: {
                 options: {
                     banner: '/*!\n' +
-                    ' * Polyfill JS files for IE 11 and below. HAL <%= config.version %>\n' +
-                    ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
-                    ' */\n\n',
+                        ' * Polyfill JS files for IE 11 and below. HAL <%= config.version %>\n' +
+                        ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
+                        ' */\n\n',
                     stripBanners: true
                 },
                 nonull: true,
@@ -144,7 +144,7 @@ module.exports = function (grunt) {
                     '<%= config.node %>/bootstrap-select/dist/js/bootstrap-select.js',
                     '<%= config.node %>/bootstrap-switch/dist/js/bootstrap-switch.js',
                     '<%= config.node %>/c3/c3.js',
-                    '<%= config.node %>/d3/d3.js',
+                    '<%= config.node %>/d3/dist//d3.js',
                     '<%= config.node %>/datatables.net/js/jquery.dataTables.js',
                     '<%= config.node %>/datatables.net-buttons/js/dataTables.buttons.js',
                     '<%= config.node %>/datatables.net-keytable/js/dataTables.keyTable.js',
@@ -165,9 +165,9 @@ module.exports = function (grunt) {
             externalProd: {
                 options: {
                     banner: '/*!\n' +
-                    ' * External JS files for HAL <%= config.version %>\n' +
-                    ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
-                    ' */\n\n',
+                        ' * External JS files for HAL <%= config.version %>\n' +
+                        ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
+                        ' */\n\n',
                     stripBanners: true
                 },
                 nonull: true,
@@ -184,7 +184,7 @@ module.exports = function (grunt) {
                     '<%= config.node %>/bootstrap-select/dist/js/bootstrap-select.min.js',
                     '<%= config.node %>/bootstrap-switch/dist/js/bootstrap-switch.min.js',
                     '<%= config.node %>/c3/c3.min.js',
-                    '<%= config.node %>/d3/d3.min.js',
+                    '<%= config.node %>/d3/dist/d3.min.js',
                     '<%= config.node %>/datatables.net/js/jquery.dataTables.js',
                     '<%= config.node %>/datatables.net-buttons/js/dataTables.buttons.min.js',
                     '<%= config.node %>/datatables.net-keytable/js/dataTables.keyTable.min.js',
@@ -208,9 +208,9 @@ module.exports = function (grunt) {
             target: {
                 options: {
                     banner: '/*\n' +
-                    ' * Generated CSS file for HAL <%= config.version %>\n' +
-                    ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
-                    ' */\n\n',
+                        ' * Generated CSS file for HAL <%= config.version %>\n' +
+                        ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
+                        ' */\n\n',
                     paths: ['<%= config.less %>', '../themes/<%= theme %>/src/main/less'],
                     strictMath: true
                 },

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,6 +48,7 @@ import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
+import org.jboss.hal.core.runtime.Timeouts;
 import org.jboss.hal.core.runtime.server.ServerUrlTasks.ReadSocketBinding;
 import org.jboss.hal.core.runtime.server.ServerUrlTasks.ReadSocketBindingGroup;
 import org.jboss.hal.dmr.Composite;
@@ -104,16 +105,8 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
-public class ServerActions {
+public class ServerActions implements Timeouts {
 
-    public static final int SERVER_SUSPEND_TIMEOUT = 1; // not the timeout specified by the user, but the time the server needs to get into suspend mode
-    public static final int SERVER_RESUME_TIMEOUT = 3;
-    public static final int SERVER_START_TIMEOUT = 15;
-    public static final int SERVER_STOP_TIMEOUT = 5;
-    public static final int SERVER_RELOAD_TIMEOUT = 10;
-    public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
-    private static final int SERVER_DESTROY_TIMEOUT = SERVER_STOP_TIMEOUT + 5;
-    private static final int SERVER_KILL_TIMEOUT = SERVER_STOP_TIMEOUT + 5;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
 
     private static AddressTemplate serverConfigTemplate(Server server) {

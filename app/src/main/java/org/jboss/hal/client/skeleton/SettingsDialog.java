@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ package org.jboss.hal.client.skeleton;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -70,6 +71,7 @@ class SettingsDialog {
             }
         }
         List<String> attributes = new ArrayList<>();
+        attributes.add(TITLE.key());
         attributes.add(COLLECT_USER_DATA.key());
         if (multipleLocales) {
             attributes.add(LOCALE.key());
@@ -104,6 +106,7 @@ class SettingsDialog {
 
     void show() {
         ModelNode modelNode = new ModelNode();
+        modelNode.get(TITLE.key()).set(Strings.nullToEmpty(settings.get(TITLE).value()));
         modelNode.get(COLLECT_USER_DATA.key()).set(settings.get(COLLECT_USER_DATA).asBoolean());
         boolean pollEnabled = settings.get(POLL).asBoolean();
         modelNode.get(POLL.key()).set(pollEnabled);

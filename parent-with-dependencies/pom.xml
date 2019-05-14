@@ -6,7 +6,7 @@
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ https://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,13 @@
   -->
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.1.2.Final</version>
+        <version>3.2.0.Final</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -50,16 +50,13 @@
         <jdom.version>2.0.2</jdom.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
-        <node.version>v8.11.3</node.version>
+        <node.version>v8.16.0</node.version>
+        <npm.version>6.4.1</npm.version>
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <undertow.version>2.0.7.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
-        <wildfly.version>12.0.0.Final</wildfly.version>
-        <wildfly-core.version>4.0.0.Final</wildfly-core.version>
-        <wildfly-swarm.version>2018.5.0</wildfly-swarm.version>
-        <yarn.version>v1.9.2</yarn.version>
     </properties>
 
     <!-- Do not declare any build settings here! Declare them in hal-parent. -->
@@ -182,26 +179,7 @@
                 </exclusions>
             </dependency>
 
-            <!-- WildFly -->
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom-all</artifactId>
-                <version>${wildfly-swarm.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>spi</artifactId>
-                <version>${wildfly-swarm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly.core</groupId>
-                <artifactId>wildfly-core-feature-pack</artifactId>
-                <version>${wildfly-core.version}</version>
-                <type>zip</type>
-                <scope>provided</scope>
-            </dependency>
+            <!-- Undertow -->
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-core</artifactId>

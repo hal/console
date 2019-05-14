@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,7 @@ import static org.jboss.hal.resources.UIConstants.TOOLTIP;
  * The Utilization chart can be used to show a visual relationship between the total available amount of a resource,
  * and the percentage of that resource that has been utilized.
  *
- * @see <a href="http://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/">http://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/</a>
+ * @see <a href="https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/">https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/</a>
  */
 public class Utilization implements IsElement {
 

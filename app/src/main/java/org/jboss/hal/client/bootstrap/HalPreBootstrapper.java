@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,8 +38,10 @@ public class HalPreBootstrapper implements PreBootstrapper {
             LoadingPanel.get().off();
             String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
             logger.error("Uncaught bootstrap error: {}", errorMessage);
-            Elements.removeChildrenFrom(document.body);
-            document.body.appendChild(BootstrapFailed.create(errorMessage, Endpoints.INSTANCE).element());
+            if (!document.body.hasChildNodes()) {
+                Elements.removeChildrenFrom(document.body);
+                document.body.appendChild(BootstrapFailed.create(errorMessage, Endpoints.INSTANCE).element());
+            }
         });
     }
 }

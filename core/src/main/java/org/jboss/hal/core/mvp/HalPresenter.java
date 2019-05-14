@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,11 +34,11 @@ import org.jetbrains.annotations.NotNull;
  * The presenter calls {@link HalView#attach()} when it's {@linkplain #onReveal() revealed} and {@link
  * HalView#detach()} when it's {@linkplain #onHide() hidden}.
  */
-abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
+public abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         extends Presenter<V, Proxy_>
         implements IsElement, Iterable<HTMLElement> {
 
-    HalPresenter(EventBus eventBus, V view, Proxy_ proxy, GwtEvent.Type<RevealContentHandler<?>> slot) {
+    protected HalPresenter(EventBus eventBus, V view, Proxy_ proxy, GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
     }
 

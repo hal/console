@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -67,7 +67,6 @@ public class HalPlaceManager extends DefaultPlaceManager {
     private final Provider<Progress> progress;
     private final Map<Tuple, Consumer<String>> selectFunctions;
     private Resources resources;
-    private boolean firstRequest;
 
     @Inject
     public HalPlaceManager(EventBus eventBus,
@@ -83,7 +82,6 @@ public class HalPlaceManager extends DefaultPlaceManager {
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.resources = resources;
-        this.firstRequest = true;
 
         selectFunctions = new HashMap<>();
         selectFunctions.put(SELECTED_PROFILE, param -> getEventBus().fireEvent(new ProfileSelectionEvent(param)));
@@ -109,42 +107,15 @@ public class HalPlaceManager extends DefaultPlaceManager {
             @Override
             public void onFailure(Throwable throwable) {
                 unlock();
-                if (firstRequest) {
-                    revealDefaultPlace();
-                } else {
-                    revealCurrentPlace();
-                }
-                if (throwable == null) {
-                    getEventBus().fireEvent(new MessageEvent(Message.error(resources.messages().metadataError())));
-                } else {
-                    getEventBus().fireEvent(new MessageEvent(
-                            Message.error(resources.messages().metadataError(), throwable.getMessage())));
-                }
+                revealCurrentPlace();
+                String details = throwable != null ? throwable.getMessage() : null;
+                getEventBus().fireEvent(new MessageEvent(Message.error(resources.messages().metadataError(), details)));
             }
 
             @Override
             public void onSuccess(Void whatever) {
                 HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
-                firstRequest = false;
             }
         });
-    }
-
-    @Override
-    public void revealErrorPlace(String invalidHistoryToken) {
-        MessageEvent.fire(getEventBus(), Message.error(resources.messages().pageNotFound(invalidHistoryToken)));
-        if (firstRequest) {
-            // TODO find a more elegant way to get hold of the very first request
-            super.revealErrorPlace(invalidHistoryToken);
-        }
-    }
-
-    @Override
-    public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
-        MessageEvent.fire(getEventBus(), Message.error(resources.messages().unauthorized()));
-        if (firstRequest) {
-            // TODO find a more elegant way to get hold of the very first request
-            super.revealUnauthorizedPlace(unauthorizedHistoryToken);
-        }
     }
 }

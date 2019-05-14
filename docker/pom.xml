@@ -6,7 +6,7 @@
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ https://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,13 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>3.1.2.Final</version>
+        <version>3.2.0.Final</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -99,11 +99,11 @@
                 </executions>
             </plugin>
             <!--
-             Produce three docker images:
-                1. halconsole/hal-standalone: Contains HAL standalone
-                2. halconsole/hal-wildfly: Contains latest WildFly and HAL
-                3. halconsole/hal-wildfly-nightly: Contains latest nightly
-                   build of WildFly with HAL 
+	             Produce three docker images:
+	                1. halconsole/hal-standalone: Contains HAL standalone
+	                2. halconsole/hal-wildfly: Contains latest WildFly and HAL
+	                3. halconsole/hal-wildfly-nightly: Contains latest nightly
+	                   build of WildFly with HAL
             -->
             <plugin>
                 <groupId>io.fabric8</groupId>
@@ -113,10 +113,10 @@
                     <logDate>default</logDate>
                     <images>
                         <image>
-                            <alias>hal-standalone</alias>
-                            <name>halconsole/hal-standalone</name>
+                            <alias>hal</alias>
+                            <name>halconsole/hal:%l</name>
                             <build>
-                                <dockerFileDir>hal-standalone</dockerFileDir>
+                                <dockerFileDir>hal</dockerFileDir>
                                 <assembly>
                                     <mode>dir</mode>
                                     <inline>
@@ -135,7 +135,7 @@
                         </image>
                         <image>
                             <alias>hal-wildfly</alias>
-                            <name>halconsole/hal-wildfly</name>
+                            <name>halconsole/hal-wildfly:%l</name>
                             <build>
                                 <dockerFileDir>hal-wildfly</dockerFileDir>
                                 <assembly>
@@ -156,7 +156,7 @@
                         </image>
                         <image>
                             <alias>hal-wildfly-nightly</alias>
-                            <name>halconsole/hal-wildfly-nightly</name>
+                            <name>halconsole/hal-wildfly-nightly:%l</name>
                             <build>
                                 <dockerFileDir>hal-wildfly-nightly</dockerFileDir>
                                 <assembly>

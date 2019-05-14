@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,7 +44,7 @@ import static org.jboss.hal.resources.CSS.*;
  * attributes. Please make sure to call {@link ElementGuard#processElements(AuthorisationDecision,
  * String)} when the empty state element is added to the DOM.
  *
- * @see <a href="http://www.patternfly.org/pattern-library/communication/empty-state/">http://www.patternfly.org/pattern-library/communication/empty-state/</a>
+ * @see <a href="https://www.patternfly.org/pattern-library/communication/empty-state/">https://www.patternfly.org/pattern-library/communication/empty-state/</a>
  */
 @SuppressWarnings("unused")
 public class EmptyState implements IsElement<HTMLElement> {

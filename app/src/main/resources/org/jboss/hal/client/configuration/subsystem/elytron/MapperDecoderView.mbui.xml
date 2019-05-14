@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="https://relaxng.org/ns/structure/1.0"?>
 <!--
   ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
   ~
@@ -7,7 +7,7 @@
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ https://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -199,7 +199,8 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="mappers-decoders-custom-permission-mapper-form" title="Custom Permission Mapper" auto-save="true"
+                    <form id="mappers-decoders-custom-permission-mapper-form" title="Custom Permission Mapper"
+                          auto-save="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
@@ -221,7 +222,8 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="mappers-decoders-logical-permission-mapper-form" title="Logical Permission Mapper" auto-save="true"
+                    <form id="mappers-decoders-logical-permission-mapper-form" title="Logical Permission Mapper"
+                          auto-save="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
                         </attributes>
@@ -259,11 +261,13 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="mappers-decoders-concatenating-principal-decoder-item" title="Concatenating Principal Decoder">
+            <sub-item id="mappers-decoders-concatenating-principal-decoder-item"
+                      title="Concatenating Principal Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/concatenating-principal-decoder=*">
                     <h1>Concatenating Principal Decoder</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="mappers-decoders-concatenating-principal-decoder-table" title="Concatenating Principal Decoder"
+                    <table id="mappers-decoders-concatenating-principal-decoder-table"
+                           title="Concatenating Principal Decoder"
                            form-ref="mappers-decoders-concatenating-principal-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
@@ -274,7 +278,8 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="mappers-decoders-concatenating-principal-decoder-form" title="Concatenating Principal Decoder"
+                    <form id="mappers-decoders-concatenating-principal-decoder-form"
+                          title="Concatenating Principal Decoder"
                           auto-save="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>
@@ -328,11 +333,13 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="mappers-decoders-x500-attribute-principal-decoder-item" title="X500 Attribute Principal Decoder">
+            <sub-item id="mappers-decoders-x500-attribute-principal-decoder-item"
+                      title="X500 Attribute Principal Decoder">
                 <metadata address="/{selected.profile}/subsystem=elytron/x500-attribute-principal-decoder=*">
                     <h1>X500 Attribute Principal Decoder</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="mappers-decoders-x500-attribute-principal-decoder-table" title="X500 Attribute Principal Decoder"
+                    <table id="mappers-decoders-x500-attribute-principal-decoder-table"
+                           title="X500 Attribute Principal Decoder"
                            form-ref="mappers-decoders-x500-attribute-principal-decoder-form">
                         <actions>
                             <action handler-ref="add-resource"/>
@@ -343,7 +350,8 @@
                             <column name="name" value="${row.getName()}"/>
                         </columns>
                     </table>
-                    <form id="mappers-decoders-x500-attribute-principal-decoder-form" title="X500 Attribute Principal Decoder"
+                    <form id="mappers-decoders-x500-attribute-principal-decoder-form"
+                          title="X500 Attribute Principal Decoder"
                           auto-save="true"
                           name-resolver="${form.getModel().getName()}">
                         <attributes>

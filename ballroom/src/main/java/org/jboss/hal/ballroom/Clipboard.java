@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,9 +25,9 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * Clipboard implementation based on <a href="http://zeroclipboard.org/">ZeroClipboard</a>.
+ * Clipboard implementation based on <a href="https://zeroclipboard.github.io/">ZeroClipboard</a>.
  *
- * @see <a href="http://zeroclipboard.org/">http://zeroclipboard.org/</a>
+ * @see <a href="https://zeroclipboard.github.io/">https://zeroclipboard.github.io/</a>
  */
 @JsType(name = "ZeroClipboard", namespace = GLOBAL, isNative = true)
 public class Clipboard {

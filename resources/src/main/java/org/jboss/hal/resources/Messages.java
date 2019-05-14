@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -334,6 +334,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeMessageQuestion();
     SafeHtml removeMessagesQuestion();
     SafeHtml removeMessageSuccess();
+    SafeHtml removeError(String name, String error);
     SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml removeRoleQuestion(String name);
     SafeHtml removeRunAsRoleError(String role);

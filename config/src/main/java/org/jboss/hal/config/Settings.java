@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -85,6 +85,7 @@ public class Settings {
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
     public enum Key {
+        TITLE("title", true),
         COLLECT_USER_DATA("collect-user-data", true),
         LOCALE("locale", true),
         PAGE_SIZE("page-size", true),
@@ -94,6 +95,8 @@ public class Settings {
 
         public static Key from(@NonNls String key) {
             switch (key) {
+                case "title":
+                    return TITLE;
                 case "collect-user-data":
                     return COLLECT_USER_DATA;
                 case "locale":

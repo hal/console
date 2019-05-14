@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,7 +51,6 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
@@ -68,28 +67,33 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             }
 
         } else if (slot == Slots.MAIN) {
-            // single or multiple elements with precedence for multiple elements
-            boolean finished = false;
             Elements.removeChildrenFrom(rootContainer);
-
-            if (content instanceof Iterable) {
-                Iterable<HTMLElement> elements = (Iterable<HTMLElement>) content;
-                for (HTMLElement element : elements) {
-                    rootContainer.appendChild(element);
-                    finished = true;
-                }
-            }
-
-            if (!finished) {
-                HTMLElement element = content instanceof IsElement
-                        ? ((IsElement<HTMLElement>) content).element()
-                        : Widgets.element(content);
-                rootContainer.appendChild(element);
-            }
+            appendContent(content);
 
         } else {
             logger.warn("Unknown slot {}. Delegate to super.setInSlot()", slot);
             super.setInSlot(slot, content);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void appendContent(IsWidget content) {
+        // single or multiple elements with precedence for multiple elements
+        boolean finished = false;
+
+        if (content instanceof Iterable) {
+            Iterable<HTMLElement> elements = (Iterable<HTMLElement>) content;
+            for (HTMLElement element : elements) {
+                rootContainer.appendChild(element);
+                finished = true;
+            }
+        }
+
+        if (!finished) {
+            HTMLElement element = content instanceof IsElement
+                    ? ((IsElement<HTMLElement>) content).element()
+                    : Widgets.element(content);
+            rootContainer.appendChild(element);
         }
     }
 }

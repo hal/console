@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ public class BootstrapTasks {
 
     private final BootstrapTask[] tasks;
 
+    // Don't change the order unless you know what you're doing!
     @Inject
     public BootstrapTasks(ReadEnvironment readEnvironment,
             ReadAuthentication readAuthentication,
@@ -29,6 +30,7 @@ public class BootstrapTasks {
             RegisterStaticCapabilities registerStaticCapabilities,
             ReadExtensions readExtensions,
             LoadSettings loadSettings,
+            SetTitle setTitle,
             StartAnalytics startAnalytics) {
         this.tasks = new BootstrapTask[]{
                 readEnvironment,
@@ -37,6 +39,7 @@ public class BootstrapTasks {
                 registerStaticCapabilities,
                 readExtensions,
                 loadSettings,
+                setTitle,
                 startAnalytics,
         };
     }

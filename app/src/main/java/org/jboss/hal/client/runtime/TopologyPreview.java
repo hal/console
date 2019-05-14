@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -503,7 +503,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         .add(dropdown = div().css(CSS.dropdown).get()))
                 .get();
 
-        if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
+        if (!serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
             String serverGroupDropDownId = Ids.serverGroup(serverGroup.getName());
             dropdown.appendChild(a()
                     .id(serverGroupDropDownId)
@@ -759,6 +759,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         actions.add(actionLink(event -> serverGroupActions.destroy(serverGroup), resources.constants().destroy()));
         actions.add(actionLink(event -> serverGroupActions.kill(serverGroup), resources.constants().kill()));
 
+        // add remove action to groups which have only stopped servers or no servers at all
+        if (!serverGroup.hasServers(Server::isStarted)) {
+            actions.add(actionLink(event -> serverGroupActions.remove(serverGroup), resources.constants().remove()));
+        }
         return actions;
     }
 

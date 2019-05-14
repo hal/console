@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -112,6 +112,7 @@ public interface ModelDescriptionConstants {
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
     String BUNDLED = "bundled";
+    String BUSY_WORKER_THREAD_COUNT = "busy-task-thread-count";
     String BYTE_BUFFER_POOL = "byte-buffer-pool";
     String BYTES = "bytes";
     String CACHE_CONTAINER = "cache-container";
@@ -188,6 +189,7 @@ public interface ModelDescriptionConstants {
     String CONTEXT = "context";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
+    String COPY = "copy";
     String CORE_MANAGEMENT = "core-management";
     String CORE_POOL_SIZE = "core-pool-size";
     String CORE_SERVICE = "core-service";
@@ -270,8 +272,9 @@ public interface ModelDescriptionConstants {
     String DISTINGUISHED_NAME = "distinguished-name";
     String DISTRIBUTED_CACHE = "distributed-cache";
     String DIVERT = "divert";
-    String DOMAIN_UUID = "domain-uuid";
+    String DOMAIN_ORGANIZATION = "domain-organization";
     String DOMAIN_ROLLOUT = "domain-rollout";
+    String DOMAIN_UUID = "domain-uuid";
     String DOWN = "DOWN";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
@@ -610,6 +613,7 @@ public interface ModelDescriptionConstants {
     String OPERATION_DATE = "operation-date";
     String OPERATION_HEADERS = "operation-headers";
     String OPERATIONS = "operations";
+    String ORGANIZATION = "organization";
     String ORDINAL = "ordinal";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";

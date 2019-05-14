@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,6 +32,7 @@ import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
+import org.jboss.hal.core.runtime.Timeouts;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
@@ -58,14 +59,13 @@ import rx.Subscription;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
+import static org.jboss.hal.core.runtime.Timeouts.hostTimeout;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
-public class HostActions {
+public class HostActions implements Timeouts {
 
-    private static final int RELOAD_TIMEOUT = 10; // seconds w/o servers
-    private static final int RESTART_TIMEOUT = 20; // seconds w/o servers
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
 
     private static AddressTemplate hostTemplate(Host host) {
@@ -131,7 +131,7 @@ public class HostActions {
                             setTimeout((o) -> {
 
                                 if (host.isDomainController()) {
-                                    domainControllerOperation(host, operation, reloadTimeout(host),
+                                    domainControllerOperation(host, operation, hostTimeout(host, Action.RELOAD),
                                             restartServers ? host.getServers(Server::isStarted) : emptyList(),
                                             resources.messages().reload(host.getName()),
                                             resources.messages().reloadDomainControllerPending(host.getName()),
@@ -140,7 +140,7 @@ public class HostActions {
                                             resources.messages().domainControllerTimeout(host.getName()));
 
                                 } else {
-                                    hostControllerOperation(host, operation, reloadTimeout(host),
+                                    hostControllerOperation(host, operation, hostTimeout(host, Action.RELOAD),
                                             restartServers ? host.getServers(Server::isStarted) : emptyList(),
                                             resources.messages().reloadHostSuccess(host.getName()),
                                             resources.messages().reloadHostError(host.getName()),
@@ -185,7 +185,7 @@ public class HostActions {
                         .param(RESTART, true)
                         .build();
                 if (host.isDomainController()) {
-                    domainControllerOperation(host, operation, restartTimeout(host), host.getServers(),
+                    domainControllerOperation(host, operation, hostTimeout(host, Action.RESTART), host.getServers(),
                             resources.messages().restart(host.getName()),
                             resources.messages().restartDomainControllerPending(host.getName()),
                             resources.messages().restartHostSuccess(host.getName()),
@@ -193,7 +193,7 @@ public class HostActions {
                             resources.messages().domainControllerTimeout(host.getName()));
 
                 } else {
-                    hostControllerOperation(host, operation, restartTimeout(host), host.getServers(),
+                    hostControllerOperation(host, operation, hostTimeout(host, Action.RESTART), host.getServers(),
                             resources.messages().restartHostSuccess(host.getName()),
                             resources.messages().restartHostError(host.getName()),
                             resources.messages().hostControllerTimeout(host.getName()));
@@ -288,14 +288,6 @@ public class HostActions {
 
     public boolean isPending(Host host) {
         return pendingHosts.containsKey(host.getName());
-    }
-
-    private int reloadTimeout(Host host) {
-        return RELOAD_TIMEOUT + host.getServers(Server::isStarted).size() * ServerActions.SERVER_RELOAD_TIMEOUT;
-    }
-
-    private int restartTimeout(Host host) {
-        return RESTART_TIMEOUT + host.getServers(Server::isStarted).size() * ServerActions.SERVER_RESTART_TIMEOUT;
     }
 
     private Operation ping(Host host) {

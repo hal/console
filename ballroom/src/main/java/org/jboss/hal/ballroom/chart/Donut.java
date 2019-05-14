@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 /**
  * Chart to show the relationship of a set of values to a whole.
  *
- * @see <a href="http://www.patternfly.org/pattern-library/data-visualization/donut-chart/">http://www.patternfly.org/pattern-library/data-visualization/donut-chart/</a>
+ * @see <a href="https://www.patternfly.org/pattern-library/data-visualization/donut-chart/">https://www.patternfly.org/pattern-library/data-visualization/donut-chart/</a>
  */
 public class Donut implements IsElement<HTMLElement>, Attachable {
 

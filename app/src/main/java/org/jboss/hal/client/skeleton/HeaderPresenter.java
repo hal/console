@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,7 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.NonProgressingOperationEvent;
+import org.jboss.hal.core.runtime.NonProgressingOperationEvent.NonProgressingOperationHandler;
 import org.jboss.hal.core.runtime.group.ServerGroupResultEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupResultEvent.ServerGroupResultHandler;
 import org.jboss.hal.core.runtime.host.HostResultEvent;
@@ -105,11 +106,20 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * The header presenter is not part of the actual presenters such as finder or application presenters, its content can
  * only be controlled by sending events. A direct modification using methods is not allowed.
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements
-        MessageHandler, HeaderModeHandler, FinderContextHandler, ModelBrowserPathHandler,
-        HostResultHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler,
-        ProcessStateHandler, UserChangedHandler, RolesChangedHandler,
-        NonProgressingOperationEvent.NonProgressingOperationHandler, IsElement {
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements IsElement,
+        // handlers (a-z)
+        FinderContextHandler,
+        HeaderModeHandler,
+        HostResultHandler,
+        MessageHandler,
+        ModelBrowserPathHandler,
+        NonProgressingOperationHandler,
+        ProcessStateHandler,
+        RolesChangedHandler,
+        ServerActionHandler,
+        ServerGroupResultHandler,
+        ServerResultHandler,
+        UserChangedHandler {
 
     static final int MAX_BREADCRUMB_VALUE_LENGTH = 20;
 
@@ -164,18 +174,18 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         getView().setPresenter(this);
         getView().init(environment, endpoints, settings, user);
 
-        registerHandler(getEventBus().addHandler(ProcessStateEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(HostResultEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(ServerGroupResultEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(ServerActionEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(ServerResultEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(HeaderModeEvent.getType(), this));
         registerHandler(getEventBus().addHandler(FinderContextEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(HeaderModeEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(HostResultEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
         registerHandler(getEventBus().addHandler(ModelBrowserPathEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(UserChangedEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(RolesChangedEvent.getType(), this));
         registerHandler(getEventBus().addHandler(NonProgressingOperationEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ProcessStateEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(RolesChangedEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ServerActionEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ServerGroupResultEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ServerResultEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(UserChangedEvent.getType(), this));
     }
 
     @Override
