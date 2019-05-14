@@ -26,13 +26,13 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class Popover {
 
-
     private final Bridge bridge;
 
     private Popover(Builder builder) {
         Options options = new Options();
         options.content = builder.content.asString();
         options.html = true;
+        options.sanitize = false;
         options.placement = builder.placement.id;
         if (builder.template != null) {
             options.template = builder.template.asString();
@@ -158,6 +158,7 @@ public class Popover {
 
         String content;
         boolean html;
+        boolean sanitize;
         String placement;
         String template;
         String title;
