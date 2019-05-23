@@ -121,6 +121,8 @@ class ServerUrlTasks {
                 completable = dispatcher.execute(operation).doOnSuccess(result -> {
                     Optional<Property> optional = result.asPropertyList().stream()
                             .filter(p -> p.getName().startsWith("http"))
+                            .filter(p -> p.getValue().hasDefined(BOUND))
+                            .filter(p -> p.getValue().get(BOUND).asBoolean())
                             .sorted(comparing(Property::getName))
                             .findFirst();
                     if (optional.isPresent()) {
