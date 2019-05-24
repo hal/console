@@ -135,6 +135,8 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
         List<ItemAction<ConfigurationChange>> actions = new ArrayList<>();
         String id = Ids.build(CONFIGURATION_CHANGES, item.getName(), "view");
         actions.add(new ItemAction<>(id, resources.constants().view(), presenter::viewRawChange));
+        String cliId = Ids.build(CONFIGURATION_CHANGES, item.getName(), "cli");
+        actions.add(new ItemAction<>(cliId, resources.constants().cli(), presenter::viewCli));
         return actions;
     }
 
