@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
@@ -126,8 +127,12 @@ public class DestinationColumn extends FinderColumn<Destination> {
                     for (ModelNode step : result) {
                         if (!step.isFailure()) {
                             for (ModelNode node : step.get(RESULT).asList()) {
-                                ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
-                                destinations.add(new Destination(address, node.get(RESULT)));
+                                AddressTemplate template = AddressTemplate.of(new ResourceAddress(node.get(ADDRESS)));
+                                if (!template.firstName().equals(HOST)) {
+                                    //Add correct host and server before the messaging address if it is missing
+                                    template = SELECTED_HOST_SELECTED_SERVER_TEMPLATE.append(template);
+                                }
+                                destinations.add(new Destination(template.resolve(statementContext), node.get(RESULT)));
                             }
                         }
                     }
