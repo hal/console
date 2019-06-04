@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import elemental2.dom.HTMLElement;
@@ -60,6 +60,22 @@ class RoleMapListItem extends TagsItem<ModelNode> implements ModelNodeItem {
         }
     }
 
+    @Override
+    public void addTag(ModelNode tag) {
+        ModelNode value = getValue();
+        ModelNode newValue = value != null ? value.clone() : new ModelNode();
+        newValue.add(tag.get(0));
+        modifyValue(newValue);
+    }
+
+    @Override
+    public void removeTag(ModelNode tag) {
+        List<ModelNode> list = new ArrayList<>(getValue().asList());
+        list.remove(tag.get(0));
+        ModelNode newValue = new ModelNode();
+        newValue.set(list);
+        modifyValue(newValue);
+    }
 
     private static class MapMapping implements TagsMapping<ModelNode> {
 
@@ -72,23 +88,17 @@ class RoleMapListItem extends TagsItem<ModelNode> implements ModelNodeItem {
         }
 
         @Override
-        public ModelNode parse(final String cst) {
-            ModelNode result = new ModelNode();
-            if (cst != null) {
-                Splitter.on(",")
-                        .trimResults()
-                        .omitEmptyStrings()
-                        .withKeyValueSeparator('=')
-                        .split(cst)
-                        .forEach((key, value) -> {
-                            ModelNode multiValue = new ModelNode();
-                            for (String v: value.split(VALUE_SEPARATOR)) {
-                                multiValue.add(v);
-                            }
-                            result.add(key, multiValue);
-                        });
+        public ModelNode parseTag(final String tag) {
+            String[] parts = tag.split("=");
+
+            ModelNode multiValue = new ModelNode();
+            for (String v: parts[1].split(VALUE_SEPARATOR)) {
+                multiValue.add(v);
             }
-            return result;
+
+            ModelNode node = new ModelNode();
+            node.add(parts[0], multiValue);
+            return node;
         }
 
         @Override
