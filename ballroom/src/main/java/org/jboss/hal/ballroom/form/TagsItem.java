@@ -75,6 +75,8 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         }
     }
 
+    public abstract void addTag(T tag);
+    public abstract void removeTag(T tag);
 
     private class TagsReadOnlyAppearance extends ReadOnlyAppearance<T> {
 
@@ -98,6 +100,8 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
 
         private final HTMLElement tagsContainer;
         private final TagsMapping<T> mapping;
+
+        private boolean skipAdding;
 
         TagsEditingAppearance(HTMLInputElement inputElement, SafeHtml inputHelp,
                 Set<Decoration> supportedDecorations, TagsMapping<T> mapping) {
@@ -130,21 +134,32 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
 
             TagsManager.Api api = TagsManager.Api.element(inputElement);
             api.tagsManager(options);
-            api.onRefresh((event, cst) -> {
-                modifyValue(mapping.parse(cst));
-                clearError();
-            });
             api.onInvalid((event, cst) -> {
                 String message = allowedCharacters() != null ? MESSAGES.invalidTagFormat(allowedCharacters())
                         : MESSAGES.invalidFormat();
                 showError(message);
+            });
+
+            api.onAdded((event, tag) -> {
+                if (skipAdding) {
+                    return;
+                }
+                addTag(mapping.parseTag(tag));
+                clearError();
+            });
+
+            api.onRemoved((event, tag) -> {
+                removeTag(mapping.parseTag(tag));
+                clearError();
             });
         }
 
         @Override
         public void showValue(T value) {
             if (attached) {
+                skipAdding = true;
                 TagsManager.Api.element(inputElement).setTags(mapping.tags(value));
+                skipAdding = false;
             } else {
                 inputElement.value = asString(value);
             }

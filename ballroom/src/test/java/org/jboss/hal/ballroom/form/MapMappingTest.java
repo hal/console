@@ -15,15 +15,12 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 public class MapMappingTest {
 
@@ -41,29 +38,8 @@ public class MapMappingTest {
     }
 
     @Test
-    public void parseNull() {
-        Map<String, String> map = mapping.parse(null);
-        assertNotNull(map);
-        assertTrue(map.isEmpty());
-    }
-
-    @Test
-    public void parseEmpty() {
-        Map<String, String> map = mapping.parse("");
-        assertNotNull(map);
-        assertTrue(map.isEmpty());
-    }
-
-    @Test
-    public void parseBlank() {
-        Map<String, String> map = mapping.parse("    ");
-        assertNotNull(map);
-        assertTrue(map.isEmpty());
-    }
-
-    @Test
     public void parseSimple() {
-        Map<String, String> map = mapping.parse(KEY_VALUE);
+        Map<String, String> map = mapping.parseTag(KEY_VALUE);
         assertNotNull(map);
         assertEquals(1, map.size());
         assertEquals(VALUE, map.get(KEY));
@@ -71,7 +47,7 @@ public class MapMappingTest {
 
     @Test
     public void parseSpecial() {
-        Map<String, String> map = mapping.parse(KEY_SPECIAL_VALUE);
+        Map<String, String> map = mapping.parseTag(KEY_SPECIAL_VALUE);
         assertNotNull(map);
         assertEquals(1, map.size());
         assertEquals(SPECIAL_VALUE, map.get(KEY));

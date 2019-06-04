@@ -38,7 +38,8 @@ public class TagsManager {
 
     private static final String EMPTY = "empty";
     private static final String PUSH_TAG = "pushTag";
-    private static final String REFRESH_EVENT = "tm:refresh";
+    private static final String ADDED_EVENT = "tm:pushed";
+    private static final String REMOVED_EVENT = "tm:spliced";
     private static final String INVALID_EVENT = "tm:invalid";
     private static final String DUPLICATED_EVENT = "tm:duplicated";
     private static final String TAGS = "tags";
@@ -50,17 +51,6 @@ public class TagsManager {
     public interface Validator {
 
         boolean validate(String tag);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    interface RefreshListener {
-
-        /**
-         * @param cst (c)omma (s)eparated (t)ags
-         */
-        void onRefresh(Event event, String cst);
     }
 
 
@@ -83,6 +73,18 @@ public class TagsManager {
          * @param cst (c)omma (s)eparated (t)ags
          */
         void onDuplicated(Event event, String cst);
+    }
+
+    @JsFunction
+    @FunctionalInterface
+    interface AddedListener {
+        void onAdded(Event event, String tag);
+    }
+
+    @JsFunction
+    @FunctionalInterface
+    interface RemovedListener {
+        void onRemoved(Event event, String tag);
     }
 
 
@@ -116,11 +118,13 @@ public class TagsManager {
         @JsMethod(namespace = GLOBAL, name = "$")
         public static native Api element(HTMLInputElement element);
 
-        public native void on(String event, RefreshListener refreshListener);
-
         public native void on(String event, InvalidListener invalidListener);
 
         public native void on(String event, DuplicatedListener duplicatedListener);
+
+        public native void on(String event, AddedListener addedListener);
+
+        public native void on(String event, RemovedListener removedListener);
 
         @JsMethod(name = TAGS_MANAGER)
         public native String[] tagsManagerGetTags(String getTags);
@@ -133,11 +137,6 @@ public class TagsManager {
         public native void tagsManager(Options options);
 
         @JsOverlay
-        final void onRefresh(RefreshListener refreshListener) {
-            on(REFRESH_EVENT, refreshListener);
-        }
-
-        @JsOverlay
         final void onInvalid(InvalidListener invalidListener) {
             on(INVALID_EVENT, invalidListener);
         }
@@ -145,6 +144,16 @@ public class TagsManager {
         @JsOverlay
         final void onDuplicated(DuplicatedListener duplicatedListener) {
             on(DUPLICATED_EVENT, duplicatedListener);
+        }
+
+        @JsOverlay
+        final void onAdded(AddedListener addedListener) {
+            on(ADDED_EVENT, addedListener);
+        }
+
+        @JsOverlay
+        final void onRemoved(RemovedListener removedListener) {
+            on(REMOVED_EVENT, removedListener);
         }
 
         @JsOverlay

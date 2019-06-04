@@ -15,10 +15,11 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Messages;
 
@@ -39,16 +40,30 @@ public class ListItem extends TagsItem<List<String>> {
         return getValue() == null || getValue().isEmpty();
     }
 
+    @Override
+    public void addTag(List<String> tag) {
+        List<String> value = getValue();
+        List<String> newValue = new ArrayList<>();
+        if (value != null) {
+            newValue.addAll(value);
+        }
+        newValue.addAll(tag);
+        modifyValue(newValue);
+    }
+
+    @Override
+    public void removeTag(List<String> tag) {
+        List<String> newValue = new ArrayList<>(getValue());
+        newValue.removeAll(tag);
+        modifyValue(newValue);
+    }
 
     private static class ListMapping implements TagsMapping<List<String>> {
 
         @Override
-        public List<String> parse(String cst) {
-            //noinspection UnstableApiUsage
-            return Splitter.on(',')
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .splitToList(cst);
+        public List<String> parseTag(final String tag) {
+            List<String> list = Arrays.asList(tag);
+            return list;
         }
 
         @Override
@@ -60,5 +75,6 @@ public class ListItem extends TagsItem<List<String>> {
         public String asString(List<String> value) {
             return String.join(", ", value);
         }
+
     }
 }

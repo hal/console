@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -31,7 +30,6 @@ import org.jboss.hal.resources.Messages;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
@@ -74,6 +72,24 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         }
     }
 
+    @Override
+    public void addTag(Map<String, String> tag) {
+        Map<String, String> value = getValue();
+        Map<String, String> newValue = new HashMap<>();
+        if (value != null) {
+            newValue.putAll(value);
+        }
+        Map.Entry<String, String> tagEntry = tag.entrySet().iterator().next();
+        newValue.put(tagEntry.getKey(), tagEntry.getValue());
+        modifyValue(newValue);
+    }
+
+    @Override
+    public void removeTag(Map<String, String> tag) {
+        Map<String, String> newValue = new HashMap<>(getValue());
+        newValue.remove(tag.keySet().iterator().next());
+        modifyValue(newValue);
+    }
 
     static class MapMapping implements TagsMapping<Map<String, String>> {
 
@@ -87,24 +103,13 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
         }
 
         @Override
-        public Map<String, String> parse(String cst) {
-            if (cst != null) {
-                // split the full cst at the comma
-                Map<String, String> tags = new HashMap<>();
-                Iterable<String> cstParts = Splitter.on(',')
-                        .trimResults()
-                        .omitEmptyStrings()
-                        .split(cst);
-                // split each key=value pair by the first '=' character
-                for (String part : cstParts) {
-                    int firstEq = part.indexOf(EQ);
-                    String keyPart = part.substring(0, firstEq);
-                    String valuePart = part.substring(firstEq + 1);
-                    tags.put(keyPart, valuePart);
-                }
-                return tags;
-            }
-            return emptyMap();
+        public Map<String, String> parseTag(String tag) {
+            int firstEq = tag.indexOf(EQ);
+            String keyPart = tag.substring(0, firstEq);
+            String valuePart = tag.substring(firstEq + 1);
+            Map<String, String> map = new HashMap<>();
+            map.put(keyPart, valuePart);
+            return map;
         }
 
         @Override
