@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import elemental2.dom.HTMLElement;
@@ -79,6 +79,22 @@ class CustomListItem extends TagsItem<ModelNode> implements ModelNodeItem {
         return getValue() == null || !getValue().isDefined();
     }
 
+    @Override
+    public void addTag(ModelNode tag) {
+        ModelNode value = getValue();
+        ModelNode newValue = value != null ? value.clone() : new ModelNode();
+        newValue.add(tag.get(0));
+        modifyValue(newValue);
+    }
+
+    @Override
+    public void removeTag(ModelNode tag) {
+        List<ModelNode> list = new ArrayList<>(getValue().asList());
+        list.remove(tag.get(0));
+        ModelNode newValue = new ModelNode();
+        newValue.set(list);
+        modifyValue(newValue);
+    }
 
     private static class MapMapping implements TagsMapping<ModelNode> {
 
@@ -98,24 +114,16 @@ class CustomListItem extends TagsItem<ModelNode> implements ModelNodeItem {
         }
 
         @Override
-        public ModelNode parse(final String cst) {
-            ModelNode result = new ModelNode();
+        public ModelNode parseTag(final String tag) {
+            String[] parts = tag.split("=");
 
-            if (cst != null) {
-                Splitter.on(',')
-                        .trimResults()
-                        .omitEmptyStrings()
-                        .withKeyValueSeparator('=')
-                        .split(cst)
-                        .forEach((key, value) -> {
-                            ModelNode kv = new ModelNode();
-                            kv.get(propAttribute).set(key);
-                            kv.get(valueAttribute).set(value);
-                            result.add(kv);
-                        });
-                return result;
-            }
-            return result;
+            ModelNode kv = new ModelNode();
+            kv.get(propAttribute).set(parts[0]);
+            kv.get(valueAttribute).set(parts[1]);
+
+            ModelNode node = new ModelNode();
+            node.add(kv);
+            return node;
         }
 
         @Override

@@ -30,7 +30,7 @@ public interface TagsMapping<T> {
         return null;
     }
 
-    T parse(String cst);
+    T parseTag(String tag);
 
     List<String> tags(T value);
 
