@@ -51,6 +51,7 @@ public interface NameTokens {
     String ELYTRON_RUNTIME_SSL = "elytron-runtime-ssl";
     String EJB3_CONFIGURATION = ModelDescriptionConstants.EJB3 + CONFIGURATION_SUFFIX;
     String EJB3_RUNTIME = ModelDescriptionConstants.EJB3 + RUNTIME_SUFFIX;
+    String ERROR = "error";
     String EXPERT_MODE = "expert-mode";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
@@ -121,6 +122,7 @@ public interface NameTokens {
     String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
     String WEBSERVICES_RUNTIME = "webservices-runtime";
+    String UNAUTHORIZED = "unauthorized";
 
     Set<String> getTokens();
 }

@@ -67,7 +67,6 @@ public class HalPlaceManager extends DefaultPlaceManager {
     private final Provider<Progress> progress;
     private final Map<Tuple, Consumer<String>> selectFunctions;
     private Resources resources;
-    private boolean firstRequest;
 
     @Inject
     public HalPlaceManager(EventBus eventBus,
@@ -83,7 +82,6 @@ public class HalPlaceManager extends DefaultPlaceManager {
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.resources = resources;
-        this.firstRequest = true;
 
         selectFunctions = new HashMap<>();
         selectFunctions.put(SELECTED_PROFILE, param -> getEventBus().fireEvent(new ProfileSelectionEvent(param)));
@@ -94,7 +92,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
     }
 
     @Override
-    protected void doRevealPlace(final PlaceRequest request, final boolean updateBrowserUrl) {
+    protected void doRevealPlace(PlaceRequest request, boolean updateBrowserUrl) {
         // Special treatment for statement context relevant parameters: The {selected.*} tokens in the @Requires
         // annotations on proxy places need to have a value in the statement context *before* the metadata processor
         // kicks in. Thus we need to look into the place request for well-known parameters and trigger a selection.
@@ -107,44 +105,17 @@ public class HalPlaceManager extends DefaultPlaceManager {
 
         metadataProcessor.process(request.getNameToken(), progress.get(), new AsyncCallback<Void>() {
             @Override
-            public void onFailure(final Throwable throwable) {
+            public void onFailure(Throwable throwable) {
                 unlock();
-                if (firstRequest) {
-                    revealDefaultPlace();
-                } else {
-                    revealCurrentPlace();
-                }
-                if (throwable == null) {
-                    getEventBus().fireEvent(new MessageEvent(Message.error(resources.messages().metadataError())));
-                } else {
-                    getEventBus().fireEvent(new MessageEvent(
-                            Message.error(resources.messages().metadataError(), throwable.getMessage())));
-                }
+                revealCurrentPlace();
+                String details = throwable != null ? throwable.getMessage() : null;
+                getEventBus().fireEvent(new MessageEvent(Message.error(resources.messages().metadataError(), details)));
             }
 
             @Override
-            public void onSuccess(final Void whatever) {
+            public void onSuccess(Void whatever) {
                 HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
-                firstRequest = false;
             }
         });
-    }
-
-    @Override
-    public void revealErrorPlace(final String invalidHistoryToken) {
-        MessageEvent.fire(getEventBus(), Message.error(resources.messages().pageNotFound(invalidHistoryToken)));
-        if (firstRequest) {
-            // TODO find a more elegant way to get hold of the very first request
-            super.revealErrorPlace(invalidHistoryToken);
-        }
-    }
-
-    @Override
-    public void revealUnauthorizedPlace(final String unauthorizedHistoryToken) {
-        MessageEvent.fire(getEventBus(), Message.error(resources.messages().unauthorized()));
-        if (firstRequest) {
-            // TODO find a more elegant way to get hold of the very first request
-            super.revealUnauthorizedPlace(unauthorizedHistoryToken);
-        }
     }
 }

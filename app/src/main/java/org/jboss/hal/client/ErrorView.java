@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.accesscontrol;
+package org.jboss.hal.client;
 
-import javax.inject.Inject;
+import javax.annotation.PostConstruct;
 
-import com.gwtplatform.mvp.client.proxy.Gatekeeper;
+import org.jboss.gwt.elemento.core.Widgets;
+import org.jboss.gwt.elemento.template.Templated;
+import org.jboss.hal.core.mvp.HalViewImpl;
 
-/** A gatekeeper which needs {@link AccessControl#isSuperUserOrAdministrator()} to pass. */
-public class SensitiveGatekeeper implements Gatekeeper {
+@Templated
+public abstract class ErrorView extends HalViewImpl implements ErrorPresenter.MyView {
 
-    private final AccessControl accessControl;
-
-    @Inject
-    public SensitiveGatekeeper(AccessControl accessControl) {
-        this.accessControl = accessControl;
+    public static ErrorView create() {
+        return new Templated_ErrorView();
     }
 
-    @Override
-    public boolean canReveal() {
-        return accessControl.isSuperUserOrAdministrator();
+    @PostConstruct
+    void init() {
+        initWidget(Widgets.asWidget(asElement()));
     }
 }

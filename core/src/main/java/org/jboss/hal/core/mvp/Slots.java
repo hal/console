@@ -19,8 +19,6 @@ import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 
 public interface Slots {
 
-    /**
-     * The slot for the main content area, used by top level and application presenters.
-     */
+    /** The slot for the main content area, used by top level and application presenters. */
     NestedSlot MAIN = new NestedSlot();
 }

@@ -104,10 +104,19 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * The header presenter is not part of the actual presenters such as finder or application presenters, its content can
  * only be controlled by sending events. A direct modification using methods is not allowed.
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements
-        MessageHandler, HeaderModeHandler, FinderContextHandler, ModelBrowserPathHandler,
-        HostResultHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler,
-        ProcessStateHandler, UserChangedHandler, RolesChangedHandler, IsElement {
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements IsElement,
+        // handlers (a-z)
+        FinderContextHandler,
+        HeaderModeHandler,
+        HostResultHandler,
+        MessageHandler,
+        ModelBrowserPathHandler,
+        ProcessStateHandler,
+        RolesChangedHandler,
+        ServerActionHandler,
+        ServerGroupResultHandler,
+        ServerResultHandler,
+        UserChangedHandler {
 
     static final int MAX_BREADCRUMB_VALUE_LENGTH = 20;
 
@@ -160,17 +169,17 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         getView().setPresenter(this);
         getView().init(environment, endpoints, settings, user);
 
-        registerHandler(getEventBus().addHandler(ProcessStateEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(HostResultEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(ServerGroupResultEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(ServerActionEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(ServerResultEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(HeaderModeEvent.getType(), this));
         registerHandler(getEventBus().addHandler(FinderContextEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(HeaderModeEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(HostResultEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
         registerHandler(getEventBus().addHandler(ModelBrowserPathEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(UserChangedEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ProcessStateEvent.getType(), this));
         registerHandler(getEventBus().addHandler(RolesChangedEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ServerActionEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ServerGroupResultEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ServerResultEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(UserChangedEvent.getType(), this));
     }
 
     @Override

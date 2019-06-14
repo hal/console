@@ -30,7 +30,7 @@ import static org.jboss.hal.config.Role.SUPER_USER;
 @JsType
 public class User {
 
-    private static final User current = new User("Unknown", new HashSet<>()); //NON-NLS
+    private static final User current = new User("Unknown", new HashSet<>(), false); //NON-NLS
 
     /** @return the current user. */
     public static User current() {
@@ -39,10 +39,12 @@ public class User {
 
     private final Set<Role> roles;
     private String name;
+    private boolean authenticated;
 
-    private User(String name, Set<Role> roles) {
+    private User(String name, Set<Role> roles, boolean authenticated) {
         this.name = name;
         this.roles = roles;
+        this.authenticated = authenticated;
     }
 
     /** @return the user name. */
@@ -94,6 +96,13 @@ public class User {
         return false;
     }
 
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+    }
 
     // ------------------------------------------------------ JS methods
 

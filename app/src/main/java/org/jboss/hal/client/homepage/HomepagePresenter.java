@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
@@ -216,7 +215,6 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
 
 
     // @formatter:off
-    @NoGatekeeper
     @ProxyStandard
     @NameToken(NameTokens.HOMEPAGE)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {

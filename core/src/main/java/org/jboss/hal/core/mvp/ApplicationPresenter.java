@@ -51,7 +51,7 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
     protected void onReveal() {
         super.onReveal();
         // if we run in external mode we need to adjust some global CSS styles
-        if (external) {
+        if (isExternal()) {
             Skeleton.externalMode();
         }
     }

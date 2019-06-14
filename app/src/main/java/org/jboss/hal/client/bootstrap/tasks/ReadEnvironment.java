@@ -133,7 +133,8 @@ public class ReadEnvironment implements BootstrapTask {
                             }
                         }
                     }
-                    logger.debug("User info: {}", user.getName(), user.getRoles());
+                    user.setAuthenticated(true);
+                    logger.debug("User info: {} {}", user.getName(), user.getRoles());
                 })
                 .toCompletable();
     }
