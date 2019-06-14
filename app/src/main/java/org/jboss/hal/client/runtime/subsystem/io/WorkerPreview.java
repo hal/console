@@ -49,6 +49,7 @@ class WorkerPreview extends PreviewContent<NamedNode> {
     private final Utilization corePoolSize;
     private final Utilization maxPoolSize;
     private final Utilization ioThreadCount;
+    private final Utilization busyWorkerThreadCount;
     private final HTMLElement connectionsContainer;
 
     WorkerPreview(NamedNode worker, Dispatcher dispatcher, StatementContext statementContext) {
@@ -58,12 +59,13 @@ class WorkerPreview extends PreviewContent<NamedNode> {
         this.labelBuilder = new LabelBuilder();
         this.corePoolSize = new Utilization(labelBuilder.label(CORE_POOL_SIZE), Names.THREAD_POOLS, false, false);
         this.maxPoolSize = new Utilization(labelBuilder.label(MAX_POOL_SIZE), Names.THREAD_POOLS, false, false);
+        this.busyWorkerThreadCount = new Utilization(labelBuilder.label(BUSY_WORKER_THREAD_COUNT), Names.THREADS, false, false);
         this.ioThreadCount = new Utilization(labelBuilder.label(IO_THREAD_COUNT), Names.THREADS, false, false);
 
         getHeaderContainer().appendChild(refreshLink(() -> update(worker)));
         previewBuilder()
                 .add(h(2).textContent(Names.THREADS))
-                .addAll(corePoolSize, maxPoolSize, ioThreadCount)
+                .addAll(corePoolSize, maxPoolSize, busyWorkerThreadCount, ioThreadCount)
                 .add(connectionsContainer = div().asElement());
     }
 
@@ -77,6 +79,7 @@ class WorkerPreview extends PreviewContent<NamedNode> {
         dispatcher.execute(operation, result -> {
             corePoolSize.update(result.get(CORE_POOL_SIZE).asLong(), result.get(TASK_MAX_THREADS).asLong());
             maxPoolSize.update(result.get(MAX_POOL_SIZE).asLong(), result.get(TASK_MAX_THREADS).asLong());
+            busyWorkerThreadCount.update(result.get(BUSY_WORKER_THREAD_COUNT).asLong(), result.get(TASK_MAX_THREADS).asLong());
             ioThreadCount.update(result.get(IO_THREAD_COUNT).asLong(), result.get(IO_THREADS).asLong());
 
             List<Property> serverConnections = failSafePropertyList(result, SERVER);

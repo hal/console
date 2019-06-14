@@ -110,6 +110,7 @@ public interface ModelDescriptionConstants {
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
     String BUNDLED = "bundled";
+    String BUSY_WORKER_THREAD_COUNT = "busy-task-thread-count";
     String BYTE_BUFFER_POOL = "byte-buffer-pool";
     String BYTES = "bytes";
     String CACHE_CONTAINER = "cache-container";
