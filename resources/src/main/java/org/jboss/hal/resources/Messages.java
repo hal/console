@@ -324,6 +324,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeMessageQuestion();
     SafeHtml removeMessagesQuestion();
     SafeHtml removeMessageSuccess();
+    SafeHtml removeError(String name, String error);
     SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml removeRoleQuestion(String name);
     SafeHtml removeRunAsRoleError(String role);

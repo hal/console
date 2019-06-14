@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.runtime.group;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,11 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.core.Core;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
@@ -40,7 +45,10 @@ import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -48,6 +56,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.MetadataProcessor.MetadataCallback;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -338,6 +347,117 @@ public class ServerGroupActions {
                             new ServerGroupExceptionCallback(serverGroup, startedServers,
                                     resources.messages().killServerError(serverGroup.getName())));
                 });
+    }
+
+    public void remove(ServerGroup serverGroup) {
+        List<Server> stoppedServers = serverGroup.getServers(Server::isStopped);
+
+        DialogFactory.showConfirmation(
+                resources.messages().removeConfirmationTitle(Names.SERVER_GROUP),
+                resources.messages().removeConfirmationQuestion(serverGroup.getName()),
+                () -> {
+                    prepare(serverGroup, stoppedServers, Action.REMOVE);
+
+                    Composite comp = new Composite();
+
+                    for (Server server: stoppedServers) {
+                        comp.add(new Operation.Builder(server.getServerConfigAddress(), REMOVE).build());
+                    }
+
+                    Operation operation = new Operation.Builder(serverGroup.getAddress(), REMOVE).build();
+                    comp.add(operation);
+
+                    dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
+                            stoppedServers,
+                            Result.SUCCESS,
+                            Message.success(resources.messages().removeResourceSuccess(Names.SERVER_GROUP, serverGroup.getName()))
+                    ), (operation1, failure) -> finish(serverGroup,
+                            stoppedServers,
+                            Result.ERROR,
+                            Message.error(resources.messages().removeError(serverGroup.getName(), failure))
+                    ), (operation1, exception) -> finish(serverGroup,
+                            stoppedServers,
+                            Result.ERROR,
+                            Message.error(resources.messages().removeError(serverGroup.getName(), exception.getMessage()))
+                    ));
+                });
+    }
+
+    public void copy(ServerGroup serverGroup, FormItemValidation<String> nameItemValidator) {
+
+        NameItem newNameItem = new NameItem();
+        newNameItem.setValue(serverGroup.getName() + "_" + COPY);
+        newNameItem.addValidationHandler(nameItemValidator);
+
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(COPY, serverGroup.getName(), Ids.FORM), Metadata.empty())
+                .fromRequestProperties()
+                .unboundFormItem(newNameItem, 0)
+                .requiredOnly()
+                .build();
+
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.SERVER_GROUP),
+                form, (resource, payload) -> {
+            // read server-config recursively to retrieve nested resources
+            Operation opReadServerGroup = new Operation.Builder(serverGroup.getAddress(), READ_RESOURCE_OPERATION)
+                    .param(RECURSIVE, true)
+                    .build();
+
+            dispatcher.execute(opReadServerGroup, serverGroupModel -> {
+                ServerGroup newServerGroup = new ServerGroup(newNameItem.getValue(), serverGroupModel);
+
+                Operation opAddServer = new Operation.Builder(newServerGroup.getAddress(), ADD)
+                        .payload(serverGroupModel)
+                        .build();
+
+                Composite comp = new Composite();
+                comp.add(opAddServer);
+                addChildOperations(comp, newServerGroup, newServerGroup.getAddress(), 2);
+
+                dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
+                        Collections.emptyList(),
+                        Result.SUCCESS,
+                        Message.success(resources.messages().addResourceSuccess(Names.SERVER_GROUP, newNameItem.getValue()))
+                ), (operation1, failure) -> finish(serverGroup,
+                        Collections.emptyList(),
+                        Result.ERROR,
+                        Message.error(resources.messages().addResourceError(newNameItem.getValue(), failure))
+                ), (operation1, exception) -> finish(serverGroup,
+                        Collections.emptyList(),
+                        Result.ERROR,
+                        Message.error(resources.messages().addResourceError(newNameItem.getValue(), exception.getMessage()))
+                ));
+            });
+        });
+        dialog.show();
+
+        ModelNode model = new ModelNode();
+        model.get(TIMEOUT).set(0);
+        form.edit(model);
+    }
+
+    private static void addChildOperations(Composite composite, ModelNode rootModel,
+                                           ModelNode baseAddress, int depth) {
+        if (depth <= 0) {
+            return;
+        }
+
+        for (Property property: rootModel.asPropertyList()) {
+            if (ModelType.OBJECT.equals(property.getValue().getType())) {
+                for (Property resource: property.getValue().asPropertyList()) {
+                    if (ModelType.OBJECT.equals(resource.getValue().getType())) {
+                        ModelNode resourceAddress = baseAddress.clone().add(property.getName(), resource.getName());
+
+                        Operation operation = new Operation
+                                .Builder(new ResourceAddress(resourceAddress), ADD)
+                                .payload(resource.getValue())
+                                .build();
+
+                        composite.add(operation);
+                        addChildOperations(composite, resource.getValue(), resourceAddress, depth - 1);
+                    }
+                }
+            }
+        }
     }
 
     private int timeout(ServerGroup serverGroup, Action action) {

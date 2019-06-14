@@ -176,6 +176,7 @@ public interface ModelDescriptionConstants {
     String CONTEXT = "context";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
+    String COPY = "copy";
     String CORE_MANAGEMENT = "core-management";
     String CORE_POOL_SIZE = "core-pool-size";
     String CORE_SERVICE = "core-service";

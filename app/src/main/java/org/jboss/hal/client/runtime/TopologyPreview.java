@@ -504,7 +504,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         .add(dropdown = div().css(CSS.dropdown).asElement()))
                 .asElement();
 
-        if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
+        if (!serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
             String serverGroupDropDownId = Ids.serverGroup(serverGroup.getName());
             dropdown.appendChild(a()
                     .id(serverGroupDropDownId)
@@ -760,6 +760,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         actions.add(actionLink(event -> serverGroupActions.destroy(serverGroup), resources.constants().destroy()));
         actions.add(actionLink(event -> serverGroupActions.kill(serverGroup), resources.constants().kill()));
 
+        // add remove action to groups which have only stopped servers or no servers at all
+        if (!serverGroup.hasServers(Server::isStarted)) {
+            actions.add(actionLink(event -> serverGroupActions.remove(serverGroup), resources.constants().remove()));
+        }
         return actions;
     }
 
