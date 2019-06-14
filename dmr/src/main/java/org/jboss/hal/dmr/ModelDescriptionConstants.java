@@ -101,6 +101,7 @@ public interface ModelDescriptionConstants {
     String BOOT_CLASS_PATH = "boot-class-path";
     String BOOT_CLASS_PATH_SUPPORTED = "boot-class-path-supported";
     String BOOT_TIME = "boot-time";
+    String BOUND = "bound";
     String BOUND_ADDRESS = "bound-address";
     String BOUND_PORT = "bound-port";
     String BRIDGE = "bridge";
