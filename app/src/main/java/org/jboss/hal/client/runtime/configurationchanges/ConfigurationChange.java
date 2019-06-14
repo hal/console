@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -73,6 +74,26 @@ class ConfigurationChange extends NamedNode {
 
         int length = get(OPERATIONS).asString().length();
         get(HAL_LENGTH).set(length);
+    }
+
+    String asCli() {
+        StringBuilder cli = new StringBuilder();
+        if (composite) {
+            cli.append("batch\n");
+            for (int i = 0; i < changes().size(); i++) {
+                String operation = new Operation(changes().get(i)).asCli();
+                cli.append(trimOperationStringDown(operation)).append("\n");
+            }
+            cli.append("run-batch");
+        } else {
+            String operation = new Operation(changes().get(0)).asCli();
+            cli.append(trimOperationStringDown(operation));
+        }
+        return cli.toString();
+    }
+
+    private String trimOperationStringDown(String operation) {
+        return (operation.contains("{")) ? operation.substring(0, operation.indexOf("{")) : operation;
     }
 
     Date getOperationDate() {

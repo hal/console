@@ -243,8 +243,16 @@ public class ConfigurationChangesPresenter extends
     }
 
     void viewRawChange(ConfigurationChange change) {
+        showInDialog(change.asModelNode().toString());
+    }
+
+    void viewCli(ConfigurationChange change) {
+        showInDialog(change.asCli());
+    }
+
+    void showInDialog(String textContent) {
         HTMLPreElement elem = pre().css(formControlStatic, wrap).get();
-        elem.textContent = change.asModelNode().toString();
+        elem.textContent = textContent;
 
         HTMLElement content = div()
                 .add(elem)
@@ -263,6 +271,7 @@ public class ConfigurationChangesPresenter extends
                 .build();
         dialog.show();
     }
+
 
     public StatementContext getStatementContext() {
         return statementContext;
