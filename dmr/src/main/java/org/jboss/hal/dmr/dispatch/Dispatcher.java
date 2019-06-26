@@ -156,16 +156,6 @@ public class Dispatcher implements RecordingHandler {
         return dmr(operations).map(this::compositeResult);
     }
 
-    /**
-     * Executes the composite operation and upon sucessfull result calls the success function with the response results,
-     * but doesn't retrieve the "result" payload as the other execute methods does. You should use this execute
-     * method if the response node you want is not in the "result" attribute.
-     */
-    @JsIgnore
-    public void executeDMR(Composite composite, Consumer<CompositeResult> success, OnFail fail, OnError error) {
-        dmr(composite, payload -> success.accept(new CompositeResult(payload)), fail, error);
-    }
-
     private CompositeResult compositeResult(ModelNode payload) {
         return new CompositeResult(payload.get(RESULT));
     }
@@ -194,7 +184,7 @@ public class Dispatcher implements RecordingHandler {
     }
 
     /**
-     * Executes the operation and upon sucessfull result calls the success function with the response results,
+     * Executes the operation and upon successful result calls the success function with the response results,
      * but doesn't retrieve the "result" payload as the other execute methods does. You should use this execute
      * method if the response node you want is not in the "result" attribute.
      */
@@ -207,21 +197,7 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ dmr
 
     private void dmr(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        dmr(operation).subscribe(new SingleSubscriber<ModelNode>() {
-            @Override
-            public void onSuccess(ModelNode modelNode) {
-                success.accept(modelNode);
-            }
-
-            @Override
-            public void onError(Throwable ex) {
-                if (ex instanceof DispatchFailure) {
-                    fail.onFailed(operation, ex.getMessage());
-                } else {
-                    error.onException(operation, ex);
-                }
-            }
-        });
+        dmr(operation).subscribe(new ModelNodeSingleSubscriber(operation, success, fail, error));
     }
 
     private Single<ModelNode> dmr(Operation operation) {
@@ -244,6 +220,7 @@ public class Dispatcher implements RecordingHandler {
             } else {
                 xhr.send(dmrOperation.toBase64String());
             }
+            logger.trace("DMR operation: {}", operation);
             recordOperation(operation);
         });
     }
@@ -253,7 +230,7 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public void upload(File file, Operation operation, Consumer<ModelNode> success) {
-        upload(file, operation).subscribe(new SingleSubscriber<ModelNode>() {
+        SingleSubscriber<ModelNode> subscriber = new SingleSubscriber<ModelNode>() {
             @Override
             public void onSuccess(ModelNode modelNode) {
                 success.accept(modelNode);
@@ -267,7 +244,8 @@ public class Dispatcher implements RecordingHandler {
                     exceptionCallback.onException(operation, ex);
                 }
             }
-        });
+        };
+        upload(file, operation).subscribe(subscriber);
     }
 
     @JsIgnore
@@ -280,7 +258,7 @@ public class Dispatcher implements RecordingHandler {
         options.setType("application/dmr-encoded");
 
         FormData formData = new FormData();
-        if (navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1) {
+        if (navigator.userAgent.contains("Safari") && !navigator.userAgent.contains("Chrome")) {
             // Safari does not support sending new files
             // https://bugs.webkit.org/show_bug.cgi?id=165081
             ConstructorBlobPartsArrayUnionType fileAsBlob = ConstructorBlobPartsArrayUnionType.of(file);
@@ -299,6 +277,7 @@ public class Dispatcher implements RecordingHandler {
                     (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
                     (op, error) -> emitter.onError(error));
             xhr.send(formData);
+            logger.trace("DMR operation: {}", operation);
             // Uploads are not supported in macros!
         });
     }
@@ -311,7 +290,7 @@ public class Dispatcher implements RecordingHandler {
         Operation downloadOperation = runAs(operation);
         String url = downloadUrl(downloadOperation);
         XMLHttpRequest request = newXhr(url, GET, downloadOperation, exceptionCallback, xhr -> {
-            int status = (int) xhr.status;
+            int status = xhr.status;
             String responseText = xhr.responseText;
 
             if (status == 200) {
@@ -386,7 +365,7 @@ public class Dispatcher implements RecordingHandler {
     private XMLHttpRequest newDmrXhr(String url, HttpMethod method, Operation operation,
             PayloadProcessor payloadProcessor, Consumer<ModelNode> success, OnFail fail, OnError error) {
         return newXhr(url, method, operation, error, xhr -> {
-            int status = (int) xhr.status;
+            int status = xhr.status;
             String responseText = xhr.responseText;
             String contentType = xhr.getResponseHeader(CONTENT_TYPE.header());
 
@@ -428,7 +407,7 @@ public class Dispatcher implements RecordingHandler {
         // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
         xhr.onload = event -> onLoad.onLoad(xhr);
         xhr.addEventListener("error",  //NON-NLS
-                event -> handleErrorCodes(url, (int) xhr.status, operation, error), false);
+                event -> handleErrorCodes(url, xhr.status, operation, error), false);
         xhr.open(method.name(), url, true);
         xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
         String bearerToken = getBearerToken();
@@ -493,7 +472,7 @@ public class Dispatcher implements RecordingHandler {
                 }
             }
         }
-        return headers.toArray(new Header[headers.size()]);
+        return headers.toArray(new Header[0]);
     }
 
 
@@ -570,13 +549,13 @@ public class Dispatcher implements RecordingHandler {
         dmr(operation, payload -> callback.onSuccess(payload.get(RESULT)), failedCallback, exceptionCallback);
     }
 
+
     // ------------------------------------------------------ Keycloak methods
 
-    /**
-     * Obtains the bearer token from keycloak object attached to the window.
-     */
+    /** Obtains the bearer token from keycloak object attached to the window. */
     public static native String getBearerToken()/*-{
         // keycloak javascript object is created in EndpointManager class
+        // noinspection JSUnresolvedVariable
         var keycloak = $wnd.keycloak;
         if (keycloak != null && keycloak.token != null) {
             return keycloak.token;
@@ -625,5 +604,35 @@ public class Dispatcher implements RecordingHandler {
 
     public enum HttpMethod {
         GET, POST
+    }
+
+
+    private static class ModelNodeSingleSubscriber extends SingleSubscriber<ModelNode> {
+
+        private final Operation operation;
+        private final Consumer<ModelNode> success;
+        private final OnFail fail;
+        private final OnError error;
+
+        ModelNodeSingleSubscriber(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
+            this.operation = operation;
+            this.success = success;
+            this.fail = fail;
+            this.error = error;
+        }
+
+        @Override
+        public void onSuccess(ModelNode modelNode) {
+            success.accept(modelNode);
+        }
+
+        @Override
+        public void onError(Throwable ex) {
+            if (ex instanceof DispatchFailure) {
+                fail.onFailed(operation, ex.getMessage());
+            } else {
+                error.onException(operation, ex);
+            }
+        }
     }
 }
