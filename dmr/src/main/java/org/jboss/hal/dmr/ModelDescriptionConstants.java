@@ -125,6 +125,7 @@ public interface ModelDescriptionConstants {
     String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
     String CANCELLED = "cancelled";
     String CAPABILITY_REFERENCE = "capability-reference";
+    String CERTIFICATE_AUTHORITY = "certificate-authority";
     String CERTIFICATE_AUTHORITY_ACCOUNT = "certificate-authority-account";
     String CERTIFICATE_DETAILS = "certificate-details";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
