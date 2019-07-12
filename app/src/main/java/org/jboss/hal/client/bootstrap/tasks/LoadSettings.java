@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class LoadSettings implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         settings.load(TITLE, Names.BROWSER_DEFAULT_TITLE);
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);

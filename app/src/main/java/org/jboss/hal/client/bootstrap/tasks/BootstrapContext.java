@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,33 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Task;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
-/** A task executed as part of the bootstrap process. */
-public interface BootstrapTask extends Task<FlowContext> {
+class BootstrapContext {
+
+    private final Stack<Object> stack;
+    private final Map<String, Object> data;
+
+    BootstrapContext() {
+        this.stack = new Stack<>();
+        this.data = new HashMap<>();
+    }
+
+    <T> void push(T value) {
+        stack.push(value);
+    }
+
+    <T> T pop() {
+        return (T) stack.pop();
+    }
+
+    <T> void set(String key, T value) {
+        data.put(key, value);
+    }
+
+    <T> T get(String key) {
+        return (T) data.get(key);
+    }
 }

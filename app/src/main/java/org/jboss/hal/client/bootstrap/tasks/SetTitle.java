@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class SetTitle implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         String title = settings.get(Settings.Key.TITLE).value();
         if (emptyToNull(title) != null) {
             for (Map.Entry<String, Supplier<String>> entry : data.entrySet()) {

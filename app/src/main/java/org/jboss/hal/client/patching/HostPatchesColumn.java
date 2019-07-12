@@ -66,7 +66,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
 @Column(Ids.PATCHING_DOMAIN)
-@Requires(value = "/host=*/core-service=patching")
+@Requires(value = "/{domain.controller}/core-service=patching")
 public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostActionEvent.HostActionHandler,
         HostResultEvent.HostResultHandler {
 
@@ -237,7 +237,6 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public void onHostResult(HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();

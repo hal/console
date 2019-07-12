@@ -64,8 +64,8 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
 
 @AsyncColumn(Ids.RUNTIME_SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
