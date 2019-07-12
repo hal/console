@@ -19,15 +19,14 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
-import static org.jboss.hal.meta.StatementContext.Tuple.*;
+import static org.jboss.hal.meta.StatementContext.Expression.*;
 
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class TestableStatementContext implements StatementContext {
 
-    private final Map<Tuple, String> context;
+    private final Map<Expression, String> context;
 
     public TestableStatementContext() {
-        context = new EnumMap<>(Tuple.class);
+        context = new EnumMap<>(Expression.class);
         context.put(DOMAIN_CONTROLLER, "master");
         context.put(SELECTED_PROFILE, "full");
         context.put(SELECTED_GROUP, "main-server-group");
@@ -47,11 +46,11 @@ public class TestableStatementContext implements StatementContext {
 
     @Override
     public String[] resolveTuple(String placeholder, AddressTemplate template) {
-        Tuple t = Tuple.from(placeholder);
-        if (t != null && context.containsKey(t)) {
-            String value = context.get(t);
+        Expression expression = Expression.from(placeholder);
+        if (expression != null && context.containsKey(expression)) {
+            String value = context.get(expression);
             if (value != null) {
-                return new String[]{t.resource(), value};
+                return new String[]{expression.resource(), value};
             }
         }
         return null;

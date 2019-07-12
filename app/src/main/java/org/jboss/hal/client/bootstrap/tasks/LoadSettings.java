@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,15 +20,14 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
-import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
-import static org.jboss.hal.config.Settings.Key.LOCALE;
-import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
-import static org.jboss.hal.config.Settings.Key.RUN_AS;
+import static org.jboss.hal.config.Settings.Key.*;
 
 /**
  * Loads the settings. Please make sure this is one of the last bootstrap function. This function loads the run-as role
@@ -49,7 +48,7 @@ public class LoadSettings implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);
         settings.load(PAGE_SIZE, Settings.DEFAULT_PAGE_SIZE);

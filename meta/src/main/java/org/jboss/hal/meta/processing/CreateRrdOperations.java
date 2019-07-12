@@ -55,7 +55,7 @@ class CreateRrdOperations {
                     int missingMetadata = lookupResult.missingMetadata(template);
                     if (missingMetadata != ALL_PRESENT) {
 
-                        ResourceAddress address = null;
+                        ResourceAddress address;
                         Operation.Builder builder = null;
 
                         if (missingMetadata == NOTHING_PRESENT) {
@@ -76,7 +76,7 @@ class CreateRrdOperations {
                                     .param(OPERATIONS, true);
                         }
 
-                        if (builder != null && address != null) {
+                        if (builder != null) {
                             if (recursive) {
                                 builder.param(RECURSIVE_DEPTH, depth);
                             }

@@ -19,8 +19,8 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.core.deployment.DeploymentResources.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.core.deployment.DeploymentResources.SUBDEPLOYMENT_ADDRESS;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
 
 interface AddressTemplates {
 

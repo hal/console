@@ -29,7 +29,6 @@ import static org.jboss.hal.config.OperationMode.STANDALONE;
  *
  * @see EnvironmentGenerator
  */
-@SuppressWarnings("unused")
 public abstract class AbstractEnvironment implements Environment {
 
     private final org.jboss.hal.config.Version halVersion;

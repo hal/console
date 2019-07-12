@@ -24,7 +24,7 @@ import org.jboss.hal.meta.StatementContext;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPENDENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUGGEST_CAPABILITIES;
-import static org.jboss.hal.meta.StatementContext.Tuple.DOMAIN_CONTROLLER;
+import static org.jboss.hal.meta.StatementContext.Expression.DOMAIN_CONTROLLER;
 
 public class SuggestCapabilitiesAutoComplete extends AutoComplete {
 
@@ -32,8 +32,8 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
             AddressTemplate.of(DOMAIN_CONTROLLER, "core-service=capability-registry");
     private static final String ERROR_MESSAGE = "Unable to read capability suggestions for {} from {}: {}";
 
-    public SuggestCapabilitiesAutoComplete(final Dispatcher dispatcher, final StatementContext statementContext,
-            final String capability, final AddressTemplate template) {
+    public SuggestCapabilitiesAutoComplete(Dispatcher dispatcher, StatementContext statementContext,
+            String capability, AddressTemplate template) {
 
         Operation operation = new Operation.Builder(CAPABILITY_REGISTRY.resolve(statementContext), SUGGEST_CAPABILITIES)
                 .param(NAME, capability)

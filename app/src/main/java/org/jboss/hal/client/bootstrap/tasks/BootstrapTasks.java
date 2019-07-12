@@ -25,6 +25,7 @@ public class BootstrapTasks {
     @Inject
     public BootstrapTasks(ReadEnvironment readEnvironment,
             ReadAuthentication readAuthentication,
+            ReadHostNames readHostNames,
             FindDomainController findDomainController,
             RegisterStaticCapabilities registerStaticCapabilities,
             ReadExtensions readExtensions,
@@ -33,6 +34,7 @@ public class BootstrapTasks {
         this.tasks = new BootstrapTask[]{
                 readEnvironment,
                 readAuthentication,
+                readHostNames,
                 findDomainController,
                 registerStaticCapabilities,
                 readExtensions,

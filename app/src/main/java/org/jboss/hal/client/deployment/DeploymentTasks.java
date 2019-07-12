@@ -283,8 +283,8 @@ class DeploymentTasks {
 
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
-     * {@link TopologyTasks#RUNNING_SERVERS}. Expects the list of deployments under the key {@link
-     * #SERVER_GROUP_DEPLOYMENTS} in the context. Updates all matching deployments with the deployments from the running
+     * {@link TopologyTasks#SERVERS}. Expects the list of deployments under the key {@link #SERVER_GROUP_DEPLOYMENTS} in
+     * the context. Updates all matching deployments with the deployments from the running
      * server.
      */
     static class LoadDeploymentsFromRunningServer implements Task<FlowContext> {
@@ -303,7 +303,7 @@ class DeploymentTasks {
             if (!environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = context
                         .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
-                List<Server> runningServers = context.get(TopologyTasks.RUNNING_SERVERS);
+                List<Server> runningServers = context.get(TopologyTasks.SERVERS);
                 if (serverGroupDeployments != null && runningServers != null &&
                         !serverGroupDeployments.isEmpty() && !runningServers.isEmpty()) {
 

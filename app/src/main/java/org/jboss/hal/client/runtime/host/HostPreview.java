@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,10 +24,9 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
-import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.core.runtime.host.HostPreviewAttributes;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.a;
@@ -36,9 +35,11 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.host.HostColumn.hostTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.security.Constraint.executable;
 import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
+import static org.jboss.hal.resources.UIConstants.CONSTRAINT;
 
 class HostPreview extends RuntimePreview<Host> {
 
@@ -49,8 +50,8 @@ class HostPreview extends RuntimePreview<Host> {
     private final Resources resources;
     private final LabelBuilder labelBuilder;
 
-    HostPreview(final HostActions hostActions, final Host host,
-            final Resources resources) {
+    HostPreview(HostActions hostActions, Host host,
+            Resources resources) {
         super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
         this.hostActions = hostActions;
         this.resources = resources;
@@ -58,20 +59,20 @@ class HostPreview extends RuntimePreview<Host> {
 
         previewBuilder()
                 .add(alertContainer = div()
-                        .add(alertIcon = span().asElement())
-                        .add(alertText = span().asElement())
+                        .add(alertIcon = span().get())
+                        .add(alertText = span().get())
                         .add(span().textContent(" "))
                         .add(reloadLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.reload(host))
-                                .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RELOAD).data())
+                                .data(CONSTRAINT, executable(hostTemplate(host), RELOAD).data())
                                 .textContent(resources.constants().reload())
-                                .asElement())
+                                .get())
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.restart(host))
-                                .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
+                                .data(CONSTRAINT, executable(hostTemplate(host), RESTART).data())
                                 .textContent(resources.constants().restart())
-                                .asElement())
-                        .asElement());
+                                .get())
+                        .get());
 
         attributes = new PreviewAttributes<>(host,
                 asList(RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
@@ -96,14 +97,14 @@ class HostPreview extends RuntimePreview<Host> {
     }
 
     @Override
-    public void update(final Host host) {
+    public void update(Host host) {
         if (!host.isConnected()) {
             disconnected(resources.messages().hostDisconnected(host.getName()));
         } else if (hostActions.isPending(host)) {
             pending(resources.messages().hostPending(host.getName()));
         } else if (host.isAdminMode()) {
             adminOnly(resources.messages().hostAdminMode(host.getName()));
-        } else if (host.isStarting()) {
+        } else if (host.isBooting() || host.isStarting()) {
             starting(resources.messages().hostStarting(host.getName()));
         } else if (host.needsReload()) {
             needsReload(resources.messages().hostNeedsReload(host.getName()));
@@ -120,18 +121,6 @@ class HostPreview extends RuntimePreview<Host> {
         Elements.toggle(reloadLink, hidden, !host.needsReload());
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
-        if (host.isStarting()) {
-            attributes.asElements().forEach(element -> Elements.setVisible(element, false));
-        } else {
-            attributes.setVisible(RELEASE_CODENAME, host.isConnected());
-            attributes.setVisible(RELEASE_VERSION, host.isConnected());
-            attributes.setVisible(PRODUCT_NAME, host.isConnected());
-            attributes.setVisible(PRODUCT_VERSION, host.isConnected());
-            attributes.setVisible(HOST_STATE, host.isConnected() && hostActions.isPending(host));
-            attributes.setVisible(RUNNING_MODE, host.isConnected() && hostActions.isPending(host));
-            attributes.setVisible(labelBuilder.label(MANAGEMENT_VERSION), host.isConnected());
-            attributes.setVisible(labelBuilder.label(LAST_CONNECTED), !host.isConnected());
-            attributes.setVisible(labelBuilder.label(DISCONNECTED), !host.isConnected());
-        }
+        HostPreviewAttributes.refresh(host, attributes, hostActions);
     }
 }

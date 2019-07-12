@@ -39,10 +39,8 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -69,7 +67,9 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -178,7 +178,6 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public String getFilterData() {
-                //noinspection HardCodedStringLiteral
                 return getTitle() + " " +
                         (dataSource.isXa() ? "xa" : "normal") + " " +
                         (dataSource.isEnabled() ? ENABLED : DISABLED);
@@ -238,14 +237,13 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         })
                         .toCompletable();
 
-        series(new FlowContext(progress.get()),
-                readDataSources,
-                new JdbcDriverTasks.ReadConfiguration(crud),
-                new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
-                        ? null
-                        : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
-                new JdbcDriverTasks.ReadRuntime(environment, dispatcher),
-                new JdbcDriverTasks.CombineDriverResults())
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(readDataSources);
+        tasks.addAll(runningServers(environment, dispatcher,
+                properties(PROFILE_NAME, statementContext.selectedProfile())));
+        tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
+        tasks.add(new JdbcDriverTasks.CombineDriverResults());
+        series(new FlowContext(progress.get()), tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {

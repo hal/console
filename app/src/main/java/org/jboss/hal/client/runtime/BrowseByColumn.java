@@ -43,18 +43,18 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.BrowseByColumn.HOST_ADDRESS;
+import static org.jboss.hal.client.runtime.BrowseByColumn.DC_ADDRESS;
 import static org.jboss.hal.client.runtime.BrowseByColumn.SERVER_CONFIG_ADDRESS;
 import static org.jboss.hal.client.runtime.BrowseByColumn.SERVER_GROUP_ADDRESS;
 
 @Column(Ids.DOMAIN_BROWSE_BY)
-@Requires(value = {HOST_ADDRESS, SERVER_GROUP_ADDRESS, SERVER_CONFIG_ADDRESS}, recursive = false)
+@Requires(value = {DC_ADDRESS, SERVER_GROUP_ADDRESS, SERVER_CONFIG_ADDRESS}, recursive = false)
 public class BrowseByColumn extends StaticItemColumn {
 
     // necessary for the constraints in topology preview
-    static final String HOST_ADDRESS = "/host=*";
+    static final String DC_ADDRESS = "/{domain.controller}";
     static final String SERVER_GROUP_ADDRESS = "/server-group=*";
-    static final String SERVER_CONFIG_ADDRESS = "/host=*/server-config=*";
+    static final String SERVER_CONFIG_ADDRESS = "/{domain.controller}/server-config=*";
 
     public static boolean browseByHosts(FinderContext context) {
         FinderSegment firstSegment = context.getPath().iterator().next();

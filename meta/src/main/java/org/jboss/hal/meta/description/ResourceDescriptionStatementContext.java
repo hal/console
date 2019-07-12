@@ -37,9 +37,9 @@ public class ResourceDescriptionStatementContext extends FilteringStatementConte
             @Override
             public String[] filterTuple(String placeholder, AddressTemplate template) {
                 if (!environment.isStandalone()) {
-                    Tuple t = Tuple.from(placeholder);
+                    Expression t = Expression.from(placeholder);
                     if (t != null) {
-                        if (t == Tuple.SELECTED_HOST && template.size() == 1) {
+                        if (t == Expression.SELECTED_HOST && template.size() == 1) {
                             return delegate.resolveTuple(placeholder, template);
                         }
                         return new String[]{t.resource(), "*"};
