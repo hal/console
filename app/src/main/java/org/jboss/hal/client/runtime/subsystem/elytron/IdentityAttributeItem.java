@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import elemental2.dom.HTMLElement;
@@ -61,6 +60,25 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
         }
     }
 
+    @Override
+    public void addTag(Map<String, List<String>> tag) {
+        Map<String, List<String>> value = getValue();
+        Map<String, List<String>> newValue = new HashMap<>();
+        if (value != null) {
+            newValue.putAll(value);
+        }
+        Map.Entry<String, List<String>> parsed = tag.entrySet().iterator().next();
+        newValue.put(parsed.getKey(), parsed.getValue());
+        modifyValue(newValue);
+    }
+
+    @Override
+    public void removeTag(Map<String, List<String>> tag) {
+        Map<String, List<String>> newValue = new HashMap<>(getValue());
+        newValue.remove(tag.keySet().iterator().next());
+        modifyValue(newValue);
+    }
+
 
     private static class MapMapping implements TagsMapping<Map<String, List<String>>> {
 
@@ -73,19 +91,12 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
         }
 
         @Override
-        public Map<String, List<String>> parse(final String cst) {
-            Map<String, List<String>> result = new HashMap<>();
-            if (cst != null) {
-                Splitter.on(",")
-                        .trimResults()
-                        .omitEmptyStrings()
-                        .withKeyValueSeparator('=')
-                        .split(cst)
-                        .forEach((key, value) -> {
-                            result.put(key, asList(value.split(VALUE_SEPARATOR)));
-                        });
-            }
-            return result;
+        public Map<String, List<String>> parseTag(final String tag) {
+            String[] parts = tag.split("=");
+
+            Map<String, List<String>> map = new HashMap<>();
+            map.put(parts[0], asList(parts[1].split(VALUE_SEPARATOR)));
+            return map;
         }
 
         @Override

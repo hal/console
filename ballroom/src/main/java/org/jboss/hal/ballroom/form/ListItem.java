@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,10 +15,11 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Messages;
 
@@ -28,7 +29,7 @@ public class ListItem extends TagsItem<List<String>> {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public ListItem(final String name, final String label) {
+    public ListItem(String name, String label) {
         super(name, label, MESSAGES.listHint(),
                 EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
                 new ListMapping());
@@ -39,24 +40,39 @@ public class ListItem extends TagsItem<List<String>> {
         return getValue() == null || getValue().isEmpty();
     }
 
+    @Override
+    public void addTag(List<String> tag) {
+        List<String> value = getValue();
+        List<String> newValue = new ArrayList<>();
+        if (value != null) {
+            newValue.addAll(value);
+        }
+        newValue.addAll(tag);
+        modifyValue(newValue);
+    }
+
+    @Override
+    public void removeTag(List<String> tag) {
+        List<String> newValue = new ArrayList<>(getValue());
+        newValue.removeAll(tag);
+        modifyValue(newValue);
+    }
 
     private static class ListMapping implements TagsMapping<List<String>> {
 
         @Override
-        public List<String> parse(final String cst) {
-            return Splitter.on(',')
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .splitToList(cst);
+        public List<String> parseTag(final String tag) {
+            List<String> list = Arrays.asList(tag);
+            return list;
         }
 
         @Override
-        public List<String> tags(final List<String> value) {
+        public List<String> tags(List<String> value) {
             return value;
         }
 
         @Override
-        public String asString(final List<String> value) {
+        public String asString(List<String> value) {
             return String.join(", ", value);
         }
     }
