@@ -52,6 +52,7 @@ public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
     public void add(ResourceAddress address, SecurityContext securityContext, boolean recursive) {
         securityContext.get(HAL_RECURSIVE).set(recursive);
         cache.put(address, securityContext);
+        logger.debug("Added {} to {} ({})", address.toString(), type, recursive ? "recursive" : "none-recursive");
     }
 
     @Override

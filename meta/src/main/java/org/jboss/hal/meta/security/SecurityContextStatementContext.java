@@ -37,7 +37,7 @@ public class SecurityContextStatementContext extends FilteringStatementContext {
             @Override
             public String[] filterTuple(String placeholder, AddressTemplate template) {
                 if (!environment.isStandalone()) {
-                    Tuple t = Tuple.from(placeholder);
+                    Expression t = Expression.from(placeholder);
                     if (t != null) {
                         switch (t) {
                             case DOMAIN_CONTROLLER:

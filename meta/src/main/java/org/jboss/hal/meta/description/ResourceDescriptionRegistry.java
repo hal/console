@@ -56,6 +56,7 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
     public void add(ResourceAddress address, ResourceDescription resourceDescription, boolean recursive) {
         resourceDescription.get(HAL_RECURSIVE).set(recursive);
         cache.put(address, resourceDescription);
+        logger.debug("Added {} to {} ({})", address.toString(), type, recursive ? "recursive" : "none-recursive");
     }
 
     @Override
@@ -65,6 +66,7 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
 
     @Override
     protected ResourceAddress resolveTemplate(AddressTemplate template) {
-        return super.resolveTemplate(templateProcessor.apply(template));
+        AddressTemplate modifiedTemplate = templateProcessor.apply(template);
+        return super.resolveTemplate(modifiedTemplate);
     }
 }

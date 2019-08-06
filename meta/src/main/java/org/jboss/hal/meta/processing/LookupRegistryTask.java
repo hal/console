@@ -54,7 +54,7 @@ class LookupRegistryTask implements Task<LookupContext> {
     }
 
     boolean allPresent(Set<AddressTemplate> templates, boolean recursive) {
-        LookupResult lookupResult = new LookupResult(templates, recursive);
+        LookupResult lookupResult = new LookupResult(templates);
         check(lookupResult, recursive);
         return lookupResult.allPresent();
     }

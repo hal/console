@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -63,6 +64,7 @@ import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.UNKNOWN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -71,38 +73,41 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
     @Inject
-    public JdbcDriverColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final Environment environment,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final CrudOperations crud,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final @Footer Provider<Progress> progress,
-            final Resources resources) {
+    public JdbcDriverColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Environment environment,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            StatementContext statementContext,
+            MetadataRegistry metadataRegistry,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
 
         super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER, Names.JDBC_DRIVER)
 
-                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
-                        new JdbcDriverTasks.ReadConfiguration(crud),
-                        new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
-                                ? null
-                                : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
-                        new JdbcDriverTasks.ReadRuntime(environment, dispatcher),
-                        new JdbcDriverTasks.CombineDriverResults())
-                        .subscribe(new Outcome<FlowContext>() {
-                            @Override
-                            public void onError(FlowContext context, Throwable error) {
-                                callback.onFailure(error);
-                            }
+                .itemsProvider((context, callback) -> {
+                    List<Task<FlowContext>> tasks = new ArrayList<>();
+                    tasks.add(new JdbcDriverTasks.ReadConfiguration(crud));
+                    tasks.addAll(TopologyTasks.runningServers(environment, dispatcher,
+                            properties(PROFILE_NAME, statementContext.selectedProfile())));
+                    tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
+                    tasks.add(new JdbcDriverTasks.CombineDriverResults());
 
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                callback.onSuccess(context.get(JdbcDriverTasks.DRIVERS));
-                            }
-                        }))
+                    series(new FlowContext(progress.get()), tasks)
+                            .subscribe(new Outcome<FlowContext>() {
+                                @Override
+                                public void onError(FlowContext context, Throwable error) {
+                                    callback.onFailure(error);
+                                }
+
+                                @Override
+                                public void onSuccess(FlowContext context) {
+                                    callback.onSuccess(context.get(JdbcDriverTasks.DRIVERS));
+                                }
+                            });
+                })
                 .withFilter()
                 .filterDescription(resources.messages().jdbcDriverColumnFilterDescription())
         );
@@ -112,7 +117,8 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                     Metadata metadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JDBC_DRIVER_ADD_FORM, metadata)
                             .fromRequestProperties()
-                            .include(DRIVER_NAME, DRIVER_MODULE_NAME, MODULE_SLOT, DRIVER_CLASS_NAME, DRIVER_DATASOURCE_CLASS_NAME,
+                            .include(DRIVER_NAME, DRIVER_MODULE_NAME, MODULE_SLOT, DRIVER_CLASS_NAME,
+                                    DRIVER_DATASOURCE_CLASS_NAME,
                                     DRIVER_XA_DATASOURCE_CLASS_NAME)
                             .unsorted()
                             .build();

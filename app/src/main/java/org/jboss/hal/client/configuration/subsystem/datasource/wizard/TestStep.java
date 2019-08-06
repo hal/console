@@ -28,7 +28,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -46,7 +45,9 @@ import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.DataSourceWizard.addOperation;
+import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.blankSlatePf;
 import static org.jboss.hal.resources.CSS.btn;
@@ -114,12 +115,12 @@ class TestStep extends WizardStep<Context, State> {
         }
 
         // check running server(s)
-        tasks.add(new TopologyTasks.RunningServersQuery(environment, dispatcher, environment.isStandalone()
-                ? null : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
+        tasks.addAll(runningServers(environment, dispatcher,
+                properties(PROFILE_NAME, statementContext.selectedProfile())));
 
         // test connection
         tasks.add(flowContext -> {
-            List<Server> servers = flowContext.get(TopologyTasks.RUNNING_SERVERS);
+            List<Server> servers = flowContext.get(TopologyTasks.SERVERS);
             ResourceAddress address;
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);

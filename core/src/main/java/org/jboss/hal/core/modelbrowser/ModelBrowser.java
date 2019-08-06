@@ -71,7 +71,10 @@ import rx.Completable;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -85,8 +88,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 
@@ -144,17 +147,17 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 .add(filter = button().css(btn, btnDefault)
                         .on(click, event -> filter(tree.getSelected()))
                         .title(resources.constants().filter())
-                        .add(i().css(fontAwesome(CSS.filter)))
+                        .add(Elements.i().css(fontAwesome(CSS.filter)))
                         .get())
                 .add(refresh = button().css(btn, btnDefault)
                         .on(click, event -> refresh(tree.getSelected()))
                         .title(resources.constants().refresh())
-                        .add(i().css(fontAwesome(CSS.refresh)))
+                        .add(Elements.i().css(fontAwesome(CSS.refresh)))
                         .get())
                 .add(collapse = button().css(btn, btnDefault)
                         .on(click, event -> collapse(tree.getSelected()))
                         .title(resources.constants().collapse())
-                        .add(i().css(fontAwesome("minus")))
+                        .add(Elements.i().css(fontAwesome("minus")))
                         .get())
                 .get();
 
@@ -204,7 +207,6 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         childrenPanel.attach();
     }
 
-    @SuppressWarnings("unchecked")
     private void emptyTree() {
         Context context = new Context(ResourceAddress.root(), Collections.emptySet());
         Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, Names.NOT_AVAILABLE, context)
@@ -424,9 +426,9 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         return AddressTemplate.of(address, (name, value, first, last, index, size) -> {
             String segment;
             if (PROFILE.equals(name)) {
-                segment = SELECTED_PROFILE.variable();
+                segment = SELECTED_PROFILE.expression();
             } else if (SERVER_GROUP.equals(name)) {
-                segment = SELECTED_GROUP.variable();
+                segment = SELECTED_GROUP.expression();
             } else {
                 if (last && node != null && node.data != null && !node.data.hasSingletons()) {
                     segment = name + "=*";

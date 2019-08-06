@@ -27,7 +27,6 @@ public class CreateRrdOperationsTest {
     private StatementContext statementContext;
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setUp() {
         Environment environment = Mockito.mock(Environment.class);
         statementContext = StatementContext.NOOP;
@@ -36,7 +35,7 @@ public class CreateRrdOperationsTest {
 
     @Test
     public void noTemplates() {
-        LookupResult lookupResult = new LookupResult(Collections.emptySet(), false);
+        LookupResult lookupResult = new LookupResult(Collections.emptySet());
         List<Operation> operations = rrdOps.create(new LookupContext(lookupResult), false, false);
         assertTrue(operations.isEmpty());
     }
@@ -49,7 +48,7 @@ public class CreateRrdOperationsTest {
         AddressTemplate allPresent = AddressTemplate.of("all=present");
 
         LookupResult lookupResult = new LookupResult(
-                Sets.newHashSet(nothingPresent, descriptionPresent, securityContextPresent, allPresent), false);
+                Sets.newHashSet(nothingPresent, descriptionPresent, securityContextPresent, allPresent));
         lookupResult.markMetadataPresent(descriptionPresent, RESOURCE_DESCRIPTION_PRESENT);
         lookupResult.markMetadataPresent(securityContextPresent, SECURITY_CONTEXT_PRESENT);
         lookupResult.markMetadataPresent(allPresent, RESOURCE_DESCRIPTION_PRESENT);
@@ -88,8 +87,7 @@ public class CreateRrdOperationsTest {
 
     @Test
     public void recursive() {
-        LookupResult lookupResult = new LookupResult(Sets.<AddressTemplate>newHashSet(AddressTemplate.of("foo=bar")),
-                true);
+        LookupResult lookupResult = new LookupResult(Sets.<AddressTemplate>newHashSet(AddressTemplate.of("foo=bar")));
         List<Operation> operations = rrdOps.create(new LookupContext(lookupResult), true, false);
         Operation operation = operations.get(0);
         assertEquals(RRD_DEPTH, operation.get(RECURSIVE_DEPTH).asInt());

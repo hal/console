@@ -441,7 +441,7 @@ public class Dispatcher implements RecordingHandler {
                 break;
             case 503:
                 error.onException(operation, new DispatchError(status,
-                        "Service temporarily unavailable. Is the server still booting?", operation));
+                        "Service temporarily unavailable. Is the server still starting?", operation));
                 break;
             default:
                 error.onException(operation, new DispatchError(status,

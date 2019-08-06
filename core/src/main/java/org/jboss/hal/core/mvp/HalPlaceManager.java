@@ -36,14 +36,14 @@ import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.flow.Progress;
-import org.jboss.hal.meta.StatementContext.Tuple;
+import org.jboss.hal.meta.StatementContext.Expression;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import static org.jboss.hal.meta.StatementContext.Tuple.*;
+import static org.jboss.hal.meta.StatementContext.Expression.*;
 
 /**
  * Custom place manager for HAL. The most important task of this place manager is to extract well-known place request
@@ -52,7 +52,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.*;
  * It's crucial that this happens <strong>before</strong> the place is revealed. Therefore this place manager intercepts
  * the {@link #doRevealPlace(PlaceRequest, boolean)} method and
  * <ol>
- * <li>looks for place request parameters which match the the {@linkplain Tuple#resource() resource names} in the
+ * <li>looks for place request parameters which match the the {@linkplain Expression#resource() resource names} in the
  * statement context tuple enum. </li>
  * <li>if found, fires the related selection events ({@link ProfileSelectionEvent}, {@link ServerGroupSelectionEvent},
  * {@link HostSelectionEvent} or {@link ServerSelectionEvent})</li>
@@ -65,7 +65,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
 
     private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
-    private final Map<Tuple, Consumer<String>> selectFunctions;
+    private final Map<Expression, Consumer<String>> selectFunctions;
     private Resources resources;
 
     @Inject
@@ -96,7 +96,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
         // Special treatment for statement context relevant parameters: The {selected.*} tokens in the @Requires
         // annotations on proxy places need to have a value in the statement context *before* the metadata processor
         // kicks in. Thus we need to look into the place request for well-known parameters and trigger a selection.
-        for (Map.Entry<Tuple, Consumer<String>> entry : selectFunctions.entrySet()) {
+        for (Map.Entry<Expression, Consumer<String>> entry : selectFunctions.entrySet()) {
             String param = request.getParameter(entry.getKey().resource(), null);
             if (param != null) {
                 entry.getValue().accept(param);

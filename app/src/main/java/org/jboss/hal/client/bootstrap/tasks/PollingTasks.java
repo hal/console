@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Single;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jboss.hal.config.Settings.DEFAULT_POLL_TIME;
 import static org.jboss.hal.config.Settings.Key.POLL;
 import static org.jboss.hal.config.Settings.Key.POLL_TIME;
 
-public class PollingTasks implements InitializedTask  {
+public class PollingTasks implements InitializedTask {
 
     @NonNls private static Logger logger = LoggerFactory.getLogger(PollingTasks.class);
     private EventBus eventBus;
@@ -68,11 +68,10 @@ public class PollingTasks implements InitializedTask  {
         logger.info("Polling mechanism is: {}", (pollEnabled ? "on" : "off"));
         if (pollEnabled) {
             // polling implementations should be added in the pollingActions list
-            List<Single<ModelNode>> pollingActions = asList(
-                    Single.fromEmitter(
-                            new FindNonProgressingTask(eventBus, dispatcher, environment, statementContext, progress))
+            List<Single<ModelNode>> pollingActions = singletonList(Single.fromEmitter(
+                    new FindNonProgressingTask(eventBus, dispatcher, environment, statementContext, progress))
             );
-            for (Single<ModelNode> singleAction: pollingActions) {
+            for (Single<ModelNode> singleAction : pollingActions) {
                 Observable
                         .interval(pollTime, SECONDS) // execute a operation each INTERVAL millis
                         .flatMapSingle(n -> singleAction, false, 1)

@@ -36,23 +36,52 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 /**
  * For the host we need to distinguish between the address-name (the name which is part of the host address)
  * and the model-node-name (the name which is part of the host model node).
- * When the latter is changed, the former remains unchanged until the host reload has been executed.
+ * When the latter is changed, the former remains unchanged until the host is reloaded.
  */
 public class Host extends HasServersNode {
 
-    public static Host disconnected(String name, Date disconnected, Date lastConnected) {
-        return new Host(name, disconnected, lastConnected);
+    // TODO rename to booting. Booting is different from starting as it marks
+    //  an old host (mgmt model version < 10) which is starting. Unlike hosts
+    //  with mgmt model version >= 10, the host resource cannot be read
+
+    /**
+     * Marks a host as booting. In contrast to {@link RunningState#STARTING}, booting means that the host name is
+     * known abd returned by {@code :read-child-names(child-type=host)}, but the resource itself is not readable
+     * ({@code /host=foo:read-resource} returns {@code WFLYCTL0379}). This applies to hosts with management model
+     * {@code <} 10.0.0.
+     *
+     * @param name the host name
+     *
+     * @return A host marked as booting
+     */
+    public static Host booting(String name) {
+        Host host = new Host(name, true, true, false, null, null);
+        host.get(HOST_STATE).set(STARTING.name());
+        return host;
     }
 
+    public static Host failed(String name) {
+        return new Host(name, false, true, true, null, null);
+    }
+
+    public static Host disconnected(String name, Date disconnected, Date lastConnected) {
+        return new Host(name, false, false, false, disconnected, lastConnected);
+    }
+
+    private final boolean booting;
     private final boolean connected;
+    private final boolean failed;
     private final Date disconnected;
     private final Date lastConnected;
     private final String addressName;
     private final org.jboss.hal.config.Version managementVersion;
 
-    private Host(String name, Date disconnected, Date lastConnected) {
+    private Host(String name, boolean booting, boolean connected, boolean failed, Date disconnected,
+            Date lastConnected) {
         super(name, new ModelNode().setEmptyObject());
-        this.connected = false;
+        this.booting = booting;
+        this.connected = connected;
+        this.failed = failed;
         this.disconnected = disconnected;
         this.lastConnected = lastConnected;
         this.addressName = name;
@@ -61,7 +90,9 @@ public class Host extends HasServersNode {
 
     public Host(ModelNode node) {
         super(node.get(NAME).asString(), node);
+        this.booting = false;
         this.connected = true;
+        this.failed = false;
         this.disconnected = null;
         this.lastConnected = null;
         this.addressName = node.get(NAME).asString();
@@ -70,7 +101,9 @@ public class Host extends HasServersNode {
 
     public Host(Property property) {
         super(property.getValue().get(NAME).asString(), property.getValue());
+        this.booting = false;
         this.connected = true;
+        this.failed = false;
         this.disconnected = null;
         this.lastConnected = null;
         this.addressName = property.getName();
@@ -105,11 +138,18 @@ public class Host extends HasServersNode {
         return asEnumValue(this, HOST_STATE, RunningState::valueOf, RunningState.UNDEFINED);
     }
 
-    /**
-     * @return the state as defined by {@code server.running-mode}
-     */
+    /** @return the state as defined by {@code server.running-mode} */
     public RunningMode getRunningMode() {
         return asEnumValue(this, RUNNING_MODE, RunningMode::valueOf, RunningMode.UNDEFINED);
+    }
+
+    /** Shortcut for {@link #isConnected()} {@code && !}{@link #isBooting()} */
+    public boolean isAlive() {
+        return isConnected() && !isBooting();
+    }
+
+    public boolean isBooting() {
+        return booting;
     }
 
     public boolean isStarting() {
@@ -122,6 +162,10 @@ public class Host extends HasServersNode {
 
     public boolean isAdminMode() {
         return getRunningMode() == ADMIN_ONLY;
+    }
+
+    public boolean isFailed() {
+        return failed;
     }
 
     public boolean needsRestart() {

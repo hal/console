@@ -62,7 +62,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -71,6 +70,7 @@ import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.SOCKET_BINDING_GROUP_TEMPLATE;
+import static org.jboss.hal.core.runtime.TopologyTasks.reloadBlocking;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
@@ -332,8 +332,8 @@ public class StandaloneServerPresenter
                 .show();
     }
 
+    @Override
     public void reloadServer(Host host, String urlConsole) {
-        Messages messages = resources.messages();
         boolean adminMode = Server.STANDALONE.isAdminMode();
         boolean suspended = Server.STANDALONE.isSuspended();
         String startMode;
@@ -349,17 +349,7 @@ public class StandaloneServerPresenter
 
         String type = resources.constants().standaloneServer();
         String name = Server.STANDALONE.getName();
-        String title = messages.restart(name);
-
-        dispatcher.execute(operation,
-                result -> DialogFactory.buildBlocking(title, Dialog.Size.MEDIUM,
-                        messages.reloadConsoleRedirect(urlConsole))
-                        .show(),
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(messages.reloadErrorCause(type, name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(messages.reloadErrorCause(type, name, exception.getMessage()))));
-
+        reloadBlocking(dispatcher, getEventBus(), operation, type, name, urlConsole, resources);
     }
 
     // @formatter:off

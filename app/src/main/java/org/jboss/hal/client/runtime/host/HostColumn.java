@@ -72,23 +72,20 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
-import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONFIGURATION_CHANGES_ADDRESS;
-import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
-import static org.jboss.hal.client.runtime.host.HostColumn.HOST_MANAGEMENT_OPERATIONS_ADDRESS;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONFIGURATION_CHANGES_ADDRESS;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_ADDRESS;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_MANAGEMENT_OPERATIONS_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.runtime.TopologyTasks.hosts;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS,
-        HOST_MANAGEMENT_OPERATIONS_ADDRESS}, recursive = false)
+@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS, HOST_MANAGEMENT_OPERATIONS_ADDRESS},
+        recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
-
-    static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
-    static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "/host=*/subsystem=core-management/service=configuration-changes";
-    static final String HOST_MANAGEMENT_OPERATIONS_ADDRESS = "/host=*/core-service=management/service=management-operations";
-    private static final AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
 
     static AddressTemplate hostTemplate(Host host) {
         return AddressTemplate.of("/host=" + host.getAddressName());
@@ -146,8 +143,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
         ItemsProvider<Host> itemsProvider = (context, callback) -> series(new FlowContext(progress.get()),
-                new TopologyTasks.HostsWithServerConfigs(environment, dispatcher),
-                new TopologyTasks.HostsStartedServers(environment, dispatcher))
+                hosts(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {
@@ -176,8 +172,10 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public void onSuccess(List<Host> result) {
-                // only connected hosts please!
-                callback.onSuccess(result.stream().filter(Host::isConnected).collect(toList()));
+                // only connected hosts which are not booting please!
+                callback.onSuccess(result.stream()
+                        .filter(Host::isAlive)
+                        .collect(toList()));
             }
         }));
 
@@ -214,7 +212,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                     return resources.constants().pending();
                 } else if (item.isAdminMode()) {
                     return resources.constants().adminOnly();
-                } else if (item.isStarting()) {
+                } else if (item.isBooting() || item.isStarting()) {
                     return resources.constants().starting();
                 } else if (item.needsReload()) {
                     return resources.constants().needsReload();
@@ -233,8 +231,10 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                     return Icons.disconnected();
                 } else if (hostActions.isPending(item)) {
                     return Icons.pending();
-                } else if (item.isAdminMode() || item.isStarting()) {
+                } else if (item.isAdminMode()) {
                     return Icons.disabled();
+                } else if (item.isBooting() || item.isStarting()) {
+                    return Icons.pending();
                 } else if (item.needsReload() || item.needsRestart()) {
                     return Icons.warning();
                 } else if (item.isRunning()) {
@@ -246,12 +246,12 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public String nextColumn() {
-                return item.isConnected() ? SERVER : null;
+                return item.isAlive() ? SERVER : null;
             }
 
             @Override
             public List<ItemAction<Host>> actions() {
-                if (item.isConnected()) {
+                if (item.isAlive()) {
                     PlaceRequest placeRequest = new PlaceRequest.Builder()
                             .nameToken(NameTokens.HOST_CONFIGURATION)
                             .with(HOST, item.getAddressName()).build();
@@ -300,7 +300,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public void onHostResult(HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();

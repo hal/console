@@ -37,6 +37,7 @@ import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttributeFunction;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.ServerPreviewAttributes;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -287,12 +288,7 @@ class ServerPreview extends RuntimePreview<Server> {
         };
         sss.accept(server);
 
-        attributes.refresh(server);
-        attributes.setVisible(PROFILE, server.isStarted());
-        attributes.setVisible(URL, server.isStarted());
-        attributes.setVisible(RUNNING_MODE, server.isStarted());
-        attributes.setVisible(SERVER_STATE, server.isStarted());
-        attributes.setVisible(SUSPEND_STATE, server.isStarted());
+        ServerPreviewAttributes.refresh(server, attributes);
 
         boolean displayOpenPorts = server.isRunning() || server.needsRestart() || server.needsReload();
         if (displayOpenPorts) {

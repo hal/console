@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.meta.StatementContext.Tuple.*;
+import static org.jboss.hal.meta.StatementContext.Expression.*;
 
 public class CoreStatementContext implements StatementContext,
         ProfileSelectionHandler, ServerGroupSelectionHandler, HostSelectionHandler, ServerSelectionHandler {
@@ -44,13 +44,13 @@ public class CoreStatementContext implements StatementContext,
     @NonNls private static final Logger logger = LoggerFactory.getLogger(CoreStatementContext.class);
 
     private final Environment environment;
-    private final Map<Tuple, String> context;
+    private final Map<Expression, String> context;
 
     @Inject
     public CoreStatementContext(Environment environment, EventBus eventBus) {
         this.environment = environment;
 
-        context = new EnumMap<>(Tuple.class);
+        context = new EnumMap<>(Expression.class);
         context.put(DOMAIN_CONTROLLER, null);
         context.put(SELECTED_PROFILE, null);
         context.put(SELECTED_GROUP, null);
@@ -72,14 +72,14 @@ public class CoreStatementContext implements StatementContext,
     @Override
     public String[] resolveTuple(String placeholder, AddressTemplate template) {
         if (!environment.isStandalone()) {
-            Tuple validTuple = Tuple.from(placeholder);
-            if (validTuple != null) {
-                if (validTuple == DOMAIN_CONTROLLER) {
-                    return new String[]{validTuple.resource(), environment.getDomainController()};
-                } else if (context.containsKey(validTuple)) {
-                    String value = context.get(validTuple);
+            Expression validExpression = Expression.from(placeholder);
+            if (validExpression != null) {
+                if (validExpression == DOMAIN_CONTROLLER) {
+                    return new String[]{validExpression.resource(), environment.getDomainController()};
+                } else if (context.containsKey(validExpression)) {
+                    String value = context.get(validExpression);
                     if (value != null) {
-                        return new String[]{validTuple.resource(), value};
+                        return new String[]{validExpression.resource(), value};
                     }
                 }
             }

@@ -27,6 +27,7 @@ import org.jboss.hal.core.analytics.GoogleAnalytics;
 import org.jboss.hal.core.analytics.Tracker;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.js.JsonObject;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class StartAnalytics implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         String pathname = window.location.getPathname();
         boolean testSuite = pathname.endsWith("ts.html");
         boolean collectUserData = settings.get(COLLECT_USER_DATA).asBoolean();
