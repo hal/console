@@ -21,13 +21,15 @@ import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
-import static org.jboss.hal.config.Settings.Key.*;
+import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
+import static org.jboss.hal.config.Settings.Key.LOCALE;
+import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
+import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
  * Loads the settings. Please make sure this is one of the last bootstrap function. This function loads the run-as role
