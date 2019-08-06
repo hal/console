@@ -15,15 +15,16 @@
  */
 package org.jboss.hal.meta.security;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.base.Splitter;
 import org.jetbrains.annotations.NotNull;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.meta.security.Constraints.Operator.AND;
 import static org.jboss.hal.meta.security.Constraints.Operator.OR;
 
@@ -49,11 +50,13 @@ public class Constraints implements Iterable<Constraint> {
     // ------------------------------------------------------ factory methods
 
     public static Constraints single(Constraint constraint) {
-        return new Constraints(newHashSet(constraint), AND);
+        LinkedHashSet<Constraint> set = new LinkedHashSet<>();
+        set.add(constraint);
+        return new Constraints(set, AND);
     }
 
     public static Constraints and(Constraint first, Constraint... rest) {
-        HashSet<Constraint> constraints = new HashSet<>();
+        LinkedHashSet<Constraint> constraints = new LinkedHashSet<>();
         constraints.add(first);
         if (rest != null) {
             constraints.addAll(asList(rest));
@@ -62,34 +65,44 @@ public class Constraints implements Iterable<Constraint> {
     }
 
     public static Constraints and(Iterable<Constraint> constraints) {
-        return new Constraints(newHashSet(constraints), AND);
+        LinkedHashSet<Constraint> set = new LinkedHashSet<>();
+        for (Constraint constraint : constraints) {
+            set.add(constraint);
+        }
+        return new Constraints(set, AND);
     }
 
     public static Constraints or(Constraint first, Constraint... rest) {
-        HashSet<Constraint> constraints = new HashSet<>();
-        constraints.add(first);
+        LinkedHashSet<Constraint> set = new LinkedHashSet<>();
+        set.add(first);
         if (rest != null) {
-            constraints.addAll(asList(rest));
+            for (Constraint constraint : rest) {
+                set.add(constraint);
+            }
         }
-        return new Constraints(constraints, OR);
+        return new Constraints(set, OR);
     }
 
     public static Constraints or(Iterable<Constraint> constraints) {
-        return new Constraints(newHashSet(constraints), OR);
+        LinkedHashSet<Constraint> set = new LinkedHashSet<>();
+        for (Constraint constraint : constraints) {
+            set.add(constraint);
+        }
+        return new Constraints(set, OR);
     }
 
     /**
      * Creates an empty instance using {@link Operator#AND} as operator.
      */
     public static Constraints empty() {
-        return new Constraints(new HashSet<>(), AND);
+        return new Constraints(new LinkedHashSet<>(), AND);
     }
 
 
     // ------------------------------------------------------ parse
 
     public static Constraints parse(String input) {
-        if (input != null) {
+        if (emptyToNull(input) != null) {
             Operator operator;
             if (input.contains(AND.operator)) {
                 operator = AND;
@@ -102,7 +115,7 @@ public class Constraints implements Iterable<Constraint> {
                     .omitEmptyStrings()
                     .trimResults()
                     .split(input);
-            Set<Constraint> constraints = new HashSet<>();
+            LinkedHashSet<Constraint> constraints = new LinkedHashSet<>();
             for (String value : values) {
                 try {
                     constraints.add(Constraint.parse(value));
@@ -126,6 +139,22 @@ public class Constraints implements Iterable<Constraint> {
             final Operator operator) {
         this.constraints = constraints;
         this.operator = operator;
+    }
+
+    @Override
+    public String toString() {
+        // Do NOT change the format, Constraint.parseSingle() relies on it!
+        if (!constraints.isEmpty()) {
+            if (constraints.size() == 1) {
+                return constraints.iterator().next().toString();
+            }
+            return constraints.stream().map(Constraint::toString).collect(joining(operator.operator()));
+        }
+        return "";
+    }
+
+    public String data() {
+        return toString();
     }
 
     @NotNull

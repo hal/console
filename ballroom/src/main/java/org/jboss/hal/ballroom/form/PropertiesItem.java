@@ -104,10 +104,15 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
 
         @Override
         public Map<String, String> parseTag(String tag) {
-            int firstEq = tag.indexOf(EQ);
+            Map<String, String> map = new HashMap<>();
+            int firstEq;
+
+            if (tag == null || (firstEq = tag.indexOf(EQ)) == -1) {
+                return map;
+            }
+
             String keyPart = tag.substring(0, firstEq);
             String valuePart = tag.substring(firstEq + 1);
-            Map<String, String> map = new HashMap<>();
             map.put(keyPart, valuePart);
             return map;
         }
