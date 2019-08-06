@@ -35,8 +35,8 @@ import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.lead;
 
 public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {

@@ -37,6 +37,7 @@ import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -79,12 +80,10 @@ public final class AddressTemplate implements Iterable<String> {
     public static final AddressTemplate ROOT = AddressTemplate.of("/");
     public static final String EQUALS = "=";
 
-    /**
-     * Creates a new address template from a well known placeholder.
-     */
+    /** Creates a new address template from a well known placeholder. */
     @JsIgnore
-    public static AddressTemplate of(StatementContext.Tuple placeholder) {
-        return AddressTemplate.of(String.join("/", placeholder.variable()));
+    public static AddressTemplate of(StatementContext.Expression placeholder) {
+        return AddressTemplate.of(String.join("/", placeholder.expression()));
     }
 
     /**
@@ -92,17 +91,16 @@ public final class AddressTemplate implements Iterable<String> {
      * must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
     @JsIgnore
-    public static AddressTemplate of(StatementContext.Tuple placeholder, @NonNls String template) {
-        return AddressTemplate.of(String.join("/", placeholder.variable(), withoutSlash(template)));
+    public static AddressTemplate of(StatementContext.Expression placeholder, @NonNls String template) {
+        return AddressTemplate.of(String.join("/", placeholder.expression(), withoutSlash(template)));
     }
 
-    /**
-     * Creates a new address template from two placeholders.
-     */
+    /** Creates a new address template from two placeholders. */
     @JsIgnore
-    public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2) {
+    public static AddressTemplate of(StatementContext.Expression placeholder1,
+            StatementContext.Expression placeholder2) {
         return AddressTemplate.of(
-                String.join("/", placeholder1.variable(), placeholder2.variable()));
+                String.join("/", placeholder1.expression(), placeholder2.expression()));
     }
 
     /**
@@ -110,15 +108,13 @@ public final class AddressTemplate implements Iterable<String> {
      * values must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
     @JsIgnore
-    public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2,
+    public static AddressTemplate of(StatementContext.Expression placeholder1, StatementContext.Expression placeholder2,
             @NonNls String template) {
         return AddressTemplate.of(
-                String.join("/", placeholder1.variable(), placeholder2.variable(), withoutSlash(template)));
+                String.join("/", placeholder1.expression(), placeholder2.expression(), withoutSlash(template)));
     }
 
-    /**
-     * Creates a new address template from an encoded string template.
-     */
+    /** Creates a new address template from an encoded string template. */
     public static AddressTemplate of(@NonNls String template) {
         return new AddressTemplate(withSlash(template));
     }
@@ -445,22 +441,23 @@ public final class AddressTemplate implements Iterable<String> {
 
         for (Token token : tokens) {
             if (!token.hasKey()) {
-                // a single token or token expression
-                String tokenRef = token.getValue();
+                // a single token, something like "{foo}" of "bar"
+                String value = token.getValue();
                 String[] resolvedValue;
 
-                if (tokenRef.startsWith("{")) {
-                    tokenRef = tokenRef.substring(1, tokenRef.length() - 1);
-                    if (!tupleMemory.contains(tokenRef)) {
-                        if (context.resolveTuple(tokenRef, this) != null) {
-                            tupleMemory.memorize(tokenRef,
-                                    Lists.<String[]>newArrayList(context.resolveTuple(tokenRef, this)));
+                if (value.startsWith("{")) {
+                    String variable = value.substring(1, value.length() - 1);
+                    value = variable;
+                    if (!tupleMemory.contains(variable)) {
+                        String[] resolvedTuple = context.resolveTuple(variable, this);
+                        if (resolvedTuple != null) {
+                            tupleMemory.memorize(variable, singletonList(resolvedTuple));
                         }
                     }
-                    resolvedValue = tupleMemory.next(tokenRef);
+                    resolvedValue = tupleMemory.next(value);
                 } else {
-                    assert tokenRef.contains(EQUALS) : "Invalid token expression " + tokenRef;
-                    resolvedValue = tokenRef.split(EQUALS);
+                    assert value.contains(EQUALS) : "Invalid token expression " + value;
+                    resolvedValue = value.split(EQUALS);
                 }
 
                 if (resolvedValue != null) {
@@ -468,7 +465,7 @@ public final class AddressTemplate implements Iterable<String> {
                 }
 
             } else {
-                // a value expression. key and value of the expression might be resolved
+                // a key/value token, something like "foo=bar", "foo=*", "{foo}=bar" or "foo={bar}"
                 String keyRef = token.getKey();
                 String valueRef = token.getValue();
 

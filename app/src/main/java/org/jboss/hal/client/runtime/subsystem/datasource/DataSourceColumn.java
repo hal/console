@@ -62,8 +62,8 @@ import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates
 import static org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.XA_PARAM;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 // TODO Add data sources from deployments

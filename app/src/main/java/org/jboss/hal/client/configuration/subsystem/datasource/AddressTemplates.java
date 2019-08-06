@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 
 public interface AddressTemplates {
 

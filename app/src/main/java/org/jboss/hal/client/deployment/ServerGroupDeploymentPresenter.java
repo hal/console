@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.deployment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,14 +38,13 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyTasks.RunningServersQuery;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -56,9 +56,11 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 
 public class ServerGroupDeploymentPresenter extends
@@ -116,10 +118,12 @@ public class ServerGroupDeploymentPresenter extends
 
     @Override
     protected void reload() {
-        series(new FlowContext(progress.get()),
-                new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment),
-                new RunningServersQuery(environment, dispatcher, new ModelNode().set(SERVER_GROUP, serverGroup)),
-                new LoadDeploymentsFromRunningServer(environment, dispatcher))
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment));
+        tasks.addAll(runningServers(environment, dispatcher, properties(SERVER_GROUP, serverGroup)));
+        tasks.add(new LoadDeploymentsFromRunningServer(environment, dispatcher));
+
+        series(new FlowContext(progress.get()), tasks)
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {

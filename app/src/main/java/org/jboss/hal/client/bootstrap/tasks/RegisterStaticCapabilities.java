@@ -18,6 +18,7 @@ package org.jboss.hal.client.bootstrap.tasks;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -26,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 
-/** Reads the capabilities from the capability registry. Depends on {@link FindDomainController}. */
+/** Reads the capabilities from the capability registry. Depends on {@link ReadHostNames}. */
 public class RegisterStaticCapabilities implements BootstrapTask {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(RegisterStaticCapabilities.class);
@@ -42,9 +43,8 @@ public class RegisterStaticCapabilities implements BootstrapTask {
         this.capabilities = capabilities;
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
             logger.debug("Register static capabilities");
 

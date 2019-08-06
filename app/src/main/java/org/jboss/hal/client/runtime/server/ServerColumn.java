@@ -16,7 +16,6 @@
 package org.jboss.hal.client.runtime.server;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,17 +91,19 @@ import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.SERVER_CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.runtime.TopologyTasks.serversOfHost;
+import static org.jboss.hal.core.runtime.TopologyTasks.serversOfServerGroup;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.resources.Ids.FORM;
 
 @Column(Ids.SERVER)
-@Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
+@Requires(value = {"/{domain.controller}/server-config=*", "/{domain.controller}/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static AddressTemplate serverConfigTemplate(Server server) {
@@ -207,48 +208,16 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         this.resources = resources;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
-            Task<FlowContext> serverConfigsFn;
-            boolean browseByHosts = BrowseByColumn.browseByHosts(context);
-
-            if (browseByHosts) {
+            List<Task<FlowContext>> tasks;
+            if (BrowseByColumn.browseByHosts(context)) {
                 processAddColumnAction(statementContext.selectedHost());
-                serverConfigsFn = flowContext -> {
-                    ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
-                    Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                            .param(CHILD_TYPE, SERVER_CONFIG)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build();
-                    return dispatcher.execute(operation).doOnSuccess(result -> {
-                        List<Server> servers = result.asPropertyList().stream()
-                                .map(property -> new Server(statementContext.selectedHost(), property))
-                                .collect(toList());
-                        flowContext.set(TopologyTasks.SERVERS, servers);
-                    }).toCompletable();
-                };
+                tasks = serversOfHost(environment, dispatcher, statementContext.selectedHost());
 
             } else {
-                serverConfigsFn = flowContext -> {
-                    ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
-                            .resolve(statementContext);
-                    Operation operation = new Operation.Builder(serverConfigAddress, QUERY)
-                            .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
-                            .build();
-                    return dispatcher.execute(operation).doOnSuccess(result -> {
-                        List<Server> servers = result.asList().stream()
-                                .filter(modelNode -> !modelNode.isFailure())
-                                .map(modelNode -> {
-                                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                                    String host = address.getParent().lastValue();
-                                    return new Server(host, modelNode.get(RESULT));
-                                })
-                                .collect(toList());
-                        flowContext.set(TopologyTasks.SERVERS, servers);
-                    }).toCompletable();
-                };
+                tasks = serversOfServerGroup(environment, dispatcher, statementContext.selectedServerGroup());
             }
 
-            series(new FlowContext(progress.get()),
-                    serverConfigsFn, new TopologyTasks.TopologyStartedServers(environment, dispatcher))
+            series(new FlowContext(progress.get()), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {
@@ -259,7 +228,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         public void onSuccess(FlowContext context) {
                             List<Server> servers = context.get(TopologyTasks.SERVERS);
                             if (servers == null) {
-                                servers = Collections.emptyList();
+                                servers = emptyList();
                             }
                             callback.onSuccess(servers.stream().sorted(comparing(Server::getName))
                                     .collect(toList()));
@@ -383,7 +352,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     .with(params)
                                     .build();
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                    ccPlaceRequest, Constraint.executable(SERVER_CONFIGURATION_CHANGES_TEMPLATE, LIST_CHANGES_OPERATION)));
+                                    ccPlaceRequest, Constraint.executable(SERVER_CONFIGURATION_CHANGES_TEMPLATE,
+                                            LIST_CHANGES_OPERATION)));
                         }
 
                         actions.add(ItemAction.separator());
@@ -561,7 +531,6 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     @Override
     public void onServerResult(ServerResultEvent event) {
-        //noinspection Duplicates
         if (isVisible()) {
             ItemMonitor.stopProgress(event.getServer().getId());
 

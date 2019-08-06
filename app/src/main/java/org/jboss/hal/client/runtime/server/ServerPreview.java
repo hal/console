@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,9 +23,11 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttributeFunction;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.ServerPreviewAttributes;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
@@ -66,8 +68,8 @@ class ServerPreview extends RuntimePreview<Server> {
 
         previewBuilder()
                 .add(alertContainer = div()
-                        .add(alertIcon = span().asElement())
-                        .add(alertText = span().asElement())
+                        .add(alertIcon = span().get())
+                        .add(alertText = span().get())
                         .add(span().textContent(" "))
 
                         .add(startLink = a().css(clickable, alertLink)
@@ -75,31 +77,31 @@ class ServerPreview extends RuntimePreview<Server> {
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), START).data())
                                 .textContent(resources.constants().start())
-                                .asElement())
+                                .get())
                         .add(stopLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.stop(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), STOP).data())
                                 .textContent(resources.constants().stop())
-                                .asElement())
+                                .get())
                         .add(reloadLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.reload(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), RELOAD).data())
                                 .textContent(resources.constants().reload())
-                                .asElement())
+                                .get())
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.restart(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), RESTART).data())
                                 .textContent(resources.constants().restart())
-                                .asElement())
+                                .get())
                         .add(resumeLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.resume(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), RESUME).data())
                                 .textContent(resources.constants().resume())
-                                .asElement())
+                                .get())
                         .add(bootErrorsLink = a().css(clickable, alertLink)
                                 .on(click, event -> {
                                     PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(
@@ -110,15 +112,16 @@ class ServerPreview extends RuntimePreview<Server> {
                                     placeManager.revealPlace(placeRequest);
                                 })
                                 .textContent(resources.constants().view())
-                                .asElement())
-                        .asElement());
+                                .get())
+                        .get());
 
         links = new HTMLElement[]{startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink};
 
-        serverUrl = span().textContent(Names.NOT_AVAILABLE).asElement();
+        serverUrl = span().textContent(Names.NOT_AVAILABLE).get();
+        PreviewAttributeFunction<Server> previewFunction = model -> new PreviewAttribute(Names.URL, serverUrl);
         if (server.isStandalone()) {
             this.attributes = new PreviewAttributes<>(server)
-                    .append(model -> new PreviewAttribute(Names.URL, serverUrl))
+                    .append(previewFunction)
                     .append(STATUS)
                     .append(RUNNING_MODE)
                     .append(SERVER_STATE)
@@ -148,7 +151,7 @@ class ServerPreview extends RuntimePreview<Server> {
                         String token = places.historyToken(profilePlaceRequest);
                         return new PreviewAttribute(Names.PROFILE, profile, token);
                     })
-                    .append(model -> new PreviewAttribute(Names.URL, serverUrl))
+                    .append(previewFunction)
                     .append(AUTO_START)
                     .append(SOCKET_BINDING_PORT_OFFSET)
                     .append(STATUS)
@@ -162,22 +165,22 @@ class ServerPreview extends RuntimePreview<Server> {
     }
 
     @Override
-    public void update(final Server server) {
+    public void update(Server server) {
         ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
             @Override
-            protected void onPending(final Server server) {
+            protected void onPending(Server server) {
                 pending(resources.messages().serverPending(server.getName()));
                 disableAllLinks();
             }
 
             @Override
-            protected void onBootErrors(final Server server) {
+            protected void onBootErrors(Server server) {
                 error(resources.messages().serverBootErrors(server.getName()));
                 disableAllLinksBut(bootErrorsLink);
             }
 
             @Override
-            protected void onFailed(final Server server) {
+            protected void onFailed(Server server) {
                 error(resources.messages().serverFailed(server.getName()));
                 if (server.isStandalone()) {
                     disableAllLinks();
@@ -187,37 +190,37 @@ class ServerPreview extends RuntimePreview<Server> {
             }
 
             @Override
-            protected void onAdminMode(final Server server) {
+            protected void onAdminMode(Server server) {
                 adminOnly(resources.messages().serverAdminMode(server.getName()));
                 disableAllLinks();
             }
 
             @Override
-            protected void onStarting(final Server server) {
+            protected void onStarting(Server server) {
                 adminOnly(resources.messages().serverAdminMode(server.getName()));
                 disableAllLinks();
             }
 
             @Override
-            protected void onSuspended(final Server server) {
+            protected void onSuspended(Server server) {
                 suspended(resources.messages().serverSuspended(server.getName()));
                 disableAllLinksBut(resumeLink);
             }
 
             @Override
-            protected void onNeedsReload(final Server server) {
+            protected void onNeedsReload(Server server) {
                 needsReload(resources.messages().serverNeedsReload(server.getName()));
                 disableAllLinksBut(reloadLink);
             }
 
             @Override
-            protected void onNeedsRestart(final Server server) {
+            protected void onNeedsRestart(Server server) {
                 needsRestart(resources.messages().serverNeedsRestart(server.getName()));
                 disableAllLinksBut(restartLink);
             }
 
             @Override
-            protected void onRunning(final Server server) {
+            protected void onRunning(Server server) {
                 running(resources.messages().serverRunning(server.getName()));
                 if (server.isStandalone()) {
                     disableAllLinks();
@@ -227,7 +230,7 @@ class ServerPreview extends RuntimePreview<Server> {
             }
 
             @Override
-            protected void onStopped(final Server server) {
+            protected void onStopped(Server server) {
                 alertContainer.className = alert + " " + alertInfo;
                 alertIcon.className = Icons.STOPPED;
                 alertText.innerHTML = resources.messages().serverStopped(server.getName()).asString();
@@ -239,20 +242,14 @@ class ServerPreview extends RuntimePreview<Server> {
             }
 
             @Override
-            protected void onUnknown(final Server server) {
+            protected void onUnknown(Server server) {
                 unknown(resources.messages().serverUndefined(server.getName()));
                 disableAllLinks();
             }
         };
         sss.accept(server);
 
-        attributes.refresh(server);
-        attributes.setVisible(PROFILE, server.isStarted());
-        attributes.setVisible(URL, server.isStarted());
-        attributes.setVisible(RUNNING_MODE, server.isStarted());
-        attributes.setVisible(SERVER_STATE, server.isStarted());
-        attributes.setVisible(SUSPEND_STATE, server.isStarted());
-
+        ServerPreviewAttributes.refresh(server, attributes);
         if (server.isStarted()) {
             serverActions.readUrl(server, serverUrl);
         }

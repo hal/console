@@ -21,7 +21,7 @@ public class LookupResultTest {
     @Before
     public void setUp() {
         template = AddressTemplate.of("template");
-        lookupResult = new LookupResult(Sets.<AddressTemplate>newHashSet(template), false);
+        lookupResult = new LookupResult(Sets.<AddressTemplate>newHashSet(template));
     }
 
     @Test
@@ -59,8 +59,7 @@ public class LookupResultTest {
         LookupResult localLookupResult = new LookupResult(Sets.newHashSet(
                 AddressTemplate.of("one"),
                 AddressTemplate.of("two"),
-                AddressTemplate.of("three")),
-                false);
+                AddressTemplate.of("three")));
 
         localLookupResult.markMetadataPresent(AddressTemplate.of("one"), ALL_PRESENT);
         localLookupResult.markMetadataPresent(AddressTemplate.of("two"), RESOURCE_DESCRIPTION_PRESENT);

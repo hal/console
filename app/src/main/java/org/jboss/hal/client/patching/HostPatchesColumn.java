@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,7 +66,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
 @Column(Ids.PATCHING_DOMAIN)
-@Requires(value = "/host=*/core-service=patching")
+@Requires(value = "/{domain.controller}/core-service=patching")
 public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostActionEvent.HostActionHandler,
         HostResultEvent.HostResultHandler {
 
@@ -228,7 +228,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
 
     @Override
-    public void onHostAction(final HostActionEvent event) {
+    public void onHostAction(HostActionEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
             ItemMonitor.startProgress(Ids.host(host.getAddressName()));
@@ -237,7 +237,6 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public void onHostResult(final HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();

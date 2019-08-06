@@ -54,7 +54,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 
 @Column(Ids.CONFIGURATION_SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {

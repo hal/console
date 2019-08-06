@@ -17,6 +17,7 @@ package org.jboss.hal.meta.processing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import org.jboss.hal.config.Environment;
@@ -92,8 +93,18 @@ class RrdTask implements Task<LookupContext> {
         }
 
         if (!completables.isEmpty()) {
-            logger.debug("About to execute {} ({}+{}) composite operations (regular+optional)",
-                    composites.size() + optionalComposites.size(), composites.size(), optionalComposites.size());
+            if (logger.isDebugEnabled()) {
+                logger.debug("About to execute {} ({}+{}) composite operations (regular+optional)",
+                        composites.size() + optionalComposites.size(), composites.size(), optionalComposites.size());
+                String compositeOps = composites.stream().map(Composite::asCli).collect(Collectors.joining(", "));
+                logger.debug("Composite operations: {}", compositeOps);
+                if (!optionalComposites.isEmpty()) {
+                    String optionalOps = optionalComposites.stream()
+                            .map(Composite::asCli)
+                            .collect(Collectors.joining(", "));
+                    logger.debug("Optional operations: {}", optionalOps);
+                }
+            }
             return Completable.concat(completables);
         } else {
             logger.debug("No DMR operations necessary");

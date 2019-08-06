@@ -20,9 +20,6 @@ import java.util.function.Function;
 
 import com.google.common.base.Splitter;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -48,8 +45,6 @@ import static java.util.stream.StreamSupport.stream;
  * </pre>
  */
 class ResourceDescriptionTemplateProcessor implements Function<AddressTemplate, AddressTemplate> {
-
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionTemplateProcessor.class);
 
     @Override
     public AddressTemplate apply(AddressTemplate template) {
@@ -80,7 +75,6 @@ class ResourceDescriptionTemplateProcessor implements Function<AddressTemplate, 
             modified = AddressTemplate.of(builder.toString());
         }
 
-        logger.debug("{} -> {}", template, modified);
         return modified;
     }
 }

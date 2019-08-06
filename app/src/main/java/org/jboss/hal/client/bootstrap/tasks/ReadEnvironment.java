@@ -34,6 +34,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.ManagementModel;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -47,7 +48,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * Reads important information from the root resource like product name and version, operation mode and management
  * version. Executes the {@code :whoami} operation to get the current user / roles.
  */
-@SuppressWarnings("HardCodedStringLiteral")
 public class ReadEnvironment implements BootstrapTask {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
@@ -66,7 +66,7 @@ public class ReadEnvironment implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         logger.debug("Read environment");
 
         Keycloak keycloak = keycloakHolder.getKeycloak();
@@ -95,7 +95,6 @@ public class ReadEnvironment implements BootstrapTask {
                     logger.debug("Server info: {}", serverName);
 
                     // operation mode
-                    //noinspection Convert2MethodRef (conflicts with second method reference below)
                     OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, (name) -> OperationMode.valueOf(name),
                             OperationMode.UNDEFINED);
                     environment.setOperationMode(operationMode);

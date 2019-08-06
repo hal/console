@@ -138,10 +138,9 @@ public class MetadataProcessor {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress,
             AsyncCallback<Void> callback) {
-        // we can skip the tasks if the metadata is already in the regisries
+        // we can skip the tasks if the metadata is already in the registries
         LookupRegistryTask lookupRegistries = new LookupRegistryTask(resourceDescriptionRegistry,
                 securityContextRegistry);
         if (lookupRegistries.allPresent(templates, recursive)) {
@@ -167,6 +166,7 @@ public class MetadataProcessor {
                     .subscribe(new Outcome<LookupContext>() {
                         @Override
                         public void onError(LookupContext context, Throwable error) {
+                            stopwatch.stop();
                             logger.debug("Failed to process metadata: {}", error.getMessage());
                             callback.onFailure(error);
                         }

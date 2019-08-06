@@ -55,17 +55,16 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyTasks.RunningServersQuery;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -92,7 +91,9 @@ import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -162,25 +163,28 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_DEPLOYMENT_REFRESH));
 
-        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> series(
-                new FlowContext(progress.get()),
-                new ReadServerGroupDeployments(environment, dispatcher, statementContext.selectedServerGroup()),
-                new RunningServersQuery(environment, dispatcher,
-                        new ModelNode().set(SERVER_GROUP, statementContext.selectedServerGroup())),
-                new LoadDeploymentsFromRunningServer(environment, dispatcher))
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext context, Throwable error) {
-                        callback.onFailure(error);
-                    }
+        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> {
+            List<Task<FlowContext>> tasks = new ArrayList<>();
+            tasks.add(new ReadServerGroupDeployments(environment, dispatcher, statementContext.selectedServerGroup()));
+            tasks.addAll(runningServers(environment, dispatcher,
+                    properties(SERVER_GROUP, statementContext.selectedServerGroup())));
+            tasks.add(new LoadDeploymentsFromRunningServer(environment, dispatcher));
 
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        List<ServerGroupDeployment> serverGroupDeployments = context
-                                .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
-                        callback.onSuccess(serverGroupDeployments);
-                    }
-                });
+            series(new FlowContext(progress.get()), tasks)
+                    .subscribe(new Outcome<FlowContext>() {
+                        @Override
+                        public void onError(FlowContext context, Throwable error) {
+                            callback.onFailure(error);
+                        }
+
+                        @Override
+                        public void onSuccess(FlowContext context) {
+                            List<ServerGroupDeployment> serverGroupDeployments = context
+                                    .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
+                            callback.onSuccess(serverGroupDeployments);
+                        }
+                    });
+        };
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
