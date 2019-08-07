@@ -24,7 +24,6 @@ import javax.inject.Provider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
@@ -34,7 +33,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
-import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.runtime.TopologyTasks;
@@ -47,7 +45,6 @@ import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -59,7 +56,6 @@ import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -179,71 +175,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             }
         }));
 
-        setItemRenderer(item -> new ItemDisplay<Host>() {
-            @Override
-            public String getId() {
-                return Ids.host(item.getAddressName());
-            }
-
-            @Override
-            public String getTitle() {
-                return item.getName();
-            }
-
-            @Override
-            public HTMLElement element() {
-                return item.isDomainController() ? ItemDisplay
-                        .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
-            }
-
-            @Override
-            public String getFilterData() {
-                return String.join(" ", item.getName(),
-                        item.isDomainController() ? "dc" : "hc", //NON-NLS
-                        item.isConnected() ? "on" : "off", //NON-NLS
-                        ModelNodeHelper.asAttributeValue(item.getHostState()));
-            }
-
-            @Override
-            public String getTooltip() {
-                if (!item.isConnected()) {
-                    return resources.constants().disconnectedUpper();
-                } else if (hostActions.isPending(item)) {
-                    return resources.constants().pending();
-                } else if (item.isAdminMode()) {
-                    return resources.constants().adminOnly();
-                } else if (item.isBooting() || item.isStarting()) {
-                    return resources.constants().starting();
-                } else if (item.needsReload()) {
-                    return resources.constants().needsReload();
-                } else if (item.needsRestart()) {
-                    return resources.constants().needsRestart();
-                } else if (item.isRunning()) {
-                    return resources.constants().running();
-                } else {
-                    return resources.constants().unknownState();
-                }
-            }
-
-            @Override
-            public HTMLElement getIcon() {
-                if (!item.isConnected()) {
-                    return Icons.disconnected();
-                } else if (hostActions.isPending(item)) {
-                    return Icons.pending();
-                } else if (item.isAdminMode()) {
-                    return Icons.disabled();
-                } else if (item.isBooting() || item.isStarting()) {
-                    return Icons.pending();
-                } else if (item.needsReload() || item.needsRestart()) {
-                    return Icons.warning();
-                } else if (item.isRunning()) {
-                    return Icons.ok();
-                } else {
-                    return Icons.unknown();
-                }
-            }
-
+        setItemRenderer(item -> new HostDisplay(item, hostActions, resources) {
             @Override
             public String nextColumn() {
                 return item.isAlive() ? SERVER : null;

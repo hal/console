@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -47,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 import rx.Single;
+import rx.functions.Func1;
 
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
@@ -120,9 +122,7 @@ public final class TopologyTasks {
      * its servers.</li>
      * </ul>
      * Started servers contain additional attributes and optional server boot errors.
-     * </ul>
      */
-    @SuppressWarnings("Duplicates")
     public static List<Task<FlowContext>> hosts(Environment environment, Dispatcher dispatcher) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(new HostsNames(environment, dispatcher));
@@ -141,7 +141,6 @@ public final class TopologyTasks {
      * <li>{@link #SERVER_GROUPS}: The ordered list of server groups. Each server group contains its servers.</li>
      * </ul>
      * Started servers contain additional attributes and optional server boot errors.
-     * </ul>
      */
     @SuppressWarnings("Duplicates")
     public static List<Task<FlowContext>> serverGroups(Environment environment, Dispatcher dispatcher) {
@@ -206,6 +205,44 @@ public final class TopologyTasks {
     }
 
 
+    // ------------------------------------------------------ public callbacks
+
+
+    /**
+     * Function which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks
+     * which read the hosts. The erroneous host is added to the the list of hosts as {@link Host#booting(String)}
+     * if the error contains {@link ModelDescriptionConstants#ERROR_WFY_CTL_0379} or as {@link Host#failed(String)}
+     * otherwise.
+     */
+    public static class HostError<T> implements Func1<Throwable, Single<T>> {
+
+        private String hostName;
+        private final List<Host> hosts;
+        private Function<Throwable, T> resume;
+
+        public HostError(String hostName, List<Host> hosts, Function<Throwable, T> resume) {
+            this.hostName = hostName;
+            this.hosts = hosts;
+            this.resume = resume;
+        }
+
+        @Override
+        public Single<T> call(Throwable throwable) {
+            Host h;
+            if (throwable.getMessage() != null &&
+                    throwable.getMessage().contains(ERROR_WFY_CTL_0379)) {
+                h = Host.booting(hostName);
+            } else {
+                h = Host.failed(hostName);
+            }
+            hosts.add(h);
+            logger.warn("Unable to read host {}: {}", hostName, throwable.getMessage());
+            T resumeWith = resume.apply(throwable);
+            return Single.just(resumeWith);
+        }
+    }
+
+
     // ------------------------------------------------------ tasks
 
 
@@ -230,16 +267,16 @@ public final class TopologyTasks {
 
             } else {
                 List<Host> hosts = context.get(HOSTS);
+                List<Host> sortedHosts;
                 if (hosts != null) {
-                    List<Host> sortedHosts = new ArrayList<>(hosts);
+                    sortedHosts = new ArrayList<>(hosts);
                     sortedHosts.sort(comparing(Host::getName));
-                    hosts = sortedHosts;
                 } else {
-                    hosts = new ArrayList<>();
+                    sortedHosts = new ArrayList<>();
                 }
-
                 Host domainController = null;
-                for (Iterator<Host> iterator = hosts.iterator(); iterator.hasNext() && domainController == null; ) {
+                for (Iterator<Host> iterator = sortedHosts.iterator();
+                        iterator.hasNext() && domainController == null; ) {
                     Host host = iterator.next();
                     if (host.isDomainController()) {
                         domainController = host;
@@ -247,8 +284,10 @@ public final class TopologyTasks {
                     }
                 }
                 if (domainController != null) {
-                    hosts.add(0, domainController);
+                    sortedHosts.add(0, domainController);
                 }
+                hosts = sortedHosts;
+
                 List<Server> servers = context.get(SERVERS);
                 List<ServerGroup> serverGroups = context.get(SERVER_GROUPS);
                 if (serverGroups != null && servers != null) {
@@ -268,7 +307,6 @@ public final class TopologyTasks {
                 context.set(SERVERS, servers);
                 return Completable.complete();
             }
-
         }
     }
 
@@ -352,18 +390,8 @@ public final class TopologyTasks {
                                                         servers.add(server);
                                                     });
                                         })
-                                        .onErrorResumeNext(error -> {
-                                            Host h;
-                                            if (error.getMessage() != null &&
-                                                    error.getMessage().contains("WFLYCTL0379")) {
-                                                h = Host.booting(host);
-                                            } else {
-                                                h = Host.failed(host);
-                                            }
-                                            hosts.add(h);
-                                            logger.warn("Unable to read host {}: {}", host, error.getMessage());
-                                            return Single.just(new CompositeResult(new ModelNode()));
-                                        })
+                                        .onErrorResumeNext(new HostError<>(host, hosts,
+                                                error -> new CompositeResult(new ModelNode())))
                                         .toCompletable();
                             })
                             .collect(toList());
