@@ -1,6 +1,6 @@
 {
   "name": "hal-console",
-  "version": "3.2.0",
+  "version": "3.0.15",
   "description": "Management console for WildFly / JBoss EAP",
   "keywords": [
     "hal",

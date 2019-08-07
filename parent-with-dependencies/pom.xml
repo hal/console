@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.0.14.Final</version>
+        <version>3.0.15.Final</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
