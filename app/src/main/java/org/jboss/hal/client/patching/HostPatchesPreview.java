@@ -105,6 +105,6 @@ class HostPatchesPreview extends RuntimePreview<Host> {
         // Important when constraints for the links are processed later.
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
-        attributes.forEach(element -> Elements.setVisible(element, !host.isStarting()));
+        attributes.asElements().forEach(element -> Elements.setVisible(element, !host.isStarting()));
     }
 }

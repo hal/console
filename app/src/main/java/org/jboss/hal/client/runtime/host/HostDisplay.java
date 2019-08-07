@@ -48,7 +48,7 @@ public abstract class HostDisplay implements ItemDisplay<Host> {
     }
 
     @Override
-    public HTMLElement element() {
+    public HTMLElement asElement() {
         return item.isDomainController() ? ItemDisplay
                 .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
     }
