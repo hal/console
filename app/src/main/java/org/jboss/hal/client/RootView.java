@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Widgets;
 import org.jboss.hal.core.mvp.Slots;
@@ -81,10 +82,12 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
         // single or multiple elements with precedence for multiple elements
         boolean finished = false;
 
-        if (content instanceof Iterable) {
-            Iterable<HTMLElement> elements = (Iterable<HTMLElement>) content;
-            for (HTMLElement element : elements) {
-                rootContainer.appendChild(element);
+        if (content instanceof HasElements) {
+            Iterable<HTMLElement> elements = ((HasElements) content).asElements();
+            if (elements != null) {
+                for (HTMLElement element : elements) {
+                    rootContainer.appendChild(element);
+                }
                 finished = true;
             }
         }
