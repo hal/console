@@ -153,7 +153,8 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public Single<CompositeResult> execute(Composite operations) {
-        return dmr(operations).map(this::compositeResult);
+        //noinspection Convert2MethodRef
+        return dmr(operations).map(payload -> compositeResult(payload));
     }
 
     private CompositeResult compositeResult(ModelNode payload) {

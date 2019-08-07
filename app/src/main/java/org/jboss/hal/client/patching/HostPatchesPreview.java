@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,6 @@ import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -40,16 +39,15 @@ import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
-class HostPatchesPreview extends RuntimePreview<NamedNode> {
+class HostPatchesPreview extends RuntimePreview<Host> {
 
     private final HTMLElement restartLink;
-    private final PreviewAttributes<NamedNode> attributes;
+    private final PreviewAttributes<Host> attributes;
     private final HostActions hostActions;
     private final Resources resources;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    HostPatchesPreview(final HostActions hostActions, final NamedNode host,
-            final Resources resources) {
+    HostPatchesPreview(HostActions hostActions, Host host, Resources resources) {
         super(host.getName(), host.get(MASTER).asBoolean() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER,
                 resources);
         this.hostActions = hostActions;
@@ -57,23 +55,26 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
 
         previewBuilder()
                 .add(alertContainer = div()
-                        .add(alertIcon = span().asElement())
-                        .add(alertText = span().asElement())
+                        .add(alertIcon = span().get())
+                        .add(alertText = span().get())
                         .add(span().textContent(" "))
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.restart(namedNodeToHost(host)))
                                 .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
                                 .textContent(resources.constants().restart())
-                                .asElement())
-                        .asElement());
+                                .get())
+                        .get());
 
         attributes = new PreviewAttributes<>(host)
-                .append(model -> {
-                    String latest = model.get(CORE_SERVICE_PATCHING).get("cumulative-patch-id").asString();
-                    // if there is no patch installed, the above attribute returns as "base"
-                    // so, lets display an informative message as there is no patch installed.
-                    if ("base".equals(latest)) {
-                        latest = resources.messages().noPatchesForHost();
+                .append(h -> {
+                    String latest = Names.NOT_AVAILABLE;
+                    if (h.hasDefined(CORE_SERVICE_PATCHING)) {
+                        latest = h.get(CORE_SERVICE_PATCHING).get("cumulative-patch-id").asString();
+                        // if there is no patch installed, the above attribute returns as "base"
+                        // so, lets display an informative message as there is no patch installed.
+                        if ("base".equals(latest)) {
+                            latest = resources.messages().noPatchesForHost();
+                        }
                     }
                     return new PreviewAttributes.PreviewAttribute(resources.messages().patchLatestInstalledLabel(),
                             latest);
@@ -83,8 +84,7 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
     }
 
     @Override
-    public void update(final NamedNode item) {
-        Host host = namedNodeToHost(item);
+    public void update(Host host) {
         if (hostActions.isPending(host)) {
             pending(resources.messages().hostPending(host.getName()));
         } else if (host.isAdminMode()) {
@@ -105,6 +105,6 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
         // Important when constraints for the links are processed later.
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
-        attributes.asElements().forEach(element -> Elements.setVisible(element, !host.isStarting()));
+        attributes.forEach(element -> Elements.setVisible(element, !host.isStarting()));
     }
 }
