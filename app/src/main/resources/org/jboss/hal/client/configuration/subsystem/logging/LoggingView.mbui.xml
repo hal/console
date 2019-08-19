@@ -617,6 +617,20 @@
                                     <attribute name="facility"/>
                                     <attribute name="hostname"/>
                                     <attribute name="level"/>
+                                    <attribute name="named-formatter">
+                                        <suggest-handler>
+                                            <templates>
+                                                <template
+                                                        address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                                <template
+                                                        address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                                <template
+                                                        address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                                <template
+                                                        address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                            </templates>
+                                        </suggest-handler>
+                                    </attribute>
                                     <attribute name="port"/>
                                     <attribute name="server-address"/>
                                     <attribute name="syslog-format"/>
@@ -640,6 +654,16 @@
                             <attribute name="facility"/>
                             <attribute name="hostname"/>
                             <attribute name="level"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/json-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
                             <attribute name="port"/>
                             <attribute name="server-address"/>
                             <attribute name="syslog-format"/>
