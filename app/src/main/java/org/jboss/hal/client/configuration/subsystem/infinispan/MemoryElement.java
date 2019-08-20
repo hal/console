@@ -43,7 +43,10 @@ import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MEMORY;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.bootstrapSelect;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.CSS.width;
 
 /** Element to view and modify the {@code memory=*} singletons of a cache. */
 class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter> {
@@ -121,7 +124,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
             Memory memory = Memory.fromResource(value);
             presenter.switchMemory(memory);
         });
-        selectMemory.previousElementSibling.classList.add(dropdownMenuRight);
+        // selectMemory.previousElementSibling.classList.add(dropdownMenuRight);
         autoWidth(headerForm);
         memoryForms.values().forEach(Attachable::attach);
     }
