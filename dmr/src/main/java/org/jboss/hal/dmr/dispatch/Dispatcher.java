@@ -203,24 +203,18 @@ public class Dispatcher implements RecordingHandler {
 
     private Single<ModelNode> dmr(Operation operation) {
         Operation dmrOperation = runAs(operation); // runAs might mutate the operation, so do it synchronously
-        boolean get = GetOperation.isSupported(dmrOperation.getName());
-        String url = get ? operationUrl(dmrOperation) : endpoints.dmr();
-        HttpMethod method = get ? GET : POST;
+        String url = endpoints.dmr();
         // ^-- those eager fields are useful if we don't want to evaluate it on each Single subscription
         return Single.fromEmitter(emitter -> {
             // in general, code inside the RX type should be able to be executed multiple times and always returns
             // the same result, so we need to be careful to not mutate anything (like the operation). This is useful
             // for example if we want to use the retry operator which will try again (subscribe again) if it fails.
-            XMLHttpRequest xhr = newDmrXhr(url, method, dmrOperation, new DmrPayloadProcessor(), emitter::onSuccess,
+            XMLHttpRequest xhr = newDmrXhr(url, dmrOperation, new DmrPayloadProcessor(), emitter::onSuccess,
                     (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
                     (op, error) -> emitter.onError(error));
             xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
             xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
-            if (get) {
-                xhr.send();
-            } else {
-                xhr.send(dmrOperation.toBase64String());
-            }
+            xhr.send(dmrOperation.toBase64String());
             logger.trace("DMR operation: {}", operation);
             recordOperation(operation);
         });
@@ -273,7 +267,7 @@ public class Dispatcher implements RecordingHandler {
 
     private Single<ModelNode> uploadFormData(FormData formData, Operation operation) {
         return Single.fromEmitter(emitter -> {
-            XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
+            XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), operation, new UploadPayloadProcessor(),
                     emitter::onSuccess,
                     (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
                     (op, error) -> emitter.onError(error));
@@ -363,15 +357,15 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ xhr
 
-    private XMLHttpRequest newDmrXhr(String url, HttpMethod method, Operation operation,
-            PayloadProcessor payloadProcessor, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        return newXhr(url, method, operation, error, xhr -> {
+    private XMLHttpRequest newDmrXhr(String url, Operation operation, PayloadProcessor payloadProcessor,
+            Consumer<ModelNode> success, OnFail fail, OnError error) {
+        return newXhr(url, POST, operation, error, xhr -> {
             int status = xhr.status;
             String responseText = xhr.responseText;
             String contentType = xhr.getResponseHeader(CONTENT_TYPE.header());
 
             if (status == 200 || status == 500) {
-                ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
+                ModelNode payload = payloadProcessor.processPayload(POST, contentType, responseText);
                 if (!payload.isFailure()) {
                     if (environment.isStandalone()) {
                         if (payload.hasDefined(RESPONSE_HEADERS)) {
@@ -415,7 +409,6 @@ public class Dispatcher implements RecordingHandler {
         if (bearerToken != null) {
             xhr.setRequestHeader("Authorization", "Bearer " + bearerToken);
         }
-
         xhr.withCredentials = true;
 
         return xhr;
