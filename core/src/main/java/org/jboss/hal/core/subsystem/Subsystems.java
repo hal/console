@@ -62,6 +62,10 @@ public class Subsystems {
                 .token(NameTokens.DEPLOYMENT_SCANNERS)
                 .preview(resources.previews().configurationDeploymentScanner())
                 .build());
+        addConfiguration(new SubsystemMetadata.Builder(DISTRIBUTABLE_WEB, "Distributable Web")
+                .token(NameTokens.DISTRIBUTABLE_WEB)
+                .preview(resources.previews().configurationDistributableWeb())
+                .build());
         addConfiguration(new SubsystemMetadata.Builder(EE, "EE")
                 .token(NameTokens.EE)
                 .preview(resources.previews().configurationEe())

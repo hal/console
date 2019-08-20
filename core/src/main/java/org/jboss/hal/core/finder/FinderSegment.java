@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /** A segment inside a {@link FinderPath}. */
 public class FinderSegment<T> {
 
-    /** Separator is used in URL tokens. Please choose a string which is safe to use in URLs */
+    /** Separator used in URL tokens. Must be securely encodable in URLs. */
     static final String SEPARATOR = "~";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
@@ -202,12 +202,12 @@ public class FinderSegment<T> {
 
         private final ItemAction<T> itemAction;
 
-        private ItemActionBreadcrumbHandler(final ItemAction<T> itemAction) {
+        private ItemActionBreadcrumbHandler(ItemAction<T> itemAction) {
             this.itemAction = itemAction;
         }
 
         @Override
-        public void execute(final T item, final FinderContext context) {
+        public void execute(T item, FinderContext context) {
             itemAction.handler.execute(item);
         }
     }
@@ -219,7 +219,7 @@ public class FinderSegment<T> {
         public final ItemDisplay<T> display;
         public final BreadcrumbItemHandler<T> handler;
 
-        DropdownItem(final T item, final ItemDisplay<T> display, final BreadcrumbItemHandler<T> handler) {
+        DropdownItem(T item, ItemDisplay<T> display, BreadcrumbItemHandler<T> handler) {
             this.item = item;
             this.display = display;
             this.handler = handler;
