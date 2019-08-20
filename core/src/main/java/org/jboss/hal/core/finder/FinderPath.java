@@ -35,13 +35,13 @@ import static com.google.common.base.Strings.nullToEmpty;
  * <li>{@code columnId} The column id. Used to lookup columns from the column registry</li>
  * <li>{@code itemId} The selected item id</li>
  * <li>{@code columnTitle} The title of the column used in the UI. If not specified defaults to {@code columnId}</li>
- * <li>{@code itemTitle} The title of the selected item used un the UI. If not specified defaults to {@code
+ * <li>{@code itemTitle} The title of the selected item used in the UI. If not specified defaults to {@code
  * itemId}</li>
  * </ol>
  */
 public class FinderPath implements Iterable<FinderSegment> {
 
-    /** Separator is used in URL tokens. Please choose a string which is safe to use in URLs */
+    /** Separator used in URL tokens. Must be securely encodable in URLs. */
     static final String SEPARATOR = "!";
 
 

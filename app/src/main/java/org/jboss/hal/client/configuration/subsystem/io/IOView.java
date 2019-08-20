@@ -27,12 +27,12 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess", "unused"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused"})
 public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPresenter.MyView {
 
     // ------------------------------------------------------ initialization
 
-    public static IOView create(final MbuiContext mbuiContext) {
+    public static IOView create(MbuiContext mbuiContext) {
         return new Mbui_IOView(mbuiContext);
     }
 
@@ -42,7 +42,7 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
     @MbuiElement("io-worker-table") Table<NamedNode> workerTable;
     @MbuiElement("io-worker-form") Form<NamedNode> workerForm;
 
-    IOView(final MbuiContext mbuiContext) {
+    IOView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
@@ -50,7 +50,7 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
     // ------------------------------------------------------ buffer pool
 
     @Override
-    public void updateBufferPool(final List<NamedNode> items) {
+    public void updateBufferPool(List<NamedNode> items) {
         bufferPoolForm.clear();
         bufferPoolTable.update(items);
     }
@@ -59,7 +59,7 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
     // ------------------------------------------------------ worker
 
     @Override
-    public void updateWorkers(final List<NamedNode> items) {
+    public void updateWorkers(List<NamedNode> items) {
         workerForm.clear();
         workerTable.update(items);
     }

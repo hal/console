@@ -97,7 +97,6 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     }
 
     @PostConstruct
-    @SuppressWarnings("ConstantConditions")
     void init() {
         StatementContext statementContext = mbuiContext.statementContext();
         if (ManagementModel.supportsEjbApplicationSecurityDomain(environment().getManagementVersion())) {

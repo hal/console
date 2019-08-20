@@ -67,6 +67,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/deployment-scanner.html")
     ExternalTextResource configurationDeploymentScanner();
 
+    @Source("previews/configuration/distributable-web.html")
+    ExternalTextResource configurationDistributableWeb();
+
     @Source("previews/configuration/domain.html")
     ExternalTextResource configurationDomain();
 

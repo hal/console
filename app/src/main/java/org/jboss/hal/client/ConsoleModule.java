@@ -45,6 +45,8 @@ import org.jboss.hal.client.configuration.subsystem.coremanagement.Mbui_CoreMana
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.DeploymentScannerPresenter;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Mbui_DeploymentScannerView;
+import org.jboss.hal.client.configuration.subsystem.distributableweb.DistributableWebPresenter;
+import org.jboss.hal.client.configuration.subsystem.distributableweb.Mbui_DistributableWebView;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
 import org.jboss.hal.client.configuration.subsystem.elytron.ElytronSubsystemPresenter;
@@ -333,6 +335,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 DestinationPresenter.MyView.class,
                 Mbui_DestinationView.class,
                 DestinationPresenter.MyProxy.class);
+
+        bindPresenter(DistributableWebPresenter.class,
+                DistributableWebPresenter.MyView.class,
+                Mbui_DistributableWebView.class,
+                DistributableWebPresenter.MyProxy.class);
 
         bindPresenter(DistributedCachePresenter.class,
                 DistributedCachePresenter.MyView.class,

@@ -547,6 +547,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String switchMemory();
     String switchNearCache();
     String switchProvider();
+    String switchRouting();
     String switchStore();
     String switchToExpressionMode();
     String switchToNormalMode();

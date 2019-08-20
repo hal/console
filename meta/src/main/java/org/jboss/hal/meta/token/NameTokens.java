@@ -40,6 +40,7 @@ public interface NameTokens {
     String DEPLOYMENT = "deployment";
     String DEPLOYMENTS = "deployments";
     String DISTRIBUTED_CACHE = ModelDescriptionConstants.DISTRIBUTED_CACHE;
+    String DISTRIBUTABLE_WEB = ModelDescriptionConstants.DISTRIBUTABLE_WEB;
     String EE = ModelDescriptionConstants.EE;
     String ERROR = "error";
     String ELYTRON = ModelDescriptionConstants.ELYTRON;

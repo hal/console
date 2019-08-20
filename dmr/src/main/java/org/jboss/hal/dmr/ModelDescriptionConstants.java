@@ -272,6 +272,7 @@ public interface ModelDescriptionConstants {
     String DISCONNECTED = "disconnected";
     String DISCOVERY_GROUP = "discovery-group";
     String DISTINGUISHED_NAME = "distinguished-name";
+    String DISTRIBUTABLE_WEB = "distributable-web";
     String DISTRIBUTED_CACHE = "distributed-cache";
     String DIVERT = "divert";
     String DOMAIN_ORGANIZATION = "domain-organization";
@@ -503,6 +504,7 @@ public interface ModelDescriptionConstants {
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOAD = "load";
+    String LOCAL = "local";
     String LOCAL_CACHE = "local-cache";
     String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
     String LOCALE = "locale";
@@ -799,6 +801,7 @@ public interface ModelDescriptionConstants {
     String ROLLBACK_OPERATION = "rollback";
     String ROLLBACK_PREPARED_TRANSACTION = "rollback-prepared-transaction";
     String ROLLBACK_TO = "rollback-to";
+    String ROUTING = "routing";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
     String RUNNING_TIME = "running-time";

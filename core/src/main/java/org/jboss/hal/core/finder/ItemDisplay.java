@@ -88,7 +88,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     /**
      * Defines the action(s) available for the item.
      *
-     * @return an empty map by default.
+     * @return an empty list by default.
      */
     default List<ItemAction<T>> actions() {
         return new ArrayList<>();
@@ -99,6 +99,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return {@code null} by default
      */
+    @Override
     default HTMLElement element() {
         return null;
     }
