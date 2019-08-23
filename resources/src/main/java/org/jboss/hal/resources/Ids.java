@@ -158,6 +158,10 @@ public interface Ids {
     String DEPLOYMENT_TAB_CONTAINER = "deployment-tab-container";
     String DEPLOYMENT_UNMANAGED_ADD = "deployment-unmanaged-add";
     String DEPLOYMENT_UPLOAD = "deployment-upload";
+    String DISTRIBUTABLE_WEB_ROUTING_ITEM = "dw-routing-item";
+    String DISTRIBUTABLE_WEB_ROUTING_INFINISPAN = "dw-routing-infinispan";
+    String DISTRIBUTABLE_WEB_ROUTING_LOCAL = "dw-routing-local";
+    String DISTRIBUTABLE_WEB_ROUTING_SELECT = "dw-routing-select";
     String DISTRIBUTED_CACHE = "distributed-cache";
     String DISABLE_SSL = "disable-ssl";
     String DOMAIN_BROWSE_BY = "domain-browse-by";

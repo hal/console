@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -50,7 +51,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * bootstrap function, because the operation might fail in some corner cases (e.g. when the current user is a host
  * scoped role scoped to a slave host).
  */
-@SuppressWarnings("HardCodedStringLiteral")
 public class ReadAuthentication implements BootstrapTask {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadAuthentication.class);
@@ -68,7 +68,7 @@ public class ReadAuthentication implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         logger.debug("Read authentication");
         ResourceAddress address = CORE_SERVICE_TEMPLATE.resolve(statementContext);
         Operation opAuthorization = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)

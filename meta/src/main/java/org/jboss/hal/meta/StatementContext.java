@@ -29,9 +29,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public interface StatementContext {
 
     @SuppressWarnings("HardCodedStringLiteral")
-    enum Tuple {
+    enum Expression {
         /**
-         * Please not that this tuple might not always resolve to the domain controller. For some edge cases (e.g. when
+         * Please note that this tuple might not always resolve to the domain controller. For some edge cases (e.g. when
          * the current user is assigned to a host scoped role which is scoped to a slave host), this tuple is resolved
          * to the first host which was read during bootstrap. In any case it is resolved to an existing host.
          * <p>
@@ -48,7 +48,7 @@ public interface StatementContext {
         private final String name;
         private final String resource;
 
-        Tuple(String name, String resource) {
+        Expression(String name, String resource) {
             this.name = name;
             this.resource = resource;
         }
@@ -57,12 +57,13 @@ public interface StatementContext {
             return resource;
         }
 
-        public String variable() {
+        /** @return the {@code name} surrounded by "{" and "}" */
+        public String expression() {
             return "{" + name + "}";
         }
 
-        public static Tuple from(String name) {
-            for (Tuple t : Tuple.values()) {
+        public static Expression from(String name) {
+            for (Expression t : Expression.values()) {
                 if (t.name.equals(name)) {
                     return t;
                 }

@@ -543,6 +543,20 @@
                             <attribute name="facility"/>
                             <attribute name="hostname"/>
                             <attribute name="level"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <template
+                                                address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template
+                                                address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template
+                                                address="/{selected.profile}/subsystem=logging/logging-profile={selection}/json-formatter=*"/>
+                                        <template
+                                                address="/{selected.profile}/subsystem=logging/logging-profile={selection}/xml-formatter=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
                             <attribute name="port"/>
                             <attribute name="server-address"/>
                             <attribute name="syslog-format"/>

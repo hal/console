@@ -17,9 +17,9 @@ package org.jboss.hal.core.runtime.server;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
-import org.jboss.hal.meta.StatementContext.Tuple;
+import org.jboss.hal.meta.StatementContext.Expression;
 
-/** Selects both {@link Tuple#SELECTED_SERVER_CONFIG} and {@link Tuple#SELECTED_SERVER} */
+/** Selects both {@link Expression#SELECTED_SERVER_CONFIG} and {@link Expression#SELECTED_SERVER} */
 @GenEvent
 public class ServerSelection {
 

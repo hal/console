@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.mail;
 import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 
 interface AddressTemplates {
 

@@ -19,16 +19,13 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 
 /**
  * Function which takes a resource address and replaces specific values with "*". Applied to addresses from
- * the r-r-d result before they are {@linkplain ResourceDescriptionRegistry#add(ResourceAddress, ResourceDescription)
- * added} to the resource description registry.
+ * the r-r-d result before they are {@linkplain ResourceDescriptionRegistry#add(ResourceAddress, ResourceDescription,
+ * boolean)} added} to the resource description registry.
  * <p>
  * The following parts of a resource address are modified by this function:
  * <ul>
@@ -48,8 +45,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class ResourceDescriptionAddressProcessor implements Function<ResourceAddress, ResourceAddress> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionAddressProcessor.class);
-
     @Override
     public ResourceAddress apply(ResourceAddress address) {
         ResourceAddress modified = new ResourceAddress();
@@ -61,7 +56,6 @@ public class ResourceDescriptionAddressProcessor implements Function<ResourceAdd
             SegmentProcessor.process(segments, segment -> modified.add(segment[0], segment[1]));
         }
 
-        logger.debug("{} -> {}", address, modified);
         return modified;
     }
 }

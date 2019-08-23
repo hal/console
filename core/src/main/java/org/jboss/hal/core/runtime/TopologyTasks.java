@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,14 +16,15 @@
 package org.jboss.hal.core.runtime;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
-import com.google.common.collect.Lists;
+import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.host.Host;
@@ -38,10 +39,16 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Messages;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
+import rx.Single;
+import rx.functions.Func1;
 
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
@@ -53,674 +60,661 @@ import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
-/** Set of tasks to read runtime data like running server of a specific server group. */
-public class TopologyTasks {
+public final class TopologyTasks {
 
-    public static final String SERVER_GROUP = "topologyFunctions.serverGroup";
-    public static final String SERVER_GROUPS = "topologyFunctions.serverGroups";
-    public static final String HOST = "topologyFunctions.host";
-    public static final String HOSTS = "topologyFunctions.hosts";
-    public static final String SERVERS = "topologyFunctions.servers";
-    public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
-    private static final String NO_SERVER_BOOT_ERRORS = "No second step containing the boot errors for server {}";
+    public static final String HOST = "topologyFunctions.host";                      // Host
+    public static final String HOSTS = "topologyFunctions.hosts";                    // List<Host>
+    public static final String SERVER_GROUPS = "topologyFunctions.serverGroups";     // List<ServerGroup>
+    public static final String SERVERS = "topologyFunctions.servers";                // List<Server>
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
-
+    private static final String HOST_NAMES = "topologyFunctions.hostNames";           // List<String>
     private static final String WILDCARD = "*";
-    private static final ResourceAddress ALL_SERVER_CONFIGS = new ResourceAddress()
-            .add(ModelDescriptionConstants.HOST, WILDCARD)
-            .add(SERVER_CONFIG, WILDCARD);
-
-    private static final ResourceAddress ALL_SERVERS = new ResourceAddress()
-            .add(ModelDescriptionConstants.HOST, WILDCARD)
-            .add(SERVER, WILDCARD);
-
-    private static final Operation HOSTS_OPERATION = new Operation.Builder(ResourceAddress.root(),
-            READ_CHILDREN_RESOURCES_OPERATION)
-            .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
-            .param(INCLUDE_RUNTIME, true)
-            .build();
-
-    private static final Operation DISCONNECTED_HOSTS = new Operation.Builder(
-            new ResourceAddress()
-                    .add(CORE_SERVICE, MANAGEMENT)
-                    .add(HOST_CONNECTION, WILDCARD),
-            QUERY)
-            .param(SELECT, new ModelNode().add(EVENTS))
-            .param(WHERE, new ModelNode().set(CONNECTED, false))
-            .build();
-
-    private static final Operation SERVER_GROUPS_OPERATION = new Operation.Builder(ResourceAddress.root(),
-            READ_CHILDREN_RESOURCES_OPERATION)
-            .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
-            .param(INCLUDE_RUNTIME, true)
-            .build();
-
-    private static List<Host> orderedHostWithDomainControllerAsFirstElement(List<Host> connected,
-            List<Host> disconnected) {
-        List<Host> hosts = new ArrayList<>();
-        hosts.addAll(connected);
-        hosts.addAll(disconnected);
-        hosts.sort(comparing(Host::getName));
-
-        Host domainController = null;
-        for (Iterator<Host> iterator = hosts.iterator();
-                iterator.hasNext() && domainController == null; ) {
-            Host host = iterator.next();
-            if (host.isDomainController()) {
-                domainController = host;
-                iterator.remove();
-            }
-        }
-        if (domainController != null) {
-            hosts.add(0, domainController);
-        }
-        return hosts;
-    }
-
-    private static List<Host> disconnectedHosts(ModelNode modelNode) {
-        return modelNode.asList().stream()
-                .filter(node -> !node.isFailure())
-                .map(node -> {
-                    String name = new ResourceAddress(node.get(ADDRESS)).lastValue();
-                    long registered = 0;
-                    long unregistered = 0;
-                    for (ModelNode event : failSafeList(node, RESULT + "/" + EVENTS)) {
-                        if (event.hasDefined(TYPE) && event.hasDefined(TIMESTAMP)) {
-                            if (REGISTERED.equals(event.get(TYPE).asString())) {
-                                registered = max(registered, event.get(TIMESTAMP).asLong());
-                            } else if (UNREGISTERED.equals(event.get(TYPE).asString())) {
-                                unregistered = max(unregistered, event.get(TIMESTAMP).asLong());
-                            }
-                        }
-                    }
-                    Date disconnected = unregistered != 0 ? new Date(unregistered) : null;
-                    Date lastConnected = registered != 0 ? new Date(registered) : null;
-                    return Host.disconnected(name, disconnected, lastConnected);
-                })
-                .collect(toList());
-    }
-
-    private static Operation.Builder serverConfigOperation(String first, String... rest) {
-        ModelNode select = new ModelNode().add(first);
-        if (rest != null) {
-            for (String attribute : rest) {
-                select.add(attribute);
-            }
-        }
-        return new Operation.Builder(ALL_SERVER_CONFIGS, QUERY)
-                .param(SELECT, select);
-    }
-
-    private static void addServersToHosts(List<Host> hosts, Collection<Server> servers) {
-        Map<String, List<Server>> serversByHost = servers.stream()
-                .collect(groupingBy(Server::getHost));
-        hosts.stream()
-                .filter(Host::isConnected)
-                .forEach(host -> {
-                    List<Server> serversOfHost = serversByHost.getOrDefault(host.getName(), emptyList());
-                    serversOfHost.forEach(host::addServer);
-                });
-    }
-
-    private static void addServersToServerGroups(List<ServerGroup> serverGroups, Collection<Server> servers) {
-        Map<String, List<Server>> serversByServerGroup = servers.stream()
-                .collect(groupingBy(Server::getServerGroup));
-        serverGroups.forEach(serverGroup -> {
-            List<Server> serversOfServerGroup = serversByServerGroup
-                    .getOrDefault(serverGroup.getName(), emptyList());
-            serversOfServerGroup.forEach(serverGroup::addServer);
-        });
-    }
-
-    private static <T extends HasServersNode> Completable processRunningServers(Dispatcher dispatcher,
-            List<T> hasServersNode) {
-        Completable completable = Completable.complete();
-        if (hasServersNode != null) {
-            List<Server> servers = runningServers(hasServersNode);
-            Composite composite = serverRuntimeComposite(servers);
-            if (!composite.isEmpty()) {
-                Map<String, Server> serverConfigsById = mapServersById(servers);
-                completable = dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
-                    for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
-                        ModelNode payload = iterator.next().get(RESULT);
-                        String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
-                        String serverName = payload.get(NAME).asString();
-                        String id = Ids.hostServer(hostName, serverName);
-                        Server server = serverConfigsById.get(id);
-                        //noinspection Duplicates
-                        if (server != null) {
-                            server.addServerAttributes(payload);
-                            if (iterator.hasNext()) {
-                                List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
-                                server.setBootErrors(!bootErrors.isEmpty());
-                            } else {
-                                logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
-                            }
-                        }
-                    }
-                }).toCompletable();
-            }
-        }
-        return completable;
-    }
-
-    private static <T extends HasServersNode> List<Server> runningServers(List<T> hasServersNode) {
-        return hasServersNode.stream()
-                .flatMap(hasServers -> hasServers.getServers().stream().filter(Server::isStarted))
-                .collect(toList());
-    }
-
-    private static Map<String, Server> serverConfigsById(List<ModelNode> modelNodes) {
-        return modelNodes.stream()
-                .filter(modelNode -> !modelNode.isFailure())
-                .map(modelNode -> {
-                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                    String host = address.getParent().lastValue();
-                    return new Server(host, modelNode.get(RESULT));
-                })
-                .collect(toMap(Server::getId, identity()));
-    }
-
-    private static Map<String, Server> mapServersById(List<Server> servers) {
-        return servers.stream().collect(toMap(Server::getId, identity()));
-    }
-
-    private static Completable readAndAddServerRuntimeAttributes(Dispatcher dispatcher, List<Server> servers) {
-        Completable completable = Completable.complete();
-        if (servers != null) {
-            Composite composite = serverRuntimeComposite(servers);
-            if (!composite.isEmpty()) {
-                completable = dispatcher.execute(composite)
-                        .doOnSuccess((CompositeResult result) -> addServerRuntimeAttributes(servers, result))
-                        .toCompletable();
-            }
-        }
-        return completable;
-    }
-
-    /**
-     * @return a composite operation with two operations per started server:
-     * <ol>
-     * <li>{@code host=h/server=s:read-resource(attributes-only,include-runtime)}</li>
-     * <li>{@code host=h/server=s/core-service=management:read-boot-errors()}</li>
-     * </ol>
-     */
-    private static Composite serverRuntimeComposite(List<Server> servers) {
-        List<Operation> operations = new ArrayList<>();
-        for (Server server : servers) {
-            if (server.isStarted()) {
-                operations.add(new Operation.Builder(server.getServerAddress(), READ_RESOURCE_OPERATION)
-                        .param(ATTRIBUTES_ONLY, true)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build());
-                operations.add(new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
-                        READ_BOOT_ERRORS
-                ).build());
-            }
-        }
-        return new Composite(operations);
-    }
-
-    /**
-     * Updates the server runtime attributes with information from the composite result. For each server there has to
-     * be two steps in the composite result:
-     * <ol>
-     * <li>The server runtime attributes (including the server name)</li>
-     * <li>The server boot errors</li>
-     * </ol>
-     */
-    private static void addServerRuntimeAttributes(List<Server> servers, CompositeResult result) {
-        Map<String, Server> serverConfigsByName = servers.stream().collect(toMap(Server::getId, identity()));
-
-        for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
-            ModelNode attributes = iterator.next().get(RESULT);
-            String serverId = Ids.hostServer(attributes.get(ModelDescriptionConstants.HOST).asString(),
-                    attributes.get(NAME).asString());
-            Server server = serverConfigsByName.get(serverId);
-            //noinspection Duplicates
-            if (server != null) {
-                server.addServerAttributes(attributes);
-                if (iterator.hasNext()) {
-                    List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
-                    server.setBootErrors(!bootErrors.isEmpty());
-                } else {
-                    logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
-                }
-            }
-        }
-    }
-
-    private TopologyTasks() {
-    }
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
 
 
     // ------------------------------------------------------ topology
 
+    /** Show a blocking verification dialog and executes the specified operation. */
+    public static void reloadBlocking(Dispatcher dispatcher, EventBus eventBus, Operation operation,
+            String type, String name, String urlConsole, Resources resources) {
+        Messages messages = resources.messages();
+        String title = messages.restart(name);
+
+        dispatcher.execute(operation,
+                result -> DialogFactory.buildBlocking(title, Dialog.Size.MEDIUM,
+                        messages.reloadConsoleRedirect(urlConsole))
+                        .show(),
+                (operation1, failure) -> MessageEvent.fire(eventBus,
+                        Message.error(messages.reloadErrorCause(type, name, failure))),
+                (operation1, exception) -> MessageEvent.fire(eventBus,
+                        Message.error(messages.reloadErrorCause(type, name, exception.getMessage()))));
+    }
 
     /**
-     * Reads the topology (hosts, server groups and servers). Should be followed by {@link TopologyStartedServers} to
-     * include the {@code server} resource attributes for the running servers.
-     * <p>
-     * Populates the context with three collections
+     * Returns a lists of tasks to read the topology.
+     *
+     * <p>The context is populated with the following keys:
      * <ul>
-     * <li>{@link #HOSTS}: An ordered list of hosts with the domain controller as first element. Each host contains its
-     * server configs.</li>
-     * <li>{@link #SERVER_GROUPS}: An ordered list of server groups. Each server group contains its server
-     * configs.</li>
-     * <li>{@link #SERVERS}: An unordered list of all server configs in the domain. The servers contain only selected
-     * attributes from the {@code server-config} resources. Use {@link TopologyStartedServers} to add the {@code
-     * server}
-     * resource attributes attributes.
+     * <li>{@link #HOSTS}: The ordered list of hosts with the domain controller as first element. Each host contains
+     * its servers.</li>
+     * <li>{@link #SERVER_GROUPS}: The ordered list of server groups. Each server group contains its servers.</li>
+     * <li>{@link #SERVERS}: The list of all servers in the domain.</li>
+     * </ul>
+     * Started servers contain additional attributes and optional server boot errors.
+     */
+    public static List<Task<FlowContext>> topology(Environment environment, Dispatcher dispatcher) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new HostsNames(environment, dispatcher));
+        tasks.add(new Hosts(environment, dispatcher));
+        tasks.add(new DisconnectedHosts(environment, dispatcher));
+        tasks.add(new ServerGroups(environment, dispatcher));
+        tasks.add(new StartedServers(environment, dispatcher));
+        tasks.add(new Topology(environment));
+        return tasks;
+    }
+
+    /**
+     * Returns a lists of tasks to read all hosts (connected and disconnected) and its servers.
+     *
+     * <p>The context is populated with the following keys:
+     * <ul>
+     * <li>{@link #HOSTS}: The ordered list of hosts with the domain controller as first element. Each host contains
+     * its servers.</li>
+     * </ul>
+     * Started servers contain additional attributes and optional server boot errors.
+     */
+    public static List<Task<FlowContext>> hosts(Environment environment, Dispatcher dispatcher) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new HostsNames(environment, dispatcher));
+        tasks.add(new Hosts(environment, dispatcher));
+        tasks.add(new DisconnectedHosts(environment, dispatcher));
+        tasks.add(new StartedServers(environment, dispatcher));
+        tasks.add(new Topology(environment));
+        return tasks;
+    }
+
+    /**
+     * Returns a lists of tasks to read all server groups and its servers.
+     *
+     * <p>The context is populated with the following keys:
+     * <ul>
+     * <li>{@link #SERVER_GROUPS}: The ordered list of server groups. Each server group contains its servers.</li>
+     * </ul>
+     * Started servers contain additional attributes and optional server boot errors.
+     */
+    @SuppressWarnings("Duplicates")
+    public static List<Task<FlowContext>> serverGroups(Environment environment, Dispatcher dispatcher) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new HostsNames(environment, dispatcher));
+        tasks.add(new Hosts(environment, dispatcher));
+        tasks.add(new ServerGroups(environment, dispatcher));
+        tasks.add(new StartedServers(environment, dispatcher));
+        tasks.add(new Topology(environment));
+        return tasks;
+    }
+
+    /**
+     * Returns a lists of tasks to read the servers of one host.
+     *
+     * <p>The context is populated with the following keys:
+     * <ul>
+     * <li>{@link #SERVERS}: The list of servers of one host.</li>
+     * </ul>
+     * Started servers contain additional attributes and optional server boot errors.
+     */
+    public static List<Task<FlowContext>> serversOfHost(Environment environment, Dispatcher dispatcher, String host) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new ServersOfHost(environment, dispatcher, host));
+        tasks.add(new StartedServers(environment, dispatcher));
+        return tasks;
+    }
+
+    /**
+     * Returns a lists of tasks to read the servers of one server group.
+     *
+     * <p>The context is populated with the following keys:
+     * <ul>
+     * <li>{@link #SERVERS}: The list of servers of one server group.</li>
+     * </ul>
+     * Started servers contain additional attributes and optional server boot errors.
+     */
+    public static List<Task<FlowContext>> serversOfServerGroup(Environment environment, Dispatcher dispatcher,
+            String serverGroup) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new HostsNames(environment, dispatcher));
+        tasks.add(new ServersOfServerGroup(environment, dispatcher, serverGroup));
+        tasks.add(new StartedServers(environment, dispatcher));
+        return tasks;
+    }
+
+    /**
+     * Returns a lists of tasks to read all running servers in the domain which satisfy the specified query.
+     *
+     * <p>The context is populated with the following keys:
+     * <ul>
+     * <li>{@link #SERVERS}: The list of running servers with additional attributes and optional server boot errors for
+     * started servers.</li>
      * </ul>
      */
-    public static class Topology implements Task<FlowContext> {
+    public static List<Task<FlowContext>> runningServers(Environment environment, Dispatcher dispatcher,
+            ModelNode query) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new HostsNames(environment, dispatcher));
+        tasks.add(new RunningServers(environment, dispatcher, query));
+        return tasks;
+    }
+
+
+    // ------------------------------------------------------ public callbacks
+
+
+    /**
+     * Function which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks
+     * which read the hosts. The erroneous host is added to the the list of hosts as {@link Host#booting(String)}
+     * if the error contains {@link ModelDescriptionConstants#ERROR_WFY_CTL_0379} or as {@link Host#failed(String)}
+     * otherwise.
+     */
+    public static class HostError<T> implements Func1<Throwable, Single<T>> {
+
+        private String hostName;
+        private final List<Host> hosts;
+        private Function<Throwable, T> resume;
+
+        public HostError(String hostName, List<Host> hosts, Function<Throwable, T> resume) {
+            this.hostName = hostName;
+            this.hosts = hosts;
+            this.resume = resume;
+        }
+
+        @Override
+        public Single<T> call(Throwable throwable) {
+            Host h;
+            if (throwable.getMessage() != null &&
+                    throwable.getMessage().contains(ERROR_WFY_CTL_0379)) {
+                h = Host.booting(hostName);
+            } else {
+                h = Host.failed(hostName);
+            }
+            hosts.add(h);
+            logger.warn("Unable to read host {}: {}", hostName, throwable.getMessage());
+            T resumeWith = resume.apply(throwable);
+            return Single.just(resumeWith);
+        }
+    }
+
+
+    // ------------------------------------------------------ tasks
+
+
+    private static class Topology implements Task<FlowContext> {
 
         private final Environment environment;
-        private final Dispatcher dispatcher;
 
-        public Topology(Environment environment, Dispatcher dispatcher) {
+        private Topology(Environment environment) {
             this.environment = environment;
-            this.dispatcher = dispatcher;
         }
 
         @Override
         public Completable call(FlowContext context) {
             if (environment.isStandalone()) {
-                List<Host> hosts = Collections.emptyList();
-                List<ServerGroup> serverGroups = Collections.emptyList();
-                List<Server> servers = Collections.emptyList();
+                List<Host> hosts = emptyList();
+                List<ServerGroup> serverGroups = emptyList();
+                List<Server> servers = emptyList();
                 context.set(HOSTS, hosts);
                 context.set(SERVER_GROUPS, serverGroups);
                 context.set(SERVERS, servers);
                 return Completable.complete();
 
             } else {
-                Composite composite = new Composite(
-                        HOSTS_OPERATION,
-                        DISCONNECTED_HOSTS,
-                        SERVER_GROUPS_OPERATION,
-                        serverConfigOperation(NAME, GROUP, STATUS, AUTO_START, SOCKET_BINDING_PORT_OFFSET).build());
-                return dispatcher.execute(composite)
-                        .doOnSuccess((CompositeResult result) -> {
+                List<Host> hosts = context.get(HOSTS);
+                List<Host> sortedHosts;
+                if (hosts != null) {
+                    sortedHosts = new ArrayList<>(hosts);
+                    sortedHosts.sort(comparing(Host::getName));
+                } else {
+                    sortedHosts = new ArrayList<>();
+                }
+                Host domainController = null;
+                for (Iterator<Host> iterator = sortedHosts.iterator();
+                        iterator.hasNext() && domainController == null; ) {
+                    Host host = iterator.next();
+                    if (host.isDomainController()) {
+                        domainController = host;
+                        iterator.remove();
+                    }
+                }
+                if (domainController != null) {
+                    sortedHosts.add(0, domainController);
+                }
+                hosts = sortedHosts;
 
-                            List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
-                                    .map(Host::new)
-                                    .collect(toList());
-                            List<Host> disconnectedHosts = disconnectedHosts(result.step(1).get(RESULT));
-                            List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(connectedHosts,
-                                    disconnectedHosts);
-                            context.set(HOSTS, hosts);
-
-                            List<ServerGroup> serverGroups = result.step(2).get(RESULT).asPropertyList().stream()
-                                    .map(ServerGroup::new)
-                                    .sorted(comparing(ServerGroup::getName))
-                                    .collect(toList());
-                            context.set(SERVER_GROUPS, serverGroups);
-
-                            Map<String, Server> serverConfigsByName = serverConfigsById(
-                                    result.step(3).get(RESULT).asList());
-                            context.set(SERVERS, Lists.newArrayList(serverConfigsByName.values()));
-
-                            addServersToHosts(hosts, serverConfigsByName.values());
-                            addServersToServerGroups(serverGroups, serverConfigsByName.values());
-                        }).toCompletable();
-            }
-        }
-    }
-
-
-    /**
-     * Adds the {@code server} resource attributes and the server bootstrap errors for started servers. Expects a list
-     * of servers in the context as provided by {@link Topology}.
-     */
-    public static class TopologyStartedServers implements Task<FlowContext> {
-
-        private final Environment environment;
-        private final Dispatcher dispatcher;
-
-        public TopologyStartedServers(Environment environment, Dispatcher dispatcher) {
-            this.environment = environment;
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            if (environment.isStandalone()) {
-                return Completable.complete();
-            } else {
                 List<Server> servers = context.get(SERVERS);
-                return readAndAddServerRuntimeAttributes(dispatcher, servers);
+                List<ServerGroup> serverGroups = context.get(SERVER_GROUPS);
+                if (serverGroups != null && servers != null) {
+                    Map<String, List<Server>> serversByServerGroup = servers.stream()
+                            .collect(groupingBy(Server::getServerGroup));
+                    for (ServerGroup serverGroup : serverGroups) {
+                        List<Server> serversOfServerGroup = serversByServerGroup
+                                .getOrDefault(serverGroup.getName(), emptyList());
+                        serversOfServerGroup.forEach(serverGroup::addServer);
+                    }
+                } else {
+                    serverGroups = emptyList();
+                    servers = emptyList();
+                }
+                context.set(HOSTS, hosts);
+                context.set(SERVER_GROUPS, serverGroups);
+                context.set(SERVERS, servers);
+                return Completable.complete();
             }
         }
     }
 
 
-    // ------------------------------------------------------ hosts
-
-
-    /**
-     * Reads the hosts as order list with the domain controller as first element. Each host contains its server configs.
-     * Should be followed by {@link HostsStartedServers} to include the {@code server} resource attributes for the
-     * running servers.
-     * <p>
-     * The list of hosts is available in the context under the key {@link #HOSTS}.
-     */
-    public static class HostsWithServerConfigs implements Task<FlowContext> {
+    private static class HostsNames implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public HostsWithServerConfigs(Environment environment, Dispatcher dispatcher) {
+        private HostsNames(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
         public Completable call(FlowContext context) {
-            if (environment.isStandalone()) {
-                return Completable.complete();
-            } else {
-                Composite composite = new Composite(HOSTS_OPERATION, DISCONNECTED_HOSTS,
-                        serverConfigOperation(NAME, GROUP, STATUS).build());
-                return dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
-                    List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
-                            .map(Host::new)
+            Completable completable = Completable.complete();
+            if (!environment.isStandalone()) {
+                Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
+                        .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
+                        .build();
+                completable = dispatcher.execute(operation).doOnSuccess(result -> {
+                    List<String> hostNames = result.asList().stream()
+                            .map(ModelNode::asString)
                             .collect(toList());
-                    List<Host> disconnectedHosts = disconnectedHosts(result.step(1).get(RESULT));
-                    List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(connectedHosts,
-                            disconnectedHosts);
-
-                    Map<String, Server> serverConfigsByName = serverConfigsById(result.step(2).get(RESULT).asList());
-                    addServersToHosts(hosts, serverConfigsByName.values());
-
-                    context.set(HOSTS, hosts);
+                    context.set(HOST_NAMES, hostNames);
                 }).toCompletable();
             }
+            return completable;
         }
     }
 
 
-    /**
-     * Reads the {@code server} resource attributes for started servers across connected hosts. Expects a list of hosts
-     * in the context as provided by {@link HostsWithServerConfigs}.
-     */
-    public static class HostsStartedServers implements Task<FlowContext> {
+    private static class Hosts implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public HostsStartedServers(Environment environment, Dispatcher dispatcher) {
+        private Hosts(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
         public Completable call(FlowContext context) {
-            if (environment.isStandalone()) {
-                return Completable.complete();
-            } else {
-                List<Host> hosts = context.get(HOSTS);
-                List<Host> connectedHosts = hosts.stream().filter(Host::isConnected).collect(toList());
-                return processRunningServers(dispatcher, connectedHosts);
+            List<Host> hosts = new ArrayList<>();
+            List<Server> servers = new ArrayList<>();
+            Completable completable = Completable.complete();
+            context.set(HOSTS, hosts);
+            context.set(SERVERS, servers);
+
+            if (!environment.isStandalone()) {
+                List<String> hostNames = context.get(HOST_NAMES);
+                if (hostNames != null && !hostNames.isEmpty()) {
+                    List<Completable> completables = hostNames.stream()
+                            .map(host -> {
+                                ResourceAddress hostAddress = new ResourceAddress()
+                                        .add(ModelDescriptionConstants.HOST, host);
+                                Operation hostOperation = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
+                                        .param(INCLUDE_RUNTIME, true)
+                                        .build();
+                                ResourceAddress serverConfigAddress = new ResourceAddress()
+                                        .add(ModelDescriptionConstants.HOST, host)
+                                        .add(SERVER_CONFIG, WILDCARD);
+                                Operation serverConfigOperation = new Operation.Builder(serverConfigAddress,
+                                        READ_RESOURCE_OPERATION)
+                                        .param(INCLUDE_RUNTIME, true)
+                                        .build();
+                                Composite composite = new Composite(hostOperation, serverConfigOperation);
+                                return dispatcher.execute(composite)
+                                        .doOnSuccess((CompositeResult result) -> {
+                                            Host h = new Host(result.step(0).get(RESULT));
+                                            hosts.add(h);
+
+                                            List<ModelNode> nodes = result.step(1).get(RESULT).asList();
+                                            nodes.stream()
+                                                    .filter(node -> !node.isFailure())
+                                                    .map(node -> new Server(h.getAddressName(), node.get(RESULT)))
+                                                    .forEach(server -> {
+                                                        h.addServer(server);
+                                                        servers.add(server);
+                                                    });
+                                        })
+                                        .onErrorResumeNext(new HostError<>(host, hosts,
+                                                error -> new CompositeResult(new ModelNode())))
+                                        .toCompletable();
+                            })
+                            .collect(toList());
+                    completable = Completable.concat(completables);
+                }
             }
+            return completable;
         }
     }
 
 
-    /**
-     * Reads one host and its server configs. Should be followed by {@link HostStartedServers} to include the {@code
-     * server} resource attributes for the running servers.
-     * <p>
-     * The host is available in the context under the key {@link #HOST}.
-     */
-    public static class HostWithServerConfigs implements Task<FlowContext> {
-
-        private final String hostName;
-        private final Dispatcher dispatcher;
-
-        public HostWithServerConfigs(String hostName, Dispatcher dispatcher) {
-            this.hostName = hostName;
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
-            Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
-                    .param(ATTRIBUTES_ONLY, true)
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-            Operation serverConfigsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                    .param(CHILD_TYPE, SERVER_CONFIG)
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-            return dispatcher.execute(new Composite(hostOp, serverConfigsOp)).doOnSuccess((CompositeResult result) -> {
-                Host host = new Host(result.step(0).get(RESULT));
-                result.step(1).get(RESULT).asPropertyList().stream()
-                        .map(property -> new Server(hostName, property.getValue()))
-                        .forEach(host::addServer);
-
-                context.set(HOST, host);
-            }).toCompletable();
-        }
-    }
-
-
-    /**
-     * Reads the {@code server} resource attributes for started servers of a host. Expects the host in the context
-     * as provided by {@link HostWithServerConfigs}.
-     */
-    public static class HostStartedServers implements Task<FlowContext> {
-
-        private final Dispatcher dispatcher;
-
-        public HostStartedServers(Dispatcher dispatcher) {
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            Host host = context.get(HOST);
-            return host != null
-                    ? readAndAddServerRuntimeAttributes(dispatcher, host.getServers())
-                    : Completable.complete();
-        }
-    }
-
-
-    // ------------------------------------------------------ server groups
-
-
-    /**
-     * Reads the server groups as order list. Each server group contains its server configs.  Should be followed by
-     * {@link ServerGroupsStartedServers} to include the {@code server} resource attributes for the running servers.
-     * <p>
-     * The list of server groups is available in the context under the key {@link #SERVER_GROUPS}.
-     */
-    public static class ServerGroupsWithServerConfigs implements Task<FlowContext> {
+    private static class DisconnectedHosts implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public ServerGroupsWithServerConfigs(Environment environment, Dispatcher dispatcher) {
+        private DisconnectedHosts(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
         public Completable call(FlowContext context) {
-            if (environment.isStandalone()) {
-                return Completable.complete();
-            } else {
-                Composite composite = new Composite(SERVER_GROUPS_OPERATION,
-                        serverConfigOperation(NAME, GROUP, STATUS).build());
-                return dispatcher.execute(composite).doOnSuccess((CompositeResult result) -> {
-                    List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
+            Completable completable = Completable.complete();
+            if (!environment.isStandalone()) {
+                ResourceAddress address = new ResourceAddress()
+                        .add(CORE_SERVICE, MANAGEMENT)
+                        .add(HOST_CONNECTION, WILDCARD);
+                Operation operation = new Operation.Builder(address, QUERY)
+                        .param(SELECT, new ModelNode().add(EVENTS))
+                        .param(WHERE, new ModelNode().set(CONNECTED, false))
+                        .build();
+                completable = dispatcher.execute(operation).doOnSuccess(result -> {
+                    List<Host> disconnectedHosts = result.asList().stream()
+                            .filter(node -> !node.isFailure())
+                            .map(node -> {
+                                String name = new ResourceAddress(node.get(ADDRESS)).lastValue();
+                                long registered = 0;
+                                long unregistered = 0;
+                                for (ModelNode event : failSafeList(node, RESULT + "/" + EVENTS)) {
+                                    if (event.hasDefined(TYPE) && event.hasDefined(TIMESTAMP)) {
+                                        if (REGISTERED.equals(event.get(TYPE).asString())) {
+                                            registered = max(registered, event.get(TIMESTAMP).asLong());
+                                        } else if (UNREGISTERED.equals(event.get(TYPE).asString())) {
+                                            unregistered = max(unregistered, event.get(TIMESTAMP).asLong());
+                                        }
+                                    }
+                                }
+                                Date disconnected = unregistered != 0 ? new Date(unregistered) : null;
+                                Date lastConnected = registered != 0 ? new Date(registered) : null;
+                                return Host.disconnected(name, disconnected, lastConnected);
+                            })
+                            .collect(toList());
+                    List<Host> hosts = context.get(HOSTS);
+                    if (hosts == null) {
+                        hosts = new ArrayList<>();
+                        context.set(HOSTS, hosts);
+                    }
+                    hosts.addAll(disconnectedHosts);
+                }).toCompletable();
+            }
+            return completable;
+        }
+    }
+
+
+    private static class ServerGroups implements Task<FlowContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+
+        private ServerGroups(Environment environment, Dispatcher dispatcher) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            Completable completable = Completable.complete();
+            if (!environment.isStandalone()) {
+                Operation operation = new Operation.Builder(ResourceAddress.root(),
+                        READ_CHILDREN_RESOURCES_OPERATION)
+                        .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build();
+                completable = dispatcher.execute(operation).doOnSuccess(result -> {
+                    List<ServerGroup> serverGroups = result.asPropertyList().stream()
                             .map(ServerGroup::new)
                             .sorted(comparing(ServerGroup::getName))
                             .collect(toList());
-
-                    Map<String, Server> serverConfigsByName = serverConfigsById(result.step(1).get(RESULT).asList());
-                    addServersToServerGroups(serverGroups, serverConfigsByName.values());
-
                     context.set(SERVER_GROUPS, serverGroups);
                 }).toCompletable();
             }
+            return completable;
         }
     }
 
 
-    /**
-     * Reads the {@code server} resource attributes for started servers across server groups. Expects a list of server
-     * groups in the context as provided by {@link ServerGroupsWithServerConfigs}.
-     */
-    public static class ServerGroupsStartedServers implements Task<FlowContext> {
+    private static class ServersOfHost implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
+        private String host;
 
-        public ServerGroupsStartedServers(Environment environment, Dispatcher dispatcher) {
+        private ServersOfHost(Environment environment, Dispatcher dispatcher, String host) {
             this.environment = environment;
             this.dispatcher = dispatcher;
+            this.host = host;
         }
 
         @Override
         public Completable call(FlowContext context) {
-            if (environment.isStandalone()) {
-                return Completable.complete();
-            } else {
-                List<ServerGroup> serverGroups = context.get(SERVER_GROUPS);
-                return processRunningServers(dispatcher, serverGroups);
-            }
-        }
-    }
+            Completable completable = Completable.complete();
+            List<Server> servers = new ArrayList<>();
+            context.set(SERVERS, servers);
 
-
-    /**
-     * Reads one server group and its server configs. Should be followed by {@link ServerGroupStartedServers} to
-     * include the {@code server} resource attributes for the running servers.
-     * <p>
-     * The server group is available in the context under the key {@link #SERVER_GROUP}.
-     */
-    public static class ServerGroupWithServerConfigs implements Task<FlowContext> {
-
-        private final String serverGroupName;
-        private final Dispatcher dispatcher;
-
-        public ServerGroupWithServerConfigs(String serverGroupName, Dispatcher dispatcher) {
-            this.serverGroupName = serverGroupName;
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            ResourceAddress serverGroupAddress = new ResourceAddress()
-                    .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
-            Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
-                    .param(ATTRIBUTES_ONLY, true)
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-            Operation serverConfigsOp = serverConfigOperation(NAME, GROUP, STATUS)
-                    .param(WHERE, new ModelNode().set(GROUP, serverGroupName))
-                    .build();
-            return dispatcher.execute(new Composite(serverGroupOp, serverConfigsOp))
-                    .doOnSuccess((CompositeResult result) -> {
-                        ServerGroup serverGroup = new ServerGroup(serverGroupName, result.step(0).get(RESULT));
-                        result.step(1).get(RESULT).asList().stream()
-                                .filter(modelNode -> !modelNode.isFailure())
-                                .map(modelNode -> {
-                                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                                    String host = address.getParent().lastValue();
-                                    return new Server(host, modelNode.get(RESULT));
-                                })
-                                .forEach(serverGroup::addServer);
-
-                        context.set(SERVER_GROUP, serverGroup);
-                    }).toCompletable();
-        }
-    }
-
-
-    /**
-     * Reads the {@code server} resource attributes for started servers of a server groups. Expects the server group in
-     * the context as provided by {@link ServerGroupWithServerConfigs}.
-     */
-    public static class ServerGroupStartedServers implements Task<FlowContext> {
-
-        private final Dispatcher dispatcher;
-
-        public ServerGroupStartedServers(Dispatcher dispatcher) {
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            ServerGroup serverGroup = context.get(SERVER_GROUP);
-            return serverGroup == null
-                    ? Completable.complete()
-                    : readAndAddServerRuntimeAttributes(dispatcher, serverGroup.getServers());
-        }
-    }
-
-
-    // ------------------------------------------------------ servers
-
-
-    /**
-     * Returns a list of running servers which satisfy the specified query. Stores the list in the context under
-     * the key {@link TopologyTasks#RUNNING_SERVERS}. Stores an empty list if there are no running servers or if
-     * running in standalone mode.
-     */
-    public static class RunningServersQuery implements Task<FlowContext> {
-
-        private final Environment environment;
-        private final Dispatcher dispatcher;
-        private final ModelNode query;
-
-        public RunningServersQuery(Environment environment, Dispatcher dispatcher, ModelNode query) {
-            this.environment = environment;
-            this.dispatcher = dispatcher;
-            this.query = query;
-        }
-
-        @Override
-        public Completable call(FlowContext context) {
-            if (environment.isStandalone()) {
-                List<Server> servers = Collections.emptyList();
-                context.set(RUNNING_SERVERS, servers);
-                return Completable.complete();
-
-            } else {
-                // Note for mixed domains with servers w/o support for SUSPEND_STATE attribute:
-                // The query operation won't fail, instead the unsupported attributes just won't be
-                // part of the response payload (kudos to the guy who implemented the query operation!)
-                Operation operation = new Operation.Builder(ALL_SERVERS, QUERY)
-                        .param(SELECT, new ModelNode()
-                                .add(ModelDescriptionConstants.HOST)
-                                .add(LAUNCH_TYPE)
-                                .add(NAME)
-                                .add(PROFILE_NAME)
-                                .add(RUNNING_MODE)
-                                .add(ModelDescriptionConstants.SERVER_GROUP)
-                                .add(SERVER_STATE)
-                                .add(SUSPEND_STATE)
-                                .add("uuid")) //NON-NLS
-                        .param(WHERE, query)
+            if (!environment.isStandalone()) {
+                ResourceAddress address = new ResourceAddress().add(ModelDescriptionConstants.HOST, host);
+                Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                        .param(CHILD_TYPE, SERVER_CONFIG)
+                        .param(INCLUDE_RUNTIME, true)
                         .build();
+                completable = dispatcher.execute(operation)
+                        .doOnSuccess(result -> result.asPropertyList().stream()
+                                .map(property -> new Server(host, property))
+                                .forEach(servers::add))
+                        .toCompletable();
+            }
+            return completable;
+        }
+    }
 
-                return dispatcher.execute(operation).doOnSuccess(result -> {
-                    List<Server> servers = result.asList().stream()
-                            .filter(modelNode -> !modelNode.isFailure())
-                            .map(modelNode -> {
-                                ResourceAddress adr = new ResourceAddress(modelNode.get(ADDRESS));
-                                String host = adr.getParent().lastValue();
-                                return new Server(host, modelNode.get(RESULT));
+
+    private static class ServersOfServerGroup implements Task<FlowContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+        private String serverGroup;
+
+        private ServersOfServerGroup(Environment environment, Dispatcher dispatcher, String serverGroup) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+            this.serverGroup = serverGroup;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            Completable completable = Completable.complete();
+            List<Server> servers = new ArrayList<>();
+            context.set(SERVERS, servers);
+
+            if (!environment.isStandalone()) {
+                List<String> hostNames = context.get(HOST_NAMES);
+                if (hostNames != null && !hostNames.isEmpty()) {
+                    List<Completable> completables = hostNames.stream()
+                            .map(host -> {
+                                ResourceAddress address = new ResourceAddress()
+                                        .add(ModelDescriptionConstants.HOST, host)
+                                        .add(SERVER_CONFIG, WILDCARD);
+                                Operation operation = new Operation.Builder(address, QUERY)
+                                        .param(WHERE, new ModelNode().set(GROUP, serverGroup))
+                                        .build();
+                                //noinspection Duplicates
+                                return dispatcher.execute(operation)
+                                        .doOnSuccess(result -> result.asList().stream()
+                                                .filter(modelNode -> !modelNode.isFailure())
+                                                .map(modelNode -> {
+                                                    ResourceAddress adr = new ResourceAddress(
+                                                            modelNode.get(ADDRESS));
+                                                    String h = adr.getParent().lastValue();
+                                                    return new Server(h, modelNode.get(RESULT));
+                                                })
+                                                .forEach(servers::add))
+                                        .onErrorResumeNext(error -> {
+                                            logger.warn("Unable to read servers of host {}: {}", host,
+                                                    error.getMessage());
+                                            return Single.just(new ModelNode());
+                                        })
+                                        .toCompletable();
                             })
                             .collect(toList());
-                    context.set(RUNNING_SERVERS, servers);
-                }).toCompletable();
+                    completable = Completable.concat(completables);
+                }
             }
+            return completable;
         }
+    }
+
+
+    private static class RunningServers implements Task<FlowContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+        private ModelNode query;
+
+        private RunningServers(Environment environment, Dispatcher dispatcher, ModelNode query) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+            this.query = query.isDefined() ? query : new ModelNode();
+            this.query.get(SERVER_STATE).set(RunningState.RUNNING.name().toLowerCase());
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            Completable completable = Completable.complete();
+            List<Server> servers = new ArrayList<>();
+            context.set(SERVERS, servers);
+
+            if (!environment.isStandalone()) {
+                List<String> hostNames = context.get(HOST_NAMES);
+                if (hostNames != null && !hostNames.isEmpty()) {
+                    List<Completable> completables = hostNames.stream()
+                            .map(host -> {
+                                ResourceAddress address = new ResourceAddress()
+                                        .add(ModelDescriptionConstants.HOST, host)
+                                        .add(SERVER, WILDCARD);
+                                // Note for mixed domains with servers w/o support for SUSPEND_STATE attribute:
+                                // The query operation won't fail, instead the unsupported attributes just won't be
+                                // part of the response payload (kudos to the guy who implemented the query operation!)
+                                Operation operation = new Operation.Builder(address, QUERY)
+                                        .param(SELECT, new ModelNode()
+                                                .add(ModelDescriptionConstants.HOST)
+                                                .add(LAUNCH_TYPE)
+                                                .add(NAME)
+                                                .add(PROFILE_NAME)
+                                                .add(RUNNING_MODE)
+                                                .add(ModelDescriptionConstants.SERVER_GROUP)
+                                                .add(SERVER_STATE)
+                                                .add(SUSPEND_STATE)
+                                                .add("uuid")) //NON-NLS
+                                        .param(WHERE, query)
+                                        .build();
+                                //noinspection Duplicates
+                                return dispatcher.execute(operation)
+                                        .doOnSuccess(result -> result.asList().stream()
+                                                .filter(modelNode -> !modelNode.isFailure())
+                                                .map(modelNode -> {
+                                                    ResourceAddress adr = new ResourceAddress(
+                                                            modelNode.get(ADDRESS));
+                                                    String h = adr.getParent().lastValue();
+                                                    return new Server(h, modelNode.get(RESULT));
+                                                })
+                                                .forEach(servers::add))
+                                        .onErrorResumeNext(error -> {
+                                            logger.warn("Unable to read servers of host {}: {}", host,
+                                                    error.getMessage());
+                                            return Single.just(new ModelNode());
+                                        })
+                                        .toCompletable();
+                            })
+                            .collect(toList());
+                    completable = Completable.concat(completables);
+                }
+            }
+            return completable;
+        }
+    }
+
+
+    private static class StartedServers implements Task<FlowContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+
+        private StartedServers(Environment environment, Dispatcher dispatcher) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            Completable completable = Completable.complete();
+            if (!environment.isStandalone()) {
+                List<Server> servers = context.get(SERVERS);
+                if (servers != null) {
+                    List<Operation> operations = new ArrayList<>();
+                    for (Server server : servers) {
+                        if (server.isStarted()) {
+                            operations.add(new Operation.Builder(server.getServerAddress(), READ_RESOURCE_OPERATION)
+                                    .param(ATTRIBUTES_ONLY, true)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .build());
+                            operations.add(
+                                    new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
+                                            READ_BOOT_ERRORS
+                                    ).build());
+                        }
+                        if (!operations.isEmpty()) {
+                            Composite composite = new Composite(operations);
+                            completable = dispatcher.execute(composite)
+                                    .doOnSuccess((CompositeResult result) -> {
+                                        Map<String, Server> serverConfigsByName = servers.stream()
+                                                .collect(toMap(Server::getId, identity()));
+
+                                        for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+                                            ModelNode attributes = iterator.next().get(RESULT);
+                                            String serverId = Ids.hostServer(
+                                                    attributes.get(ModelDescriptionConstants.HOST).asString(),
+                                                    attributes.get(NAME).asString());
+                                            Server runningServer = serverConfigsByName.get(serverId);
+                                            if (runningServer != null) {
+                                                runningServer.addServerAttributes(attributes);
+                                                if (iterator.hasNext()) {
+                                                    List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
+                                                    runningServer.setBootErrors(!bootErrors.isEmpty());
+                                                } else {
+                                                    logger.error(
+                                                            "No second step containing the boot errors for server {}",
+                                                            runningServer.getName());
+                                                }
+                                            }
+                                        }
+                                    })
+                                    .toCompletable();
+                        }
+                    }
+                }
+            }
+            return completable;
+        }
+    }
+
+
+    private TopologyTasks() {
     }
 }

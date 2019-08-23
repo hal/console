@@ -49,7 +49,7 @@ class LookupContext extends FlowContext {
     LookupContext(Progress progress, Set<AddressTemplate> template, boolean recursive) {
         super(progress);
         this.recursive = recursive;
-        this.lookupResult = new LookupResult(template, recursive);
+        this.lookupResult = new LookupResult(template);
         this.toResourceDescriptionRegistry = new HashMap<>();
         this.toResourceDescriptionDatabase = new HashMap<>();
         this.toSecurityContextRegistry = new HashMap<>();

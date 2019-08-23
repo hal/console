@@ -61,7 +61,7 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
 import static org.jboss.hal.resources.Ids.PATCHES_AGEOUT;
 
 @Column(Ids.PATCHING)
@@ -80,17 +80,17 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     private Resources resources;
 
     @Inject
-    public PatchesColumn(final Finder finder,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Environment environment,
-            final HostActions hostActions,
-            final MetadataProcessor metadataProcessor,
-            final ServerActions serverActions,
-            @Footer final Provider<Progress> progress,
-            final ColumnActionFactory columnActionFactory,
-            final Resources resources) {
+    public PatchesColumn(Finder finder,
+            EventBus eventBus,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            Environment environment,
+            HostActions hostActions,
+            MetadataProcessor metadataProcessor,
+            ServerActions serverActions,
+            @Footer Provider<Progress> progress,
+            ColumnActionFactory columnActionFactory,
+            Resources resources) {
 
         super(new Builder<ModelNode>(finder, Ids.PATCHING, Names.PATCHES)
 
@@ -156,7 +156,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
     }
 
-    private void rollback(final String patchId) {
+    private void rollback(String patchId) {
 
         // check the host controller (or standalone server) for restart-required
         checkHostState(() ->
@@ -164,7 +164,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                         new SuccessfulMetadataCallback(eventBus, resources) {
 
                             @Override
-                            public void onMetadata(final Metadata metadata) {
+                            public void onMetadata(Metadata metadata) {
                                 Metadata metadataRollback = metadata.forOperation(ROLLBACK_OPERATION);
                                 new RollbackWizard(patchId, resources, environment, metadataRollback, statementContext,
                                         dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
@@ -177,7 +177,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
         metadataProcessor
                 .lookup(PATCHING_TEMPLATE, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                     @Override
-                    public void onMetadata(final Metadata metadata) {
+                    public void onMetadata(Metadata metadata) {
                         ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
                         Metadata operationMetadata = metadata.forOperation(AGEOUT_HISTORY_OPERATION);
                         Messages messages = resources.messages();
@@ -205,7 +205,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                 metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
                         new SuccessfulMetadataCallback(eventBus, resources) {
                             @Override
-                            public void onMetadata(final Metadata metadata) {
+                            public void onMetadata(Metadata metadata) {
                                 Metadata metadataOp = metadata.forOperation(PATCH);
                                 new ApplyPatchWizard(resources, environment, metadataOp, statementContext,
                                         dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))

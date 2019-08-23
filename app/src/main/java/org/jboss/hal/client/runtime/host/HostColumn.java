@@ -24,7 +24,6 @@ import javax.inject.Provider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
@@ -34,7 +33,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
-import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.runtime.TopologyTasks;
@@ -47,7 +45,6 @@ import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -59,7 +56,6 @@ import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -72,23 +68,20 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
-import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONFIGURATION_CHANGES_ADDRESS;
-import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
-import static org.jboss.hal.client.runtime.host.HostColumn.HOST_MANAGEMENT_OPERATIONS_ADDRESS;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONFIGURATION_CHANGES_ADDRESS;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_ADDRESS;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_MANAGEMENT_OPERATIONS_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.runtime.TopologyTasks.hosts;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS,
-        HOST_MANAGEMENT_OPERATIONS_ADDRESS}, recursive = false)
+@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS, HOST_MANAGEMENT_OPERATIONS_ADDRESS},
+        recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
-
-    static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
-    static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "/host=*/subsystem=core-management/service=configuration-changes";
-    static final String HOST_MANAGEMENT_OPERATIONS_ADDRESS = "/host=*/core-service=management/service=management-operations";
-    private static final AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
 
     static AddressTemplate hostTemplate(Host host) {
         return AddressTemplate.of("/host=" + host.getAddressName());
@@ -146,8 +139,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
         ItemsProvider<Host> itemsProvider = (context, callback) -> series(new FlowContext(progress.get()),
-                new TopologyTasks.HostsWithServerConfigs(environment, dispatcher),
-                new TopologyTasks.HostsStartedServers(environment, dispatcher))
+                hosts(environment, dispatcher))
                 .subscribe(new Outcome<FlowContext>() {
                     @Override
                     public void onError(FlowContext context, Throwable error) {
@@ -176,82 +168,22 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public void onSuccess(List<Host> result) {
-                // only connected hosts please!
-                callback.onSuccess(result.stream().filter(Host::isConnected).collect(toList()));
+                // only connected hosts which are not booting please!
+                callback.onSuccess(result.stream()
+                        .filter(Host::isAlive)
+                        .collect(toList()));
             }
         }));
 
-        setItemRenderer(item -> new ItemDisplay<Host>() {
-            @Override
-            public String getId() {
-                return Ids.host(item.getAddressName());
-            }
-
-            @Override
-            public String getTitle() {
-                return item.getName();
-            }
-
-            @Override
-            public HTMLElement element() {
-                return item.isDomainController() ? ItemDisplay
-                        .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
-            }
-
-            @Override
-            public String getFilterData() {
-                return String.join(" ", item.getName(),
-                        item.isDomainController() ? "dc" : "hc", //NON-NLS
-                        item.isConnected() ? "on" : "off", //NON-NLS
-                        ModelNodeHelper.asAttributeValue(item.getHostState()));
-            }
-
-            @Override
-            public String getTooltip() {
-                if (!item.isConnected()) {
-                    return resources.constants().disconnectedUpper();
-                } else if (hostActions.isPending(item)) {
-                    return resources.constants().pending();
-                } else if (item.isAdminMode()) {
-                    return resources.constants().adminOnly();
-                } else if (item.isStarting()) {
-                    return resources.constants().starting();
-                } else if (item.needsReload()) {
-                    return resources.constants().needsReload();
-                } else if (item.needsRestart()) {
-                    return resources.constants().needsRestart();
-                } else if (item.isRunning()) {
-                    return resources.constants().running();
-                } else {
-                    return resources.constants().unknownState();
-                }
-            }
-
-            @Override
-            public HTMLElement getIcon() {
-                if (!item.isConnected()) {
-                    return Icons.disconnected();
-                } else if (hostActions.isPending(item)) {
-                    return Icons.pending();
-                } else if (item.isAdminMode() || item.isStarting()) {
-                    return Icons.disabled();
-                } else if (item.needsReload() || item.needsRestart()) {
-                    return Icons.warning();
-                } else if (item.isRunning()) {
-                    return Icons.ok();
-                } else {
-                    return Icons.unknown();
-                }
-            }
-
+        setItemRenderer(item -> new HostDisplay(item, hostActions, resources) {
             @Override
             public String nextColumn() {
-                return item.isConnected() ? SERVER : null;
+                return item.isAlive() ? SERVER : null;
             }
 
             @Override
             public List<ItemAction<Host>> actions() {
-                if (item.isConnected()) {
+                if (item.isAlive()) {
                     PlaceRequest placeRequest = new PlaceRequest.Builder()
                             .nameToken(NameTokens.HOST_CONFIGURATION)
                             .with(HOST, item.getAddressName()).build();
@@ -300,7 +232,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public void onHostResult(HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();

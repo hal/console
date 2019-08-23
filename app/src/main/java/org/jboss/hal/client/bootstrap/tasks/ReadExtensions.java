@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
+import org.jboss.hal.flow.FlowContext;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class ReadExtensions implements BootstrapTask {
     }
 
     @Override
-    public Completable call() {
+    public Completable call(FlowContext context) {
         // TODO Load server side extensions from /core-service=management/console-extension=*
         for (InstalledExtension extension : extensionStorage.list()) {
             logger.debug("Read extension {}", extension.getName());

@@ -58,6 +58,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.runtime.TopologyTasks.serverGroups;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 
@@ -85,8 +86,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
 
                 .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
-                        new TopologyTasks.ServerGroupsWithServerConfigs(environment, dispatcher),
-                        new TopologyTasks.ServerGroupsStartedServers(environment, dispatcher))
+                        serverGroups(environment, dispatcher))
                         .subscribe(new Outcome<FlowContext>() {
                             @Override
                             public void onError(FlowContext context, Throwable error) {

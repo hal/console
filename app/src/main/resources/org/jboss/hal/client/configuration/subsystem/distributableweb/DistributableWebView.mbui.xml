@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="https://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="dw-vertical-navigation">
+
+        <item id="dw-configuration-item" title="Configuration" icon="pficon pficon-settings">
+            <metadata address="/{selected.profile}/subsystem=distributable-web">
+                <h1>Distributable Web</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <form id="dw-configuration-form" title="Distributable Web" auto-save="true" reset="true"/>
+            </metadata>
+        </item>
+
+        <item id="dw-hotrod-session-management-item" title="HotRod Session" icon="pficon pficon-users">
+            <metadata address="/{selected.profile}/subsystem=distributable-web/hotrod-session-management=*">
+                <h1>HotRod Session Management</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="dw-hotrod-session-management-table" form-ref="dw-hotrod-session-management-form">
+                    <actions>
+                        <action handler-ref="add-resource"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="${table.selectedRow().getName()}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="dw-hotrod-session-management-form" auto-save="true" reset="true"
+                      name-resolver="${form.getModel().getName()}"/>
+            </metadata>
+        </item>
+
+        <item id="dw-hotrod-sso-management-item" title="HotRod SSO" icon="fa fa-lock">
+            <metadata address="/{selected.profile}/subsystem=distributable-web/hotrod-single-sign-on-management=*">
+                <h1>HotRod SSO Management</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="dw-hotrod-sso-management-table" form-ref="dw-hotrod-sso-management-form">
+                    <actions>
+                        <action handler-ref="add-resource"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="${table.selectedRow().getName()}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="dw-hotrod-sso-management-form" auto-save="true" reset="true"
+                      name-resolver="${form.getModel().getName()}"/>
+            </metadata>
+        </item>
+
+        <item id="dw-infinispan-session-management-item" title="Infinispan Session"
+              icon="pficon pficon-users">
+            <metadata address="/{selected.profile}/subsystem=distributable-web/infinispan-session-management=*">
+                <h1>Infinispan Session Management</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="dw-infinispan-session-management-table" form-ref="dw-infinispan-session-management-form">
+                    <actions>
+                        <action handler-ref="add-resource"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="${table.selectedRow().getName()}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="dw-infinispan-session-management-form" auto-save="true" reset="true"
+                      name-resolver="${form.getModel().getName()}"/>
+            </metadata>
+        </item>
+
+        <item id="dw-infinispan-sso-management-item" title="Infinispan SSO" icon="fa fa-lock">
+            <metadata address="/{selected.profile}/subsystem=distributable-web/infinispan-single-sign-on-management=*">
+                <h1>Infinispan SSO Management</h1>
+                <p>${metadata.getDescription().getDescription()}</p>
+                <table id="dw-infinispan-sso-management-table" form-ref="dw-infinispan-sso-management-form">
+                    <actions>
+                        <action handler-ref="add-resource"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="${table.selectedRow().getName()}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="${row.getName()}"/>
+                    </columns>
+                </table>
+                <form id="dw-infinispan-sso-management-form" auto-save="true" reset="true"
+                      name-resolver="${form.getModel().getName()}"/>
+            </metadata>
+        </item>
+    </vertical-navigation>
+</view>

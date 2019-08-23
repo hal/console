@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-self.importScripts("polyfill.min.js", "pouchdb.min.js");
+self.importScripts("pouchdb.min.js");
 
 self.addEventListener("message", function (e) {
     var db = new PouchDB(e.data.database);

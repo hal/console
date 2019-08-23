@@ -16,10 +16,12 @@
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
@@ -28,24 +30,96 @@ import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.FlowException;
+import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Task;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Resources;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 
 /** Set of tasks to read the installed JDBC drivers. */
-class JdbcDriverTasks {
+public class JdbcDriverTasks {
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(JdbcDriverTasks.class);
 
     private static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";
     private static final String RUNTIME_DRIVERS = "jdbcDriverFunctions.runtimeDrivers";
     static final String DRIVERS = "jdbcDriverFunctions.drivers";
+
+
+    public static List<Task<FlowContext>> jdbcDriverProperties(Environment environment, Dispatcher dispatcher,
+            StatementContext statementContext, String driverName, Resources resources) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        if (!environment.isStandalone()) {
+            tasks.addAll(runningServers(environment, dispatcher,
+                    properties(PROFILE_NAME, statementContext.selectedProfile())));
+        }
+        tasks.add(new ReadJdbcDriversFromFirstServer(environment, dispatcher, statementContext, driverName, resources));
+        return tasks;
+    }
+
+    /**
+     * Reads the JDBC driver from the standalone server or the first running server in domain mode. Puts the list under
+     * the key {@link ModelDescriptionConstants#RESULT} into the context.
+     */
+    private static class ReadJdbcDriversFromFirstServer implements Task<FlowContext> {
+
+        private Environment environment;
+        private final Dispatcher dispatcher;
+        private StatementContext statementContext;
+        private String driverName;
+        private Resources resources;
+
+        private ReadJdbcDriversFromFirstServer(Environment environment, Dispatcher dispatcher,
+                StatementContext statementContext, String driverName, Resources resources) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+            this.statementContext = statementContext;
+            this.driverName = driverName;
+            this.resources = resources;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            ResourceAddress address;
+            if (environment.isStandalone()) {
+                address = Server.STANDALONE.getServerAddress();
+            } else {
+                List<Server> servers = context.get(TopologyTasks.SERVERS);
+                if (!servers.isEmpty()) {
+                    Server server = servers.get(0);
+                    address = server.getServerAddress();
+                } else {
+                    String message = resources.messages()
+                            .readDatasourcePropertiesErrorDomain(statementContext.selectedProfile());
+                    return Completable.error(new FlowException(message, context));
+                }
+            }
+            address.add(SUBSYSTEM, DATASOURCES).add(JDBC_DRIVER, driverName);
+            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            return dispatcher.execute(operation)
+                    .doOnSuccess(result -> context.set(RESULT, result))
+                    .toCompletable();
+        }
+    }
 
 
     /**
@@ -74,8 +148,8 @@ class JdbcDriverTasks {
 
     /**
      * Reads the JDBC drivers from a list of running servers which are expected in the context under the key
-     * {@link TopologyTasks#RUNNING_SERVERS}. The drivers are read using the {@code :installed-drivers-list}
-     * operation. Stores the result as {@code List<JdbcDriver>} under the key {@link
+     * {@link org.jboss.hal.core.runtime.TopologyTasks#SERVERS}. The drivers are read using the {@code
+     * :installed-drivers-list} operation. Stores the result as {@code List<JdbcDriver>} under the key {@link
      * JdbcDriverTasks#RUNTIME_DRIVERS} into the context.
      */
     static class ReadRuntime implements Task<FlowContext> {
@@ -103,7 +177,7 @@ class JdbcDriverTasks {
                 }).toCompletable();
 
             } else {
-                List<Server> servers = context.get(TopologyTasks.RUNNING_SERVERS);
+                List<Server> servers = context.get(TopologyTasks.SERVERS);
                 if (servers != null && !servers.isEmpty()) {
                     List<Operation> operations = servers.stream()
                             .map(server -> {
@@ -162,6 +236,47 @@ class JdbcDriverTasks {
             return Completable.complete();
         }
     }
+
+
+    public static class JdbcDriverOutcome extends Outcome<FlowContext> {
+
+        private final String dsClassname;
+        private final boolean isXa;
+        private final Consumer<List<String>> callback;
+
+        public JdbcDriverOutcome(String dsClassname, boolean isXa, Consumer<List<String>> callback) {
+            this.dsClassname = dsClassname;
+            this.isXa = isXa;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onError(FlowContext flowContext, Throwable error) {
+            logger.warn("Failed to read jdbc-driver. Cause: {}", error.getMessage());
+        }
+
+        @Override
+        public void onSuccess(FlowContext flowContext) {
+            ModelNode result = flowContext.get(RESULT);
+            List<String> properties = Collections.emptyList();
+            String datasourceClassname;
+            if (dsClassname == null) {
+                String attribute = isXa ? DRIVER_XA_DATASOURCE_CLASS_NAME : DRIVER_DATASOURCE_CLASS_NAME;
+                datasourceClassname = result.get(attribute).asString();
+            } else {
+                datasourceClassname = dsClassname;
+            }
+            if (result.hasDefined(DATASOURCE_CLASS_INFO)) {
+                properties = result.get(DATASOURCE_CLASS_INFO).asList().stream()
+                        .filter(node -> datasourceClassname.equals(node.asProperty().getName()))
+                        .flatMap(node -> node.asProperty().getValue().asPropertyList().stream())
+                        .map(Property::getName)
+                        .collect(toList());
+            }
+            callback.accept(properties);
+        }
+    }
+
 
     private JdbcDriverTasks() {
     }

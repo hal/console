@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import jsinterop.annotations.JsIgnore;
@@ -240,6 +241,28 @@ public class ModelNodeHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Turns a list of properties into a model node.
+     *
+     * @param properties A list of properties with even size.
+     *
+     * @return a model node with the specified properties.
+     */
+    public static ModelNode properties(String... properties) {
+        ModelNode modelNode = new ModelNode();
+        if (properties != null) {
+            List<String> p = Lists.newArrayList(properties);
+            for (Iterator<String> iterator = p.iterator(); iterator.hasNext(); ) {
+                String key = iterator.next();
+                if (iterator.hasNext()) {
+                    String value = iterator.next();
+                    modelNode.get(key).set(value);
+                }
+            }
+        }
+        return modelNode;
     }
 
     private ModelNodeHelper() {

@@ -13,6 +13,7 @@ function downloadSpecifiedOrLatestWildfly() {
     curl -O https://ci.wildfly.org/guestAuth/repository/download/WF_Nightly/latest.lastFinished/${WF_ARTIFACT_VERSION}.zip
 }
 
+rm -f /tmp/teamcity-ivy.xml
 downloadSpecifiedOrLatestWildfly
 unzip ${WF_ARTIFACT_VERSION}.zip
 mv ${WF_ARTIFACT_VERSION} ${JBOSS_HOME}

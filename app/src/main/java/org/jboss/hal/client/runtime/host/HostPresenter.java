@@ -62,7 +62,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
@@ -71,6 +70,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.window;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.*;
+import static org.jboss.hal.core.runtime.TopologyTasks.reloadBlocking;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
@@ -79,20 +80,6 @@ import static org.jboss.hal.resources.Ids.FORM;
 public class HostPresenter
         extends MbuiPresenter<HostPresenter.MyView, HostPresenter.MyProxy>
         implements SupportsExpertMode, EnableSSLPresenter {
-
-    static final String HOST_ADDRESS = "/{selected.host}";
-    static final String INTERFACE_ADDRESS = HOST_ADDRESS + "/interface=*";
-    static final String JVM_ADDRESS = HOST_ADDRESS + "/jvm=*";
-    static final String PATH_ADDRESS = HOST_ADDRESS + "/path=*";
-    static final String SOCKET_BINDING_GROUP_ADDRESS = HOST_ADDRESS + "/socket-binding-group=*";
-    static final String SYSTEM_PROPERTY_ADDRESS = HOST_ADDRESS + "/system-property=*";
-    static final String MANAGEMENT_INTERFACE_ADDRESS = HOST_ADDRESS + "/core-service=management/management-interface=*";
-
-    private static final String HTTP_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=http-interface";
-    static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
-    private static final String NATIVE_INTERFACE_ADDRESS = "{selected.host}/core-service=management/management-interface=native-interface";
-    static final AddressTemplate NATIVE_INTERFACE_TEMPLATE = AddressTemplate.of(NATIVE_INTERFACE_ADDRESS);
-    private static final AddressTemplate ELYTRON_TEMPLATE = AddressTemplate.of("{domain.controller}/subsystem=elytron");
 
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -199,7 +186,7 @@ public class HostPresenter
 
     void saveHost(Form<Host> form, Map<String, Object> changedValues) {
         boolean hostNameChanged = changedValues.containsKey(NAME);
-        crud.save(Names.HOST, form.getModel().getName(), AddressTemplate.of(HOST_ADDRESS), changedValues, () -> {
+        crud.save(Names.HOST, form.getModel().getName(), AddressTemplate.of(SELECTED_HOST), changedValues, () -> {
             reload();
             if (hostNameChanged) {
                 DialogFactory.showConfirmation(resources.constants().hostNameChanged(),
@@ -403,7 +390,6 @@ public class HostPresenter
 
     @Override
     public void reloadServer(Host host, String urlConsole) {
-        Messages messages = resources.messages();
         ModelNode dc = new ModelNode();
         dc.get(HOST).set(environment.getDomainController());
         ResourceAddress address = new ResourceAddress(dc);
@@ -413,25 +399,15 @@ public class HostPresenter
                 .build();
         String type = resources.constants().domainController();
         String name = host.getName();
-        String title = messages.reload(name);
-
-        dispatcher.execute(operation,
-                result -> DialogFactory.buildBlocking(title, Dialog.Size.MEDIUM,
-                        messages.reloadConsoleRedirect(urlConsole))
-                        .show(),
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(messages.reloadErrorCause(type, name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(messages.reloadErrorCause(type, name, exception.getMessage()))));
-
+        reloadBlocking(dispatcher, getEventBus(), operation, type, name, urlConsole, resources);
     }
 
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.HOST_CONFIGURATION)
-    @Requires(value = {HOST_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS, MANAGEMENT_INTERFACE_ADDRESS}, recursive = false)
+    @Requires(value = {SELECTED_HOST, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
+            SYSTEM_PROPERTY_ADDRESS, HTTP_INTERFACE_ADDRESS, NATIVE_INTERFACE_ADDRESS}, recursive = false)
     public interface MyProxy extends ProxyPlace<HostPresenter> {
     }
 

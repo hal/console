@@ -26,22 +26,24 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 
 /**
@@ -66,9 +68,9 @@ public class PathsAutoComplete extends AutoComplete {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();
         } else {
-            series(new FlowContext(),
-                    new TopologyTasks.RunningServersQuery(environment, dispatcher,
-                            new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())))
+            List<Task<FlowContext>> tasks = runningServers(environment, dispatcher,
+                    properties(PROFILE_NAME, statementContext.selectedProfile()));
+            series(new FlowContext(), tasks)
                     .subscribe(new Outcome<FlowContext>() {
                         @Override
                         public void onError(FlowContext context, Throwable error) {
@@ -79,7 +81,7 @@ public class PathsAutoComplete extends AutoComplete {
 
                         @Override
                         public void onSuccess(FlowContext context) {
-                            List<Server> servers = context.get(TopologyTasks.RUNNING_SERVERS);
+                            List<Server> servers = context.get(TopologyTasks.SERVERS);
                             boolean readPathsFromServer = !servers.isEmpty() && (servers.get(0)
                                     .isStarted() || servers.get(0).needsReload() || servers.get(0)
                                     .needsRestart());

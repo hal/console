@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.2.0.Final</version>
+        <version>3.2.1.Final</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -51,11 +51,11 @@
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
         <node.version>v8.16.0</node.version>
-        <npm.version>6.4.1</npm.version>
+        <npm.version>6.9.0</npm.version>
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
-        <undertow.version>2.0.7.Final</undertow.version>
+        <undertow.version>2.0.22.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
     </properties>
 

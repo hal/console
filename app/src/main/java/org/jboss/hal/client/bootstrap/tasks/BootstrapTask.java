@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import rx.Completable;
-import rx.functions.Func0;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 
-/** A task executed as part of the initialization process. */
-public interface BootstrapTask extends Func0<Completable> {
+/** A task executed as part of the bootstrap process. */
+public interface BootstrapTask extends Task<FlowContext> {
 }

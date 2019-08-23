@@ -24,10 +24,9 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
-import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.core.runtime.host.HostPreviewAttributes;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.a;
@@ -36,9 +35,11 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.host.HostColumn.hostTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.security.Constraint.executable;
 import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
+import static org.jboss.hal.resources.UIConstants.CONSTRAINT;
 
 class HostPreview extends RuntimePreview<Host> {
 
@@ -63,12 +64,12 @@ class HostPreview extends RuntimePreview<Host> {
                         .add(span().textContent(" "))
                         .add(reloadLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.reload(host))
-                                .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RELOAD).data())
+                                .data(CONSTRAINT, executable(hostTemplate(host), RELOAD).data())
                                 .textContent(resources.constants().reload())
                                 .get())
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.restart(host))
-                                .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
+                                .data(CONSTRAINT, executable(hostTemplate(host), RESTART).data())
                                 .textContent(resources.constants().restart())
                                 .get())
                         .get());
@@ -103,7 +104,7 @@ class HostPreview extends RuntimePreview<Host> {
             pending(resources.messages().hostPending(host.getName()));
         } else if (host.isAdminMode()) {
             adminOnly(resources.messages().hostAdminMode(host.getName()));
-        } else if (host.isStarting()) {
+        } else if (host.isBooting() || host.isStarting()) {
             starting(resources.messages().hostStarting(host.getName()));
         } else if (host.needsReload()) {
             needsReload(resources.messages().hostNeedsReload(host.getName()));
@@ -120,18 +121,6 @@ class HostPreview extends RuntimePreview<Host> {
         Elements.toggle(reloadLink, hidden, !host.needsReload());
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
-        if (host.isStarting()) {
-            attributes.forEach(element -> Elements.setVisible(element, false));
-        } else {
-            attributes.setVisible(RELEASE_CODENAME, host.isConnected());
-            attributes.setVisible(RELEASE_VERSION, host.isConnected());
-            attributes.setVisible(PRODUCT_NAME, host.isConnected());
-            attributes.setVisible(PRODUCT_VERSION, host.isConnected());
-            attributes.setVisible(HOST_STATE, host.isConnected() && hostActions.isPending(host));
-            attributes.setVisible(RUNNING_MODE, host.isConnected() && hostActions.isPending(host));
-            attributes.setVisible(labelBuilder.label(MANAGEMENT_VERSION), host.isConnected());
-            attributes.setVisible(labelBuilder.label(LAST_CONNECTED), !host.isConnected());
-            attributes.setVisible(labelBuilder.label(DISCONNECTED), !host.isConnected());
-        }
+        HostPreviewAttributes.refresh(host, attributes, hostActions);
     }
 }

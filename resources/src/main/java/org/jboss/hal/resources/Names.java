@@ -166,6 +166,7 @@ public interface Names {
     String IN_VM_CONNECTOR = "In VM Connector";
     String INBOUND = "Inbound";
     String INCLUDES = "Includes";
+    String INFINISPAN = "Infinispan";
     String INSTANCE_ID = "Instance ID";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
@@ -204,6 +205,7 @@ public interface Names {
     String LOAD_METRIC = "Load Metric";
     String LOAD_PROVIDER_DYNAMIC = "Load Provider Dynamic";
     String LOAD_PROVIDER_SIMPLE = "Load Provider Simple";
+    String LOCAL = "Local";
     String LOCAL_CACHE = "Local Cache";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
@@ -314,6 +316,7 @@ public interface Names {
     String RESPONSE_HEADER = "Response Header";
     String REST_RESOURCE = "REST Resource";
     String ROOT_LOGGER = "Root Logger";
+    String ROUTING = "Routing";
     String RUNTIME = "Runtime";
 
     String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";

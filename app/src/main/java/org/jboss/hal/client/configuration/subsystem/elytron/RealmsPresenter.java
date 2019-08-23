@@ -70,9 +70,10 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     static final String[] KEY_MAPPERS = new String[]{
             "clear-password-mapper",
             "bcrypt-mapper",
+            "modular-crypt-mapper",
             "salted-simple-digest-mapper",
             "simple-digest-mapper",
-            "scram-mapper"
+            "scram-mapper",
     };
     private static final String DOT = ".";
 

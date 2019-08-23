@@ -44,15 +44,14 @@ import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.client.runtime.host.HostPresenter.HTTP_INTERFACE_TEMPLATE;
-import static org.jboss.hal.client.runtime.host.HostPresenter.NATIVE_INTERFACE_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HTTP_INTERFACE_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.NATIVE_INTERFACE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.pullRight;
 import static org.jboss.hal.resources.Ids.*;
 
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class HostView extends MbuiViewImpl<HostPresenter> implements HostPresenter.MyView {
 
     public static HostView create(MbuiContext mbuiContext) {
@@ -144,7 +143,7 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     public void updateManagementInterfaces(List<NamedNode> endpoints) {
         boolean nativeExists = false;
         boolean httpExists = false;
-        for (NamedNode named: endpoints) {
+        for (NamedNode named : endpoints) {
             if (named.getName().equals(NATIVE_INTERFACE)) {
                 ModelNode model = named.asModelNode();
                 nativeInterfaceForm.view(model);
