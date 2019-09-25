@@ -115,18 +115,20 @@ class TestStep extends WizardStep<Context, State> {
         }
 
         // check running server(s)
-        tasks.addAll(runningServers(environment, dispatcher,
-                properties(PROFILE_NAME, statementContext.selectedProfile())));
+        if (!environment.isStandalone()) {
+            tasks.addAll(runningServers(environment, dispatcher,
+                    properties(PROFILE_NAME, statementContext.selectedProfile())));
+        }
 
         // test connection
         tasks.add(flowContext -> {
             List<Server> servers = flowContext.get(TopologyTasks.SERVERS);
             ResourceAddress address;
-            if (!servers.isEmpty()) {
+            if (environment.isStandalone()) {
+                address = ResourceAddress.root();
+            } else if (!servers.isEmpty()) {
                 Server server = servers.get(0);
                 address = server.getServerAddress();
-            } else if (environment.isStandalone()) {
-                address = ResourceAddress.root();
             } else {
                 flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
                 flowContext.set(WIZARD_TEXT,

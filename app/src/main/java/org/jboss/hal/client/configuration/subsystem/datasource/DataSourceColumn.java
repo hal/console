@@ -239,8 +239,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(readDataSources);
-        tasks.addAll(runningServers(environment, dispatcher,
-                properties(PROFILE_NAME, statementContext.selectedProfile())));
+        if (!environment.isStandalone()) {
+            tasks.addAll(runningServers(environment, dispatcher,
+                    properties(PROFILE_NAME, statementContext.selectedProfile())));
+        }
         tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
         tasks.add(new JdbcDriverTasks.CombineDriverResults());
         series(new FlowContext(progress.get()), tasks)

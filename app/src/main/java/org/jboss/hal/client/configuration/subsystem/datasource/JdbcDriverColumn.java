@@ -90,8 +90,10 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                 .itemsProvider((context, callback) -> {
                     List<Task<FlowContext>> tasks = new ArrayList<>();
                     tasks.add(new JdbcDriverTasks.ReadConfiguration(crud));
-                    tasks.addAll(TopologyTasks.runningServers(environment, dispatcher,
-                            properties(PROFILE_NAME, statementContext.selectedProfile())));
+                    if (!environment.isStandalone()) {
+                        tasks.addAll(TopologyTasks.runningServers(environment, dispatcher,
+                                properties(PROFILE_NAME, statementContext.selectedProfile())));
+                    }
                     tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
                     tasks.add(new JdbcDriverTasks.CombineDriverResults());
 
