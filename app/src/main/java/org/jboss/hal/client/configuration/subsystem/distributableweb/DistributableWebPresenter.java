@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.client.configuration.subsystem.distributableweb;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -34,11 +36,14 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -50,9 +55,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.distributableweb.AddressTemplates.DISTRIBUTABLE_WEB_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DISTRIBUTABLE_WEB;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ROUTING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -66,6 +69,7 @@ public class DistributableWebPresenter
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
+    private ManagementAffinity mgmtAffinity;
     private Routing routing;
 
     @Inject
@@ -166,6 +170,60 @@ public class DistributableWebPresenter
         });
     }
 
+    // ------------------------------------------------------ affinity
+
+    void saveAffinity(Affinity affinity, Map<String, Object> changedValues) {
+        if (affinity != Affinity.UNDEFINED) {
+            Metadata metadata = metadataRegistry.lookup(affinityTemplate(mgmtAffinity));
+            crud.save(affinity.type, AFFINITY, affinityAddress(mgmtAffinity), changedValues, metadata, () -> reload());
+        }
+    }
+
+    void resetAffinity(Affinity affinity, Form<ModelNode> form) {
+        if (affinity != Affinity.UNDEFINED) {
+            Metadata metadata = metadataRegistry.lookup(affinityTemplate(mgmtAffinity));
+            crud.reset(affinity.type, AFFINITY, affinityAddress(mgmtAffinity), form, metadata,
+                    new Form.FinishReset<ModelNode>(form) {
+                        @Override
+                        public void afterReset(Form<ModelNode> f) {
+                            reload();
+                        }
+                    });
+        }
+    }
+
+    void switchAffinity(SessionManagement sessionManagement, String mgmtName, Affinity newAffinity) {
+        ManagementAffinity newManagementAffinity = new ManagementAffinity(sessionManagement, mgmtName, newAffinity);
+        if (this.mgmtAffinity == null || !mgmtName.equals(mgmtAffinity.getMgmtName())) {
+            this.mgmtAffinity = newManagementAffinity;
+        }
+        if (!this.mgmtAffinity.equals(newManagementAffinity)) {
+            List<Operation> operations = new ArrayList<>();
+            if (this.mgmtAffinity.getAffinity() != Affinity.UNDEFINED) { // switching from pre-existing affinity type
+                operations.add(new Operation.Builder(affinityAddress(this.mgmtAffinity), REMOVE).build());
+            }
+            if (newAffinity != Affinity.UNDEFINED) {
+                operations.add(new Operation.Builder(affinityAddress(newManagementAffinity), ADD).build());
+            }
+            Composite composite = new Composite(operations)
+                    .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
+            dispatcher.execute(composite, (CompositeResult result) -> {
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().addSingleResourceSuccess(newAffinity.type)));
+                this.mgmtAffinity = newManagementAffinity;
+                reload();
+            });
+        }
+    }
+
+    private AddressTemplate affinityTemplate(ManagementAffinity mgmtAffinity) {
+        return mgmtAffinity.getMgmt().template.append(AddressTemplates.AFFINITY_TEMPLATE.replaceWildcards(mgmtAffinity.getAffinity().resource));
+    }
+
+    private ResourceAddress affinityAddress(ManagementAffinity mgmtAffinity) {
+        return affinityTemplate(mgmtAffinity).resolve(statementContext, mgmtAffinity.getMgmtName());
+    }
+
 
     // @formatter:off
     @ProxyCodeSplit
@@ -183,4 +241,47 @@ public class DistributableWebPresenter
         void updateInfinispanSSOManagement(List<NamedNode> nodes);
     }
     // @formatter:on
+
+    // helper class to keep track of session management and affinity
+    private class ManagementAffinity {
+        private SessionManagement mgmt;
+        private String mgmtName;
+        private Affinity affinity;
+
+        public ManagementAffinity(SessionManagement mgmt, String mgmtName, Affinity affinity) {
+            this.mgmt = mgmt;
+            this.mgmtName = mgmtName;
+            this.affinity = affinity;
+        }
+
+        public SessionManagement getMgmt() {
+            return mgmt;
+        }
+
+        public String getMgmtName() {
+            return mgmtName;
+        }
+
+        public Affinity getAffinity() {
+            return affinity;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            ManagementAffinity otherManagementAffinity = (ManagementAffinity) o;
+
+            return (mgmt == otherManagementAffinity.getMgmt() &&
+                    mgmtName.equals(otherManagementAffinity.getMgmtName()) &&
+                    affinity == otherManagementAffinity.getAffinity());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(mgmt, mgmtName, affinity);
+        }
+    }
 }

@@ -51,6 +51,10 @@ public interface Ids {
     String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_OPERATION_EMPTY = "active-operation-empty";
     String ADD = "add";
+    String AFFINITY_LOCAL = "affinity-local";
+    String AFFINITY_NONE = "affinity-none";
+    String AFFINITY_PRIMARY_OWNER = "affinity-primary-owner";
+    String AFFINITY_RANKED = "affinity-ranked";
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_EXCLUDE = "assignement-exclude";
     String ASSIGNMENT_INCLUDE = "assignement-include";

@@ -17,16 +17,16 @@ package org.jboss.hal.client.configuration.subsystem.distributableweb;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-interface AddressTemplates {
+enum SessionManagement {
 
-    String DISTRIBUTABLE_WEB_ADDRESS = "/{selected.profile}/subsystem=distributable-web";
+    HOTROD("HotRod Session Management", AddressTemplates.HOTROD_SESSION_TEMPLATE),
+    INFINISPAN("Infinispan Session Management", AddressTemplates.INFINISPAN_SESSION_TEMPLATE);
 
-    String HOTROD_SESSION_MANAGEMENT = "/hotrod-session-management=*";
-    String INFINISPAN_SESSION_MANAGEMENT = "/infinispan-session-management=*";
+    final String type;
+    final AddressTemplate template;
 
-    AddressTemplate DISTRIBUTABLE_WEB_TEMPLATE = AddressTemplate.of(DISTRIBUTABLE_WEB_ADDRESS);
-
-    AddressTemplate HOTROD_SESSION_TEMPLATE = DISTRIBUTABLE_WEB_TEMPLATE.append(HOTROD_SESSION_MANAGEMENT);
-    AddressTemplate INFINISPAN_SESSION_TEMPLATE = DISTRIBUTABLE_WEB_TEMPLATE.append(INFINISPAN_SESSION_MANAGEMENT);
-    AddressTemplate AFFINITY_TEMPLATE = AddressTemplate.of("/affinity=*");
+    SessionManagement(String type, AddressTemplate template) {
+        this.type = type;
+        this.template = template;
+    }
 }

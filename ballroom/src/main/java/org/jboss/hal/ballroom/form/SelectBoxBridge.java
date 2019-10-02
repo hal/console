@@ -80,6 +80,8 @@ public class SelectBoxBridge {
 
         public native void on(@NonNls String event, ChangeListener listener);
 
+        private native void prop(String prop, boolean value);
+
         @JsOverlay
         public final String getValue() {
             return val();
@@ -98,6 +100,11 @@ public class SelectBoxBridge {
         @JsOverlay
         public final void refresh() {
             selectpicker(REFRESH);
+        }
+
+        @JsOverlay
+        public final void enable(boolean value) {
+            prop("disabled", !value);
         }
     }
 

@@ -52,6 +52,7 @@ public interface ModelDescriptionConstants {
     String ADDRESS_SETTING = "address-setting";
     String ADMIN_OBJECTS = "admin-objects";
     String ADMIN_ONLY = "admin-only";
+    String AFFINITY = "affinity";
     String AGEOUT_HISTORY_OPERATION = "ageout-history";
     String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "aggregate-http-server-mechanism-factory";
     String AGGREGATE_PRINCIPAL_DECODER = "aggregate-principal-decoder";
@@ -667,6 +668,7 @@ public interface ModelDescriptionConstants {
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
     String PRESERVE = "preserve";
+    String PRIMARY_OWNER = "primary-owner";
     String PRINCIPAL_QUERY = "principal-query";
     String PRINCIPALS = "principals";
     String PRIORITY = "priority";
@@ -703,6 +705,7 @@ public interface ModelDescriptionConstants {
     String QUEUE_LENGTH = "queue-length";
     String QUEUE_NAME = "queue-name";
     String QUEUE_SIZE = "queue-size";
+    String RANKED = "ranked";
     String RDN_IDENTIFIER = "rdn-identifier";
     String READ = "read";
     String READ_ALIAS = "read-alias";
