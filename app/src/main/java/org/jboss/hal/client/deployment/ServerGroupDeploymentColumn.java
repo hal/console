@@ -102,7 +102,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
 public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeployment> {
 
-    static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/server-group=*/deployment=*";
+    static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/{selected.group}/deployment=*";
     static final AddressTemplate SERVER_GROUP_DEPLOYMENT_TEMPLATE = AddressTemplate
             .of(SERVER_GROUP_DEPLOYMENT_ADDRESS);
 
