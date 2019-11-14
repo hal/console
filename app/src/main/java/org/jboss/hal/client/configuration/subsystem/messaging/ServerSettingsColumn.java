@@ -93,7 +93,7 @@ public class ServerSettingsColumn
             List<StaticItem> items = new ArrayList<>();
             FinderSegment segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_CONFIGURATION);
             if (segment != null) {
-                String server = Ids.extractMessagingServer(segment.getItemId());
+                String server = segment.getItemTitle();
                 StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
                         () -> server);
                 ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(serverStatementContext);

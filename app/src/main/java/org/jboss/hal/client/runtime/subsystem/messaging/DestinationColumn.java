@@ -106,7 +106,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
             // extract server name from the finder path
             FinderSegment segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
             if (segment != null) {
-                String server = Ids.extractMessagingServer(segment.getItemId());
+                String server = segment.getItemTitle();
                 List<Operation> operations = new ArrayList<>();
                 for (Type type : SUBSYSTEM_RESOURCES) {
                     ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
