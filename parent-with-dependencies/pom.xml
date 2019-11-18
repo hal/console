@@ -33,7 +33,6 @@
     <packaging>pom</packaging>
 
     <properties>
-        <annotations.version>16.0.1</annotations.version>
         <apt-tools.version>0.0.3</apt-tools.version>
         <auto-service.version>1.0-rc4</auto-service.version>
         <compile-testing.version>0.15</compile-testing.version>
@@ -48,6 +47,7 @@
         <jaxen.version>1.1.6</jaxen.version>
         <jboss.dmr.version>1.5.0.Final</jboss.dmr.version>
         <jdom.version>2.0.2</jdom.version>
+        <jetbrains.annotations.version>16.0.1</jetbrains.annotations.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
         <node.version>v8.16.0</node.version>
@@ -190,7 +190,7 @@
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>${annotations.version}</version>
+                <version>${jetbrains.annotations.version}</version>
             </dependency>
 
             <!-- Annotation Processing -->
