@@ -91,7 +91,7 @@ public final class TopologyTasks {
     }
 
     /**
-     * Returns a lists of tasks to read the topology.
+     * Returns a list of tasks to read the topology.
      *
      * <p>The context is populated with the following keys:
      * <ul>
@@ -114,7 +114,7 @@ public final class TopologyTasks {
     }
 
     /**
-     * Returns a lists of tasks to read all hosts (connected and disconnected) and its servers.
+     * Returns a list of tasks to read all hosts (connected and disconnected) and its servers.
      *
      * <p>The context is populated with the following keys:
      * <ul>
@@ -134,7 +134,7 @@ public final class TopologyTasks {
     }
 
     /**
-     * Returns a lists of tasks to read all server groups and its servers.
+     * Returns a list of tasks to read all server groups and its servers.
      *
      * <p>The context is populated with the following keys:
      * <ul>
@@ -154,7 +154,7 @@ public final class TopologyTasks {
     }
 
     /**
-     * Returns a lists of tasks to read the servers of one host.
+     * Returns a list of tasks to read the servers of one host.
      *
      * <p>The context is populated with the following keys:
      * <ul>
@@ -170,7 +170,7 @@ public final class TopologyTasks {
     }
 
     /**
-     * Returns a lists of tasks to read the servers of one server group.
+     * Returns a list of tasks to read the servers of one server group.
      *
      * <p>The context is populated with the following keys:
      * <ul>
@@ -188,7 +188,7 @@ public final class TopologyTasks {
     }
 
     /**
-     * Returns a lists of tasks to read all running servers in the domain which satisfy the specified query.
+     * Returns a list of tasks to read all running servers in the domain, which satisfy the specified query.
      *
      * <p>The context is populated with the following keys:
      * <ul>
@@ -209,8 +209,8 @@ public final class TopologyTasks {
 
 
     /**
-     * Function which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks
-     * which read the hosts. The erroneous host is added to the the list of hosts as {@link Host#booting(String)}
+     * Function, which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks,
+     * which read the hosts. The erroneous host is added to the list of hosts as {@link Host#booting(String)}
      * if the error contains {@link ModelDescriptionConstants#ERROR_WFY_CTL_0379} or as {@link Host#failed(String)}
      * otherwise.
      */
