@@ -79,7 +79,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     DataSource dataSource = new DataSource("H2XADS", true);
                     dataSource.get(JNDI_NAME).set("java:/H2XADS");
                     dataSource.get(DRIVER_NAME).set(H2);
-                    dataSource.get(XA_DATASOURCE_CLASS).set("org.h2.jdbcx.JdbcDataSource");
                     dataSource.get(USER_NAME).set(SA);
                     dataSource.get(PASSWORD).set(SA);
                     dataSource.get(BACKGROUND_VALIDATION).set(false);
@@ -122,7 +121,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
-                    dataSource.get(XA_DATASOURCE_CLASS).set("org.postgresql.xa.PGXADataSource");
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -166,7 +164,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
-                    dataSource.get(XA_DATASOURCE_CLASS).set("com.mysql.jdbc.jdbc2.optional.MysqlXADataSource");
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -211,7 +208,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(ORACLE);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(XA_DATASOURCE_CLASS).set("oracle.jdbc.xa.client.OracleXADataSource");
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker");
@@ -258,7 +254,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(SQLSERVER);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(XA_DATASOURCE_CLASS).set("com.microsoft.sqlserver.jdbc.SQLServerXADataSource");
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker");
@@ -305,7 +300,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set("ibmdb2");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(XA_DATASOURCE_CLASS).set("COM.ibm.db2.jdbc.DB2XADataSource");
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker");
@@ -355,7 +349,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(SYBASE);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(XA_DATASOURCE_CLASS).set("com.sybase.jdbc4.jdbc.SybXADataSource");
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker");
