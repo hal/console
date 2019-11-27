@@ -17,6 +17,7 @@ package org.jboss.hal.client.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -51,6 +52,8 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -237,6 +240,15 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, EXPLODE))
                             .build());
                 }
+                if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
+                        && item.isExploded() && item.isEnabled() && item.hasSubdeployments()) {
+                    actions.add(new ItemAction.Builder<Deployment>()
+                            .title(resources.constants().explodeSubdeployments())
+                            .handler(itm -> explodeSubs(itm))
+                            .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, EXPLODE))
+                            .build());
+                }
+
                 actions.add(new ItemAction.Builder<Deployment>()
                         .title(resources.constants().undeploy())
                         .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
@@ -416,6 +428,32 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
             refresh(RESTORE_SELECTION);
             MessageEvent
                     .fire(eventBus, Message.success(resources.messages().deploymentExploded(deployment.getName())));
+        });
+    }
+
+    private void explodeSubs(Deployment deployment) {
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
+        Operation disable = new Operation.Builder(address, UNDEPLOY).build();
+        Composite op = new Composite(disable);
+
+        String id = Ids.deployment(deployment.getName());
+        ItemMonitor.startProgress(id);
+
+        deployment.getSubdeployments().forEach(
+                subdeployment -> {
+                    Operation explode = new Operation.Builder(address, EXPLODE).param(PATH, subdeployment.getName()).build();
+                    op.add(explode);
+                }
+        );
+
+        dispatcher.execute(op, (Consumer<CompositeResult>) result -> {
+            enable(deployment);
+            MessageEvent
+                    .fire(eventBus, Message.success(resources.messages().deploymentExploded(deployment.getName())));
+        }, (operation, failure) -> {
+            ItemMonitor.stopProgress(id);
+            SafeHtml message = failure.contains("WFLYDR0015") ? resources.messages().deploymentSubAlreadyExploded() : resources.messages().lastOperationException();
+            MessageEvent.fire(eventBus, Message.error(message, failure));
         });
     }
 }
