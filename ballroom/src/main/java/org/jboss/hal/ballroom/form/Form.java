@@ -73,9 +73,7 @@ public interface Form<T> extends IsElement, Attachable {
     @JsIgnore
     void setSaveCallback(SaveCallback<T> saveCallback);
 
-    /**
-     * Cancels any modifications to the model.
-     */
+    /** Cancels any modifications to the model. */
     void cancel();
 
     @JsIgnore
@@ -84,57 +82,41 @@ public interface Form<T> extends IsElement, Attachable {
     @JsIgnore
     void setPrepareReset(PrepareReset<T> prepareReset);
 
-    /**
-     * Resets the model.
-     */
+    /** Resets the model. */
     @JsIgnore
     void reset();
 
     @JsIgnore
     void setPrepareRemove(PrepareRemove<T> removeCallback);
 
-    /**
-     * Removes the model.
-     */
+    /** Removes the model. */
     @JsIgnore
     void remove();
 
-    /**
-     * @return an unique identifier for this form.
-     */
+    /** @return an unique identifier for this form. */
     @JsIgnore
     String getId();
 
-    /**
-     * @return the current model.
-     */
+    /** @return the current model. */
     @JsProperty
     T getModel();
 
-    /**
-     * @return the state machine which access to the current state.
-     */
+    /** @return the state machine which access to the current state. */
     @JsIgnore
     StateMachine getStateMachine();
 
     @JsIgnore
     <F> FormItem<F> getFormItem(String name);
 
-    /**
-     * @return return all form items.
-     */
+    /** @return return all form items. */
     @JsIgnore
     Iterable<FormItem> getFormItems();
 
-    /**
-     * @return only those form items which are bound to the model.
-     */
+    /** @return only those form items which are bound to the model. */
     @JsIgnore
     Iterable<FormItem> getBoundFormItems();
 
-    /**
-     * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
-     */
+    /** Makes it possible to validate the form as a whole or to check fields which depend on other fields. */
     @JsIgnore
     void addFormValidation(FormValidation<T> formValidation);
 
@@ -143,27 +125,19 @@ public interface Form<T> extends IsElement, Attachable {
 
 
     enum State {
-        /**
-         * No model is bound to the form
-         */
+        /** No model is bound to the form */
         EMPTY,
 
-        /**
-         * The model is shown in read-only mode
-         */
+        /** The model is shown in read-only mode */
         READONLY,
 
-        /**
-         * The model is shown in edit mode
-         */
+        /** The model is shown in edit mode */
         EDITING
     }
 
 
     enum Operation {
-        /**
-         * Takes the specified model and updates the read-only state with the values from the model.
-         */
+        /** Takes the specified model and updates the read-only state with the values from the model. */
         VIEW,
 
         /**
@@ -172,14 +146,10 @@ public interface Form<T> extends IsElement, Attachable {
          */
         CLEAR,
 
-        /**
-         * Resets the model and updates the bound form field.
-         */
+        /** Resets the model and updates the bound form field. */
         RESET,
 
-        /**
-         * Takes the specified model and populates the bound form fields with the values from the model.
-         */
+        /** Takes the specified model and populates the bound form fields with the values from the model. */
         EDIT,
 
         /**
@@ -188,14 +158,10 @@ public interface Form<T> extends IsElement, Attachable {
          */
         SAVE,
 
-        /**
-         * Cancels any modifications to the model and calls the cancel callback.
-         */
+        /** Cancels any modifications to the model and calls the cancel callback. */
         CANCEL,
 
-        /**
-         * Removes the model and calls the remove callback.
-         */
+        /** Removes the model and calls the remove callback. */
         REMOVE
     }
 
@@ -237,7 +203,7 @@ public interface Form<T> extends IsElement, Attachable {
 
         private final Form<T> form;
 
-        protected FinishReset(final Form<T> form) {
+        protected FinishReset(Form<T> form) {
             this.form = form;
         }
 
@@ -271,7 +237,7 @@ public interface Form<T> extends IsElement, Attachable {
 
         private final Form<T> form;
 
-        protected FinishRemove(final Form<T> form) {
+        protected FinishRemove(Form<T> form) {
             this.form = form;
         }
 

@@ -1,13 +1,13 @@
-<p>&#x30ed;&#x30fc;&#x30ab;&#x30eb; JNDI &#x30cd;&#x30fc;&#x30e0;&#x30b9;&#x30da;&#x30fc;&#x30b9;&#x306e;&#x6982;&#x8981;&#x3092;&#x63d0;&#x4f9b;&#x3057;&#x307e;&#x3059;&#x3002;Java EE &#x30d7;&#x30e9;&#x30c3;&#x30c8;&#x30d5;&#x30a9;&#x30fc;&#x30e0;&#x4ed5;&#x69d8;&#x306f;&#x4ee5;&#x4e0b;&#x306e; JNDI &#x30b3;&#x30f3;&#x30c6;&#x30ad;&#x30b9;&#x30c8;&#x3092;&#x5b9a;&#x7fa9;&#x3057;&#x307e;&#x3059;&#x3002;</p>
+<p>ローカル JNDI ネームスペースの概要を提供します。Java EE プラットフォーム仕様は以下の JNDI コンテキストを定義します。</p>
 <ul>
-    <li><code>java:comp</code> - &#x30cd;&#x30fc;&#x30e0;&#x30b9;&#x30da;&#x30fc;&#x30b9;&#x306f;&#x73fe;&#x5728;&#x306e;&#x30b3;&#x30f3;&#x30dd;&#x30fc;&#x30cd;&#x30f3;&#x30c8;&#x306b;&#x30b9;&#x30b3;&#x30fc;&#x30d7;&#x6307;&#x5b9a;&#x3055;&#x308c;&#x307e;&#x3059; (&#x4f8b;: EJB)&#x3002;</li>
-    <li><code>java:module</code> - &#x73fe;&#x5728;&#x306e;&#x30e2;&#x30b8;&#x30e5;&#x30fc;&#x30eb;&#x306b;&#x30b9;&#x30b3;&#x30fc;&#x30d7;&#x6307;&#x5b9a;&#x3055;&#x308c;&#x307e;&#x3059;&#x3002;</li>
-    <li><code>java:app</code> - &#x73fe;&#x5728;&#x306e;&#x30a2;&#x30d7;&#x30ea;&#x30b1;&#x30fc;&#x30b7;&#x30e7;&#x30f3;&#x306b;&#x30b9;&#x30b3;&#x30fc;&#x30d7;&#x6307;&#x5b9a;&#x3055;&#x308c;&#x307e;&#x3059;&#x3002;</li>
-    <li><code>java:global</code> - &#x30a2;&#x30d7;&#x30ea;&#x30b1;&#x30fc;&#x30b7;&#x30e7;&#x30f3;&#x30b5;&#x30fc;&#x30d0;&#x30fc;&#x306b;&#x30b9;&#x30af;&#x30fc;&#x30d7;&#x6307;&#x5b9a;&#x3055;&#x308c;&#x307e;&#x3059;&#x3002;</li>
+    <li><code>java:comp</code> - ネームスペースは現在のコンポーネントにスコープ指定されます (例: EJB)。</li>
+    <li><code>java:module</code> - 現在のモジュールにスコープ指定されます。</li>
+    <li><code>java:app</code> - 現在のアプリケーションにスコープ指定されます。</li>
+    <li><code>java:global</code> - アプリケーションサーバーにスクープ指定されます。</li>
 </ul>
-<p>{build.shortName}  &#x306f;&#x3001;&#x6a19;&#x6e96;&#x306e;&#x30cd;&#x30fc;&#x30e0;&#x30b9;&#x30da;&#x30fc;&#x30b9;&#x306e;&#x4ed6;&#x306b;&#x3001;&#x4ee5;&#x4e0b;&#x306e; 2 &#x3064;&#x306e;&#x30b0;&#x30ed;&#x30fc;&#x30d0;&#x30eb;&#x30cd;&#x30fc;&#x30e0;&#x30b9;&#x30da;&#x30fc;&#x30b9;&#x3082;&#x63d0;&#x4f9b;&#x3057;&#x307e;&#x3059;&#x3002;</p>
+<p>${build.shortName} は、標準のネームスペースの他に、以下の 2 つのグローバルネームスペースも提供します。</p>
 <ul>
     <li><code>java:jboss</code></li>
     <li><code>java:/</code></li>
 </ul>
-<p>&#x30ea;&#x30e2;&#x30fc;&#x30c8; JNDI &#x4e0a;&#x3067;&#x306f; java:jboss/exported &#x30b3;&#x30f3;&#x30c6;&#x30ad;&#x30b9;&#x30c8;&#x5185;&#x306e;&#x30a8;&#x30f3;&#x30c8;&#x30ea;&#x30fc;&#x306e;&#x307f;&#x306b;&#x30a2;&#x30af;&#x30bb;&#x30b9;&#x3067;&#x304d;&#x308b;&#x3053;&#x3068;&#x306b;&#x6ce8;&#x610f;&#x3057;&#x3066;&#x304f;&#x3060;&#x3055;&#x3044;&#x3002;web &#x30c7;&#x30d7;&#x30ed;&#x30a4;&#x30e1;&#x30f3;&#x30c8;&#x3067;&#x306f; <code>java:comp</code> &#x306e;&#x30a8;&#x30a4;&#x30ea;&#x30a2;&#x30b9;&#x306f; <code>java:module</code> &#x306b;&#x306a;&#x308b;&#x305f;&#x3081;&#x3001;war &#x306b;&#x30c7;&#x30d7;&#x30ed;&#x30a4;&#x3055;&#x308c;&#x305f; EJB &#x306f;&#x72ec;&#x81ea;&#x306e; comp &#x30cd;&#x30fc;&#x30e0;&#x30b9;&#x30da;&#x30fc;&#x30b9;&#x3092;&#x6301;&#x3061;&#x307e;&#x305b;&#x3093;&#x3002;</p>
+<p>リモート JNDI 上では java:jboss/exported コンテキスト内のエントリーのみにアクセスできることに注意してください。web デプロイメントでは <code>java:comp</code> のエイリアスは <code>java:module</code> になるため、war にデプロイされた EJB は独自の comp ネームスペースを持ちません。</p>

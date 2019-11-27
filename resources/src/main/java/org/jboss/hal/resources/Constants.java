@@ -174,6 +174,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String expire();
     String expiredSessions();
     String explode();
+    String explodeSubdeployments();
     String exploded();
     String export();
     String exportCertificate();

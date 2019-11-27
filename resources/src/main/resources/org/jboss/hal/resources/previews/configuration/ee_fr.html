@@ -1,7 +1,0 @@
-<p>Le sous-système EE fournit des fonctionnalités communes à la plate-forme Java EE, telles que les utilitaires EE Concurrency Utilities (JSR 236) et l'injection <code>@Resource</code>. Le sous-système est également responsable de la gestion du cycle de vie des déploiements de l'application Java EE, c'est-à-dire les fichiers.ear.</p>
-<p>La configuration du sous-système EE peut être utilisée pour :</p>
-<ul>
-    <li>permettre de personnaliser le comportement de déploiement des applications Java EE.</li>
-    <li>gérer les modules globaux : un ensemble de modules JBoss qui seront ajoutés en tant que dépendances au module JBoss de chaque déploiement Java EE. de telles dépendances permettent aux déploiements Java EE de voir les classes exportées par les modules globaux.</li>
-    <li>Gestion des services publics concomitants de l'EE (JSR 236) : Il a été introduit avec Java EE 7, pour faciliter l'écriture d'applications Java EE multithread. Les instances de ces utilitaires sont gérées par ${build.fullName}, et la configuration associée fournie par le sous-système EE.</li>
-</ul>

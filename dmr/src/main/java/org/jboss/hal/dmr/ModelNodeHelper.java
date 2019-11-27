@@ -258,7 +258,9 @@ public class ModelNodeHelper {
                 String key = iterator.next();
                 if (iterator.hasNext()) {
                     String value = iterator.next();
-                    modelNode.get(key).set(value);
+                    if (value != null) {
+                        modelNode.get(key).set(value);
+                    }
                 }
             }
         }

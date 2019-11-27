@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.2.1.Final</version>
+        <version>3.2.2.Final</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -33,7 +33,6 @@
     <packaging>pom</packaging>
 
     <properties>
-        <annotations.version>16.0.1</annotations.version>
         <apt-tools.version>0.0.3</apt-tools.version>
         <auto-service.version>1.0-rc4</auto-service.version>
         <compile-testing.version>0.15</compile-testing.version>
@@ -48,6 +47,7 @@
         <jaxen.version>1.1.6</jaxen.version>
         <jboss.dmr.version>1.5.0.Final</jboss.dmr.version>
         <jdom.version>2.0.2</jdom.version>
+        <jetbrains.annotations.version>16.0.1</jetbrains.annotations.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
         <node.version>v8.16.0</node.version>
@@ -55,7 +55,7 @@
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
-        <undertow.version>2.0.22.Final</undertow.version>
+        <undertow.version>2.0.28.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
     </properties>
 
@@ -190,7 +190,7 @@
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>${annotations.version}</version>
+                <version>${jetbrains.annotations.version}</version>
             </dependency>
 
             <!-- Annotation Processing -->

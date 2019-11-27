@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.listview;
 
-/** Function which turns an item into an {@link ItemRenderer}. */
+/** Function which turns an item into an {@link ItemDisplay}. */
 @FunctionalInterface
 public interface ItemRenderer<T> {
 
