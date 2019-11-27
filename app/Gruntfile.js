@@ -34,7 +34,7 @@ module.exports = function (grunt) {
             node: 'node_modules',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
-            version: '3.2.2',
+            version: '3.2.3',
         },
 
         clean: {
@@ -124,7 +124,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     '<%= config.node %>/promise-polyfill/dist/polyfill.min.js',
-                    '<%= config.node %>/whatwg-fetch/fetch.js'
+                    '<%= config.node %>/whatwg-fetch/dist/fetch.umd.js'
                 ],
                 dest: '<%= config.public %>/js/polyfill.min.js'
             },
