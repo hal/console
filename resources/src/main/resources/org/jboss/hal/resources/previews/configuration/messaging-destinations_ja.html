@@ -1,0 +1,44 @@
+<p>以下のトピックの設定が含まれます。</p>
+<ul>
+    <li>コアキュー</li>
+    <li>JMS 宛先</li>
+    <li>セキュリティー設定</li>
+    <li>アドレス設定</li>
+    <li>迂回 (Divert)</li>
+</ul>
+
+<h2>コアキュー</h2>
+<p>Apache ActiveMQ Artemis コアは JMS に依存せず、JMS トピックの概念はありません。JMS トピックはアドレス (トピック名) としてコアに実装され、0 以上のキューがバインドされます。そのアドレスにバインドされた各キューは、トピックサブスクリプションを表します。同様に、JMS キューはアドレス (JMS キュー名) として実装され、JMS キューを表す 1 つのキューにバインドされます。 </p>
+
+<p>慣例では、すべての JMS キューはコアキューにマップされ、コアキュー名の最初に文字列「 jms.queue.」が追加されます。たとえば、「orders.europe」という名前の JMS キューは「jms.queue.orders.europe」という名前のコアキューにマップされます。コアキューがバインドされるアドレスもコアキュー名によって付与されます。</p>
+
+<p>JMS トピックでは、サブスクリプションを表すキューがバインドされるアドレスは、文字列「jms.topic.」を JMS トピック名の最初に追加して付与されます。たとえば、「news.europe」という名前の JMS トピックは、コアアドレス 「jms.topic.news.europe 」にマップします。</p>
+
+<h2>JMS 宛先</h2>
+<p>JMS 宛先や JMS 接続ファクトリーは JMS 管理オブジェクトです。宛先は、メッセージを生成および消費するために JMS クライアントによって使用されます。宛先は、JMS クライアントがメッセージの生成時にターゲットを指定できるようにし、メッセージの消費時にメッセージのソースを生成できるようにします。パブリッシュ-サブスクライブパターンを使用する場合、宛先はトピックとして見なされます。ポイントツーポイントパターンを使用する場合、宛先はキューとして見なされます。</p>
+
+<p>アプリケーションは、サーバー側に設定され、通常は JNDI 経由でアクセスされる、多くの異なる JMS 宛先を使用することがあります。</p>
+
+<h2>セキュリティー設定</h2>
+<p>セキュリティー設定は、特定の宛先周囲のセキュリティーを設定するために使用されます。これは、security-setting 設定要素を使用して、セキュリティー制約を追加して行われます。${build.shortName} メッセージングにはデフォルトで設定された <code>security-setting</code> が含まれます。</p>
+
+<p>security-setting オプションは、ワイルドカードを利用して、どの宛先にセキュリティー制約を適用するかを処理します。単一の <code>#</code> パターンはすべてのアドレスと一致します。セキュリティー制約でワイルドカードを使用する詳細は、 <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-7-configuring-security#role_based_security_for_address">Role Based Security for Addresses</a> を参照してください。
+</p>
+
+<h2>アドレス設定</h2>
+<p>messaging-activemq サブシステムには、メッセージの配信時および配信方法、試行回数、およびメッセージの失効時を制御する複数の設定可能なオプションがあります。これらの設定オプションは、すべて <code>&lt;address-setting></code> 設定要素内に存在します。 ワイルドカード構文を使用すると、${build.shortName} は 1 つの <code>&lt;address-setting></code> を複数の宛先に適用できます。</p>
+
+<p>アドレス設定におけるワイルドカードの使用に関する詳細は「<a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-6-address-settings">Wildcard Syntax</a>」を参照してください。
+</p>
+
+<h2>迂回 (Divert)</h2>
+<p>迂回 (Divert) は、メッセージがあるアドレスから別のアドレスに迂回できるようにする、${build.shortName} メッセージングに設定されたオブジェクトです。迂回は以下の種類に分類されます。
+
+<dl>
+    <dt>排他的</dt>
+    <dd>メッセージは新しいアドレスにのみ迂回され、古いアドレスには送信されません。</dd>
+    <dt>非排他的</dt>
+    <dd>メッセージは古いアドレスに送信され、そのコピーは新しいアドレスに送信されます。非排他的な迂回は、メッセージの流れの分割に使用できます。</dd>
+</dl>
+
+<p>メッセージは同じサーバー上のアドレスへのみ迂回されます。異なるサーバーのアドレスへ迂回したい場合は、ローカルの store-and-forward キューに迂回し、そのキューから消費し、異なるサーバーのアドレスに転送する api を設定します。</p>

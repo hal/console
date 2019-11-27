@@ -1,0 +1,30 @@
+<p>以下のトピックの設定が含まれます。</p>
+<ul>
+    <li>アクセプターおよびコネクター</li>
+    <li>コネクターサービス</li>
+    <li>(プールされた) 接続ファクトリー</li>
+</ul>
+
+<h2>アクセプターおよびコネクター</h2>
+<p>アクセプターは、${build.shortName} 埋め込みのメッセージングサーバーによって許可される接続の種類を定義します。サーバーごとに任意の数のアクセプターを定義できます。</p>
+
+<p>コネクターは、${build.shortName} 埋め込みメッセージングサーバーへ接続する方法を定義し、接続を確立するためにクライアントによって使用されます。</p>
+
+<p>アクセプターおよびコネクターの詳細は 
+<a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-8-configuring-the-messaging-transports">アクセプターおよびコネクターの項</a> を参照してください。
+</p>
+
+<h2>コネクターサービス</h2>
+<p>コネクターサービスを使用して外部コンポーネントと Apache ActiveMQ Artemis を統合し、メッセージの送受信ができるようになります。</p>
+
+<h2>接続ファクトリー</h2>
+<p>デフォルトでは、${build.shortName} messaging サブシステムは <code>InVmConnectionFactory</code> および 
+<code>RemoteConnectionFactory</code> 接続ファクトリーを提供し、さらに プールされた 
+<code>activemq-ra</code> 接続ファクトリーも提供します。</p>
+
+<p><code>InVmConnectionFactory</code> は <code>in-vm-connector</code> を参照し、クライアントとサーバーの両方が同じ JVM で実行されている場合にメッセージの送受信に使用できます。 <code>RemoteConnectionFactory</code> は <code>http-connector</code> を参照し、クライアントとサーバーが異なる JVM で実行されている場合に HTTP 上でのメッセージの送受信に使用できます。
+</p>
+
+<p>プールされた接続ファクトリーでは、統合された ActiveMQ Artemis リソースアダプターのインバウンドおよびアウトバウンド接続を設定できます。pooled-connection-factory を設定してリモート ActiveMQ Artemis サーバーに接続する方法は 
+<a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">Using the Integrated Resource Adapter for Remote Connections</a> を参照してください。
+</p>

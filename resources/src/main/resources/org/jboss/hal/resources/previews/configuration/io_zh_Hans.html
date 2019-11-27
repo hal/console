@@ -1,8 +1,0 @@
-<p>IO 子系统定义了由其他子系统（如 Undertow 和 Remoting）使用的 XNIO 工作节点（worker）和缓冲池。</p>
-<h2>工作节点</h2>
-<p>工作节点是 XNIO 工作节点实例。一个 XNIO 工作节点是 Java NIO API 的抽象层，其提供了如 IO 和工作节点线程管理，以及 SS L支持的功能。默认情况下，${build.shortName} 提供了一个名为 <code>default</code>的工作节点，但可以定义多个工作节点。</p>
-<h2>缓冲池</h2>
-<p>缓冲池就是包括一组 NIO 缓冲实例的池。</p>
-<p><strong>重要：</strong><br/>
-    更改缓冲区大小对应用程序的性能有很大的影响。对于大多数的服务器，理想的大小通常是16K。
-</p>

@@ -1,0 +1,24 @@
+<p>リモート ActiveMQ Artemis サーバーへのディスカバリーグループ、コネクター、コネクションファクトリー、キュー、およびトピックの設定が含まれます。</p>
+
+<h2>コネクター</h2>
+<p>コネクターは、リモート ActiveMQ Artemis サーバーへの接続方法を定義します。</p>
+
+<p>コネクターに関する詳細は、<a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/acceptors_and_connectors">コネクターに関するドキュメント</a>を参照してください。
+</p>
+
+<h2>ディスカバリーグループ</h2>
+<p>ディスカバリーグループは、UDP マルチキャストアドレスや JGroups チャネルなどのブロードキャストエンドポイントからコネクター情報を受け取る方法を定義します。</p>
+<p>ディスカバリーグループは、各サーバーの各ブロードキャストごとに 1 つのコネクターリストを保持します。特定のサーバーからブロードキャストエンドポイントでブロードキャストを受信すると、そのサーバーのリストのエントリーを更新します。特定のサーバーからブロードキャストを長時間受信しないと、そのリストからサーバーのエントリーを削除します。</p>
+
+
+<h2>接続ファクトリー</h2>
+<p>デフォルトでは、${build.shortName} messaging サブシステムは <code>InVmConnectionFactory</code> および 
+<code>RemoteConnectionFactory</code> 接続ファクトリーを提供し、さらに プールされた 
+<code>activemq-ra</code> 接続ファクトリーも提供します。
+</p>
+
+<p>プールされた接続ファクトリーでは、リモートの ActiveMQ Artemis リソースアダプターのインバウンドおよびアウトバウンド接続を設定できます。pooled-connection-factory を設定してリモート ActiveMQ Artemis サーバーに接続する方法は「<a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">Using the Integrated Resource Adapter for Remote Connections</a>」を参照してください。
+</p>
+
+<h2>外部キュー / トピック</h2>
+<p>リモート ActiveMQ Artemis サーバーに存在するキューおよびトピック。</p>

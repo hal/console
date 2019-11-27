@@ -1,0 +1,4 @@
+<h2>Apache ActiveMQ Artemis</h2>
+<p>Apache ActiveMQ Artemis は非同期メッセージングシステムのオープンソースプロジェクトです。Apache ActiveMQ Artemis はパフォーマンスに優れ、埋め込み可能でクラスター化され、複数のプロトコルをサポートします。${build.shortName} は Apache ActiveMQ Artemis をJMS ブローカーとして使用し、messaging-activemq サブシステムを使用して設定されます。これによって HornetQ ブローカーは完全に置き換えられますが、以前のバージョンとのプロトコルの互換性を維持します。</p>
+
+コア ActiveMQ Artemis は JMS にとらわれず、コア API と呼ばれる非 JMS API を提供します。ActiveMQ Artemis は、ファサード層を使用して JMS セマンティックをコア API の上部に実装する JMS クライアント API も提供します。基本的に、JMS の対話は JMS クライアント API を使用してクライアント側でコア API 操作に変換されます。すべての操作は、コアクライアント API および Apache ActiveMQ Artemis ワイヤ形式を使用して、そこから送信されます。サーバー自体はコア API のみを使用します。コア API とその概念に関する詳細は、 <a target="_blank" href=http://activemq.apache.org/artemis/docs/1.1.0/using-core.html">ActiveMQ Artemis のドキュメント</a> を参照してください。

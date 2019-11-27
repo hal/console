@@ -1,7 +1,0 @@
-<p>La messagerie ${build.shortName} inclut une api de message JMS entièrement fonctionnelle. La fonction d'une api JMS est de consommer les messages d'une file d'attente ou d'un topic source et de les envoyer à une file d'attente ou à un topic cible, généralement sur un serveur différent.</p>
-
-<p>Les serveurs source et cible n'ont pas besoin d'être dans le même cluster, ce qui rend le pontage approprié pour l'envoi fiable de messages d'un cluster à l'autre, par exemple à travers un WAN, et où la connexion peut ne pas être fiable.</p>
-
-<p>
-    <strong>Note</strong><br/>Ne pas confondre un pont JMS avec un système de pontage core bridge Un pont JMS peut être utilisé pour relier deux fournisseurs JMS compatibles JMS 1.1 et utilise l'API JMS. Un core bridge est utilisé pour ponter deux instances de messagerie ${build.shortName} et utilise l'API de base. Il est préférable d'utiliser un core bridge au lieu d'un pont JMS dans la mesure du possible.
-</p>
