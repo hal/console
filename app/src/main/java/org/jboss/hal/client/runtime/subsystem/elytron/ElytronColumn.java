@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
@@ -47,7 +48,7 @@ public class ElytronColumn extends FinderColumn<StaticItem> {
                 .onPreview(StaticItem::getPreviewContent)
                 .useFirstActionAsBreadcrumbHandler());
 
-        List<StaticItem> items = asList(
+        Supplier<List<StaticItem>> itemsSupplier = () -> asList(
                 new StaticItem.Builder(Names.SECURITY_REALMS)
                         .onPreview(new PreviewContent<>(Names.SECURITY_REALMS, resources.previews().runtimeElytronSecurityRealms()))
                         .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON_SECURITY_REALMS,
@@ -65,10 +66,10 @@ public class ElytronColumn extends FinderColumn<StaticItem> {
                         .build()
 
         );
-        setItemsProvider((context, callback) -> callback.onSuccess(items));
+        setItemsProvider((context, callback) -> callback.onSuccess(itemsSupplier.get()));
         setBreadcrumbItemsProvider(
                 (context, callback) -> callback.onSuccess(
-                        items.stream().filter(item -> item.getNextColumn() == null).collect(toList())));
+                        itemsSupplier.get().stream().filter(item -> item.getNextColumn() == null).collect(toList())));
 
     }
 }
