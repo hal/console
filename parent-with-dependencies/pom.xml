@@ -191,6 +191,7 @@
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains.annotations.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Annotation Processing -->
