@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-gwt</artifactId>
-        <version>3.2.3.Final</version>
+        <version>3.2.4.Final</version>
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
@@ -59,6 +59,10 @@
         <dependency>
             <groupId>org.jboss.auto</groupId>
             <artifactId>apt-tools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
     </dependencies>
 
