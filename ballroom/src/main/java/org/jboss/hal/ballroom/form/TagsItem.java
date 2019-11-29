@@ -118,16 +118,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
             inputContainer.appendChild(tagsContainer);
             inputContainer.appendChild(helpBlock);
             inputGroup.classList.add(properties);
-        }
 
-        @Override
-        protected String name() {
-            return "TagsEditingAppearance";
-        }
-
-        @Override
-        public void attach() {
-            super.attach();
             Options options = Defaults.get();
             options.tagsContainer = HASH + tagsContainer.id;
             options.validator = mapping.validator();
@@ -152,6 +143,11 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
                 removeTag(mapping.parseTag(tag));
                 clearError();
             });
+        }
+
+        @Override
+        protected String name() {
+            return "TagsEditingAppearance";
         }
 
         @Override
