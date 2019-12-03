@@ -186,14 +186,6 @@
                 <version>${undertow.version}</version>
             </dependency>
 
-            <!-- Misc -->
-            <dependency>
-                <groupId>org.jetbrains</groupId>
-                <artifactId>annotations</artifactId>
-                <version>${jetbrains.annotations.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
             <!-- Annotation Processing -->
             <dependency>
                 <groupId>org.jboss.auto</groupId>

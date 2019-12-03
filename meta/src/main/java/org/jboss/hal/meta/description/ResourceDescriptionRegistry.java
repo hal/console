@@ -24,7 +24,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
 
     private static final int CACHE_SIZE = 250;
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionRegistry.class);
 
     private final Cache<ResourceAddress, ResourceDescription> cache;
     private final ResourceDescriptionTemplateProcessor templateProcessor;

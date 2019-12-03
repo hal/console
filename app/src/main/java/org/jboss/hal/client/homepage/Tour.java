@@ -36,7 +36,6 @@ import org.jboss.hal.ballroom.Popover.Placement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 class Tour implements NavigationHandler {
 
     private static final int MAX_TRIES = 50;
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Tour.class);
+    private static final Logger logger = LoggerFactory.getLogger(Tour.class);
 
     private final EventBus eventBus;
     private final PlaceManager placeManager;

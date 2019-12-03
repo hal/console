@@ -30,7 +30,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -66,7 +65,7 @@ class AttributesTable implements IsElement {
             HtmlContentBuilder<HTMLTableRowElement> builder = tr();
 
             // attribute name & description
-            @NonNls SafeHtmlBuilder html = new SafeHtmlBuilder();
+            SafeHtmlBuilder html = new SafeHtmlBuilder();
             html.appendHtmlConstant(
                     "<strong" + (deprecated ? " class=\"" + CSS.deprecated + "\" title=\"deprecated\"" : "") + ">")
                     .appendEscaped(property.getName())

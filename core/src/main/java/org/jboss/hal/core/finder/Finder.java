@@ -45,7 +45,6 @@ import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Footer;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -76,7 +75,7 @@ public class Finder implements IsElement, Attachable {
     private static final int MAX_VISIBLE_COLUMNS = 4;
 
     private static final int MAX_COLUMNS = 12;
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Finder.class);
+    private static final Logger logger = LoggerFactory.getLogger(Finder.class);
 
     private final Environment environment;
     private final EventBus eventBus;
@@ -395,8 +394,8 @@ public class Finder implements IsElement, Attachable {
     /**
      * Refreshes the specified path.
      * <p>
-     * Please note that this might be a complex and long running operation since each segment in the path is turned
-     * into a function which reloads and re-selects the items.
+     * Please note that this might be a complex and long running operation since each segment in the path is turned into
+     * a function which reloads and re-selects the items.
      */
     public void refresh(FinderPath path) {
         if (!path.isEmpty()) {
@@ -428,9 +427,8 @@ public class Finder implements IsElement, Attachable {
      * Shows the finder associated with the specified token and selects the columns and items according to the given
      * finder path.
      * <p>
-     * Please note that this might be a complex and long running operation since each segment in the path is turned
-     * into a function. The function will load and initialize the column and select the item as specified in the
-     * segment.
+     * Please note that this might be a complex and long running operation since each segment in the path is turned into
+     * a function. The function will load and initialize the column and select the item as specified in the segment.
      * <p>
      * If the path is empty, the fallback operation is executed.
      */

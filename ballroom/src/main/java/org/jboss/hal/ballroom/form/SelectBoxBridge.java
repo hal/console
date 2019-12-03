@@ -24,7 +24,6 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -78,7 +77,7 @@ public class SelectBoxBridge {
 
         public native void selectpicker(String method, String param);
 
-        public native void on(@NonNls String event, ChangeListener listener);
+        public native void on(String event, ChangeListener listener);
 
         @JsOverlay
         public final String getValue() {
@@ -114,7 +113,7 @@ public class SelectBoxBridge {
 
         public native void selectpicker(String method, String[] param);
 
-        public native void on(@NonNls String event, ChangeListener listener);
+        public native void on(String event, ChangeListener listener);
 
         @JsOverlay
         public final List<String> getValue() {

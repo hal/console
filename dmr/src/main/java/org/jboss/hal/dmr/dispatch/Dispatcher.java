@@ -57,7 +57,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Single;
@@ -84,7 +83,7 @@ public class Dispatcher implements RecordingHandler {
 
     private static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
     private static boolean pendingLifecycleAction = false;
 
@@ -185,9 +184,9 @@ public class Dispatcher implements RecordingHandler {
     }
 
     /**
-     * Executes the operation and upon successful result calls the success function with the response results,
-     * but doesn't retrieve the "result" payload as the other execute methods does. You should use this execute
-     * method if the response node you want is not in the "result" attribute.
+     * Executes the operation and upon successful result calls the success function with the response results, but
+     * doesn't retrieve the "result" payload as the other execute methods does. You should use this execute method if
+     * the response node you want is not in the "result" attribute.
      */
     @JsIgnore
     public void executeDMR(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {

@@ -21,14 +21,13 @@ import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
 import org.jboss.hal.flow.FlowContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 public class ReadExtensions implements BootstrapTask {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadExtensions.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadExtensions.class);
 
     private final ExtensionRegistry extensionRegistry;
     private final ExtensionStorage extensionStorage;

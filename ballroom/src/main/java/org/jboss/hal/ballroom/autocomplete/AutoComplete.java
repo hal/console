@@ -26,7 +26,6 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.AbstractFormItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ import static org.jboss.hal.resources.UIConstants.HASH;
  */
 public class AutoComplete implements SuggestHandler, Attachable {
 
-    @NonNls static final Logger logger = LoggerFactory.getLogger(AutoComplete.class);
+    static final Logger logger = LoggerFactory.getLogger(AutoComplete.class);
 
     private FormItem formItem;
     private Api api;

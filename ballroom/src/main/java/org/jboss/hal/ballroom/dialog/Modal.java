@@ -19,7 +19,6 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
@@ -28,13 +27,13 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 public abstract class Modal {
 
     @JsMethod(namespace = GLOBAL)
-    public static native Modal $(@NonNls String selector);
+    public static native Modal $(String selector);
 
     public native void modal(ModalOptions modalOptions);
 
-    public native void modal(@NonNls String action);
+    public native void modal(String action);
 
-    public native void on(@NonNls String event, JsCallback callback);
+    public native void on(String event, JsCallback callback);
 
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

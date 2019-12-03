@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public class FinderSegment<T> {
 
     /** Separator used in URL tokens. Must be securely encodable in URLs. */
     static final String SEPARATOR = "~";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
+    private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
     private final String columnId;
     private final String itemId;
@@ -119,10 +118,10 @@ public class FinderSegment<T> {
     }
 
     /**
-     * @return {@code true} if this segment was initialized with a column which has an {@linkplain
-     * BreadcrumbItemHandler breadcrumb item handler} and either {@linkplain FinderColumn#getInitialItems() initial
-     * items}, an {@linkplain FinderColumn#getItemsProvider() items provider} or a {@linkplain
-     * FinderColumn#getBreadcrumbItemsProvider() breadcrumb items provider}.
+     * @return {@code true} if this segment was initialized with a column which has an {@linkplain BreadcrumbItemHandler
+     * breadcrumb item handler} and either {@linkplain FinderColumn#getInitialItems() initial items}, an {@linkplain
+     * FinderColumn#getItemsProvider() items provider} or a {@linkplain FinderColumn#getBreadcrumbItemsProvider()
+     * breadcrumb items provider}.
      */
     public boolean supportsDropdown() {
         //noinspection SimplifiableIfStatement

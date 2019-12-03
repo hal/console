@@ -47,7 +47,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ import static org.jboss.hal.resources.UIConstants.data;
 
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
     private final Metadata metadata;
     private final Options<T> options;
@@ -166,14 +165,14 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         private final ColumnFactory columnFactory;
 
         @JsIgnore
-        public Builder(@NonNls String id, Metadata metadata) {
+        public Builder(String id, Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
             this.columnFactory = new ColumnFactory();
         }
 
         @JsIgnore
-        public Builder<T> columns(@NonNls String first, @NonNls String... rest) {
+        public Builder<T> columns(String first, String... rest) {
             List<String> columns = Lists.asList(first, rest);
             for (String column : columns) {
                 column(column);
@@ -191,7 +190,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
         /** Adds a column which maps to the specified attribute. */
         @EsReturn("TableBuilder")
-        public Builder<T> column(@NonNls String attribute) {
+        public Builder<T> column(String attribute) {
             Property attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute);
             if (attributeDescription != null) {
                 Column<T> column = columnFactory.createColumn(attributeDescription);
@@ -223,8 +222,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
          *
          * @param type       The human readable resource type used in the dialog header and success message.
          * @param template   The address template for the add operation. Must end in <code>&lt;resource
-         *                   type&gt;=&lt;resource
-         *                   name&gt;</code>.
+         *                   type&gt;=&lt;resource name&gt;</code>.
          * @param attributes attributes which should be part of the add resource dialog
          * @param callback   the callback executed after the resource has been added
          */

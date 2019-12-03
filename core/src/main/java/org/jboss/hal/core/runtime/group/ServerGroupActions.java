@@ -61,7 +61,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.CompletableSubscriber;
@@ -83,7 +82,7 @@ import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatCompositeUntil;
 /** TODO Fire events for the servers of a server group as well. */
 public class ServerGroupActions {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerGroupActions.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerGroupActions.class);
 
     private static AddressTemplate serverGroupTemplate(ServerGroup serverGroup) {
         return AddressTemplate.of("/server-group=" + serverGroup.getName());

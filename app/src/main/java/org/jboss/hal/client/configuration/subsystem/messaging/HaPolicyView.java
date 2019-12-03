@@ -34,7 +34,6 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ import static org.jboss.hal.resources.CSS.pullRight;
 
 public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyView {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(HaPolicyView.class);
+    private static final Logger logger = LoggerFactory.getLogger(HaPolicyView.class);
 
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;

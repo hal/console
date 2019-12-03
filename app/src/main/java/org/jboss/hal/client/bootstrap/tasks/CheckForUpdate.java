@@ -22,7 +22,6 @@ import elemental2.dom.XMLHttpRequest;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Version;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 public class CheckForUpdate implements InitializedTask {
 
     private static final String METADATA_URL = "https://raw.githubusercontent.com/hal/console/master/version.txt";
-    @NonNls private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
+    private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
     private final Environment environment;
     private final EventBus eventBus;

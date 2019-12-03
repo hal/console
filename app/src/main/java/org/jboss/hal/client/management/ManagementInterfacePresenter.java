@@ -36,7 +36,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +45,7 @@ public class ManagementInterfacePresenter
 
     private static final String HTTP_INTERFACE_ADDRESS = "{domain.controller}/core-service=management/management-interface=http-interface";
     static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
-    @NonNls private static Logger logger = LoggerFactory.getLogger(ManagementInterfacePresenter.class);
+    private static Logger logger = LoggerFactory.getLogger(ManagementInterfacePresenter.class);
 
     private final CrudOperations crud;
     private final StatementContext statementContext;

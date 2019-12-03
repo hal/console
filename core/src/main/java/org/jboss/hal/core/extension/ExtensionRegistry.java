@@ -42,7 +42,6 @@ import org.jboss.hal.js.Json;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.EsParam;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ import static org.jboss.hal.resources.CSS.hidden;
 @JsType(namespace = "hal.core")
 public class ExtensionRegistry implements ApplicationReadyHandler {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
     private final Queue<Extension> queue;
     private final Set<String> extensions;

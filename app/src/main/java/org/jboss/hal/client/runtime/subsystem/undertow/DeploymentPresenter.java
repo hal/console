@@ -56,7 +56,6 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.jetbrains.annotations.NotNull;
 import rx.Completable;
 
 import static java.util.stream.Collectors.toList;
@@ -240,7 +239,6 @@ public class DeploymentPresenter
         dispatcher.execute(operation, result -> getView().updateSessionAttributes(result.asPropertyList()));
     }
 
-    @NotNull
     private ResourceAddress deploymentAddress() {
         ResourceAddress address;
         if (subdeploymentName == null) {

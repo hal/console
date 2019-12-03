@@ -25,13 +25,12 @@ import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.js.JsonObject;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class ReadChildrenProcessor extends AbstractResultProcessor<ReadChildrenResult> implements ResultProcessor {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadChildrenProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadChildrenProcessor.class);
 
     protected List<ReadChildrenResult> results(List<ResourceAddress> addresses) {
         List<ReadChildrenResult> results = new ArrayList<>();

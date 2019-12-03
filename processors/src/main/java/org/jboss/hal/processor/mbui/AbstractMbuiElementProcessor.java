@@ -27,14 +27,13 @@ import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    @NonNls final MbuiViewProcessor processor;
+    final MbuiViewProcessor processor;
     private final Elements elementUtils;
     final XPathFactory xPathFactory;
 

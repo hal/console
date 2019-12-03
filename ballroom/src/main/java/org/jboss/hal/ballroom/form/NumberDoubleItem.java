@@ -23,7 +23,6 @@ import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
      */
     private static final long MAX_SAFE_LONG = 9007199254740991L;
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(NumberDoubleItem.class);
+    private static final Logger logger = LoggerFactory.getLogger(NumberDoubleItem.class);
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
 

@@ -16,7 +16,6 @@
 package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.Operation;
-import org.jetbrains.annotations.NonNls;
 
 /** Exception caused by a communication error or another exception not directly related to the DMR operation. */
 public class DispatchError extends RuntimeException {
@@ -30,7 +29,7 @@ public class DispatchError extends RuntimeException {
         this.operation = operation;
     }
 
-    public DispatchError(int statusCode, @NonNls String message, Operation operation) {
+    public DispatchError(int statusCode, String message, Operation operation) {
         super(message);
         this.statusCode = statusCode;
         this.operation = operation;

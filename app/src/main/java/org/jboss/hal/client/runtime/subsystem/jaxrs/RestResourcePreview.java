@@ -50,7 +50,6 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 
 import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
 import static elemental2.dom.DomGlobal.document;
@@ -175,7 +174,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void appendMediaTypes(HTMLElement body, ModelNode resource, String type, @NonNls String arrow) {
+    private void appendMediaTypes(HTMLElement body, ModelNode resource, String type, String arrow) {
         String consumes = failSafeList(resource, type).stream()
                 .map(ModelNode::asString)
                 .collect(joining(", "));

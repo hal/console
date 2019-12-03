@@ -28,7 +28,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ import static org.jboss.hal.dmr.ModelType.INT;
 public final class Json {
 
     private static final String EMPTY_JSON = "Empty JSON '{}'";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Json.class);
+    private static final Logger logger = LoggerFactory.getLogger(Json.class);
 
     @SuppressWarnings("unchecked")
     public static List<ModelNode> parseArray(String json, Metadata metadata, Map<String, String> mappping) {

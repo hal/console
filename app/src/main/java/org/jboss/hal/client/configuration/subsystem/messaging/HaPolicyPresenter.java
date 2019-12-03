@@ -48,7 +48,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +60,7 @@ public class HaPolicyPresenter
         extends ApplicationFinderPresenter<HaPolicyPresenter.MyView, HaPolicyPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(HaPolicyPresenter.class);
+    private static final Logger logger = LoggerFactory.getLogger(HaPolicyPresenter.class);
 
     private final Dispatcher dispatcher;
     private final CrudOperations crud;

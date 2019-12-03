@@ -21,8 +21,6 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -39,7 +37,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
 public class TimeoutHandler {
 
     private static int INTERVAL = 500;
-    @NonNls private static Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
 
     /** Executes the operation until it successfully returns. */
     public static Completable repeatUntilTimeout(Dispatcher dispatcher, int timeout, Operation operation) {
@@ -54,7 +52,7 @@ public class TimeoutHandler {
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public static Completable repeatOperationUntil(Dispatcher dispatcher, int timeout, Operation operation,
-            @Nullable Predicate<ModelNode> until) {
+            Predicate<ModelNode> until) {
         logger.debug("Repeat {} using {} seconds timeout", operation.asCli(), timeout);
 
         Single<ModelNode> execution = Single.fromEmitter(em -> dispatcher.execute(operation, em::onSuccess,
@@ -73,12 +71,12 @@ public class TimeoutHandler {
     }
 
     /**
-     * Executes the composite operation until the operation successfully returns and the precondition is met.
-     * The precondition receives the composite result of the operation.
+     * Executes the composite operation until the operation successfully returns and the precondition is met. The
+     * precondition receives the composite result of the operation.
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public static Completable repeatCompositeUntil(Dispatcher dispatcher, int timeout, Composite composite,
-            @Nullable Predicate<CompositeResult> until) {
+            Predicate<CompositeResult> until) {
         logger.debug("Repeat {} using {} seconds as timeout", composite, timeout);
 
         Single<CompositeResult> execution = Single.fromEmitter(em -> dispatcher.execute(composite, em::onSuccess,

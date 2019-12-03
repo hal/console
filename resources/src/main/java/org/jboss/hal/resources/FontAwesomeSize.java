@@ -15,15 +15,13 @@
  */
 package org.jboss.hal.resources;
 
-import org.jetbrains.annotations.NonNls;
-
 public enum FontAwesomeSize {
 
     large("lg"), x2("2x"), x3("3x"), x4("4x"), x5("5x");
 
     private final String size;
 
-    FontAwesomeSize(@NonNls String size) {
+    FontAwesomeSize(String size) {
         this.size = size;
     }
 

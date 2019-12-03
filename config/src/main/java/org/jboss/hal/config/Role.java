@@ -25,7 +25,6 @@ import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.EsReturn;
 import org.jboss.hal.spi.NamedObject;
-import org.jetbrains.annotations.NonNls;
 
 /** A standard or scoped role used when RBAC is turned on. */
 @JsType
@@ -73,12 +72,12 @@ public class Role implements NamedObject {
     private boolean includeAll;
 
     @JsIgnore
-    public Role(@NonNls String name) {
+    public Role(String name) {
         this(name, null, Type.STANDARD, Collections.emptySet());
     }
 
     @JsIgnore
-    public Role(@NonNls String name, Role baseRole, Type type,
+    public Role(String name, Role baseRole, Type type,
             Iterable<String> scope) {
         this.name = name;
         this.baseRole = baseRole;

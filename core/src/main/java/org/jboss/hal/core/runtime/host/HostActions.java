@@ -50,7 +50,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.CompletableSubscriber;
@@ -66,7 +65,7 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class HostActions implements Timeouts {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
 
     private static AddressTemplate hostTemplate(Host host) {
         return AddressTemplate.of("/host=" + host.getAddressName());

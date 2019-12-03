@@ -33,7 +33,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -97,7 +96,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .get();
     }
 
-    private String id(@NonNls String... ids) {
+    private String id(String... ids) {
         return Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, ids);
     }
 

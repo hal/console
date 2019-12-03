@@ -23,14 +23,13 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
 
 class UpdateRegistryTask implements Task<LookupContext> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(UpdateRegistryTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(UpdateRegistryTask.class);
 
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final SecurityContextRegistry securityContextRegistry;

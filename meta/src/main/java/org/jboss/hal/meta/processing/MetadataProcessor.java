@@ -44,7 +44,6 @@ import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.EsParam;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +65,7 @@ public class MetadataProcessor {
     /** Number of r-r-d operations part of one composite operation. */
     private static final int BATCH_SIZE = 3;
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
 
     private final Environment environment;
     private final Dispatcher dispatcher;

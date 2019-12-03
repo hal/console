@@ -28,7 +28,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +66,7 @@ public class HelpTextBuilder {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(HelpTextBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(HelpTextBuilder.class);
 
     public SafeHtml helpText(Property property) {
         SafeHtmlBuilder help = new SafeHtmlBuilder();

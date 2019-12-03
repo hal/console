@@ -35,7 +35,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -362,7 +361,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     }
 
     private void addResourceElement(ElytronResource resource, ResourceElement element,
-            String primaryId, String secondaryId, @NonNls String text) {
+            String primaryId, String secondaryId, String text) {
         elements.put(resource.resource, element);
         registerAttachable(element);
         navigation.addSecondary(primaryId, secondaryId, text, element.element());

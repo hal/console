@@ -119,10 +119,6 @@
             <artifactId>rxgwt</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
-        <dependency>
             <groupId>ru.finam</groupId>
             <artifactId>slf4j-gwt</artifactId>
         </dependency>

@@ -23,7 +23,6 @@ import elemental2.dom.HTMLLabelElement;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.resources.CSS.deprecated;
 
@@ -85,7 +84,6 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
      */
     abstract void safeUnapply(Decoration decoration);
 
-    @NonNls
     protected abstract String name();
 
 

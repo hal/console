@@ -23,7 +23,6 @@ import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -360,7 +359,7 @@ public interface Previews extends ClientBundleWithLookup {
 
     // ------------------------------------------------------ helper methods
 
-    @NonNls Logger logger = LoggerFactory.getLogger(Previews.class);
+    Logger logger = LoggerFactory.getLogger(Previews.class);
 
     /** Sets the inner HTML of the specified element to the HTML from the specified resource. */
     @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})

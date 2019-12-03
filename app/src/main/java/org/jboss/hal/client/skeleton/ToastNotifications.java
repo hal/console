@@ -26,7 +26,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,15 +40,15 @@ import static org.jboss.hal.resources.CSS.toastNotificationsListPf;
 import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
 
 /**
- * A container around the messages / toast notifications which are shown to the user in the upper right corner.
- * Prevents overlapping of simultaneous messages and handles the mouse over / out events in order to pause the
- * automatic fade out time.
+ * A container around the messages / toast notifications which are shown to the user in the upper right corner. Prevents
+ * overlapping of simultaneous messages and handles the mouse over / out events in order to pause the automatic fade out
+ * time.
  *
  * @see <a href="https://www.patternfly.org/pattern-library/communication/toast-notifications/">https://www.patternfly.org/pattern-library/communication/toast-notifications/</a>
  */
 class ToastNotifications implements IsElement {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
     private final Resources resources;
     private final Map<String, Double> messageIds;

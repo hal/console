@@ -43,7 +43,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 class DefaultFormItemProvider implements FormItemProvider {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(DefaultFormItemProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultFormItemProvider.class);
 
     private final Metadata metadata;
     private final LabelBuilder labelBuilder;

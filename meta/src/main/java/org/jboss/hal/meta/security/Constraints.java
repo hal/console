@@ -20,7 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.base.Splitter;
-import org.jetbrains.annotations.NotNull;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Arrays.asList;
@@ -154,7 +153,6 @@ public class Constraints implements Iterable<Constraint> {
         return toString();
     }
 
-    @NotNull
     @Override
     public Iterator<Constraint> iterator() {
         return constraints.iterator();

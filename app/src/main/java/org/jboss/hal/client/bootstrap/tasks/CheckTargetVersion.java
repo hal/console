@@ -24,7 +24,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,7 @@ import static elemental2.dom.DomGlobal.setTimeout;
 
 public class CheckTargetVersion implements InitializedTask {
 
-    @NonNls private static Logger logger = LoggerFactory.getLogger(CheckTargetVersion.class);
+    private static Logger logger = LoggerFactory.getLogger(CheckTargetVersion.class);
 
     private final Environment environment;
     private final EventBus eventBus;

@@ -28,7 +28,6 @@ import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ import static org.jboss.hal.dmr.ModelType.INT;
 
 class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
     private final List<Property> attributeDescriptions;
 
     ModelNodeMapping(List<Property> attributeDescriptions) {

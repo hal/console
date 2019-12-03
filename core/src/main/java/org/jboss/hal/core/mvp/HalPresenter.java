@@ -25,14 +25,13 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.header.HeaderModeEvent;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The base presenter for HAL. Each presenter must extend from this presenter or one of its subclasses. Fires a {@link
  * HeaderModeEvent} as part of the {@link #onReveal()} method, if {@link #headerMode()} returns a non-null event.
  * <p>
- * The presenter calls {@link HalView#attach()} when it's {@linkplain #onReveal() revealed} and {@link
- * HalView#detach()} when it's {@linkplain #onHide() hidden}.
+ * The presenter calls {@link HalView#attach()} when it's {@linkplain #onReveal() revealed} and {@link HalView#detach()}
+ * when it's {@linkplain #onHide() hidden}.
  */
 public abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         extends Presenter<V, Proxy_>
@@ -65,7 +64,6 @@ public abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         return getView().element();
     }
 
-    @NotNull
     @Override
     public Iterator<HTMLElement> iterator() {
         return getView().iterator();

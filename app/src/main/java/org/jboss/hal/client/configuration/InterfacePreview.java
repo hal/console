@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.span;
@@ -73,7 +72,7 @@ class InterfacePreview extends PreviewContent<NamedNode> {
                     .sorted()
                     .collect(toList());
             if (!socketBindingGroups.isEmpty()) {
-                @NonNls SafeHtmlBuilder html = new SafeHtmlBuilder();
+                SafeHtmlBuilder html = new SafeHtmlBuilder();
                 for (Iterator<String> iterator = socketBindingGroups.iterator(); iterator.hasNext(); ) {
                     String sbg = iterator.next();
                     PlaceRequest sbgPlaceRequest = places.finderPlace(NameTokens.CONFIGURATION,

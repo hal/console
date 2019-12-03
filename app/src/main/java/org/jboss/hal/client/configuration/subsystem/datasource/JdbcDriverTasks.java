@@ -42,7 +42,6 @@ import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -56,7 +55,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 /** Set of tasks to read the installed JDBC drivers. */
 public class JdbcDriverTasks {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(JdbcDriverTasks.class);
+    private static final Logger logger = LoggerFactory.getLogger(JdbcDriverTasks.class);
 
     private static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";
     private static final String RUNTIME_DRIVERS = "jdbcDriverFunctions.runtimeDrivers";
@@ -123,8 +122,8 @@ public class JdbcDriverTasks {
 
 
     /**
-     * Reads the JDBC drivers from {@code /{selected.profile}/subsystem=datasource/jdbc-driver=*} and puts the result
-     * as {@code List<JdbcDriver>} under the key {@link JdbcDriverTasks#CONFIGURATION_DRIVERS} into the context.
+     * Reads the JDBC drivers from {@code /{selected.profile}/subsystem=datasource/jdbc-driver=*} and puts the result as
+     * {@code List<JdbcDriver>} under the key {@link JdbcDriverTasks#CONFIGURATION_DRIVERS} into the context.
      */
     static class ReadConfiguration implements Task<FlowContext> {
 
@@ -147,10 +146,10 @@ public class JdbcDriverTasks {
 
 
     /**
-     * Reads the JDBC drivers from a list of running servers which are expected in the context under the key
-     * {@link org.jboss.hal.core.runtime.TopologyTasks#SERVERS}. The drivers are read using the {@code
-     * :installed-drivers-list} operation. Stores the result as {@code List<JdbcDriver>} under the key {@link
-     * JdbcDriverTasks#RUNTIME_DRIVERS} into the context.
+     * Reads the JDBC drivers from a list of running servers which are expected in the context under the key {@link
+     * org.jboss.hal.core.runtime.TopologyTasks#SERVERS}. The drivers are read using the {@code :installed-drivers-list}
+     * operation. Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverTasks#RUNTIME_DRIVERS}
+     * into the context.
      */
     static class ReadRuntime implements Task<FlowContext> {
 

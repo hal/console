@@ -60,7 +60,6 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -78,7 +77,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     private static final long MESSAGES_THRESHOLD = 500L;
     private static final String MESSAGES_COUNT = "messagesCount";
     private static final String MESSAGES = "messages";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(JmsQueuePresenter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JmsQueuePresenter.class);
 
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;

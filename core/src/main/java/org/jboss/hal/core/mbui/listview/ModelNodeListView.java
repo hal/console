@@ -45,7 +45,6 @@ import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -163,8 +162,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
     }
 
     /**
-     * Use this method if you embed the list view into an application view and if you have additional elements
-     * before or after the list view. This method should be called before the list view is attached.
+     * Use this method if you embed the list view into an application view and if you have additional elements before or
+     * after the list view. This method should be called before the list view is attached.
      *
      * @param surroundingHeight the sum of the height of all surrounding elements
      */
@@ -226,7 +225,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
         private boolean multiSelect;
         private boolean stacked;
 
-        public Builder(@NonNls String id, Metadata metadata, DataProvider<T> dataProvider,
+        public Builder(String id, Metadata metadata, DataProvider<T> dataProvider,
                 ItemRenderer<T> itemRenderer) {
             this.id = id;
             this.metadata = metadata;

@@ -19,7 +19,6 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.spi.EsParam;
-import org.jetbrains.annotations.NonNls;
 
 /** Represents an extension written in JavaScript. */
 @JsType(namespace = "hal.core")
@@ -30,7 +29,7 @@ public class Extension {
 
         private final String title;
 
-        Point(@NonNls String title) {
+        Point(String title) {
             this.title = title;
         }
 
@@ -45,7 +44,6 @@ public class Extension {
      * @param name       A unique name of the extension.
      * @param title      The title of the menu item in the header.
      * @param entryPoint The entrypoint of the header extension.
-     *
      * @return the extension which can be registered using the {@link ExtensionRegistry}.
      */
     @JsMethod
@@ -59,7 +57,6 @@ public class Extension {
      * @param name       A unique name of the extension.
      * @param title      The title of the menu item in the footer.
      * @param entryPoint The entrypoint of the footer extension.
-     *
      * @return the extension which can be registered using the {@link ExtensionRegistry}.
      */
     @JsMethod

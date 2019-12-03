@@ -60,10 +60,6 @@
             <groupId>org.jboss.auto</groupId>
             <artifactId>apt-tools</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

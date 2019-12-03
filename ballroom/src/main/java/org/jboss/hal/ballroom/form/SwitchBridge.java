@@ -21,7 +21,6 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
@@ -51,7 +50,7 @@ public class SwitchBridge {
 
         public native void bootstrapSwitch(String method, boolean param);
 
-        public native void on(@NonNls String event, ChangeListener listener);
+        public native void on(String event, ChangeListener listener);
 
         @JsOverlay
         public final void destroy() {

@@ -19,7 +19,6 @@ import org.jboss.hal.core.deployment.DeploymentResource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DELIVERY_ACTIVE;
 
@@ -47,7 +46,7 @@ class EjbNode extends DeploymentResource {
         final String resource;
         final String type;
 
-        Type(@NonNls String resource, String type) {
+        Type(String resource, String type) {
             this.resource = resource;
             this.type = type;
         }

@@ -26,7 +26,6 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import org.jboss.hal.ballroom.JQuery;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -47,7 +46,7 @@ class Api<T> {
     // ------------------------------------------------------ initialization
 
     @JsMethod(namespace = GLOBAL, name = "$")
-    static native <T> Api<T> select(@NonNls String selector);
+    static native <T> Api<T> select(String selector);
 
     @JsMethod(name = "DataTable")
     native Api<T> dataTable(Options options);
@@ -183,7 +182,6 @@ class Api<T> {
      * Buttons options.
      *
      * @param <T> the row type
-     *
      * @author Harald Pehl
      * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
      */
@@ -218,7 +216,6 @@ class Api<T> {
      * Represents the {@code row} property in a data table.
      *
      * @param <T> the row type
-     *
      * @author Harald Pehl
      */
     @JsType(isNative = true)
@@ -276,7 +273,6 @@ class Api<T> {
      * Callback used for all kind of "select" and "deselect" events.
      *
      * @param <T> the row type
-     *
      * @see <a href="https://datatables.net/reference/event/select">https://datatables.net/reference/event/select</a>
      * @see <a href="https://datatables.net/reference/event/deselect">https://datatables.net/reference/event/deselect</a>
      */

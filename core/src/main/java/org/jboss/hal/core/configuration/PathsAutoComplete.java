@@ -34,7 +34,6 @@ import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.StatementContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ import static org.jboss.hal.flow.Flow.series;
  */
 public class PathsAutoComplete extends AutoComplete {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(PathsAutoComplete.class);
+    private static final Logger logger = LoggerFactory.getLogger(PathsAutoComplete.class);
     private static Operation operation = defaultOperation();
 
     /** Updates the static operation which is used by this typeahead. */

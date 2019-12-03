@@ -43,7 +43,6 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -69,7 +68,7 @@ public final class TopologyTasks {
 
     private static final String HOST_NAMES = "topologyFunctions.hostNames";           // List<String>
     private static final String WILDCARD = "*";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
+    private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
 
 
     // ------------------------------------------------------ topology
@@ -210,9 +209,8 @@ public final class TopologyTasks {
 
     /**
      * Function, which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks,
-     * which read the hosts. The erroneous host is added to the list of hosts as {@link Host#booting(String)}
-     * if the error contains {@link ModelDescriptionConstants#ERROR_WFY_CTL_0379} or as {@link Host#failed(String)}
-     * otherwise.
+     * which read the hosts. The erroneous host is added to the list of hosts as {@link Host#booting(String)} if the
+     * error contains {@link ModelDescriptionConstants#ERROR_WFY_CTL_0379} or as {@link Host#failed(String)} otherwise.
      */
     public static class HostError<T> implements Func1<Throwable, Single<T>> {
 

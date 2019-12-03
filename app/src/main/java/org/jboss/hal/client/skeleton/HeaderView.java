@@ -59,7 +59,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +95,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     // @formatter:on
 
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
+    private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
     private static final PlaceRequest HOMEPAGE = new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
 
     private PlaceRequest backPlaceRequest;

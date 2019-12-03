@@ -19,7 +19,6 @@ import elemental2.core.JsArray;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
@@ -59,7 +58,7 @@ class Options {
         JsArray<JsArray<Any>> columns;
         JsArray<JsArray<String>> groups;
         JsPropertyMap<Object> names;
-        @NonNls public String type;
+        public String type;
     }
 
 
@@ -81,7 +80,7 @@ class Options {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Legend {
 
-        @NonNls public String position;
+        public String position;
         public boolean show;
     }
 

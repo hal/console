@@ -36,7 +36,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.ManagementModel;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -50,7 +49,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 public class ReadEnvironment implements BootstrapTask {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
 
     private final Dispatcher dispatcher;
     private final Environment environment;

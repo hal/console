@@ -38,7 +38,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 public class OperationFactory {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
 
     private final Function<String, String> nameFn;
 
@@ -63,8 +62,7 @@ public class OperationFactory {
      * Creates a new instance with the specified name function. Use this constructor if you want to create change sets
      * for complex attributes and need to adopt the {@code NAME} parameters of the DMR operations.
      *
-     * @param nameFn function which is applied to the {@code NAME} parameter of the operations created by this
-     *               class.
+     * @param nameFn function which is applied to the {@code NAME} parameter of the operations created by this class.
      */
     public OperationFactory(Function<String, String> nameFn) {
         this.nameFn = nameFn;
@@ -72,13 +70,11 @@ public class OperationFactory {
 
     /**
      * Turns a change-set into a composite operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION
-     * write-attribute}
-     * and {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute}
-     * operations.
+     * write-attribute} and {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION
+     * undefine-attribute} operations.
      * <p>
      * The composite operation will contain {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION
-     * undefine-attribute}
-     * operations which reflect the alternative attributes as defined in the specified metadata.
+     * undefine-attribute} operations which reflect the alternative attributes as defined in the specified metadata.
      *
      * @param address   the fq address used for the operations
      * @param changeSet the changed values
@@ -111,7 +107,8 @@ public class OperationFactory {
                 alternatives.forEach(alternative -> {
                     boolean alternativeDoesntExist = resourceDescription.findAttribute(ATTRIBUTES, alternative) == null;
                     if (resourceDescription.isDeprecated(ATTRIBUTES, alternative) || alternativeDoesntExist) {
-                        logger.debug("Skip undefine operations for deprecated or non-existent alternative {}", alternative);
+                        logger.debug("Skip undefine operations for deprecated or non-existent alternative {}",
+                                alternative);
                     } else {
                         logger.debug("Add undefine operations for alternative {}", alternative);
                         operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
@@ -195,7 +192,6 @@ public class OperationFactory {
      * @param address    the fq address used for the operations
      * @param attributes the attributes to reset
      * @param metadata   the metadata which should contain the attribute definitions of the change-set
-     *
      * @return a composite to reset the attributes or an empty composite if no attributes could be reset.
      */
     Composite resetResource(ResourceAddress address, Set<String> attributes,
@@ -378,7 +374,8 @@ public class OperationFactory {
                                     }
                                 } else {
                                     valueNode = (ModelNode) value;
-                                    logger.warn("Unsupported value type {} for attribute {} of type {}. Will try to save anyway.",
+                                    logger.warn(
+                                            "Unsupported value type {} for attribute {} of type {}. Will try to save anyway.",
                                             valueType, name, type);
                                 }
                             } else if (typeOfValueType == ModelType.OBJECT) {

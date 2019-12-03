@@ -28,7 +28,6 @@ import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -57,7 +56,7 @@ class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
         Date timestamp = message.getTimestamp();
         Date expiration = message.getExpiration();
         if (timestamp != null || expiration != null) {
-            @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
             builder.appendHtmlConstant("<p>");
             if (timestamp != null) {
                 builder.appendEscaped(JMS_TIMESTAMP + COLON).appendEscaped(Format.mediumDateTime(timestamp))
@@ -74,7 +73,7 @@ class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
 
     @Override
     public SafeHtml getAdditionalInfoHtml() {
-        @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<p>")
                 .appendEscaped(JMS_PRIORITY + COLON + message.get(JMS_PRIORITY).asInt())
                 .appendHtmlConstant("</br/>")

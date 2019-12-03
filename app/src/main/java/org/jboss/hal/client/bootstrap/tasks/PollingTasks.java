@@ -28,7 +28,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Footer;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -42,7 +41,7 @@ import static org.jboss.hal.config.Settings.Key.POLL_TIME;
 
 public class PollingTasks implements InitializedTask {
 
-    @NonNls private static Logger logger = LoggerFactory.getLogger(PollingTasks.class);
+    private static Logger logger = LoggerFactory.getLogger(PollingTasks.class);
     private EventBus eventBus;
     private Dispatcher dispatcher;
     private StatementContext statementContext;

@@ -25,7 +25,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -35,7 +34,7 @@ import static elemental2.dom.DomGlobal.document;
 
 public class SetTitle implements BootstrapTask {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(SetTitle.class);
+    private static final Logger logger = LoggerFactory.getLogger(SetTitle.class);
     private static final String NAME_PLACEHOLDER = "%n";
     private static final String ORGANIZATION_PLACEHOLDER = "%o";
 

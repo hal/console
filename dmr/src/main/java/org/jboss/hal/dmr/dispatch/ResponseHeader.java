@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import org.jetbrains.annotations.NonNls;
-
 public enum ResponseHeader {
 
     // response header (https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields)
@@ -75,7 +73,7 @@ public enum ResponseHeader {
 
     private final String header;
 
-    ResponseHeader(@NonNls String header) {
+    ResponseHeader(String header) {
         this.header = header;
     }
 
