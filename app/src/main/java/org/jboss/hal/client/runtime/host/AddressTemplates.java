@@ -17,22 +17,24 @@ package org.jboss.hal.client.runtime.host;
 
 import org.jboss.hal.meta.AddressTemplate;
 
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
+
 interface AddressTemplates {
 
     String DOMAIN_CONTROLLER = "{domain.controller}";
-    String SELECTED_HOST = "{selected.host}";
+    String ANY_HOST = "host=*";
 
     String ELYTRON_ADDRESS = DOMAIN_CONTROLLER + "/subsystem=elytron";
-    String HTTP_INTERFACE_ADDRESS = SELECTED_HOST + "/core-service=management/management-interface=http-interface";
+    String HTTP_INTERFACE_ADDRESS = ANY_HOST + "/core-service=management/management-interface=http-interface";
     String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
-    String HOST_CONFIGURATION_CHANGES_ADDRESS = DOMAIN_CONTROLLER + "/subsystem=core-management/service=configuration-changes";
-    String HOST_MANAGEMENT_OPERATIONS_ADDRESS = DOMAIN_CONTROLLER + "/core-service=management/service=management-operations";
-    String INTERFACE_ADDRESS = SELECTED_HOST + "/interface=*";
-    String JVM_ADDRESS = SELECTED_HOST + "/jvm=*";
-    String NATIVE_INTERFACE_ADDRESS = SELECTED_HOST + "/core-service=management/management-interface=native-interface";
-    String PATH_ADDRESS = SELECTED_HOST + "/path=*";
-    String SOCKET_BINDING_GROUP_ADDRESS = SELECTED_HOST + "/socket-binding-group=*";
-    String SYSTEM_PROPERTY_ADDRESS = SELECTED_HOST + "/system-property=*";
+    String HOST_CONFIGURATION_CHANGES_ADDRESS = ANY_HOST + CONFIGURATION_CHANGES_ADDRESS;
+    String HOST_MANAGEMENT_OPERATIONS_ADDRESS = ANY_HOST + "/core-service=management/service=management-operations";
+    String INTERFACE_ADDRESS = ANY_HOST + "/interface=*";
+    String JVM_ADDRESS = ANY_HOST + "/jvm=*";
+    String NATIVE_INTERFACE_ADDRESS = ANY_HOST + "/core-service=management/management-interface=native-interface";
+    String PATH_ADDRESS = ANY_HOST + "/path=*";
+    String SOCKET_BINDING_GROUP_ADDRESS = ANY_HOST + "/socket-binding-group=*";
+    String SYSTEM_PROPERTY_ADDRESS = ANY_HOST + "/system-property=*";
 
     AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
     AddressTemplate NATIVE_INTERFACE_TEMPLATE = AddressTemplate.of(NATIVE_INTERFACE_ADDRESS);
