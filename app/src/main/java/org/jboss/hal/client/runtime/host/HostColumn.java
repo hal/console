@@ -67,7 +67,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_TEMPLATE;
@@ -196,7 +196,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                     .with(HOST, item.getAddressName())
                                     .build();
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                    ccPlaceRequest, Constraint.executable(HOST_CONFIGURATION_CHANGES_TEMPLATE, ADD)));
+                                    ccPlaceRequest, Constraint.executable(hostTemplate(item).append(CONFIGURATION_CHANGES_ADDRESS), ADD)));
                         }
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                         actions.add(ItemAction.separator());
