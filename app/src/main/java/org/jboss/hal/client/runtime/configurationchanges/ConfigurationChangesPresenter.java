@@ -63,6 +63,7 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.LARGE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.meta.token.NameTokens.CONFIGURATION_CHANGES;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.px;
@@ -281,7 +282,7 @@ public class ConfigurationChangesPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(CONFIGURATION_CHANGES)
-    @Requires({HOST_CONFIGURATION_CHANGES_ADDRESS, SERVER_CONFIGURATION_CHANGES_ADDRESS})
+    @Requires({HOST_CONFIGURATION_CHANGES_ADDRESS, OPTIONAL + SERVER_CONFIGURATION_CHANGES_ADDRESS})
     public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {
 
     }
