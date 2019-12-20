@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
@@ -56,7 +57,7 @@ public class ElytronColumn
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter());
 
-        List<StaticItem> items = asList(
+        Supplier<List<StaticItem>> itemsSupplier = () -> asList(
                 new StaticItem.Builder(resources.constants().globalSettings())
                         .id(Ids.ELYTRON)
                         .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON,
@@ -98,12 +99,11 @@ public class ElytronColumn
                                 resources.previews().configurationElytronSecurityRealms()))
                         .keywords("realm")
                         .build()
-
-
         );
-        setItemsProvider((context, callback) -> callback.onSuccess(items));
+
+        setItemsProvider((context, callback) -> callback.onSuccess(itemsSupplier.get()));
         setBreadcrumbItemsProvider(
                 (context, callback) -> callback.onSuccess(
-                        items.stream().filter(item -> item.getNextColumn() == null).collect(toList())));
+                        itemsSupplier.get().stream().filter(item -> item.getNextColumn() == null).collect(toList())));
     }
 }
