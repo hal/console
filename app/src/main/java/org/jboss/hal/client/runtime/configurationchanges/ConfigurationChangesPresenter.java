@@ -73,10 +73,11 @@ import static org.jboss.hal.resources.Ids.ADD;
 public class ConfigurationChangesPresenter extends
         ApplicationFinderPresenter<ConfigurationChangesPresenter.MyView, ConfigurationChangesPresenter.MyProxy> {
 
-    public static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
+    public static final String CONFIGURATION_CHANGES_ADDRESS = "/subsystem=core-management/service=configuration-changes";
+    public static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "{selected.host}" + CONFIGURATION_CHANGES_ADDRESS;
     public static final AddressTemplate HOST_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             HOST_CONFIGURATION_CHANGES_ADDRESS);
-    private static final String SERVER_CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/{selected.server}/subsystem=core-management/service=configuration-changes";
+    private static final String SERVER_CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/{selected.server}" + CONFIGURATION_CHANGES_ADDRESS;
     public static final AddressTemplate SERVER_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             SERVER_CONFIGURATION_CHANGES_ADDRESS);
     private static final String PROFILE_CONFIGURATION_CHANGES_ADDRESS = "/profile=*/subsystem=core-management/service=configuration-changes";
