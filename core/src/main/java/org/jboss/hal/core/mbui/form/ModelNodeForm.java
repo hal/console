@@ -275,7 +275,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                         } else {
                             flip(READONLY);
                         }
-                    }, (op, failure) -> flip(EMPTY));
+                    }, (op, failure) -> flip(READONLY));
         }
     }
 

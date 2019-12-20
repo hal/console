@@ -63,6 +63,7 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.LARGE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.meta.token.NameTokens.CONFIGURATION_CHANGES;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.px;
@@ -72,10 +73,11 @@ import static org.jboss.hal.resources.Ids.ADD;
 public class ConfigurationChangesPresenter extends
         ApplicationFinderPresenter<ConfigurationChangesPresenter.MyView, ConfigurationChangesPresenter.MyProxy> {
 
-    public static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "{selected.host}/subsystem=core-management/service=configuration-changes";
+    public static final String CONFIGURATION_CHANGES_ADDRESS = "/subsystem=core-management/service=configuration-changes";
+    public static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "{selected.host}" + CONFIGURATION_CHANGES_ADDRESS;
     public static final AddressTemplate HOST_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             HOST_CONFIGURATION_CHANGES_ADDRESS);
-    private static final String SERVER_CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/{selected.server}/subsystem=core-management/service=configuration-changes";
+    private static final String SERVER_CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/{selected.server}" + CONFIGURATION_CHANGES_ADDRESS;
     public static final AddressTemplate SERVER_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             SERVER_CONFIGURATION_CHANGES_ADDRESS);
     private static final String PROFILE_CONFIGURATION_CHANGES_ADDRESS = "/profile=*/subsystem=core-management/service=configuration-changes";
@@ -281,7 +283,7 @@ public class ConfigurationChangesPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(CONFIGURATION_CHANGES)
-    @Requires({HOST_CONFIGURATION_CHANGES_ADDRESS, SERVER_CONFIGURATION_CHANGES_ADDRESS})
+    @Requires({HOST_CONFIGURATION_CHANGES_ADDRESS, OPTIONAL + SERVER_CONFIGURATION_CHANGES_ADDRESS})
     public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {
 
     }

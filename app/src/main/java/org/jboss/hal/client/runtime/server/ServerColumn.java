@@ -94,7 +94,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.SERVER_CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.serversOfHost;
 import static org.jboss.hal.core.runtime.TopologyTasks.serversOfServerGroup;
@@ -103,15 +103,17 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
 
 @Column(Ids.SERVER)
-@Requires(value = {"/{domain.controller}/server-config=*", "/{domain.controller}/server=*"}, recursive = false)
+@Requires(value = {"/host=*/server-config=*", "/host=*/server=*", "/host=*/server=*" + CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
+
+    static final String HOST_KEY = "/host=";
 
     static AddressTemplate serverConfigTemplate(Server server) {
         return serverConfigTemplate(server.getHost());
     }
 
     static AddressTemplate serverConfigTemplate(String host) {
-        return AddressTemplate.of("/host=" + host + "/server-config=*");
+        return AddressTemplate.of(HOST_KEY + host + "/server-config=*");
     }
 
     private final Finder finder;
@@ -332,7 +334,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             .build());
                     if (!item.isStarted()) {
                         AddressTemplate template = AddressTemplate
-                                .of("/host=" + item.getHost() + "/server-config=" + item.getName());
+                                .of(HOST_KEY + item.getHost() + "/server-config=" + item.getName());
                         actions.add(itemActionFactory.remove(Names.SERVER, item.getName(),
                                 template, serverConfigTemplate(item), ServerColumn.this));
                     }
@@ -351,9 +353,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     .nameToken(NameTokens.CONFIGURATION_CHANGES)
                                     .with(params)
                                     .build();
+                            AddressTemplate template = AddressTemplate
+                                    .of(HOST_KEY + item.getHost() + "/server=" + item.getName())
+                                    .append(CONFIGURATION_CHANGES_ADDRESS);
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                    ccPlaceRequest, Constraint.executable(SERVER_CONFIGURATION_CHANGES_TEMPLATE,
-                                            LIST_CHANGES_OPERATION)));
+                                    ccPlaceRequest, Constraint.executable(template, LIST_CHANGES_OPERATION)));
                         }
 
                         actions.add(ItemAction.separator());
