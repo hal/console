@@ -46,7 +46,10 @@ import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.bootstrapSelect;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.CSS.width;
 
 /**
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
@@ -188,7 +191,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             Store store = Store.fromResource(value);
             presenter.switchStore(store);
         });
-        selectStore.previousElementSibling.classList.add(dropdownMenuRight);
+//        selectStore.previousElementSibling.classList.add(dropdownMenuRight);
         autoWidth(emptyState.asElement());
         autoWidth(headerForm);
         storeForms.values().forEach(Attachable::attach);
