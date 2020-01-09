@@ -103,7 +103,7 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
 
 @Column(Ids.SERVER)
-@Requires(value = {"/{domain.controller}/server-config=*", "/{domain.controller}/server=*"}, recursive = false)
+@Requires(value = {"/{selected.host}/server-config=*", "/{selected.host}/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static AddressTemplate serverConfigTemplate(Server server) {
