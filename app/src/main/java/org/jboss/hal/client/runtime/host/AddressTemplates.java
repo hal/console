@@ -33,6 +33,7 @@ interface AddressTemplates {
     String PATH_ADDRESS = SELECTED_HOST + "/path=*";
     String SOCKET_BINDING_GROUP_ADDRESS = SELECTED_HOST + "/socket-binding-group=*";
     String SYSTEM_PROPERTY_ADDRESS = SELECTED_HOST + "/system-property=*";
+    String ALL_HOSTS = "/host=*";
 
     AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
     AddressTemplate NATIVE_INTERFACE_TEMPLATE = AddressTemplate.of(NATIVE_INTERFACE_ADDRESS);

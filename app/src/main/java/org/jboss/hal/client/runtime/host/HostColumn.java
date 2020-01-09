@@ -68,6 +68,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.ALL_HOSTS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_TEMPLATE;
@@ -79,7 +80,8 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS, HOST_MANAGEMENT_OPERATIONS_ADDRESS},
+@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS, HOST_MANAGEMENT_OPERATIONS_ADDRESS,
+        ALL_HOSTS},
         recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
