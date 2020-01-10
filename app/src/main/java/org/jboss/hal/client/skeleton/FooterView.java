@@ -30,7 +30,6 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
     // @formatter:on
 
 
-    @NonNls private static Logger logger = LoggerFactory.getLogger(FooterView.class);
+    private static Logger logger = LoggerFactory.getLogger(FooterView.class);
 
     private FooterPresenter presenter;
     private Environment environment;

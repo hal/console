@@ -23,7 +23,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class CompositeRrdParser {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(CompositeRrdParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(CompositeRrdParser.class);
 
     private final Composite composite;
 

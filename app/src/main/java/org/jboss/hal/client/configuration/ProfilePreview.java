@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -86,7 +85,7 @@ class ProfilePreview extends PreviewContent<NamedNode> {
                     .sorted()
                     .collect(Collectors.toList());
             if (!serverGroups.isEmpty()) {
-                @NonNls SafeHtmlBuilder html = new SafeHtmlBuilder();
+                SafeHtmlBuilder html = new SafeHtmlBuilder();
                 for (Iterator<String> iterator = serverGroups.iterator(); iterator.hasNext(); ) {
                     String serverGroup = iterator.next();
                     PlaceRequest placeRequest = places.finderPlace(NameTokens.RUNTIME,

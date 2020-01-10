@@ -34,15 +34,13 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.spi.EsParam;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
  * Template for a DMR address which might contain multiple variable parts.
- *
+ * <p>
  * An address template can be defined using the following BNF:
  * <pre>
  * &lt;address template&gt; ::= "/" | &lt;segment&gt;
@@ -55,21 +53,16 @@ import static java.util.stream.Collectors.toList;
  * &lt;upper&gt;            ::= "A" | "B" | … | "Z"
  * &lt;lower&gt;            ::= "a" | "b" | … | "z"
  * </pre>
- *
- * Following variables are supported:
- * - <code>{domain.controller}</code>
- * - <code>{selected.profile}</code>
- * - <code>{selected.group}</code>
- * - <code>{selected.server-config}</code>
- * - <code>{selected.server}</code>
- *
+ * <p>
+ * Following variables are supported: - <code>{domain.controller}</code> - <code>{selected.profile}</code> -
+ * <code>{selected.group}</code> - <code>{selected.server-config}</code> - <code>{selected.server}</code>
+ * <p>
  * To get a fully qualified address from an address template use the method <code>resolve()</code>. For standalone mode
  * the variables will resolve to an empty string. The values of the variables are managed by the {@link
  * StatementContext}.
  *
- * @example AddressTemplate a2 = AddressTemplate.of("{selected.profile}");
- * AddressTemplate a3 = AddressTemplate.of("{selected.profile}/subsystem=mail");
- * AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
+ * @example AddressTemplate a2 = AddressTemplate.of("{selected.profile}"); AddressTemplate a3 =
+ * AddressTemplate.of("{selected.profile}/subsystem=mail"); AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
  */
 @JsType(namespace = "hal.meta")
 public final class AddressTemplate implements Iterable<String> {
@@ -91,7 +84,7 @@ public final class AddressTemplate implements Iterable<String> {
      * must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
     @JsIgnore
-    public static AddressTemplate of(StatementContext.Expression placeholder, @NonNls String template) {
+    public static AddressTemplate of(StatementContext.Expression placeholder, String template) {
         return AddressTemplate.of(String.join("/", placeholder.expression(), withoutSlash(template)));
     }
 
@@ -104,18 +97,18 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Creates a new address template from two placeholders and an encoded string template. '/' characters inside
-     * values must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
+     * Creates a new address template from two placeholders and an encoded string template. '/' characters inside values
+     * must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
     @JsIgnore
     public static AddressTemplate of(StatementContext.Expression placeholder1, StatementContext.Expression placeholder2,
-            @NonNls String template) {
+            String template) {
         return AddressTemplate.of(
                 String.join("/", placeholder1.expression(), placeholder2.expression(), withoutSlash(template)));
     }
 
     /** Creates a new address template from an encoded string template. */
-    public static AddressTemplate of(@NonNls String template) {
+    public static AddressTemplate of(String template) {
         return new AddressTemplate(withSlash(template));
     }
 
@@ -185,8 +178,8 @@ public final class AddressTemplate implements Iterable<String> {
     private final boolean optional;
 
     /**
-     * Creates a new instance from an encoded string template. '/' characters inside values must have been encoded
-     * using {@link ModelNodeHelper#encodeValue(String)}.
+     * Creates a new instance from an encoded string template. '/' characters inside values must have been encoded using
+     * {@link ModelNodeHelper#encodeValue(String)}.
      *
      * @param template the encoded template.
      */
@@ -272,7 +265,6 @@ public final class AddressTemplate implements Iterable<String> {
         return tokens.size();
     }
 
-    @NotNull
     @Override
     @JsIgnore
     public Iterator<String> iterator() {
@@ -285,11 +277,10 @@ public final class AddressTemplate implements Iterable<String> {
      * using {@link ModelNodeHelper#encodeValue(String)}.
      *
      * @param template the encoded template to append (makes no difference whether it starts with '/' or not)
-     *
      * @return a new template
      */
     @JsIgnore
-    public AddressTemplate append(@NonNls String template) {
+    public AddressTemplate append(String template) {
         String slashTemplate = template.startsWith("/") ? template : "/" + template;
         return AddressTemplate.of(this.template + slashTemplate);
     }
@@ -304,12 +295,9 @@ public final class AddressTemplate implements Iterable<String> {
      *
      * @param fromIndex low endpoint (inclusive) of the sub template
      * @param toIndex   high endpoint (exclusive) of the sub template
-     *
      * @return a new address template containing the specified tokens.
-     *
-     * @throws IndexOutOfBoundsException for an illegal endpoint index value
-     *                                   (<tt>fromIndex &lt; 0 || toIndex &gt; size ||
-     *                                   fromIndex &gt; toIndex</tt>)
+     * @throws IndexOutOfBoundsException for an illegal endpoint index value (<tt>fromIndex &lt; 0 || toIndex &gt; size
+     *                                   || fromIndex &gt; toIndex</tt>)
      */
     @JsIgnore
     public AddressTemplate subTemplate(int fromIndex, int toIndex) {
@@ -330,14 +318,13 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Replaces one or more wildcards with the specified values starting from left to right and returns a new
-     * address template.
+     * Replaces one or more wildcards with the specified values starting from left to right and returns a new address
+     * template.
      * <p>
      * This method does <em>not</em> resolve the address template. The returned template is still unresolved.
      *
      * @param wildcard  the first wildcard (mandatory)
      * @param wildcards more wildcards (optional)
-     *
      * @return a new (still unresolved) address template with the wildcards replaced by the specified values.
      */
     @JsIgnore
@@ -424,9 +411,8 @@ public final class AddressTemplate implements Iterable<String> {
      * Resolve this address template against the specified statement context.
      *
      * @param context   the statement context
-     * @param wildcards An optional list of values which are used to resolve any wildcards in this address template
-     *                  from left to right
-     *
+     * @param wildcards An optional list of values which are used to resolve any wildcards in this address template from
+     *                  left to right
      * @return a fully qualified resource address which might be empty, but which does not contain any tokens
      */
     public ResourceAddress resolve(StatementContext context, @EsParam("...string") String... wildcards) {
@@ -515,7 +501,6 @@ public final class AddressTemplate implements Iterable<String> {
      * Append an address to this addrress template and return a new one.
      *
      * @param address The address to append.
-     *
      * @return a new address template with the specified address added at the end.
      */
     @JsMethod(name = "append")

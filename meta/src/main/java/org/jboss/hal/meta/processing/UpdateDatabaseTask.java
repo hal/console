@@ -22,7 +22,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -31,7 +30,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 class UpdateDatabaseTask implements Task<LookupContext> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(UpdateDatabaseTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(UpdateDatabaseTask.class);
 
     private final WorkerChannel workerChannel;
 

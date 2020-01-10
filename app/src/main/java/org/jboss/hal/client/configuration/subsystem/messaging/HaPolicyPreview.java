@@ -22,14 +22,13 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.dmr.ModelNode;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 class HaPolicyPreview extends PreviewContent<StaticItem> {
 
-    @SuppressWarnings("DuplicateStringLiteralInspection") @NonNls
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private static final Map<HaPolicy, PreviewAttributes<ModelNode>> ATTRIBUTES =
             new ImmutableMap.Builder<HaPolicy, PreviewAttributes<ModelNode>>()
                     .put(HaPolicy.LIVE_ONLY, new PreviewAttributes<>(new ModelNode(),

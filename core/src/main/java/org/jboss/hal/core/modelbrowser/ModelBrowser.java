@@ -63,7 +63,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -96,7 +95,7 @@ import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 /** Model browser element which can be embedded in other elements. */
 public class ModelBrowser implements IsElement<HTMLElement> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
     static final HTMLElement PLACE_HOLDER_ELEMENT = div().get();
 

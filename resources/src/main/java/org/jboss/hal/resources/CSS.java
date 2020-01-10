@@ -19,13 +19,12 @@ import java.util.Arrays;
 
 import elemental2.dom.CSSProperties.HeightUnionType;
 import elemental2.dom.CSSProperties.WidthUnionType;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
 
 /**
- * Contains common CSS classes from HAL, PatternFly & Bootstrap. The constants in this interface are not involved in
- * any kind of code generation or GWT magic. They're just here to have them in one place.
+ * Contains common CSS classes from HAL, PatternFly & Bootstrap. The constants in this interface are not involved in any
+ * kind of code generation or GWT magic. They're just here to have them in one place.
  */
 public interface CSS {
 
@@ -488,7 +487,7 @@ public interface CSS {
      *
      * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
      */
-    static String fontAwesome(@NonNls String name) {
+    static String fontAwesome(String name) {
         return fontAwesome(name, null);
     }
 
@@ -497,8 +496,8 @@ public interface CSS {
      *
      * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
      */
-    static String fontAwesome(@NonNls String name, FontAwesomeSize size) {
-        @NonNls String css = "fa fa-" + name;
+    static String fontAwesome(String name, FontAwesomeSize size) {
+        String css = "fa fa-" + name;
         if (size != null) {
             css += " fa-" + size.size();
         }
@@ -510,7 +509,7 @@ public interface CSS {
      *
      * @param name the name of the PatternFly icon <strong>w/o</strong> the "pficon pficon-" prefix.
      */
-    static String pfIcon(@NonNls String name) {
+    static String pfIcon(String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
 
@@ -519,7 +518,7 @@ public interface CSS {
      *
      * @param name the name of the Glyphicon icon <strong>w/o</strong> the "glyphicon glyphicon-" prefix.
      */
-    static String glyphicon(@NonNls String name) {
+    static String glyphicon(String name) {
         return "glyphicon glyphicon-" + name; //NON-NLS
     }
 }

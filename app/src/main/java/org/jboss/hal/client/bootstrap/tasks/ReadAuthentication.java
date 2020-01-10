@@ -34,7 +34,6 @@ import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -53,7 +52,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 public class ReadAuthentication implements BootstrapTask {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadAuthentication.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadAuthentication.class);
     private static final AddressTemplate CORE_SERVICE_TEMPLATE = AddressTemplate.of("/core-service=management");
 
     private final Dispatcher dispatcher;

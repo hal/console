@@ -49,7 +49,6 @@ import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -67,7 +66,7 @@ class DeploymentTasks {
 
     static final String SERVER_GROUP_DEPLOYMENTS = "deploymentFunctions.serverGroupDeployments";
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
 
     /** Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode. */
     static <T> void upload(FinderColumn<T> column, Environment environment, Dispatcher dispatcher,
@@ -177,8 +176,8 @@ class DeploymentTasks {
 
     /**
      * Reads the deployments of the specified server group. Stores the list in the context under the key {@link
-     * DeploymentTasks#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if
-     * running in standalone mode.
+     * DeploymentTasks#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if running in
+     * standalone mode.
      */
     static class ReadServerGroupDeployments implements Task<FlowContext> {
 
@@ -284,8 +283,7 @@ class DeploymentTasks {
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
      * {@link TopologyTasks#SERVERS}. Expects the list of deployments under the key {@link #SERVER_GROUP_DEPLOYMENTS} in
-     * the context. Updates all matching deployments with the deployments from the running
-     * server.
+     * the context. Updates all matching deployments with the deployments from the running server.
      */
     static class LoadDeploymentsFromRunningServer implements Task<FlowContext> {
 
@@ -362,12 +360,12 @@ class DeploymentTasks {
 
 
     /**
-     * Creates a new deployment or replaces an existing deployment. The function looks for a status code in the
-     * context. If no status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the
-     * deployment is replaced.
+     * Creates a new deployment or replaces an existing deployment. The function looks for a status code in the context.
+     * If no status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the deployment
+     * is replaced.
      * <p>
-     * The function puts an {@link UploadStatistics} under the key {@link DeploymentTasks#UPLOAD_STATISTICS}
-     * into the context.
+     * The function puts an {@link UploadStatistics} under the key {@link DeploymentTasks#UPLOAD_STATISTICS} into the
+     * context.
      */
     static class UploadOrReplace implements Task<FlowContext> {
 

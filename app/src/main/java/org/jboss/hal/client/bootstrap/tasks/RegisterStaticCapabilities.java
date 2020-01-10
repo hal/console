@@ -22,7 +22,6 @@ import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -32,7 +31,7 @@ import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 /** Reads the capabilities from the capability registry. Depends on {@link ReadHostNames}. */
 public class RegisterStaticCapabilities implements BootstrapTask {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(RegisterStaticCapabilities.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegisterStaticCapabilities.class);
 
     private final Environment environment;
     private final Capabilities capabilities;

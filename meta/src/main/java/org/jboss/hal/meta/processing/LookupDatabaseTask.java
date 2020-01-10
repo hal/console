@@ -29,7 +29,6 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -42,7 +41,7 @@ import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESEN
 /** Task which checks whether metadata is present in the databases. */
 class LookupDatabaseTask implements Task<LookupContext> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(LookupDatabaseTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(LookupDatabaseTask.class);
 
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
     private final SecurityContextDatabase securityContextDatabase;

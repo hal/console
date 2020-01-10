@@ -18,7 +18,6 @@ package org.jboss.hal.ballroom.autocomplete;
 import java.util.function.Function;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.ballroom.autocomplete.ItemRenderer.highlight;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
@@ -34,7 +33,7 @@ public final class StringRenderer<T> implements ItemRenderer<T> {
     @Override
     public String render(T item, String query) {
         String itm = toString.apply(item);
-        @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant(
                 "<div class=\"" + autocompleteSuggestion + "\" data-val=\"" + itm + "\">")
                 .appendHtmlConstant(highlight(query).replace(itm, "<b>$1</b>")) //NON-NLS

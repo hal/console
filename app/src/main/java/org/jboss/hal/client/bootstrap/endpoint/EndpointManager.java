@@ -30,7 +30,6 @@ import org.jboss.hal.config.keycloak.KeycloakHolder;
 import org.jboss.hal.js.Json;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.Callback;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +42,11 @@ import static org.jboss.hal.js.JsHelper.requestParameter;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
 
 /**
- * Class which connects to a running management endpoint or triggers the selection of an arbitrary management
- * endpoint. By default this class first tries to connect to the management endpoint the console was loaded from.
- * If no endpoint was found, the selection is triggered by {@link EndpointDialog}.
+ * Class which connects to a running management endpoint or triggers the selection of an arbitrary management endpoint.
+ * By default this class first tries to connect to the management endpoint the console was loaded from. If no endpoint
+ * was found, the selection is triggered by {@link EndpointDialog}.
  * <p>
- * Please note: This class must run <em>before</em> any {@linkplain BootstrapTask
- * bootstrap function}!
+ * Please note: This class must run <em>before</em> any {@linkplain BootstrapTask bootstrap function}!
  */
 public class EndpointManager {
 
@@ -59,7 +57,7 @@ public class EndpointManager {
     public static final String CONNECT_PARAMETER = "connect";
     static final String DEFAULT_HOST = "localhost"; // must be in sync with the default value in endpoint.dmr!
     static final int DEFAULT_PORT = 9990; // must be in sync with the default value in endpoint.dmr!
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(EndpointManager.class);
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
@@ -153,7 +151,7 @@ public class EndpointManager {
     void pingServer(Endpoint endpoint, AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
 
-        checkKeycloakAdapter(endpoint.getUrl(), s ->  {
+        checkKeycloakAdapter(endpoint.getUrl(), s -> {
             callback.onSuccess(null);
         }, () -> {
             try {
@@ -205,15 +203,15 @@ public class EndpointManager {
             Keycloak kc = new Keycloak(kcAdapterUrl);
             Keycloak.Api initOptions = new Keycloak.Api();
             kc.init(initOptions)
-                .success(authenticated -> {
-                    setInterval(o -> kc.updateToken(32), 30000);
-                    kc.loadUserProfile().success(profile -> {
-                        kc.userProfile = profile;
-                    });
-                    set(KEYCLOAK, kc);
-                    callback.execute();
-                })
-                .error(() -> logger.error("Error, could not initialize keycloak authentication."));
+                    .success(authenticated -> {
+                        setInterval(o -> kc.updateToken(32), 30000);
+                        kc.loadUserProfile().success(profile -> {
+                            kc.userProfile = profile;
+                        });
+                        set(KEYCLOAK, kc);
+                        callback.execute();
+                    })
+                    .error(() -> logger.error("Error, could not initialize keycloak authentication."));
 
             keycloakHolder.setKeycloak(kc);
             return null;

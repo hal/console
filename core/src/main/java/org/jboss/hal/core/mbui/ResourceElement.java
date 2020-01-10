@@ -51,7 +51,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Callback;
-import org.jetbrains.annotations.NonNls;
 
 import static elemental2.dom.DomGlobal.alert;
 import static java.util.Collections.singletonList;
@@ -65,8 +64,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 
 /**
- * Master detail element for a resource with support for n complex attributes of type {@code OBJECT} and one
- * complex attribute of type {@code LIST}.
+ * Master detail element for a resource with support for n complex attributes of type {@code OBJECT} and one complex
+ * attribute of type {@code LIST}.
  *
  * <p>This class provides the following features:</p>
  * <ul>
@@ -411,7 +410,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
 
         /** Columns for the main table. */
-        public Builder columns(@NonNls String first, @NonNls String... rest) {
+        public Builder columns(String first, String... rest) {
             tableBuilder.columns(first, rest);
             return this;
         }
@@ -547,9 +546,9 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
          * CrudOperations#add(String, String, AddressTemplate, CrudOperations.AddCallback)} is used (which opens an
          * {@linkplain org.jboss.hal.core.mbui.dialog.AddResourceDialog add-resource-dialog} with all required
          * properties of the main resource).
-         *
-         * Use this method if you need to customize the add-resource-dialog somehow, e.g. if there's a required
-         * complex attribute which has to be specified).
+         * <p>
+         * Use this method if you need to customize the add-resource-dialog somehow, e.g. if there's a required complex
+         * attribute which has to be specified).
          */
         public Builder onAdd(Callback callback) {
             this.onAdd = callback;

@@ -20,7 +20,6 @@ import java.util.EnumSet;
 import com.google.common.base.Joiner;
 import org.jboss.hal.ballroom.form.Form.Operation;
 import org.jboss.hal.ballroom.form.Form.State;
-import org.jetbrains.annotations.NonNls;
 
 public abstract class AbstractStateMachine implements StateMachine {
 
@@ -85,6 +84,5 @@ public abstract class AbstractStateMachine implements StateMachine {
 
     protected abstract <C> void safeExecute(Operation operation, C context);
 
-    @NonNls
     protected abstract String name();
 }

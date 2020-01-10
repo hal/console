@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
@@ -93,7 +92,7 @@ public class Settings {
         POLL_TIME("poll-time", true),
         RUN_AS("run-as", false); // can contain multiple roles separated by ","
 
-        public static Key from(@NonNls String key) {
+        public static Key from(String key) {
             switch (key) {
                 case "title":
                     return TITLE;
@@ -117,7 +116,7 @@ public class Settings {
         private final String key;
         private final boolean persistent;
 
-        Key(@NonNls String key, boolean persistent) {
+        Key(String key, boolean persistent) {
             this.key = key;
             this.persistent = persistent;
         }

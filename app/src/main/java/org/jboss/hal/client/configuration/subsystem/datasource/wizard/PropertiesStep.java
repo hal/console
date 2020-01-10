@@ -39,7 +39,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,7 @@ import static org.jboss.hal.flow.Flow.series;
 
 class PropertiesStep extends WizardStep<Context, State> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(DataSourceWizard.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceWizard.class);
 
     private final ModelNode dummy;
     private final Form<ModelNode> form;

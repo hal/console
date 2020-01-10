@@ -35,7 +35,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpressionHandler {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ExpressionResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExpressionResolver.class);
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;

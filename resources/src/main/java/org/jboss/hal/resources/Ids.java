@@ -20,7 +20,6 @@ import java.util.List;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.base.CharMatcher.inRange;
 import static com.google.common.base.Strings.emptyToNull;
@@ -33,9 +32,9 @@ import static org.jboss.hal.resources.Strings.substringAfterLast;
  * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an
  * equivalent or similar constant in {@code ModelDescriptionConstants} (SoC).
  * <p>
- * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the code base but
- * gathered in this interface. This is not always possible - for instance if the ID contains dynamic parts like a
- * resource name or selected server. But IDs which only contain static strings should be part of this interface.
+ * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the code base but gathered in
+ * this interface. This is not always possible - for instance if the ID contains dynamic parts like a resource name or
+ * selected server. But IDs which only contain static strings should be part of this interface.
  */
 @SuppressWarnings({"DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public interface Ids {
@@ -51,6 +50,10 @@ public interface Ids {
     String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_OPERATION_EMPTY = "active-operation-empty";
     String ADD = "add";
+    String AFFINITY_LOCAL = "affinity-local";
+    String AFFINITY_NONE = "affinity-none";
+    String AFFINITY_PRIMARY_OWNER = "affinity-primary-owner";
+    String AFFINITY_RANKED = "affinity-ranked";
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_EXCLUDE = "assignement-exclude";
     String ASSIGNMENT_INCLUDE = "assignement-include";
@@ -999,10 +1002,10 @@ public interface Ids {
     // ------------------------------------------------------ methods
 
     /**
-     * Turns a label which can contain whitespace and upper/lower case characters into an all lowercase id separated
-     * by "-".
+     * Turns a label which can contain whitespace and upper/lower case characters into an all lowercase id separated by
+     * "-".
      */
-    static String asId(@NonNls String text) {
+    static String asId(String text) {
         Iterable<String> parts = Splitter
                 .on(CharMatcher.whitespace().or(CharMatcher.is('-')))
                 .omitEmptyStrings()
@@ -1014,11 +1017,11 @@ public interface Ids {
                 .collect(joining("-"));
     }
 
-    static String build(@NonNls String id, @NonNls String... additionalIds) {
+    static String build(String id, String... additionalIds) {
         return build(id, '-', additionalIds);
     }
 
-    static String build(@NonNls String id, char separator, @NonNls String... additionalIds) {
+    static String build(String id, char separator, String... additionalIds) {
         if (emptyToNull(id) == null) {
             throw new IllegalArgumentException("Id must not be null");
         }

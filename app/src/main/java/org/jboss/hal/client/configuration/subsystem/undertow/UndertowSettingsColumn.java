@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
@@ -53,7 +54,7 @@ public class UndertowSettingsColumn
                 .onPreview(StaticItem::getPreviewContent)
                 .useFirstActionAsBreadcrumbHandler());
 
-        List<StaticItem> items = asList(
+        Supplier<List<StaticItem>> itemsSupplier = () -> asList(
                 new StaticItem.Builder(resources.constants().globalSettings())
                         .id(Ids.UNDERTOW_GLOBAL_SETTINGS)
                         .action(itemActionFactory.view(places.selectedProfile(NameTokens.UNDERTOW).build()))
@@ -97,9 +98,9 @@ public class UndertowSettingsColumn
                                 resources.previews().configurationUndertowHandlers()))
                         .build()
         );
-        setItemsProvider((context, callback) -> callback.onSuccess(items));
+        setItemsProvider((context, callback) -> callback.onSuccess(itemsSupplier.get()));
         setBreadcrumbItemsProvider(
                 (context, callback) -> callback.onSuccess(
-                        items.stream().filter(item -> item.getNextColumn() == null).collect(toList())));
+                        itemsSupplier.get().stream().filter(item -> item.getNextColumn() == null).collect(toList())));
     }
 }

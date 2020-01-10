@@ -32,7 +32,6 @@ import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent.ServerSelectionHandler;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ import static org.jboss.hal.meta.StatementContext.Expression.*;
 public class CoreStatementContext implements StatementContext,
         ProfileSelectionHandler, ServerGroupSelectionHandler, HostSelectionHandler, ServerSelectionHandler {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(CoreStatementContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(CoreStatementContext.class);
 
     private final Environment environment;
     private final Map<Expression, String> context;

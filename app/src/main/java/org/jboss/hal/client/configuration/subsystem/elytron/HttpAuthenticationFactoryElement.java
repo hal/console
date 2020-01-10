@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -134,7 +133,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 mrcSection);
     }
 
-    private String id(@NonNls String... ids) {
+    private String id(String... ids) {
         return Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, ids);
     }
 

@@ -22,7 +22,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -36,7 +35,7 @@ import static org.jboss.hal.config.Settings.Key.*;
  */
 public class LoadSettings implements BootstrapTask {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(LoadSettings.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoadSettings.class);
 
     private final Environment environment;
     private final Settings settings;

@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import org.jetbrains.annotations.NonNls;
-
 public enum RequestHeader {
 
     // only those which are used in HAL
@@ -26,7 +24,7 @@ public enum RequestHeader {
 
     private final String header;
 
-    RequestHeader(@NonNls final String header) {
+    RequestHeader(final String header) {
         this.header = header;
     }
 

@@ -39,15 +39,14 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.collect.Lists.asList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
 /**
- * A form which groups attributes on different tabs. Each group will include the attributes specified by the
- * {@linkplain Builder grouped form builder}.
+ * A form which groups attributes on different tabs. Each group will include the attributes specified by the {@linkplain
+ * Builder grouped form builder}.
  * <p>
  * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and reset
  * callbacks.
@@ -365,7 +364,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             return this;
         }
 
-        public Builder<T> include(@NonNls String first, @NonNls String... rest) {
+        public Builder<T> include(String first, String... rest) {
             assertCurrentGroup();
             currentGroup.includes.addAll(asList(first, rest));
             return this;
@@ -377,7 +376,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             return this;
         }
 
-        public Builder<T> exclude(@NonNls String first, @NonNls String... rest) {
+        public Builder<T> exclude(String first, String... rest) {
             assertCurrentGroup();
             currentGroup.excludes.addAll(asList(first, rest));
             return this;
@@ -389,7 +388,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             return this;
         }
 
-        public Builder<T> customFormItem(@NonNls String attribute, FormItemProvider provider) {
+        public Builder<T> customFormItem(String attribute, FormItemProvider provider) {
             assertCurrentGroup();
             currentGroup.includes.add(attribute);
             currentGroup.providers.put(attribute, provider);

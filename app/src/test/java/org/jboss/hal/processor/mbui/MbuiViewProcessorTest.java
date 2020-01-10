@@ -19,7 +19,6 @@ import javax.tools.JavaFileObject;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import org.jetbrains.annotations.NonNls;
 import org.junit.Before;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
@@ -33,14 +32,14 @@ public abstract class MbuiViewProcessorTest {
         MbuiViewProcessor.resetCounter();
     }
 
-    protected Compilation compile(@NonNls String source) {
+    protected Compilation compile(String source) {
         return javac()
                 .withOptions("-proc:only")
                 .withProcessors(new MbuiViewProcessor())
                 .compile(javaSource((source)));
     }
 
-    protected void assertSourceEquals(final Compilation compilation, @NonNls final String source) {
+    protected void assertSourceEquals(final Compilation compilation, final String source) {
         String generated = getClass().getPackage().getName() + "." + source;
         assertThat(compilation)
                 .generatedSourceFile(generated)

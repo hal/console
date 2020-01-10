@@ -22,7 +22,6 @@ import elemental2.webstorage.Storage;
 import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ import static elemental2.dom.DomGlobal.window;
 /** Registry for the management endpoints which uses the local storage of the browser. */
 public class EndpointStorage {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
+    private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
     private final Storage storage;
     private final List<Endpoint> endpoints;

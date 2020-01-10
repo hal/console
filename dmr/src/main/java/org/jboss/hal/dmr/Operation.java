@@ -25,7 +25,6 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
-import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toSet;
@@ -217,13 +216,13 @@ public class Operation extends ModelNode {
         }
 
         @JsIgnore
-        public Builder param(String name, @NonNls String value) {
+        public Builder param(String name, String value) {
             parameter.get(name).set(value);
             return this;
         }
 
         @JsIgnore
-        public Builder param(String name, @NonNls String[] values) {
+        public Builder param(String name, String[] values) {
             for (String value : values) {
                 parameter.get(name).add(value);
             }
@@ -252,7 +251,6 @@ public class Operation extends ModelNode {
          * Uses the specified payload for the operation.
          *
          * @param payload The operation as model node.
-         *
          * @return this builder
          */
         @EsReturn("OperationBuilder")
@@ -276,7 +274,6 @@ public class Operation extends ModelNode {
          *
          * @param name  The name of the parameter.
          * @param value The value of the parameter.
-         *
          * @return this builder
          */
         @JsMethod(name = "param")
@@ -299,7 +296,6 @@ public class Operation extends ModelNode {
          *
          * @param name  The name of the header.
          * @param value The value of the header.
-         *
          * @return this builder
          */
         @JsMethod(name = "header")

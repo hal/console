@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +74,7 @@ public class AuthorisationDecision {
 
     // ------------------------------------------------------ instance
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(AuthorisationDecision.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthorisationDecision.class);
 
     private final Environment environment;
     private final SecurityContextResolver resolver;

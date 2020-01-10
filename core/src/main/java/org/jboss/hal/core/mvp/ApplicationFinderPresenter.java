@@ -22,7 +22,6 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ extends ProxyPlace<?>>
         extends ApplicationPresenter<V, Proxy_> implements HasFinderPath, SupportsExternalMode {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ApplicationFinderPresenter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationFinderPresenter.class);
 
     private final Finder finder;
 

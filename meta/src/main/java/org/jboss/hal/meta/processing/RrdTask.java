@@ -30,7 +30,6 @@ import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -42,7 +41,7 @@ import static java.util.stream.Collectors.toList;
 /** Creates, executes and parses the {@code read-resource-description} operations to read the missing metadata. */
 class RrdTask implements Task<LookupContext> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(RrdTask.class);
 
     private final Dispatcher dispatcher;
     private final int batchSize;

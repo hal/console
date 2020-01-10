@@ -23,7 +23,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
     private static final int CACHE_SIZE = 500;
     private static final String SECURITY_CONTEXT_TYPE = "security context";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(SecurityContextRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(SecurityContextRegistry.class);
 
     private final Cache<ResourceAddress, SecurityContext> cache;
 

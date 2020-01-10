@@ -77,7 +77,6 @@ import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.CompletableSubscriber;
@@ -107,7 +106,7 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class ServerActions implements Timeouts {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
 
     private static AddressTemplate serverConfigTemplate(Server server) {
         return server.isStandalone()

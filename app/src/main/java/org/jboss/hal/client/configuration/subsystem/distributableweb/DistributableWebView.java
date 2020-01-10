@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.distributableweb;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventType;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SelectBoxBridge;
@@ -33,8 +35,12 @@ import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -45,8 +51,10 @@ import org.jboss.hal.spi.MbuiView;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.Ids.*;
 
 @MbuiView
 @SuppressWarnings("WeakerAccess")
@@ -61,12 +69,14 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
 
     @MbuiElement("dw-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("dw-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("dw-hotrod-session-management-table") Table<NamedNode> hotRodSessionManagementTable;
-    @MbuiElement("dw-hotrod-session-management-form") Form<NamedNode> hotRodSessionManagementForm;
+    private Table<NamedNode> hotRodSessionManagementTable;
+    private Form<NamedNode> hotRodSessionManagementForm;
+    private AffinityElement hotRodSessionManagementAffinityElement;
     @MbuiElement("dw-hotrod-sso-management-table") Table<NamedNode> hotRodSSOManagementTable;
     @MbuiElement("dw-hotrod-sso-management-form") Form<NamedNode> hotRodSSOManagementForm;
-    @MbuiElement("dw-infinispan-session-management-table") Table<NamedNode> infinispanSessionManagementTable;
-    @MbuiElement("dw-infinispan-session-management-form") Form<NamedNode> infinispanSessionManagementForm;
+    private Table<NamedNode> infinispanSessionManagementTable;
+    private Form<NamedNode> infinispanSessionManagementForm;
+    private AffinityElement infinispanSessionManagementAffinityElement;
     @MbuiElement("dw-infinispan-sso-management-table") Table<NamedNode> infinispanSSOManagementTable;
     @MbuiElement("dw-infinispan-sso-management-form") Form<NamedNode> infinispanSSOManagementForm;
     private HTMLElement currentRouting;
@@ -127,6 +137,40 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
 
         navigation.insertPrimary(Ids.DISTRIBUTABLE_WEB_ROUTING_ITEM, null, Names.ROUTING,
                 pfIcon("route"), section);
+
+        // -- hotrod session management
+        String hotRodId = "dw-hotrod-session-management";
+        String hotRodNavLabel = SessionManagement.HOTROD.type.substring(0, SessionManagement.HOTROD.type.lastIndexOf(' ')); // remove " Management";
+
+        hotRodSessionManagementForm = createMgmtForm(hotRodId, SessionManagement.HOTROD);
+        hotRodSessionManagementTable = createMgmtTable(hotRodId, SessionManagement.HOTROD);
+        hotRodSessionManagementAffinityElement = new AffinityElement(SessionManagement.HOTROD, mbuiContext.metadataRegistry(), mbuiContext.resources());
+
+        registerAttachable(hotRodSessionManagementAffinityElement);
+
+        HTMLElement hotRodSection = createMgmtSection(hotRodId, hotRodSessionManagementForm.element(), hotRodSessionManagementAffinityElement.element(),
+                hotRodSessionManagementTable, SessionManagement.HOTROD);
+
+        navigation.insertPrimary(build(hotRodId, ITEM), build("dw-hotrod-sso-management", ITEM), hotRodNavLabel, "pficon pficon-users", hotRodSection);
+
+        registerAttachable(hotRodSessionManagementTable, hotRodSessionManagementForm);
+
+        // -- infinispan session management
+        String infinispanId = "dw-infinispan-session-management";
+        String infinispanNavLabel = SessionManagement.INFINISPAN.type.substring(0, SessionManagement.INFINISPAN.type.lastIndexOf(' '));
+
+        infinispanSessionManagementForm = createMgmtForm(infinispanId, SessionManagement.INFINISPAN);
+        infinispanSessionManagementTable = createMgmtTable(infinispanId, SessionManagement.INFINISPAN);
+        infinispanSessionManagementAffinityElement = new AffinityElement(SessionManagement.INFINISPAN, mbuiContext.metadataRegistry(), mbuiContext.resources());
+
+        registerAttachable(infinispanSessionManagementAffinityElement);
+
+        HTMLElement infinispanSection = createMgmtSection(infinispanId, infinispanSessionManagementForm.element(), infinispanSessionManagementAffinityElement.element(),
+                infinispanSessionManagementTable, SessionManagement.INFINISPAN);
+
+        navigation.insertPrimary(build(infinispanId, ITEM), build("dw-infinispan-sso-management", ITEM), infinispanNavLabel, "pficon pficon-users", infinispanSection);
+
+        registerAttachable(infinispanSessionManagementTable, infinispanSessionManagementForm);
     }
 
     @Override
@@ -135,6 +179,22 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
         SelectBoxBridge.Options options = SelectBoxBridge.Defaults.get();
         $("#" + Ids.DISTRIBUTABLE_WEB_ROUTING_SELECT).selectpicker(options);
         routingForms.values().forEach(Attachable::attach);
+
+        hotRodSessionManagementTable.bindForm(hotRodSessionManagementForm);
+        hotRodSessionManagementTable.onSelectionChange((table -> {
+            NamedNode row = table.selectedRow();
+            String mgtmName = row != null ? row.getName() : null;
+            List<Property> affinities = row != null ? ModelNodeHelper.failSafePropertyList(table.selectedRow(), AFFINITY) : Collections.emptyList();
+            hotRodSessionManagementAffinityElement.update(mgtmName, affinities);
+        }));
+
+        infinispanSessionManagementTable.bindForm(infinispanSessionManagementForm);
+        infinispanSessionManagementTable.onSelectionChange((table -> {
+            NamedNode row = table.selectedRow();
+            String mgtmName = row != null ? row.getName() : null;
+            List<Property> affinities = row != null ? ModelNodeHelper.failSafePropertyList(table.selectedRow(), AFFINITY) : Collections.emptyList();
+            infinispanSessionManagementAffinityElement.update(mgtmName, affinities);
+        }));
     }
 
     @Override
@@ -143,6 +203,12 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
         routingForms.values().forEach(Attachable::detach);
     }
 
+    @Override
+    public void setPresenter(DistributableWebPresenter presenter) {
+        this.presenter = presenter;
+        this.hotRodSessionManagementAffinityElement.setPresenter(presenter);
+        this.infinispanSessionManagementAffinityElement.setPresenter(presenter);
+    }
 
     // ------------------------------------------------------ update
 
@@ -189,5 +255,46 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
     public void updateInfinispanSSOManagement(List<NamedNode> nodes) {
         infinispanSSOManagementForm.clear();
         infinispanSSOManagementTable.update(nodes);
+    }
+
+    private Form<NamedNode> createMgmtForm(String mgmtId, SessionManagement sessionManagement) {
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(sessionManagement.template);
+        return new ModelNodeForm.Builder<NamedNode>(build(mgmtId, FORM), metadata)
+                .onSave((form, changedValues) -> {
+                    String name = form.getModel().getName();
+                    saveForm(sessionManagement.type, name, sessionManagement.template.resolve(statementContext(), name), changedValues, metadata);
+                })
+                .prepareReset(form -> {
+                    String name = form.getModel().getName();
+                    resetForm(sessionManagement.type, name, sessionManagement.template.resolve(statementContext(), name), form, metadata);
+                })
+                .build();
+    }
+
+    private Table<NamedNode> createMgmtTable(String mgmtId, SessionManagement sessionManagement) {
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(sessionManagement.template);
+        return new ModelNodeTable.Builder<NamedNode>(build(mgmtId, ModelDescriptionConstants.TABLE), metadata)
+                .button(mbuiContext.tableButtonFactory().add(build(mgmtId, ModelDescriptionConstants.TABLE, ModelDescriptionConstants.ADD), sessionManagement.type,
+                        sessionManagement.template, (name, address) -> presenter.reload()))
+                .button(mbuiContext.tableButtonFactory().remove(sessionManagement.type, sessionManagement.template,
+                        table -> table.selectedRow().getName(),
+                        () -> presenter.reload()))
+                .column("name", (cell, type, row, meta) -> row.getName())
+                .build();
+    }
+
+    private HTMLElement createMgmtSection(String mgmtId, HTMLElement formElement, HTMLElement affinityElement, Table<NamedNode> table, SessionManagement sessionManagement) {
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(sessionManagement.template);
+        Tabs tabs = new Tabs(build(mgmtId, "container"));
+        tabs.add(build(mgmtId, TAB), mbuiContext.resources().constants().attributes(), formElement);
+
+        tabs.add(build(mgmtId, AFFINITY, TAB), Names.AFFINITY, affinityElement);
+
+        return section()
+                .add(h(1).textContent(sessionManagement.type))
+                .add(p().textContent(metadata.getDescription().getDescription()))
+                .add(table)
+                .add(tabs)
+                .get();
     }
 }

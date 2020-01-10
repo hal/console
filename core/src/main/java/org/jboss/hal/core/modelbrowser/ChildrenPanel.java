@@ -44,7 +44,6 @@ import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 /** Panel which holds the children of the selected resource. */
 class ChildrenPanel implements Iterable<HTMLElement>, Attachable {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ChildrenPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChildrenPanel.class);
 
     private final Environment environment;
     private final Dispatcher dispatcher;

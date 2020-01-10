@@ -38,7 +38,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -116,11 +115,11 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 pqSection);
     }
 
-    private String id(@NonNls String... ids) {
+    private String id(String... ids) {
         return Ids.build(Ids.ELYTRON_JDBC_REALM, ids);
     }
 
-    private Form<ModelNode> keyMapperForm(Metadata metadata, @NonNls String keyMapper) {
+    private Form<ModelNode> keyMapperForm(Metadata metadata, String keyMapper) {
         Metadata keyMapperMetadata = metadata.forComplexAttribute(keyMapper);
         return new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, keyMapper, FORM), keyMapperMetadata)
                 .singleton(

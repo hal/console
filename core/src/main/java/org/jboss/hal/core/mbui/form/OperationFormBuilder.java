@@ -24,7 +24,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
-import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 
@@ -36,7 +35,7 @@ public class OperationFormBuilder<T extends ModelNode> {
     private final LinkedHashSet<String> includes;
     private final Set<String> excludes;
 
-    public OperationFormBuilder(@NonNls String id, Metadata metadata, String operation) {
+    public OperationFormBuilder(String id, Metadata metadata, String operation) {
         this.id = id;
         this.metadata = metadata;
         this.operation = operation;
@@ -55,7 +54,7 @@ public class OperationFormBuilder<T extends ModelNode> {
         return this;
     }
 
-    public OperationFormBuilder<T> include(@NonNls String first, @NonNls String... rest) {
+    public OperationFormBuilder<T> include(String first, String... rest) {
         includes.addAll(Lists.asList(first, rest));
         return this;
     }
@@ -70,7 +69,7 @@ public class OperationFormBuilder<T extends ModelNode> {
         return this;
     }
 
-    public OperationFormBuilder<T> exclude(@NonNls String first, @NonNls String... rest) {
+    public OperationFormBuilder<T> exclude(String first, String... rest) {
         excludes.addAll(Lists.asList(first, rest));
         return this;
     }

@@ -23,7 +23,6 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -35,7 +34,7 @@ import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESEN
 /** Task which checks whether metadata is present in the registries. */
 class LookupRegistryTask implements Task<LookupContext> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(LookupRegistryTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(LookupRegistryTask.class);
 
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final SecurityContextRegistry securityContextRegistry;

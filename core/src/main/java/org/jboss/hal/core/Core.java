@@ -47,7 +47,6 @@ import org.jboss.hal.spi.EsReturn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 
 /** Provides access to all important classes. Acts as an entry point for the JavaScript API. */
 @JsType
@@ -188,7 +187,6 @@ public class Core {
      * Creates and returns a dialog builder using the specified title.
      *
      * @param title The dialog title.
-     *
      * @return a builder to create dialogs
      */
     @JsMethod(name = "dialog")
@@ -211,7 +209,6 @@ public class Core {
      * Returns a new form builder for a {@link ModelNode}.
      *
      * @param meta The metadata for the form.
-     *
      * @return the form builder
      */
     @JsMethod(name = "form")
@@ -234,7 +231,6 @@ public class Core {
      * Returns a new form builder for a {@link NamedNode}.
      *
      * @param meta The metadata for the form.
-     *
      * @return the form builder
      */
     @JsMethod(name = "namedForm")
@@ -247,7 +243,6 @@ public class Core {
      * Returns a new table builder for a {@link NamedNode}.
      *
      * @param meta The metadata for the table.
-     *
      * @return the table builder
      */
     @JsMethod(name = "namedTable")
@@ -261,7 +256,6 @@ public class Core {
      *
      * @param address The address.
      * @param name    The operation name.
-     *
      * @return the operation builder
      */
     @JsMethod(name = "operation")
@@ -296,7 +290,6 @@ public class Core {
      * Returns a new table builder for a {@link ModelNode}.
      *
      * @param meta The metadata for the table.
-     *
      * @return the table builder
      */
     @JsMethod(name = "table")
@@ -335,7 +328,7 @@ public class Core {
         }
     }
 
-    private Metadata jsMetadata(@NonNls String method, Object meta) {
+    private Metadata jsMetadata(String method, Object meta) {
         if (meta instanceof String) {
             AddressTemplate t = AddressTemplate.of(((String) meta));
             return metadataRegistry.lookup(t);

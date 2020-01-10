@@ -21,6 +21,7 @@ import elemental2.dom.Worker;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.db.Document;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.js.Browser;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -43,7 +44,7 @@ public class WorkerChannel {
             SecurityContextDatabase securityContextDatabase) {
         this.resourceDescriptionDatabase = resourceDescriptionDatabase;
         this.securityContextDatabase = securityContextDatabase;
-        this.worker = new Worker(WORKER_JS);
+        this.worker = Browser.isIE() ? null : new Worker(WORKER_JS);
     }
 
     void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription, boolean recursive) {

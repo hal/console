@@ -71,7 +71,6 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +88,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
     private final boolean addOnly;
     private final boolean singleton;
@@ -276,7 +275,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                         } else {
                             flip(READONLY);
                         }
-                    }, (op, failure) -> flip(EMPTY));
+                    }, (op, failure) -> flip(READONLY));
         }
     }
 
@@ -409,7 +408,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         // ------------------------------------------------------ configure required and optional settings
 
         @JsIgnore
-        public Builder(@NonNls String id, Metadata metadata) {
+        public Builder(String id, Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
             this.includes = new LinkedHashSet<>();
@@ -439,7 +438,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         @JsIgnore
-        public Builder<T> include(@NonNls String first, @NonNls String... rest) {
+        public Builder<T> include(String first, String... rest) {
             includes.addAll(Lists.asList(first, rest));
             return this;
         }
@@ -457,7 +456,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         @JsIgnore
-        public Builder<T> exclude(@NonNls String first, @NonNls String... rest) {
+        public Builder<T> exclude(String first, String... rest) {
             excludes.addAll(Lists.asList(first, rest));
             return this;
         }
@@ -520,8 +519,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * Use this method if you want to manage a singleton resource. This will create a form with an
-         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * Use this method if you want to manage a singleton resource. This will create a form with an {@link
+         * org.jboss.hal.ballroom.form.SingletonStateMachine}.
          * <p>
          * The specified operation is used to check whether the resource exists.
          * <p>
@@ -538,13 +537,13 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * Use this method if you want to manage a singleton resource. This will create a form with an
-         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * Use this method if you want to manage a singleton resource. This will create a form with an {@link
+         * org.jboss.hal.ballroom.form.SingletonStateMachine}.
          * <p>
          * The specified operation is used to check whether the resource exists.
          * <p>
-         * If the resource does not exist, the specified empty state is displayed. The empty state must have a
-         * button which triggers the creation of the singleton resource.
+         * If the resource does not exist, the specified empty state is displayed. The empty state must have a button
+         * which triggers the creation of the singleton resource.
          * <p>
          * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached
          * to it.
@@ -564,7 +563,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         @JsIgnore
-        public Builder<T> customFormItem(@NonNls String attribute, FormItemProvider provider) {
+        public Builder<T> customFormItem(String attribute, FormItemProvider provider) {
             includes.add(attribute);
             providers.put(attribute, provider);
             return this;
@@ -616,8 +615,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * By default the non-requried attributes are displayed together with the required attributes.
-         * Call this method to put the non-required attributes on a collapsible panel beneath the required attributes.
+         * By default the non-requried attributes are displayed together with the required attributes. Call this method
+         * to put the non-required attributes on a collapsible panel beneath the required attributes.
          */
         @JsIgnore
         public Builder<T> panelForOptionalAttributes() {

@@ -29,7 +29,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class DeploymentResources {
     public static final String SUBDEPLOYMENT_ADDRESS = "{selected.host}/{selected.server}/deployment=*/subdeployment=*";
     private static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
     private static final AddressTemplate SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(SUBDEPLOYMENT_ADDRESS);
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentResources.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeploymentResources.class);
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;

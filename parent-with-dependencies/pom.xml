@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.2.4.Final</version>
+        <version>3.2.5.Final</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -184,14 +184,6 @@
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-core</artifactId>
                 <version>${undertow.version}</version>
-            </dependency>
-
-            <!-- Misc -->
-            <dependency>
-                <groupId>org.jetbrains</groupId>
-                <artifactId>annotations</artifactId>
-                <version>${jetbrains.annotations.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <!-- Annotation Processing -->

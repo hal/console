@@ -23,7 +23,6 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +35,8 @@ import static org.jboss.hal.resources.UIConstants.TOGGLE;
 import static org.jboss.hal.resources.UIConstants.TOOLTIP;
 
 /**
- * The Utilization chart can be used to show a visual relationship between the total available amount of a resource,
- * and the percentage of that resource that has been utilized.
+ * The Utilization chart can be used to show a visual relationship between the total available amount of a resource, and
+ * the percentage of that resource that has been utilized.
  *
  * @see <a href="https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/">https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/</a>
  */
@@ -48,7 +47,7 @@ public class Utilization implements IsElement {
     private static final String VALUE_NOW = "valuenow";
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Utilization.class);
+    private static final Logger logger = LoggerFactory.getLogger(Utilization.class);
 
     private final String unit;
     private final boolean thresholds;

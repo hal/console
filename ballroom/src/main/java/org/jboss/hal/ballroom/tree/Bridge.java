@@ -17,7 +17,6 @@ package org.jboss.hal.ballroom.tree;
 
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
@@ -32,5 +31,5 @@ class Bridge<T> {
     @SuppressWarnings("SameParameterValue")
     native Api<T> jstree(boolean _true);
 
-    native <E> void on(@NonNls String event, EventHandler<E> handler);
+    native <E> void on(String event, EventHandler<E> handler);
 }

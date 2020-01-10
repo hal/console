@@ -30,7 +30,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +70,7 @@ public class VerticalNavigation implements Attachable {
 
     private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
     private static final int SECONDARY_VISIBLE_TEXT_LENGTH = 23;
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
+    private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
 
     private static HTMLElement rootContainer;
     private static final HTMLElement root;
@@ -174,15 +173,15 @@ public class VerticalNavigation implements Attachable {
 
     /**
      * Inserts a primary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null}, the
-     * item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and
-     * no item is inserted.
+     * item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and no
+     * item is inserted.
      * <p>
      * You must call this method <em>after</em> at least one item was added and <em>before</em> the navigation is
      * {@linkplain #attach() attached}.
      *
      * <p><strong>Please note</strong><br/>
-     * Unlike {@link #addPrimary(String, String, String, IsElement)}, this method <strong>does</strong> add the item
-     * to the DOM.</p>
+     * Unlike {@link #addPrimary(String, String, String, IsElement)}, this method <strong>does</strong> add the item to
+     * the DOM.</p>
      */
     public void insertPrimary(String id, String beforeId, String text, String iconClass, IsElement element) {
         insertPrimary(id, beforeId, text, iconClass, element.element());
@@ -296,16 +295,16 @@ public class VerticalNavigation implements Attachable {
     }
 
     /**
-     * Inserts a secondary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null},
-     * the item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged
-     * and no item is inserted.
+     * Inserts a secondary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null}, the
+     * item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and no
+     * item is inserted.
      * <p>
      * You must call this method <em>after</em> at least one item was added and <em>before</em> the navigation is
      * {@linkplain #attach() attached}.
      *
      * <p><strong>Please note</strong><br/>
-     * Unlike {@link #addSecondary(String, String, String, HTMLElement)}, this method <strong>does</strong> add the
-     * item to the DOM.</p>
+     * Unlike {@link #addSecondary(String, String, String, HTMLElement)}, this method <strong>does</strong> add the item
+     * to the DOM.</p>
      */
     public void insertSecondary(String primaryId, String id, String beforeId, String text, HTMLElement element) {
         Item primaryItem = items.get(primaryId);
@@ -465,8 +464,8 @@ public class VerticalNavigation implements Attachable {
     }
 
     /**
-     * Returns the elements which were registered using the {@code add()} methods. Use this method to add those
-     * elements to another container.
+     * Returns the elements which were registered using the {@code add()} methods. Use this method to add those elements
+     * to another container.
      */
     public Iterable<HTMLElement> panes() {
         return panes.values().stream().map(Pane::element).collect(toList());

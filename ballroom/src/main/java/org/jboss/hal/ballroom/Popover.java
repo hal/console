@@ -19,7 +19,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
@@ -135,13 +134,13 @@ public class Popover {
     private static class Bridge {
 
         @JsMethod(namespace = GLOBAL)
-        static native Bridge $(@NonNls String selector);
+        static native Bridge $(String selector);
 
         native Bridge popover(Options options);
 
-        native void popover(@NonNls String method);
+        native void popover(String method);
 
-        native void on(@NonNls String event, Callback callback);
+        native void on(String event, Callback callback);
     }
 
 

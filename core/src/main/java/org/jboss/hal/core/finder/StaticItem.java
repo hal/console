@@ -18,8 +18,6 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NonNls;
-
 import static java.util.Arrays.asList;
 
 /** A customizable finder item useful when you need full control over each and every item. */
@@ -109,7 +107,7 @@ public class StaticItem {
             return this;
         }
 
-        public Builder keywords(@NonNls String first, @NonNls String... rest) {
+        public Builder keywords(String first, String... rest) {
             keywords.add(first);
             if (rest != null) {
                 keywords.addAll(asList(rest));

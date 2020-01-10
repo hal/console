@@ -21,7 +21,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.logging.LogConfiguration;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,7 @@ import static elemental2.dom.DomGlobal.document;
 
 public class HalPreBootstrapper implements PreBootstrapper {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(HalPreBootstrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(HalPreBootstrapper.class);
 
     @Override
     public void onPreBootstrap() {

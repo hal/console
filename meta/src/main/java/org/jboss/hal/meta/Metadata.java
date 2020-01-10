@@ -28,7 +28,6 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
 @JsType
 public class Metadata {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Metadata.class);
+    private static final Logger logger = LoggerFactory.getLogger(Metadata.class);
 
     @JsIgnore
     public static Metadata empty() {

@@ -29,7 +29,6 @@ import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.js.Browser;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +36,7 @@ import static elemental2.dom.DomGlobal.window;
 
 public class HalBootstrapper implements Bootstrapper {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(HalBootstrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(HalBootstrapper.class);
 
     private final PlaceManager placeManager;
     private final EndpointManager endpointManager;

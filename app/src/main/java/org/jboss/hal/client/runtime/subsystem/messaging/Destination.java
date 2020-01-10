@@ -21,7 +21,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
@@ -52,7 +51,7 @@ class Destination extends DeploymentResource {
         final String token;
         final String type;
 
-        Type(@NonNls String resource, String token, String type) {
+        Type(String resource, String token, String type) {
             this.resource = resource;
             this.token = token;
             this.type = type;

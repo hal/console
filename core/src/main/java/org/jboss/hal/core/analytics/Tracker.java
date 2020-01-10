@@ -30,13 +30,12 @@ import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent.ModelBrowserPathHandler;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Strings;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Tracker implements NavigationHandler, FinderContextHandler, ModelBrowserPathHandler {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Tracker.class);
+    private static final Logger logger = LoggerFactory.getLogger(Tracker.class);
     private static final Set<String> IGNORE_PLACES = Sets.newHashSet(
             NameTokens.ACCESS_CONTROL,
             NameTokens.CONFIGURATION,

@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.security;
 
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -37,7 +36,7 @@ enum Module {
     final String singleton;
     final String resource;
 
-    Module(final String id, final String type, @NonNls final String singleton, final String resource) {
+    Module(final String id, final String type, final String singleton, final String resource) {
         this.id = id;
         this.type = type;
         this.singleton = singleton;

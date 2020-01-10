@@ -21,5 +21,12 @@ interface AddressTemplates {
 
     String DISTRIBUTABLE_WEB_ADDRESS = "/{selected.profile}/subsystem=distributable-web";
 
+    String HOTROD_SESSION_MANAGEMENT = "/hotrod-session-management=*";
+    String INFINISPAN_SESSION_MANAGEMENT = "/infinispan-session-management=*";
+
     AddressTemplate DISTRIBUTABLE_WEB_TEMPLATE = AddressTemplate.of(DISTRIBUTABLE_WEB_ADDRESS);
+
+    AddressTemplate HOTROD_SESSION_TEMPLATE = DISTRIBUTABLE_WEB_TEMPLATE.append(HOTROD_SESSION_MANAGEMENT);
+    AddressTemplate INFINISPAN_SESSION_TEMPLATE = DISTRIBUTABLE_WEB_TEMPLATE.append(INFINISPAN_SESSION_MANAGEMENT);
+    AddressTemplate AFFINITY_TEMPLATE = AddressTemplate.of("/affinity=*");
 }

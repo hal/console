@@ -27,14 +27,13 @@ import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.spi.Footer;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Registry for finder columns. Manages both sync and async columns behind a split point. */
 public class ColumnRegistry {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);
 
     private final MetadataProcessor metadataProcessor;
     private final RequiredResources requiredResources;

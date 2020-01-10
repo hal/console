@@ -26,7 +26,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ import static elemental2.dom.DomGlobal.window;
 
 public class ExtensionStorage {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionStorage.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExtensionStorage.class);
 
     private final Storage storage;
     private final Map<String, InstalledExtension> extensions;

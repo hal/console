@@ -26,7 +26,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Widgets;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.resources.Ids;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,7 @@ import static org.jboss.hal.resources.CSS.containerFluid;
 
 public class RootView extends ViewImpl implements RootPresenter.MyView {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(RootView.class);
+    private static final Logger logger = LoggerFactory.getLogger(RootView.class);
 
     private final Map<Object, HTMLElement> slots;
     private final HTMLElement rootContainer;

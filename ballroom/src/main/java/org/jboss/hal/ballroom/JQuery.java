@@ -19,7 +19,6 @@ import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.SelectBoxBridge;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
@@ -28,7 +27,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 public class JQuery {
 
     @JsMethod(namespace = GLOBAL)
-    public static native JQuery $(@NonNls String selector);
+    public static native JQuery $(String selector);
 
     @JsMethod(namespace = GLOBAL)
     public static native JQuery $(HTMLElement element);

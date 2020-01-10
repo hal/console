@@ -27,7 +27,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +35,7 @@ import static org.jboss.hal.resources.CSS.withProgress;
 
 public class ExceptionHandler {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
     private static boolean pendingLifecycleAction = false;
 
     static void setPendingLifecycleAction(boolean value) {

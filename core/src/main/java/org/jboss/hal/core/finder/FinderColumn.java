@@ -56,7 +56,6 @@ import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.NamedObject;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,9 +78,9 @@ import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
- * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions
- * and an {@link ItemRenderer} which defines how the items of this column are rendered. All items of a column must have
- * the same type parameter which is the type parameter of this column.
+ * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions and an {@link
+ * ItemRenderer} which defines how the items of this column are rendered. All items of a column must have the same type
+ * parameter which is the type parameter of this column.
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only
  * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
@@ -97,7 +96,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     private static final String DOT = ".";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
+    private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
 
     private final Finder finder;
     private final String id;
@@ -701,8 +700,8 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
     /**
-     * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're
-     * part of the builder which is passed to {@code super()}. In this case you can use this method to add your column
+     * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're part
+     * of the builder which is passed to {@code super()}. In this case you can use this method to add your column
      * actions <strong>after</strong> the call to {@code super()}.
      */
     protected void addColumnAction(ColumnAction<T> columnAction) {
@@ -739,9 +738,9 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
     /**
-     * Sometimes you need to reference {@code this} in the actions created by {@link ItemDisplay#actions()}. This is
-     * not possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer
-     * can be specified <strong>after</strong> the call to {@code super()} using this setter.
+     * Sometimes you need to reference {@code this} in the actions created by {@link ItemDisplay#actions()}. This is not
+     * possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer can be
+     * specified <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
      * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
      * attached to the DOM!
@@ -756,8 +755,8 @@ public class FinderColumn<T> implements IsElement, Attachable {
     }
 
     /**
-     * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider
-     * is part of the builder which is passed to {@code super()}. In this case the items provider can be specified
+     * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider is
+     * part of the builder which is passed to {@code super()}. In this case the items provider can be specified
      * <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
      * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
@@ -792,7 +791,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     private String getNameOfItem(T item) {
         if (item instanceof NamedObject) {
-           return ((NamedObject) item).getName();
+            return ((NamedObject) item).getName();
         }
         return item.toString();
     }

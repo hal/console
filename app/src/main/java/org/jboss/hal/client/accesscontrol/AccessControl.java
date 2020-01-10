@@ -40,7 +40,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public class AccessControl {
 
     private static final String LOCAL_USERNAME = "$local";
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(AccessControl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccessControl.class);
 
     private final Environment environment;
     private final EventBus eventBus;

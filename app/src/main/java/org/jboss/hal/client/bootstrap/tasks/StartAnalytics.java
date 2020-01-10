@@ -29,7 +29,6 @@ import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.js.JsonObject;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Completable;
@@ -47,7 +46,7 @@ public class StartAnalytics implements BootstrapTask {
     private static final String DEVELOPMENT_ID = "UA-89365654-2";
     private static final String UNKNOWN_ID = "UA-89365654-4";
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(StartAnalytics.class);
+    private static final Logger logger = LoggerFactory.getLogger(StartAnalytics.class);
 
     private final Environment environment;
     private final Endpoints endpoints;
