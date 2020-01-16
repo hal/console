@@ -52,7 +52,7 @@ public class BootstrapFailed implements IsElement<HTMLDivElement> {
                 .add(div().css(containerFluid)
                         .add(div().css(row)
                                 .add(div().css(column(12, columnLg, columnMd, columnSm))
-                                        .add(h(1, "Bootstrap Eror"))
+                                        .add(h(1, "Bootstrap Error"))
                                         .add(div().css(alert, alertDanger, marginTopLarge)
                                                 .add(span().css(pfIcon(errorCircleO)))
                                                 .add(errorHolder = span()
