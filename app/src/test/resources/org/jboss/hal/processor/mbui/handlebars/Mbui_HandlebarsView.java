@@ -10,9 +10,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.template.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
+import org.jboss.hal.ballroom.ExpressionUtil;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -71,6 +71,6 @@ public final class Mbui_HandlebarsView extends HandlebarsView {
     public void attach() {
         super.attach();
 
-        TemplateUtil.replaceExpression(expressionElements.get("html0"), "${org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}", String.valueOf(org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())));
+        ExpressionUtil.replaceExpression(expressionElements.get("html0"), "${org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())}", String.valueOf(org.jboss.hal.ballroom.Format.shortDateTime(new java.util.Date())));
     }
 }

@@ -45,6 +45,7 @@ public interface CSS {
     String autocompleteSuggestion = "autocomplete-suggestion";
     String autocompleteSuggestions = "autocomplete-suggestions";
 
+    String back = "back";
     String badge = "badge";
     String badgeContainerPf = "badge-container-pf";
     String blankSlatePf = "blank-slate-pf";
@@ -57,6 +58,7 @@ public interface CSS {
     String bootstrapSwitch = "bootstrap-switch";
     String bootstrapSwitchContainer = "bootstrap-switch-container";
     String breadcrumb = "breadcrumb";
+    String breadcrumbTools = "breadcrumb-tools";
     String breakTooltip = "break-tooltip";
     String btn = "btn";
     String btnCancel = "btn-cancel";
@@ -109,6 +111,8 @@ public interface CSS {
     String drawerPfNotificationMessage = "drawer-pf-notification-message";
     String drawerPfNotificationInfo = "drawer-pf-notification-info";
     String drawerPfTitle = "drawer-pf-title";
+    String drawerPfTrigger = "drawer-pf-trigger";
+    String drawerPfTriggerIcon = "drawer-pf-trigger-icon";
     String drawerPfToggleExpand = "drawer-pf-toggle-expand";
     String drawerPfNotificationsNonClickable = "drawer-pf-notifications-non-clickable";
     String dropdown = "dropdown";
@@ -117,7 +121,14 @@ public interface CSS {
     String dropdownMenuRight = "dropdown-menu-right";
     String dropdownToggle = "dropdown-toggle";
 
+    String eapHomeCol = "eap-home-col";
+    String eapHomeModule = "eap-home-module";
+    String eapHomeModuleContainer = "eap-home-module-container";
+    String eapHomeModuleCol = "eap-home-module-col";
+    String eapHomeModuleHeader = "eap-home-module-header";
+    String eapHomeModuleIcon = "eap-home-module-icon";
     String eapHomeRow = "eap-home-row";
+    String eapHomeSectionIcon = "eap-home-section-icon";
     String eapHomeTitle = "eap-home-title";
     String eapPagination = "eap-pagination";
     String eapQuickTour = "eap-quick-tour";
@@ -127,9 +138,13 @@ public interface CSS {
     String eapQuickTourStep4 = "eap-quick-tour-step-4";
     String eapQuickTourStep5 = "eap-quick-tour-step-5";
     String eapQuickTourSteps = "eap-quick-tour-steps";
+    String eapToggleContainer = "eap-toggle-container";
+    String eapToggleControls = "eap-toggle-controls";
     String editing = "editing";
     String editor = "editor";
+    String editorButtons = "editor-buttons";
     String editorControls = "editor-controls";
+    String editorStatus = "editor-status";
     String empty = "empty";
     String error = "error";
     String errorCircleO = "error-circle-o";
@@ -150,6 +165,9 @@ public interface CSS {
     String finderPreview = "finder-preview";
     String flexRow = "flex-row";
     String folder = "folder";
+    String footer = "footer";
+    String footerProgress = "footer-progress";
+    String footerTools = "footer-tools";
     String form = "form";
     String formButtons = "form-buttons";
     String formControl = "form-control";
@@ -169,6 +187,7 @@ public interface CSS {
     String halFormLabel = "hal-form-label";
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
+    String halHeaderCollapse = "hal-header-collapse";
     String halSearch = "hal-search";
     String halTableButtons = "hal-table-buttons";
     String hasButton = "has-button";
@@ -185,6 +204,7 @@ public interface CSS {
     String hostContainer = "host-container";
 
     String i = "i";
+    String iconBar = "icon-bar";
     String imgResponsive = "img-responsive";
     String imgThumbnail = "img-thumbnail";
     String in = "in";
@@ -241,8 +261,14 @@ public interface CSS {
     String listPfTitle = "list-pf-title";
     String loading = "loading";
     String loadingContainer = "loading-container";
+    String logFileEditorContainer = "log-file-editor-container";
+    String logFileFollow = "log-file-follow";
     String logFileLoading = "log-file-loading";
     String logFilePreview = "log-file-preview";
+    String logo = "logo";
+    String logoText = "logo-text";
+    String logoTextFirst = "logo-text-first";
+    String logoTextLast = "logo-text-last";
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
@@ -274,6 +300,18 @@ public interface CSS {
     String name = "name";
     String nav = "nav";
     String navbar = "navbar";
+    String navbarBrand = "navbar-brand";
+    String navbarCollapse = "navbar-collapse";
+    String navbarDefault = "navbar-default";
+    String navbarFixedBottom = "navbar-fixed-bottom";
+    String navbarFixedTop = "navbar-fixed-top";
+    String navbarFooter = "navbar-footer";
+    String navbarHeader = "navbar-header";
+    String navbarNav = "navbar-nav";
+    String navbarPf = "navbar-pf";
+    String navbarToggle = "navbar-toggle";
+    String navbarUtility = "navbar-utility";
+    String navItemIconic = "nav-item-iconic";
     String navItemPfHeader = "nav-item-pf-header";
     String navPfPersistentSecondary = "nav-pf-persistent-secondary";
     String navPfSecondaryNav = "nav-pf-secondary-nav";
@@ -341,6 +379,7 @@ public interface CSS {
     String radioInline = "radio-inline";
     String rbacHidden = "rbac-hidden";
     String readonly = "readonly";
+    String recording = "recording";
     String refresh = "refresh";
     String restResources = "rest-resources";
     String restricted = "restricted";
@@ -391,6 +430,7 @@ public interface CSS {
     String tmTagRemove = "tm-tag-remove";
     String toastNotificationsListPf = "toast-notifications-list-pf";
     String toastPfAction = "toast-pf-action";
+    String tool = "tool";
     String toolbarPf = "toolbar-pf";
     String toolbarPfActionRight = "toolbar-pf-action-right";
     String toolbarPfActions = "toolbar-pf-actions";
@@ -407,6 +447,7 @@ public interface CSS {
     String uploadAdvanced = "upload-advanced";
     String uploadIcon = "upload-icon";
     String uploadFile = "upload-file";
+    String userDropdown = "user-dropdown";
 
     String value = "value";
     String valueDropdown = "value-dropdown";
@@ -439,26 +480,26 @@ public interface CSS {
     static String column(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {
             return Arrays.stream(sizes)
-                    .map(size -> column + DASH + size + DASH + String.valueOf(columns))
+                    .map(size -> column + DASH + size + DASH + columns)
                     .collect(joining(SPACE));
         } else {
-            return column + DASH + columnXs + DASH + String.valueOf(columns) + SPACE +
-                    column + DASH + columnSm + DASH + String.valueOf(columns) + SPACE +
-                    column + DASH + columnMd + DASH + String.valueOf(columns) + SPACE +
-                    column + DASH + columnLg + DASH + String.valueOf(columns);
+            return column + DASH + columnXs + DASH + columns + SPACE +
+                    column + DASH + columnSm + DASH + columns + SPACE +
+                    column + DASH + columnMd + DASH + columns + SPACE +
+                    column + DASH + columnLg + DASH + columns;
         }
     }
 
     static String offset(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {
             return Arrays.stream(sizes)
-                    .map(size -> column + DASH + size + DASH + offset + DASH + String.valueOf(columns))
+                    .map(size -> column + DASH + size + DASH + offset + DASH + columns)
                     .collect(joining(SPACE));
         } else {
-            return column + DASH + columnXs + DASH + offset + DASH + String.valueOf(columns) + SPACE +
-                    column + DASH + columnSm + DASH + offset + DASH + String.valueOf(columns) + SPACE +
-                    column + DASH + columnMd + DASH + offset + DASH + String.valueOf(columns) + SPACE +
-                    column + DASH + columnLg + DASH + offset + DASH + String.valueOf(columns);
+            return column + DASH + columnXs + DASH + offset + DASH + columns + SPACE +
+                    column + DASH + columnSm + DASH + offset + DASH + columns + SPACE +
+                    column + DASH + columnMd + DASH + offset + DASH + columns + SPACE +
+                    column + DASH + columnLg + DASH + offset + DASH + columns;
         }
     }
 
@@ -475,11 +516,11 @@ public interface CSS {
     }
 
     static String px(int value) {
-        return String.valueOf(value) + "px"; //NON-NLS
+        return value + "px"; //NON-NLS
     }
 
     static String px(double value) {
-        return String.valueOf(value) + "px"; //NON-NLS
+        return value + "px"; //NON-NLS
     }
 
     /**

@@ -15,59 +15,58 @@
  */
 package org.jboss.hal.client.homepage;
 
-import javax.annotation.PostConstruct;
-
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLLIElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.template.DataElement;
-import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.li;
-import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.CSS.in;
+import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.*;
 
-@SuppressWarnings("HardCodedStringLiteral")
-@Templated("Homepage.html#homepage-section")
-abstract class HomepageSection implements IsElement {
+class HomepageSection implements IsElement<HTMLDivElement> {
 
     private static final String FA_ANGLE_RIGHT = "fa-angle-right";
     private static final String FA_ANGLE_DOWN = "fa-angle-down";
 
-    // @formatter:off
-    static HomepageSection create(Places places, Resources resources,
+    private final HTMLDivElement root;
+    private final HTMLElement toggleIcon;
+
+    HomepageSection(Places places, Resources resources,
             String id, String token, String header, String intro,
             Iterable<String> steps, boolean open) {
-        return new Templated_HomepageSection(places, resources, id, token, header, intro, steps, open);
-    }
 
-    abstract Places places();
-    abstract Resources resources();
-    abstract String id();
-    abstract String token();
-    abstract String header();
-    abstract String intro();
-    abstract Iterable<String> steps();
-    abstract boolean open();
-    // @formatter:on
+        HTMLElement sectionBody;
+        HTMLElement sectionSteps;
 
+        root = div()
+                .add(div().css(CSS.eapToggleControls)
+                        .add(a("#" + id)
+                                .aria(CONTROLS, id)
+                                .aria(EXPANDED, TRUE)
+                                .data(TOGGLE, COLLAPSE)
+                                .on(click, e -> toggle())
+                                .add(toggleIcon = i().css(eapHomeSectionIcon, fontAwesome("angle-down"))
+                                        .element())
+                                .add(span().textContent(header)))
+                        .add(a(historyToken(places, token))
+                                .add(span().textContent(resources.constants().start() + " "))
+                                .add(i().css(fontAwesome("arrow-circle-right")))))
+                .add(sectionBody = div().css(eapToggleContainer, collapse)
+                        .id(id)
+                        .add(p().textContent(intro))
+                        .add(sectionSteps = ol().element())
+                        .element())
+                .element();
 
-    @DataElement HTMLElement toggleIcon;
-    @DataElement HTMLElement toggleSection;
-    @DataElement HTMLElement sectionHeader;
-    @DataElement HTMLElement sectionBody;
-    @DataElement HTMLElement sectionIntro;
-    @DataElement HTMLElement sectionSteps;
-
-    @PostConstruct
-    void init() {
-        if (open()) {
+        if (open) {
             toggleIcon.classList.remove(FA_ANGLE_RIGHT);
             toggleIcon.classList.add(FA_ANGLE_DOWN);
             sectionBody.classList.add(in);
@@ -76,22 +75,23 @@ abstract class HomepageSection implements IsElement {
             toggleIcon.classList.add(FA_ANGLE_RIGHT);
             sectionBody.classList.remove(in);
         }
-        sectionHeader.innerHTML = header();
-        sectionIntro.innerHTML = intro();
-        sectionBody.setAttribute("aria-expanded", String.valueOf(open())); //NON-NLS
+        sectionBody.setAttribute("aria-expanded", String.valueOf(open));
 
-        Elements.removeChildrenFrom(sectionSteps);
-        for (String step : steps()) {
+        removeChildrenFrom(sectionSteps);
+        for (String step : steps) {
             HTMLLIElement li = li().innerHtml(SafeHtmlUtils.fromString(step)).get();
             sectionSteps.appendChild(li);
         }
-
-        bind(toggleSection, click, event -> toggle());
     }
 
-    String historyToken() {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token()).build();
-        return places().historyToken(placeRequest);
+    @Override
+    public HTMLDivElement element() {
+        return root;
+    }
+
+    String historyToken(Places places, String token) {
+        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
+        return places.historyToken(placeRequest);
     }
 
     void toggle() {

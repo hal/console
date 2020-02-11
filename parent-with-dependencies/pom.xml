@@ -127,16 +127,6 @@
                 <version>${elemento.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.gwt.elemento</groupId>
-                <artifactId>elemento-template-api</artifactId>
-                <version>${elemento.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.gwt.elemento</groupId>
-                <artifactId>elemento-template-processor</artifactId>
-                <version>${elemento.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava-gwt</artifactId>
                 <version>${guava.version}</version>
