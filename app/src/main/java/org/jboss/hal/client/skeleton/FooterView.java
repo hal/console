@@ -24,7 +24,6 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Version;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -64,7 +63,7 @@ public class FooterView extends HalViewImpl implements FooterPresenter.MyView {
     private Environment environment;
 
     @Inject
-    public FooterView(Places places, UIRegistry uiRegistry, Resources resources) {
+    public FooterView(UIRegistry uiRegistry, Resources resources) {
         this.resources = resources;
 
         ProgressElement progress = new ProgressElement(XS, NONE, false);
@@ -73,7 +72,7 @@ public class FooterView extends HalViewImpl implements FooterPresenter.MyView {
         HTMLElement expressionResolver;
         HTMLElement settings;
         HTMLElement root = footer().css(footer)
-                .add(nav().css(navbar, navbarFooter, navbarFixedTop)
+                .add(nav().css(navbar, navbarFooter, navbarFixedBottom)
                         .add(ul().css(CSS.nav, navbarNav)
                                 .add(li().css(footerProgress)
                                         .add(progress)))

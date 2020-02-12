@@ -181,6 +181,7 @@ public interface CSS {
 
     String grey = "grey";
 
+    String halBreadcrumb = "hal-breadcrumb";
     String halConfChangesAdditionalInfo = "hal-conf-changes-additional-info";
     String halExecutionDuration = "hal-execution-duration";
     String halExecutionTime = "hal-execution-time";
@@ -309,6 +310,7 @@ public interface CSS {
     String navbarHeader = "navbar-header";
     String navbarNav = "navbar-nav";
     String navbarPf = "navbar-pf";
+    String navbarPrimary = "navbar-primary";
     String navbarToggle = "navbar-toggle";
     String navbarUtility = "navbar-utility";
     String navItemIconic = "nav-item-iconic";
