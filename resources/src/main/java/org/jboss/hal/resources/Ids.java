@@ -15,17 +15,14 @@
  */
 package org.jboss.hal.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-import static com.google.common.base.CharMatcher.inRange;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
@@ -1007,15 +1004,26 @@ public interface Ids {
      * "-".
      */
     static String asId(String text) {
-        Iterable<String> parts = Splitter
-                .on(CharMatcher.whitespace().or(CharMatcher.is('-')))
-                .omitEmptyStrings()
-                .trimResults()
-                .split(text);
-        return stream(parts.spliterator(), false)
-                .map(String::toLowerCase)
-                .map(inRange('a', 'z').or(inRange('0', '9'))::retainFrom)
-                .collect(joining("-"));
+        String[] parts = text.split("[-\\s]");
+        List<String> sanitized = new ArrayList<>();
+        for (String part : parts) {
+            if (part != null) {
+                String s = part.replaceAll("\\s+", "");
+                s = s.replaceAll("[^a-zA-Z0-9-_]", "");
+                s = s.replace('_', '-');
+                if (s.length() != 0) {
+                    sanitized.add(s);
+                }
+            }
+        }
+        if (sanitized.isEmpty()) {
+            return null;
+        } else {
+            return sanitized.stream()
+                    .filter(s -> s != null && s.trim().length() != 0)
+                    .map(String::toLowerCase)
+                    .collect(joining("-"));
+        }
     }
 
     static String build(String id, String... additionalIds) {
@@ -1024,7 +1032,7 @@ public interface Ids {
 
     static String build(String id, char separator, String... additionalIds) {
         if (emptyToNull(id) == null) {
-            throw new IllegalArgumentException("Id must not be null");
+            throw new IllegalArgumentException("ID must not be null");
         }
         List<String> ids = Lists.newArrayList(id);
         if (additionalIds != null) {
