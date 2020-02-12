@@ -39,8 +39,10 @@ public class ExpressionUtil {
         TreeWalker treeWalker = DomGlobal.document.createTreeWalker(context, NodeFilter.SHOW_TEXT, null, false);
 
         while (treeWalker.nextNode() != null) {
-            if (treeWalker.getCurrentNode().nodeValue != null && treeWalker.getCurrentNode().nodeValue.contains(expression)) {
-                treeWalker.getCurrentNode().nodeValue = treeWalker.getCurrentNode().nodeValue.replace(expression, value);
+            if (treeWalker.getCurrentNode().nodeValue != null && treeWalker.getCurrentNode().nodeValue.contains(
+                    expression)) {
+                treeWalker.getCurrentNode().nodeValue = treeWalker.getCurrentNode().nodeValue.replace(expression,
+                        value);
             }
         }
     }
@@ -63,5 +65,8 @@ public class ExpressionUtil {
                 attribute.nodeValue = currentValue.replace(expression, value);
             }
         }
+    }
+
+    private ExpressionUtil() {
     }
 }
