@@ -29,8 +29,9 @@ import rx.Single;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static java.util.stream.Collectors.joining;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
 public class TimeoutHandler {
