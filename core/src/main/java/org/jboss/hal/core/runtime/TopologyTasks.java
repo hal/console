@@ -326,12 +326,16 @@ public final class TopologyTasks {
                 Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
                         .build();
-                completable = dispatcher.execute(operation).doOnSuccess(result -> {
-                    List<String> hostNames = result.asList().stream()
-                            .map(ModelNode::asString)
-                            .collect(toList());
-                    context.set(HOST_NAMES, hostNames);
-                }).toCompletable();
+                completable = dispatcher.execute(operation)
+                        .doOnSuccess(result -> {
+                            List<String> hostNames = result.asList().stream()
+                                    .map(ModelNode::asString)
+                                    .collect(toList());
+                            context.set(HOST_NAMES, hostNames);
+                        })
+                        .doOnError(throwable -> logger.error("TopologyTasks.HostNames failed: {}",
+                                throwable.getMessage()))
+                        .toCompletable();
             }
             return completable;
         }
@@ -388,6 +392,8 @@ public final class TopologyTasks {
                                                         servers.add(server);
                                                     });
                                         })
+                                        .doOnError(throwable -> logger.error("TopologyTasks.Hosts failed: {}",
+                                                throwable.getMessage()))
                                         .onErrorResumeNext(new HostError<>(host, hosts,
                                                 error -> new CompositeResult(new ModelNode())))
                                         .toCompletable();
@@ -422,34 +428,38 @@ public final class TopologyTasks {
                         .param(SELECT, new ModelNode().add(EVENTS))
                         .param(WHERE, new ModelNode().set(CONNECTED, false))
                         .build();
-                completable = dispatcher.execute(operation).doOnSuccess(result -> {
-                    List<Host> disconnectedHosts = result.asList().stream()
-                            .filter(node -> !node.isFailure())
-                            .map(node -> {
-                                String name = new ResourceAddress(node.get(ADDRESS)).lastValue();
-                                long registered = 0;
-                                long unregistered = 0;
-                                for (ModelNode event : failSafeList(node, RESULT + "/" + EVENTS)) {
-                                    if (event.hasDefined(TYPE) && event.hasDefined(TIMESTAMP)) {
-                                        if (REGISTERED.equals(event.get(TYPE).asString())) {
-                                            registered = max(registered, event.get(TIMESTAMP).asLong());
-                                        } else if (UNREGISTERED.equals(event.get(TYPE).asString())) {
-                                            unregistered = max(unregistered, event.get(TIMESTAMP).asLong());
+                completable = dispatcher.execute(operation)
+                        .doOnSuccess(result -> {
+                            List<Host> disconnectedHosts = result.asList().stream()
+                                    .filter(node -> !node.isFailure())
+                                    .map(node -> {
+                                        String name = new ResourceAddress(node.get(ADDRESS)).lastValue();
+                                        long registered = 0;
+                                        long unregistered = 0;
+                                        for (ModelNode event : failSafeList(node, RESULT + "/" + EVENTS)) {
+                                            if (event.hasDefined(TYPE) && event.hasDefined(TIMESTAMP)) {
+                                                if (REGISTERED.equals(event.get(TYPE).asString())) {
+                                                    registered = max(registered, event.get(TIMESTAMP).asLong());
+                                                } else if (UNREGISTERED.equals(event.get(TYPE).asString())) {
+                                                    unregistered = max(unregistered, event.get(TIMESTAMP).asLong());
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                                Date disconnected = unregistered != 0 ? new Date(unregistered) : null;
-                                Date lastConnected = registered != 0 ? new Date(registered) : null;
-                                return Host.disconnected(name, disconnected, lastConnected);
-                            })
-                            .collect(toList());
-                    List<Host> hosts = context.get(HOSTS);
-                    if (hosts == null) {
-                        hosts = new ArrayList<>();
-                        context.set(HOSTS, hosts);
-                    }
-                    hosts.addAll(disconnectedHosts);
-                }).toCompletable();
+                                        Date disconnected = unregistered != 0 ? new Date(unregistered) : null;
+                                        Date lastConnected = registered != 0 ? new Date(registered) : null;
+                                        return Host.disconnected(name, disconnected, lastConnected);
+                                    })
+                                    .collect(toList());
+                            List<Host> hosts = context.get(HOSTS);
+                            if (hosts == null) {
+                                hosts = new ArrayList<>();
+                                context.set(HOSTS, hosts);
+                            }
+                            hosts.addAll(disconnectedHosts);
+                        })
+                        .doOnError(throwable -> logger.error("TopologyTasks.DisconnectedHosts failed: {}",
+                                throwable.getMessage()))
+                        .toCompletable();
             }
             return completable;
         }
@@ -475,13 +485,17 @@ public final class TopologyTasks {
                         .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
                         .param(INCLUDE_RUNTIME, true)
                         .build();
-                completable = dispatcher.execute(operation).doOnSuccess(result -> {
-                    List<ServerGroup> serverGroups = result.asPropertyList().stream()
-                            .map(ServerGroup::new)
-                            .sorted(comparing(ServerGroup::getName))
-                            .collect(toList());
-                    context.set(SERVER_GROUPS, serverGroups);
-                }).toCompletable();
+                completable = dispatcher.execute(operation)
+                        .doOnSuccess(result -> {
+                            List<ServerGroup> serverGroups = result.asPropertyList().stream()
+                                    .map(ServerGroup::new)
+                                    .sorted(comparing(ServerGroup::getName))
+                                    .collect(toList());
+                            context.set(SERVER_GROUPS, serverGroups);
+                        })
+                        .doOnError(throwable -> logger.error("TopologyTasks.ServerGroups failed: {}",
+                                throwable.getMessage()))
+                        .toCompletable();
             }
             return completable;
         }
@@ -516,6 +530,8 @@ public final class TopologyTasks {
                         .doOnSuccess(result -> result.asPropertyList().stream()
                                 .map(property -> new Server(host, property))
                                 .forEach(servers::add))
+                        .doOnError(throwable -> logger.error("TopologyTasks.ServersOfHost failed: {}",
+                                throwable.getMessage()))
                         .toCompletable();
             }
             return completable;
@@ -563,6 +579,9 @@ public final class TopologyTasks {
                                                     return new Server(h, modelNode.get(RESULT));
                                                 })
                                                 .forEach(servers::add))
+                                        .doOnError(throwable -> logger.error(
+                                                "TopologyTasks.ServersOfServerGroup failed: {}",
+                                                throwable.getMessage()))
                                         .onErrorResumeNext(error -> {
                                             logger.warn("Unable to read servers of host {}: {}", host,
                                                     error.getMessage());
@@ -633,6 +652,8 @@ public final class TopologyTasks {
                                                     return new Server(h, modelNode.get(RESULT));
                                                 })
                                                 .forEach(servers::add))
+                                        .doOnError(throwable -> logger.error("TopologyTasks.RunningServers failed: {}",
+                                                throwable.getMessage()))
                                         .onErrorResumeNext(error -> {
                                             logger.warn("Unable to read servers of host {}: {}", host,
                                                     error.getMessage());
@@ -703,6 +724,8 @@ public final class TopologyTasks {
                                             }
                                         }
                                     })
+                                    .doOnError(throwable -> logger.error("TopologyTasks.StartedServers failed: {}",
+                                            throwable.getMessage()))
                                     .toCompletable();
                         }
                     }

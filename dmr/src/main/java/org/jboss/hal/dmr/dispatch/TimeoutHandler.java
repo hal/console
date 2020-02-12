@@ -29,9 +29,8 @@ import rx.Single;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
+import static java.util.stream.Collectors.joining;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
 public class TimeoutHandler {
@@ -102,10 +101,12 @@ public class TimeoutHandler {
     }
 
     private static CompositeResult compositeFailure(String reason) {
-        ModelNode node = new ModelNode();
-        node.get(OUTCOME).set(FAILED);
-        node.get(FAILURE_DESCRIPTION).set(reason);
-        return new CompositeResult(node);
+        ModelNode step1 = new ModelNode();
+        step1.get(OUTCOME).set(FAILED);
+        step1.get(FAILURE_DESCRIPTION).set(reason);
+        ModelNode steps = new ModelNode();
+        steps.get("step-1").set(step1);
+        return new CompositeResult(steps);
     }
 
     private TimeoutHandler() {
