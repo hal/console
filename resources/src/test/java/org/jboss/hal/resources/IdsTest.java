@@ -47,7 +47,7 @@ public class IdsTest {
         assertEquals("lorem-ipsum", Ids.asId("lorem-ipsum"));
         assertEquals("lorem-ipsum", Ids.asId("Lorem Ipsum"));
         assertEquals("l0rem-ip5um", Ids.asId("l0rem-ip5um"));
-        assertEquals("lorem--ipsum", Ids.asId("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
+        assertEquals("lorem---ipsum", Ids.asId("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class IdsTest {
         assertEquals("l0rem-ip5um", Ids.build("l0rem ip5um"));
         assertEquals("l0rem-ip5um", Ids.build("l0rem", "ip5um"));
         assertEquals("l0rem-ip5um", Ids.build(" l0rem ", " ip5um "));
-        assertEquals("lorem--ipsum", Ids.build("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
-        assertEquals("lorem--ipsum", Ids.build("lorem", "§±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~", "ipsum"));
+        assertEquals("lorem---ipsum", Ids.build("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
+        assertEquals("lorem---ipsum", Ids.build("lorem", "§±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~", "ipsum"));
     }
 }
