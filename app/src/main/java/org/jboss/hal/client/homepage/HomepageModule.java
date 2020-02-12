@@ -15,50 +15,37 @@
  */
 package org.jboss.hal.client.homepage;
 
-import javax.annotation.PostConstruct;
-
 import com.google.gwt.resources.client.ImageResource;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLImageElement;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.template.DataElement;
-import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.core.mvp.Places;
 
-@Templated("Homepage.html#homepage-module")
-abstract class HomepageModule implements IsElement {
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.hal.resources.CSS.*;
 
-    // @formatter:off
-    static HomepageModule create(Places places, String id, String token, String header, String intro,
+class HomepageModule implements IsElement<HTMLDivElement> {
+
+    private final HTMLDivElement root;
+
+    public HomepageModule(Places places, String id, String token, String header, String intro,
             ImageResource image, Iterable<HomepageSection> sections) {
-        return new Templated_HomepageModule(places, id, token, header, intro, image, sections);
-    }
+        HTMLElement moduleBody;
 
-    abstract Places places();
-    abstract String id();
-    abstract String token();
-    abstract String header();
-    abstract String intro();
-    abstract ImageResource image();
-    abstract Iterable<HomepageSection> sections();
-    // @formatter:on
-
-
-    @DataElement HTMLImageElement moduleImage;
-    @DataElement HTMLElement moduleBody;
-    @DataElement HTMLElement moduleHeader;
-    @DataElement HTMLElement moduleIntro;
-
-    @PostConstruct
-    void init() {
-        moduleImage.src = image().getSafeUri().asString();
-        moduleHeader.id = id();
-        moduleHeader.textContent = header();
-        moduleIntro.textContent = intro();
+        root = div().css(eapHomeCol)
+                .add(div().css(eapHomeModule)
+                        .add(div().css(eapHomeModuleIcon)
+                                .add(img(image.getSafeUri().asString())))
+                        .add(moduleBody = div().css(eapHomeModuleContainer)
+                                .add(div().css(eapHomeModuleHeader)
+                                        .add(h(2).add(a(historyToken(places, token)).id(id).textContent(header)))
+                                        .add(p().textContent(intro)))
+                                .element()))
+                .element();
 
         int i = 0;
-        for (HomepageSection section : sections()) {
+        for (HomepageSection section : sections) {
             moduleBody.appendChild(section.element());
             if (i > 0) {
                 section.toggle();
@@ -67,8 +54,13 @@ abstract class HomepageModule implements IsElement {
         }
     }
 
-    String historyToken() {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token()).build();
-        return places().historyToken(placeRequest);
+    @Override
+    public HTMLDivElement element() {
+        return root;
+    }
+
+    String historyToken(Places places, String token) {
+        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
+        return places.historyToken(placeRequest);
     }
 }

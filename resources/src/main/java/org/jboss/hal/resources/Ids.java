@@ -464,6 +464,7 @@ public interface Ids {
     String LOCAL_CACHE = "local-cache";
     String LOG_FILE = "lf";
     String LOG_FILE_EDITOR = "lf-editor";
+    String LOG_FILE_FOLLOW = "lf-follow";
     String LOG_FILE_REFRESH = "lf-refresh";
     String LOG_FILE_SEARCH = "lf-search";
     String LOGGING_CONFIG_AND_PROFILES = "lcap";

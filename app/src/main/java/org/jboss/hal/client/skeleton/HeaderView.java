@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -33,8 +33,6 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLLIElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
-import org.jboss.gwt.elemento.template.DataElement;
-import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
@@ -56,6 +54,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
@@ -65,38 +64,49 @@ import org.slf4j.LoggerFactory;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.li;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.Elements.ul;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.nav;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.resources.CSS.nav;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.large;
 import static org.jboss.hal.resources.Strings.abbreviateMiddle;
-import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.UIConstants.*;
 
-@Templated("MainLayout.html#header")
-public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
-
-    // @formatter:off
-    public static HeaderView create(Places places, AccessControl ac, User user, Resources resources) {
-        return new Templated_HeaderView(places, ac, user, resources);
-    }
-
-    public abstract Places places();
-    public abstract AccessControl ac();
-    public abstract User user();
-    public abstract Resources resources();
-    // @formatter:on
-
+public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
     private static final PlaceRequest HOMEPAGE = new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
+
+    private final Places places;
+    private final Resources resources;
+
+    private final HTMLElement logoFirst;
+    private final HTMLElement logoLast;
+    private final HTMLElement reloadContainer;
+    private final HTMLElement reloadLink;
+    private final HTMLElement reloadLabel;
+    private final HTMLElement nonProgressingOperationContainer;
+    private final HTMLElement messages;
+    private final HTMLElement badgeIcon;
+    private final HTMLElement userName;
+    private final HTMLElement userDropdown;
+    private final HTMLElement logoutItem;
+    private final HTMLElement connectedToContainer;
+    private final HTMLElement connectedTo;
+    private final HTMLElement topLevelCategories;
+    private final HTMLElement breadcrumb;
+    private final HTMLElement backItem;
+    private final HTMLElement breadcrumbToolsItem;
+    private final HTMLElement switchModeLink;
+    private final HTMLElement switchModeIcon;
+    private final HTMLElement externalLink;
 
     private PlaceRequest backPlaceRequest;
     private Map<String, PlaceRequest> tlcPlaceRequests;
@@ -108,56 +118,162 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     private List<HandlerRegistration> handlers;
     private List<HandlerRegistration> breadcrumbHandlers;
 
-    @DataElement HTMLElement logoFirst;
-    @DataElement HTMLElement logoLast;
-    @DataElement HTMLElement logoLink;
-    @DataElement HTMLElement reloadContainer;
-    @DataElement HTMLElement reloadLink;
-    @DataElement HTMLElement reloadLabel;
-    @DataElement HTMLElement nonProgressingOperationContainer;
-    @DataElement HTMLElement nonProgressingOperationLink;
-    @DataElement HTMLElement nonProgressingOperationLabel;
-    @DataElement HTMLElement messages;
-    @DataElement HTMLElement badgeIcon;
-    @DataElement HTMLElement userName;
-    @DataElement HTMLElement userDropdown;
-    @DataElement HTMLElement logout;
-    @DataElement HTMLElement logoutItem;
-    @DataElement HTMLElement reconnect;
-    @DataElement HTMLElement connectedToContainer;
-    @DataElement HTMLElement connectedTo;
-    @DataElement HTMLElement patching;
-    @DataElement HTMLElement accessControl;
-    @DataElement HTMLElement topLevelCategories;
-    @DataElement HTMLElement breadcrumb;
-    @DataElement HTMLElement backItem;
-    @DataElement HTMLElement backLink;
-    @DataElement HTMLElement breadcrumbToolsItem;
-    @DataElement HTMLElement switchModeLink;
-    @DataElement HTMLElement switchModeIcon;
-    @DataElement HTMLElement externalLink;
+    @Inject
+    public HeaderView(Places places, AccessControl ac, Resources resources) {
+        this.places = places;
+        this.resources = resources;
 
+        HTMLElement logoLink;
+        HTMLElement nonProgressingOperationLink;
+        HTMLElement logout;
+        HTMLElement reconnect;
+        HTMLElement patching;
+        HTMLElement accessControl;
+        HTMLElement backLink;
+        HTMLElement root = nav().css(navbar, navbarDefault, navbarFixedTop, navbarPf)
+                .add(div().css(navbarHeader)
+                        .add(button().css(navbarToggle)
+                                .data(TOGGLE, COLLAPSE)
+                                .data(TARGET, "." + halHeaderCollapse)
+                                .add(span().css(srOnly).textContent(resources.constants().toggleNavigation()))
+                                .add(span().css(iconBar))
+                                .add(span().css(iconBar))
+                                .add(span().css(iconBar)))
+                        .add(logoLink = a().css(navbarBrand, logo, clickable)
+                                .add(logoFirst = span().css(logoText, logoTextFirst)
+                                        .textContent("HAL")
+                                        .element())
+                                .add(logoLast = span().css(logoText, logoTextLast)
+                                        .textContent("Management Console")
+                                        .element())
+                                .element()))
+                .add(div().css(collapse, navbarCollapse, halHeaderCollapse)
+                        .add(ul().css(nav, navbarNav, navbarUtility)
+                                .add(nonProgressingOperationContainer = li()
+                                        .add(nonProgressingOperationLink = a().css(clickable)
+                                                .data(TOGGLE, TOOLTIP)
+                                                .data(PLACEMENT, "bottom")
+                                                .data(CONTAINER, BODY)
+                                                .title("There is an operation in progress, longer than 15s, it may be a non progressing operation. Click to navigate to the Management Operations view to check in more detail.")
+                                                .add(span().css(pfIcon(warningTriangleO)))
+                                                .add(span().textContent("Non Progressing Operation"))
+                                                .element())
+                                        .element())
+                                .add(reloadContainer = li()
+                                        .add(reloadLink = a().css(clickable)
+                                                .data(TOGGLE, TOOLTIP)
+                                                .data(PLACEMENT, "bottom")
+                                                .data(CONTAINER, BODY)
+                                                .title(Names.NOT_AVAILABLE)
+                                                .add(span().css(pfIcon("restart")))
+                                                .add(reloadLabel = span().element())
+                                                .element())
+                                        .element())
+                                .add(li().css(drawerPfTrigger, dropdown)
+                                        .add(messages = a().css(navItemIconic, drawerPfTriggerIcon)
+                                                .title(resources.messages().notifications(0))
+                                                .add(span()
+                                                        .css(fontAwesome("bell"))
+                                                        .style("padding-right: 0"))
+                                                .add(badgeIcon = span().css(badge).element())
+                                                .element()))
+                                .add(li().css(dropdown, hidden).id(Ids.HEADER_EXTENSIONS_DROPDOWN)
+                                        .add(a().css(clickable, dropdownToggle)
+                                                .data(TOGGLE, DROPDOWN)
+                                                .title(Names.EXTENSIONS)
+                                                .add(span().css(fontAwesome("th-large")))
+                                                .add(b().css(caret)))
+                                        .add(ul().css(dropdownMenu, CSS.userDropdown).id(Ids.HEADER_EXTENSIONS)))
+                                .add(li().css(dropdown)
+                                        .add(a().css(clickable, dropdownToggle).data(TOGGLE, DROPDOWN)
+                                                .add(span().css(pfIcon("user")))
+                                                .add(userName = span().id(Ids.HEADER_USERNAME).element())
+                                                .add(b().css(caret)))
+                                        .add(userDropdown = ul().css(dropdownMenu, CSS.userDropdown)
+                                                .add(logoutItem = li()
+                                                        .add(logout = a().css(clickable)
+                                                                .textContent(resources.constants().logout())
+                                                                .element())
+                                                        .element())
+                                                .element()))
+                                .add(connectedToContainer = li().css(dropdown)
+                                        .add(a().css(clickable, dropdownToggle).data(TOGGLE, DROPDOWN)
+                                                .add(span().css(pfIcon("plugged")))
+                                                .add(b().css(caret)))
+                                        .add(ul().css(dropdownMenu)
+                                                .add(connectedTo = li().css(static_).id(Ids.HEADER_CONNECTED_TO)
+                                                        .element())
+                                                .add(li().css(divider))
+                                                .add(li()
+                                                        .add(reconnect = a().css(clickable)
+                                                                .textContent(resources.constants().connectToServer())
+                                                                .element())))
+                                        .element()))
+                        .add(topLevelCategories = ul().css(nav, navbarNav, navbarPrimary)
+                                .add(li().css(active)
+                                        .add(a().css(clickable, active)
+                                                .id(Ids.TLC_HOMEPAGE)
+                                                .textContent(Names.HOMEPAGE)))
+                                .add(li()
+                                        .add(a().css(clickable)
+                                                .id(Ids.TLC_DEPLOYMENTS)
+                                                .textContent(Names.DEPLOYMENTS)))
+                                .add(li()
+                                        .add(a().css(clickable)
+                                                .id(Ids.TLC_CONFIGURATION)
+                                                .textContent(Names.CONFIGURATION)))
+                                .add(li()
+                                        .add(a().css(clickable)
+                                                .id(Ids.TLC_RUNTIME)
+                                                .textContent(Names.RUNTIME)))
+                                .add(patching = li()
+                                        .add(a().css(clickable)
+                                                .id(Ids.TLC_PATCHING)
+                                                .textContent(Names.PATCHING))
+                                        .element())
+                                .add(accessControl = li()
+                                        .add(a().css(clickable)
+                                                .id(Ids.TLC_ACCESS_CONTROL)
+                                                .textContent(Names.ACCESS_CONTROL))
+                                        .element())
+                                .element())
+                        .add(breadcrumb = ol().css(CSS.breadcrumb, halBreadcrumb)
+                                .add(backItem = li()
+                                        .add(backLink = a().css(clickable, back)
+                                                .add(i().css(fontAwesome("angle-double-left")))
+                                                .add(" " + resources.constants().back())
+                                                .element())
+                                        .element())
+                                .add(breadcrumbToolsItem = li().css(breadcrumbTools)
+                                        .add(switchModeLink = a().css(clickable)
+                                                .title(resources.constants().openInModelBrowser())
+                                                .add(switchModeIcon = span().css(fontAwesome("sitemap", large))
+                                                        .element())
+                                                .element())
+                                        .add(externalLink = a().css(clickable)
+                                                .title(resources.constants().openInExternalWindow())
+                                                .add(span().css(fontAwesome("external-link", large)))
+                                                .element())
+                                        .element())
+                                .element()))
+                .element();
+        initElement(root);
 
-    // ------------------------------------------------------ initialization
-
-    @PostConstruct
-    void init() {
         backPlaceRequest = HOMEPAGE;
-        HTMLElement root = element();
-        Elements.setVisible(reloadContainer, false);
-        Elements.setVisible(nonProgressingOperationContainer, false);
-        Elements.setVisible(breadcrumb, false);
+        setVisible(reloadContainer, false);
+        setVisible(nonProgressingOperationContainer, false);
+        setVisible(breadcrumb, false);
 
-        toastNotifications = new ToastNotifications(resources()); // adds itself to the body
-        notificationDrawer = new NotificationDrawer(resources());
+        toastNotifications = new ToastNotifications(resources); // adds itself to the body
+        notificationDrawer = new NotificationDrawer(resources);
         topLevelCategories.parentNode.insertBefore(notificationDrawer.element(), topLevelCategories);
 
-        boolean su = ac().isSuperUserOrAdministrator();
+        boolean su = ac.isSuperUserOrAdministrator();
         if (!su) {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
         }
-        String accessControlNameToken = ac().isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
+        String accessControlNameToken = ac.isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
 
         // @formatter:off
         tlcPlaceRequests = new HashMap<>();
@@ -167,7 +283,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         tlcPlaceRequests.put(NameTokens.RUNTIME,        new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
         tlcPlaceRequests.put(NameTokens.PATCHING,       new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
         tlcPlaceRequests.put(accessControlNameToken,    new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
-        // tlcPlaceRequests.put(NameTokens.MANAGEMENT,     new PlaceRequest.Builder().nameToken(NameTokens.MANAGEMENT).build());
         // @formatter:on
 
         tlc = new HashMap<>();
@@ -238,12 +353,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @Override
     public void init(Environment environment, Endpoints endpoints, Settings settings, User user) {
-        setLogo(resources().theme().getFirstName(), resources().theme().getLastName());
+        setLogo(resources.theme().getFirstName(), resources.theme().getLastName());
 
         if (endpoints.isSameOrigin()) {
-            connectedTo.textContent = resources().constants().sameOrigin();
+            connectedTo.textContent = resources.constants().sameOrigin();
         } else {
-            connectedTo.textContent = resources().messages().connectedTo(endpoints.dmr());
+            connectedTo.textContent = resources.messages().connectedTo(endpoints.dmr());
         }
 
         userName.textContent = user.getName();
@@ -267,17 +382,17 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                     .map(Role::getName)
                     .collect(joining(", "));
             HTMLElement activeRoles = li().css(static_, CSS.activeRoles)
-                    .textContent(resources().messages().activeRoles(csr))
-                    .title(resources().messages().activeRoles(csr))
-                    .get();
+                    .textContent(resources.messages().activeRoles(csr))
+                    .title(resources.messages().activeRoles(csr))
+                    .element();
             userDropdown.insertBefore(activeRoles, logoutItem);
             userDropdown.insertBefore(divider(), logoutItem);
 
             if (user.isSuperuser() && environment.getAccessControlProvider() == RBAC) {
                 Set<String> runAsRoleSetting = settings.get(RUN_AS).asSet();
                 HTMLElement runAs = li().css(static_)
-                        .textContent(resources().constants().runAs())
-                        .get();
+                        .textContent(resources.constants().runAs())
+                        .element();
                 userDropdown.insertBefore(runAs, logoutItem);
 
                 stream(environment.getRoles().spliterator(), false)
@@ -287,10 +402,10 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                             HTMLElement runAsRole = li()
                                     .add(a().css(clickable).on(click, event -> presenter.runAs(role.getName()))
                                             .add(check = span().css(fontAwesome("check"), marginRight5)
-                                                    .get())
+                                                    .element())
                                             .add(name = span().textContent(role.getName())
-                                                    .get()))
-                                    .get();
+                                                    .element()))
+                                    .element();
                             if (!runAsRoleSetting.contains(role.getName())) {
                                 check.style.visibility = "hidden"; //NON-NLS
                             }
@@ -305,8 +420,8 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                     HTMLElement clearRunAs = li()
                             .add(a().css(clickable)
                                     .on(click, event -> presenter.clearRunAs())
-                                    .textContent(resources().constants().clearRunAs()))
-                            .get();
+                                    .textContent(resources.constants().clearRunAs()))
+                            .element();
                     userDropdown.insertBefore(clearRunAs, logoutItem);
                 }
                 userDropdown.insertBefore(divider(), logoutItem);
@@ -315,7 +430,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     private HTMLElement divider() {
-        return li().css(CSS.divider).get();
+        return li().css(CSS.divider).element();
     }
 
     private void setLogo(String first, String last) {
@@ -330,17 +445,17 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     public void showReload(String text, String tooltip) {
         reloadLabel.textContent = text;
         Tooltip.element(reloadLink).setTitle(tooltip);
-        Elements.setVisible(reloadContainer, true);
+        setVisible(reloadContainer, true);
     }
 
     @Override
     public void hideReload() {
-        Elements.setVisible(reloadContainer, false);
+        setVisible(reloadContainer, false);
     }
 
     @Override
     public void hideReconnect() {
-        Elements.setVisible(connectedToContainer, false);
+        setVisible(connectedToContainer, false);
     }
 
     @Override
@@ -375,26 +490,26 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     private void updateMessageElements() {
         int unreadCount = notificationDrawer.getUnreadCount();
-        Elements.setVisible(badgeIcon, unreadCount != 0);
-        messages.title = resources().messages().notifications(unreadCount);
+        setVisible(badgeIcon, unreadCount != 0);
+        messages.title = resources.messages().notifications(unreadCount);
     }
 
     public void onNonProgressingOperation(boolean display) {
-        Elements.setVisible(nonProgressingOperationContainer, display);
+        setVisible(nonProgressingOperationContainer, display);
     }
 
     // ------------------------------------------------------ modes
 
     @Override
     public void topLevelCategoryMode() {
-        Elements.setVisible(topLevelCategories, true);
-        Elements.setVisible(breadcrumb, false);
+        setVisible(topLevelCategories, true);
+        setVisible(breadcrumb, false);
     }
 
     @Override
     public void applicationMode() {
-        Elements.setVisible(topLevelCategories, false);
-        Elements.setVisible(breadcrumb, true);
+        setVisible(topLevelCategories, false);
+        setVisible(breadcrumb, true);
     }
 
 
@@ -428,12 +543,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @Override
     public void updateBreadcrumb(String title) {
         clearBreadcrumb();
-        HTMLElement li = li().textContent(title).get();
+        HTMLElement li = li().textContent(title).element();
         breadcrumb.insertBefore(li, breadcrumbToolsItem);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void updateBreadcrumb(FinderContext finderContext) {
         clearBreadcrumb();
         FinderPath currentPath = new FinderPath();
@@ -458,7 +573,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 builder.css(active);
             }
 
-            HTMLElement key = span().css(CSS.key).get();
+            HTMLElement key = span().css(CSS.key).element();
             if (finderContext.getToken() != null) {
                 PlaceRequest keyRequest = new PlaceRequest.Builder()
                         .nameToken(finderContext.getToken())
@@ -466,14 +581,14 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         .build();
                 key.appendChild(a().css(clickable).on(click, event -> presenter.goTo(keyRequest))
                         .textContent(segment.getColumnTitle())
-                        .get());
+                        .element());
             } else {
                 key.textContent = segment.getColumnTitle();
             }
             builder.add(key)
                     .add(span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")));
 
-            HTMLElement value = span().css(CSS.value).get();
+            HTMLElement value = span().css(CSS.value).element();
             if (segment.supportsDropdown()) {
                 value.classList.add(dropdown);
 
@@ -485,15 +600,15 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
-                        .get());
+                        .element());
                 breadcrumbHandlers.add(bind(a, click, event -> {
                     Element ul = a.nextElementSibling;
                     segment.dropdown(finderContext, items -> {
                         Elements.removeChildrenFrom(ul);
                         if (items.isEmpty()) {
                             HTMLElement empty = li().css(CSS.empty)
-                                    .textContent(HeaderView.this.resources().constants().noItems())
-                                    .get();
+                                    .textContent(HeaderView.this.resources.constants().noItems())
+                                    .element();
                             ul.appendChild(empty);
                         } else {
                             for (DropdownItem<Object> dropdownItem : items) {
@@ -501,7 +616,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                                         .add(a().css(clickable)
                                                 .on(click, e -> dropdownItem.onSelect(finderContext))
                                                 .textContent(dropdownItem.getTitle()))
-                                        .get();
+                                        .element();
                                 ul.appendChild(element);
                             }
                         }
@@ -513,15 +628,15 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                     a.appendChild(span()
                             .textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH) + " ")
                             .title(breadcrumbValue)
-                            .get());
+                            .element());
                 } else {
-                    a.appendChild(span().textContent(breadcrumbValue + " ").get());
+                    a.appendChild(span().textContent(breadcrumbValue + " ").element());
                 }
-                a.appendChild(span().css(caret).get());
+                a.appendChild(span().css(caret).element());
                 value.appendChild(ul()
                         .css(dropdownMenu, valueDropdown)
                         .aria(UIConstants.LABELLED_BY, id)
-                        .get());
+                        .element());
             } else {
                 String breadcrumbValue = segment.getItemTitle();
                 if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
@@ -532,7 +647,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 }
             }
             builder.add(value);
-            breadcrumb.insertBefore(builder.get(), breadcrumbToolsItem);
+            breadcrumb.insertBefore(builder.element(), breadcrumbToolsItem);
         }
     }
 
@@ -541,7 +656,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         clearBreadcrumb();
         if (path == null || path.isEmpty()) {
             // deselection
-            breadcrumb.insertBefore(li().textContent(resources().constants().nothingSelected()).get(),
+            breadcrumb.insertBefore(li().textContent(resources.constants().nothingSelected()).element(),
                     breadcrumbToolsItem);
 
         } else {
@@ -559,12 +674,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                                         .on(click, event -> modelBrowser.select(key.id, true))
                                         .textContent(key.text)))
                         .add(span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")))
-                        .add(valueContainer = span().css(CSS.value).get())
-                        .get();
+                        .add(valueContainer = span().css(CSS.value).element())
+                        .element();
                 if (link) {
                     valueContainer.appendChild(valueContainer = a().css(clickable)
                             .on(click, event -> modelBrowser.select(value.id, true))
-                            .get());
+                            .element());
                 }
                 valueContainer.textContent = value.text;
                 breadcrumb.insertBefore(li, breadcrumbToolsItem);
@@ -591,9 +706,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             switchModeHandler.removeHandler();
         }
         switchModeHandler = bind(switchModeLink, click, event -> presenter.switchToExpertMode(address));
-        switchModeLink.title = resources().constants().expertMode();
+        switchModeLink.title = resources.constants().expertMode();
         switchModeIcon.className = fontAwesome("sitemap", large);
-        Elements.setVisible(switchModeLink, true);
+        setVisible(switchModeLink, true);
     }
 
     @Override
@@ -608,25 +723,25 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             switchModeHandler.removeHandler();
         }
         switchModeHandler = bind(switchModeLink, click, event -> presenter.backToNormalMode());
-        switchModeLink.title = resources().constants().backToNormalMode();
+        switchModeLink.title = resources.constants().backToNormalMode();
         switchModeIcon.className = fontAwesome("th-list", large);
-        Elements.setVisible(switchModeLink, true);
+        setVisible(switchModeLink, true);
     }
 
     @Override
     public void hideSwitchMode() {
-        Elements.setVisible(switchModeLink, false);
+        setVisible(switchModeLink, false);
     }
 
     @Override
     public void showExternal(PlaceRequest placeRequest) {
-        Elements.setVisible(externalLink, true);
+        setVisible(externalLink, true);
         externalLink.setAttribute(UIConstants.TARGET, placeRequest.getNameToken());
-        externalLink.setAttribute(UIConstants.HREF, places().historyToken(placeRequest));
+        externalLink.setAttribute(UIConstants.HREF, places.historyToken(placeRequest));
     }
 
     @Override
     public void hideExternal() {
-        Elements.setVisible(externalLink, false);
+        setVisible(externalLink, false);
     }
 }

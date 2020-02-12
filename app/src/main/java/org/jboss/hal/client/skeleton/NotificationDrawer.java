@@ -17,6 +17,7 @@ package org.jboss.hal.client.skeleton;
 
 import elemental2.dom.CSSProperties.MaxHeightUnionType;
 import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
@@ -39,7 +40,7 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @see <a href="https://www.patternfly.org/pattern-library/communication/notification-drawer/">https://www.patternfly.org/pattern-library/communication/notification-drawer/</a>
  */
-class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
+class NotificationDrawer implements IsElement<HTMLDivElement>, HasPresenter<HeaderPresenter> {
 
     private static final String DOT = ".";
 
@@ -49,7 +50,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     private final HTMLElement actions;
     private final HTMLElement empty;
     private final HTMLElement markAllRead;
-    private final HTMLElement root;
+    private final HTMLDivElement root;
     private HeaderPresenter presenter;
 
     NotificationDrawer(Resources resources) {
@@ -63,7 +64,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
                                 .on(click, event -> close()))
                         .add(header = h(3, resources.messages().notifications(0))
                                 .css(textCenter)
-                                .get()))
+                                .element()))
                 .add(div().css(panelGroup)
                         .add(div().css(panel, panelDefault)
                                 .add(div().css(panelHeading, hidden))
@@ -71,27 +72,27 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
                                         .aria(UIConstants.EXPANDED, UIConstants.TRUE)
                                         .add(panelBody = div().css(CSS.panelBody)
                                                 .style("overflow-y:auto")  //NON-NLS
-                                                .get())
+                                                .element())
                                         .add(empty = div().css(blankSlatePf)
                                                 .add(div().css(blankSlatePfIcon)
                                                         .add(span().css("pficon-info"))) //NON-NLS
                                                 .add(h(1, resources.constants().noNotifications()))
-                                                .get())
+                                                .element())
                                         .add(actions = div().css(drawerPfAction)
                                                 .add(markAllRead = div().css(drawerPfActionLink)
                                                         .add(button(resources.constants().markAllRead())
                                                                 .css(btn, btnLink)
                                                                 .id(Ids.NOTIFICATION_DRAWER_MARK_ALL_READ)
                                                                 .on(click, event -> markAllRead()))
-                                                        .get())
+                                                        .element())
                                                 .add(div().css(drawerPfActionLink)
                                                         .add(button().css(btn, btnLink)
                                                                 .id(Ids.NOTIFICATION_DRAWER_CLEAR_ALL)
                                                                 .on(click, event -> clear())
                                                                 .add(span().css(pfIcon("close")))
                                                                 .add(resources.constants().clearAll())))
-                                                .get()))))
-                .get();
+                                                .element()))))
+                .element();
 
         updateElements();
         window.onresize = (o) -> {
@@ -101,7 +102,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     @Override
-    public HTMLElement element() {
+    public HTMLDivElement element() {
         return root;
     }
 
@@ -123,7 +124,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
 
     int getUnreadCount() {
         NodeList<Element> nodes = root.querySelectorAll(DOT + drawerPfNotification + DOT + unread);
-        return nodes != null ? (int) nodes.length : 0;
+        return nodes != null ? nodes.length : 0;
     }
 
     private int getMessageCount() {
@@ -174,7 +175,7 @@ class NotificationDrawer implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     private void adjustHeight() {
-        int height = (int) (root.offsetHeight - 26 - 42 - 2);
+        int height = root.offsetHeight - 26 - 42 - 2;
         panelBody.style.maxHeight = MaxHeightUnionType.of(px(height));
     }
 }

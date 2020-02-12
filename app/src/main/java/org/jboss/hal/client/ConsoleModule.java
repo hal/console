@@ -177,15 +177,15 @@ import org.jboss.hal.client.runtime.subsystem.elytron.StoresView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiView;
 import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
-import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView;
+import org.jboss.hal.client.runtime.subsystem.logging.LogFileView;
 import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueuePresenter;
 import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueueView;
 import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroProfileHealthPresenter;
 import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroProfileHealthView;
 import org.jboss.hal.client.skeleton.FooterPresenter;
+import org.jboss.hal.client.skeleton.FooterView;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
-import org.jboss.hal.client.skeleton.Templated_FooterView;
-import org.jboss.hal.client.skeleton.Templated_HeaderView;
+import org.jboss.hal.client.skeleton.HeaderView;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
@@ -227,11 +227,11 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         bindPresenterWidget(HeaderPresenter.class,
                 HeaderPresenter.MyView.class,
-                Templated_HeaderView.class);
+                HeaderView.class);
 
         bindSingletonPresenterWidget(FooterPresenter.class,
                 FooterPresenter.MyView.class,
-                Templated_FooterView.class);
+                FooterView.class);
 
         bindPresenter(RootPresenter.class,
                 RootPresenter.MyView.class,
@@ -368,7 +368,7 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         bindPresenter(ErrorPresenter.class,
                 ErrorPresenter.MyView.class,
-                Templated_ErrorView.class,
+                ErrorView.class,
                 ErrorPresenter.MyProxy.class);
 
         bindPresenter(ExpertModePresenter.class,
@@ -483,7 +483,7 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         bindPresenter(LogFilePresenter.class,
                 LogFilePresenter.MyView.class,
-                Templated_LogFileView.class,
+                LogFileView.class,
                 LogFilePresenter.MyProxy.class);
 
         bindPresenter(LoggingPresenter.class,
@@ -728,7 +728,7 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         bindPresenter(UnauthorizedPresenter.class,
                 UnauthorizedPresenter.MyView.class,
-                Templated_UnauthorizedView.class,
+                UnauthorizedView.class,
                 UnauthorizedPresenter.MyProxy.class);
 
         bindPresenter(UndertowSubsystemPresenter.class,

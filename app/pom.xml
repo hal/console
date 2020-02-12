@@ -88,15 +88,6 @@
             <artifactId>elemento-widget</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.gwt.elemento</groupId>
-            <artifactId>elemento-template-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.gwt.elemento</groupId>
-            <artifactId>elemento-template-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-all</artifactId>
             <exclusions>

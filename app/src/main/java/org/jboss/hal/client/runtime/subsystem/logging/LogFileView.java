@@ -17,13 +17,12 @@ package org.jboss.hal.client.runtime.subsystem.logging;
 
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import com.google.common.base.Strings;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
-import org.jboss.gwt.elemento.template.DataElement;
-import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Search;
@@ -45,74 +44,103 @@ import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
-import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
-import static org.jboss.hal.resources.CSS.logFileLoading;
-import static org.jboss.hal.resources.CSS.px;
-import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.*;
 
-@Templated("LogFileView.html#root")
-public abstract class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
-
-    // @formatter:off
-    public static LogFileView create(Environment environment, StatementContext statementContext, LogFiles logFiles,
-            Resources resources) {
-        return new Templated_LogFileView(environment, statementContext, logFiles, resources);
-    }
-
-    public abstract Environment environment();
-    public abstract StatementContext statementContext();
-    public abstract LogFiles logFiles();
-    public abstract Resources resources();
-    // @formatter:on
-
+public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
 
     private static final int MIN_HEIGHT = 70;
     private static final String SLASH = " / ";
 
-    private Search search;
+    private final Environment environment;
+    private final StatementContext statementContext;
+    private final LogFiles logFiles;
+    private final Resources resources;
+
+    private final HTMLElement header;
+    private final HTMLElement logFileControls;
+    private final HTMLElement status;
+    private final HTMLInputElement tailMode;
+    private final HTMLElement copyToClipboard;
+    private final HTMLElement download;
+    private final HTMLElement editorContainer;
+    private final HTMLElement loading;
+
+    private final Search search;
     private AceEditor editor;
     private LogFilePresenter presenter;
 
-    @DataElement HTMLElement header;
-    @DataElement HTMLElement logFileControls;
-    @DataElement HTMLElement status;
-    @DataElement HTMLInputElement tailMode;
-    @DataElement HTMLElement copyToClipboard;
-    @DataElement HTMLElement download;
-    @DataElement HTMLElement editorContainer;
-    @DataElement HTMLElement editorPlaceholder;
-    @DataElement HTMLElement loading;
-    @DataElement HTMLElement refresh;
+    @Inject
+    public LogFileView(Environment environment, StatementContext statementContext, LogFiles logFiles,
+            Resources resources) {
+        this.environment = environment;
+        this.statementContext = statementContext;
+        this.logFiles = logFiles;
+        this.resources = resources;
 
-
-    // ------------------------------------------------------ init & ui
-
-    @DataElement("search")
-    Search setupSearch() {
         search = new Search.Builder(Ids.LOG_FILE_SEARCH, query -> editor.getEditor().find(query))
                 .onPrevious(query -> editor.getEditor().findPrevious())
                 .onNext(query -> editor.getEditor().findNext())
                 .build();
-        return search;
-    }
 
-    @PostConstruct
-    void init() {
         Options editorOptions = new Options();
         editorOptions.readOnly = true;
         editorOptions.showGutter = true;
         editorOptions.showLineNumbers = true;
         editorOptions.showPrintMargin = false;
         editor = new AceEditor(Ids.LOG_FILE_EDITOR, editorOptions);
-        registerAttachable(editor);
-        editorContainer.replaceChild(editor.element(), editorPlaceholder);
+
+        HTMLDivElement root = div().css(row)
+                .add(div().css(column(12, columnLg, columnMd, columnSm))
+                        .add(header = h(1).element())
+                        .add(logFileControls = div().css(editorControls, marginBottomSmall)
+                                .add(search)
+                                .add(status = div().css(editorStatus, marginLeftSmall).element())
+                                .add(div().css(logFileFollow)
+                                        .add(label().apply(l -> l.htmlFor = Ids.LOG_FILE_FOLLOW)
+                                                .textContent(resources.constants().tailMode()))
+                                        .add(tailMode = input(checkbox).css(bootstrapSwitch)
+                                                .id(Ids.LOG_FILE_FOLLOW)
+                                                .element()))
+                                .add(div().css(editorButtons, btnGroup)
+                                        .add(a().css(btn, btnDefault, clickable)
+                                                .data(TOGGLE, TOOLTIP)
+                                                .data(CONTAINER, BODY)
+                                                .data(PLACEMENT, TOP)
+                                                .on(click, event -> presenter.reloadFile())
+                                                .title(resources.constants().references())
+                                                .add(i().css(fontAwesome(refresh))))
+                                        .add(copyToClipboard = a().css(btn, btnDefault, clickable)
+                                                .data(TOGGLE, TOOLTIP)
+                                                .data(CONTAINER, BODY)
+                                                .data(PLACEMENT, TOP)
+                                                .title(resources.constants().copyToClipboard())
+                                                .add(i().css(fontAwesome("clipboard")))
+                                                .element())
+                                        .add(download = a("#").css(btn, btnDefault, clickable)
+                                                .data(TOGGLE, TOOLTIP)
+                                                .data(CONTAINER, BODY)
+                                                .data(PLACEMENT, TOP)
+                                                .title(resources.constants().download())
+                                                .add(i().css(fontAwesome("download")))
+                                                .element()))
+                                .element())
+                        .add(editorContainer = div().css(marginBottomLarge, logFileEditorContainer)
+                                .add(editor)
+                                .add(loading = div().css(spinner, spinnerLg).element())
+                                .element()))
+                .element();
 
         Clipboard clipboard = new Clipboard(copyToClipboard);
         clipboard.onCopy(event -> copyToClipboard(event.client));
-
-        bind(refresh, click, event -> presenter.reloadFile());
+        registerAttachable(editor);
+        initElement(root);
     }
 
     private void copyToClipboard(Clipboard clipboard) {
@@ -121,9 +149,9 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
             clipboard.setText(value);
             Tooltip tooltip = Tooltip.element(copyToClipboard);
             tooltip.hide()
-                    .setTitle(resources().constants().copied())
+                    .setTitle(resources.constants().copied())
                     .show()
-                    .onHide(() -> tooltip.setTitle(resources().constants().copyToClipboard()));
+                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
             setTimeout((o) -> tooltip.hide(), 1000);
         }
     }
@@ -172,8 +200,8 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
 
     @Override
     public void loading() {
-        status.textContent = resources().constants().loadingPleaseWait();
-        status.title = resources().constants().loadingPleaseWait();
+        status.textContent = resources.constants().loadingPleaseWait();
+        status.title = resources.constants().loadingPleaseWait();
         int top = (int) (loading.offsetHeight + editor.element().offsetHeight / 2);
         loading.style.top = -1 * top + "px"; //NON-NLS
         editorContainer.classList.add(logFileLoading);
@@ -184,10 +212,10 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         statusUpdate(lines);
         StringBuilder builder = new StringBuilder();
         if (presenter.isExternal()) {
-            if (!environment().isStandalone()) {
-                builder.append(statementContext().selectedHost())
+            if (!environment.isStandalone()) {
+                builder.append(statementContext.selectedHost())
                         .append(SLASH)
-                        .append(statementContext().selectedServer())
+                        .append(statementContext.selectedServer())
                         .append(SLASH);
             } else {
                 builder.append(Server.STANDALONE.getName())
@@ -201,7 +229,8 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         builder.append(logFile.getFilename());
         header.textContent = builder.toString();
         download.setAttribute(UIConstants.DOWNLOAD, logFile.getFilename());
-        download.setAttribute(UIConstants.HREF, logFiles().downloadUrl(logFile.getFilename(), logFile.getLoggingProfile()));
+        download.setAttribute(UIConstants.HREF,
+                logFiles.downloadUrl(logFile.getFilename(), logFile.getLoggingProfile()));
 
         editor.getEditor().getSession().setValue(content);
         editor.getEditor().gotoLine(lines, 0, false);
@@ -227,8 +256,8 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
 
     private void statusUpdate(int lines) {
         String statusText = lines < LogFiles.LINES
-                ? resources().messages().logFileFullStatus(lines, Format.time(new Date()))
-                : resources().messages().logFilePartStatus(lines, Format.time(new Date()));
+                ? resources.messages().logFileFullStatus(lines, Format.time(new Date()))
+                : resources.messages().logFilePartStatus(lines, Format.time(new Date()));
         status.textContent = statusText;
         status.title = statusText;
         editorContainer.classList.remove(logFileLoading);
