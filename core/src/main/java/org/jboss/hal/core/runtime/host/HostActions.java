@@ -61,6 +61,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
+import static org.jboss.hal.resources.UIConstants.LONG_TIMEOUT;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class HostActions {
@@ -224,7 +225,7 @@ public class HostActions {
                                 setTimeout((o) -> {
                                     pendingDialog.close();
                                     finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                                }, 666);
+                                }, LONG_TIMEOUT);
                             }
 
                             @Override
