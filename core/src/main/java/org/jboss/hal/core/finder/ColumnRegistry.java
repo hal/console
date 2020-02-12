@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Registry for finder columns. Manages both sync and async columns behind a split point. */
+@SuppressWarnings("rawtypes")
 public class ColumnRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);

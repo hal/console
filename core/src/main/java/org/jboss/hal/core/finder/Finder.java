@@ -31,6 +31,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -64,7 +65,8 @@ import static org.jboss.hal.resources.Ids.FINDER;
  * instance gets injected into the different top level presenters. Only the columns will change when navigating between
  * the different places
  */
-public class Finder implements IsElement, Attachable {
+@SuppressWarnings("rawtypes")
+public class Finder implements IsElement<HTMLDivElement>, Attachable {
 
     static final String DATA_BREADCRUMB = "breadcrumb";
     static final String DATA_FILTER = "filter";
@@ -87,7 +89,7 @@ public class Finder implements IsElement, Attachable {
     private final LinkedHashMap<String, FinderColumn> columns;
     private final Map<String, String> initialColumnsByToken;
     private final Map<String, PreviewContent> initialPreviewsByToken;
-    private final HTMLElement root;
+    private final HTMLDivElement root;
     private final HTMLElement previewColumn;
     private PreviewContent currentPreview;
 
@@ -123,7 +125,7 @@ public class Finder implements IsElement, Attachable {
     }
 
     @Override
-    public HTMLElement element() {
+    public HTMLDivElement element() {
         return root;
     }
 

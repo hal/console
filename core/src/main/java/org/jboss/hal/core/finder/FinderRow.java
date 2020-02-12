@@ -20,6 +20,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -45,7 +46,7 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.data;
 
 /** UI class for a single row in in a finder column. Only used internally in the finder. */
-class FinderRow<T> implements IsElement {
+class FinderRow<T> implements IsElement<HTMLLIElement> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String PREVENT_SET_ITEMS = "preventSetItems";
@@ -61,7 +62,7 @@ class FinderRow<T> implements IsElement {
     private String id;
     private T item;
 
-    private HTMLElement root;
+    private HTMLLIElement root;
     private HTMLElement folderElement;
     private HTMLElement buttonContainer;
 
@@ -81,7 +82,7 @@ class FinderRow<T> implements IsElement {
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent<>(
                 display.getTitle());
 
-        root = li().get();
+        root = li().element();
         folderElement = null;
         if (column.isPinnable()) {
             root.className = pinned ? CSS.pinned : unpinned;
@@ -134,9 +135,9 @@ class FinderRow<T> implements IsElement {
         if (display.element() != null) {
             itemElement = display.element();
         } else if (display.getTitle() != null) {
-            itemElement = span().css(itemText).textContent(display.getTitle()).get();
+            itemElement = span().css(itemText).textContent(display.getTitle()).element();
         } else {
-            itemElement = span().css(itemText).textContent(NOT_AVAILABLE).get();
+            itemElement = span().css(itemText).textContent(NOT_AVAILABLE).element();
         }
         if (display.getTooltip() != null && itemElement != null) {
             itemElement.title = display.getTooltip();
@@ -151,16 +152,16 @@ class FinderRow<T> implements IsElement {
                     .title(CONSTANTS.unpin())
                     .on(click, e -> column.unpin(FinderRow.this))
                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                    .get());
+                    .element());
             root.appendChild(span().css(CSS.pin, pfIcon("thumb-tack-o"))
                     .title(CONSTANTS.pin())
                     .on(click, e -> column.pin(FinderRow.this))
                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                    .get());
+                    .element());
         }
 
         if (display.nextColumn() != null) {
-            folderElement = span().css(folder, fontAwesome("angle-right")).get();
+            folderElement = span().css(folder, fontAwesome("angle-right")).element();
             root.appendChild(folderElement);
         }
 
@@ -173,7 +174,7 @@ class FinderRow<T> implements IsElement {
                 HTMLUListElement ul = null;
                 boolean firstAction = true;
                 boolean ulCreated = false;
-                buttonContainer = div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE).get();
+                buttonContainer = div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE).element();
                 for (ItemAction<T> action : actions) {
                     if (firstAction) {
                         buttonContainer.appendChild(actionLink(action, false));
@@ -188,22 +189,22 @@ class FinderRow<T> implements IsElement {
                                 .add(span().css(srOnly)
                                         .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                                         .textContent(CONSTANTS.toggleDropdown()))
-                                .get());
+                                .element());
                         firstAction = false;
                     } else {
                         if (!ulCreated) {
                             buttonContainer.appendChild(ul = ul().css(dropdownMenu)
                                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                                    .get());
+                                    .element());
                             ulCreated = true;
                         }
                         if (action == ItemAction.SEPARATOR) {
-                            ul.appendChild(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).get());
+                            ul.appendChild(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).element());
                         } else {
                             ul.appendChild(li()
                                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                                     .add(actionLink(action, true))
-                                    .get());
+                                    .element());
                         }
                     }
                 }
@@ -232,7 +233,7 @@ class FinderRow<T> implements IsElement {
         if (!action.attributes.isEmpty()) {
             action.attributes.forEach(builder::attr);
         }
-        return builder.get();
+        return builder.element();
     }
 
     void click() {
@@ -285,7 +286,7 @@ class FinderRow<T> implements IsElement {
     }
 
     @Override
-    public HTMLElement element() {
+    public HTMLLIElement element() {
         return root;
     }
 
