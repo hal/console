@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.ws.rs.DELETE;
+
 import com.google.common.collect.Lists;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -144,6 +146,9 @@ public final class AddressTemplate implements Iterable<String> {
                 Property property = iterator.next();
                 String name = property.getName();
                 String value = property.getValue().asString();
+                if (value.contains("/")) {
+                    value = ModelNodeHelper.encodeValue(value);
+                }
 
                 String segment = unresolver == null
                         ? name + EQUALS + value
@@ -573,7 +578,8 @@ public final class AddressTemplate implements Iterable<String> {
 
     private static class StringTokenizer {
 
-        private final String delim;
+        private static final String DELIMITER = "/";
+
         private final String s;
         private final int len;
 
@@ -582,8 +588,7 @@ public final class AddressTemplate implements Iterable<String> {
 
         StringTokenizer(String s) {
             this.s = s;
-            this.delim = "/";
-            len = s.length();
+            this.len = s.length();
         }
 
         String nextToken() {
@@ -600,7 +605,7 @@ public final class AddressTemplate implements Iterable<String> {
                 return true;
             }
             // skip leading delimiters
-            while (pos < len && delim.indexOf(s.charAt(pos)) != -1) {
+            while (pos < len && DELIMITER.indexOf(s.charAt(pos)) != -1) {
                 pos++;
             }
 
@@ -609,7 +614,7 @@ public final class AddressTemplate implements Iterable<String> {
             }
 
             int p0 = pos++;
-            while (pos < len && delim.indexOf(s.charAt(pos)) == -1) {
+            while (pos < len && DELIMITER.indexOf(s.charAt(pos)) == -1) {
                 pos++;
             }
 
