@@ -185,7 +185,7 @@ public class HostPresenter
 
     void saveHost(Form<Host> form, Map<String, Object> changedValues) {
         boolean hostNameChanged = changedValues.containsKey(NAME);
-        crud.save(Names.HOST, form.getModel().getName(), AddressTemplate.of(SELECTED_HOST), changedValues, () -> {
+        crud.save(Names.HOST, form.getModel().getName(), AddressTemplate.of("/{selected.host}"), changedValues, () -> {
             reload();
             if (hostNameChanged) {
                 DialogFactory.showConfirmation(resources.constants().hostNameChanged(),
@@ -402,7 +402,7 @@ public class HostPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.HOST_CONFIGURATION)
-    @Requires(value = {SELECTED_HOST, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
+    @Requires(value = {ANY_HOST, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
             SYSTEM_PROPERTY_ADDRESS, HTTP_INTERFACE_ADDRESS, NATIVE_INTERFACE_ADDRESS}, recursive = false)
     public interface MyProxy extends ProxyPlace<HostPresenter> {
     }
