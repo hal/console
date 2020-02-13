@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.ws.rs.DELETE;
-
 import com.google.common.collect.Lists;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
