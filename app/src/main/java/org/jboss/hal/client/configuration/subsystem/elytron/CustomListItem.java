@@ -48,7 +48,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *             "required" => true
  *         },
  *         "value_name" => {
- *             "type" => STRING,
+ *             "type" => INT,
  *             "required" => true,
  *         }
  *     }
@@ -98,7 +98,7 @@ class CustomListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     private static class MapMapping implements TagsMapping<ModelNode> {
 
-        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:]+)$"); //NON-NLS
+        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=(\\d+)$"); //NON-NLS
         private String propAttribute;
         private String valueAttribute;
 
@@ -119,7 +119,7 @@ class CustomListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
             ModelNode kv = new ModelNode();
             kv.get(propAttribute).set(parts[0]);
-            kv.get(valueAttribute).set(parts[1]);
+            kv.get(valueAttribute).set(Integer.parseInt(parts[1]));
 
             ModelNode node = new ModelNode();
             node.add(kv);
