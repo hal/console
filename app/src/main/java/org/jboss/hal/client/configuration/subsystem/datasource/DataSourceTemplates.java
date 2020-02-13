@@ -137,7 +137,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(MYSQL);
             driver.get(DRIVER_MODULE_NAME).set("com.mysql");
             driver.get(DRIVER_CLASS_NAME).set("com.mysql.cj.jdbc.Driver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.mysql.jdbc.jdbc2.optional.MysqlXADataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.mysql.cj.jdbc.MysqlXADataSource");
             return driver;
         };
         setup.add(new DataSourceTemplate(MYSQL, DataSourceTemplate.Vendor.MYSQL,
