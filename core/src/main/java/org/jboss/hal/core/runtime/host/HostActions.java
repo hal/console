@@ -47,7 +47,6 @@ import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.MetadataProcessor.MetadataCallback;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -100,7 +99,6 @@ public class HostActions implements Timeouts {
 
     // ------------------------------------------------------ reload
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void reload(Host host) {
         metadataProcessor.lookup(hostTemplate(host), progress.get(), new MetadataCallback() {
             @Override
