@@ -155,8 +155,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                         // Restore pending visualization
                         hosts.stream()
                                 .filter(hostActions::isPending)
-                                .forEach(host -> ItemMonitor
-                                        .startProgress(Ids.host(host.getAddressName())));
+                                .forEach(host -> ItemMonitor.startProgress(Ids.host(host.getAddressName())));
                     }
                 });
         setItemsProvider(itemsProvider);
