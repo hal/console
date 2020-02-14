@@ -15,26 +15,38 @@
  */
 package org.jboss.hal.client;
 
-import javax.annotation.PostConstruct;
-
-import org.jboss.gwt.elemento.template.Templated;
+import elemental2.dom.HTMLDivElement;
 import org.jboss.hal.client.bootstrap.LoadingPanel;
 import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.gwt.elemento.core.Widgets.widget;
-import static org.jboss.hal.resources.CSS.bootstrapError;
+import static org.jboss.gwt.elemento.core.Elements.nav;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.hal.resources.CSS.*;
 
-@Templated
-public abstract class UnauthorizedView extends HalViewImpl implements UnauthorizedPresenter.MyView {
+public class UnauthorizedView extends HalViewImpl implements UnauthorizedPresenter.MyView {
 
-    public static UnauthorizedView create() {
-        return new Templated_UnauthorizedView();
-    }
-
-    @PostConstruct
-    void init() {
-        initWidget(widget(element()));
+    public UnauthorizedView() {
+        HTMLDivElement root = div()
+                .add(nav().css(navbar, navbarDefault, navbarFixedTop, navbarPf)
+                        .attr(UIConstants.ROLE, "navigation")
+                        .add(div().css(navbarHeader)
+                                .add(a().css(navbarBrand, logo)
+                                        .add(span().css(logoText, logoTextFirst)
+                                                .textContent("Management "))
+                                        .add(span().css(logoText, logoTextLast)
+                                                .textContent("Console")))))
+                .add(div().css(containerFluid)
+                        .add(div().css(row)
+                                .add(div().css(column(12, columnLg, columnMd, columnSm))
+                                        .add(h(1, "Forbidden"))
+                                        .add(div().css(alert, alertDanger, marginTopLarge)
+                                                .add(span().css(pfIcon(errorCircleO)))
+                                                .add(span().textContent(
+                                                        "You don't have permission to access this page."))))))
+                .element();
+        initElement(root);
         LoadingPanel.get().off();
         document.documentElement.classList.add(bootstrapError);
     }

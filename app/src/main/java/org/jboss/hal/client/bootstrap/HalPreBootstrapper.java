@@ -39,7 +39,7 @@ public class HalPreBootstrapper implements PreBootstrapper {
             logger.error("Uncaught bootstrap error: {}", errorMessage);
             if (!document.body.hasChildNodes()) {
                 Elements.removeChildrenFrom(document.body);
-                document.body.appendChild(BootstrapFailed.create(errorMessage, Endpoints.INSTANCE).element());
+                document.body.appendChild(new BootstrapFailed(errorMessage, Endpoints.INSTANCE).element());
             }
         });
     }

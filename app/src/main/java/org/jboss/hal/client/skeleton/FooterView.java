@@ -15,66 +15,119 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.template.DataElement;
-import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Version;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.ui.UIRegistry;
+import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.gwt.elemento.core.Elements.footer;
+import static org.jboss.gwt.elemento.core.Elements.nav;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.ProgressElement.Label.NONE;
 import static org.jboss.hal.ballroom.ProgressElement.Size.XS;
-import static org.jboss.hal.resources.CSS.disabled;
-import static org.jboss.hal.resources.CSS.pulse;
+import static org.jboss.hal.resources.CSS.footer;
+import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.DROPDOWN;
+import static org.jboss.hal.resources.UIConstants.TOGGLE;
 
-@Templated("MainLayout.html#footer")
-public abstract class FooterView extends HalViewImpl implements FooterPresenter.MyView {
-
-    // @formatter:off
-    public static FooterView create(Places places, UIRegistry uiRegistry, Resources resources) {
-        return new Templated_FooterView(places, uiRegistry, resources);
-    }
-
-    public abstract Places places();
-    public abstract UIRegistry uiRegistry();
-    public abstract Resources resources();
-    // @formatter:on
-
+public class FooterView extends HalViewImpl implements FooterPresenter.MyView {
 
     private static Logger logger = LoggerFactory.getLogger(FooterView.class);
+
+    private final Resources resources;
+
+    private final HTMLElement halVersion;
+    private final HTMLElement updateAvailable;
+    private final HTMLElement macroRecorder;
+    private final HTMLElement macroEditor;
+    private final HTMLElement recordingContainer;
+    private final HTMLElement steps;
+    private final HTMLElement recording;
 
     private FooterPresenter presenter;
     private Environment environment;
 
-    @DataElement ProgressElement progress = new ProgressElement(XS, NONE, false);
-    @DataElement HTMLElement halVersion;
-    @DataElement HTMLElement updateAvailable;
-    @DataElement HTMLElement showVersion;
-    @DataElement HTMLElement modelBrowser;
-    @DataElement HTMLElement expressionResolver;
-    @DataElement HTMLElement macroRecorder;
-    @DataElement HTMLElement macroEditor;
-    @DataElement HTMLElement recordingContainer;
-    @DataElement HTMLElement steps;
-    @DataElement HTMLElement recording;
-    @DataElement HTMLElement settings;
+    @Inject
+    public FooterView(UIRegistry uiRegistry, Resources resources) {
+        this.resources = resources;
 
-    @PostConstruct
-    void init() {
-        uiRegistry().register(progress);
+        ProgressElement progress = new ProgressElement(XS, NONE, false);
+        HTMLElement showVersion;
+        HTMLElement modelBrowser;
+        HTMLElement expressionResolver;
+        HTMLElement settings;
+        HTMLElement root = footer().css(footer)
+                .add(nav().css(navbar, navbarFooter, navbarFixedBottom)
+                        .add(ul().css(CSS.nav, navbarNav)
+                                .add(li().css(footerProgress)
+                                        .add(progress)))
+                        .add(ul().css(CSS.nav, navbarNav, footerTools)
+                                .add(recordingContainer = li()
+                                        .add(div().css(tool)
+                                                .add(steps = span().element())
+                                                .add(recording = span()
+                                                        .css(CSS.recording, fontAwesome("dot-circle-o"),
+                                                                "fa-pulse")
+                                                        .element()))
+                                        .element())
+                                .add(li()
+                                        .add(showVersion = a().css(tool, clickable)
+                                                .add(updateAvailable = span().css(pfIcon("info")).element())
+                                                .add(halVersion = span().element())
+                                                .element()))
+                                .add(li().css(dropdown, hidden).id(Ids.FOOTER_EXTENSIONS_DROPDOWN)
+                                        .add(a().css(tool, clickable, dropdownToggle)
+                                                .data(TOGGLE, DROPDOWN)
+                                                .title(Names.EXTENSIONS)
+                                                .add(span().css(fontAwesome("th-large")))
+                                                .add(b().css(caret)))
+                                        .add(ul().css(dropdown, dropdownMenu).id(Ids.FOOTER_EXTENSIONS)))
+                                .add(li().css(dropdown)
+                                        .add(a("#").css(tool, dropdownToggle).data(TOGGLE, DROPDOWN)
+                                                .add(span().css(fontAwesome("wrench")))
+                                                .add(span().textContent(resources.constants().tools()))
+                                                .add(b().css(caret)))
+                                        .add(ul().css(dropdown, dropdownMenu)
+                                                .add(li()
+                                                        .add(modelBrowser = a().css(clickable)
+                                                                .textContent(resources.constants().modelBrowser())
+                                                                .element()))
+                                                .add(li()
+                                                        .add(expressionResolver = a().css(clickable)
+                                                                .textContent(resources.constants().expressionResolver())
+                                                                .element()))
+                                                .add(li()
+                                                        .add(macroRecorder = a().css(clickable)
+                                                                .textContent(resources.constants().startMacro())
+                                                                .element()))
+                                                .add(li()
+                                                        .add(macroEditor = a().css(clickable)
+                                                                .textContent(resources.constants().macroEditor())
+                                                                .element()))))
+                                .add(li()
+                                        .add(settings = a().css(tool, clickable)
+                                                .add(span().css(fontAwesome("cogs")))
+                                                .add(span().textContent(resources.constants().settings()))
+                                                .element()))))
+                .element();
+        initElement(root);
+
+        uiRegistry.register(progress);
         Elements.setVisible(recordingContainer, false);
         Elements.setVisible(updateAvailable, false);
 
@@ -101,9 +154,9 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
         if (version.greaterThan(environment.getHalVersion())) {
             logger.info("A new HAL version is available. Current version: {}, new version: {}",
                     environment.getHalVersion(), version);
-            updateAvailable.title = resources().messages().updateAvailable(environment.getHalVersion().toString(),
+            updateAvailable.title = resources.messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());
-            updateAvailable.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            updateAvailable.dataset.set(TOGGLE, UIConstants.TOOLTIP);
             updateAvailable.dataset.set(UIConstants.PLACEMENT, UIConstants.TOP);
             updateAvailable.dataset.set(UIConstants.CONTAINER, UIConstants.BODY);
             Tooltip.element(updateAvailable).init();
@@ -113,7 +166,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
 
     @Override
     public void startRecording() {
-        macroRecorder.textContent = resources().constants().stopMacro();
+        macroRecorder.textContent = resources.constants().stopMacro();
         macroEditor.classList.add(disabled);
         Elements.setVisible(recordingContainer, true);
         recording.classList.add(pulse);
@@ -121,7 +174,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
 
     @Override
     public void steps(int size) {
-        steps.textContent = resources().messages().recordedOperations(size);
+        steps.textContent = resources.messages().recordedOperations(size);
     }
 
     @Override
@@ -129,6 +182,6 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
         recording.classList.remove(pulse);
         Elements.setVisible(recordingContainer, false);
         macroEditor.classList.remove(disabled);
-        macroRecorder.textContent = resources().constants().startMacro();
+        macroRecorder.textContent = resources.constants().startMacro();
     }
 }

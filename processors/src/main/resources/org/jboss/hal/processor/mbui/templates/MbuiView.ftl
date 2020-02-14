@@ -11,9 +11,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.template.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
+import org.jboss.hal.ballroom.ExpressionUtil;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 <#if context.verticalNavigation??>
@@ -415,7 +415,7 @@ public final class ${context.subclass} extends ${context.base} {
                 <#list primaryItem.content as content>
                     <#if content.html??>
                         <#list content.handlebars?keys as handlebar>
-        TemplateUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+        ExpressionUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
                         </#list>
                     </#if>
                 </#list>
@@ -423,7 +423,7 @@ public final class ${context.subclass} extends ${context.base} {
                     <#list subItem.content as content>
                         <#if content.html??>
                             <#list content.handlebars?keys as handlebar>
-        TemplateUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+        ExpressionUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
                             </#list>
                         </#if>
                     </#list>
@@ -433,7 +433,7 @@ public final class ${context.subclass} extends ${context.base} {
             <#list context.content as content>
                 <#if content.html??>
                     <#list content.handlebars?keys as handlebar>
-        TemplateUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+        ExpressionUtil.replaceExpression(expressionElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
                     </#list>
                 </#if>
             </#list>

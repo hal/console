@@ -23,7 +23,6 @@
     <inherits name="elemental2.webstorage.WebStorage"/>
     <inherits name="com.intendia.rxgwt.RxElemento"/>
     <inherits name="org.jboss.gwt.elemento.Core"/>
-    <inherits name="org.jboss.gwt.elemento.Template"/>
     <inherits name="ru.finam.slf4jgwt.logging.gwt.Logging"/>
 
     <set-configuration-property name="gwtp.prebootstrapper"
@@ -34,7 +33,7 @@
                                    value="org.jboss.hal.client.gin.CompositeModule"/>
 
     <define-configuration-property name="hal.version" is-multi-valued="false"/>
-    <set-configuration-property name="hal.version" value="3.2.5.Final"/>
+    <set-configuration-property name="hal.version" value="3.2.6.Final"/>
 
     <set-configuration-property name="CssResource.enableGss" value="true"/>
 

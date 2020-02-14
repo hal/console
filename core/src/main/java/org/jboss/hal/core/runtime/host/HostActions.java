@@ -61,6 +61,7 @@ import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
 import static org.jboss.hal.core.runtime.Timeouts.hostTimeout;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
+import static org.jboss.hal.resources.UIConstants.LONG_TIMEOUT;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class HostActions implements Timeouts {
@@ -98,7 +99,6 @@ public class HostActions implements Timeouts {
 
     // ------------------------------------------------------ reload
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void reload(Host host) {
         metadataProcessor.lookup(hostTemplate(host), progress.get(), new MetadataCallback() {
             @Override
@@ -222,7 +222,7 @@ public class HostActions implements Timeouts {
                                 setTimeout((o) -> {
                                     pendingDialog.close();
                                     finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                                }, 666);
+                                }, LONG_TIMEOUT);
                             }
 
                             @Override

@@ -92,7 +92,8 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  *
  * @param <T> The column and items type.
  */
-public class FinderColumn<T> implements IsElement, Attachable {
+@SuppressWarnings("rawtypes")
+public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
 
     private static final String DOT = ".";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
@@ -103,7 +104,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     private final String title;
     private final boolean showCount;
     private final boolean pinnable;
-    private final HTMLElement root;
+    private final HTMLDivElement root;
     private final HTMLElement columnActions;
     private final HTMLElement hiddenColumns;
     private final HTMLElement headerElement;
@@ -161,10 +162,10 @@ public class FinderColumn<T> implements IsElement, Attachable {
                                 .title(CONSTANTS.hiddenColumns())
                                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                                 .data(UIConstants.PLACEMENT, "bottom")
-                                .get())
-                        .add(headerElement = h(1, builder.title).title(builder.title).get())
-                        .get())
-                .get();
+                                .element())
+                        .add(headerElement = h(1, builder.title).title(builder.title).element())
+                        .element())
+                .element();
 
         // column actions
         List<ColumnAction<T>> allowedColumnActions = allowedActions(builder.columnActions);
@@ -177,7 +178,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                 actionsBuilder.add(newColumnButton(action));
             }
         }
-        columnActions = actionsBuilder.get();
+        columnActions = actionsBuilder.element();
         header.appendChild(columnActions);
 
         // filter box
@@ -194,10 +195,10 @@ public class FinderColumn<T> implements IsElement, Attachable {
                                     .attr(UIConstants.PLACEHOLDER,
                                             Strings.abbreviateMiddle(builder.filterDescription, 45))
                                     .attr(UIConstants.TITLE, builder.filterDescription)
-                                    .get())
+                                    .element())
                             .add(clearFilter)
-                            .get());
-            clearFilterElement = clearFilter.get();
+                            .element());
+            clearFilterElement = clearFilter.element();
             Elements.setVisible(clearFilterElement, false);
         } else {
             filterElement = null;
@@ -205,7 +206,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
         }
 
         // rows
-        root.appendChild(ulElement = ul().get());
+        root.appendChild(ulElement = ul().element());
         if (pinnable) {
             ulElement.classList.add(CSS.pinnable);
         }
@@ -213,12 +214,12 @@ public class FinderColumn<T> implements IsElement, Attachable {
         // no items marker
         noItems = li().css(empty)
                 .add(span().css(itemText).textContent(CONSTANTS.noItems()))
-                .get();
+                .element();
     }
 
     @SuppressWarnings("Duplicates")
     private HTMLElement newColumnButton(ColumnAction<T> action) {
-        HtmlContentBuilder builder;
+        HtmlContentBuilder<? extends HTMLElement> builder;
         if (!action.actions.isEmpty()) {
             HTMLElement button;
             HTMLElement ul;
@@ -227,12 +228,12 @@ public class FinderColumn<T> implements IsElement, Attachable {
                             .id(action.id)
                             .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                             .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                            .get())
+                            .element())
                     .add(ul = ul().css(dropdownMenu)
                             .id(Ids.uniqueId())
                             .attr(UIConstants.ROLE, UIConstants.MENU)
                             .aria(UIConstants.LABELLED_BY, action.id)
-                            .get());
+                            .element());
             if (action.title != null) {
                 button.textContent = action.title;
             } else if (action.element != null) {
@@ -240,7 +241,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
             } else {
                 button.textContent = NOT_AVAILABLE;
             }
-            button.appendChild(span().css(caret).get());
+            button.appendChild(span().css(caret).element());
 
             for (ColumnAction<T> liAction : action.actions) {
                 HTMLElement a;
@@ -254,8 +255,8 @@ public class FinderColumn<T> implements IsElement, Attachable {
                                         liAction.handler.execute(this);
                                     }
                                 })
-                                .get())
-                        .get());
+                                .element())
+                        .element());
                 if (liAction.title != null) {
                     a.textContent = liAction.title;
                 } else if (liAction.element != null) {
@@ -281,7 +282,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                 builder.textContent(NOT_AVAILABLE);
             }
         }
-        return builder.get();
+        return builder.element();
     }
 
     private void updateHeader(int matched) {
@@ -351,7 +352,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
             Elements.failSafeRemove(ulElement, noItems);
         }
         // when user deletes remaining chars, hide the 'clear' icon
-        if (filter.trim().length() == 0) {
+        if (filter != null && filter.trim().length() == 0) {
             Elements.setVisible(clearFilterElement, false);
         }
     }
@@ -395,7 +396,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                 case ArrowLeft: {
                     HTMLElement previousElement = (HTMLElement) root.previousElementSibling;
                     if (previousElement != null) {
-                        FinderColumn previousColumn = finder.getColumn(previousElement.id);
+                        FinderColumn<?> previousColumn = finder.getColumn(previousElement.id);
                         if (previousColumn != null) {
                             event.preventDefault();
                             event.stopPropagation();
@@ -720,7 +721,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
                     .title(title)
                     .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                     .data(UIConstants.PLACEMENT, "bottom")
-                    .get();
+                    .element();
             ColumnAction<T> dropdownAction = new ColumnAction.Builder<T>(id)
                     .element(element)
                     .actions(actions)
@@ -848,7 +849,7 @@ public class FinderColumn<T> implements IsElement, Attachable {
     // ------------------------------------------------------ public API
 
     @Override
-    public HTMLElement element() {
+    public HTMLDivElement element() {
         asElement = true;
         return root;
     }
