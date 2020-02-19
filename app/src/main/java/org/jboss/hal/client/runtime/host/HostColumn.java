@@ -68,10 +68,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
-import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONFIGURATION_CHANGES_ADDRESS;
-import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_TEMPLATE;
-import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_MANAGEMENT_OPERATIONS_ADDRESS;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.hosts;
@@ -80,8 +77,10 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {HOST_CONNECTION_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS, HOST_MANAGEMENT_OPERATIONS_ADDRESS},
-        recursive = false)
+@Requires(value = {
+        "/core-service=management/host-connection=*",
+        "host=*/subsystem=core-management/service=configuration-changes",
+        "host=*/core-service=management/service=management-operations"}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static AddressTemplate hostTemplate(Host host) {
@@ -196,7 +195,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                     .with(HOST, item.getAddressName())
                                     .build();
                             actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
-                                    ccPlaceRequest, Constraint.executable(hostTemplate(item).append(CONFIGURATION_CHANGES_ADDRESS), ADD)));
+                                    ccPlaceRequest,
+                                    Constraint.executable(hostTemplate(item).append(CONFIGURATION_CHANGES_ADDRESS),
+                                            ADD)));
                         }
                         PlaceRequest moPlaceRequest = new PlaceRequest.Builder()
                                 .nameToken(NameTokens.MANAGEMENT_OPERATIONS).build();
