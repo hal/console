@@ -119,14 +119,14 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     private final Finder finder;
     private final Environment environment;
     private final SecurityContextRegistry securityContextRegistry;
-    private Dispatcher dispatcher;
-    private EventBus eventBus;
-    private Provider<Progress> progress;
-    private StatementContext statementContext;
-    private MetadataProcessor metadataProcessor;
-    private ServerActions serverActions;
-    private CrudOperations crud;
-    private Resources resources;
+    private final Dispatcher dispatcher;
+    private final EventBus eventBus;
+    private final Provider<Progress> progress;
+    private final StatementContext statementContext;
+    private final MetadataProcessor metadataProcessor;
+    private final ServerActions serverActions;
+    private final CrudOperations crud;
+    private final Resources resources;
     private FinderPath refreshPath;
 
     @Inject
