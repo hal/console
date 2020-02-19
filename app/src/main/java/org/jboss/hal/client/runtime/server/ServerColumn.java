@@ -543,8 +543,19 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             ItemMonitor.stopProgress(event.getServer().getId());
 
             FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
-            refreshPath = null;
+            if (event.getServer().isStopped()) {
+                FinderPath woRuntime = new FinderPath();
+                for (FinderSegment<?> segment : path) {
+                    if (Ids.RUNTIME_SUBSYSTEM.equals(segment.getColumnId())) {
+                        break;
+                    }
+                    woRuntime.append(segment.getColumnId(), segment.getItemId(),
+                            segment.getColumnTitle(), segment.getItemTitle());
+                }
+                path = woRuntime;
+            }
             finder.refresh(path);
+            refreshPath = null;
         }
     }
 }

@@ -22,7 +22,11 @@ package org.jboss.hal.core.runtime;
 public enum Action {
     RELOAD, RESTART, SUSPEND, RESUME, START, STOP, DESTROY, KILL, REMOVE, COPY;
 
-    public static boolean isStarting(Action action) {
+    public static boolean isStart(Action action) {
         return action == RELOAD || action == RESTART || action == RESUME || action == START;
+    }
+
+    public static boolean isStop(Action action) {
+        return action == STOP || action == DESTROY || action == KILL || action == REMOVE;
     }
 }
