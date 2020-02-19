@@ -121,7 +121,7 @@ public class ServerActions implements Timeouts {
     private final Resources resources;
     private final Map<String, Server> pendingServers;
     private final ServerUrlStorage serverUrlStorage;
-    private StatementContext statementContext;
+    private final StatementContext statementContext;
 
     @Inject
     public ServerActions(EventBus eventBus,
@@ -727,7 +727,6 @@ public class ServerActions implements Timeouts {
 
     private Predicate<ModelNode> checkServerConfigStatus(ServerConfigStatus first, ServerConfigStatus... rest) {
         return result -> {
-            //noinspection Convert2MethodRef (method reference leads to an error!)
             ServerConfigStatus status = asEnumValue(result, name -> ServerConfigStatus.valueOf(name),
                     ServerConfigStatus.UNDEFINED);
             return EnumSet.of(first, rest).contains(status);
@@ -736,7 +735,6 @@ public class ServerActions implements Timeouts {
 
     private Predicate<ModelNode> checkServerState(RunningState first, RunningState... rest) {
         return result -> {
-            //noinspection Convert2MethodRef (method reference leads to an error!)
             RunningState state = asEnumValue(result, (name) -> RunningState.valueOf(name), RunningState.UNDEFINED);
             return EnumSet.of(first, rest).contains(state);
         };
@@ -749,7 +747,6 @@ public class ServerActions implements Timeouts {
     }
 
     private Predicate<ModelNode> checkSuspendState(SuspendState statusToReach) {
-        //noinspection Convert2MethodRef (method reference leads to an error!)
         return result -> statusToReach == asEnumValue(result, name -> SuspendState.valueOf(name),
                 SuspendState.UNDEFINED);
     }
@@ -769,8 +766,8 @@ public class ServerActions implements Timeouts {
 
         @Override
         public void onCompleted() {
-            // TODO Check for server boot errors
-            if (Action.isStarting(action)) {
+            if (Action.isStart(action)) {
+                // read boot errors
                 ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
                 Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
                 dispatcher.execute(operation, result -> {
@@ -780,6 +777,17 @@ public class ServerActions implements Timeouts {
                     } else {
                         finish(server, Result.SUCCESS, Message.success(successMessage));
                     }
+                });
+            } else if (Action.isStop(action)) {
+                // update server for event
+                ResourceAddress address = server.getServerConfigAddress();
+                Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                        .param(ATTRIBUTES_ONLY, true)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build();
+                dispatcher.execute(operation, result -> {
+                    Server stoppedServer = new Server(this.server.getHost(), result);
+                    finish(stoppedServer, Result.SUCCESS, Message.success(successMessage));
                 });
             } else {
                 finish(server, Result.SUCCESS, Message.success(successMessage));
