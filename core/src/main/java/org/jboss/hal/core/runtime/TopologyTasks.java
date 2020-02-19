@@ -70,7 +70,6 @@ public final class TopologyTasks {
     private static final String WILDCARD = "*";
     private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
 
-
     // ------------------------------------------------------ topology
 
     /** Show a blocking verification dialog and executes the specified operation. */
@@ -141,7 +140,6 @@ public final class TopologyTasks {
      * </ul>
      * Started servers contain additional attributes and optional server boot errors.
      */
-    @SuppressWarnings("Duplicates")
     public static List<Task<FlowContext>> serverGroups(Environment environment, Dispatcher dispatcher) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(new HostsNames(environment, dispatcher));
@@ -203,9 +201,7 @@ public final class TopologyTasks {
         return tasks;
     }
 
-
     // ------------------------------------------------------ public callbacks
-
 
     /**
      * Function, which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks,
@@ -214,9 +210,9 @@ public final class TopologyTasks {
      */
     public static class HostError<T> implements Func1<Throwable, Single<T>> {
 
-        private String hostName;
+        private final String hostName;
         private final List<Host> hosts;
-        private Function<Throwable, T> resume;
+        private final Function<Throwable, T> resume;
 
         public HostError(String hostName, List<Host> hosts, Function<Throwable, T> resume) {
             this.hostName = hostName;
@@ -240,9 +236,7 @@ public final class TopologyTasks {
         }
     }
 
-
     // ------------------------------------------------------ tasks
-
 
     private static class Topology implements Task<FlowContext> {
 
@@ -308,7 +302,6 @@ public final class TopologyTasks {
         }
     }
 
-
     private static class HostsNames implements Task<FlowContext> {
 
         private final Environment environment;
@@ -322,17 +315,17 @@ public final class TopologyTasks {
         @Override
         public Completable call(FlowContext context) {
             Completable completable = Completable.complete();
+            List<String> hostNames = new ArrayList<>();
+            context.set(HOST_NAMES, hostNames);
+
             if (!environment.isStandalone()) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
                         .build();
                 completable = dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
-                            List<String> hostNames = result.asList().stream()
-                                    .map(ModelNode::asString)
-                                    .collect(toList());
-                            context.set(HOST_NAMES, hostNames);
-                        })
+                        .doOnSuccess(result -> hostNames.addAll(result.asList().stream()
+                                .map(ModelNode::asString)
+                                .collect(toList())))
                         .doOnError(throwable -> logger.error("TopologyTasks.HostNames failed: {}",
                                 throwable.getMessage()))
                         .toCompletable();
@@ -340,7 +333,6 @@ public final class TopologyTasks {
             return completable;
         }
     }
-
 
     private static class Hosts implements Task<FlowContext> {
 
@@ -354,9 +346,9 @@ public final class TopologyTasks {
 
         @Override
         public Completable call(FlowContext context) {
+            Completable completable = Completable.complete();
             List<Host> hosts = new ArrayList<>();
             List<Server> servers = new ArrayList<>();
-            Completable completable = Completable.complete();
             context.set(HOSTS, hosts);
             context.set(SERVERS, servers);
 
@@ -406,7 +398,6 @@ public final class TopologyTasks {
         }
     }
 
-
     private static class DisconnectedHosts implements Task<FlowContext> {
 
         private final Environment environment;
@@ -420,6 +411,7 @@ public final class TopologyTasks {
         @Override
         public Completable call(FlowContext context) {
             Completable completable = Completable.complete();
+
             if (!environment.isStandalone()) {
                 ResourceAddress address = new ResourceAddress()
                         .add(CORE_SERVICE, MANAGEMENT)
@@ -465,7 +457,6 @@ public final class TopologyTasks {
         }
     }
 
-
     private static class ServerGroups implements Task<FlowContext> {
 
         private final Environment environment;
@@ -479,6 +470,9 @@ public final class TopologyTasks {
         @Override
         public Completable call(FlowContext context) {
             Completable completable = Completable.complete();
+            List<ServerGroup> serverGroups = new ArrayList<>();
+            context.set(SERVER_GROUPS, serverGroups);
+
             if (!environment.isStandalone()) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(),
                         READ_CHILDREN_RESOURCES_OPERATION)
@@ -486,13 +480,10 @@ public final class TopologyTasks {
                         .param(INCLUDE_RUNTIME, true)
                         .build();
                 completable = dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
-                            List<ServerGroup> serverGroups = result.asPropertyList().stream()
-                                    .map(ServerGroup::new)
-                                    .sorted(comparing(ServerGroup::getName))
-                                    .collect(toList());
-                            context.set(SERVER_GROUPS, serverGroups);
-                        })
+                        .doOnSuccess(result -> serverGroups.addAll(result.asPropertyList().stream()
+                                .map(ServerGroup::new)
+                                .sorted(comparing(ServerGroup::getName))
+                                .collect(toList())))
                         .doOnError(throwable -> logger.error("TopologyTasks.ServerGroups failed: {}",
                                 throwable.getMessage()))
                         .toCompletable();
@@ -501,12 +492,11 @@ public final class TopologyTasks {
         }
     }
 
-
     private static class ServersOfHost implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
-        private String host;
+        private final String host;
 
         private ServersOfHost(Environment environment, Dispatcher dispatcher, String host) {
             this.environment = environment;
@@ -538,12 +528,11 @@ public final class TopologyTasks {
         }
     }
 
-
     private static class ServersOfServerGroup implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
-        private String serverGroup;
+        private final String serverGroup;
 
         private ServersOfServerGroup(Environment environment, Dispatcher dispatcher, String serverGroup) {
             this.environment = environment;
@@ -568,7 +557,6 @@ public final class TopologyTasks {
                                 Operation operation = new Operation.Builder(address, QUERY)
                                         .param(WHERE, new ModelNode().set(GROUP, serverGroup))
                                         .build();
-                                //noinspection Duplicates
                                 return dispatcher.execute(operation)
                                         .doOnSuccess(result -> result.asList().stream()
                                                 .filter(modelNode -> !modelNode.isFailure())
@@ -597,12 +585,11 @@ public final class TopologyTasks {
         }
     }
 
-
     private static class RunningServers implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
-        private ModelNode query;
+        private final ModelNode query;
 
         private RunningServers(Environment environment, Dispatcher dispatcher, ModelNode query) {
             this.environment = environment;
@@ -641,7 +628,6 @@ public final class TopologyTasks {
                                                 .add("uuid")) //NON-NLS
                                         .param(WHERE, query)
                                         .build();
-                                //noinspection Duplicates
                                 return dispatcher.execute(operation)
                                         .doOnSuccess(result -> result.asList().stream()
                                                 .filter(modelNode -> !modelNode.isFailure())
@@ -669,7 +655,6 @@ public final class TopologyTasks {
         }
     }
 
-
     private static class StartedServers implements Task<FlowContext> {
 
         private final Environment environment;
@@ -683,8 +668,10 @@ public final class TopologyTasks {
         @Override
         public Completable call(FlowContext context) {
             Completable completable = Completable.complete();
+
             if (!environment.isStandalone()) {
                 List<Server> servers = context.get(SERVERS);
+
                 if (servers != null) {
                     List<Operation> operations = new ArrayList<>();
                     for (Server server : servers) {
@@ -734,7 +721,6 @@ public final class TopologyTasks {
             return completable;
         }
     }
-
 
     private TopologyTasks() {
     }
