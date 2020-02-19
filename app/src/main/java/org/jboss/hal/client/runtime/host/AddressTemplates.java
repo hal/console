@@ -17,27 +17,15 @@ package org.jboss.hal.client.runtime.host;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
-
 interface AddressTemplates {
 
-    String DOMAIN_CONTROLLER = "{domain.controller}";
-    String ANY_HOST = "host=*";
-
-    String ELYTRON_ADDRESS = DOMAIN_CONTROLLER + "/subsystem=elytron";
-    String HTTP_INTERFACE_ADDRESS = ANY_HOST + "/core-service=management/management-interface=http-interface";
+    String ELYTRON_ADDRESS = "{domain.controller}" + "/subsystem=elytron";
+    String HTTP_INTERFACE_ADDRESS = "{selected.host}/core-service=management/management-interface=http-interface";
     String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
-    String HOST_CONFIGURATION_CHANGES_ADDRESS = ANY_HOST + CONFIGURATION_CHANGES_ADDRESS;
-    String HOST_MANAGEMENT_OPERATIONS_ADDRESS = ANY_HOST + "/core-service=management/service=management-operations";
-    String INTERFACE_ADDRESS = ANY_HOST + "/interface=*";
-    String JVM_ADDRESS = ANY_HOST + "/jvm=*";
-    String NATIVE_INTERFACE_ADDRESS = ANY_HOST + "/core-service=management/management-interface=native-interface";
-    String PATH_ADDRESS = ANY_HOST + "/path=*";
-    String SOCKET_BINDING_GROUP_ADDRESS = ANY_HOST + "/socket-binding-group=*";
-    String SYSTEM_PROPERTY_ADDRESS = ANY_HOST + "/system-property=*";
+    String NATIVE_INTERFACE_ADDRESS = "{selected.host}/core-service=management/management-interface=native-interface";
 
-    AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
-    AddressTemplate NATIVE_INTERFACE_TEMPLATE = AddressTemplate.of(NATIVE_INTERFACE_ADDRESS);
     AddressTemplate ELYTRON_TEMPLATE = AddressTemplate.of(ELYTRON_ADDRESS);
+    AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
     AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
+    AddressTemplate NATIVE_INTERFACE_TEMPLATE = AddressTemplate.of(NATIVE_INTERFACE_ADDRESS);
 }

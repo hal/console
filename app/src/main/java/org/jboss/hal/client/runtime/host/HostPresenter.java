@@ -70,7 +70,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.hal.client.runtime.host.AddressTemplates.*;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.ELYTRON_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.AddressTemplates.HTTP_INTERFACE_TEMPLATE;
 import static org.jboss.hal.core.runtime.TopologyTasks.reloadBlocking;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -85,8 +86,8 @@ public class HostPresenter
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
-    private Provider<Progress> progress;
-    private Environment environment;
+    private final Provider<Progress> progress;
+    private final Environment environment;
     private final Resources resources;
 
     @Inject
@@ -406,8 +407,15 @@ public class HostPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.HOST_CONFIGURATION)
-    @Requires(value = {ANY_HOST, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SOCKET_BINDING_GROUP_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS, HTTP_INTERFACE_ADDRESS, NATIVE_INTERFACE_ADDRESS}, recursive = false)
+    @Requires(value = {"{selected.host}",
+            "{selected.host}/interface=*",
+            "{selected.host}/jvm=*",
+            "{selected.host}/path=*",
+            "{selected.host}/socket-binding-group=*",
+            "{selected.host}/system-property=*",
+            "{selected.host}/core-service=management/management-interface=http-interface",
+            "{selected.host}/core-service=management/management-interface=native-interface"},
+            recursive = false)
     public interface MyProxy extends ProxyPlace<HostPresenter> {
     }
 
