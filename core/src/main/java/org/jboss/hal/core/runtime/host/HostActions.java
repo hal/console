@@ -47,6 +47,7 @@ import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.MetadataProcessor.MetadataCallback;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -232,8 +233,8 @@ public class HostActions implements Timeouts {
                                 finish(host, servers, Result.TIMEOUT, null);
                             }
                         }),
-                new HostFailedCallback(host, servers, errorMessage),
-                new HostExceptionCallback(host, servers, errorMessage));
+                new HostFailedCallback(host, servers, errorMessage, pendingDialog::close),
+                new HostExceptionCallback(host, servers, errorMessage, pendingDialog::close));
     }
 
     private void hostControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
@@ -254,8 +255,8 @@ public class HostActions implements Timeouts {
                                 finish(host, servers, Result.TIMEOUT, Message.error(timeoutMessage));
                             }
                         }),
-                new HostFailedCallback(host, servers, errorMessage),
-                new HostExceptionCallback(host, servers, errorMessage));
+                new HostFailedCallback(host, servers, errorMessage, null),
+                new HostExceptionCallback(host, servers, errorMessage, null));
     }
 
     private void prepare(Host host, List<Server> servers, Action action) {
@@ -313,16 +314,21 @@ public class HostActions implements Timeouts {
         private final Host host;
         private final List<Server> servers;
         private final SafeHtml errorMessage;
+        private final Callback cleanup;
 
-        HostFailedCallback(Host host, List<Server> servers, SafeHtml errorMessage) {
+        HostFailedCallback(Host host, List<Server> servers, SafeHtml errorMessage, Callback cleanup) {
             this.host = host;
             this.servers = servers;
             this.errorMessage = errorMessage;
+            this.cleanup = cleanup;
         }
 
         @Override
         public void onFailed(Operation operation, String failure) {
             finish(host, servers, Result.ERROR, Message.error(errorMessage, failure));
+            if (cleanup != null) {
+                cleanup.execute();
+            }
         }
     }
 
@@ -332,16 +338,21 @@ public class HostActions implements Timeouts {
         private final Host host;
         private final List<Server> servers;
         private final SafeHtml errorMessage;
+        private final Callback cleanup;
 
-        HostExceptionCallback(Host host, List<Server> servers, SafeHtml errorMessage) {
+        HostExceptionCallback(Host host, List<Server> servers, SafeHtml errorMessage, Callback cleanup) {
             this.host = host;
             this.servers = servers;
             this.errorMessage = errorMessage;
+            this.cleanup = cleanup;
         }
 
         @Override
         public void onException(Operation operation, Throwable exception) {
             finish(host, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
+            if (cleanup != null) {
+                cleanup.execute();
+            }
         }
     }
 }
