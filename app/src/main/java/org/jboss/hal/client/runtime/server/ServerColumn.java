@@ -103,7 +103,8 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
 
 @Column(Ids.SERVER)
-@Requires(value = {"/host=*/server-config=*", "/host=*/server=*", "opt:///host=*/server=*" + CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
+@Requires(value = {"/host=*/server-config=*", "/host=*/server=*",
+        "opt:///host=*/server=*" + CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static final String HOST_KEY = "/host=";
@@ -119,14 +120,14 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     private final Finder finder;
     private final Environment environment;
     private final SecurityContextRegistry securityContextRegistry;
-    private Dispatcher dispatcher;
-    private EventBus eventBus;
-    private Provider<Progress> progress;
-    private StatementContext statementContext;
-    private MetadataProcessor metadataProcessor;
-    private ServerActions serverActions;
-    private CrudOperations crud;
-    private Resources resources;
+    private final Dispatcher dispatcher;
+    private final EventBus eventBus;
+    private final Provider<Progress> progress;
+    private final StatementContext statementContext;
+    private final MetadataProcessor metadataProcessor;
+    private final ServerActions serverActions;
+    private final CrudOperations crud;
+    private final Resources resources;
     private FinderPath refreshPath;
 
     @Inject
@@ -542,8 +543,19 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             ItemMonitor.stopProgress(event.getServer().getId());
 
             FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
-            refreshPath = null;
+            if (event.getServer().isStopped()) {
+                FinderPath woRuntime = new FinderPath();
+                for (FinderSegment<?> segment : path) {
+                    if (Ids.RUNTIME_SUBSYSTEM.equals(segment.getColumnId())) {
+                        break;
+                    }
+                    woRuntime.append(segment.getColumnId(), segment.getItemId(),
+                            segment.getColumnTitle(), segment.getItemTitle());
+                }
+                path = woRuntime;
+            }
             finder.refresh(path);
+            refreshPath = null;
         }
     }
 }

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -59,14 +60,19 @@ public class BrowseByColumn extends StaticItemColumn {
     static final String SERVER_CONFIG_ADDRESS = ANY_HOST + "/server-config=*";
 
     public static boolean browseByHosts(FinderContext context) {
-        FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getItemId().equals(Ids.asId(Names.HOSTS));
+        for (FinderSegment<?> segment : context.getPath()) {
+            if (Ids.DOMAIN_BROWSE_BY.equals(segment.getColumnId())) {
+                return Objects.equals(Ids.asId(Names.HOSTS), segment.getItemId());
+            }
+        }
+        return false;
     }
 
     public static boolean browseByServerGroups(FinderContext context) {
-        if (!context.getPath().isEmpty()) {
-            FinderSegment firstSegment = context.getPath().iterator().next();
-            return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
+        for (FinderSegment<?> segment : context.getPath()) {
+            if (Ids.DOMAIN_BROWSE_BY.equals(segment.getColumnId())) {
+                return Objects.equals(Ids.asId(Names.SERVER_GROUPS), segment.getItemId());
+            }
         }
         return false;
     }
