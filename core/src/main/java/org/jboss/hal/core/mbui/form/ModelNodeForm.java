@@ -300,10 +300,15 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             case EDITING:
                 // change restricted and enabled state
                 for (FormItem formItem : getBoundFormItems()) {
-                    formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
+                    String name = formItem.getName();
+                    int pos = name.indexOf('.');
+                    if (pos > 0) {
+                        name = name.substring(0,pos);
+                    }
+                    formItem.setRestricted(!securityContext.isReadable(name));
                     // don't touch disabled form items
                     if (formItem.isEnabled()) {
-                        formItem.setEnabled(securityContext.isWritable(formItem.getName()));
+                        formItem.setEnabled(securityContext.isWritable(name));
                     }
                 }
                 break;

@@ -46,6 +46,7 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
@@ -83,10 +84,7 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
@@ -402,6 +400,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                 @Override
                 public void onMetadata(Metadata metadata) {
+                    flattenDescription(metadata.getDescription().get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES));
                     String title = new LabelBuilder().label(parent.text);
                     NameItem nameItem = new NameItem();
                     String id = Ids.build(parent.id, "add");
@@ -413,12 +412,43 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
                     AddResourceDialog dialog = new AddResourceDialog(
                             resources.messages().addResourceTitle(title),
-                            form, (name1, model) ->
-                            crud.add(title, nameItem.getValue(), fqAddress(parent, nameItem.getValue()),
-                                    model, (n, a) -> refresh(parent)));
+                            form, (name1, model) -> {
+                                unflattenModel(model);
+                                crud.add(title, nameItem.getValue(), fqAddress(parent, nameItem.getValue()),
+                                    model, (n, a) -> refresh(parent));
+                            });
                     dialog.show();
                 }
             });
+        }
+    }
+
+    private void flattenDescription(ModelNode model) {
+        for (Property p : model.asPropertyList()) {
+            if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT) && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
+
+                model.remove(p.getName());
+
+                for (Property nested : p.getValue().get(VALUE_TYPE).asPropertyList()) {
+                    model.get(p.getName() + "." + nested.getName()).set(nested.getValue());
+                }
+            }
+        }
+    }
+
+    private void unflattenModel(ModelNode model) {
+        if (!model.isDefined()) {
+            return;
+        }
+        for (Property p : model.asPropertyList()) {
+            if (p.getName().indexOf('.') < 0) {
+                continue;
+            }
+
+            String[] split = p.getName().split("\\.");
+
+            model.remove(p.getName());
+            model.get(split[0]).get(split[1]).set(p.getValue());
         }
     }
 
