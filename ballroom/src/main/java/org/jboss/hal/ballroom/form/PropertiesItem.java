@@ -59,7 +59,7 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
 
     @Override
     public String allowedCharacters() {
-        return "- . : @ ; = ? ! # $ % & [ ]";
+        return "- . : @ ; = ? ! # $ % & [ ] ( )";
     }
 
     @Override
@@ -94,7 +94,7 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
     static class MapMapping implements TagsMapping<Map<String, String>> {
 
         private static final RegExp REGEX = RegExp.compile(
-                "^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\@\\;\\=\\?\\!\\#\\$\\%\\&\\[\\]\\,]+)$"); //NON-NLS
+                "^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:\\@\\;\\=\\?\\!\\#\\$\\%\\&\\[\\]\\,\\(\\)]+)$"); //NON-NLS
         private static final String EQ = "=";
 
         @Override
