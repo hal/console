@@ -106,7 +106,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                         for (ModelNode step : result) {
                             if (!step.isFailure()) {
                                 for (ModelNode node : step.get(RESULT).asList()) {
-                                    ResourceAddress address = baseAddress.add(new ResourceAddress(node.get(ADDRESS)));
+                                    ResourceAddress address = new ResourceAddress().add(baseAddress).add(new ResourceAddress(node.get(ADDRESS)));
                                     ejbs.add(new EjbNode(address, node.get(RESULT)));
                                 }
                             }
