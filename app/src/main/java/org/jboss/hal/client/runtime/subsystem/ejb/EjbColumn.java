@@ -82,28 +82,31 @@ public class EjbColumn extends FinderColumn<EjbNode> {
         super(new Builder<EjbNode>(finder, Ids.EJB3, Names.EJB3)
 
                 .itemsProvider((context, callback) -> {
-                    List<Operation> operations = new ArrayList<>();
+                    ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}").resolve(statementContext);
+                    Composite composite = new Composite(baseAddress);
+
                     AddressTemplate[] templates = new AddressTemplate[]{
                             EJB3_DEPLOYMENT_TEMPLATE,
                             EJB3_SUBDEPLOYMENT_TEMPLATE
                     };
                     for (EjbNode.Type type : EjbNode.Type.values()) {
                         for (AddressTemplate template : templates) {
-                            ResourceAddress deploymentAddress = template
+                            ResourceAddress deploymentAddress = template.subTemplate(2,template.size())
                                     .append(type.resource + "=*")
                                     .resolve(statementContext);
-                            operations.add(new Operation.Builder(deploymentAddress, READ_RESOURCE_OPERATION)
+                            composite.add(new Operation.Builder(deploymentAddress, READ_RESOURCE_OPERATION)
                                     .param(INCLUDE_RUNTIME, true)
                                     .param(RECURSIVE, true)
                                     .build());
                         }
                     }
-                    dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+
+                    dispatcher.execute(composite, (CompositeResult result) -> {
                         List<EjbNode> ejbs = new ArrayList<>();
                         for (ModelNode step : result) {
                             if (!step.isFailure()) {
                                 for (ModelNode node : step.get(RESULT).asList()) {
-                                    ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
+                                    ResourceAddress address = new ResourceAddress().add(baseAddress).add(new ResourceAddress(node.get(ADDRESS)));
                                     ejbs.add(new EjbNode(address, node.get(RESULT)));
                                 }
                             }
