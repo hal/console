@@ -89,8 +89,8 @@ class CompositeRrdParser {
         List<Property> operationSegments = operationAddress.asPropertyList();
         List<Property> resultSegments = resultAddress.asPropertyList();
 
-        // For wildcard rrd operations against running servers like /host=master/server=server-one/interface=*
-        // the result does *not* contain absolute addresses. But since we need them in the registries,
+        // For rrd operations against running servers using wildcards like /host=master/server=server-one/interface=*
+        // the result does *not* contain absolute addresses. Since we need them in the registries,
         // this method fixes this corner case.
         if (operationSegments.size() > 2 &&
                 operationSegments.size() == resultSegments.size() + 2 &&

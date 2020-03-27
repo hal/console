@@ -17,7 +17,7 @@ package org.jboss.hal.meta.processing;
 
 class ParserException extends RuntimeException {
 
-    ParserException(final String message) {
+    ParserException(String message) {
         super(message);
     }
 }
