@@ -26,7 +26,9 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
@@ -35,9 +37,7 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.PLACE_HOLDER_ELEMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.lead;
 
 /**
@@ -103,6 +103,8 @@ class ResourcePanel implements Iterable<HTMLElement> {
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             dispatcher.execute(operation, result -> {
+                flattenDescription(metadata.getDescription().get(ATTRIBUTES));
+                flattenModel(result);
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                         Ids.build(Ids.MODEL_BROWSER, node.id, Ids.FORM), metadata)
                         .includeRuntime()
@@ -132,6 +134,32 @@ class ResourcePanel implements Iterable<HTMLElement> {
     void hide() {
         for (HTMLElement element : elements) {
             Elements.setVisible(element, false);
+        }
+    }
+
+    private void flattenDescription(ModelNode model) {
+        for (Property p : model.asPropertyList()) {
+            if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT) && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
+
+                model.remove(p.getName());
+
+                for (Property nested : p.getValue().get(VALUE_TYPE).asPropertyList()) {
+                    model.get(p.getName() + "." + nested.getName()).set(nested.getValue());
+                }
+            }
+        }
+    }
+
+    private void flattenModel(ModelNode model) {
+        for (Property p : model.asPropertyList()) {
+            if (p.getValue().getType() == ModelType.OBJECT) {
+
+                model.remove(p.getName());
+
+                for (Property nested : p.getValue().asPropertyList()) {
+                    model.get(p.getName() + "." + nested.getName()).set(nested.getValue());
+                }
+            }
         }
     }
 }
