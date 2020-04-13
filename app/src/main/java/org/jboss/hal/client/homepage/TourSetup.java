@@ -179,10 +179,10 @@ class TourSetup {
             PlaceRequest browseBy = new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build();
             PlaceRequest users = places.finderPlace(NameTokens.ACCESS_CONTROL,
                     new FinderPath().append(Ids.ACCESS_CONTROL_BROWSE_BY,
-                            Ids.asId(resources.constants().users()))).build();
+                            Ids.ACCESS_CONTROL_BROWSE_BY_USERS)).build();
             PlaceRequest roles = places.finderPlace(NameTokens.ACCESS_CONTROL,
                     new FinderPath().append(Ids.ACCESS_CONTROL_BROWSE_BY,
-                            Ids.asId(resources.constants().roles()))).build();
+                            Ids.ACCESS_CONTROL_BROWSE_BY_ROLES)).build();
             tour.addStep(browseBy, Ids.ACCESS_CONTROL_BROWSE_BY, Names.ACCESS_CONTROL,
                     resources.messages().tourAccessControl(), Placement.RIGHT);
             tour.addStep(users, Ids.USER, Names.ACCESS_CONTROL,
