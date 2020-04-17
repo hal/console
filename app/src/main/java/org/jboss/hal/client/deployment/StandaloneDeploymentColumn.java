@@ -325,6 +325,8 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 .primary(resources.constants().replace(), () -> {
                     boolean valid = uploadElement.validate();
                     if (valid) {
+                        ReplaceDeploymentPanel replaceDeploymentPanel = new ReplaceDeploymentPanel();
+                        replaceDeploymentPanel.on();
                         series(new FlowContext(progress.get()),
                                 new CheckDeployment(dispatcher, deployment.getName()),
                                 // To replace an existing deployment, the original name and runtime-name must be preserved.
@@ -333,6 +335,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                 .subscribe(new Outcome<FlowContext>() {
                                     @Override
                                     public void onError(FlowContext context, Throwable error) {
+                                        replaceDeploymentPanel.off();
                                         MessageEvent.fire(eventBus, Message.error(
                                                 resources.messages().contentReplaceError(deployment.getName()),
                                                 error.getMessage()));
@@ -341,6 +344,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                     @Override
                                     public void onSuccess(FlowContext context) {
                                         refresh(Ids.content(deployment.getName()));
+                                        replaceDeploymentPanel.off();
                                         MessageEvent.fire(eventBus, Message.success(
                                                 resources.messages().contentReplaceSuccess(deployment.getName())));
                                     }
