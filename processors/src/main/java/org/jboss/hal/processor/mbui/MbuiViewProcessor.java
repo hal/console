@@ -16,7 +16,6 @@
 package org.jboss.hal.processor.mbui;
 
 import java.beans.Introspector;
-import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.EnumSet;
@@ -234,7 +233,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         String mbuiXml = Strings.isNullOrEmpty(mbuiView.value())
                 ? type.getSimpleName().toString() + ".mbui.xml"
                 : mbuiView.value();
-        String fq = TypeSimplifier.packageNameOf(type).replace('.', '/') + File.separator + mbuiXml;
+        String fq = TypeSimplifier.packageNameOf(type).replace('.', '/') + "/" + mbuiXml;
 
         try {
             FileObject file = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", fq);
