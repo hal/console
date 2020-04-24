@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -135,8 +136,9 @@ public class ReadAuthentication implements BootstrapTask {
 
     private Role scopedRole(Property property, Role.Type type, String scopeAttribute) {
         Role baseRole = environment.getRoles().get(Ids.role(property.getValue().get(BASE_ROLE).asString()));
-        Set<String> scope = property.getValue().get(scopeAttribute).asList().stream()
-                .map(ModelNode::asString).collect(toSet());
+        Set<String> scope = property.getValue().hasDefined(scopeAttribute)
+                ? property.getValue().get(scopeAttribute).asList().stream().map(ModelNode::asString).collect(toSet())
+                : Collections.<String>emptySet();
         return new Role(property.getName(), baseRole, type, scope);
     }
 }
