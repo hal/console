@@ -47,7 +47,7 @@ public final class Mbui_RemoveConstraintActionView extends RemoveConstraintActio
 
     @Inject
     @SuppressWarnings("unchecked")
-    public Mbui_CustomActionView(MbuiContext mbuiContext) {
+    public Mbui_RemoveConstraintActionView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
@@ -64,10 +64,10 @@ public final class Mbui_RemoveConstraintActionView extends RemoveConstraintActio
                 .add(column()
                         .add(html0 = div()
                                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Table</h1>"))
-                                .get())
+                                .element())
                         .add(table)
                 )
-                .get();
+                .element();
         expressionElements.put("html0", html0);
 
         registerAttachable(table);

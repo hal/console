@@ -64,10 +64,10 @@ public final class Mbui_CustomColumnView extends CustomColumnView {
                 .add(column()
                         .add(html0 = div()
                                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Table</h1>"))
-                                .get())
+                                .element())
                         .add(table)
                 )
-                .get();
+                .element();
         expressionElements.put("html0", html0);
 
         registerAttachable(table);

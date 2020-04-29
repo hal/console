@@ -69,16 +69,16 @@ public final class Mbui_NestedView extends NestedView {
         HTMLElement subItemElement = section()
                 .add(html0 = div()
                         .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
-                        .get())
+                        .element())
                 .add(form)
-                .get();
+                .element();
         expressionElements.put("html0", html0);
         navigation.addSecondary("item", "sub-item", "Sub Item", subItemElement);
 
         HTMLElement root = row()
                 .add(column()
                         .addAll(navigation.panes()))
-                .get();
+                .element();
 
         registerAttachable(navigation);
         registerAttachable(form);
