@@ -38,6 +38,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -45,6 +46,7 @@ import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.W
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_WEBSOCKETS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.SESSION;
@@ -88,15 +90,13 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                                 .add(tr()
                                         .add(th().textContent(Names.NAME))
                                         .add(th().textContent(Names.VALUE))))
-                        .add(attributesTableBody = tbody().get()))
-                .get();
+                        .add(attributesTableBody = tbody().element())).element();
         Elements.setVisible(attributesElement, false);
 
         HTMLElement sessionSection = section()
                 .add(h(1).textContent(Names.SESSIONS))
                 .add(sessionTable)
-                .add(attributesElement)
-                .get();
+                .add(attributesElement).element();
 
         // ------------------------------------------------------ servlets
 
@@ -119,8 +119,7 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .add(h(1).textContent(Names.SERVLET))
                 .add(p().textContent(servletMetadata.getDescription().getDescription()))
                 .add(servletsTable)
-                .add(servletsForm)
-                .get();
+                .add(servletsForm).element();
 
         // ------------------------------------------------------ websockets
 
@@ -143,8 +142,7 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .add(h(1).textContent(Names.WEBSOCKETS))
                 .add(p().textContent(websocketMetadata.getDescription().getDescription()))
                 .add(websocketsTable)
-                .add(websocketsForm)
-                .get();
+                .add(websocketsForm).element();
 
         // ------------------------------------------------------ navigation & root
 
@@ -195,8 +193,7 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
         for (Property attribute : attributes) {
             attributesTableBody.appendChild(tr()
                     .add(td().textContent(attribute.getName()))
-                    .add(td().textContent(attribute.getValue().asString()))
-                    .get());
+                    .add(td().textContent(attribute.getValue().asString())).element());
         }
         Elements.setVisible(attributesElement, !attributes.isEmpty());
     }

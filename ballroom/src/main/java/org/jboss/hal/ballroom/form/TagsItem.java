@@ -54,7 +54,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         addAppearance(Form.State.READONLY, new TagsReadOnlyAppearance());
 
         // editing appearance
-        editingAppearance = new TagsEditingAppearance(input(text).css(formControl, tags).get(), inputHelp,
+        editingAppearance = new TagsEditingAppearance(input(text).css(formControl, tags).element(), inputHelp,
                 editingDecorations, mapping);
         addAppearance(Form.State.EDITING, editingAppearance);
     }
@@ -109,8 +109,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
             this.mapping = mapping;
 
             tagsContainer = div().css(tagManagerContainer)
-                    .id(Ids.build("tags", "container", uniqueId()))
-                    .get();
+                    .id(Ids.build("tags", "container", uniqueId())).element();
 
             helpBlock.classList.add(CSS.hint);
             helpBlock.innerHTML = inputHelp.asString();

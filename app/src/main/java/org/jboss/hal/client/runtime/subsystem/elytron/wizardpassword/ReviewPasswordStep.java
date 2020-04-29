@@ -50,9 +50,8 @@ public class ReviewPasswordStep extends WizardStep<PasswordContext, PasswordStat
         this.metadata = metadata;
 
         section = section()
-                .add(header = h(1).get())
-                .add(description = p().get())
-                .get();
+                .add(header = h(1).element())
+                .add(description = p().element()).element();
     }
 
     @Override

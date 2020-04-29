@@ -95,8 +95,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
         previewAttributes = new PreviewAttributes<>(deploymentResource)
                 .append(model -> new PreviewAttributes.PreviewAttribute(new LabelBuilder().label(CONTEXT_ROOT),
                         span().textContent(model.get(CONTEXT_ROOT).asString())
-                                .data(LINK, "")
-                                .get()))
+                                .data(LINK, "").element()))
                 .append(model -> {
                     FinderPath path = finderPathFactory.deployment(deploymentResource.getDeployment());
                     PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
@@ -133,8 +132,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
         registerAttachable(sessions);
         sessionsElement = section()
                 .add(h(2, Names.SESSIONS))
-                .add(sessions)
-                .get();
+                .add(sessions).element();
 
         // the order of rows is determined at update time.
         sessionTime = new GroupedBar.Builder(resources.constants().seconds())
@@ -149,8 +147,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
         maxTimeElement = section()
                 .add(h(2, resources.constants().sessionTime()))
                 .add(maxSessions)
-                .add(sessionTime)
-                .get();
+                .add(sessionTime).element();
 
         previewBuilder().addAll(previewAttributes);
         previewBuilder()
@@ -251,8 +248,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                                 Elements.removeChildrenFrom(linkContainer);
                                 linkContainer.appendChild(a(url.getUrl() + link)
                                         .apply(a -> a.target = Ids.hostServer(host, server))
-                                        .textContent(link)
-                                        .get());
+                                        .textContent(link).element());
                             }
                         }
                     });

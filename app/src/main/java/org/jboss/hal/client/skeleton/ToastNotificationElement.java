@@ -36,26 +36,22 @@ class ToastNotificationElement implements IsElement {
 
     ToastNotificationElement(ToastNotifications toastNotifications, Message message, Resources resources) {
         String[] cssIcon = cssIcon(message.getLevel());
-        root = Elements.div().css(alert, cssIcon[0])
-                .get();
+        root = Elements.div().css(alert, cssIcon[0]).element();
         root.appendChild(button()
                 .css(close)
                 .aria(HIDDEN, TRUE)
                 .aria(LABEL, "Close")
                 .data(DISMISS, ALERT)
                 .on(click, event -> toastNotifications.close(message))
-                .add(span().css(pfIcon(close)))
-                .get());
-        root.appendChild(span().css(pfIcon(cssIcon[1])).get());
-        root.appendChild(span().innerHtml(message.getMessage()).get());
+                .add(span().css(pfIcon(close))).element());
+        root.appendChild(span().css(pfIcon(cssIcon[1])).element());
+        root.appendChild(span().innerHtml(message.getMessage()).element());
         if (message.hasAction() || message.getDetails() != null) {
             HTMLElement a;
             root.appendChild(span().css(marginLeft5)
                     .add(a = a()
                             .css(clickable, alertLink)
-                            .data(DISMISS, ALERT)
-                            .get())
-                    .get());
+                            .data(DISMISS, ALERT).element()).element());
             if (message.hasAction()) {
                 a.textContent = message.getActionTitle();
                 bind(a, click, event -> message.getCallback().execute());

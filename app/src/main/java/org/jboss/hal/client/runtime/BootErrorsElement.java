@@ -112,10 +112,8 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
                                 .add(h(1).textContent(Names.BOOT_ERRORS))
                                 .add(p().textContent(resources.messages().bootErrors()))
                                 .add(table)
-                                .add(form)
-                                .get())
-                        .add(noBootErrors))
-                .get();
+                                .add(form).element())
+                        .add(noBootErrors)).element();
     }
 
     @Override

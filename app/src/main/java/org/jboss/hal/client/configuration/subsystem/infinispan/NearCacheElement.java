@@ -53,16 +53,14 @@ class NearCacheElement implements IsElement<HTMLElement>, Attachable, HasPresent
     NearCacheElement(MetadataRegistry metadataRegistry, Resources resources) {
         undefinedElement = div()
                 .add(p().css(marginTopLarge)
-                        .innerHtml(resources.messages().nearCacheUndefined()))
-                .get();
+                        .innerHtml(resources.messages().nearCacheUndefined())).element();
 
         noneElement = div()
                 .add(p().css(marginTopLarge)
                         .innerHtml(resources.messages().nearCacheNone()))
                 .add(button(resources.constants().switchNearCache())
                         .css(btn, btnDefault)
-                        .on(click, event -> presenter.switchNearCache(INVALIDATION)))
-                .get();
+                        .on(click, event -> presenter.switchNearCache(INVALIDATION))).element();
 
         String id = Ids.build(INVALIDATION.baseId, Ids.FORM);
         Metadata metadata = metadataRegistry.lookup(REMOTE_CACHE_CONTAINER_TEMPLATE.append("near-cache=invalidation"));
@@ -77,14 +75,12 @@ class NearCacheElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .add(button(resources.constants().switchNearCache())
                         .css(btn, btnDefault)
                         .on(click, event -> presenter.switchNearCache(NONE)))
-                .add(invalidationForm)
-                .get();
+                .add(invalidationForm).element();
 
         root = section()
                 .add(undefinedElement)
                 .add(noneElement)
-                .add(invalidationElement)
-                .get();
+                .add(invalidationElement).element();
 
         Elements.setVisible(undefinedElement, false);
         Elements.setVisible(noneElement, false);

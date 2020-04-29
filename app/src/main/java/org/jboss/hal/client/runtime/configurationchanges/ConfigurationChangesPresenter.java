@@ -253,13 +253,12 @@ public class ConfigurationChangesPresenter extends
     }
 
     void showInDialog(String textContent) {
-        HTMLPreElement elem = pre().css(formControlStatic, wrap).get();
+        HTMLPreElement elem = pre().css(formControlStatic, wrap).element();
         elem.textContent = textContent;
 
         HTMLElement content = div()
                 .add(elem)
-                .style("overflow: scroll") //NON-NLS
-                .get();
+                .style("overflow: scroll").element();
 
         int maxheight = applicationHeight() - 6 * MARGIN_BIG;
         content.style.maxHeight = CSSProperties.MaxHeightUnionType.of(px(maxheight));

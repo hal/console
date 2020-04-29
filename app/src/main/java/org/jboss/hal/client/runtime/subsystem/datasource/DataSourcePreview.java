@@ -114,8 +114,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                     document.createTextNode(dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE + " @ "));
             getLeadElement().appendChild(a(places.historyToken(placeRequest))
                     .textContent(dataSource.getPath())
-                    .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                    .get());
+                    .title(resources.messages().goTo(Names.DEPLOYMENTS)).element());
         }
 
         fromDeployment = new EmptyState.Builder(Ids.DATA_SOURCE_RUNTIME_STATISTICS_NOT_AVAILABLE,
@@ -177,12 +176,11 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 .add(needsReloadWarning)
                 .add(needsRestartWarning)
                 .add(disabledWarning)
-                .add(poolHeader = h(2).css(underline).textContent(resources.constants().connectionPool()).get())
+                .add(poolHeader = h(2).css(underline).textContent(resources.constants().connectionPool()).element())
                 .add(activeConnections)
                 .add(maxUsedConnections)
                 .add(cacheHeader = h(2).css(underline)
-                        .textContent(resources.constants().preparedStatementCache())
-                        .get())
+                        .textContent(resources.constants().preparedStatementCache()).element())
                 .add(hitCount)
                 .add(missCount);
 

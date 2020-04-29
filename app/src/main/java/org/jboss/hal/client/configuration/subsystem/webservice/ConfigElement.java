@@ -92,8 +92,7 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .add(h(1).textContent(configType.type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
 
         handlerChain = new HandlerChainElement(configType, metadataRegistry, tableButtonFactory);
         handler = new HandlerElement(configType, metadataRegistry, tableButtonFactory);

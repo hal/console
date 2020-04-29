@@ -75,11 +75,10 @@ public class DeployContentDialog2 {
                 .add(p().innerHtml(resources.messages().chooseContentToDeploy(serverGroup)))
                 .add(table)
                 .add(div().css(marginTopLarge)
-                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).get())
+                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).element())
                         .add(label().css(CSS.marginLeft5)
                                 .apply(l -> l.htmlFor = Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                                .textContent(resources.constants().enableDeployment())))
-                .get();
+                                .textContent(resources.constants().enableDeployment()))).elements();
 
         dialog = new Dialog.Builder(resources.constants().deployContent())
                 .add(elements)

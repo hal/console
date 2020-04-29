@@ -74,10 +74,9 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
         registerAttachable(attributesForm);
 
         HTMLElement attributesElement = section()
-                .add(h(1).textContent(resources.constants().attributes()).get())
-                .add(p().textContent(metadata.getDescription().getDescription()).get())
-                .add(attributesForm)
-                .get();
+                .add(h(1).textContent(resources.constants().attributes()).element())
+                .add(p().textContent(metadata.getDescription().getDescription()).element())
+                .add(attributesForm).element();
         String attributesItemId = Ids.build(Ids.ATTRIBUTES, ITEM);
         navigation.addPrimary(attributesItemId, resources.constants().configuration(), pfIcon("settings"),
                 attributesElement);
@@ -93,24 +92,21 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
 
         enableSslButton = button().id(ENABLE_SSL)
                 .textContent(resources.constants().enableSSL())
-                .css(Button.DEFAULT_CSS, pullRight)
-                .get();
+                .css(Button.DEFAULT_CSS, pullRight).element();
         bind(enableSslButton, click, ev -> presenter.launchEnableSSLWizard());
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
-                .css(Button.DEFAULT_CSS, pullRight)
-                .get();
+                .css(Button.DEFAULT_CSS, pullRight).element();
         bind(disableSslButton, click, ev -> presenter.disableSSLWizard());
 
         HTMLElement httpMgmtItemElement = section()
                 .add(div()
-                        .add(h(1).textContent(httpTitle).get())
-                        .add(p().textContent(httpMetadata.getDescription().getDescription()).get())
+                        .add(h(1).textContent(httpTitle).element())
+                        .add(p().textContent(httpMetadata.getDescription().getDescription()).element())
                         .add(enableSslButton)
                         .add(disableSslButton))
-                .add(httpInterfaceForm)
-                .get();
+                .add(httpInterfaceForm).element();
         registerAttachable(httpInterfaceForm);
 
         navigation.addPrimary(HTTP_INTERFACE_ITEM, resources.constants().httpManagementInterface(),

@@ -49,8 +49,7 @@ public class LoadingPanel implements IsElement {
         root = div().css(loadingContainer)
                 .add(div().css(loading)
                         .add(h(3).textContent(CONSTANTS.loading()))
-                        .add(div().css(spinner)))
-                .get();
+                        .add(div().css(spinner))).element();
     }
 
     @Override

@@ -63,7 +63,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         this.resources = resources;
 
         emptyState = new EmptyState.Builder(Ids.ELYTRON_CUSTOM_POLICY_EMPTY, resources.constants().noPolicy())
-                .add(div().innerHtml(resources.messages().noPolicy()).get())
+                .add(div().innerHtml(resources.messages().noPolicy()).element())
                 .secondaryAction(resources.messages().addResourceTitle(Names.CUSTOM_POLICY),
                         () -> presenter.addPolicy(CUSTOM_POLICY, Names.CUSTOM_POLICY))
                 .secondaryAction(resources.messages().addResourceTitle(Names.JACC_POLICY),
@@ -92,12 +92,11 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         Elements.setVisible(jaccPolicyForm.element(), false);
 
         root = section()
-                .add(header = h(1).get())
-                .add(description = p().get())
+                .add(header = h(1).element())
+                .add(description = p().element())
                 .add(emptyState)
                 .add(customPolicyForm)
-                .add(jaccPolicyForm)
-                .get();
+                .add(jaccPolicyForm).element();
         Elements.setVisible(description, false);
     }
 
@@ -109,8 +108,7 @@ class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
             HTMLLIElement removeLink = li().add(a().css(clickable).on(click, event -> callback.execute())
                     .add(i().css(pfIcon("remove")))
                     .data(OPERATION, REMOVE)
-                    .add(span().css(formLinkLabel).textContent(resources.constants().remove())))
-                    .get();
+                    .add(span().css(formLinkLabel).textContent(resources.constants().remove()))).element();
             formLinks.insertBefore(removeLink, formLinks.lastElementChild);
         }
     }

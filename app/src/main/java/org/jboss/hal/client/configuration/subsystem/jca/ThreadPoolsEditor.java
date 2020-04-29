@@ -113,8 +113,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
                 .add(h(1).textContent(THREAD_POOLS))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(tabs)
-                .get();
+                .add(tabs).element();
     }
 
     @Override

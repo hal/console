@@ -26,6 +26,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
 import static elemental2.dom.DomGlobal.setTimeout;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.change;
@@ -91,7 +92,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         private final HTMLElement expressionModeContainer;
         private final FormItemValidation<Boolean> expressionValidation;
         private Boolean backup;
-        private HandlerRegistration expressionHandler;
+        private final HandlerRegistration expressionHandler;
         private HandlerRegistration resolveHandler;
         private SwitchBridge.Api api;
 
@@ -100,7 +101,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
         SwitchEditingAppearance() {
             super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, INVALID, REQUIRED, RESTRICTED),
-                    input(checkbox).get());
+                    input(checkbox).element());
 
             inputElement.classList.add(bootstrapSwitch);
             normalModeContainer = div()
@@ -108,10 +109,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                             .css(btn, btnDefault, expressionModeSwitcher)
                             .title(CONSTANTS.switchToExpressionMode())
                             .on(click, event -> switchToExpressionMode())
-                            .add(i().css(fontAwesome("link")))
-                            .get())
-                    .add(inputElement)
-                    .get();
+                            .add(i().css(fontAwesome("link"))).element())
+                    .add(inputElement).element();
 
             expressionModeContainer = div().css(CSS.inputGroup)
                     .add(span().css(inputGroupBtn)
@@ -123,15 +122,12 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                                     .add(i().css(fontAwesome("toggle-on")))))
                     .add(expressionModeInput = input(text)
                             .css(formControl)
-                            .apply(input -> input.placeholder = CONSTANTS.expression())
-                            .get())
+                            .apply(input -> input.placeholder = CONSTANTS.expression()).element())
                     .add(span().css(inputGroupBtn)
                             .add(resolveExpressionButton = button()
                                     .css(btn, btnDefault)
                                     .title(CONSTANTS.resolveExpression())
-                                    .add(i().css(fontAwesome("link")))
-                                    .get()))
-                    .get();
+                                    .add(i().css(fontAwesome("link"))).element())).element();
 
             // Append both the <input type=checkbox/> for the normal mode
             // and the <input type=text/> for the expression mode

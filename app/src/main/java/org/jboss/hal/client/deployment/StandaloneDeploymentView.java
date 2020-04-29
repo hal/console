@@ -63,7 +63,7 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
             initElement(tabs.element());
         } else {
             tabs = null;
-            HTMLElement root = div().get();
+            HTMLElement root = div().element();
             deploymentModel.forEach(root::appendChild);
             initElement(root);
         }

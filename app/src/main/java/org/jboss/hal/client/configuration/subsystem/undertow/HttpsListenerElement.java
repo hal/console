@@ -19,6 +19,7 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Button;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -59,16 +60,14 @@ class HttpsListenerElement extends ListenerElement {
 
         enableSslButton = button().id(ENABLE_SSL)
                 .textContent(resources.constants().enableSSL())
-                .css(org.jboss.hal.ballroom.Button.DEFAULT_CSS)
-                .data(CONSTRAINT, constraint.data())
-                .get();
+                .css(Button.DEFAULT_CSS)
+                .data(CONSTRAINT, constraint.data()).element();
         bind(enableSslButton, click, ev -> presenter.enableSsl(selectedHttps));
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
-                .css(org.jboss.hal.ballroom.Button.DEFAULT_CSS)
-                .data(CONSTRAINT, constraint.data())
-                .get();
+                .css(Button.DEFAULT_CSS)
+                .data(CONSTRAINT, constraint.data()).element();
         bind(disableSslButton, click, ev -> presenter.disableSsl(selectedHttps));
 
         Metadata metadata = metadataRegistry.lookup(template);
@@ -89,8 +88,7 @@ class HttpsListenerElement extends ListenerElement {
                 .add(h(1).textContent(HTTPS.type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
     }
 
     @Override

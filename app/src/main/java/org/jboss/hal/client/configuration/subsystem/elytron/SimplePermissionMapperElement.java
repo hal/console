@@ -84,8 +84,7 @@ public class SimplePermissionMapperElement
                 .add(h(1).textContent(Names.SIMPLE_PERMISSION_MAPPER))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(spmTable)
-                .add(spmForm)
-                .get();
+                .add(spmForm).element();
 
         // permission-mappings
         Metadata pmMetadata = metadata.forComplexAttribute(ModelDescriptionConstants.PERMISSION_MAPPINGS);
@@ -109,8 +108,7 @@ public class SimplePermissionMapperElement
         HTMLElement permissionMappingsSection = section()
                 .add(h(1).textContent(Names.PERMISSION_MAPPINGS))
                 .add(p().textContent(pmMetadata.getDescription().getDescription()))
-                .addAll(pmTable, pmForm)
-                .get();
+                .addAll(pmTable, pmForm).element();
 
         // permissions
         Metadata permissionsMetadata = pmMetadata.forComplexAttribute(PERMISSIONS);
@@ -130,8 +128,7 @@ public class SimplePermissionMapperElement
         HTMLElement permissionsSection = section()
                 .add(h(1).textContent(Names.PERMISSIONS))
                 .add(p().textContent(permissionsMetadata.getDescription().getDescription()))
-                .addAll(permissionsTable, permissionsForm)
-                .get();
+                .addAll(permissionsTable, permissionsForm).element();
 
         pages = new Pages(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGES, Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_PAGE,
                 primarySection);

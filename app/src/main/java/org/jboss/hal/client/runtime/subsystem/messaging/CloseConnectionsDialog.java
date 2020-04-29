@@ -76,7 +76,7 @@ class CloseConnectionsDialog implements HasPresenter<ServerPresenter> {
         tabToOperation.put(Ids.MESSAGING_SERVER_CONNECTION_CLOSE_FOR_USER_TAB, CLOSE_CONNECTIONS_FOR_USER);
 
         Dialog dialog = new Dialog.Builder(resources.constants().close())
-                .add(p().textContent(resources.constants().chooseConnectionsToClose()).get())
+                .add(p().textContent(resources.constants().chooseConnectionsToClose()).element())
                 .add(tabs.element())
                 .primary(resources.constants().close(), this::onClose)
                 .size(Size.MEDIUM)

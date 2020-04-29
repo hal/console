@@ -102,8 +102,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         HTMLElement navigationElement = div()
                 .add(h(1).textContent(Names.DEPLOYMENTS))
                 .add(p().textContent(eeMetadata.getDescription().getDescription()))
-                .add(eeAttributesForm)
-                .get();
+                .add(eeAttributesForm).element();
         navigation.addPrimary(EE_ATTRIBUTES_ITEM, Names.CONFIGURATION, pfIcon("settings"), navigationElement);
 
         // ============================================
@@ -122,8 +121,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         navigationElement = div()
                 .add(h(1).textContent(Names.GLOBAL_MODULES))
                 .add(p().textContent(globalModulesMetadata.getDescription().getDescription()))
-                .add(globalModulesTable)
-                .get();
+                .add(globalModulesTable).element();
         navigation.addPrimary(EE_GLOBAL_MODULES_ITEM, Names.GLOBAL_MODULES, fontAwesome("cubes"), navigationElement);
 
         // ============================================
@@ -144,8 +142,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         navigationElement = div()
                 .add(h(1).textContent(DEFAULT_BINDINGS_NAME))
                 .add(p().textContent(defaultBindingsMetadata.getDescription().getDescription()))
-                .add(defaultBindingsForm)
-                .get();
+                .add(defaultBindingsForm).element();
         navigation.addPrimary(EE_DEFAULT_BINDINGS_ITEM, DEFAULT_BINDINGS_NAME, fontAwesome("link"),
                 navigationElement);
 
@@ -272,7 +269,6 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(h(1).textContent(type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
     }
 }

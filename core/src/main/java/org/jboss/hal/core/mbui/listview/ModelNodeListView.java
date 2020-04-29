@@ -111,7 +111,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
             element.style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
             emptyStates.put(key, element);
         });
-        HTMLElement emptyStatesContainer = div().get();
+        HTMLElement emptyStatesContainer = div().element();
         for (HTMLElement element : emptyStates.values()) {
             emptyStatesContainer.appendChild(element);
         }
@@ -122,8 +122,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
                 .add(row()
                         .add(column()
                                 .addAll(listView.element(), emptyStatesContainer)))
-                .add(pager)
-                .get();
+                .add(pager).elements();
         surroundingHeight = 0;
 
         // wire displays

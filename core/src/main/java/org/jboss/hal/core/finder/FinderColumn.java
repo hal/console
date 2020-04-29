@@ -60,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.header;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -92,7 +93,6 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  *
  * @param <T> The column and items type.
  */
-@SuppressWarnings("rawtypes")
 public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
 
     private static final String DOT = ".";
@@ -119,13 +119,13 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     private final FinderColumnStorage storage;
 
     private boolean asElement;
-    private boolean firstActionAsBreadcrumbHandler;
+    private final boolean firstActionAsBreadcrumbHandler;
     private ItemsProvider<T> itemsProvider;
     private List<T> currentItems;
     private ItemRenderer<T> itemRenderer;
     private PreviewCallback<T> previewCallback;
     private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
-    private BreadcrumbItemHandler<T> breadcrumbItemHandler;
+    private final BreadcrumbItemHandler<T> breadcrumbItemHandler;
 
 
     // ------------------------------------------------------ ui
@@ -217,7 +217,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
                 .element();
     }
 
-    @SuppressWarnings("Duplicates")
     private HTMLElement newColumnButton(ColumnAction<T> action) {
         HtmlContentBuilder<? extends HTMLElement> builder;
         if (!action.actions.isEmpty()) {
@@ -974,7 +973,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     }
 
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public static class Builder<T> {
 
         private final Finder finder;
@@ -988,7 +986,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
         private PreviewCallback<T> previewCallback;
         private BreadcrumbItemHandler<T> breadcrumbItemHandler;
         private boolean firstActionAsBreadcrumbHandler;
-        private List<T> items;
+        private final List<T> items;
         private ItemsProvider<T> itemsProvider;
         private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
         private ItemSelectionHandler<T> selectionHandler;

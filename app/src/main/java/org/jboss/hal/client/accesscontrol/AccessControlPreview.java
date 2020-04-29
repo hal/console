@@ -46,7 +46,7 @@ class AccessControlPreview extends PreviewContent<Void> {
         HTMLElement content;
         previewBuilder().add(warning);
         previewBuilder().add(warningSso);
-        previewBuilder().add(content = section().get());
+        previewBuilder().add(content = section().element());
         Previews.innerHtml(content, resources.previews().rbacOverview());
         update(null);
     }

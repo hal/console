@@ -82,13 +82,10 @@ public class Utilization implements IsElement {
                                 .aria(VALUE_NOW, "0")
                                 .aria(VALUE_MAX, "0")
                                 .data(TOGGLE, TOOLTIP)
-                                .add(valueElement = span().get())
-                                .get())
+                                .add(valueElement = span().element()).element())
                         .add(remainingBar = div().css(progressBar, progressBarRemaining)
                                 .title(Names.NOT_AVAILABLE)
-                                .add(remainingElement = span().css(srOnly).get())
-                                .get()))
-                .get();
+                                .add(remainingElement = span().css(srOnly).element()).element())).element();
 
         if (inline) {
             valueElement.title = unit;

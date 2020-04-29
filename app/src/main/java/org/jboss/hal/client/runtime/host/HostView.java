@@ -83,14 +83,12 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
         Resources resources = mbuiContext.resources();
         enableSslButton = button().id(ENABLE_SSL)
                 .textContent(resources.constants().enableSSL())
-                .css(Button.DEFAULT_CSS, pullRight)
-                .get();
+                .css(Button.DEFAULT_CSS, pullRight).element();
         bind(enableSslButton, click, ev -> presenter.launchEnableSSLWizard());
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
-                .css(Button.DEFAULT_CSS, pullRight)
-                .get();
+                .css(Button.DEFAULT_CSS, pullRight).element();
         bind(disableSslButton, click, ev -> presenter.disableSSLWizard());
 
         String httpTitle = resources.constants().httpManagementInterface();
@@ -104,12 +102,11 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
 
         httpMgmtItemElement = section()
                 .add(div()
-                        .add(h(1).textContent(httpTitle).get())
-                        .add(p().textContent(httpMetadata.getDescription().getDescription()).get())
+                        .add(h(1).textContent(httpTitle).element())
+                        .add(p().textContent(httpMetadata.getDescription().getDescription()).element())
                         .add(enableSslButton)
                         .add(disableSslButton))
-                .add(httpInterfaceForm)
-                .get();
+                .add(httpInterfaceForm).element();
 
         String nativeTitle = resources.constants().nativeManagementInterface();
         Metadata nativeMetadata = mbuiContext.metadataRegistry().lookup(NATIVE_INTERFACE_TEMPLATE);
@@ -122,10 +119,9 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
 
         nativeMgmtItemElement = section()
                 .add(div()
-                        .add(h(1).textContent(nativeTitle).get())
-                        .add(p().textContent(nativeMetadata.getDescription().getDescription()).get()))
-                .add(nativeInterfaceForm)
-                .get();
+                        .add(h(1).textContent(nativeTitle).element())
+                        .add(p().textContent(nativeMetadata.getDescription().getDescription()).element()))
+                .add(nativeInterfaceForm).element();
     }
 
     @PostConstruct

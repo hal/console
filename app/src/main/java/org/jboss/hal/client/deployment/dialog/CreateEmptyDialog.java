@@ -43,7 +43,7 @@ public class CreateEmptyDialog {
                 .addOnly()
                 .build();
         dialog = new Dialog.Builder(resources.constants().deploymentEmptyCreate())
-                .add(p().textContent(resources.messages().deploymentEmptyCreate()).get())
+                .add(p().textContent(resources.messages().deploymentEmptyCreate()).element())
                 .add(form.element())
                 .closeOnEsc(true)
                 .closeIcon(true)

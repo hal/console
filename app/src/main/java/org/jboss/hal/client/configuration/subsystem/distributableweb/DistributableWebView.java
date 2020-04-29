@@ -24,7 +24,6 @@ import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventType;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
@@ -51,7 +50,7 @@ import org.jboss.hal.spi.MbuiView;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AFFINITY;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.selectpicker;
 import static org.jboss.hal.resources.Ids.*;
@@ -90,7 +89,7 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
     @PostConstruct
     void init() {
         selectRouting = select().css(selectpicker)
-                .id(Ids.DISTRIBUTABLE_WEB_ROUTING_SELECT)
+                .id(DISTRIBUTABLE_WEB_ROUTING_SELECT)
                 .apply(s -> {
                     s.multiple = false;
                     s.size = 1;
@@ -101,15 +100,13 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                     if (routing != null) {
                         presenter.switchRouting(routing);
                     }
-                })
-                .get();
+                }).element();
         for (Routing routing : Routing.values()) {
-            selectRouting.appendChild(Elements.option()
+            selectRouting.appendChild(option()
                     .apply(o -> {
                         o.value = routing.resource;
                         o.text = routing.type;
-                    })
-                    .get());
+                    }).element());
         }
 
         routingForms = new HashMap<>();
@@ -126,14 +123,12 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
         HTMLElement section = section()
                 .add(div().css(CSS.headerForm)
                         .add(label()
-                                .apply(l -> l.htmlFor = Ids.DISTRIBUTABLE_WEB_ROUTING_SELECT)
+                                .apply(l -> l.htmlFor = DISTRIBUTABLE_WEB_ROUTING_SELECT)
                                 .textContent(mbuiContext.resources().constants().switchRouting()))
-                        .add(selectRouting)
-                        .get())
+                        .add(selectRouting).element())
                 .add(h(1).textContent(Names.ROUTING)
-                        .add(currentRouting = span().get()))
-                .addAll(routingForms.values().stream().map(Form::element).collect(toList()))
-                .get();
+                        .add(currentRouting = span().element()))
+                .addAll(routingForms.values().stream().map(Form::element).collect(toList())).element();
 
         navigation.insertPrimary(Ids.DISTRIBUTABLE_WEB_ROUTING_ITEM, null, Names.ROUTING,
                 pfIcon("route"), section);
@@ -294,7 +289,6 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                 .add(h(1).textContent(sessionManagement.type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(tabs)
-                .get();
+                .add(tabs).element();
     }
 }

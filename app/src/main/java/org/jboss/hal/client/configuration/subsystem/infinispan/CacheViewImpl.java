@@ -107,8 +107,7 @@ abstract class CacheViewImpl<P extends CachePresenter<?, ?>> extends HalViewImpl
         HTMLElement section = section()
                 .add(h(1).textContent(cacheType.type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(tabs)
-                .get();
+                .add(tabs).element();
         navigation.addPrimary(Ids.build(cacheType.baseId, Ids.ITEM), Names.CONFIGURATION, pfIcon("settings"),
                 section);
     }
@@ -154,8 +153,7 @@ abstract class CacheViewImpl<P extends CachePresenter<?, ?>> extends HalViewImpl
                     .add(h(1).textContent(Names.BACKUPS))
                     .add(p().textContent(backupMeta.getDescription().getDescription()))
                     .add(backupTable)
-                    .add(backupForm)
-                    .get();
+                    .add(backupForm).element();
             navigation.addPrimary(Ids.build(cacheType.baseId, BACKUP, Ids.ITEM), Names.BACKUP, fontAwesome("life-ring"),
                     backupSection);
             registerAttachable(backupTable, backupForm);

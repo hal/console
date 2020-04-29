@@ -59,11 +59,9 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
         this.allowEmpty = allowEmpty;
         this.helpBlock = Appearance.helpBlock();
         this.root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).get())
+                .add(labelElement = label().css(controlLabel, halFormLabel).element())
                 .add(inputContainer = div().css(halFormInput)
-                        .add(selectElement)
-                        .get())
-                .get();
+                        .add(selectElement).element()).element();
 
         List<String> localOptions = options;
         if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
@@ -71,7 +69,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             localOptions.add(0, "");
         }
         for (String option : localOptions) {
-            HTMLOptionElement optionElement = Elements.option(option).get();
+            HTMLOptionElement optionElement = Elements.option(option).element();
             if (emptyToNull(option) == null) {
                 optionElement.title = UNDEFINED;
             }
@@ -100,7 +98,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             this.selectElement.removeChild(this.selectElement.firstElementChild);
         }
         for (String option : values) {
-            HTMLOptionElement optionElement = Elements.option(option).get();
+            HTMLOptionElement optionElement = Elements.option(option).element();
             if (emptyToNull(option) == null) {
                 optionElement.title = UNDEFINED;
             }
@@ -152,8 +150,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
                             .apply(input -> {
                                 input.value = CONSTANTS.restricted();
                                 input.readOnly = true;
-                            })
-                            .get();
+                            }).element();
                     restrictedMarker = Appearance.restrictedMarker();
 
                     inputGroup = Appearance.inputGroup();

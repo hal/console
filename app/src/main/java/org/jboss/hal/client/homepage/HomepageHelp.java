@@ -97,6 +97,6 @@ class HomepageHelp implements IsElement<HTMLDivElement> {
     }
 
     private HTMLElement helpLink(String href, String text) {
-        return li().add(a(href).textContent(text)).get();
+        return li().add(a(href).textContent(text)).element();
     }
 }

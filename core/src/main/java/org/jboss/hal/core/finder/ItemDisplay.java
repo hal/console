@@ -116,7 +116,6 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     static HTMLElement withSubtitle(String title, String subtitle) {
         return span().css(itemText)
                 .add(span().textContent(title))
-                .add(small().css(CSS.subtitle).title(subtitle).textContent(subtitle))
-                .get();
+                .add(small().css(CSS.subtitle).title(subtitle).textContent(subtitle)).element();
     }
 }

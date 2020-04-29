@@ -84,8 +84,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
                 .add(h(1).textContent(Names.TRANSACTIONS))
                 .add(p().textContent(metadataTx.getDescription().getDescription()))
                 .add(transactionsTable)
-                .add(transactionsForm)
-                .get();
+                .add(transactionsForm).element();
 
         // ==================================== participants
 
@@ -104,8 +103,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
                 .add(h(1).textContent(Names.PARTICIPANT))
                 .add(p().textContent(metadataPart.getDescription().getDescription()))
                 .add(participantsTable)
-                .add(participantsForm)
-                .get();
+                .add(participantsForm).element();
 
         String id = Ids.build(TRANSACTIONS, PAGES);
         String txPageId = Ids.build(TRANSACTIONS, PAGE);

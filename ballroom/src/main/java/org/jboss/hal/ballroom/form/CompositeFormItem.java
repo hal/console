@@ -75,8 +75,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected void addFormItems(List<FormItem> formItems) {
         this.formItems = new ArrayList<>(formItems);
 
-        editingContainer = div().get();
-        readOnlyContainer = div().get();
+        editingContainer = div().element();
+        readOnlyContainer = div().element();
 
         for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
@@ -94,7 +94,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
             editingContainer.appendChild(formItem.element(EDITING));
             readOnlyContainer.appendChild(formItem.element(READONLY));
             if (iterator.hasNext()) {
-                HTMLHRElement hr = hr().css(separator).get();
+                HTMLHRElement hr = hr().css(separator).element();
                 readOnlyContainer.appendChild(hr);
             }
         }

@@ -69,8 +69,7 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .add(h(1).textContent(Names.HANDLER))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
     }
 
     @Override

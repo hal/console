@@ -77,8 +77,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .add(p().textContent(
                         metadata.getDescription().getDescription() + ". " + resources.constants().jgroupsRelayAlias()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
     }
 
     @Override

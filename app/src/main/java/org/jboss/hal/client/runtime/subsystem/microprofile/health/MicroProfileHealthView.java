@@ -76,8 +76,7 @@ public class MicroProfileHealthView extends HalViewImpl implements MicroProfileH
                 .add(outcomeDown)
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(checkTable)
-                .add(checkForm)
-                .get();
+                .add(checkForm).element();
 
         registerAttachable(checkTable, checkForm);
 

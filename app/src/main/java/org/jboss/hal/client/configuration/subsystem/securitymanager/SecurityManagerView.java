@@ -117,9 +117,7 @@ public class SecurityManagerView extends HalViewImpl implements SecurityManagerP
                         .add(h(1).textContent(permission.type))
                         .add(p().textContent(metadata.getDescription().getDescription()))
                         .add(table)
-                        .add(form)
-                        .get())
-                .get();
+                        .add(form).element()).element();
         masterDetails.put(permission, masterDetail);
         navigation.addPrimary(Ids.build(permission.baseId, Ids.ITEM), permission.type, permission.icon, section);
     }

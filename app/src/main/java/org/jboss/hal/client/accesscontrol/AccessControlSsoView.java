@@ -90,8 +90,7 @@ public class AccessControlSsoView extends HalViewImpl implements AccessControlSs
                 .add(h(1).textContent(Names.ACCESS_CONTROL))
                 .add(p().textContent(resources.messages().accessControlSsoDescription()))
                 .add(warning)
-                .add(form)
-                .get();
+                .add(form).element();
 
         initElement(row()
                 .add(column()

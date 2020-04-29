@@ -87,8 +87,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
                 .add(h(1).textContent(builder.title))
                 .add(p().textContent(builder.metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
 
         ModelNodeTable.Builder<ModelNode> aliasTableBuilder = new ModelNodeTable.Builder<>(id(ALIAS, TABLE),
                 builder.metadata);
@@ -108,8 +107,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
         HTMLElement aliasesSection = section()
                 .add(h(1).textContent(builder.resources.constants().aliases()))
                 .add(aliasesTable)
-                .add(formAlias)
-                .get();
+                .add(formAlias).element();
 
         pages = new Pages(id(PAGES), id(PAGE), mainSection);
         pages.addPage(id(PAGE), id(ALIAS, PAGE),
@@ -117,8 +115,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
                 () -> builder.resources.constants().aliases(), aliasesSection);
 
         root = section()
-                .add(pages)
-                .get();
+                .add(pages).element();
     }
 
     @Override

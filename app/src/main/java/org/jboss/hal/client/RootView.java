@@ -45,7 +45,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     public RootView() {
         slots = new HashMap<>();
-        rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).get();
+        rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).element();
         initWidget(Widgets.widget(rootContainer));
     }
 

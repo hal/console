@@ -41,7 +41,7 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @see <a href="https://www.patternfly.org/pattern-library/communication/inline-notifications/">https://www.patternfly.org/pattern-library/communication/inline-notifications/</a>
  */
-public class Alert implements IsElement {
+public class Alert implements IsElement<HTMLElement> {
 
     private final HTMLElement root;
     private final HTMLElement icon;
@@ -73,26 +73,26 @@ public class Alert implements IsElement {
     public Alert(String icon, SafeHtml text, String additionalText, String linkText,
             EventCallbackFn<MouseEvent> linkHandler, Constraint constraint) {
         this.root = div().css(alert, alertCss(icon))
-                .add(this.icon = span().css(icon).get())
-                .add(this.text = span().get())
-                .get();
+                .add(this.icon = span().css(icon).element())
+                .add(this.text = span().element())
+                .element();
 
         if (text != null) {
             this.text.innerHTML = text.asString();
         }
         if (linkText != null && linkHandler != null) {
             HTMLElement a;
-            this.root.appendChild(span().textContent(" ").get());
+            this.root.appendChild(span().textContent(" ").element());
             this.root.appendChild(a = a().css(clickable, alertLink)
                     .on(click, linkHandler)
                     .textContent(linkText)
-                    .get());
+                    .element());
             if (constraint != null) {
                 a.dataset.set(UIConstants.CONSTRAINT, constraint.data());
             }
         }
         if (additionalText != null) {
-            HTMLElement additionalDescription = span().get();
+            HTMLElement additionalDescription = span().element();
             this.root.appendChild(additionalDescription);
             additionalDescription.innerHTML = additionalText;
         }

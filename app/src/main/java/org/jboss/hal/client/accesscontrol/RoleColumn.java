@@ -196,8 +196,7 @@ public class RoleColumn extends FinderColumn<Role> {
                                             .appendEscaped(resources.constants().includesAll())
                                             .appendHtmlConstant("<br/>") //NON-NLS
                                             .appendEscaped(scopedInfo)
-                                            .toSafeHtml()))
-                            .get();
+                                            .toSafeHtml())).element();
 
                 } else if (item.isIncludeAll()) {
                     return ItemDisplay.withSubtitle(item.getName(), resources.constants().includesAll());

@@ -96,8 +96,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
         Elements.removeChildrenFrom(getLeadElement());
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(restResource.getPath())
-                .title(r.messages().goTo(Names.DEPLOYMENTS))
-                .get());
+                .title(r.messages().goTo(Names.DEPLOYMENTS)).element());
         getLeadElement().style.marginBottom = MarginBottomUnionType.of(0);
 
 
@@ -112,7 +111,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                 div().css(CSS.panel, panelDefault)
                                         .add(div().css(panelHeading)
                                                 .add(h(3, resourcePath).css(panelTitle)))
-                                        .add(body = div().css(panelBody, restResources).get()));
+                                        .add(body = div().css(panelBody, restResources).element()));
                         for (Iterator<ModelNode> iterator = resources.iterator(); iterator.hasNext(); ) {
                             ModelNode resource = iterator.next();
                             if (resource.hasDefined(CONSUMES)) {
@@ -126,7 +125,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                         .map(ModelNode::asString)
                                         .collect(toList());
                                 HTMLElement p;
-                                body.appendChild(p = p().get());
+                                body.appendChild(p = p().element());
                                 for (Iterator<String> rmIterator = resourceMethods.iterator(); rmIterator.hasNext(); ) {
                                     String resourceMethod = rmIterator.next();
                                     if (resourceMethod.contains(" ")) {
@@ -135,13 +134,13 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                         if (parts.size() == 2) {
                                             String method = parts.get(0);
                                             String url = parts.get(1);
-                                            p.appendChild(strong().textContent(method).get());
+                                            p.appendChild(strong().textContent(method).element());
                                             HtmlContentBuilder<HTMLElement> builder = span().css(marginLeft5)
                                                     .textContent(url);
                                             if (GET.name().equalsIgnoreCase(method)) {
                                                 builder.data(LINK, String.join(",", extractParams(url)));
                                             }
-                                            p.appendChild(builder.get());
+                                            p.appendChild(builder.element());
                                         } else {
                                             p.appendChild(document.createTextNode(resourceMethod));
                                         }
@@ -149,18 +148,17 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                         p.appendChild(document.createTextNode(resourceMethod));
                                     }
                                     if (rmIterator.hasNext()) {
-                                        p.appendChild(br().get());
+                                        p.appendChild(br().element());
                                     }
                                 }
                             }
                             if (resource.hasDefined(JAVA_METHOD)) {
                                 body.appendChild(pre().css(prettyPrint, langJava)
                                         .style("white-space:pre-wrap") //NON-NLS
-                                        .textContent(resource.get(JAVA_METHOD).asString())
-                                        .get());
+                                        .textContent(resource.get(JAVA_METHOD).asString()).element());
                             }
                             if (iterator.hasNext()) {
-                                body.appendChild(hr().get());
+                                body.appendChild(hr().element());
                             }
                         }
                     });
@@ -182,8 +180,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                 .add(span().title(type)
                         .style("cursor:help")
                         .innerHtml(fromSafeConstant(arrow)))
-                .add(" " + consumes)
-                .get());
+                .add(" " + consumes).element());
     }
 
     private List<String> extractParams(String url) {
@@ -231,8 +228,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                     Elements.removeChildrenFrom(linkContainer);
                                     linkContainer.appendChild(a(url.getUrl() + link)
                                             .apply(a -> a.target = serverId())
-                                            .textContent(link)
-                                            .get());
+                                            .textContent(link).element());
 
                                 } else {
                                     Elements.removeChildrenFrom(linkContainer);
@@ -240,8 +236,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                     linkContainer.appendChild(a().css(clickable)
                                             .on(click, e -> specifyParameters(url.getUrl(), link, Splitter.on(',')
                                                     .splitToList(linkContainer.dataset.get(LINK))))
-                                            .textContent(link)
-                                            .get());
+                                            .textContent(link).element());
                                 }
                             }
                         }
@@ -270,7 +265,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
         }
         Form<ModelNode> form = builder.build();
         Dialog dialog = new Dialog.Builder(resources.constants().specifyParameters())
-                .add(p().innerHtml(resources.messages().specifyParameters(link)).get())
+                .add(p().innerHtml(resources.messages().specifyParameters(link)).element())
                 .add(form.element())
                 .primary(resources.constants().ok(), form::save)
                 .cancel()

@@ -70,8 +70,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
                 .add(h(1).textContent(listenerType.type))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
     }
 
     @Override

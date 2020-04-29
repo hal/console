@@ -65,8 +65,7 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
                 asList("modify-wsdl-address", "wsdl-host", "wsdl-path-rewrite-rule", "wsdl-port", "wsdl-secure-port",
                         "wsdl-uri-scheme"));
         attributesElement = section()
-                .addAll(attributes)
-                .get();
+                .addAll(attributes).element();
 
         previewBuilder()
                 .add(noStatistics)

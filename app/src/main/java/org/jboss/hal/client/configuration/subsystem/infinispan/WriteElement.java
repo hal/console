@@ -61,8 +61,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .add(label()
                                 .add(behindRadio = input(radio)
                                         .attr(UIConstants.NAME, radioName)
-                                        .attr(UIConstants.VALUE, BEHIND.resource)
-                                        .get())
+                                        .attr(UIConstants.VALUE, BEHIND.resource).element())
                                 .add(span().textContent(BEHIND.type))))
                 .add(div().css(CSS.radio)
                         .add(label()
@@ -70,8 +69,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                         .attr(UIConstants.NAME, radioName)
                                         .attr(UIConstants.VALUE, THROUGH.resource)
                                         .attr(UIConstants.CHECKED, UIConstants.TRUE))
-                                .add(span().textContent(THROUGH.type))))
-                .get();
+                                .add(span().textContent(THROUGH.type)))).elements();
 
         emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, store.baseId, WRITE, Ids.EMPTY),
                 resources.constants().noWrite())
@@ -89,8 +87,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .innerHtml(resources.messages().writeBehaviour(THROUGH.type, BEHIND.type)))
                 .add(button(resources.constants().switchBehaviour())
                         .css(btn, btnDefault)
-                        .on(click, event -> presenter.switchWrite(THROUGH, BEHIND)))
-                .get();
+                        .on(click, event -> presenter.switchWrite(THROUGH, BEHIND))).element();
 
         String id = Ids.build(cacheType.baseId, store.baseId, BEHIND.baseId, Ids.FORM);
         Metadata metadata = metadataRegistry.lookup(cacheType.template
@@ -107,14 +104,12 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                 .add(button(resources.constants().switchBehaviour())
                         .css(btn, btnDefault)
                         .on(click, event -> presenter.switchWrite(BEHIND, THROUGH)))
-                .add(behindForm)
-                .get();
+                .add(behindForm).element();
 
         root = section()
                 .add(emptyState)
                 .add(throughElement)
-                .add(behindElement)
-                .get();
+                .add(behindElement).element();
 
         Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(throughElement, false);

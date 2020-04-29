@@ -47,11 +47,11 @@ class PrincipalPreview extends PreviewContent<Principal> {
 
         previewBuilder()
                 .add(h(2).textContent(resources.constants().excludes()))
-                .add(noExcludes = p().textContent(resources.constants().noRolesExcluded()).get())
-                .add(excludesUl = ul().get())
+                .add(noExcludes = p().textContent(resources.constants().noRolesExcluded()).element())
+                .add(excludesUl = ul().element())
                 .add(h(2).textContent(resources.constants().includes()))
-                .add(noIncludes = p().textContent(resources.constants().noRolesIncluded()).get())
-                .add(includesUl = ul().get());
+                .add(noIncludes = p().textContent(resources.constants().noRolesIncluded()).element())
+                .add(includesUl = ul().element());
 
         Elements.setVisible(noExcludes, false);
         Elements.setVisible(excludesUl, false);
@@ -70,12 +70,12 @@ class PrincipalPreview extends PreviewContent<Principal> {
         Elements.setVisible(excludesUl, !excludes.isEmpty());
         Elements.removeChildrenFrom(excludesUl);
         excludes.forEach(role -> excludesUl.appendChild(li()
-                .add(a(tokens.role(role)).textContent(role.getName())).get()));
+                .add(a(tokens.role(role)).textContent(role.getName())).element()));
 
         Elements.setVisible(noIncludes, includes.isEmpty());
         Elements.setVisible(includesUl, !includes.isEmpty());
         Elements.removeChildrenFrom(includesUl);
         includes.forEach(role -> includesUl.appendChild(li()
-                .add(a(tokens.role(role)).textContent(role.getName())).get()));
+                .add(a(tokens.role(role)).textContent(role.getName())).element()));
     }
 }

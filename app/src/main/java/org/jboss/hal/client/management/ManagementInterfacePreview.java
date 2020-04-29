@@ -61,7 +61,7 @@ class ManagementInterfacePreview extends PreviewContent<StaticItem> {
                 .append(model -> {
                     String label = labelBuilder.label(HTTP_UPGRADE);
                     boolean httpUpgrade = ModelNodeHelper.failSafeBoolean(model, HTTP_UPGRADE + "/" + ENABLED);
-                    HTMLElement element = span().css(flag(httpUpgrade)).get();
+                    HTMLElement element = span().css(flag(httpUpgrade)).element();
                     return new PreviewAttribute(label, element);
                 });
         if (environment.isStandalone()) {

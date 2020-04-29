@@ -45,8 +45,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
     protected static HTMLElement refreshLink(Callback callback) {
         return a().css(clickable, pullRight, smallLink, marginTop5).on(click, event -> callback.execute())
                 .add(span().css(fontAwesome("refresh"), marginRight5))
-                .add(span().textContent(CONSTANTS.refresh()))
-                .get();
+                .add(span().textContent(CONSTANTS.refresh())).element();
 
     }
 
@@ -137,7 +136,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
         }
 
         HTMLElement section;
-        builder.add(section = section().get());
+        builder.add(section = section().element());
         Previews.innerHtml(section, resource);
     }
 
@@ -161,7 +160,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
         } else {
             builder.textContent(header);
         }
-        return this.headerContainer = h(1).add(builder.get()).get();
+        return this.headerContainer = h(1).add(builder.element()).element();
     }
 
     private String shorten(String header) {
@@ -171,7 +170,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
     }
 
     private HTMLElement lead(String lead) {
-        return this.lead = p().css(CSS.lead).textContent(lead).get();
+        return this.lead = p().css(CSS.lead).textContent(lead).element();
     }
 
 
@@ -201,7 +200,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
 
     @Override
     public Iterator<HTMLElement> iterator() {
-        return builder.get().iterator();
+        return builder.elements().iterator();
     }
 
     @SuppressWarnings("UnusedParameters")

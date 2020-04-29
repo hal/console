@@ -68,8 +68,7 @@ class DestinationPreview extends PreviewContent<Destination> {
                     document.createTextNode(destination.type.type + " @ "));
             getLeadElement().appendChild(a(places.historyToken(placeRequest))
                     .textContent(destination.getPath())
-                    .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                    .get());
+                    .title(resources.messages().goTo(Names.DEPLOYMENTS)).element());
         }
 
         PreviewAttributeFunction<Destination> jndiNamesFn = model -> {
@@ -97,8 +96,7 @@ class DestinationPreview extends PreviewContent<Destination> {
                                         .css(flag(failSafeBoolean(model, DURABLE)), marginRight5))
                                 .add(span()
                                         .title(labelBuilder.label(TEMPORARY))
-                                        .css(flag(failSafeBoolean(model, TEMPORARY))))
-                                .get();
+                                        .css(flag(failSafeBoolean(model, TEMPORARY)))).elements();
                         return new PreviewAttribute(label, elements);
                     });
             messages.append(MESSAGES_ADDED)

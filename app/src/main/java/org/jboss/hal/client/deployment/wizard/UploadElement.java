@@ -27,6 +27,8 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.form;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.InputType.file;
@@ -50,19 +52,17 @@ public class UploadElement implements IsElement<HTMLElement> {
         this.root = form().css(upload)
                 .apply(f -> f.noValidate = true)
                 .add(alert)
-                .add(iconElement = div().css(uploadIcon, fontAwesome("upload", x4)).get())
+                .add(iconElement = div().css(uploadIcon, fontAwesome("upload", x4)).element())
                 .add(fileInput = input(file)
                         .id(Ids.UPLOAD_FILE_INPUT)
                         .css(uploadFile)
-                        .on(change, event -> showFiles(fileInput.files))
-                        .get())
+                        .on(change, event -> showFiles(fileInput.files)).element())
                 .add(labelElement = label()
                         .apply(l -> l.htmlFor = Ids.UPLOAD_FILE_INPUT)
                         .css(clickable, link)
                         .textContent(CONSTANTS.chooseFile())
-                        .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).get())
-                        .get())
-                .get();
+                        .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).element()).element())
+                .element();
 
         Elements.setVisible(alert.element(), false);
         boolean advancedUpload = JsHelper.supportsAdvancedUpload();

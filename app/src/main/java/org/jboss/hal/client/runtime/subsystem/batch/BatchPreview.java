@@ -58,8 +58,7 @@ public class BatchPreview extends PreviewContent<SubsystemMetadata> {
                 .add(currentThreadCount = new Utilization(
                         resources.constants().active(), Names.THREADS, false, true))
                 .add(largestThreadCount = new Utilization(
-                        resources.constants().largest(), Names.THREADS, false, true))
-                .get();
+                        resources.constants().largest(), Names.THREADS, false, true)).element();
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()

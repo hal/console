@@ -40,7 +40,7 @@ class AssignmentPreview extends PreviewContent<Assignment> {
                 : null);
         // @formatter:on
 
-        HTMLElement roleDescription = p().get();
+        HTMLElement roleDescription = p().element();
         String roleName = role.isScoped() ? role.getBaseRole().getName() : role.getName();
         ExternalTextResource resource = resources.preview("rbac" + roleName);
         Previews.innerHtml(roleDescription, resource);

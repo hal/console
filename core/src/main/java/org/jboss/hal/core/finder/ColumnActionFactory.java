@@ -126,8 +126,7 @@ public class ColumnActionFactory {
         return span().css(iconCss)
                 .title(title)
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .get();
+                .data(UIConstants.PLACEMENT, "bottom").element();
     }
 
     public <T> ColumnAction<T> refresh(String id) {
@@ -139,8 +138,7 @@ public class ColumnActionFactory {
                 .css(fontAwesome(CSS.refresh))
                 .title(resources.constants().refresh())
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .get();
+                .data(UIConstants.PLACEMENT, "bottom").element();
         return new ColumnAction.Builder<T>(id)
                 .element(element)
                 .handler(handler)

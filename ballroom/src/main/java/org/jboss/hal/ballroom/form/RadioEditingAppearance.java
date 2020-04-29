@@ -48,9 +48,8 @@ class RadioEditingAppearance extends AbstractAppearance<String> {
         this.inputElements = elements;
 
         root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).get())
-                .add(inputContainer = div().css(halFormInput).get())
-                .get();
+                .add(labelElement = label().css(controlLabel, halFormLabel).element())
+                .add(inputContainer = div().css(halFormInput).element()).element();
         helpBlock = Appearance.helpBlock();
 
         int i = 0;
@@ -63,9 +62,7 @@ class RadioEditingAppearance extends AbstractAppearance<String> {
             inputContainer.appendChild(div().css(radio)
                     .add(labelElement = label()
                             .add(inputElement)
-                            .add(" " + entry.getValue())
-                            .get())
-                    .get());
+                            .add(" " + entry.getValue()).element()).element());
             if (inline) {
                 labelElement.classList.add(radioInline);
             }

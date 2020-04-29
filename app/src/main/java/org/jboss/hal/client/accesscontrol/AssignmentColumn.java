@@ -170,8 +170,8 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             @Override
             public HTMLElement getIcon() {
                 return item.isInclude()
-                        ? span().css(fontAwesome("plus")).get()
-                        : span().css(fontAwesome("minus")).get();
+                        ? span().css(fontAwesome("plus")).element()
+                        : span().css(fontAwesome("minus")).element();
             }
 
             @Override

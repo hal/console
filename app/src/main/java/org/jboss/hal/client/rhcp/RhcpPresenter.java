@@ -55,8 +55,7 @@ public class RhcpPresenter extends FinderPresenter<RhcpPresenter.MyView, RhcpPre
                         "Have fun browsing through the albums (and don't forget to look under the bridge)."))
                 .add(img(
                         "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Redgotchilipeppers-logo.svg/240px-Redgotchilipeppers-logo.svg.png")
-                        .css(preview))
-                .get();
+                        .css(preview)).elements();
         return new PreviewContent("Red Hot Chili Peppers", elements);
     }
 

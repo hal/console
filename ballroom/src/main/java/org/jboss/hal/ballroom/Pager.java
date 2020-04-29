@@ -31,12 +31,15 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.form;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.submit;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.resources.CSS.i;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -97,29 +100,26 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
                                                 .apply(s -> s.tabIndex = -98)
                                                 .on(change, e -> setPageSize(
                                                         Integer.parseInt(((HTMLSelectElement) e.currentTarget).value)))
-                                                .get())
+                                                .element())
                                         .add(span().textContent(CONSTANTS.perPage())))
                                 .add(div().css(formGroup)
                                         .add(span()
-                                                .add(current = span().css(paginationPfItemsCurrent)
-                                                        .get())
+                                                .add(current = span().css(paginationPfItemsCurrent).element())
                                                 .add(" " + CONSTANTS.of() + " ")
-                                                .add(total = span().css(paginationPfItemsTotal)
-                                                        .get()))
+                                                .add(total = span().css(paginationPfItemsTotal).element()))
                                         .add(ul().css(pagination, paginationPfBack)
                                                 .add(firstPage = li()
                                                         .add(a().css(clickable)
                                                                 .on(click, e -> firstPage())
                                                                 .title(CONSTANTS.firstPage())
                                                                 .add(span().css(CSS.i,
-                                                                        fontAwesome("angle-double-left"))))
-                                                        .get())
+                                                                        fontAwesome("angle-double-left")))).element())
                                                 .add(previousPage = li()
                                                         .add(a().css(clickable)
                                                                 .on(click, e -> previousPage())
                                                                 .title(CONSTANTS.previousPage())
                                                                 .add(span().css(i, fontAwesome("angle-left"))))
-                                                        .get()))
+                                                        .element()))
                                         .add(label().css(srOnly)
                                                 .textContent(CONSTANTS.currentPage())
                                                 .apply(label -> label.htmlFor = pageId))
@@ -127,30 +127,28 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
                                                 .apply(input -> input.value = "1")
                                                 .id(pageId)
                                                 .on(change, e -> gotoPage(((HTMLInputElement) e.currentTarget).value))
-                                                .get())
+                                                .element())
                                         .add(span()
                                                 .add(CONSTANTS.of() + " ")
-                                                .add(pages = span().css(paginationPfPages).get()))
+                                                .add(pages = span().css(paginationPfPages).element()))
                                         .add(ul().css(pagination, paginationPfForward)
                                                 .add(nextPage = li()
                                                         .add(a().css(clickable)
                                                                 .on(click, e -> nextPage())
                                                                 .title(CONSTANTS.nextPage())
                                                                 .add(span().css(i, fontAwesome("angle-right"))))
-                                                        .get())
+                                                        .element())
                                                 .add(lastPage = li()
                                                         .add(a().css(clickable)
                                                                 .on(click, e -> lastPage())
                                                                 .title(CONSTANTS.lastPage())
                                                                 .add(span().css(i, fontAwesome("angle-double-right"))))
-                                                        .get())))))
-                .get();
+                                                        .element()))))).element();
 
         for (int i = 0; i < Settings.PAGE_SIZE_VALUES.length; i++) {
             String pageLength = String.valueOf(Settings.PAGE_SIZE_VALUES[i]);
             pageSizeSelect.appendChild(option().apply(o -> o.value = pageLength)
-                    .textContent(pageLength)
-                    .get());
+                    .textContent(pageLength).element());
         }
 
         // initial reset

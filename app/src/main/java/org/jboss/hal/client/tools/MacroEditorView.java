@@ -99,7 +99,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 return collect().add(div()
                         .add(span().css(pfIcon("image"), marginRight5))
                         .add(span().textContent(resources.messages().operations(macro.getOperationCount()))))
-                        .get();
+                        .elements();
             }
 
             @Override
@@ -132,10 +132,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                         .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                         .data(UIConstants.PLACEMENT, "left") //NON-NLS
                         .title(resources.constants().copyToClipboard())
-                        .add(span().css(fontAwesome("clipboard")))
-                        .get())
-                .add(editor)
-                .get();
+                        .add(span().css(fontAwesome("clipboard"))).element())
+                .add(editor).element();
         Clipboard clipboard = new Clipboard(copyToClipboard);
         clipboard.onCopy(event -> copyToClipboard(event.client));
 
@@ -143,8 +141,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 .add(column(4)
                         .add(macroList))
                 .add(column(8)
-                        .add(editorContainer))
-                .get();
+                        .add(editorContainer)).element();
 
         registerAttachable(editor);
         initElements(asList(empty.element(), row));

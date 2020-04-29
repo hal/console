@@ -47,7 +47,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     private Donut(Builder builder) {
         this.builder = builder;
 
-        root = div().id().get();
+        root = div().id().element();
         options = Charts.get().defaultDonutOptions();
         options.bindto = HASH + root.id;
         options.data = new Options.Data();

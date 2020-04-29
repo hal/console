@@ -40,8 +40,12 @@ import org.jboss.hal.resources.Resources;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AFFINITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
+import static org.jboss.hal.resources.CSS.bootstrapSelect;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.CSS.width;
 
 /** Element to view and modify the {@code affinity=*} singletons of a session management */
 class AffinityElement implements IsElement<HTMLElement>, Attachable, HasPresenter<DistributableWebPresenter> {
@@ -90,29 +94,25 @@ class AffinityElement implements IsElement<HTMLElement>, Attachable, HasPresente
                         .add(label()
                                 .apply(l -> l.htmlFor = selectAffinityId)
                                 .textContent(resources.constants().switchAffinity()))
-                        .add(selectAffinity)
-                        .get())
+                        .add(selectAffinity).element())
                 .add(h(2).textContent(Names.AFFINITY)
-                        .add(currentAffinity = span().get()))
-                .addAll(affinityForms.values().stream().map(Form::element).collect(toList()))
-                .get();
+                        .add(currentAffinity = span().element()))
+                .addAll(affinityForms.values().stream().map(Form::element).collect(toList())).element();
     }
 
     private HTMLSelectElement affinitySelect() {
-        HTMLSelectElement select = Elements.select().css(selectpicker)
+        HTMLSelectElement select = select().css(selectpicker)
                 .apply(s -> {
                     s.multiple = false;
                     s.size = 1;
-                })
-                .get();
+                }).element();
 
         for (Affinity affinity : values) {
-            select.appendChild(Elements.option()
+            select.appendChild(option()
                     .apply(o -> {
                         o.value = affinity.resource;
                         o.text = affinity.type;
-                    })
-                    .get());
+                    }).element());
         }
         return select;
     }

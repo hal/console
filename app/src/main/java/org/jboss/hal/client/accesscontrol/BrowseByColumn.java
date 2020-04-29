@@ -55,7 +55,7 @@ public class BrowseByColumn extends StaticItemColumn {
                     event -> accessControl.switchProvider());
 
             previewBuilder().add(warning);
-            HTMLElement content = div().get();
+            HTMLElement content = div().element();
             Previews.innerHtml(content, resource);
             previewBuilder().add(content);
         }

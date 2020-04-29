@@ -55,8 +55,8 @@ class ProfilePreview extends PreviewContent<NamedNode> {
         this.places = places;
         this.resources = resources;
 
-        includesElement = p().get();
-        serverGroupsElement = p().get();
+        includesElement = p().element();
+        serverGroupsElement = p().element();
         previewBuilder()
                 .add(includesElement)
                 .add(serverGroupsElement);

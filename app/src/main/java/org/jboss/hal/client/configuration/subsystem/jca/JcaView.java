@@ -136,8 +136,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         HTMLElement configLayout = div()
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(resources.constants().jcaConfiguration()))
-                .add(tabs)
-                .get();
+                .add(tabs).element();
 
         navigation.addPrimary(Ids.JCA_CONFIGURATION_ITEM, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
@@ -160,8 +159,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         HTMLElement tracerLayout = div()
                 .add(h(1).textContent(tracerType))
                 .add(p().textContent(tracerMetadata.getDescription().getDescription()))
-                .add(tracerForm)
-                .get();
+                .add(tracerForm).element();
 
         navigation.addPrimary(Ids.JCA_TRACER_ITEM, tracerType, fontAwesome("bug"), tracerLayout);
         registerAttachable(tracerForm);
@@ -207,8 +205,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(h(1).textContent(bcType))
                 .add(p().textContent(bcMetadata.getDescription().getDescription()))
                 .add(bcTable)
-                .add(bcForm)
-                .get();
+                .add(bcForm).element();
 
         navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ITEM, bcType, fontAwesome("play"), bcLayout);
         registerAttachable(bcTable, bcForm);
@@ -239,8 +236,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         HTMLElement wmLayout = div()
                 .add(h(1).textContent(wmType))
                 .add(p().textContent(wmMetadata.getDescription().getDescription()))
-                .add(wmTable)
-                .get();
+                .add(wmTable).element();
 
         wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, tableButtonFactory, resources);
         registerAttachable(wmTpEditor);
@@ -305,8 +301,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .add(h(1).textContent(dwmType))
                 .add(p().textContent(dwmMetadata.getDescription().getDescription()))
                 .add(dwmTable)
-                .add(dwmForm)
-                .get();
+                .add(dwmForm).element();
 
         dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, tableButtonFactory,
                 resources);

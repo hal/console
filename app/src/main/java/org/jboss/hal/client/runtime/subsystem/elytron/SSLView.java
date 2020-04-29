@@ -122,8 +122,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .add(h(1).textContent(caaTitle))
                 .add(p().textContent(certAuthorityMeta.getDescription().getDescription()))
                 .add(caaTable)
-                .add(caaForm)
-                .get();
+                .add(caaForm).element();
 
         nav.addPrimary(Ids.ELYTRON_CERTIFICATE_AUTHORITY_ACCOUNT, caaTitle, fontAwesome("exchange"), caaSection);
 
@@ -145,8 +144,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .add(h(1).textContent(Names.KEY_MANAGER))
                 .add(p().textContent(keyManagerMeta.getDescription().getDescription()))
                 .add(keyManagerTable)
-                .add(keyManagerForm)
-                .get();
+                .add(keyManagerForm).element();
 
         nav.addPrimary(Ids.ELYTRON_KEY_MANAGER, Names.KEY_MANAGER, pfIcon("settings"), keyManagerSection);
 
@@ -168,8 +166,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .add(h(1).textContent(Names.SECURITY_DOMAIN))
                 .add(p().textContent(secDomainMeta.getDescription().getDescription()))
                 .add(securityDomainTable)
-                .add(securityDomainForm)
-                .get();
+                .add(securityDomainForm).element();
 
         nav.addPrimary(Ids.ELYTRON_SECURITY_DOMAIN, Names.SECURITY_DOMAIN, pfIcon("cluster"), secDomainSection);
 
@@ -195,8 +192,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .add(h(1).textContent(Names.TRUST_MANAGER))
                 .add(p().textContent(trustMeta.getDescription().getDescription()))
                 .add(trustManagerTable)
-                .add(trustManagerForm)
-                .get();
+                .add(trustManagerForm).element();
         nav.addPrimary(Ids.ELYTRON_TRUST_MANAGER, Names.TRUST_MANAGER, pfIcon("resource-pool"), trustManagerSection);
 
         registerAttachables(asList(nav, caaTable, caaForm, keyManagerTable, keyManagerForm, securityDomainTable,

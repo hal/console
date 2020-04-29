@@ -79,7 +79,7 @@ class HomepageSection implements IsElement<HTMLDivElement> {
 
         removeChildrenFrom(sectionSteps);
         for (String step : steps) {
-            HTMLLIElement li = li().innerHtml(SafeHtmlUtils.fromString(step)).get();
+            HTMLLIElement li = li().innerHtml(SafeHtmlUtils.fromString(step)).element();
             sectionSteps.appendChild(li);
         }
     }

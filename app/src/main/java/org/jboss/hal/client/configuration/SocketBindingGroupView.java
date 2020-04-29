@@ -101,8 +101,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .add(h(1).textContent(Names.INBOUND))
                 .add(p().textContent(inboundMetadata.getDescription().getDescription()))
                 .add(inboundTable)
-                .add(inboundForm)
-                .get();
+                .add(inboundForm).element();
 
         Metadata clientMappingsMetadata = inboundMetadata.forComplexAttribute(CLIENT_MAPPINGS);
 
@@ -134,8 +133,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .add(h(1).textContent(Names.CLIENT_MAPPINGS))
                 .add(p().textContent(clientMappingsMetadata.getDescription().getDescription()))
                 .add(clientMappingTable)
-                .add(clientMappingForm)
-                .get();
+                .add(clientMappingForm).element();
 
         String id = Ids.build(INBOUND.baseId, Ids.PAGES);
         String parentId = Ids.build(INBOUND.baseId, Ids.PAGE);

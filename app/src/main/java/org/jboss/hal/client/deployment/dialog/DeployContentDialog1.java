@@ -97,12 +97,10 @@ public class DeployContentDialog1 {
                 .add(p().innerHtml(description))
                 .add(table)
                 .add(enableContainer = div().css(marginTopLarge)
-                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).get())
+                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).element())
                         .add(label().css(CSS.marginLeft5)
                                 .apply(l -> l.htmlFor = Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                                .textContent(resources.constants().enableDeployment()))
-                        .get())
-                .get();
+                                .textContent(resources.constants().enableDeployment())).element()).elements();
 
         String title = deployCallback != null ? resources.constants().deployContent() : resources.constants()
                 .undeployContent();

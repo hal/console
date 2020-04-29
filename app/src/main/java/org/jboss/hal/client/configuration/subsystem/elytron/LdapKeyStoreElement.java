@@ -92,8 +92,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
         root = section()
                 .add(h(1).textContent(Names.LDAP_KEY_STORE))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .addAll(table, tabs)
-                .get();
+                .addAll(table, tabs).element();
     }
 
     private String id(String... ids) {

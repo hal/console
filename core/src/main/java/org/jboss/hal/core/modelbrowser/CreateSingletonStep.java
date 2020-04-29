@@ -54,7 +54,7 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
         this.progress = progress;
         this.eventBus = eventBus;
         this.resources = resources;
-        this.root = div().get();
+        this.root = div().element();
     }
 
     @Override

@@ -140,8 +140,8 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
             @Override
             public HTMLElement getIcon() {
                 return item.getAdapterType() == AdapterType.ARCHIVE
-                        ? span().css(fontAwesome("archive")).get()
-                        : span().css(fontAwesome("cubes")).get();
+                        ? span().css(fontAwesome("archive")).element()
+                        : span().css(fontAwesome("cubes")).element();
             }
 
             @Override

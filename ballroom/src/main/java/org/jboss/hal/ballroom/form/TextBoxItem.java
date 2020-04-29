@@ -50,8 +50,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
 
         // editing appearance
         inputElement = input(text)
-                .css(formControl)
-                .get();
+                .css(formControl).element();
 
         addAppearance(EDITING, new TextBoxEditingAppearance(inputElement));
     }

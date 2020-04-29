@@ -83,8 +83,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 .add(h(1).textContent(Names.CACHING_REALM))
                 .add(p().textContent(cachingRealmMetadata.getDescription().getDescription()))
                 .add(cachingRealmTable)
-                .add(cachingRealmForm)
-                .get();
+                .add(cachingRealmForm).element();
 
         navigation.addPrimary(Ids.ELYTRON_CACHING_REALM, Names.CACHING_REALM, pfIcon("settings"), cachingSection);
 
@@ -129,8 +128,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 .add(h(1).textContent(Names.PROPERTIES_REALM))
                 .add(p().textContent(propertiesRealmMetadata.getDescription().getDescription()))
                 .add(propertiesRealmTable)
-                .add(propertiesRealmForm)
-                .get();
+                .add(propertiesRealmForm).element();
 
         navigation.addPrimary(ELYTRON_PROPERTIES_REALM, Names.PROPERTIES_REALM, pfIcon("resource-pool"),
                 propertiesSection);

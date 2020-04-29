@@ -68,13 +68,10 @@ class ListItem<T> implements IsElement {
                             .data("parent", HASH + this.id)
                             .aria(UIConstants.CONTROLS, idLongPanel)
                             .attr(UIConstants.ROLE, UIConstants.BUTTON)
-                            .add(container = div().css(listPfContainer)
-                                    .get()))
-                    .get();
+                            .add(container = div().css(listPfContainer).element())).element();
         } else {
             root = div().id(id).css(listPfItem)
-                    .add(container = div().css(listPfContainer).get())
-                    .get();
+                    .add(container = div().css(listPfContainer).element()).element();
 
         }
         if (checkbox) {
@@ -83,9 +80,7 @@ class ListItem<T> implements IsElement {
                             .on(click, event -> {
                                 HTMLInputElement element = (HTMLInputElement) event.target;
                                 listView.selectListItem(ListItem.this, element.checked);
-                            })
-                            .get())
-                    .get());
+                            }).element()).element());
         } else {
             this.checkbox = null;
             bind(root, click, event -> listView.selectListItem(this, true));
@@ -96,17 +91,14 @@ class ListItem<T> implements IsElement {
         HTMLElement contentWrapper;
         HTMLElement mainContent;
         HTMLElement title;
-        container.appendChild(content = div().css(listPfContent, listPfContentFlex).get());
+        container.appendChild(content = div().css(listPfContent, listPfContentFlex).element());
         if (display.getStatusElement() != null) {
             content.appendChild(div().css(listPfLeft)
-                    .add(display.getStatusElement())
-                    .get());
+                    .add(display.getStatusElement()).element());
         } else if (display.getStatusIcon() != null) {
             HTMLElement status;
             content.appendChild(div().css(listPfLeft)
-                    .add(status = span().css(listPfIcon, listPfIconBordered, listPfIconSmall)
-                            .get())
-                    .get());
+                    .add(status = span().css(listPfIcon, listPfIconBordered, listPfIconSmall).element()).element());
             //noinspection UnstableApiUsage
             List<String> classes = Splitter.on(' ')
                     .omitEmptyStrings()
@@ -117,20 +109,17 @@ class ListItem<T> implements IsElement {
         content.appendChild(contentWrapper = div().css(listPfContentWrapper)
                 .add(mainContent = div().css(listPfMainContent, listHalMainContent)
                         .style("flex-basis:" + contentWidths[0]) //NON-NLS
-                        .add(title = div().css(listPfTitle)
-                                .get())
-                        .get())
-                .get());
+                        .add(title = div().css(listPfTitle).element()).element()).element());
         if (display.getTitleElements() != null) {
             for (HTMLElement element : display.getTitleElements()) {
                 title.appendChild(element);
             }
         } else if (display.getTitleHtml() != null) {
-            title.appendChild(h(3).innerHtml(display.getTitleHtml()).get());
+            title.appendChild(h(3).innerHtml(display.getTitleHtml()).element());
         } else if (display.getTitle() != null) {
-            title.appendChild(h(3, display.getTitle()).get());
+            title.appendChild(h(3, display.getTitle()).element());
         } else {
-            title.appendChild(h(3, Names.NOT_AVAILABLE).get());
+            title.appendChild(h(3, Names.NOT_AVAILABLE).element());
         }
 
         // logic to display the description content
@@ -138,11 +127,9 @@ class ListItem<T> implements IsElement {
                 display.getDescriptionHtml() != null ||
                 display.getDescription() != null) {
             HTMLElement description;
-            mainContent.appendChild(description = div().css(listPfDescription)
-                    .get());
+            mainContent.appendChild(description = div().css(listPfDescription).element());
 
-            HTMLDivElement textContentElem = div().id(idLongPanel).css(listPfContainer, listPfContainerLong)
-                    .get();
+            HTMLDivElement textContentElem = div().id(idLongPanel).css(listPfContainer, listPfContainerLong).element();
             if (display.hideDescriptionWhenLarge()) {
                 description.textContent = CONSTANTS.messageLarge();
             }
@@ -185,8 +172,7 @@ class ListItem<T> implements IsElement {
                 display.getAdditionalInfo() != null) {
             HTMLElement additionalInfo;
             contentWrapper.appendChild(additionalInfo = div().css(listPfAdditionalContent, listHalAdditionalContent)
-                    .style("flex-basis:" + contentWidths[1]) //NON-NLS
-                    .get());
+                    .style("flex-basis:" + contentWidths[1]).element());
             if (display.getAdditionalInfoElements() != null) {
                 for (HTMLElement element : display.getAdditionalInfoElements()) {
                     additionalInfo.appendChild(element);
@@ -201,8 +187,7 @@ class ListItem<T> implements IsElement {
         List<ItemAction<T>> allowedActions = listView.allowedActions(display.actions());
         if (!allowedActions.isEmpty()) {
             HTMLElement actionsContainer;
-            content.appendChild(actionsContainer = div().css(listPfActions, listHalActions)
-                    .get());
+            content.appendChild(actionsContainer = div().css(listPfActions, listHalActions).element());
             int index = 0;
             HTMLUListElement ul = null;
             for (ItemAction<T> action : allowedActions) {
@@ -216,8 +201,7 @@ class ListItem<T> implements IsElement {
                             .id(actionId)
                             .css(btn, btnDefault)
                             .textContent(action.title)
-                            .on(click, eventHandler)
-                            .get());
+                            .on(click, eventHandler).element());
 
                 } else {
                     // remaining actions are inside the kebab menu
@@ -233,16 +217,13 @@ class ListItem<T> implements IsElement {
                                                 .aria(UIConstants.EXPANDED, UIConstants.TRUE)
                                                 .add(span().css(fontAwesome("ellipsis-v"))))
                                         .add(ul = ul().css(dropdownMenu, dropdownMenuRight)
-                                                .aria(UIConstants.LABELLED_BY, id)
-                                                .get())
-                                        .get());
+                                                .aria(UIConstants.LABELLED_BY, id).element()).element());
                     }
                     //noinspection ConstantConditions
                     ul.appendChild(actionElement = li()
                             .add(a().css(clickable)
                                     .textContent(action.title)
-                                    .on(click, eventHandler))
-                            .get());
+                                    .on(click, eventHandler)).element());
                 }
 
                 this.actions.put(action.id, actionElement);

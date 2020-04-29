@@ -77,8 +77,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                             .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
                     .add(span()
                             .title(labelBuilder.label(EXPLODED))
-                            .css(flag(failSafeBoolean(model, EXPLODED))))
-                    .get();
+                            .css(flag(failSafeBoolean(model, EXPLODED)))).elements();
             return new PreviewAttribute(label, elements);
         });
     }
@@ -91,9 +90,9 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
         HTMLElement ul;
         previewBuilder()
                 .add(h(2).textContent(Names.SUBDEPLOYMENTS))
-                .add(ul = ul().get());
+                .add(ul = ul().element());
         deployment.getSubdeployments().forEach(
-                subdeployment -> ul.appendChild(li().textContent(subdeployment.getName()).get()));
+                subdeployment -> ul.appendChild(li().textContent(subdeployment.getName()).element()));
     }
 
     void contextRoot(PreviewAttributes<T> attributes, Deployment deployment) {
@@ -102,12 +101,11 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             if (contextRoot.isDefined()) {
                 attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOT,
                         span().textContent(contextRoot.asString())
-                                .data(LINK, "")
-                                .get()));
+                                .data(LINK, "").element()));
             }
 
         } else if (deployment.hasNestedSubsystem(UNDERTOW)) {
-            HTMLElement ul = ul().get();
+            HTMLElement ul = ul().element();
             for (Subdeployment subdeployment : deployment.getSubdeployments()) {
                 ModelNode contextRoot = failSafeGet(subdeployment, String.join("/", SUBSYSTEM, UNDERTOW, CONTEXT_ROOT));
                 if (contextRoot.isDefined()) {
@@ -118,7 +116,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                             .appendHtmlConstant("&rarr;") //NON-NLS
                             .append(contextHtml)
                             .toSafeHtml();
-                    ul.appendChild(li().innerHtml(safeHtml).get());
+                    ul.appendChild(li().innerHtml(safeHtml).element());
                 }
             }
             attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOTS, ul));
@@ -159,8 +157,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                                 Elements.removeChildrenFrom(linkContainer);
                                 linkContainer.appendChild(a(url.getUrl() + link)
                                         .apply(a -> a.target = Ids.hostServer(host, server))
-                                        .textContent(link)
-                                        .get());
+                                        .textContent(link).element());
                             }
                         }
                     });

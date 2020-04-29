@@ -92,13 +92,10 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
             this.buttons = new HashMap<>();
 
             root = div().css(formGroup)
-                    .add(labelElement = label().css(controlLabel, halFormLabel).get())
+                    .add(labelElement = label().css(controlLabel, halFormLabel).element())
                     .add(inputContainer = div().css(halFormInput)
                             .add(buttonGroup = div().css(btnGroup)
-                                    .attr(UIConstants.ROLE, UIConstants.GROUP)
-                                    .get())
-                            .get())
-                    .get();
+                                    .attr(UIConstants.ROLE, UIConstants.GROUP).element()).element()).element();
             for (long number : numbers) {
                 String value = String.valueOf(number);
                 HTMLButtonElement button = button().css(btn, btnDefault)
@@ -107,8 +104,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
                         .on(click, event -> {
                             showValue(number);
                             modifyValue(number);
-                        })
-                        .get();
+                        }).element();
                 buttons.put(number, button);
                 buttonGroup.appendChild(button);
             }

@@ -219,7 +219,7 @@ public class ContentColumn extends FinderColumn<Content> {
             @Override
             public HTMLElement getIcon() {
                 String icon = item.isExploded() ? fontAwesome("folder-open") : fontAwesome("archive");
-                return span().css(icon).get();
+                return span().css(icon).element();
             }
 
             @Override
