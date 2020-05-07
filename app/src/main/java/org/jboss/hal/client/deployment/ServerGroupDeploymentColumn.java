@@ -280,7 +280,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                             .build());
                 }
                 AddressTemplate template = SERVER_GROUP_DEPLOYMENT_TEMPLATE
-                        .replaceWildcards(statementContext.selectedServerGroup());
+                        .replaceWildcards(item.getName());
                 actions.add(new ItemAction.Builder<ServerGroupDeployment>()
                         .title(resources.constants().undeploy())
                         .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), template,
