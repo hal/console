@@ -308,13 +308,12 @@ public class OperationFactory {
         if (attribute != null) {
             String stringValue = String.valueOf(value);
             ModelNode attributeDescription = attribute.getValue();
+            ModelType type = attributeDescription.get(TYPE).asType();
             if (attributeDescription.hasDefined(EXPRESSIONS_ALLOWED) &&
                     attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean() &&
-                    Expression.isExpression(stringValue)) {
+                    Expression.isExpression(stringValue) && type != ModelType.LIST) {
                 valueNode.setExpression(stringValue);
-
             } else {
-                ModelType type = attributeDescription.get(TYPE).asType();
                 try {
                     switch (type) {
                         case BIG_DECIMAL:
