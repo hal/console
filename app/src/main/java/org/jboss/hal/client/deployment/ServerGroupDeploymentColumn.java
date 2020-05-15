@@ -279,11 +279,9 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                             .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, DEPLOY))
                             .build());
                 }
-                AddressTemplate template = SERVER_GROUP_DEPLOYMENT_TEMPLATE
-                        .replaceWildcards(statementContext.selectedServerGroup());
                 actions.add(new ItemAction.Builder<ServerGroupDeployment>()
                         .title(resources.constants().undeploy())
-                        .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), template,
+                        .handler(item -> crud.remove(Names.DEPLOYMENT, item.getName(), SERVER_GROUP_DEPLOYMENT_TEMPLATE,
                                 () -> refresh(CLEAR_SELECTION)))
                         .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, REMOVE))
                         .build());
