@@ -39,7 +39,7 @@ public class URLItem extends TextBoxItem {
             HTMLElement parent = (HTMLElement) valueContainer.parentNode;
             Elements.removeChildrenFrom(parent);
 
-            anchorElement = a().attr("target", "_blank").get();
+            anchorElement = a().attr("target", "_blank").element();
             valueElement = anchorElement;
             parent.appendChild(valueElement);
         }

@@ -72,7 +72,7 @@ class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
         } else {
             builder.css(pfIcon(ok), listHalIconSuccess);
         }
-        return builder.get();
+        return builder.element();
     }
 
 
@@ -111,8 +111,7 @@ class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
                                                 operation.getExclusiveRunningTime())))
                                 .append(messages.cancelledLabel(operation.isCancelled()))
                                 .append(messages.domainRolloutLabel(operation.isDomainRollout()))
-                                .toSafeHtml())))
-                .get();
+                                .toSafeHtml()))).elements();
     }
 
     @Override

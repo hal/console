@@ -44,13 +44,12 @@ class LogFilePreview extends PreviewContent<LogFile> {
         HTMLElement container, icon, message;
         previewBuilder()
                 .add(container = div()
-                        .add(icon = span().get())
-                        .add(message = span().get())
+                        .add(icon = span().element())
+                        .add(message = span().element())
                         .add(" ")
                         .add(a(logFiles.downloadUrl(logFile.getFilename(), logFile.getLoggingProfile())).css(alertLink)
                                 .apply(a -> a.download = logFile.getFilename())
-                                .textContent(resources.constants().download()))
-                        .get());
+                                .textContent(resources.constants().download())).element());
         if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
             container.classList.add(CSS.alert, alertWarning);
             icon.className = Icons.WARNING;
@@ -78,7 +77,7 @@ class LogFilePreview extends PreviewContent<LogFile> {
                 .add(div().css(clearfix)
                         .add(refreshLink(() -> update(logFile)))
                         .add(p().textContent(resources.messages().logFilePreview(PREVIEW_LINES))))
-                .add(preview = pre().css(logFilePreview).get());
+                .add(preview = pre().css(logFilePreview).element());
     }
 
     @Override

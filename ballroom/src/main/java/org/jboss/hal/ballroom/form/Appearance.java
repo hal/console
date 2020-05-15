@@ -46,21 +46,20 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
     // ------------------------------------------------------ static builder methods
 
     static HTMLElement inputGroup() {
-        return div().css(inputGroup).get();
+        return div().css(inputGroup).element();
     }
 
     static HTMLElement helpBlock() {
-        return span().css(helpBlock).get();
+        return span().css(helpBlock).element();
     }
 
     static HTMLElement restrictedMarker() {
         return span().css(inputGroupAddon)
-                .add(i().css(fontAwesome("lock")))
-                .get();
+                .add(i().css(fontAwesome("lock"))).element();
     }
 
     static HTMLElement hintMarker() {
-        return span().css(inputGroupAddon).get();
+        return span().css(inputGroupAddon).element();
     }
 
 

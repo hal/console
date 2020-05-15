@@ -90,8 +90,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .add(h(1).textContent(Names.CHANNEL))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
 
         forkElement = new ForkElement(metadataRegistry, tableButtonFactory, resources);
         protocolElement = new GenericElement(metadataRegistry.lookup(CHANNEL_FORK_PROTOCOL_TEMPLATE),

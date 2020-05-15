@@ -55,7 +55,11 @@ final class ReadChildren implements DataFunction<Context> {
         String parentId = parent.id;
         int index = parent.id.indexOf(ID_SEPARATOR);
         if (index != -1) {
-            parentId = parent.id.substring(index + ID_SEPARATOR.length(), parent.id.length());
+            if (parent.data.isFullyQualified()) {
+                parentId = parent.id.substring(index + ID_SEPARATOR.length(), parent.id.length());
+            } else {
+                parentId = parent.id.substring(0, index);
+            }
         }
         return parentId + ID_SEPARATOR + name;
     }

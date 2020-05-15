@@ -156,7 +156,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                 HTMLElement icon = null;
                 JdbcDriver.Provider provider = driver.getProvider();
                 if (provider != UNKNOWN) {
-                    icon = span().get();
+                    icon = span().element();
                     if (provider == MODULE) {
                         icon.className = fontAwesome("cubes");
                     } else if (provider == DEPLOYMENT) {

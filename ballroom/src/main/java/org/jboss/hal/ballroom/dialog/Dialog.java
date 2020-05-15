@@ -89,13 +89,10 @@ public class Dialog implements IsElement {
                         .add(div().css(modalContent)
                                 .add(div().css(modalHeader)
                                         .add(closeIcon = button().css(close).aria(LABEL, CONSTANTS.close())
-                                                .add(span().css(pfIcon("close")))
-                                                .get())
-                                        .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).get()))
-                                .add(body = div().css(modalBody).get())
-                                .add(footer = div().css(modalFooter).get()))
-                        .get())
-                .get();
+                                                .add(span().css(pfIcon("close"))).element())
+                                        .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).element()))
+                                .add(body = div().css(modalBody).element())
+                                .add(footer = div().css(modalFooter).element())).element()).element();
 
         document.body.appendChild(root);
         initEventHandler();
@@ -187,8 +184,7 @@ public class Dialog implements IsElement {
                             } else {
                                 close();
                             }
-                        })
-                        .get();
+                        }).element();
                 Dialog.footer.appendChild(buttonElement);
                 buttons.put(position, buttonElement);
             }

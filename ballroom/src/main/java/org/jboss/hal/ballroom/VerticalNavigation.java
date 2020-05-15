@@ -78,8 +78,7 @@ public class VerticalNavigation implements Attachable {
 
     static {
         root = div().css(navPfVertical, navPfVerticalHal)
-                .add(ul = ul().css(listGroup).get())
-                .get();
+                .add(ul = ul().css(listGroup).element()).element();
         Elements.setVisible(root, false);
     }
 
@@ -248,16 +247,15 @@ public class VerticalNavigation implements Attachable {
         HTMLElement span;
         HTMLElement primary = li().css(listGroupItem)
                 .id(id)
-                .add(a = a().css(clickable).get())
-                .get();
+                .add(a = a().css(clickable).element()).element();
 
         if (pane != null) {
             bind(a, click, event -> show(id));
         }
         if (iconClass != null) {
-            a.appendChild(span().css(iconClass).get());
+            a.appendChild(span().css(iconClass).element());
         }
-        a.appendChild(span = span().css(listGroupItemValue).textContent(text).get());
+        a.appendChild(span = span().css(listGroupItemValue).textContent(text).element());
         if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH) {
             span.title = text;
         }
@@ -350,9 +348,8 @@ public class VerticalNavigation implements Attachable {
                         .add(div().css(navItemPfHeader)
                                 .add(a().css(secondaryCollapseTogglePf)
                                         .data(UIConstants.TOGGLE, "collapse-secondary-nav")) //NON-NLS
-                                .add(span = span().textContent(primaryItem.text).get()))
-                        .add(secondaryUl = ul().css(listGroup).get())
-                        .get();
+                                .add(span = span().textContent(primaryItem.text).element()))
+                        .add(secondaryUl = ul().css(listGroup).element()).element();
 
                 if (text.length() > SECONDARY_VISIBLE_TEXT_LENGTH) {
                     span.title = text;
@@ -362,8 +359,7 @@ public class VerticalNavigation implements Attachable {
 
             HTMLElement li = li().id(id).css(listGroupItem)
                     .add(a().css(clickable).on(click, event -> show(id))
-                            .add(span().css(listGroupItemValue).textContent(text)))
-                    .get();
+                            .add(span().css(listGroupItemValue).textContent(text))).element();
 
             primaryItem.addChild(id);
             Item secondaryItem = new Item(id, primaryId, text, li);
@@ -455,8 +451,7 @@ public class VerticalNavigation implements Attachable {
                 a.removeChild(badgeContainer);
             }
             badgeContainer = div().css(badgeContainerPf)
-                    .add(span().css(badge).textContent(String.valueOf(count)))
-                    .get();
+                    .add(span().css(badge).textContent(String.valueOf(count))).element();
             a.appendChild(badgeContainer);
         } else {
             logger.error("Unable to find navigation item for id '{}'", id);

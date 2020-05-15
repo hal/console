@@ -72,9 +72,8 @@ public class ProgressElement implements IsElement, Progress {
                         .aria("valuenow", "0")
                         .aria("valuemin", "0")
                         .aria("valuemax", "100")
-                        .add(valueElement = span().innerHtml(SafeHtmlUtils.EMPTY_SAFE_HTML).get())
-                        .get())
-                .get();
+                        .add(valueElement = span().innerHtml(SafeHtmlUtils.EMPTY_SAFE_HTML).element()).element())
+                .element();
 
         if (size != Size.NORMAL) {
             valueElement.classList.add(srOnly);

@@ -101,8 +101,7 @@ public class ServerView extends HalViewImpl implements MyView {
         HTMLElement connectionSection = section()
                 .add(h(1).textContent(Names.CONNECTIONS))
                 .add(connectionTable)
-                .add(connectionForm)
-                .get();
+                .add(connectionForm).element();
 
         // ------------------------------------------------------ connection / sessions
 
@@ -117,8 +116,7 @@ public class ServerView extends HalViewImpl implements MyView {
         HTMLElement sessionSection = section()
                 .add(h(1).textContent(Names.SESSIONS))
                 .add(sessionTable)
-                .add(sessionForm)
-                .get();
+                .add(sessionForm).element();
 
         // ------------------------------------------------------ connection / consumers
 
@@ -136,8 +134,7 @@ public class ServerView extends HalViewImpl implements MyView {
         HTMLElement connectionConsumerSection = section()
                 .add(h(1).textContent(Names.CONSUMERS))
                 .add(connectionConsumerTable)
-                .add(connectionConsumerForm)
-                .get();
+                .add(connectionConsumerForm).element();
 
         // ------------------------------------------------------ all consumers
 
@@ -153,8 +150,7 @@ public class ServerView extends HalViewImpl implements MyView {
         HTMLElement consumerSection = section()
                 .add(h(1).textContent(Names.CONSUMERS))
                 .add(consumerTable)
-                .add(consumerForm)
-                .get();
+                .add(consumerForm).element();
 
         // ------------------------------------------------------ producers
 
@@ -169,8 +165,7 @@ public class ServerView extends HalViewImpl implements MyView {
         HTMLElement producerSection = section()
                 .add(h(1).textContent(Names.PRODUCERS))
                 .add(producerTable)
-                .add(producerForm)
-                .get();
+                .add(producerForm).element();
 
         // ------------------------------------------------------ connectors
 
@@ -185,8 +180,7 @@ public class ServerView extends HalViewImpl implements MyView {
         HTMLElement connectorSection = section()
                 .add(h(1).textContent(Names.CONNECTORS))
                 .add(connectorTable)
-                .add(connectorForm)
-                .get();
+                .add(connectorForm).element();
 
         // ------------------------------------------------------ roles
 
@@ -206,8 +200,7 @@ public class ServerView extends HalViewImpl implements MyView {
                 .add(h(1).textContent(resources.constants().roles()))
                 .add(getRolesElement)
                 .add(roleTable)
-                .add(roleForm)
-                .get();
+                .add(roleForm).element();
 
         // ------------------------------------------------------ transaction
 
@@ -226,8 +219,7 @@ public class ServerView extends HalViewImpl implements MyView {
         HTMLElement transactionSection = section()
                 .add(h(1).textContent(resources.constants().transactions()))
                 .add(transactionTable)
-                .add(transactionForm)
-                .get();
+                .add(transactionForm).element();
 
         // ------------------------------------------------------ pages and navigation
 

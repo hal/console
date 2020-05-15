@@ -68,8 +68,7 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
         HTMLElement jgroupsSection = section()
                 .add(h(1).textContent(Names.JGROUPS))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(jgroupsForm)
-                .get();
+                .add(jgroupsForm).element();
 
         stackConfig = new StackElement(metadataRegistry, tableButtonFactory, resources);
         channelConfig = new ChannelElement(metadataRegistry, tableButtonFactory, resources);

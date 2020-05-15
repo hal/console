@@ -57,6 +57,7 @@ import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
+import static org.jboss.hal.resources.CSS.form;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
@@ -156,7 +157,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     @Override
     protected HTMLElement createElement() {
-        HTMLElement section = section().id(id).css(formSection).get();
+        HTMLElement section = section().id(id).css(formSection).element();
 
         formLinks = new FormLinks<>(this, stateMachine, helpTexts,
                 event -> edit(getModel()),
@@ -178,9 +179,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
         errorPanel = div().css(alert, alertDanger)
                 .add(span().css(Icons.ERROR))
-                .add(errorMessage = span().get())
-                .add(errorMessages = ul().get())
-                .get();
+                .add(errorMessage = span().element())
+                .add(errorMessages = ul().element()).element();
         clearErrors();
 
         if (stateMachine.supports(EMPTY)) {
@@ -220,13 +220,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private HTMLElement viewPanel() {
         HTMLDivElement viewPanel = div()
                 .id(Ids.build(id, READONLY.name().toLowerCase()))
-                .css(form, formHorizontal, readonly)
-                .get();
+                .css(form, formHorizontal, readonly).element();
         for (Iterator<FormItem> iterator = getFormItems().iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
             viewPanel.appendChild(formItem.element(READONLY));
             if (iterator.hasNext()) {
-                HTMLHRElement hr = hr().css(separator).get();
+                HTMLHRElement hr = hr().css(separator).element();
                 viewPanel.appendChild(hr);
             }
         }
@@ -236,8 +235,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private HTMLElement editPanel() {
         HTMLElement editPanel = div()
                 .id(Ids.build(id, EDITING.name().toLowerCase()))
-                .css(form, formHorizontal, editing)
-                .get();
+                .css(form, formHorizontal, editing).element();
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;
         boolean hasOptionalField = false;
@@ -251,16 +249,15 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         if (hasRequiredField) {
             editPanel.appendChild(div().css(formGroup)
                     .add(div().css(halFormOffset)
-                            .add(span().css(helpBlock).innerHtml(MESSAGES.requiredHelp())))
-                    .get());
+                            .add(span().css(helpBlock).innerHtml(MESSAGES.requiredHelp()))).element());
         }
         // if separateOptionalFields=true and there are non-required attributes, they are placed in a collapsible
         // panel
         if (separateOptionalFields && hasOptionalField) {
             List<HTMLElement> optionalFields = new ArrayList<>();
-            HTMLFieldSetElement fieldsetElement = fieldset().css(fieldsSectionPf).get();
+            HTMLFieldSetElement fieldsetElement = fieldset().css(fieldsSectionPf).element();
             HTMLElement expanderElement = span().css(fontAwesome("angle-right"), fontAwesome("angle-down"),
-                    fieldSectionTogglePf).get();
+                    fieldSectionTogglePf).element();
             // as we add fa-angle-right and fa-angle-down, remove the later so the angle-right becomes visible
             expanderElement.classList.remove(faAngleDown);
             HTMLLegendElement legend = legend().css(fieldsSectionHeaderPf)
@@ -272,8 +269,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                                 expanderElement.classList.toggle(faAngleDown);
                                 optionalFields.forEach(field -> setVisible(field,
                                         expanderElement.classList.contains(faAngleDown)));
-                            }))
-                    .get();
+                            })).element();
             fieldsetElement.appendChild(legend);
             for (FormItem formItem : getFormItems()) {
                 if (!formItem.isRequired()) {
@@ -295,8 +291,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                                 .add(button()
                                         .css(btn, btnHal, btnPrimary)
                                         .textContent(CONSTANTS.save())
-                                        .on(click, event -> save()))))
-                .get();
+                                        .on(click, event -> save())))).element();
         editPanel.appendChild(buttons);
 
         return editPanel;
@@ -438,6 +433,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         this.cancelCallback = cancelCallback;
     }
 
+    @Override
     public void setPrepareReset(PrepareReset<T> prepareReset) {
         this.prepareReset = prepareReset;
     }
@@ -519,7 +515,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
-    @SuppressWarnings("WeakerAccess")
     protected void prepareEmptyState() {
     }
 
@@ -527,7 +522,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
-    @SuppressWarnings("WeakerAccess")
     protected void prepareViewState() {
     }
 
@@ -535,7 +529,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips
      * to the new state.
      */
-    @SuppressWarnings("WeakerAccess")
     protected void prepareEditState() {
     }
 
@@ -587,7 +580,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <I> FormItem<I> getFormItem(String name) {
         return formItems.get(name);
     }
@@ -607,7 +599,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     // ------------------------------------------------------ validation
 
-    @SuppressWarnings("unchecked")
     protected boolean validate() {
         boolean valid = true;
         clearErrors();
@@ -651,7 +642,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
             } else {
                 errorMessage.textContent = CONSTANTS.formErrors();
                 for (String message : messages) {
-                    errorMessages.appendChild(li().textContent(message).get());
+                    errorMessages.appendChild(li().textContent(message).element());
                 }
             }
             setVisible(errorPanel, true);

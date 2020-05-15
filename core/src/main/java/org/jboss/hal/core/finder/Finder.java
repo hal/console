@@ -119,9 +119,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         this.root = div().id(FINDER).css(row, finder)
                 .add(previewColumn = div()
                         .id(Ids.PREVIEW_ID)
-                        .css(finderPreview, column(12))
-                        .get())
-                .get();
+                        .css(finderPreview, column(12)).element()).element();
     }
 
     @Override

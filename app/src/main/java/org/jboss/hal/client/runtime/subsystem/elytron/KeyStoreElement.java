@@ -99,8 +99,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .add(h(1).textContent(Names.KEY_STORE))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
 
         aliasesTable = new ModelNodeTable.Builder<>(id(ALIAS, TABLE), metadata)
                 .button(new Button<>(cons.changeAlias(), table -> changeAlias(metadata, table.selectedRow().asString()),
@@ -136,8 +135,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
         HTMLElement aliasesSection = section()
                 .add(h(1).textContent(cons.aliases()))
                 .add(aliasesTable)
-                .add(formAlias)
-                .get();
+                .add(formAlias).element();
 
         pages = new Pages(id(PAGES), id(PAGE), mainSection);
         pages.addPage(id(PAGE), id(ALIAS, PAGE),
@@ -145,8 +143,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 () -> cons.aliases(), aliasesSection);
 
         root = section()
-                .add(pages)
-                .get();
+                .add(pages).element();
     }
 
     @Override

@@ -200,9 +200,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                 .add(span().textContent(resources.constants().refresh()))))
                 .add(loadingSection = section().css(centerBlock)
                         .add(p().textContent(resources.constants().loading()))
-                        .add(div().css(spinner, spinnerLg))
-                        .get())
-                .add(topologySection = section().get());
+                        .add(div().css(spinner, spinnerLg)).element())
+                .add(topologySection = section().element());
 
         hostAttributes = new PreviewAttributes<>(new Host(new ModelNode()), Names.HOST)
                 .append(model -> {
@@ -251,7 +250,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(SOCKET_BINDING_PORT_OFFSET)
                 .append(SOCKET_BINDING_DEFAULT_INTERFACE);
 
-        serverUrl = span().textContent(Names.NOT_AVAILABLE).get();
+        serverUrl = span().textContent(Names.NOT_AVAILABLE).element();
         serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER)
                 .append(model -> {
                     String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),
@@ -285,14 +284,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
         previewBuilder()
                 .add(hostAttributesSection = section()
-                        .addAll(hostAttributes)
-                        .get())
+                        .addAll(hostAttributes).element())
                 .add(serverGroupAttributesSection = section()
-                        .addAll(serverGroupAttributes)
-                        .get())
+                        .addAll(serverGroupAttributes).element())
                 .add(serverAttributesSection = section()
-                        .addAll(serverAttributes)
-                        .get());
+                        .addAll(serverAttributes).element());
     }
 
     private <T extends NamedNode> String lazyToken(String tlc, T model,
@@ -432,7 +428,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     // ------------------------------------------------------ UI methods
 
     private HTMLElement buildTable(List<Host> hosts, List<ServerGroup> serverGroups, List<Server> servers) {
-        HTMLTableElement table = Elements.table().css(topology).get();
+        HTMLTableElement table = table().css(topology).element();
 
         // <colgroup>
         double width = 100.0 / (serverGroups.size() + 1);
@@ -441,7 +437,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         for (int i = 0; i < serverGroups.size(); i++) {
             colgroup.add(col().attr("width", width + "%"));
         }
-        table.appendChild(colgroup.get());
+        table.appendChild(colgroup.element());
         // </colgroup>
 
         // <thead>
@@ -454,14 +450,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                         .appendEscaped(Names.HOSTS + " ")
                                         .appendHtmlConstant("&darr;").toSafeHtml()))
                         .addAll(serverGroups.stream().map(this::serverGroupElement).collect(toList())));
-        table.appendChild(thead.get());
+        table.appendChild(thead.element());
         // </thead>
 
         // <tbody>
-        HTMLElement tbody = tbody().get();
+        HTMLElement tbody = tbody().element();
         for (Host host : hosts) {
             HTMLElement tr;
-            tbody.appendChild(tr = tr().get());
+            tbody.appendChild(tr = tr().element());
             tr.appendChild(hostElement(host));
             for (ServerGroup serverGroup : serverGroups) {
                 List<HTMLElement> matchingServers = servers.stream()
@@ -471,12 +467,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         .map(this::serverElement)
                         .collect(toList());
                 if (matchingServers.isEmpty()) {
-                    tr.appendChild(td().css(empty).get());
+                    tr.appendChild(td().css(empty).element());
                 } else {
                     tr.appendChild(td()
                             .add(div().css(CSS.servers)
-                                    .addAll(matchingServers))
-                            .get());
+                                    .addAll(matchingServers)).element());
                 }
             }
         }
@@ -493,8 +488,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .on(click, event -> hostDetails(host))
                 .data("host", host.getName()) //NON-NLS
                 .add(div().css(hostContainer)
-                        .add(dropdown = div().css(CSS.dropdown).get()))
-                .get();
+                        .add(dropdown = div().css(CSS.dropdown).element())).element();
 
         HTMLElement hostNameElement;
         if (host.isAlive() && !hostActions.isPending(host) && isAllowed(host)) {
@@ -504,17 +498,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .css(clickable, dropdownToggle, name)
                     .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                     .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
-                    .title(host.getName())
-                    .get());
+                    .title(host.getName()).element());
             dropdown.appendChild(ul()
                     .css(dropdownMenu)
                     .attr(UIConstants.ROLE, UIConstants.MENU)
                     .aria(UIConstants.LABELLED_BY, hostDropDownId)
-                    .addAll(hostActions(host))
-                    .get());
+                    .addAll(hostActions(host)).element());
         } else {
-            dropdown.appendChild(hostNameElement = span().css(name).title(host.getName())
-                    .get());
+            dropdown.appendChild(hostNameElement = span().css(name).title(host.getName()).element());
         }
         hostNameElement.appendChild(hostNameElement.ownerDocument.createTextNode(host.getName()));
         if (!host.isConnected()) {
@@ -523,7 +514,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         }
         if (host.isDomainController()) {
             hostNameElement.appendChild(
-                    span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER).get());
+                    span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER).element());
         }
 
         return th;
@@ -535,8 +526,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .on(click, event -> serverGroupDetails(serverGroup))
                 .data("serverGroup", serverGroup.getName()) //NON-NLS
                 .add(div().css(serverGroupContainer)
-                        .add(dropdown = div().css(CSS.dropdown).get()))
-                .get();
+                        .add(dropdown = div().css(CSS.dropdown).element())).element();
 
         if (!serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
             String serverGroupDropDownId = Ids.serverGroup(serverGroup.getName());
@@ -546,20 +536,17 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                     .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                     .title(serverGroup.getName())
-                    .textContent(serverGroup.getName())
-                    .get());
+                    .textContent(serverGroup.getName()).element());
             dropdown.appendChild(ul()
                     .css(dropdownMenu)
                     .attr(UIConstants.ROLE, UIConstants.MENU)
                     .aria(UIConstants.LABELLED_BY, serverGroupDropDownId)
-                    .addAll(serverGroupActions(serverGroup))
-                    .get());
+                    .addAll(serverGroupActions(serverGroup)).element());
         } else {
             dropdown.appendChild(span()
                     .css(name)
                     .title(serverGroup.getName())
-                    .textContent(serverGroup.getName())
-                    .get());
+                    .textContent(serverGroup.getName()).element());
         }
         return element;
     }
@@ -571,8 +558,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .css(asList(server, statusCss(srv)).toArray(new String[]{}))
                 .data(SERVER, srv.getId())
                 .on(click, event -> serverDetails(srv))
-                .add(dropdown = div().css(CSS.dropdown).get())
-                .get();
+                .add(dropdown = div().css(CSS.dropdown).element()).element();
 
         if (!serverActions.isPending(srv) && isAllowed(srv)) {
             dropdown.appendChild(a()
@@ -581,20 +567,17 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                     .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                     .title(srv.getName())
-                    .textContent(srv.getName())
-                    .get());
+                    .textContent(srv.getName()).element());
             dropdown.appendChild(ul()
                     .css(dropdownMenu)
                     .attr(UIConstants.ROLE, UIConstants.MENU)
                     .aria(UIConstants.LABELLED_BY, srv.getId())
-                    .addAll(serverActions(srv))
-                    .get());
+                    .addAll(serverActions(srv)).element());
         } else {
             dropdown.appendChild(span()
                     .css(name)
                     .title(srv.getName())
-                    .textContent(srv.getName())
-                    .get());
+                    .textContent(srv.getName()).element());
         }
         return element;
     }
@@ -637,8 +620,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private HTMLElement actionLink(EventCallbackFn<MouseEvent> listener, String text) {
         return li().attr(UIConstants.ROLE, UIConstants.PRESENTATION)
-                .add(a().css(clickable).on(click, listener).textContent(text))
-                .get();
+                .add(a().css(clickable).on(click, listener).textContent(text)).element();
     }
 
     private void startProgress(String selector) {
@@ -657,7 +639,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             Element parent = (Element) link.parentNode;
             Element ul = link.nextElementSibling;
             if (parent != null && ul != null) {
-                HTMLElement noLink = span().css(CSS.name).title(name).textContent(name).get();
+                HTMLElement noLink = span().css(CSS.name).title(name).textContent(name).element();
                 parent.classList.remove("opened"); //NON-NLS
                 parent.replaceChild(noLink, link);
                 parent.removeChild(ul);
@@ -863,7 +845,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     updateServer(server);
                 }
             }), resources.constants().editURL()));
-            actions.add(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).get());
+            actions.add(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).element());
             // Order is: reload, restart, (resume | suspend), stop
             actions.add(actionLink(event -> serverActions.reload(server), resources.constants().reload()));
             actions.add(actionLink(event -> serverActions.restart(server), resources.constants().restart()));

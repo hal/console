@@ -58,23 +58,21 @@ class RolePreview extends PreviewContent<Role> {
         previewBuilder()
                 .add(includeAllDiv = div()
                         .add(h(2).textContent(resources.constants().includesAllHeader()))
-                        .add(p().textContent(resources.constants().includesAllDescription()))
-                        .get())
+                        .add(p().textContent(resources.constants().includesAllDescription())).element())
                 .add(notIncludeAllDiv = div()
                         .add(h(2).textContent(resources.constants().excludes()))
-                        .add(noExcludes = p().textContent(resources.constants().noPrincipalsExcluded()).get())
-                        .add(excludesUl = ul().get())
+                        .add(noExcludes = p().textContent(resources.constants().noPrincipalsExcluded()).element())
+                        .add(excludesUl = ul().element())
                         .add(h(2).textContent(resources.constants().includes()))
-                        .add(noIncludes = p().textContent(resources.constants().noPrincipalsIncluded()).get())
-                        .add(includesUl = ul().get())
-                        .get());
+                        .add(noIncludes = p().textContent(resources.constants().noPrincipalsIncluded()).element())
+                        .add(includesUl = ul().element()).element());
 
         Elements.setVisible(noExcludes, false);
         Elements.setVisible(excludesUl, false);
         Elements.setVisible(noIncludes, false);
         Elements.setVisible(includesUl, false);
 
-        HTMLElement roleDescription = p().get();
+        HTMLElement roleDescription = p().element();
         String roleName = role.isScoped() ? role.getBaseRole().getName() : role.getName();
         ExternalTextResource resource = resources.preview("rbac" + roleName);
         Previews.innerHtml(roleDescription, resource);
@@ -110,7 +108,6 @@ class RolePreview extends PreviewContent<Role> {
                 .group();
         ul.appendChild(li()
                 .add(span().textContent(type + " "))
-                .add(a(tokens.principal(principal)).textContent(principal.getName()))
-                .get());
+                .add(a(tokens.principal(principal)).textContent(principal.getName())).element());
     }
 }

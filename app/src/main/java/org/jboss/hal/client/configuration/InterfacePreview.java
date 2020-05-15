@@ -49,7 +49,7 @@ class InterfacePreview extends PreviewContent<NamedNode> {
         super(interfce.getName());
         this.dispatcher = dispatcher;
         this.places = places;
-        this.links = span().get();
+        this.links = span().element();
 
         PreviewAttributes<NamedNode> attributes = new PreviewAttributes<>(interfce)
                 .append(INET_ADDRESS)

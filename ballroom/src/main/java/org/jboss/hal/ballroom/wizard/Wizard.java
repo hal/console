@@ -82,31 +82,27 @@ public class Wizard<C, S extends Enum<S>> {
                         .add(div().css(modalContent)
                                 .add(div().css(modalHeader)
                                         .add(closeIcon = button().css(close)
-                                                .aria(UIConstants.LABEL, CONSTANTS.close())
-                                                .add(span().css(pfIcon("close")).aria(HIDDEN, TRUE))
-                                                .get())
+                                                .aria(LABEL, CONSTANTS.close())
+                                                .add(span().css(pfIcon("close")).aria(HIDDEN, TRUE)).element())
                                         .add(titleElement = h(4).css(modalTitle)
-                                                .id(Ids.HAL_WIZARD_TITLE)
-                                                .get()))
+                                                .id(Ids.HAL_WIZARD_TITLE).element()))
                                 .add(div().css(modalBody, wizardPfBody, clearfix)
                                         .add(div().css(wizardPfSteps)
-                                                .add(stepsNames = ul().css(wizardPfStepsIndicator).get()))
+                                                .add(stepsNames = ul().css(wizardPfStepsIndicator).element()))
                                         .add(div().css(wizardPfRow)
                                                 .add(mainContainer = div().css(wizardPfMain, wizardHalNoSidebar)
-                                                        .add(blankSlate = div().css(blankSlatePf).get())
-                                                        .get())))
+                                                        .add(blankSlate = div().css(blankSlatePf).element())
+                                                        .element())))
                                 .add(div().css(modalFooter, wizardPfFooter)
                                         .add(cancelButton = button().css(btn, btnDefault, btnCancel)
-                                                .textContent(CONSTANTS.cancel()).get())
+                                                .textContent(CONSTANTS.cancel()).element())
                                         .add(backButton = button().css(btn, btnDefault)
                                                 .add(span().css(fontAwesome("angle-left")))
-                                                .add(span().textContent(CONSTANTS.back()))
-                                                .get())
+                                                .add(span().textContent(CONSTANTS.back())).element())
                                         .add(nextButton = button().css(btn, btnPrimary)
-                                                .add(nextText = span().textContent(CONSTANTS.next()).get())
-                                                .add(nextIcon = span().css(fontAwesome("angle-right")).get())
-                                                .get()))))
-                .get();
+                                                .add(nextText = span().textContent(CONSTANTS.next()).element())
+                                                .add(nextIcon = span().css(fontAwesome("angle-right")).element())
+                                                .element())))).element();
 
         document.body.appendChild(root);
         initEventHandler();
@@ -206,9 +202,9 @@ public class Wizard<C, S extends Enum<S>> {
         blankSlate.classList.add(wizardPfProcess);
         Elements.removeChildrenFrom(blankSlate);
 
-        blankSlate.appendChild(div().css(spinner, spinnerLg, blankSlatePfIcon).get());
-        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).get());
-        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).get());
+        blankSlate.appendChild(div().css(spinner, spinnerLg, blankSlatePfIcon).element());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).element());
+        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).element());
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
         Elements.setVisible(blankSlate, true);
@@ -249,10 +245,9 @@ public class Wizard<C, S extends Enum<S>> {
         Elements.removeChildrenFrom(blankSlate);
 
         blankSlate.appendChild(div().css(wizardPfSuccessIcon)
-                .add(span().css(glyphicon("ok-circle")))
-                .get());
-        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).get());
-        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).get());
+                .add(span().css(glyphicon("ok-circle"))).element());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).element());
+        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).element());
 
         if (successButton != null && successAction != null) {
             blankSlate.appendChild(button().css(btn, btnLg, btnPrimary)
@@ -260,8 +255,7 @@ public class Wizard<C, S extends Enum<S>> {
                     .on(click, event -> {
                         successAction.execute(context);
                         close();
-                    })
-                    .get());
+                    }).element());
         }
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
@@ -303,24 +297,20 @@ public class Wizard<C, S extends Enum<S>> {
         Elements.removeChildrenFrom(blankSlate);
 
         blankSlate.appendChild(div().css(wizardPfErrorIcon)
-                .add(span().css(glyphicon("remove-circle")))
-                .get());
-        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).get());
+                .add(span().css(glyphicon("remove-circle"))).element());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).element());
         HTMLParagraphElement p = p().css(blankSlatePfSecondaryAction)
-                .innerHtml(text)
-                .get();
+                .innerHtml(text).element();
         blankSlate.appendChild(p);
         if (error != null) {
             String id = Ids.uniqueId();
             p.appendChild(a(HASH + id).css(marginLeft5)
-                    .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
-                    .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                    .aria(UIConstants.CONTROLS, id)
-                    .textContent(CONSTANTS.details())
-                    .get());
-            p.appendChild(div().css(collapse).id(id).aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                    .add(pre().css(wizardHalErrorText).textContent(error))
-                    .get());
+                    .data(TOGGLE, COLLAPSE)
+                    .aria(EXPANDED, FALSE)
+                    .aria(CONTROLS, id)
+                    .textContent(CONSTANTS.details()).element());
+            p.appendChild(div().css(collapse).id(id).aria(EXPANDED, FALSE)
+                    .add(pre().css(wizardHalErrorText).textContent(error)).element());
         }
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
@@ -462,12 +452,11 @@ public class Wizard<C, S extends Enum<S>> {
             HTMLLIElement li = li().css(wizardPfStep)
                     .add(a()
                             .add(span().css(wizardPfStepNumber).textContent(String.valueOf(index)))
-                            .add(span().css(wizardPfStepTitle).textContent(step.title)))
-                    .get();
+                            .add(span().css(wizardPfStepTitle).textContent(step.title))).element();
             stepIndicators.put(status, li);
             stepsNames.appendChild(li);
 
-            HTMLDivElement wrapper = div().css(wizardPfContents).add(step).get();
+            HTMLDivElement wrapper = div().css(wizardPfContents).add(step).element();
             step.attachables.forEach(Attachable::attach);
             Elements.setVisible(wrapper, false);
             mainContainer.appendChild(wrapper);

@@ -42,7 +42,7 @@ class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
     ChooseSingletonStep(Node<Context> parent, List<String> children, Resources resources) {
         super(resources.constants().chooseSingleton());
 
-        this.root = div().get();
+        this.root = div().element();
         SortedSet<String> singletons = new TreeSet<>(parent.data.getSingletons());
         SortedSet<String> existing = new TreeSet<>(children);
         singletons.removeAll(existing);
@@ -53,10 +53,8 @@ class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
                     .add(label()
                             .add(input = input(InputType.radio)
                                     .attr("name", "singleton") //NON-NLS
-                                    .attr("value", singleton)
-                                    .get())
-                            .add(span().textContent(singleton)))
-                    .get());
+                                    .attr("value", singleton).element())
+                            .add(span().textContent(singleton))).element());
             bind(input, click, event -> wizard().getContext().singleton = input.value);
         }
 

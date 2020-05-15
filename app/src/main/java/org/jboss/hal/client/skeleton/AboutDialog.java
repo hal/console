@@ -58,11 +58,12 @@ class AboutDialog {
             }
             List<HTMLElement> elements = new ArrayList<>();
             builder.build().forEach((key, value) -> {
-                elements.add(dt().textContent(key).get());
-                elements.add(dd().textContent(value).get());
+                elements.add(dt().textContent(key).element());
+                elements.add(dd().textContent(value).element());
             });
 
-            HTMLElement about = div().id(Ids.ABOUT_MODAL).css(modal, fade, in)
+            HTMLElement about = div().id(Ids.ABOUT_MODAL)
+                    .css(modal, fade, in)
                     .attr(ROLE, DIALOG)
                     .attr(TABINDEX, "-1")
                     .aria(LABELLED_BY, Ids.ABOUT_MODAL_TITLE)
@@ -81,7 +82,7 @@ class AboutDialog {
                                                             .addAll(elements))))
                                     .add(div().css(modalFooter)
                                             .add(img(resources.theme().logos().about().getSafeUri().asString())))))
-                    .get();
+                    .element();
             document.body.appendChild(about);
         }
     }

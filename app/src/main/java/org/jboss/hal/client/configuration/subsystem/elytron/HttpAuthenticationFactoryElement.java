@@ -76,8 +76,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         HTMLElement factorySection = section()
                 .add(h(1).textContent(Names.HTTP_AUTHENTICATION_FACTORY))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .addAll(factoryTable, factoryForm)
-                .get();
+                .addAll(factoryTable, factoryForm).element();
 
         // mechanism configurations
         Metadata mcMetadata = metadata.forComplexAttribute(MECHANISM_CONFIGURATIONS);
@@ -98,8 +97,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         HTMLElement mcSection = section()
                 .add(h(1).textContent(Names.MECHANISM_CONFIGURATIONS))
                 .add(p().textContent(mcMetadata.getDescription().getDescription()))
-                .addAll(mcTable, mcForm)
-                .get();
+                .addAll(mcTable, mcForm).element();
 
         // mechanism realm configurations
         Metadata mrcMetadata = mcMetadata.forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
@@ -119,8 +117,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         HTMLElement mrcSection = section()
                 .add(h(1).textContent(Names.MECHANISM_REALM_CONFIGURATIONS))
                 .add(p().textContent(mrcMetadata.getDescription().getDescription()))
-                .addAll(mrcTable, mrcForm)
-                .get();
+                .addAll(mrcTable, mrcForm).element();
 
         pages = new Pages(id(PAGES), id(PAGE), factorySection);
         pages.addPage(id(PAGE), id(MECHANISM_CONFIGURATIONS, PAGE),

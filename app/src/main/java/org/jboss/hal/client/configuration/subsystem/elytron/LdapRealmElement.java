@@ -144,8 +144,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .add(h(1).textContent(Names.LDAP_REALM))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(ldapRealmTable)
-                .add(tabs)
-                .get();
+                .add(tabs).element();
 
         // identity mapping -> attribute mapping
         Metadata iamMetadata = metadata
@@ -166,8 +165,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         HTMLElement iamSection = section()
                 .add(h(1).textContent(Names.IDENTITY_ATTRIBUTE_MAPPING))
                 .add(p().textContent(iamMetadata.getDescription().getDescription()))
-                .addAll(iamTable, iamForm)
-                .get();
+                .addAll(iamTable, iamForm).element();
 
         pages = new Pages(id(PAGES), id(PAGE), ldapRealmSection);
         pages.addPage(id(PAGE), id(ATTRIBUTE_MAPPING, PAGE),

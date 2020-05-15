@@ -49,11 +49,10 @@ public class ChoosePasswordTypeStep extends WizardStep<PasswordContext, Password
                             .add(input(InputType.radio)
                                     .id(type.name())
                                     .attr(UIConstants.NAME, SET_PASSWORD)
-                                    .on(click, e -> wizard().getContext().type = type)
-                                    .get())
+                                    .on(click, e -> wizard().getContext().type = type).element())
                             .add(span().textContent(getDescription(type)))));
         }
-        root = builder.get();
+        root = builder.element();
     }
 
     private String getDescription(PasswordContext.PasswordType type) {

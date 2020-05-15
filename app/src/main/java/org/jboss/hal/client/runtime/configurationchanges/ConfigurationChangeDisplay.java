@@ -67,7 +67,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
         } else {
             builder.css(pfIcon(errorCircleO), listHalIconError);
         }
-        return builder.get();
+        return builder.element();
     }
 
     @Override
@@ -89,7 +89,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
                     resources.constants().operation() + ": <strong>" + op + "</strong><br/>"));
             html.append(SafeHtmlUtils.fromTrustedString(
                     resources.constants().address() + ": <strong>" + address + "</strong><br/>"));
-            HTMLPreElement elem = pre().css(formControlStatic, wrap).get();
+            HTMLPreElement elem = pre().css(formControlStatic, wrap).element();
             m.asPropertyList().forEach(prop -> {
                 boolean allowedProperties = !(prop.getName().equals(OPERATION) || prop.getName()
                         .equals(ADDRESS) || prop.getName().equals(OPERATION_HEADERS));
@@ -121,8 +121,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
 
                                 .appendEscaped(resources.constants().composite() + COLON)
                                 .appendEscaped(String.valueOf(item.isComposite()))
-                                .toSafeHtml())))
-                .get();
+                                .toSafeHtml()))).elements();
     }
 
     @Override

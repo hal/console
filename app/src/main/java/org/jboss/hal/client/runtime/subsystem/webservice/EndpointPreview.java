@@ -69,8 +69,7 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
         Elements.removeChildrenFrom(getLeadElement());
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(deploymentResource.getPath())
-                .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                .get());
+                .title(resources.messages().goTo(Names.DEPLOYMENTS)).element());
 
         previewAttributes = new PreviewAttributes<>(deploymentResource, asList(CLASS, TYPE, CONTEXT));
         previewAttributes.append(model -> {

@@ -81,30 +81,26 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                         .add(label()
                                 .apply(l -> l.htmlFor = selectMemoryId)
                                 .textContent(resources.constants().switchMemory()))
-                        .add(selectMemory)
-                        .get())
+                        .add(selectMemory).element())
                 .add(h(1).textContent(Names.MEMORY)
-                        .add(currentMemory = span().get()))
+                        .add(currentMemory = span().element()))
                 .add(p().textContent(resources.constants().cacheMemory()))
-                .addAll(memoryForms.values().stream().map(Form::element).collect(toList()))
-                .get();
+                .addAll(memoryForms.values().stream().map(Form::element).collect(toList())).element();
     }
 
     private HTMLSelectElement memorySelect() {
-        HTMLSelectElement select = Elements.select().css(selectpicker)
+        HTMLSelectElement select = select().css(selectpicker)
                 .apply(s -> {
                     s.multiple = false;
                     s.size = 1;
-                })
-                .get();
+                }).element();
 
         for (Memory memory : Memory.values()) {
-            select.appendChild(Elements.option()
+            select.appendChild(option()
                     .apply(o -> {
                         o.value = memory.resource;
                         o.text = memory.type;
-                    })
-                    .get());
+                    }).element());
         }
         return select;
     }

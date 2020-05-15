@@ -149,8 +149,7 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                                         .appendEscaped("Under The Bridge")
                                         .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
                                         .toSafeHtml()))
-                        .add(tabs))
-                .get();
+                        .add(tabs)).element();
         initElement(layout);
     }
 

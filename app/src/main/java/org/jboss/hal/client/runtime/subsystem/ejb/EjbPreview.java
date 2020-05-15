@@ -90,8 +90,7 @@ class EjbPreview extends PreviewContent<EjbNode> {
                 document.createTextNode(ejb.type.type + " @ "));
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(ejb.getPath())
-                .title(resources.messages().goTo(Names.DEPLOYMENTS))
-                .get());
+                .title(resources.messages().goTo(Names.DEPLOYMENTS)).element());
 
         attributes = new PreviewAttributes<>(ejb,
                 asList(COMPONENT_CLASS_NAME, INVOCATIONS, EXECUTION_TIME, DELIVERY_ACTIVE));
@@ -99,10 +98,9 @@ class EjbPreview extends PreviewContent<EjbNode> {
 
         poolSection = section().add(h(2, Names.POOL))
                 .add(poolUtilization = new Utilization(resources.constants().size(), resources.constants().instances(),
-                        false, true))
-                .get();
+                        false, true)).element();
         statefulSection = section().addAll(statefulAttributes = new PreviewAttributes<>(ejb, STATEFUL.type,
-                asList(CACHE_SIZE, PASSIVATED_COUNT, TOTAL_SIZE))).get();
+                asList(CACHE_SIZE, PASSIVATED_COUNT, TOTAL_SIZE))).element();
         previewBuilder().addAll(poolSection, statefulSection);
 
         ModelNode firstTimer = firstTimer(ejb);
@@ -110,7 +108,7 @@ class EjbPreview extends PreviewContent<EjbNode> {
             timer = new PreviewAttributes<>(firstTimer, Names.TIMER)
                     .append(t -> {
                         String nextTimeout = Format.mediumDateTime(new Date(t.get(NEXT_TIMEOUT).asLong()));
-                        nextTimeoutElement = span().textContent(nextTimeout).get();
+                        nextTimeoutElement = span().textContent(nextTimeout).element();
                         return new PreviewAttribute(labelBuilder.label(NEXT_TIMEOUT), nextTimeoutElement);
                     })
                     .append(t -> {

@@ -127,8 +127,8 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
             @Override
             public HTMLElement getIcon() {
                 return ModelNodeHelper.failSafeBoolean(item, STANDALONE)
-                        ? span().css(fontAwesome("puzzle-piece")).get()
-                        : span().css(fontAwesome("archive")).get();
+                        ? span().css(fontAwesome("puzzle-piece")).element()
+                        : span().css(fontAwesome("archive")).element();
             }
 
             @Override

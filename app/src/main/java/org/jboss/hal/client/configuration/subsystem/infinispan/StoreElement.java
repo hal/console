@@ -123,14 +123,12 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .add(label()
                                 .apply(l -> l.htmlFor = selectStoreId)
                                 .textContent(resources.constants().switchStore()))
-                        .add(selectStore)
-                        .get())
+                        .add(selectStore).element())
                 .add(h(1).textContent(Names.STORE)
-                        .add(currentStore = span().get()))
+                        .add(currentStore = span().element()))
                 .add(p().textContent(resources.constants().cacheStore()))
                 .add(emptyState)
-                .addAll(tabs.values().stream().map(Tabs::element).collect(toList()))
-                .get();
+                .addAll(tabs.values().stream().map(Tabs::element).collect(toList())).element();
 
         Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(headerForm, false);
@@ -138,20 +136,18 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     }
 
     private HTMLSelectElement storeSelect() {
-        HTMLSelectElement select = Elements.select().css(selectpicker)
+        HTMLSelectElement select = select().css(selectpicker)
                 .apply(s -> {
                     s.multiple = false;
                     s.size = 1;
-                })
-                .get();
+                }).element();
 
         for (Store store : Store.values()) {
-            select.appendChild(Elements.option()
+            select.appendChild(option()
                     .apply(o -> {
                         o.value = store.resource;
                         o.text = store.type;
-                    })
-                    .get());
+                    }).element());
         }
         return select;
     }

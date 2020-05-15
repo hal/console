@@ -310,12 +310,12 @@ public final class ${context.subclass} extends ${context.base} {
                         <#if content.html??>
             .add(${content.name} = div()
                 .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
-                            .get())
+                            .element())
                         <#elseif content.reference??>
             .add(${content.reference})
                         </#if>
                     </#list>
-                    .get();
+                    .element();
                     <#list primaryItem.htmlContent as htmlContent>
         expressionElements.put("${htmlContent.name}", ${htmlContent.name});
                     </#list>
@@ -332,12 +332,12 @@ public final class ${context.subclass} extends ${context.base} {
                                 <#if content.html??>
             .add(${content.name} = div()
                 .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
-                                    .get())
+                                    .element())
                                 <#elseif content.reference??>
             .add(${content.reference})
                                 </#if>
                             </#list>
-                            .get();
+                            .element();
                             <#list subItem.htmlContent as htmlContent>
         expressionElements.put("${htmlContent.name}", ${htmlContent.name});
                             </#list>
@@ -349,7 +349,7 @@ public final class ${context.subclass} extends ${context.base} {
         HTMLElement root = row()
             .add(column()
                 .addAll(${context.verticalNavigation.name}.panes()))
-            .get();
+            .element();
         <#else>
             <#if context.content?has_content>
                 <#if context.htmlContent?has_content>
@@ -361,12 +361,12 @@ public final class ${context.subclass} extends ${context.base} {
                     <#if content.html??>
                 .add(${content.name} = div()
                     .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
-                        .get())
+                        .element())
                     <#elseif content.reference??>
                 .add(${content.reference})
                     </#if>
                 </#list>)
-                .get();
+                .element();
                 <#list context.htmlContent as htmlContent>
         expressionElements.put("${htmlContent.name}", ${htmlContent.name});
                 </#list>
@@ -375,8 +375,8 @@ public final class ${context.subclass} extends ${context.base} {
             .add(
                 column()
                     .add(h(1).textContent("${context.base}"))
-                    .add(p().textContent(org.jboss.hal.resources.Names.NYI)))
-                .get();
+                .add(p().textContent(org.jboss.hal.resources.Names.NYI)))
+                .element();
             </#if>
         </#if>
 

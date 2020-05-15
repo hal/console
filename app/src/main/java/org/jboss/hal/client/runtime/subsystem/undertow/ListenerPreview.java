@@ -85,8 +85,7 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         registerAttachable(processingTime);
         processingElement = section()
                 .add(h(2, resources.constants().processingTime()))
-                .add(processingTime)
-                .get();
+                .add(processingTime).element();
 
         requests = new Donut.Builder(Names.REQUESTS)
                 .add(REQUEST_COUNT, resources.constants().requests(), PatternFly.colors.green)
@@ -97,8 +96,7 @@ class ListenerPreview extends PreviewContent<NamedNode> {
         registerAttachable(requests);
         requestsElement = section()
                 .add(h(2, resources.constants().requests()))
-                .add(requests)
-                .get();
+                .add(requests).element();
 
         previewBuilder().addAll(previewAttributes);
         previewBuilder()

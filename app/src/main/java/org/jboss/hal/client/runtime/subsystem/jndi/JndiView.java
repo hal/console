@@ -32,6 +32,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -73,12 +74,12 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
         HTMLElement root = row()
                 .add(column(4)
-                        .add(header = h(1).textContent(resources.constants().jndiTree()).get())
+                        .add(header = h(1).textContent(resources.constants().jndiTree()).element())
                         .add(div().css(flexRow)
                                 .add(div().css(btnGroup, marginRightSmall)
                                         .add(button().css(btn, btnDefault)
                                                 .on(click, event -> presenter.reload())
-                                                .add(i().css(fontAwesome(CSS.refresh))))
+                                                .add(i().css(fontAwesome(refresh))))
                                         .add(button().css(btn, btnDefault)
                                                 .on(click, event -> {
                                                     Node<JndiContext> selection = tree.getSelected();
@@ -88,12 +89,11 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
                                                 })
                                                 .add(i().css(fontAwesome("minus")))))
                                 .add(search))
-                        .add(treeContainer = div().css(CSS.treeContainer).get()))
+                        .add(treeContainer = div().css(CSS.treeContainer).element()))
                 .add(column(8)
                         .add(h(1).textContent(resources.constants().details()))
-                        .add(hint = p().textContent(resources.constants().noDetails()).get())
-                        .add(details))
-                .get();
+                        .add(hint = p().textContent(resources.constants().noDetails()).element())
+                        .add(details)).element();
         initElement(root);
     }
 

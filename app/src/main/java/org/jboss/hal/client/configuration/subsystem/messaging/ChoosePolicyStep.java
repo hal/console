@@ -56,7 +56,7 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
                                                 .id(Ids.MESSAGING_HA_REPLICATION_LIVE_ONLY)
                                                 .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
                                                 .on(click, e -> wizard().getContext().haPolicy = HaPolicy.LIVE_ONLY)
-                                                .get())
+                                                .element())
                                         .add(span().innerHtml(resources.messages().replicationLiveOnly()))))
                         .add(div().css(radio)
                                 .add(label()
@@ -65,7 +65,7 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
                                                 .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
                                                 .on(click,
                                                         e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_MASTER)
-                                                .get())
+                                                .element())
                                         .add(span().innerHtml(resources.messages().replicationMaster()))))
                         .add(div().css(radio)
                                 .add(label()
@@ -74,7 +74,7 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
                                                 .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
                                                 .on(click,
                                                         e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_SLAVE)
-                                                .get())
+                                                .element())
                                         .add(span().innerHtml(resources.messages().replicationSlave()))))
                         .add(div().css(radio)
                                 .add(label()
@@ -83,9 +83,8 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
                                                 .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
                                                 .on(click,
                                                         e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_COLOCATED)
-                                                .get())
-                                        .add(span().innerHtml(resources.messages().replicationColocated()))))
-                        .get())
+                                                .element())
+                                        .add(span().innerHtml(resources.messages().replicationColocated())))).element())
 
                 .add(sharedStoreForm = div().css(formHorizontal)
                         .add(p().innerHtml(resources.messages().chooseSharedStore()))
@@ -96,7 +95,7 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
                                                 .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
                                                 .on(click,
                                                         e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_MASTER)
-                                                .get())
+                                                .element())
                                         .add(span().innerHtml(resources.messages().sharedStoreMaster()))))
                         .add(div().css(radio)
                                 .add(label()
@@ -105,7 +104,7 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
                                                 .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
                                                 .on(click,
                                                         e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_SLAVE)
-                                                .get())
+                                                .element())
                                         .add(span().innerHtml(resources.messages().sharedStoreSlave()))))
                         .add(div().css(radio)
                                 .add(label()
@@ -114,10 +113,9 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
                                                 .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
                                                 .on(click,
                                                         e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_COLOCATED)
-                                                .get())
-                                        .add(span().innerHtml(resources.messages().sharedStoreColocated()))))
-                        .get())
-                .get();
+                                                .element())
+                                        .add(span().innerHtml(resources.messages().sharedStoreColocated())))).element())
+                .element();
     }
 
     @Override

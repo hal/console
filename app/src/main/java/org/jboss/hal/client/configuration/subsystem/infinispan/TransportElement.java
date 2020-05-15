@@ -67,8 +67,7 @@ class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .add(h(1).textContent(Names.JGROUPS))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(emptyState)
-                .add(form)
-                .get();
+                .add(form).element();
 
         Elements.setVisible(emptyState.element(), false);
         Elements.setVisible(form.element(), false);

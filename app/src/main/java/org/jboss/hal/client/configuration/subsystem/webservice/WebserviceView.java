@@ -65,8 +65,7 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
         HTMLElement webservicesSection = section()
                 .add(h(1).textContent(Names.WEBSERVICES_CONFIGURATION))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(webservicesForm)
-                .get();
+                .add(webservicesForm).element();
 
         clientConfig = new ConfigElement(CLIENT_CONFIG, metadataRegistry, tableButtonFactory);
         endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, tableButtonFactory);

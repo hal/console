@@ -67,8 +67,7 @@ public class Pages implements IsElement {
 
         root = div().id(id)
                 .add(mainPage)
-                .add(breadcrumb)
-                .get();
+                .add(breadcrumb).element();
         showMain();
     }
 

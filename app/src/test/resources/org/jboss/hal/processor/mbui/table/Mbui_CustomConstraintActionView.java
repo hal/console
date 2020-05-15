@@ -47,7 +47,7 @@ public final class Mbui_CustomConstraintActionView extends CustomConstraintActio
 
     @Inject
     @SuppressWarnings("unchecked")
-    public Mbui_CustomActionView(MbuiContext mbuiContext) {
+    public Mbui_CustomConstraintActionView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
@@ -64,10 +64,10 @@ public final class Mbui_CustomConstraintActionView extends CustomConstraintActio
                 .add(column()
                         .add(html0 = div()
                                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Table</h1>"))
-                                .get())
+                                .element())
                         .add(table)
                 )
-                .get();
+                .element();
         expressionElements.put("html0", html0);
 
         registerAttachable(table);

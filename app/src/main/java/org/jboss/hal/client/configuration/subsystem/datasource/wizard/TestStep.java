@@ -90,8 +90,7 @@ class TestStep extends WizardStep<Context, State> {
                         .add(button(resources.constants().testConnection())
                                 .id(Ids.DATA_SOURCE_TEST_CONNECTION)
                                 .css(btn, btnLg, btnPrimary)
-                                .on(click, event -> testConnection())))
-                .get();
+                                .on(click, event -> testConnection()))).element();
     }
 
     @Override

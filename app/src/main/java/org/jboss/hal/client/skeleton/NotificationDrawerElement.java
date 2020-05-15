@@ -17,7 +17,6 @@ package org.jboss.hal.client.skeleton;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -26,6 +25,7 @@ import org.jboss.hal.spi.Message;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.resources.CSS.time;
 import static org.jboss.hal.resources.CSS.*;
 
 /** One item in {@link NotificationDrawer} */
@@ -47,7 +47,7 @@ class NotificationDrawerElement implements IsElement {
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                                 .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                                 .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                                .add(span().css(CSS.fontAwesome("ellipsis-v"))))
+                                .add(span().css(fontAwesome("ellipsis-v"))))
                         .add(ul().css(dropdownMenu, dropdownMenuRight)
                                 .aria(UIConstants.LABELLED_BY, dropdownId)
                                 .add(li()
@@ -58,13 +58,12 @@ class NotificationDrawerElement implements IsElement {
                                         .add(a().css(clickable)
                                                 .on(click, event -> notificationDrawer.remove(id))
                                                 .textContent(resources.constants().remove())))))
-                .add(iconContainer = span().css(pullLeft).get())
+                .add(iconContainer = span().css(pullLeft).element())
                 .add(div().css(drawerPfNotificationContent)
                         .add(span().css(drawerPfNotificationMessage).innerHtml(message.getMessage()))
                         .add(div().css(drawerPfNotificationInfo)
                                 .add(span().css(date).textContent(message.getDate()))
-                                .add(span().css(time).textContent(message.getTime()))))
-                .get();
+                                .add(span().css(time).textContent(message.getTime())))).element();
 
         String css = null;
         switch (message.getLevel()) {

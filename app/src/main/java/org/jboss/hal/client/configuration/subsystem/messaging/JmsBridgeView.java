@@ -116,8 +116,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
         HTMLElement htmlSection = section()
                 .add(h(1).textContent(Names.JMS_BRIDGE))
                 .add(p().textContent(jmsBridgeMetadata.getDescription().getDescription()))
-                .add(tabs)
-                .get();
+                .add(tabs).element();
 
         initElement(htmlSection);
     }

@@ -158,9 +158,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
                     .add(a().id(extension.name)
                             .css(clickable)
                             .textContent(extension.title)
-                            .on(click, event -> extension.entryPoint.execute())
-                            .get())
-                    .get();
+                            .on(click, event -> extension.entryPoint.execute()).element()).element();
 
             elemental2.dom.Element ul;
             elemental2.dom.Element dropdown;

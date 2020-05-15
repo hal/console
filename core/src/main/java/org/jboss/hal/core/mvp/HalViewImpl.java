@@ -59,8 +59,7 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
                         .add(code().textContent("initElement(Element)"))
                         .add(span().textContent(" / "))
                         .add(code().textContent("initElements(Iterable<Element>)"))
-                        .add(span().textContent("?")))
-                .get();
+                        .add(span().textContent("?"))).element();
     }
 
     protected void initElement(IsElement element) {

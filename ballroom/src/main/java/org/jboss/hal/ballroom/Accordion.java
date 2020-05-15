@@ -43,8 +43,7 @@ public class Accordion implements IsElement {
                 .id(id)
                 .css(panelGroup)
                 .aria("multiselectable", UIConstants.TRUE)
-                .attr(UIConstants.ROLE, UIConstants.TABLIST)
-                .get();
+                .attr(UIConstants.ROLE, UIConstants.TABLIST).element();
     }
 
     public void add(String id, String title, HTMLElement first, HTMLElement... rest) {
@@ -64,8 +63,7 @@ public class Accordion implements IsElement {
                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                                         .textContent(title))))
                 .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : null).aria("labelledby", headerId)
-                        .add(body = div().css(panelBody).get()))
-                .get();
+                        .add(body = div().css(panelBody).element())).element();
 
         fillBody(body, first, rest);
         root.appendChild(div);

@@ -64,8 +64,7 @@ class OperationsTable implements IsElement {
                                 .add(th().textContent(Names.NAME))
                                 .add(th().textContent(resources.constants().input()))
                                 .add(th().textContent(resources.constants().output()))))
-                .add(tbody = tbody().get())
-                .get();
+                .add(tbody = tbody().element()).element();
 
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(operations)) {
             ModelNode operation = property.getValue();
@@ -86,15 +85,15 @@ class OperationsTable implements IsElement {
 
             // input
             HTMLElement inputTd;
-            builder.add(inputTd = td().get());
+            builder.add(inputTd = td().element());
             if (operation.hasDefined(REQUEST_PROPERTIES) && !operation.get(REQUEST_PROPERTIES).asPropertyList()
                     .isEmpty()) {
                 List<Property> input = operation.get(REQUEST_PROPERTIES).asPropertyList();
                 HTMLElement ul;
-                inputTd.appendChild(ul = ul().css(operationParameter).get());
+                inputTd.appendChild(ul = ul().css(operationParameter).element());
                 for (Property parameter : Ordering.natural().onResultOf(Property::getName).sortedCopy(input)) {
                     HTMLElement li;
-                    ul.appendChild(li = li().get());
+                    ul.appendChild(li = li().element());
                     buildParameter(li, parameter.getName(), parameter.getValue());
                 }
             } else {
@@ -103,14 +102,14 @@ class OperationsTable implements IsElement {
 
             // output
             HTMLElement outputTd;
-            builder.add(outputTd = td().get());
+            builder.add(outputTd = td().element());
             if (operation.hasDefined(REPLY_PROPERTIES) && !operation.get(REPLY_PROPERTIES).asList().isEmpty()) {
                 buildParameter(outputTd, null, operation.get(REPLY_PROPERTIES));
             } else {
                 outputTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
-            tbody.appendChild(builder.get());
+            tbody.appendChild(builder.element());
         }
     }
 

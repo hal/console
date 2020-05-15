@@ -75,7 +75,7 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
         if (stacked) {
             div.css(listPfStacked);
         }
-        this.root = div.get();
+        this.root = div.element();
     }
 
     @Override

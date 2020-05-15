@@ -98,11 +98,9 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
                 .build();
         HTMLElement loadProviderDynamicElement = section()
                 .add(div()
-                        .add(h(1).textContent(Names.LOAD_PROVIDER_DYNAMIC))
-                        .add(p().textContent(dynamicMetadata.getDescription().getDescription()))
-                        .get())
-                .add(loadProviderDynamicForm)
-                .get();
+                        .add(h(1).textContent(LOAD_PROVIDER_DYNAMIC))
+                        .add(p().textContent(dynamicMetadata.getDescription().getDescription())).element())
+                .add(loadProviderDynamicForm).element();
         navigation.insertPrimary("load-provider-dynamic-item", "custom-load-metrics-item", LOAD_PROVIDER_DYNAMIC,
                 "fa fa-shield", loadProviderDynamicElement);
         registerAttachable(loadProviderDynamicForm);
@@ -133,10 +131,8 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
         HTMLElement loadProviderSimpleElement = section()
                 .add(div()
                         .add(h(1).textContent(LOAD_PROVIDER_SIMPLE))
-                        .add(p().textContent(simpleMetadata.getDescription().getDescription()))
-                        .get())
-                .add(loadProviderSimpleForm)
-                .get();
+                        .add(p().textContent(simpleMetadata.getDescription().getDescription())).element())
+                .add(loadProviderSimpleForm).element();
         navigation.insertPrimary("load-provider-simple-item", "load-provider-dynamic-item", LOAD_PROVIDER_SIMPLE,
                 "fa fa-exchange", loadProviderSimpleElement);
         registerAttachable(loadProviderSimpleForm);

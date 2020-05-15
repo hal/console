@@ -219,7 +219,7 @@ public class ContentColumn extends FinderColumn<Content> {
             @Override
             public HTMLElement getIcon() {
                 String icon = item.isExploded() ? fontAwesome("folder-open") : fontAwesome("archive");
-                return span().css(icon).get();
+                return span().css(icon).element();
             }
 
             @Override
@@ -391,6 +391,8 @@ public class ContentColumn extends FinderColumn<Content> {
                 .primary(resources.constants().replace(), () -> {
                     boolean valid = uploadElement.validate();
                     if (valid) {
+                        ReplaceDeploymentPanel replaceDeploymentPanel = new ReplaceDeploymentPanel();
+                        replaceDeploymentPanel.on();
                         series(new FlowContext(progress.get()),
                                 new CheckDeployment(dispatcher, content.getName()),
                                 // To replace an existing content, the original name and runtime-name must be preserved.
@@ -399,6 +401,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                 .subscribe(new Outcome<FlowContext>() {
                                     @Override
                                     public void onError(FlowContext context, Throwable error) {
+                                        replaceDeploymentPanel.off();
                                         MessageEvent.fire(eventBus, Message.error(
                                                 resources.messages().contentReplaceError(content.getName()),
                                                 error.getMessage()));
@@ -407,6 +410,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                     @Override
                                     public void onSuccess(FlowContext context) {
                                         refresh(Ids.content(content.getName()));
+                                        replaceDeploymentPanel.off();
                                         MessageEvent.fire(eventBus, Message.success(
                                                 resources.messages().contentReplaceSuccess(content.getName())));
                                     }

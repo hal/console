@@ -75,6 +75,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -240,7 +241,7 @@ class BrowseContentElement implements IsElement, Attachable {
                                                 .add(button().css(btn, btnDefault)
                                                         .on(click, event -> refresh())
                                                         .title(resources.constants().refresh())
-                                                        .add(i().css(fontAwesome(CSS.refresh))))
+                                                        .add(i().css(fontAwesome(refresh))))
                                                 .add(collapseButton = button().css(btn, btnDefault)
                                                         .on(click, event -> {
                                                             Node<ContentEntry> selection = tree.getSelected();
@@ -249,41 +250,34 @@ class BrowseContentElement implements IsElement, Attachable {
                                                             }
                                                         })
                                                         .title(resources.constants().collapse())
-                                                        .add(i().css(fontAwesome("minus")))
-                                                        .get()))
+                                                        .add(i().css(fontAwesome("minus"))).element()))
                                         .add(crudContainer = div().css(btnGroup)
                                                 .add(downloadContentLink = a().css(btn, btnDefault)
                                                         .title(resources.constants().download())
                                                         .attr(UIConstants.TARGET, "_blank") //NON-NLS
                                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
-                                                        .add(span().css(fontAwesome("download")))
-                                                        .get())
-                                                .get()))
+                                                        .add(span().css(fontAwesome("download"))).element()).element()))
                                 .add(treeSearch))
-                        .add(treeContainer = div().css(CSS.treeContainer).get()))
+                        .add(treeContainer = div().css(CSS.treeContainer).element()))
                 .add(column(8)
                         .add(div().css(marginTopLarge, marginBottomLarge)
                                 .add(previewContainer = div()
                                         .add(previewHeader = h(1)
-                                                .textContent(resources.constants().preview())
-                                                .get())
+                                                .textContent(resources.constants().preview()).element())
                                         .add(previewImageContainer = div()
                                                 .style("overflow: scroll") //NON-NLS
-                                                .add(previewImage = img().css(imgResponsive, imgThumbnail).get())
-                                                .get())
-                                        .get())
+                                                .add(previewImage = img().css(imgResponsive, imgThumbnail).element())
+                                                .element()).element())
                                 .add(editorControls = div().css(CSS.editorControls, marginBottomSmall)
                                         .add(contentSearch)
                                         .add(div().add(editorStatus = span()
-                                                .textContent(resources.constants().nothingSelected())
-                                                .get()))
-                                        .get())
+                                                .textContent(resources.constants().nothingSelected()).element()))
+                                        .element())
                                 .add(editor)
                                 .add(pleaseSelect)
                                 .add(deploymentPreview)
                                 .add(explodedPreview)
-                                .add(unsupportedFileType)))
-                .get();
+                                .add(unsupportedFileType))).element();
 
         boolean supported = !(Browser.isEdge() || Browser.isIE());
         AuthorisationDecision ad = AuthorisationDecision.from(environment, metadata.getSecurityContext());
@@ -291,19 +285,16 @@ class BrowseContentElement implements IsElement, Attachable {
             addContentButton = Optional.of(button().css(btn, btnDefault)
                     .on(click, event -> addContent())
                     .title(resources.constants().newContent())
-                    .add(i().css(fontAwesome("file-o")))
-                    .get());
+                    .add(i().css(fontAwesome("file-o"))).element());
             uploadContentButton = Optional.of(button().css(btn, btnDefault)
                     .on(click, event -> uploadContent())
                     .title(resources.constants().uploadContent())
                     .title(resources.constants().addContent())
-                    .add(i().css(fontAwesome("upload")))
-                    .get());
+                    .add(i().css(fontAwesome("upload"))).element());
             saveContentButton = Optional.of(button().css(btn, btnDefault, marginRightSmall)
                     .on(click, event -> saveContent())
                     .title(resources.constants().save())
-                    .add(span().css(fontAwesome("floppy-o")))
-                    .get());
+                    .add(span().css(fontAwesome("floppy-o"))).element());
             crudContainer.insertBefore(addContentButton.get(), downloadContentLink);
             crudContainer.insertBefore(uploadContentButton.get(), downloadContentLink);
             editorControls.insertBefore(saveContentButton.get(), contentSearch.element());
@@ -317,8 +308,7 @@ class BrowseContentElement implements IsElement, Attachable {
             removeContentButton = Optional.of(button().css(btn, btnDefault)
                     .on(click, event -> removeContent())
                     .title(resources.constants().removeContent())
-                    .add(i().css(pfIcon("remove")))
-                    .get());
+                    .add(i().css(pfIcon("remove"))).element());
             crudContainer.appendChild(removeContentButton.get());
         } else {
             removeContentButton = Optional.empty();
@@ -505,7 +495,7 @@ class BrowseContentElement implements IsElement, Attachable {
         });
 
         Dialog dialog = new Dialog.Builder(resources.constants().uploadContent())
-                .add(p().innerHtml(resources.messages().uploadContentDescription()).get())
+                .add(p().innerHtml(resources.messages().uploadContentDescription()).element())
                 .add(form.element())
                 .primary(resources.constants().upload(), form::save)
                 .size(Dialog.Size.MEDIUM)

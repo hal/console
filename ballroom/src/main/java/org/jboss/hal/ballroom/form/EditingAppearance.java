@@ -28,6 +28,8 @@ import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -46,7 +48,6 @@ import static org.jboss.hal.resources.CSS.*;
  * &lt;/div&gt;
  * </pre>
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
     final HTMLElement root;
@@ -74,11 +75,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         this.inputType = inputElement.type;
         this.masked = false;
         this.root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).get())
+                .add(labelElement = label().css(controlLabel, halFormLabel).element())
                 .add(inputContainer = div().css(halFormInput)
-                        .add(inputElement)
-                        .get())
-                .get();
+                        .add(inputElement).element()).element();
         this.inputGroup = Appearance.inputGroup();
         this.helpBlock = Appearance.helpBlock();
     }
@@ -113,7 +112,6 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     private void mask() {
         inputElement.type = "password";
         inputElement.focus();
@@ -123,7 +121,6 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         masked = true;
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     private void unmask() {
         inputElement.type = inputType;
         inputElement.focus();
@@ -190,9 +187,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         if (expressionContainer == null) {
             expressionContainer = span().css(inputGroupBtn)
                     .add(expressionButton = button().css(btn, btnDefault).title(CONSTANTS.resolveExpression())
-                            .add(i().css(fontAwesome("link")))
-                            .get())
-                    .get();
+                            .add(i().css(fontAwesome("link"))).element()).element();
         }
 
         if (!hasInputGroup()) {
@@ -264,9 +259,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                                     mask();
                                 }
                             })
-                            .add(peekIcon = i().css(fontAwesome("eye")).get())
-                            .get())
-                    .get();
+                            .add(peekIcon = i().css(fontAwesome("eye")).element()).element()).element();
         }
 
         if (!hasInputGroup()) {
@@ -283,9 +276,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                             .css(btn, btnDefault)
                             .title(CONSTANTS.showAll())
                             .on(click, event -> suggestHandler.showAll())
-                            .add(i().css(fontAwesome("angle-down")))
-                            .get())
-                    .get();
+                            .add(i().css(fontAwesome("angle-down"))).element()).element();
 
             if (!hasInputGroup()) {
                 wrapInputElement();

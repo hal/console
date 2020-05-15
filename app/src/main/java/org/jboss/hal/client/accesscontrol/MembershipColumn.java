@@ -169,7 +169,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
 
             @Override
             public HTMLElement getIcon() {
-                HTMLElement icon = span().get();
+                HTMLElement icon = span().element();
                 if (item.isInclude()) {
                     icon.className = fontAwesome("plus");
                 } else {

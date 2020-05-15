@@ -62,8 +62,7 @@ public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState
                                         .on(click, e -> {
                                             restartServers = true;
                                             //restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
-                                        })
-                                        .get())
+                                        }).element())
                                 .add(span().innerHtml(resources.messages().patchStopServersDialogMessage1()))))
                 .add(div().css(radio)
                         .add(label()
@@ -73,10 +72,9 @@ public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState
                                         .on(click, e -> {
                                             restartServers = false;
                                             //restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
-                                        })
-                                        .get())
+                                        }).element())
                                 .add(span().innerHtml(resources.messages().patchStopServersDialogMessage2()))))
-                .get();
+                .element();
 
     }
 

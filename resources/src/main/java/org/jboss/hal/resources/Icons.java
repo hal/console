@@ -47,50 +47,50 @@ public interface Icons {
     // ------------------------------------------------------ icon elements
 
     static HTMLElement disabled() {
-        return span().css(DISABLED).get();
+        return span().css(DISABLED).element();
     }
 
     static HTMLElement disconnected() {
-        return span().css(DISCONNECTED).get();
+        return span().css(DISCONNECTED).element();
     }
 
     static HTMLElement error() {
-        return span().css(ERROR).get();
+        return span().css(ERROR).element();
     }
 
     static HTMLElement info() {
-        return span().css(INFO).get();
+        return span().css(INFO).element();
     }
 
     static HTMLElement lock() {
-        return span().css(LOCK).get();
+        return span().css(LOCK).element();
     }
 
     static HTMLElement ok() {
-        return span().css(OK).get();
+        return span().css(OK).element();
     }
 
     static HTMLElement paused() {
-        return span().css(PAUSED).get();
+        return span().css(PAUSED).element();
     }
 
     static HTMLElement pending() {
-        return span().css(PENDING).get();
+        return span().css(PENDING).element();
     }
 
     static HTMLElement stopped() {
-        return span().css(STOPPED).get();
+        return span().css(STOPPED).element();
     }
 
     static HTMLElement warning() {
-        return span().css(WARNING).get();
+        return span().css(WARNING).element();
     }
 
     static HTMLElement unknown() {
-        return span().css(UNKNOWN).get();
+        return span().css(UNKNOWN).element();
     }
 
     static HTMLElement custom(String css) {
-        return span().css(css).get();
+        return span().css(css).element();
     }
 }

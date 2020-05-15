@@ -290,7 +290,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             keycloakHolder.getKeycloak().logout(null);
         } else {
             Dialog dialog = new Dialog.Builder(resources.constants().logout())
-                    .add(p().innerHtml(resources.messages().closeToLogout()).get())
+                    .add(p().innerHtml(resources.messages().closeToLogout()).element())
                     .primary(resources.constants().ok(), () -> true)
                     .build();
             dialog.show();

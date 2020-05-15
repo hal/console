@@ -51,7 +51,7 @@ class ToastNotificationDialog {
 
         dialog = new Dialog.Builder(CONSTANTS.message())
                 .closeOnly()
-                .add(builder.get())
+                .add(builder.elements())
                 .build();
     }
 

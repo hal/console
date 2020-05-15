@@ -157,14 +157,13 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         HTMLElement root = row()
                 .add(column()
-                        .add(header = h(1).textContent(Names.DATASOURCE).get())
+                        .add(header = h(1).textContent(Names.DATASOURCE).element())
                         .add(p().css(clearfix)
                                 .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                         .add(span().css(fontAwesome("refresh"), marginRight5))
                                         .add(span().textContent(resources.constants().refresh()))))
                         .add(nonXaTabs)
-                        .add(xaTabs))
-                .get();
+                        .add(xaTabs)).element();
 
         registerAttachables(asList(poolForm, xaPoolForm, jdbcForm, xaJdbcForm));
         initElement(root);

@@ -44,7 +44,7 @@ public class FileItem extends AbstractFormItem<File> {
         super(name, label, null);
         addAppearance(Form.State.READONLY, new FileReadOnlyAppearance());
 
-        fileInput = input(file).css(formControl).get();
+        fileInput = input(file).css(formControl).element();
         FileEditingAppearance editingAppearance = new FileEditingAppearance(fileInput);
         addAppearance(Form.State.EDITING, editingAppearance);
     }
@@ -99,11 +99,9 @@ public class FileItem extends AbstractFormItem<File> {
 
             inputGroup.appendChild(label().css(inputGroupBtn)
                     .add(span().css(btn, btnPrimary).textContent(CONSTANTS.browse())
-                            .add(inputElement))
-                    .get());
+                            .add(inputElement)).element());
             inputGroup.appendChild(filename = input(text).css(formControl)
-                    .attr(UIConstants.READONLY, "")
-                    .get());
+                    .attr(UIConstants.READONLY, "").element());
             Elements.removeChildrenFrom(inputContainer);
             inputContainer.appendChild(inputGroup);
         }

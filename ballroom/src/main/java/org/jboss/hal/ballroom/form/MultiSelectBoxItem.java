@@ -40,8 +40,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
                 .apply(select -> {
                     select.size = 1;
                     select.multiple = true;
-                })
-                .get();
+                }).element();
         addAppearance(Form.State.EDITING, new MultiSelectBoxEditingAppearance(selectElement, options));
     }
 

@@ -81,11 +81,11 @@ public final class Mbui_AttributeGroupsView extends AttributeGroupsView {
                 .add(column()
                         .add(html0 = div()
                                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Master-Detail</h1>"))
-                                .get())
+                                .element())
                         .add(table)
                         .add(form)
                 )
-                .get();
+                .element();
         expressionElements.put("html0", html0);
 
         registerAttachable(table);

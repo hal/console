@@ -49,8 +49,7 @@ public class RadioItem extends AbstractFormItem<String> {
         List<HTMLInputElement> elements = new ArrayList<>();
         for (String ignore : options.keySet()) {
             elements.add(input(radio)
-                    .on(change, e -> modifyValue(((HTMLInputElement) e.target).value))
-                    .get());
+                    .on(change, e -> modifyValue(((HTMLInputElement) e.target).value)).element());
         }
         addAppearance(Form.State.EDITING, new RadioEditingAppearance(elements, options, inline));
     }

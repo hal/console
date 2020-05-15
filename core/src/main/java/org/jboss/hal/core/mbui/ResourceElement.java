@@ -211,15 +211,13 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             section = section()
                     .add(h(1).textContent(builder.type))
                     .add(p().textContent(builder.metadata.getDescription().getDescription()))
-                    .addAll(table, tabs)
-                    .get();
+                    .addAll(table, tabs).element();
 
         } else {
             section = section()
                     .add(h(1).textContent(builder.type))
                     .add(p().textContent(builder.metadata.getDescription().getDescription()))
-                    .addAll(table, form)
-                    .get();
+                    .addAll(table, form).element();
         }
 
         // complex attributes of type LIST
@@ -248,8 +246,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             HTMLElement clSection = section()
                     .add(h(1).textContent(labelBuilder.label(builder.clAttribute)))
                     .add(p().textContent(metadata.getDescription().getDescription()))
-                    .addAll(clTable, clForm)
-                    .get();
+                    .addAll(clTable, clForm).element();
 
             pages.addPage(mainPageId(), complexListPageId(),
                     () -> builder.type + ": " + selectedResource,

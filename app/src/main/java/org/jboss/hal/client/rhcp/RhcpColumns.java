@@ -185,8 +185,7 @@ public class RhcpColumns {
                                             .add(span().textContent("More infos: "))
                                             .add(a(item.getString("url"))
                                                     .attr("target", "_blank")
-                                                    .textContent(item.getString("url"))))
-                                    .get())));
+                                                    .textContent(item.getString("url")))).elements())));
         }
     }
 
@@ -236,16 +235,14 @@ public class RhcpColumns {
                         String length = item.getString("length");
                         HTMLElement ul = ul()
                                 .add(li().css(listGroupItem).textContent("Album: " + album))
-                                .add(li().css(listGroupItem).textContent("Length: " + length))
-                                .get();
+                                .add(li().css(listGroupItem).textContent("Length: " + length)).element();
                         if (item.hasKey("writer")) {
                             List<String> writers = new ArrayList<>();
                             for (int i = 0; i < item.getArray("writer").length(); i++) {
                                 writers.add(item.getArray("writer").getString(i));
                             }
                             ul.appendChild(li().css(listGroupItem)
-                                    .textContent("Writer: " + String.join(", ", writers))
-                                    .get());
+                                    .textContent("Writer: " + String.join(", ", writers)).element());
                         }
                         return new PreviewContent<>(item.getString(TITLE), ul);
                     }));

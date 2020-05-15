@@ -69,8 +69,7 @@ class LoggingPreview<T> extends PreviewContent<T> {
         previewBuilder()
                 .add(undefined = div()
                         .add(h(2).textContent(ROOT_LOGGER))
-                        .add(p().textContent(resources.constants().noRootLoggerDescription()))
-                        .get());
+                        .add(p().textContent(resources.constants().noRootLoggerDescription())).element());
         Elements.setVisible(undefined, false);
     }
 

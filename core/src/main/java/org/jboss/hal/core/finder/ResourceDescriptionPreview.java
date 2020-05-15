@@ -30,7 +30,7 @@ public class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata
 
     public ResourceDescriptionPreview(String header, Dispatcher dispatcher, Operation rrd) {
         super(header);
-        HTMLElement content = section().get();
+        HTMLElement content = section().element();
         previewBuilder().add(content);
         dispatcher.execute(rrd, result -> {
             if (result.hasDefined(DESCRIPTION)) {

@@ -92,7 +92,7 @@ public class DataTable<T> implements Table<T> {
     public DataTable(String id, Options<T> options) {
         this.id = id;
         this.options = options;
-        this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, tableHover).get();
+        this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, tableHover).element();
         if (options.buttons != null && options.buttons.buttons != null) {
             for (Api.Button<T> button : options.buttons.buttons) {
                 button.table = this;

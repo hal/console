@@ -64,12 +64,10 @@ class GetRolesElement implements IsElement<HTMLElement>, HasPresenter<ServerPres
                             if (Key.Enter.match(event)) {
                                 presenter.getRoles(addressMatch.value);
                             }
-                        })
-                        .get())
+                        }).element())
                 .add(button().css(btn, btnHal, btnDefault)
                         .textContent(resources.constants().getRoles())
-                        .on(click, event -> presenter.getRoles(addressMatch.value)))
-                .get();
+                        .on(click, event -> presenter.getRoles(addressMatch.value))).element();
     }
 
     @Override

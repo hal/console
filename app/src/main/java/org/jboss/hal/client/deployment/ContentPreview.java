@@ -83,8 +83,7 @@ class ContentPreview extends PreviewContent<Content> {
                             .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
                     .add(span()
                             .title(labelBuilder.label(EXPLODED))
-                            .css(flag(failSafeBoolean(model, EXPLODED))))
-                    .get();
+                            .css(flag(failSafeBoolean(model, EXPLODED)))).elements();
             return new PreviewAttribute(label, elements);
         });
         if (!content.isManaged()) {
@@ -100,17 +99,15 @@ class ContentPreview extends PreviewContent<Content> {
                 .add(h(2).textContent(resources.constants().deployments()))
                 .add(deploymentsDiv = div()
                         .add(p().innerHtml(resources.messages().deployedTo(content.getName())))
-                        .add(deploymentsUl = ul().get())
-                        .get())
+                        .add(deploymentsUl = ul().element()).element())
                 .add(undeployedContentDiv = div()
                         .add(p = p()
                                 .add(span()
                                         .innerHtml(resources.messages().undeployedContent(content.getName())))
-                                .get())
-                        .get());
+                                .element()).element());
         if (authorisationDecision.isAllowed(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))) {
             p.appendChild(a().css(clickable, marginLeft5).on(click, event -> column.deploy(content))
-                    .textContent(resources.constants().deploy()).get());
+                    .textContent(resources.constants().deploy()).element());
         }
     }
 
@@ -135,15 +132,13 @@ class ContentPreview extends PreviewContent<Content> {
                         .build();
                 String serverGroupToken = places.historyToken(serverGroupPlaceRequest);
                 HTMLElement li = li()
-                        .add(a(serverGroupToken).textContent(serverGroup))
-                        .get();
+                        .add(a(serverGroupToken).textContent(serverGroup)).element();
                 if (authorisationDecision.isAllowed(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))) {
-                    li.appendChild(span().textContent(" (").get());
+                    li.appendChild(span().textContent(" (").element());
                     li.appendChild(a().css(clickable)
                             .on(click, event -> column.undeploy(content, serverGroup))
-                            .textContent(resources.constants().undeploy())
-                            .get());
-                    li.appendChild(span().textContent(")").get());
+                            .textContent(resources.constants().undeploy()).element());
+                    li.appendChild(span().textContent(")").element());
                 }
                 deploymentsUl.appendChild(li);
             });

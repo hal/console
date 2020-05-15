@@ -88,8 +88,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
                 .add(h(1).textContent(title))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-                .add(form)
-                .get();
+                .add(form).element();
 
         Metadata identityMetadata = metadata.forOperation(READ_IDENTITY);
         SafeHtml identityAttributeHelp = resources.messages().identityAttributeHelp();
@@ -109,14 +108,12 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
 
         HTMLButtonElement setPasswordBtn = button().id(SET_PASSWORD)
                 .textContent(resources.constants().setPassword())
-                .css(Button.DEFAULT_CSS, pullRight)
-                .get();
+                .css(Button.DEFAULT_CSS, pullRight).element();
         bind(setPasswordBtn, click, ev -> presenter.launchSetPasswordWizard(metadata, selectedRealm, selectedIdentity));
         HTMLButtonElement removeIdentityBtn = button().id(REMOVE_IDENTITY)
                 .textContent(resources.constants().remove())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .title(resources.constants().removeIdentity())
-                .get();
+                .title(resources.constants().removeIdentity()).element();
         bind(removeIdentityBtn, click, ev -> presenter.removeIdentity(metadata, selectedRealm, selectedIdentity, success -> {
             if (success) {
                 realmPages.showPage(id(PAGE));
@@ -129,8 +126,7 @@ public class ElytronRealmWithIdentity implements IsElement<HTMLElement>, Attacha
                         .add(p().textContent(resources.messages().identityDescription()))
                         .add(setPasswordBtn)
                         .add(removeIdentityBtn))
-                .add(identityForm)
-                .get();
+                .add(identityForm).element();
 
         realmPages = new Pages(id(PAGES), id(PAGE), mainSection);
         realmPages.addPage(id(PAGE), id(baseId),

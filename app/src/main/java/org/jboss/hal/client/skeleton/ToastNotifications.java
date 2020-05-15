@@ -59,7 +59,7 @@ class ToastNotifications implements IsElement {
         this.resources = resources;
         this.messageIds = new HashMap<>();
         this.stickyMessages = new HashMap<>();
-        this.root = div().css(toastNotificationsListPf).get();
+        this.root = div().css(toastNotificationsListPf).element();
         document.body.appendChild(root);
     }
 

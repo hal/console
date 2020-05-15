@@ -35,7 +35,6 @@ import org.jboss.hal.ballroom.form.ResolveExpressionEvent;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.expression.Expression;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -87,16 +86,16 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
         if (header != null) {
             builder.add(h(2, header));
         }
-        builder.add(this.description = p().get());
+        builder.add(this.description = p().element());
         if (description != null) {
             this.description.textContent = description;
         } else {
             Elements.setVisible(this.description, false);
         }
 
-        builder.add(this.ul = ul().css(listGroup).get());
+        builder.add(this.ul = ul().css(listGroup).element());
         attributes.forEach(this::append);
-        this.elements = builder.get();
+        this.elements = builder.elements();
     }
 
     public PreviewAttributes<T> append(String attribute) {
@@ -122,8 +121,7 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
 
         HTMLLIElement li = li().id(id).css(listGroupItem)
                 .add(span().id(labelId).css(key).textContent(previewAttribute.label))
-                .add(valueContainer = span().id(valueId).css(CSS.value).get())
-                .get();
+                .add(valueContainer = span().id(valueId).css(value).element()).element();
 
         if (previewAttribute.elements != null || previewAttribute.element != null) {
             if (previewAttribute.elements != null) {
@@ -133,7 +131,7 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
             }
         } else {
             if (previewAttribute.href != null) {
-                HTMLAnchorElement anchorElement = a(previewAttribute.href).get();
+                HTMLAnchorElement anchorElement = a(previewAttribute.href).element();
                 if (previewAttribute.target != null) {
                     anchorElement.target = previewAttribute.target;
                 }
@@ -148,9 +146,8 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
                     HTMLElement resolveExpression = span().css(fontAwesome("link"), clickable, marginLeft5)
                             .title(CONSTANTS.resolveExpression())
                             .on(click, event -> Core.INSTANCE.eventBus()
-                                    .fireEvent(new ResolveExpressionEvent(previewAttribute.value)))
-                            .get();
-                    HTMLElement nextValueContainer = span().get();
+                                    .fireEvent(new ResolveExpressionEvent(previewAttribute.value))).element();
+                    HTMLElement nextValueContainer = span().element();
                     valueContainer.appendChild(nextValueContainer);
                     valueContainer.appendChild(resolveExpression);
                     valueContainer = nextValueContainer;
@@ -169,7 +166,6 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
         return this;
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void refresh(T model) {
         for (Map.Entry<String, PreviewAttributeFunction<T>> entry : functions.entrySet()) {
             String id = entry.getKey();

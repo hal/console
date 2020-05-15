@@ -87,8 +87,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .append(NUMBER_OF_INFLIGHT_TRANSACTIONS)
                 .append(NUMBER_OF_NESTED_TRANSACTIONS);
         attributesElement = section()
-                .addAll(attributes)
-                .get();
+                .addAll(attributes).element();
 
         transactions = new Donut.Builder(Names.TRANSACTIONS)
                 .add(TransactionStatus.COMMITTED.name(), cons.committed(), PatternFly.colors.green)

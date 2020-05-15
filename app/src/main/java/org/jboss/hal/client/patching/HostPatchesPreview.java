@@ -55,15 +55,13 @@ class HostPatchesPreview extends RuntimePreview<Host> {
 
         previewBuilder()
                 .add(alertContainer = div()
-                        .add(alertIcon = span().get())
-                        .add(alertText = span().get())
+                        .add(alertIcon = span().element())
+                        .add(alertText = span().element())
                         .add(span().textContent(" "))
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> hostActions.restart(namedNodeToHost(host)))
                                 .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
-                                .textContent(resources.constants().restart())
-                                .get())
-                        .get());
+                                .textContent(resources.constants().restart()).element()).element());
 
         attributes = new PreviewAttributes<>(host)
                 .append(h -> {

@@ -39,8 +39,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
         super(resources.constants().chooseTemplate());
 
         root = div()
-                .add(p().textContent(resources.messages().chooseTemplate(resources.constants().custom())))
-                .get();
+                .add(p().textContent(resources.messages().chooseTemplate(resources.constants().custom()))).element();
 
         root.appendChild(div().css(CSS.radio)
                 .add(label()
@@ -48,8 +47,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
                                 .attr("name", "template") //NON-NLS
                                 .attr("value", "custom")
                                 .on(click, event -> wizard().getContext().template = null))
-                        .add(span().textContent(resources.constants().custom())))
-                .get());
+                        .add(span().textContent(resources.constants().custom()))).element());
 
         List<DataSourceTemplate> matchingTemplates = stream(templates.spliterator(), false)
                 .filter(t -> t.getDataSource().isXa() == xa).collect(toList());
@@ -63,8 +61,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
                                         String id = ((HTMLInputElement) event.target).value;
                                         wizard().getContext().template = templates.getTemplate(id);
                                     }))
-                            .add(span().textContent(template.getVendor().label)))
-                    .get());
+                            .add(span().textContent(template.getVendor().label))).element());
         }
 
         HTMLInputElement firstRadio = (HTMLInputElement) root.querySelector("input[type=radio]"); //NON-NLS

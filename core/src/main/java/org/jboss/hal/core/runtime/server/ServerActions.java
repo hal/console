@@ -578,8 +578,7 @@ public class ServerActions implements Timeouts {
                 Elements.removeChildrenFrom(element);
                 element.appendChild(a(url.getUrl())
                         .apply(a -> a.target = server.getId())
-                        .textContent(url.getUrl())
-                        .get());
+                        .textContent(url.getUrl()).element());
                 String icon;
                 String tooltip;
                 if (url.isCustom()) {
@@ -589,7 +588,7 @@ public class ServerActions implements Timeouts {
                     icon = pfIcon("server");
                     tooltip = resources.constants().serverUrlManagementModel();
                 }
-                element.appendChild(span().css(icon, marginLeft5).style("cursor:help").title(tooltip).get()); //NON-NLS
+                element.appendChild(span().css(icon, marginLeft5).style("cursor:help").title(tooltip).element()); //NON-NLS
             }
         });
     }
@@ -627,7 +626,7 @@ public class ServerActions implements Timeouts {
 
     public void editUrl(Server server, Callback callback) {
         Alert alert = new Alert(Icons.ERROR, resources.messages().serverUrlError());
-        HTMLElement info = p().get();
+        HTMLElement info = p().element();
         TextBoxItem urlItem = new TextBoxItem(URL, Names.URL);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SERVER_URL_FORM, Metadata.empty())
                 .unboundFormItem(urlItem)

@@ -58,7 +58,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
     private GroupedBar(Builder builder) {
         this.builder = builder;
 
-        root = div().id().get();
+        root = div().id().element();
         options = Charts.get().defaultGroupedBarOptions();
         options.axis = new Options.Axis();
         options.axis.rotated = builder.orientation == Orientation.HORIZONTAL;

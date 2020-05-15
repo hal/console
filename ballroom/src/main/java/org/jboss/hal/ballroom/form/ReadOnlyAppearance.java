@@ -80,26 +80,21 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         masked = false;
 
         root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).get())
+                .add(labelElement = label().css(controlLabel, halFormLabel).element())
                 .add(div().css(halFormInput)
                         .add(valueContainer = p().css(formControlStatic)
-                                .add(valueElement = span().get())
-                                .get()))
-                .get();
+                                .add(valueElement = span().element()).element())).element();
 
-        hintElement = span().css(hint).get();
+        hintElement = span().css(hint).element();
         defaultValue = span()
                 .css(CSS.defaultValue)
-                .title(CONSTANTS.defaultValue())
-                .get();
+                .title(CONSTANTS.defaultValue()).element();
         expressionLink = span()
-                .css(CSS.fontAwesome("link"), clickable)
-                .title(CONSTANTS.resolveExpression())
-                .get();
+                .css(fontAwesome("link"), clickable)
+                .title(CONSTANTS.resolveExpression()).element();
         restrictedMarker = span()
                 .add(span().css(fontAwesome("lock"), marginRight5).aria(HIDDEN, TRUE))
-                .add(span().textContent(CONSTANTS.restricted()))
-                .get();
+                .add(span().textContent(CONSTANTS.restricted())).element();
         peekLink = span()
                 .css(fontAwesome("eye"), clickable)
                 .title(CONSTANTS.showSensitive())
@@ -109,8 +104,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                     } else {
                         mask();
                     }
-                })
-                .get();
+                }).element();
         Elements.setVisible(peekLink, false);
     }
 

@@ -92,9 +92,8 @@ class ChildrenPanel implements Iterable<HTMLElement>, Attachable {
 
         table = new DataTable<>(Ids.build(Ids.MODEL_BROWSER, "children", Ids.TABLE), options);
         elements = Elements.collect()
-                .add(header = h(1).get())
-                .add(table)
-                .get();
+                .add(header = h(1).element())
+                .add(table).elements();
     }
 
     @Override

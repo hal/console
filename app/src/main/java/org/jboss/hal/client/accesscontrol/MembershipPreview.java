@@ -37,13 +37,13 @@ class MembershipPreview extends PreviewContent<Assignment> {
                         : null);
 
         HTMLElement p;
-        previewBuilder().add(p = p().get());
+        previewBuilder().add(p = p().element());
         if (principal.getType() == Principal.Type.USER) {
-            p.appendChild(span().textContent(resources.constants().assignmentsOfUser() + SPACE).get());
+            p.appendChild(span().textContent(resources.constants().assignmentsOfUser() + SPACE).element());
         } else {
-            p.appendChild(span().textContent(resources.constants().assignmentsOfGroup() + SPACE).get());
+            p.appendChild(span().textContent(resources.constants().assignmentsOfGroup() + SPACE).element());
         }
-        p.appendChild(a(tokens.principal(principal)).textContent(principal.getName()).get());
-        p.appendChild(span().textContent(".").get());
+        p.appendChild(a(tokens.principal(principal)).textContent(principal.getName()).element());
+        p.appendChild(span().textContent(".").element());
     }
 }

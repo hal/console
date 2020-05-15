@@ -64,7 +64,7 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
         addAppearance(Form.State.READONLY, new NumberReadOnlyAppearance());
 
         // editing appearance - type="number" not possible because of expression support
-        inputElement = input(text).css(formControl).get();
+        inputElement = input(text).css(formControl).element();
         addAppearance(Form.State.EDITING, new NumberEditingAppearance(inputElement));
     }
 

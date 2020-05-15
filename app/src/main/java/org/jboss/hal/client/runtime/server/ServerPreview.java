@@ -49,7 +49,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -83,8 +82,8 @@ class ServerPreview extends RuntimePreview<Server> {
     private final HTMLElement[] links;
     private final HTMLElement serverUrl;
     private final PreviewAttributes<Server> attributes;
-    private HTMLElement ulOpenPorts = ul().id(ID_OPEN_PORTS).css(listGroup).get();
-    private HTMLElement headerOpenPorts = h(2, resources.constants().openPorts()).id(ID_HEADER_OPEN_PORTS).get();
+    private HTMLElement ulOpenPorts = ul().id(ID_OPEN_PORTS).css(listGroup).element();
+    private HTMLElement headerOpenPorts = h(2, resources.constants().openPorts()).id(ID_HEADER_OPEN_PORTS).element();
 
     ServerPreview(ServerActions serverActions,
             Server server,
@@ -105,40 +104,35 @@ class ServerPreview extends RuntimePreview<Server> {
 
         previewBuilder()
                 .add(alertContainer = div()
-                        .add(alertIcon = span().get())
-                        .add(alertText = span().get())
+                        .add(alertIcon = span().element())
+                        .add(alertText = span().element())
                         .add(span().textContent(" "))
 
                         .add(startLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.start(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), START).data())
-                                .textContent(resources.constants().start())
-                                .get())
+                                .textContent(resources.constants().start()).element())
                         .add(stopLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.stop(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), STOP).data())
-                                .textContent(resources.constants().stop())
-                                .get())
+                                .textContent(resources.constants().stop()).element())
                         .add(reloadLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.reload(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), RELOAD).data())
-                                .textContent(resources.constants().reload())
-                                .get())
+                                .textContent(resources.constants().reload()).element())
                         .add(restartLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.restart(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), RESTART).data())
-                                .textContent(resources.constants().restart())
-                                .get())
+                                .textContent(resources.constants().restart()).element())
                         .add(resumeLink = a().css(clickable, alertLink)
                                 .on(click, event -> serverActions.resume(server))
                                 .data(UIConstants.CONSTRAINT,
                                         Constraint.executable(serverConfigTemplate(server), RESUME).data())
-                                .textContent(resources.constants().resume())
-                                .get())
+                                .textContent(resources.constants().resume()).element())
                         .add(bootErrorsLink = a().css(clickable, alertLink)
                                 .on(click, event -> {
                                     PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(
@@ -148,13 +142,11 @@ class ServerPreview extends RuntimePreview<Server> {
                                             .build();
                                     placeManager.revealPlace(placeRequest);
                                 })
-                                .textContent(resources.constants().view())
-                                .get())
-                        .get());
+                                .textContent(resources.constants().view()).element()).element());
 
         links = new HTMLElement[]{startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink};
 
-        serverUrl = span().textContent(Names.NOT_AVAILABLE).get();
+        serverUrl = span().textContent(Names.NOT_AVAILABLE).element();
         PreviewAttributeFunction<Server> previewFunction = model -> new PreviewAttribute(Names.URL, serverUrl);
         if (server.isStandalone()) {
             this.attributes = new PreviewAttributes<>(server)
@@ -368,8 +360,7 @@ class ServerPreview extends RuntimePreview<Server> {
             String label = labelBuilder.label(prop.getName());
             HTMLLIElement liState = li().css(listGroupItem)
                     .add(span().css(key).textContent(label))
-                    .add(span().css(CSS.value).textContent(prop.getValue().asString()).get())
-                    .get();
+                    .add(span().css(value).textContent(prop.getValue().asString()).element()).element();
             ulOpenPorts.appendChild(liState);
         });
     }

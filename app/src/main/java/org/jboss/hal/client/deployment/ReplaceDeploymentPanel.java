@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ * Copyright 2020 Red Hat, Inc, and individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap;
+package org.jboss.hal.client.deployment;
 
 import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
-
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -28,28 +27,18 @@ import static org.jboss.hal.resources.CSS.loading;
 import static org.jboss.hal.resources.CSS.loadingContainer;
 import static org.jboss.hal.resources.CSS.spinner;
 
-public class LoadingPanel implements IsElement {
-
+public class ReplaceDeploymentPanel implements IsElement {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-
-    public static LoadingPanel get() {
-        if (instance == null) {
-            instance = new LoadingPanel();
-            instance.off();
-            document.body.appendChild(instance.element());
-        }
-        return instance;
-    }
-
-    private static LoadingPanel instance;
 
     private final HTMLElement root;
 
-    private LoadingPanel() {
-        root = div().css(loadingContainer)
+    public ReplaceDeploymentPanel() {
+        this.root = div().css(loadingContainer)
                 .add(div().css(loading)
-                        .add(h(3).textContent(CONSTANTS.loading()))
-                        .add(div().css(spinner))).element();
+                        .add(h(3).textContent(CONSTANTS.replaceDeployment()))
+                        .add(div().css(spinner)))
+                .get();
+        document.body.appendChild(this.element());
     }
 
     @Override

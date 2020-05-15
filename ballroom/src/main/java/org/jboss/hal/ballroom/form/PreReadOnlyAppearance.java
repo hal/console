@@ -33,7 +33,7 @@ class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
         HTMLElement parent = (HTMLElement) valueContainer.parentNode;
         Elements.removeChildrenFrom(parent);
 
-        valueElement = pre().css(formControlStatic, wrap).get();
+        valueElement = pre().css(formControlStatic, wrap).element();
         parent.appendChild(valueElement);
     }
 

@@ -45,7 +45,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
         addAppearance(Form.State.READONLY, new ButtonReadOnlyAppearance(label));
 
-        button = button().textContent(label).css(Button.DEFAULT_CSS).get();
+        button = button().textContent(label).css(Button.DEFAULT_CSS).element();
         addAppearance(Form.State.EDITING, new ButtonEditingAppearance(button));
     }
 
@@ -94,10 +94,9 @@ public class ButtonItem extends AbstractFormItem<Void> {
             super(EnumSet.of(DEPRECATED, ENABLED));
             this.button = button;
             this.root = div().css(formGroup)
-                    .add(labelElement = label().css(controlLabel, halFormLabel).get())
+                    .add(labelElement = label().css(controlLabel, halFormLabel).element())
                     .add(div().css(halFormInput)
-                            .add(button))
-                    .get();
+                            .add(button)).element();
         }
 
         @Override

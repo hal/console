@@ -95,7 +95,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
-    static final HTMLElement PLACE_HOLDER_ELEMENT = div().get();
+    static final HTMLElement PLACE_HOLDER_ELEMENT = div().element();
 
     private final CrudOperations crud;
     private MetadataProcessor metadataProcessor;
@@ -144,22 +144,18 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 .add(filter = button().css(btn, btnDefault)
                         .on(click, event -> filter(tree.getSelected()))
                         .title(resources.constants().filter())
-                        .add(Elements.i().css(fontAwesome(CSS.filter)))
-                        .get())
+                        .add(Elements.i().css(fontAwesome(CSS.filter))).element())
                 .add(refresh = button().css(btn, btnDefault)
                         .on(click, event -> refresh(tree.getSelected()))
                         .title(resources.constants().refresh())
-                        .add(Elements.i().css(fontAwesome(CSS.refresh)))
-                        .get())
+                        .add(Elements.i().css(fontAwesome(CSS.refresh))).element())
                 .add(collapse = button().css(btn, btnDefault)
                         .on(click, event -> collapse(tree.getSelected()))
                         .title(resources.constants().collapse())
-                        .add(Elements.i().css(fontAwesome("minus")))
-                        .get())
-                .get();
+                        .add(Elements.i().css(fontAwesome("minus"))).element()).element();
 
-        treeContainer = div().css(CSS.treeContainer).get();
-        content = div().css(modelBrowserContent).get();
+        treeContainer = div().css(CSS.treeContainer).element();
+        content = div().css(modelBrowserContent).element();
 
         resourcePanel = new ResourcePanel(this, dispatcher, resources);
         for (HTMLElement element : resourcePanel) {
@@ -177,8 +173,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 .add(column(4)
                         .addAll(buttonGroup, treeContainer))
                 .add(column(8)
-                        .add(content))
-                .get();
+                        .add(content)).element();
     }
 
     private void adjustHeight() {
@@ -238,8 +233,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                     .add(span().css(tmTag, tagManagerTag)
                             .add(span().textContent(filter.filterText))
                             .add(a().css(clickable, tmTagRemove)
-                                    .on(click, event -> clearFilter()).textContent("x"))) //NON-NLS
-                    .get();
+                                    .on(click, event -> clearFilter()).textContent("x"))).element();
 
             if (oldFilterElement != null) {
                 buttonGroup.replaceChild(filterElement, oldFilterElement);

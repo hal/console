@@ -87,8 +87,7 @@ class EndpointDialog {
 
         selectPage = div()
                 .add(p().textContent(CONSTANTS.endpointSelectDescription()))
-                .add(table.element())
-                .get();
+                .add(table.element()).element();
 
         alert = new Alert();
         ButtonItem ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
@@ -133,8 +132,7 @@ class EndpointDialog {
         addPage = div()
                 .add(p().textContent(CONSTANTS.endpointAddDescription()))
                 .add(alert)
-                .add(form.element())
-                .get();
+                .add(form.element()).element();
 
         dialog = new Dialog.Builder(CONSTANTS.endpointSelectTitle())
                 .add(selectPage, addPage)

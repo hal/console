@@ -78,8 +78,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
         HTMLElement configurationSection = section()
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(tabs)
-                .get();
+                .add(tabs).element();
 
         metadata = metadataRegistry.lookup(REMOTE_CLUSTER_TEMPLATE);
         remoteClusterTable = new ModelNodeTable.Builder<NamedNode>(Ids.REMOTE_CLUSTER_TABLE, metadata)
@@ -104,8 +103,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                 .add(h(1).textContent(Names.REMOTE_CLUSTER))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(remoteClusterTable)
-                .add(remoteClusterForm)
-                .get();
+                .add(remoteClusterForm).element();
 
         metadata = metadataRegistry.lookup(COMPONENT_CONNECTION_POOL_TEMPLATE);
         connectionPoolForm = new ModelNodeForm.Builder<>(Ids.CONNECTION_POOL_FORM, metadata)
@@ -117,8 +115,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
         HTMLElement connectionPoolSection = section()
                 .add(h(1).textContent(Names.CONNECTION_POOL))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(connectionPoolForm)
-                .get();
+                .add(connectionPoolForm).element();
 
         metadata = metadataRegistry.lookup(THREAD_POOL_ASYNC_TEMPLATE);
         threadPoolForm = new ModelNodeForm.Builder<>(Ids.THREAD_POOL_FORM, metadata)
@@ -130,8 +127,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
         HTMLElement threadPoolSection = section()
                 .add(h(1).textContent(Names.THREAD_POOL))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(threadPoolForm)
-                .get();
+                .add(threadPoolForm).element();
 
         metadata = metadataRegistry.lookup(COMPONENT_SECURITY_TEMPLATE);
         securityForm = new ModelNodeForm.Builder<>(Ids.SECURITY_FORM, metadata)
@@ -143,8 +139,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
         HTMLElement securitySection = section()
                 .add(h(1).textContent(Names.SECURITY))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(securityForm)
-                .get();
+                .add(securityForm).element();
 
         navigation = new VerticalNavigation();
         navigation.addPrimary(Ids.REMOTE_CACHE_CONTAINER_ITEM, Names.CONFIGURATION, pfIcon("settings"),

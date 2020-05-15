@@ -76,10 +76,9 @@ class ResourcePanel implements Iterable<HTMLElement> {
         tabs.add(operationsId, resources.constants().operations(), PLACE_HOLDER_ELEMENT);
 
         elements = Elements.collect()
-                .add(description = p().css(lead).get())
-                .add(empty = p().textContent(resources.constants().noAttributes()).get())
-                .add(tabs.element())
-                .get();
+                .add(description = p().css(lead).element())
+                .add(empty = p().textContent(resources.constants().noAttributes()).element())
+                .add(tabs.element()).elements();
         Elements.setVisible(empty, false);
     }
 

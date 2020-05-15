@@ -32,6 +32,7 @@ import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -46,7 +47,6 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @see <a href="https://www.patternfly.org/pattern-library/communication/empty-state/">https://www.patternfly.org/pattern-library/communication/empty-state/</a>
  */
-@SuppressWarnings("unused")
 public class EmptyState implements IsElement<HTMLElement> {
 
     private final HTMLElement root;
@@ -58,16 +58,16 @@ public class EmptyState implements IsElement<HTMLElement> {
     private EmptyState(Builder builder) {
         HtmlContentBuilder<HTMLDivElement> rb = div().id(builder.id).css(blankSlatePf);
         if (builder.icon != null) {
-            rb.add(div().css(blankSlatePfIcon).add(icon = i().css(builder.icon).get()).get());
+            rb.add(div().css(blankSlatePfIcon).add(icon = i().css(builder.icon).element()).element());
         } else {
             icon = null;
         }
-        rb.add(header = h(1).textContent(builder.title).get());
-        rb.add(paragraphsDiv = div().get());
+        rb.add(header = h(1).textContent(builder.title).element());
+        rb.add(paragraphsDiv = div().element());
         for (HTMLElement element : builder.elements) {
             paragraphsDiv.appendChild(element);
         }
-        rb.add(primaryActionDiv = div().css(blankSlatePfMainAction).get());
+        rb.add(primaryActionDiv = div().css(blankSlatePfMainAction).element());
         if (builder.primaryAction != null) {
             if (builder.primaryAction.constraint != null) {
                 primaryActionDiv.dataset.set(UIConstants.CONSTRAINT, builder.primaryAction.constraint.data());
@@ -75,11 +75,10 @@ public class EmptyState implements IsElement<HTMLElement> {
             primaryActionDiv.appendChild(button()
                     .css(btn, btnPrimary, btnLg)
                     .textContent(builder.primaryAction.title)
-                    .on(click, event -> builder.primaryAction.callback.execute())
-                    .get());
+                    .on(click, event -> builder.primaryAction.callback.execute()).element());
         }
         HTMLElement secondaryActionsDiv;
-        rb.add(secondaryActionsDiv = div().css(blankSlatePfSecondaryAction).get());
+        rb.add(secondaryActionsDiv = div().css(blankSlatePfSecondaryAction).element());
         if (!builder.secondaryActions.isEmpty()) {
             for (Action a : builder.secondaryActions) {
                 HtmlContentBuilder<HTMLButtonElement> bb = button()
@@ -89,10 +88,10 @@ public class EmptyState implements IsElement<HTMLElement> {
                 if (a.constraint != null) {
                     bb.data(UIConstants.CONSTRAINT, a.constraint.data());
                 }
-                secondaryActionsDiv.appendChild(bb.get());
+                secondaryActionsDiv.appendChild(bb.element());
             }
         }
-        root = rb.get();
+        root = rb.element();
         Elements.setVisible(primaryActionDiv, builder.primaryAction != null);
         Elements.setVisible(secondaryActionsDiv, !builder.secondaryActions.isEmpty());
     }
@@ -110,7 +109,7 @@ public class EmptyState implements IsElement<HTMLElement> {
     public void setDescription(SafeHtml description) {
         Elements.removeChildrenFrom(paragraphsDiv);
         if (description != null) {
-            paragraphsDiv.appendChild(p().innerHtml(description).get());
+            paragraphsDiv.appendChild(p().innerHtml(description).element());
         }
     }
 
@@ -118,8 +117,7 @@ public class EmptyState implements IsElement<HTMLElement> {
         Elements.removeChildrenFrom(primaryActionDiv);
         HTMLElement element = button()
                 .css(btn, btnPrimary, btnLg).on(click, event -> callback.execute())
-                .textContent(title)
-                .get();
+                .textContent(title).element();
         primaryActionDiv.appendChild(element);
         Elements.setVisible(primaryActionDiv, true);
     }
@@ -148,7 +146,6 @@ public class EmptyState implements IsElement<HTMLElement> {
     }
 
 
-    @SuppressWarnings("WeakerAccess")
     public static class Builder {
 
         private final String id;
@@ -171,12 +168,12 @@ public class EmptyState implements IsElement<HTMLElement> {
         }
 
         public Builder description(String description) {
-            elements.add(p().textContent(description).get());
+            elements.add(p().textContent(description).element());
             return this;
         }
 
         public Builder description(SafeHtml description) {
-            elements.add(p().innerHtml(description).get());
+            elements.add(p().innerHtml(description).element());
             return this;
         }
 

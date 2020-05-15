@@ -269,7 +269,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         Supplier<JdbcDriver> db2Driver = () -> {
             JdbcDriver driver = new JdbcDriver("ibmdb2");
             driver.get(DRIVER_MODULE_NAME).set("com.ibm");
-            driver.get(DRIVER_CLASS_NAME).set("COM.ibm.db2.jdbc.app.DB2Driver");
+            driver.get(DRIVER_CLASS_NAME).set("com.ibm.db2.jcc.DB2Driver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("COM.ibm.db2.jdbc.DB2XADataSource");
             return driver;
         };

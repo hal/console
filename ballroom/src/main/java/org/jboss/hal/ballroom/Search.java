@@ -25,6 +25,7 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
@@ -35,7 +36,7 @@ public class Search implements IsElement<HTMLElement> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    private HTMLElement root;
+    private final HTMLElement root;
     private HTMLInputElement searchBox;
     private HTMLElement clearSearch;
 
@@ -52,12 +53,11 @@ public class Search implements IsElement<HTMLElement> {
                                         .css(formControl)
                                         .attr(UIConstants.PLACEHOLDER, CONSTANTS.search())
                                         .on(keyup, event -> {
-                                            Elements.setVisible(clearSearch, !Strings.isNullOrEmpty(searchBox.value));
+                                            setVisible(clearSearch, !Strings.isNullOrEmpty(searchBox.value));
                                             if ("Enter".equals(event.key)) { //NON-NLS
                                                 builder.onSearch.search(searchBox.value);
                                             }
-                                        })
-                                        .get())
+                                        }).element())
                                 .add(clearSearch = button().css(clear)
                                         .aria(UIConstants.HIDDEN, "true") //NON-NLS
                                         .on(click, event -> {
@@ -67,26 +67,21 @@ public class Search implements IsElement<HTMLElement> {
                                             }
                                             focus();
                                         })
-                                        .add(span().css(pfIcon("close")))
-                                        .get())))
+                                        .add(span().css(pfIcon("close"))).element())))
                 .add(buttons = div().css(formGroup, btnGroup)
                         .add(button().css(btn, btnDefault)
                                 .on(click, event -> builder.onSearch.search(searchBox.value))
-                                .add(span().css(fontAwesome("search"))))
-                        .get())
-                .get();
+                                .add(span().css(fontAwesome("search")))).element()).element();
 
         if (builder.onPrevious != null) {
             buttons.appendChild(button().css(btn, btnDefault)
                     .on(click, event -> builder.onPrevious.search(searchBox.value))
-                    .add(span().css(fontAwesome("angle-left")))
-                    .get());
+                    .add(span().css(fontAwesome("angle-left"))).element());
         }
         if (builder.onNext != null) {
             buttons.appendChild(button().css(btn, btnDefault)
                     .on(click, event -> builder.onNext.search(searchBox.value))
-                    .add(span().css(fontAwesome("angle-right")))
-                    .get());
+                    .add(span().css(fontAwesome("angle-right"))).element());
         }
         Elements.setVisible(clearSearch, false);
     }

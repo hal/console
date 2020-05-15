@@ -83,8 +83,7 @@ public class MicroProfileMetricsView extends HalViewImpl implements MicroProfile
                 .add(column()
                         .add(h(1).textContent(Names.MICROPROFILE_METRICS))
                         .add(p().textContent(metadata.getDescription().getDescription()))
-                        .add(form))
-                .get();
+                        .add(form)).element();
         initElement(root);
     }
 

@@ -25,6 +25,7 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -46,8 +47,7 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
 
         errorMsg = div().css(alert, alertDanger)
                 .add(span().css(pfIcon(errorCircleO)))
-                .add(span().textContent(resources.constants().enableSSLManagementErrorMsg()))
-                .get();
+                .add(span().textContent(resources.constants().enableSSLManagementErrorMsg())).element();
 
         String radioMutualName = "mutual";
         String radioStrategyName = "key-store-strategy";
@@ -63,16 +63,14 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                                 .add(input(InputType.radio)
                                         .id("choose-mutual-yes")
                                         .attr(UIConstants.NAME, radioMutualName)
-                                        .on(click, e -> mutual = true)
-                                        .get())
+                                        .on(click, e -> mutual = true).element())
                                 .add(span().textContent(resources.constants().yes()))))
                 .add(div().css(radio)
                         .add(label()
                                 .add(input(InputType.radio)
                                         .id("choose-mutual-no")
                                         .attr(UIConstants.NAME, radioMutualName)
-                                        .on(click, e -> mutual = false)
-                                        .get())
+                                        .on(click, e -> mutual = false).element())
                                 .add(span().textContent(resources.constants().no()))))
 
                 // asks the user to choose the key-store strategy
@@ -93,8 +91,7 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                             .add(input(InputType.radio)
                                     .id("strategy-create-all")
                                     .attr(UIConstants.NAME, radioStrategyName)
-                                    .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_CREATE)
-                                    .get())
+                                    .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_CREATE).element())
                             .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateAll()))));
 
             builder.add(div().css(radio)
@@ -103,7 +100,7 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                                     .id("strategy-obtain-from-letsencrypt")
                                     .attr(UIConstants.NAME, radioStrategyName)
                                     .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_OBTAIN_LETSENCRYPT)
-                                    .get())
+                                    .element())
                             .add(span().innerHtml(
                                     resources.messages().enableSSLStrategyQuestionObtainFromLetsEncrypt()))));
         }
@@ -113,8 +110,7 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                         .add(input(InputType.radio)
                                 .id("strategy-create-key-store")
                                 .attr(UIConstants.NAME, radioStrategyName)
-                                .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS)
-                                .get())
+                                .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS).element())
                         .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionCreateKeyStore()))));
         builder.add(div().css(radio)
                 .add(label()
@@ -122,10 +118,10 @@ public class DefineStrategyStep extends WizardStep<EnableSSLContext, EnableSSLSt
                                 .id("strategy-reuse-key-store")
                                 .attr(UIConstants.NAME, radioStrategyName)
                                 .on(click, e -> strategy = EnableSSLContext.Strategy.KEYSTORE_RESOURCE_EXISTS)
-                                .get())
+                                .element())
                         .add(span().innerHtml(resources.messages().enableSSLStrategyQuestionReuseKeyStore()))));
 
-        root = builder.get();
+        root = builder.element();
 
         Elements.setVisible(errorMsg, false);
     }

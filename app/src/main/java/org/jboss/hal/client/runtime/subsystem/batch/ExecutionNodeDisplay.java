@@ -25,7 +25,6 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -89,7 +88,7 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
             default:
                 break;
         }
-        return builder.get();
+        return builder.element();
     }
 
     @Override
@@ -131,10 +130,9 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
                         .add(span()
                                 .css(fontAwesome("clock-o", x2), marginRight5)
                                 .title(resources.constants().duration()))
-                        .add(p().css(CSS.lead).textContent(failsSafeTime(item, END_TIME, itm ->
+                        .add(p().css(lead).textContent(failsSafeTime(item, END_TIME, itm ->
                                 humanReadableDuration(
-                                        itm.getEndTime().getTime() - item.getCreateTime().getTime())))))
-                .get();
+                                        itm.getEndTime().getTime() - item.getCreateTime().getTime()))))).elements();
     }
 
     @Override

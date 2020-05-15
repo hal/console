@@ -38,7 +38,7 @@ public class Button implements IsElement {
     }
 
     public Button(final String label, final String css, final EventCallbackFn<MouseEvent> listener) {
-        element = button().textContent(label).on(click, listener).get();
+        element = button().textContent(label).on(click, listener).element();
         if (css != null) {
             element.className = css;
         }

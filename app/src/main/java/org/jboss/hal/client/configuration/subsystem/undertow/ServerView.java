@@ -96,8 +96,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         HTMLElement configurationSection = section()
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(configurationMetadata.getDescription().getDescription()))
-                .add(configurationForm)
-                .get();
+                .add(configurationForm).element();
 
         // ------------------------------------------------------ hosts
 
@@ -135,8 +134,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.HOSTS))
                 .add(p().textContent(hostMetadata.getDescription().getDescription()))
                 .add(hostTable)
-                .add(tabs)
-                .get();
+                .add(tabs).element();
 
         // ------------------------------------------------------ host filter refs
 
@@ -158,8 +156,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.FILTERS))
                 .add(p().textContent(filterRefMetadata.getDescription().getDescription()))
                 .add(filterRefTable)
-                .add(filterRefForm)
-                .get();
+                .add(filterRefForm).element();
 
         // ------------------------------------------------------ host locations
 
@@ -182,8 +179,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.LOCATIONS))
                 .add(p().textContent(locationMetadata.getDescription().getDescription()))
                 .add(locationTable)
-                .add(locationForm)
-                .get();
+                .add(locationForm).element();
 
         // ------------------------------------------------------ host location filter refs
 
@@ -208,8 +204,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .add(h(1).textContent(Names.FILTERS))
                 .add(p().textContent(locationFilterRefMetadata.getDescription().getDescription()))
                 .add(locationFilterRefTable)
-                .add(locationFilterRefForm)
-                .get();
+                .add(locationFilterRefForm).element();
 
         // ------------------------------------------------------ pages, listener and navigation
 

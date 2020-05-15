@@ -194,8 +194,7 @@ class AddConfigSourceWizard {
 
             root = div()
                     .add(p().textContent(description))
-                    .add(form)
-                    .get();
+                    .add(form).element();
         }
 
         @Override
@@ -252,7 +251,7 @@ class AddConfigSourceWizard {
             attribute = CLASS;
             id = Ids.build(Ids.MICRO_PROFILE_CONFIG_SOURCE, attribute, Ids.FORM);
             metadata = configSourceMeta.forComplexAttribute(attribute);
-            description = p().textContent(metadata.getDescription().getDescription()).get();
+            description = p().textContent(metadata.getDescription().getDescription()).element();
             form = new ModelNodeForm.Builder<>(id, metadata)
                     .unsorted()
                     .include(NAME, MODULE)
@@ -269,7 +268,7 @@ class AddConfigSourceWizard {
             attribute = DIR;
             id = Ids.build(Ids.MICRO_PROFILE_CONFIG_SOURCE, attribute, Ids.FORM);
             metadata = configSourceMeta.forComplexAttribute(attribute);
-            description = p().textContent(metadata.getDescription().getDescription()).get();
+            description = p().textContent(metadata.getDescription().getDescription()).element();
             form = new ModelNodeForm.Builder<>(id, metadata)
                     .unsorted()
                     .include(PATH, RELATIVE_TO)
@@ -291,7 +290,7 @@ class AddConfigSourceWizard {
                     .findAttribute(ATTRIBUTES, PROPERTIES)
                     .getValue()
                     .get(DESCRIPTION)
-                    .asString()).get();
+                    .asString()).element();
             form = new ModelNodeForm.Builder<>(id, configSourceMeta)
                     .include(attribute)
                     .onSave((f, changedValues) -> {
@@ -316,7 +315,7 @@ class AddConfigSourceWizard {
                 registerAttachable(f);
                 setVisible(f.element(), false);
             }
-            root = builder.get();
+            root = builder.element();
         }
 
         @Override
@@ -377,8 +376,7 @@ class AddConfigSourceWizard {
                     .asString();
             root = div()
                     .add(p().textContent(attributeDescription))
-                    .add(form)
-                    .get();
+                    .add(form).element();
         }
 
         @Override

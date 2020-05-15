@@ -59,7 +59,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
 
     private HTMLHeadingElement header;
     private final List<HTMLElement> elements = new ArrayList<>();
-    private HTMLElement section = section().id(Ids.uniqueId()).get();
+    private HTMLElement section = section().id(Ids.uniqueId()).element();
 
     public MicroprofileHealthPreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
         super(Names.MICROPROFILE_HEALTH);
@@ -70,7 +70,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
         this.outcomeUp = new Alert(Icons.OK, resources.messages().microprofileHealthOutcome(UP));
         this.outcomeDown = new Alert(Icons.ERROR, resources.messages().microprofileHealthOutcome(DOWN));
 
-        header = h(1).add(span().textContent(Names.MICROPROFILE_HEALTH)).get();
+        header = h(1).add(span().textContent(Names.MICROPROFILE_HEALTH)).element();
         header.appendChild(refreshLink(() -> update(null)));
 
         update(null);
@@ -92,7 +92,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
             } else {
                 section.appendChild(outcomeDown.element());
             }
-            section.appendChild(p().textContent(resources.messages().microprofileHealthPreviewDescription()).get());
+            section.appendChild(p().textContent(resources.messages().microprofileHealthPreviewDescription()).element());
 
             List<ModelNode> checks = new ArrayList<>();
             ModelNode modelChecks = result.get(CHECKS);
@@ -110,7 +110,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
                     ModelNode check = checks.get(i);
                     String name = check.get(NAME).asString();
                     String state = check.get("state").asString();
-                    section.appendChild(h(2, name).get());
+                    section.appendChild(h(2, name).element());
 
                     Map<String, String> dataMap = new HashMap<>();
                     if (check.hasDefined("data")) {
@@ -124,7 +124,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
                     section.appendChild(checkElement);
                 }
             } else {
-                section.appendChild(p().textContent(resources.messages().microprofileHealthNoChecks()).get());
+                section.appendChild(p().textContent(resources.messages().microprofileHealthNoChecks()).element());
             }
             elements.add(section);
         });
@@ -134,8 +134,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
 
         HTMLLIElement liState = li().css(listGroupItem)
                 .add(span().css(key).textContent(STATE))
-                .add(span().css(CSS.value).textContent(state).get())
-                .get();
+                .add(span().css(CSS.value).textContent(state).element()).element();
 
         HtmlContentBuilder<HTMLUListElement> ulBuilder = ul().css(listGroup)
                 .add(liState);
@@ -144,8 +143,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
             HTMLElement dataValue;
             HTMLLIElement liData = li().css(listGroupItem)
                     .add(span().css(key).textContent("Data"))
-                    .add(dataValue = span().css(CSS.value).get())
-                    .get();
+                    .add(dataValue = span().css(CSS.value).element()).element();
             dataValue.style.whiteSpace = "pre";
 
             StringBuilder dataString = new StringBuilder();
@@ -154,7 +152,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
 
             ulBuilder.add(liData);
         }
-        return ulBuilder.get();
+        return ulBuilder.element();
     }
 
     @Override

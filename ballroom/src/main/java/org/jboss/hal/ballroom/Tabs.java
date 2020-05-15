@@ -49,10 +49,8 @@ public class Tabs implements IsElement<HTMLElement> {
         root = div().id(id)
                 .add(tabs = ul()
                         .css(nav, navTabs, navTabsPf, navTabsHal)
-                        .attr(UIConstants.ROLE, UIConstants.TABLIST)
-                        .get())
-                .add(panes = div().css(tabContent).get())
-                .get();
+                        .attr(UIConstants.ROLE, UIConstants.TABLIST).element())
+                .add(panes = div().css(tabContent).element()).element();
 
         indexToId = new HashMap<>();
         paneElements = new HashMap<>();
@@ -84,9 +82,8 @@ public class Tabs implements IsElement<HTMLElement> {
                             event.preventDefault();
                             showTab(id);
                         })
-                        .textContent(title))
-                .get();
-        HTMLElement pane = div().id(id).css(tabPane).attr(UIConstants.ROLE, "tabpanel").get(); //NON-NLS
+                        .textContent(title)).element();
+        HTMLElement pane = div().id(id).css(tabPane).attr(UIConstants.ROLE, "tabpanel").element(); //NON-NLS
 
         tabs.appendChild(tab);
         panes.appendChild(pane);

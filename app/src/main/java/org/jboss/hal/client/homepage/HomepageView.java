@@ -55,14 +55,13 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         HTMLElement deployments;
         HTMLElement configuration;
         HTMLElement runtime;
-        HTMLElement accessControl = div().get(); // to get rid of warning "might not be initialized"
-        HTMLElement patching = div().get();
+        HTMLElement accessControl = div().element(); // to get rid of warning "might not be initialized"
+        HTMLElement patching = div().element();
         HTMLElement help;
 
         if (community) {
             header = div().css(eapHomeTitle)
-                    .add(h(1).textContent(resources.theme().getFullName()))
-                    .get();
+                    .add(h(1).textContent(resources.theme().getFullName())).element();
         } else {
             header = div().css(eapHomeTitle)
                     .add(p()
@@ -70,8 +69,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                             .add(a().css(clickable)
                                     .on(click, event -> presenter.launchGuidedTour())
                                     .textContent(resources.constants().homepageTakeATour())))
-                    .add(h(1).textContent(resources.theme().getFullName()))
-                    .get();
+                    .add(h(1).textContent(resources.theme().getFullName())).element();
         }
 
         if (standalone) {
@@ -225,22 +223,18 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                 .add(div().css(eapHomeRow)
                         .add(header)
                         .add(deployments)
-                        .add(configuration))
-                .get();
+                        .add(configuration)).element();
         if (su) {
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
-                    .add(accessControl)
-                    .get());
+                    .add(accessControl).element());
             root.appendChild(div().css(eapHomeRow)
                     .add(patching)
-                    .add(help)
-                    .get());
+                    .add(help).element());
         } else {
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
-                    .add(help)
-                    .get());
+                    .add(help).element());
         }
         initElement(root);
     }

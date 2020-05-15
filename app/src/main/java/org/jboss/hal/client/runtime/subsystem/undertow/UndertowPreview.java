@@ -57,7 +57,7 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
                 .build();
         Elements.setVisible(noStatistics.element(), false);
 
-        descriptionPreview = section().get();
+        descriptionPreview = section().element();
         Elements.setVisible(descriptionPreview, false);
         Previews.innerHtml(descriptionPreview, resources.previews().runtimeWeb());
 

@@ -54,8 +54,8 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
 
         initElement(row()
                 .add(column()
-                        .add(header = h(1).get())
-                        .add(lead = p().css(CSS.lead).get())
+                        .add(header = h(1).element())
+                        .add(lead = p().css(CSS.lead).element())
                         .addAll(forms.values().toArray(new IsElement[0]))));
     }
 
