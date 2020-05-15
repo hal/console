@@ -300,13 +300,13 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                             String destination = form.getModel().get(OTHER_QUEUE_NAME).asString();
                             boolean rejectDuplicates = failSafeBoolean(form.getModel(), REJECT_DUPLICATES);
                             if (messages.size() == 1) {
-                                operation = new Operation.Builder(queueAddress(), CHANGE_MESSAGE_PRIORITY)
+                                operation = new Operation.Builder(queueAddress(), MOVE_MESSAGE)
                                         .param(MESSAGE_ID, messages.get(0).getMessageId())
                                         .param(OTHER_QUEUE_NAME, destination)
                                         .param(REJECT_DUPLICATES, rejectDuplicates)
                                         .build();
                             } else {
-                                operation = new Operation.Builder(queueAddress(), CHANGE_MESSAGES_PRIORITY)
+                                operation = new Operation.Builder(queueAddress(), MOVE_MESSAGES)
                                         .param(FILTER, filter(messages))
                                         .param(OTHER_QUEUE_NAME, destination)
                                         .param(REJECT_DUPLICATES, rejectDuplicates)
