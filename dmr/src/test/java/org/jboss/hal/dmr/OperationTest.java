@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class OperationTest {
@@ -52,6 +53,23 @@ public class OperationTest {
                 .build();
 
         assertOperation(operation);
+    }
+    
+    @Test
+    public void fromBuilderResolveExoression() throws Exception {
+        ResourceAddress address = new ResourceAddress()
+                .add("subsystem", "datasources")
+                .add("data-source", "foo");
+
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION,true)
+                .header("header1", "value1")
+                .build();
+        
+        ModelNode parameter = new ModelNode();
+        parameter.get(RESOLVE_EXPRESSION).set(true);
+        assertEquals(parameter, operation.getParameter());
+
+        assertTrue(operation.getParameter().asBoolean());
     }
 
     @Test

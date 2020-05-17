@@ -128,7 +128,7 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                 (wildcards == 0 || (wildcards == 1 && "*".equals(address.lastValue())))) {
             ResourceAddress parent = address.getParent();
             String childName = address.lastName();
-            operation = new Operation.Builder(parent, READ_CHILDREN_NAMES_OPERATION)
+            operation = new Operation.Builder(parent, READ_CHILDREN_NAMES_OPERATION,true)
                     .param(CHILD_TYPE, childName).build();
 
         } else {
@@ -138,7 +138,7 @@ public class ReadChildrenAutoComplete extends AutoComplete {
             // but it returns an empty list, so we're using
             // /foo=*/bar=*:read-resource
             // which makes parsing the response more complicated
-            operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+            operation = new Operation.Builder(address, READ_RESOURCE_OPERATION,true)
                     .param(ATTRIBUTES_ONLY, true)
                     .param(INCLUDE_ALIASES, false)
                     .param(INCLUDE_DEFAULTS, false)

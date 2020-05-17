@@ -70,7 +70,7 @@ public class BatchPreview extends PreviewContent<SubsystemMetadata> {
     @Override
     public void update(SubsystemMetadata item) {
         ResourceAddress address = BATCH_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION,true)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();
