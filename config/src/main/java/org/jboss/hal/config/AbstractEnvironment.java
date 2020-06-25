@@ -45,6 +45,7 @@ public abstract class AbstractEnvironment implements Environment {
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
     private boolean sso;
+    private boolean patchingEnabled;
 
     AbstractEnvironment(String halVersion, String halBuild, List<String> locales) {
         this.halVersion = org.jboss.hal.config.Version.parseVersion(halVersion);
@@ -176,6 +177,16 @@ public abstract class AbstractEnvironment implements Environment {
     @Override
     public boolean isProductionMode() {
         return productionMode;
+    }
+
+    @Override
+    public boolean isPatchingEnabled() {
+        return patchingEnabled;
+    }
+
+    @Override
+    public void setPatchingEnabled(boolean enabled) {
+        this.patchingEnabled = enabled;
     }
 
     @Override

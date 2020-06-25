@@ -48,6 +48,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         boolean ssoEnabled = environment.isSingleSignOn();
         boolean community = environment.getHalBuild() == Build.COMMUNITY;
         boolean su = ac.isSuperUserOrAdministrator();
+        boolean patchable = environment.isPatchingEnabled();
         String name = environment.getInstanceInfo().productName();
 
         Iterable<HomepageSection> sections;
@@ -210,11 +211,13 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                                 resources.constants().homepagePatchingDomainStep2(),
                                 resources.constants().homepagePatchingStepApply()), true));
             }
-            patching = new HomepageModule(places,
-                    Ids.HOMEPAGE_PATCHING_MODULE, NameTokens.PATCHING, Names.PATCHING,
-                    resources.messages().homepagePatchingSubHeader(name),
-                    resources.images().patching(),
-                    sections).element();
+            if (patchable) {
+                patching = new HomepageModule(places,
+                        Ids.HOMEPAGE_PATCHING_MODULE, NameTokens.PATCHING, Names.PATCHING,
+                        resources.messages().homepagePatchingSubHeader(name),
+                        resources.images().patching(),
+                        sections).element();
+            }
         }
 
         help = new HomepageHelp(environment, resources).element();
@@ -228,8 +231,11 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
                     .add(accessControl).element());
+            if (patchable) {
+                root.appendChild(div().css(eapHomeRow)
+                        .add(patching).element());
+            }
             root.appendChild(div().css(eapHomeRow)
-                    .add(patching)
                     .add(help).element());
         } else {
             root.appendChild(div().css(eapHomeRow)
