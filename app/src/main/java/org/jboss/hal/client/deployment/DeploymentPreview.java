@@ -63,23 +63,37 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
 
     /** Adds the (e)nabled, (m)anaged and (e)xploded flags to the specified preview attributes. */
     void eme(PreviewAttributes<T> attributes) {
-        // TODO Fix in domain mode
-        // TODO There's no EXPLODED attribute
-        attributes.append(model -> {
-            String label = String.join(", ",
-                    labelBuilder.label(ENABLED), labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
-            Iterable<HTMLElement> elements = collect()
-                    .add(span()
-                            .title(labelBuilder.label(ENABLED))
-                            .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))
-                    .add(span()
-                            .title(labelBuilder.label(MANAGED))
-                            .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
-                    .add(span()
-                            .title(labelBuilder.label(EXPLODED))
-                            .css(flag(failSafeBoolean(model, EXPLODED)))).elements();
-            return new PreviewAttribute(label, elements);
-        });
+        // There is only "MANAGED" return at domain server group deployment level resource, no "content".
+        if (environment.isStandalone()) {
+            attributes.append(model -> {
+                String label = String.join(", ",
+                        labelBuilder.label(ENABLED), labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
+                Iterable<HTMLElement> elements = collect()
+                        .add(span()
+                                .title(labelBuilder.label(ENABLED))
+                                .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))
+                        .add(span()
+                                .title(labelBuilder.label(MANAGED))
+                                .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
+                        .add(span()
+                                .title(labelBuilder.label(EXPLODED))
+                                .css(flag(failSafeBoolean(model, EXPLODED)))).elements();
+                return new PreviewAttribute(label, elements);
+            });
+        } else {
+            attributes.append(model -> {
+                String label = String.join(", ",
+                        labelBuilder.label(ENABLED), labelBuilder.label(MANAGED));
+                Iterable<HTMLElement> elements = collect()
+                        .add(span()
+                                .title(labelBuilder.label(ENABLED))
+                                .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))
+                        .add(span()
+                                .title(labelBuilder.label(MANAGED))
+                                .css(flag(failSafeBoolean(model, MANAGED)))).elements();
+                return new PreviewAttribute(label, elements);
+            });
+        }
     }
 
     void status(PreviewAttributes<T> attributes, Deployment deployment) {
