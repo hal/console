@@ -23,6 +23,8 @@ import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLScriptElement;
 import elemental2.dom.XMLHttpRequest;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.keycloak.Keycloak;
@@ -123,6 +125,14 @@ public class EndpointManager {
                                 callback.execute();
                             });
                         }
+                        break;
+                    case 403:
+                        Elements.removeChildrenFrom(document.body);
+                        document.body.appendChild(new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
+                        break;
+                    case 503:
+                        Elements.removeChildrenFrom(document.body);
+                        document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText, Endpoints.INSTANCE).element());
                         break;
                     // TODO Show an error page!
                     // case 500:
