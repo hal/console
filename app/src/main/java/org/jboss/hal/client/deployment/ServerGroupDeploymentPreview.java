@@ -30,10 +30,7 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.*;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_TEMPLATE;
@@ -93,7 +90,7 @@ class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployme
         attributes.append(model -> {
             PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, new FinderPath()
                     .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(resources.constants().contentRepository()))
-                    .append(Ids.CONTENT, Ids.content(model.getName())))
+                    .append(Ids.CONTENT, Strings.sanitize(Ids.content(model.getName()))))
                     .build();
             return new PreviewAttribute(resources.constants().providedBy(), model.getName(),
                     places.historyToken(placeRequest));
