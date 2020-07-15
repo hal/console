@@ -83,7 +83,7 @@ public class ReadAuthentication implements BootstrapTask {
                 .doOnSuccess((CompositeResult compositeResult) -> {
 
                     ModelNode result = compositeResult.step(0).get(RESULT);
-                    if (result.isDefined() && !result.asString().equals("{}")) {
+                    if (result.hasDefined(AUTHORIZATION)) {
                         result = result.get(AUTHORIZATION);
                         // provider
                         AccessControlProvider accessControlProvider = asEnumValue(result, PROVIDER,
@@ -118,6 +118,10 @@ public class ReadAuthentication implements BootstrapTask {
                         environment.getRoles().clear();
                         if (resultWhoami.hasDefined(ROLES)) {
                             resultWhoami.get(ROLES).asList().stream()
+                                    .map(node -> new Role(node.asString()))
+                                    .forEach(role -> environment.getRoles().add(role));
+                        } else if (resultWhoami.hasDefined(MAPPED_ROLES)) {
+                            resultWhoami.get(MAPPED_ROLES).asList().stream()
                                     .map(node -> new Role(node.asString()))
                                     .forEach(role -> environment.getRoles().add(role));
                         }
