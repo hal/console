@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.AbstractFormItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.js.Browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
         if (element != null) {
             setTimeout((o) -> {
                 element.blur();
-                KeyboardEvent event = new KeyboardEvent("keyup");
+                KeyboardEvent event = !Browser.isIE() ? new KeyboardEvent("keyup") : createKeyboardEvent();
                 triggerEvent(element, event, "", 0); // to reset 'last_val' in autoComplete.js
                 triggerEvent(element, event, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
                 element.focus();
@@ -98,6 +99,12 @@ public class AutoComplete implements SuggestHandler, Attachable {
         event.keyCode = keyCode;
         event.which = keyCode;
         element.dispatchEvent(event);
+    }-*/;
+
+    private native KeyboardEvent createKeyboardEvent() /*-{
+        var event = $doc.createEvent('KeyboardEvent');
+        event.initEvent('keyup', false, false);
+        return event;
     }-*/;
 
     @Override
