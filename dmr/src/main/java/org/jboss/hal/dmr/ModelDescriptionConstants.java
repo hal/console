@@ -539,6 +539,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_VERSION = "management-version";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPED_ROLE_MAPPER = "mapped-role-mapper";
+    String MAPPED_ROLES = "mapped-roles";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
     String MATCH_ALL = "match-all";

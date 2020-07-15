@@ -110,7 +110,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     static final String HOST_KEY = "/host=";
 
     static AddressTemplate serverConfigTemplate(Server server) {
-        return serverConfigTemplate(server.getHost());
+        return server.isStandalone() ? AddressTemplate.ROOT : serverConfigTemplate(server.getHost());
     }
 
     static AddressTemplate serverConfigTemplate(String host) {
