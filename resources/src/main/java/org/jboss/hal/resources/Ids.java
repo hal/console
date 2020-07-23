@@ -109,6 +109,7 @@ public interface Ids {
     String CONFIGURATION_CHANGES_EMPTY = "configuration-changes-empty";
     String CONFIGURATION_CHANGES_NOT_ENABLED = "configuration-changes-not-enabled";
     String CONFIGURATION_SUBSYSTEM = "css";
+    String CONNECTION = "connection";
     String CONNECTION_POOL_ITEM = "connection-pool-item";
     String CONNECTION_POOL_FORM = "connection-pool-form";
     String CONTENT = "content";
@@ -125,6 +126,7 @@ public interface Ids {
     String CONTENT_UNMANAGED_ADD = "content-unmanaged-add";
     String COOKIE = "hal-cookie";
     String CUSTOM_LOAD_METRIC = "custom-load-metric";
+    String CREDENTIAL_REFERENCE = "credential-reference";
     String DATA_SOURCE_ADD = "ds-configuration-add";
     String DATA_SOURCE_ADD_ACTIONS = "ds-configuration-add-actions";
     String DATA_SOURCE_CONFIGURATION = "ds-configuration";
@@ -613,6 +615,7 @@ public interface Ids {
     String PATCHES_REFRESH = "patching-refresh";
     String PATCHING = "patching";
     String PATCHING_DOMAIN = "patching-domain";
+    String POOL = "pool";
     String PREVIEW_ID = "hal-finder-preview";
     String PROFILE = "profile";
     String PROFILE_ADD = "profile-add";
@@ -668,6 +671,7 @@ public interface Ids {
     String RUNTIME_SUBSYSTEM = "rss";
     String SCATTERED_CACHE = "scattered-cache";
     String SEARCH = "search";
+    String SECURITY = "security";
     String SECURITY_ITEM = "security-item";
     String SECURITY_FORM = "security-form";
     String SECURITY_DOMAIN = "sd";
@@ -718,6 +722,7 @@ public interface Ids {
     String SOCKET_BINDING_GROUP_REFRESH = "socket-binding-group-refresh";
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER_COLUMN = "standalone-server-column";
+    String STATEMENTS = "statements";
     String STORAGE = "hal-local-storage";
     String SYSTEM_PROPERTY_ADD = "system-property-add";
     String SYSTEM_PROPERTY_FORM = "system-property-form";
@@ -731,6 +736,7 @@ public interface Ids {
     String TASKS_REJECTED = "tasks-rejected";
     String THREAD_POOL_ITEM = "thread-pool-item";
     String THREAD_POOL_FORM = "thread-pool-form";
+    String TIMEOUT = "timeout";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_ACCESS_CONTROL_SSO = "tlc-access-control-sso";
     String TLC_CONFIGURATION = "tlc-configuration";
@@ -831,6 +837,7 @@ public interface Ids {
     String UPLOAD_FILE_INPUT = "upload-file-input";
     String UPLOAD_NAMES_FORM = "upload-names-form";
     String USER = "user";
+    String VALIDATION = "validations";
     String WEBSERVICES_CLIENT_CONFIG = "webservices-client-config";
     String WEBSERVICES_CLIENT_CONFIG_ITEM = "webservices-client-config-item";
     String WEBSERVICES_ENDPOINT_CONFIG = "webservices-endpoint-config";
