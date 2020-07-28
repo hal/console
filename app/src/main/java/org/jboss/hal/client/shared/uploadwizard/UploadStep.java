@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment.wizard;
+package org.jboss.hal.client.shared.uploadwizard;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 
-abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
+public abstract class UploadStep<C extends UploadContext, S extends Enum<S>> extends WizardStep<C,S> {
 
     private final UploadElement uploadElement;
 
-    UploadStep(String title, SafeHtml onError) {
+    public UploadStep(String title, SafeHtml onError) {
         super(title);
         this.uploadElement = new UploadElement(onError);
     }
@@ -34,17 +34,17 @@ abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    public void reset(UploadContext context) {
+    public void reset(C context) {
         context.file = null;
     }
 
     @Override
-    protected void onShow(UploadContext context) {
+    protected void onShow(C context) {
         uploadElement.reset();
     }
 
     @Override
-    protected boolean onNext(UploadContext context) {
+    protected boolean onNext(C context) {
         if (uploadElement.validate()) {
             context.file = uploadElement.getFiles().item(0);
             return true;
