@@ -29,6 +29,7 @@ import org.jboss.hal.resources.UIConstants;
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.ballroom.JQuery.$;
+import static org.jboss.hal.ballroom.chart.Donut.Legend.BOTTOM;
 import static org.jboss.hal.ballroom.chart.Donut.Legend.NONE;
 import static org.jboss.hal.resources.UIConstants.HASH;
 
@@ -57,6 +58,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         options.data.type = "donut";
         options.donut.title = builder.unit;
         options.legend.show = builder.legend != NONE;
+        options.legend.position = builder.legend == BOTTOM ? "bottom" : "right";
         options.size.width = builder.width != -1 ? builder.width : builder.legend.width;
         options.size.height = builder.width != -1 ? (int) (builder.width / builder.legend.ratio) : builder.legend.height;
         options.tooltip.show = true;
@@ -134,7 +136,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
 
 
     public enum Legend {
-        NONE(200, 171), RIGHT(251, 161), BOTTOM(271, 191);
+        NONE(200, 171), RIGHT(291, 161), BOTTOM(271, 191);
 
         final int width;
         final int height;
