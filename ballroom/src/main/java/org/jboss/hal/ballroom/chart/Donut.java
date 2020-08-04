@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.ballroom.chart;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import elemental2.core.JsArray;
 import elemental2.dom.HTMLElement;
@@ -24,6 +26,7 @@ import jsinterop.base.JsPropertyMap;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.js.JsHelper;
+import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.window;
@@ -107,6 +110,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         long total = 0;
         JsPropertyMap<Object> dataMap = JsPropertyMap.of();
         JsArray<JsArray<Object>> columns = new JsArray<>();
+        JsPropertyMap<Object> names = JsPropertyMap.of();
 
         for (Map.Entry<String, Long> entry : data.entrySet()) {
             String key = entry.getKey();
@@ -114,11 +118,13 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
             total += value;
             JsArray<Object> column = new JsArray<>();
             column.push(key, value);
+            names.set(key, nameAndCount(key, value));
             columns.push(column);
         }
 
         Charts.setDonutChartTitle(HASH + root.id, String.valueOf(total), builder.unit);
         dataMap.set("columns", columns); //NON-NLS
+        dataMap.set("names", names); //NON-NLS
         api().load(dataMap);
     }
 
@@ -132,6 +138,11 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     private void resizeInParent() {
         HTMLElement parent = (HTMLElement) root.parentNode;
         resize((int) $(parent).width());
+    }
+
+    private String nameAndCount(String name, long count) {
+        String[] parts = name.split("[-_]");
+        return Arrays.stream(parts).map(String::toLowerCase).map(Strings::capitalize).collect(Collectors.joining(" ")) + ": " + count;
     }
 
 

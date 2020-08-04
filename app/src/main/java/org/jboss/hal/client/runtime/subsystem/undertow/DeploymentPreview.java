@@ -126,7 +126,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .add(ACTIVE_SESSIONS, resources.constants().activeSessions(), PatternFly.colors.green)
                 .add(EXPIRED_SESSIONS, resources.constants().expiredSessions(), PatternFly.colors.orange)
                 .add(REJECTED_SESSIONS, resources.constants().rejectedSessions(), PatternFly.colors.red)
-                .legend(Donut.Legend.BOTTOM)
+                .legend(Donut.Legend.RIGHT)
                 .responsive(true)
                 .build();
         registerAttachable(sessions);
