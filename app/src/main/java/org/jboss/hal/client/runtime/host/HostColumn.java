@@ -53,6 +53,7 @@ import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
@@ -69,17 +70,21 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_TEMPLATE;
+import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.hosts;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.resources.CSS.pfIcon;
+
+
 
 @Column(Ids.HOST)
 @Requires(value = {
         "/core-service=management/host-connection=*",
-        "host=*/subsystem=core-management/service=configuration-changes",
-        "host=*/core-service=management/service=management-operations"}, recursive = false)
+        OPTIONAL + "host=*" + CONFIGURATION_CHANGES_ADDRESS,
+        "host=*" + MANAGEMENT_OPERATIONS_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static AddressTemplate hostTemplate(Host host) {
@@ -103,7 +108,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
             HostActions hostActions,
-            Resources resources) {
+            Resources resources,
+            MetadataRegistry metadataRegistry) {
 
         super(new Builder<Host>(finder, Ids.HOST, Names.HOST)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
@@ -188,7 +194,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                     List<ItemAction<Host>> actions = new ArrayList<>();
                     actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
                     if (!hostActions.isPending(item)) {
-                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())
+                            && metadataRegistry.contains(hostTemplate(item).append(CONFIGURATION_CHANGES_ADDRESS))) {
                             PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
                                     .nameToken(NameTokens.CONFIGURATION_CHANGES)
                                     .with(HOST, item.getAddressName())
@@ -197,9 +204,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                     ccPlaceRequest,
                                     Constraint.executable(hostTemplate(item).append(CONFIGURATION_CHANGES_ADDRESS),
                                             ADD)));
+                            actions.add(ItemAction.separator());
                         }
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
-                        actions.add(ItemAction.separator());
                         actions.add(new ItemAction.Builder<Host>()
                                 .title(resources.constants().reload())
                                 .handler(hostActions::reload)
