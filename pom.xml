@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.2.10.Final</version>
+    <version>3.2.11-SNAPSHOT</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>

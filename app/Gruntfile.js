@@ -34,7 +34,7 @@ module.exports = function (grunt) {
             node: 'node_modules',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
-            version: '3.2.10',
+            version: '3.2.11',
         },
 
         clean: {
