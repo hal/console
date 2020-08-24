@@ -15,6 +15,6 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
-public enum UploadState {
+public enum DeploymentState {
     UPLOAD, NAMES
 }

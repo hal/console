@@ -35,11 +35,11 @@ import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.dialog.CreateEmptyDialog;
 import org.jboss.hal.client.deployment.dialog.DeployContentDialog1;
+import org.jboss.hal.client.deployment.wizard.DeploymentContext;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContentStep;
-import org.jboss.hal.client.deployment.wizard.UploadContext;
-import org.jboss.hal.client.deployment.wizard.UploadElement;
-import org.jboss.hal.client.deployment.wizard.UploadState;
+import org.jboss.hal.client.shared.uploadwizard.UploadElement;
+import org.jboss.hal.client.deployment.wizard.DeploymentState;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
@@ -89,8 +89,8 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.ROOT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
-import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
-import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
+import static org.jboss.hal.client.deployment.wizard.DeploymentState.NAMES;
+import static org.jboss.hal.client.deployment.wizard.DeploymentState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -308,8 +308,8 @@ public class ContentColumn extends FinderColumn<Content> {
 
     private void uploadContent() {
         Metadata metadata = metadataRegistry.lookup(CONTENT_TEMPLATE);
-        Wizard<UploadContext, UploadState> wizard = new Wizard.Builder<UploadContext, UploadState>(
-                resources.messages().addResourceTitle(resources.constants().content()), new UploadContext())
+        Wizard<DeploymentContext, DeploymentState> wizard = new Wizard.Builder<DeploymentContext, DeploymentState>(
+                resources.messages().addResourceTitle(resources.constants().content()), new DeploymentContext())
 
                 .addStep(UPLOAD, new UploadContentStep(resources))
                 .addStep(NAMES, new NamesStep(environment, metadata, resources))

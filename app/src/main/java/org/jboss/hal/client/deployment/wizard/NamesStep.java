@@ -29,7 +29,7 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 
-public class NamesStep extends WizardStep<UploadContext, UploadState> {
+public class NamesStep extends WizardStep<DeploymentContext, DeploymentState> {
 
     private final NameItem nameItem;
     private final Form<ModelNode> form;
@@ -58,14 +58,14 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    public void reset(UploadContext context) {
+    public void reset(DeploymentContext context) {
         context.name = "";
         context.runtimeName = "";
         context.enabled = true;
     }
 
     @Override
-    protected void onShow(UploadContext context) {
+    protected void onShow(DeploymentContext context) {
         String filename = context.file.name;
 
         form.edit(new ModelNode());
@@ -78,7 +78,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    protected boolean onNext(UploadContext context) {
+    protected boolean onNext(DeploymentContext context) {
         boolean valid = form.save();
         if (valid) {
             context.name = nameItem.getValue();
@@ -91,7 +91,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    protected boolean onBack(UploadContext context) {
+    protected boolean onBack(DeploymentContext context) {
         if (!form.isUndefined()) {
             form.cancel();
         }
@@ -99,7 +99,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    protected boolean onCancel(UploadContext context) {
+    protected boolean onCancel(DeploymentContext context) {
         if (!form.isUndefined()) {
             form.cancel();
         }
