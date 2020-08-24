@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -102,8 +104,9 @@ class ResourcePanel implements Iterable<HTMLElement> {
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             dispatcher.execute(operation, result -> {
-                flattenDescription(metadata.getDescription().get(ATTRIBUTES));
-                flattenModel(result);
+                List<String> plainObjects = new ArrayList<>();
+                flattenDescription(metadata.getDescription().get(ATTRIBUTES), plainObjects);
+                flattenModel(result, plainObjects);
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                         Ids.build(Ids.MODEL_BROWSER, node.id, Ids.FORM), metadata)
                         .includeRuntime()
@@ -136,7 +139,7 @@ class ResourcePanel implements Iterable<HTMLElement> {
         }
     }
 
-    private void flattenDescription(ModelNode model) {
+    private void flattenDescription(ModelNode model, List<String> plainObjects) {
         for (Property p : model.asPropertyList()) {
             if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT) && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
 
@@ -145,14 +148,15 @@ class ResourcePanel implements Iterable<HTMLElement> {
                 for (Property nested : p.getValue().get(VALUE_TYPE).asPropertyList()) {
                     model.get(p.getName() + "." + nested.getName()).set(nested.getValue());
                 }
+            } else if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT)) {
+                plainObjects.add(p.getName());
             }
         }
     }
 
-    private void flattenModel(ModelNode model) {
+    private void flattenModel(ModelNode model, List<String> plainObjects) {
         for (Property p : model.asPropertyList()) {
-            if (p.getValue().getType() == ModelType.OBJECT) {
-
+            if (p.getValue().getType() == ModelType.OBJECT && !plainObjects.contains(p.getName())) {
                 model.remove(p.getName());
 
                 for (Property nested : p.getValue().asPropertyList()) {
