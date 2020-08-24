@@ -63,11 +63,11 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static LinkedListMultimap<String, Attribute> attributes = LinkedListMultimap.create();
+    private static LinkedListMultimap<Group, Attribute> attributes = LinkedListMultimap.create();
 
     static {
         // main attributes
-        attributes.putAll(CONSTANTS.attributes(), asList(
+        attributes.putAll(new Group(Ids.ATTRIBUTES, CONSTANTS.attributes()), asList(
                 new Attribute("datasource-class", NON_XA),
                 new Attribute("driver-class", NON_XA),
                 new Attribute(DRIVER_NAME),
@@ -79,7 +79,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // connection
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(CONSTANTS.connection(), asList(
+        attributes.putAll(new Group(Ids.CONNECTION, CONSTANTS.connection()), asList(
                 new Attribute(CONNECTION_URL, NON_XA),
                 new Attribute("connection-listener-class"),
                 new Attribute("connection-listener-property"),
@@ -98,7 +98,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // pool
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(CONSTANTS.pool(), asList(
+        attributes.putAll(new Group(Ids.POOL, CONSTANTS.pool()), asList(
                 new Attribute("initial-pool-size"),
                 new Attribute(MIN_POOL_SIZE),
                 new Attribute(MAX_POOL_SIZE),
@@ -117,7 +117,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // security
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(CONSTANTS.security(), asList(
+        attributes.putAll(new Group(Ids.SECURITY, CONSTANTS.security()), asList(
                 new Attribute("user-name"),
                 new Attribute("password"),
                 new Attribute("authentication-context"),
@@ -133,11 +133,11 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         ));
 
         // credential reference is added as a marker key and not part of the grouped form!
-        attributes.put(CREDENTIAL_REFERENCE, null);
+        attributes.put(new Group(Ids.CREDENTIAL_REFERENCE, CREDENTIAL_REFERENCE), null);
 
         // validation
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(CONSTANTS.validation(), asList(
+        attributes.putAll(new Group(Ids.VALIDATION, CONSTANTS.validation()), asList(
                 new Attribute("check-valid-connection-sql"),
                 new Attribute("valid-connection-checker-class-name"),
                 new Attribute("valid-connection-checker-properties"),
@@ -152,7 +152,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // timeouts
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(CONSTANTS.timeouts(), asList(
+        attributes.putAll(new Group(Ids.TIMEOUT, CONSTANTS.timeouts()), asList(
                 new Attribute("use-try-lock"),
                 new Attribute("blocking-timeout-wait-millis"),
                 new Attribute("idle-timeout-minutes"),
@@ -165,7 +165,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // statements / tracking
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(CONSTANTS.statements() + " / " + CONSTANTS.tracking(), asList(
+        attributes.putAll(new Group(Ids.STATEMENTS, CONSTANTS.statements() + " / " + CONSTANTS.tracking()), asList(
                 new Attribute("spy"),
                 new Attribute("tracking"),
                 new Attribute("track-statements"),
@@ -187,10 +187,9 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private Map<String, String> originalConnectionProperties;
     private StaticAutoComplete xaAutoCompleteValues = new StaticAutoComplete(Collections.emptyList());
     private StaticAutoComplete nonXaAutoCompleteValues = new StaticAutoComplete(Collections.emptyList());
-
     @Inject
     public DataSourceView(MetadataRegistry metadataRegistry, CredentialReference credentialReference,
-            Resources resources) {
+                          Resources resources) {
         this.resources = resources;
 
         Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(f, changedValues,
@@ -209,11 +208,12 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         GroupedForm.Builder<DataSource> xaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.XA_DATA_SOURCE_FORM,
                 xaMeta).onSave(saveCallback);
 
-        for (String group : attributes.keySet()) {
-            String nonXaId = Ids.build(Ids.DATA_SOURCE_CONFIGURATION, group);
-            String xaId = Ids.build(Ids.XA_DATA_SOURCE, group);
+        for (Group group : attributes.keySet()) {
 
-            if (CREDENTIAL_REFERENCE.equals(group)) {
+            String nonXaId = Ids.build(Ids.DATA_SOURCE_CONFIGURATION, group.id);
+            String xaId = Ids.build(Ids.XA_DATA_SOURCE, group.id);
+
+            if (Ids.CREDENTIAL_REFERENCE.equals(group.id)) {
                 nonXaCrForm = credentialReference.form(Ids.DATA_SOURCE_CONFIGURATION, nonXaMeta, PASSWORD,
                         () -> nonXaForm.<String>getFormItem(PASSWORD).getValue(),
                         () -> presenter.resourceAddress(),
@@ -240,7 +240,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                         .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
                         .map(attribute -> attribute.name)
                         .collect(toList());
-                nonXaFormBuilder.customGroup(nonXaId, group)
+                nonXaFormBuilder.customGroup(nonXaId, group.title)
                         .include(nonXaNames);
 
                 // xa form and tab
@@ -248,10 +248,10 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                         .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
                         .map(attribute -> attribute.name)
                         .collect(toList());
-                xaFormBuilder.customGroup(xaId, group)
+                xaFormBuilder.customGroup(xaId, group.title)
                         .include(xaNames);
 
-                if (group.equals(CONSTANTS.connection())) {
+                if (Ids.CONNECTION.equals(group.id)) {
                     nonXaFormBuilder.unboundFormItem(new PropertiesItem(CONNECTION_PROPERTIES));
                     xaFormBuilder.unboundFormItem(new PropertiesItem(XA_DATASOURCE_PROPERTIES));
                 }
@@ -352,5 +352,15 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         Elements.setVisible(xaInfo, xa);
         Elements.setVisible(nonXaForm.element(), !xa);
         Elements.setVisible(xaForm.element(), xa);
+    }
+
+    private static class Group {
+        String id;
+        String title;
+
+        private Group(String id, String title) {
+            this.id = id;
+            this.title = title;
+        }
     }
 }
