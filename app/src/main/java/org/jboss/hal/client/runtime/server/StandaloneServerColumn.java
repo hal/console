@@ -49,6 +49,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
@@ -66,9 +67,10 @@ import static org.jboss.hal.client.runtime.managementoperations.ManagementOperat
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 @Column(Ids.STANDALONE_SERVER_COLUMN)
-@Requires(value = {"/", MANAGEMENT_ADDRESS, HOST_CONFIGURATION_CHANGES_ADDRESS, MANAGEMENT_OPERATIONS_ADDRESS},
+@Requires(value = {"/", MANAGEMENT_ADDRESS, OPTIONAL + HOST_CONFIGURATION_CHANGES_ADDRESS, MANAGEMENT_OPERATIONS_ADDRESS},
         recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
@@ -82,7 +84,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     public StandaloneServerColumn(Finder finder, EventBus eventBus, Dispatcher dispatcher,
             FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
             ServerActions serverActions, PlaceManager placeManager, Places places, @Footer Provider<Progress> progress,
-            Resources resources, StatementContext statementContext) {
+            Resources resources, StatementContext statementContext, MetadataRegistry metadataRegistry) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER_COLUMN, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -175,7 +177,8 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                         }
                     }
                     actions.add(ItemAction.separator());
-                    if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                    if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())
+                            && metadataRegistry.contains(HOST_CONFIGURATION_CHANGES_TEMPLATE)) {
                         PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
                                 .nameToken(NameTokens.CONFIGURATION_CHANGES).build();
                         actions.add(itemActionFactory.placeRequest(resources.constants().configurationChanges(),
