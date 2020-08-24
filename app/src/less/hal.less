@@ -109,7 +109,6 @@
 @import "../../node_modules/patternfly/dist/less/bootstrap-treeview.less";
 @import "../../node_modules/patternfly/dist/less/cards.less";
 @import "../../node_modules/patternfly/dist/less/card-view.less";
-@import "../../node_modules/patternfly/dist/less/charts.less";
 @import "../../node_modules/patternfly/dist/less/close.less";
 @import "../../node_modules/patternfly/dist/less/datatables.less";
 @import "../../node_modules/patternfly/dist/less/experimental-features.less";
@@ -146,6 +145,9 @@
 // Misc
 @import (less) "../../node_modules/c3/c3.css";
 @import (less) "../../node_modules/google-code-prettify/src/prettify.css";
+
+// has to be imported after c3, do not move
+@import "../../node_modules/patternfly/dist/less/charts.less";
 
 // HAL
 @import "variables";
