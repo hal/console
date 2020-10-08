@@ -181,6 +181,7 @@ public class Operation extends ModelNode {
         private ModelNode parameter;
         private ModelNode header;
         private Set<String> roles;
+        private boolean resolveExpression;
 
         @JsIgnore
         public Builder(ResourceAddress address, String name) {
@@ -189,6 +190,19 @@ public class Operation extends ModelNode {
             this.parameter = new ModelNode();
             this.header = new ModelNode();
             this.roles = new HashSet<>();
+        }
+
+        @JsIgnore
+        public Builder(ResourceAddress address, String name,boolean resolveExpression) {
+            this.address = address;
+            this.name = name;
+            this.parameter = new ModelNode();
+            this.header = new ModelNode();
+            this.roles = new HashSet<>();
+            this.resolveExpression = resolveExpression;
+            if (resolveExpression) {
+            parameter.get(RESOLVE_EXPRESSION).set(resolveExpression);
+            }
         }
 
         @JsIgnore
