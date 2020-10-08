@@ -15,10 +15,6 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import java.util.function.Consumer;
-
-import javax.inject.Inject;
-
 import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLScriptElement;
@@ -34,6 +30,9 @@ import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.util.function.Consumer;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
@@ -201,6 +200,10 @@ public class EndpointManager {
                 wildflyCallback.execute();
             }
         };
+        xhr.addEventListener("error", event -> {
+            logger.error("Keycloak adapter '{}' failed: {}", keycloakAdapterUrl, event);
+            wildflyCallback.execute();
+        });
         xhr.open(GET.name(), keycloakAdapterUrl, true);
         xhr.send();
     }
