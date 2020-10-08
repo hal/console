@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.npm",
-  "version": "3.2.11",
+  "version": "3.3.0",
   "description": "NPM dependencies",
   "license": "Apache-2.0",
   "private": true,
