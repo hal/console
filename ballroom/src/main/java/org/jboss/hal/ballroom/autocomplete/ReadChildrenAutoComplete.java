@@ -15,19 +15,15 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import java.util.List;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.*;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+
+import java.util.List;
 
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
@@ -39,12 +35,12 @@ public class ReadChildrenAutoComplete extends AutoComplete {
     private static final String ERROR_MESSAGE = "Unable to read child resource suggestions for {}: {}";
 
     public ReadChildrenAutoComplete(Dispatcher dispatcher, StatementContext statementContext,
-            AddressTemplate template) {
+                                    AddressTemplate template) {
         this(dispatcher, statementContext, singleton(template));
     }
 
     public ReadChildrenAutoComplete(Dispatcher dispatcher, StatementContext statementContext,
-            Iterable<AddressTemplate> templates) {
+                                    Iterable<AddressTemplate> templates) {
         verifyTemplates(templates);
 
         ResultProcessor resultProcessor;
@@ -128,7 +124,7 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                 (wildcards == 0 || (wildcards == 1 && "*".equals(address.lastValue())))) {
             ResourceAddress parent = address.getParent();
             String childName = address.lastName();
-            operation = new Operation.Builder(parent, READ_CHILDREN_NAMES_OPERATION)
+            operation = new Operation.Builder(parent, READ_CHILDREN_NAMES_OPERATION, true)
                     .param(CHILD_TYPE, childName).build();
 
         } else {
@@ -138,7 +134,7 @@ public class ReadChildrenAutoComplete extends AutoComplete {
             // but it returns an empty list, so we're using
             // /foo=*/bar=*:read-resource
             // which makes parsing the response more complicated
-            operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+            operation = new Operation.Builder(address, READ_RESOURCE_OPERATION, true)
                     .param(ATTRIBUTES_ONLY, true)
                     .param(INCLUDE_ALIASES, false)
                     .param(INCLUDE_DEFAULTS, false)
