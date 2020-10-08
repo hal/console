@@ -15,10 +15,6 @@
  */
 package org.jboss.hal.dmr;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -26,11 +22,17 @@ import jsinterop.annotations.JsType;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/** Represents a DMR operation. */
+/**
+ * Represents a DMR operation.
+ */
 @JsType
 public class Operation extends ModelNode {
 
@@ -94,25 +96,33 @@ public class Operation extends ModelNode {
         }
     }
 
-    /** @return the name of the operation */
+    /**
+     * @return the name of the operation
+     */
     @JsProperty
     public String getName() {
         return get(OP).asString();
     }
 
-    /** @return the address of the operation */
+    /**
+     * @return the address of the operation
+     */
     @JsProperty
     public ResourceAddress getAddress() {
         return address;
     }
 
-    /** @return the parameters of the operation */
+    /**
+     * @return the parameters of the operation
+     */
     @JsProperty
     public ModelNode getParameter() {
         return parameter;
     }
 
-    /** @return the header of the operation */
+    /**
+     * @return the header of the operation
+     */
     @JsProperty
     public ModelNode getHeader() {
         return header;
@@ -133,13 +143,17 @@ public class Operation extends ModelNode {
         return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
 
-    /** @return the string representation of the operation as used in the CLI */
+    /**
+     * @return the string representation of the operation as used in the CLI
+     */
     @Override
     public String toString() {
         return asCli();
     }
 
-    /** @return the string representation of the operation as used in the CLI */
+    /**
+     * @return the string representation of the operation as used in the CLI
+     */
     public String asCli() {
         StringBuilder builder = new StringBuilder();
         if (address.isDefined() && !address.asList().isEmpty()) {
@@ -172,36 +186,32 @@ public class Operation extends ModelNode {
     }
 
 
-    /** A builder for operations. */
+    /**
+     * A builder for operations.
+     */
     @JsType(name = "OperationBuilder")
     public static class Builder {
 
         private final String name;
         private final ResourceAddress address;
         private ModelNode parameter;
-        private ModelNode header;
-        private Set<String> roles;
-        private boolean resolveExpression;
+        private final ModelNode header;
+        private final Set<String> roles;
 
         @JsIgnore
         public Builder(ResourceAddress address, String name) {
-            this.address = address;
-            this.name = name;
-            this.parameter = new ModelNode();
-            this.header = new ModelNode();
-            this.roles = new HashSet<>();
+            this(address, name, false);
         }
 
         @JsIgnore
-        public Builder(ResourceAddress address, String name,boolean resolveExpression) {
+        public Builder(ResourceAddress address, String name, boolean resolveExpression) {
             this.address = address;
             this.name = name;
             this.parameter = new ModelNode();
             this.header = new ModelNode();
             this.roles = new HashSet<>();
-            this.resolveExpression = resolveExpression;
             if (resolveExpression) {
-            parameter.get(RESOLVE_EXPRESSION).set(resolveExpression);
+                parameter.get(RESOLVE_EXPRESSION).set(resolveExpression);
             }
         }
 
