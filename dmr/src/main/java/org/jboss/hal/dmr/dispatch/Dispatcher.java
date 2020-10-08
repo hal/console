@@ -15,21 +15,10 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-
-import javax.inject.Inject;
-
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.Blob;
+import elemental2.dom.*;
 import elemental2.dom.Blob.ConstructorBlobPartsArrayUnionType;
-import elemental2.dom.BlobPropertyBag;
-import elemental2.dom.File;
-import elemental2.dom.FormData;
 import elemental2.dom.FormData.AppendValueUnionType;
-import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -38,20 +27,9 @@ import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.*;
 import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessor.Header;
-import org.jboss.hal.dmr.macro.Action;
-import org.jboss.hal.dmr.macro.Macro;
-import org.jboss.hal.dmr.macro.MacroFinishedEvent;
-import org.jboss.hal.dmr.macro.MacroOperationEvent;
-import org.jboss.hal.dmr.macro.MacroOptions;
-import org.jboss.hal.dmr.macro.Macros;
-import org.jboss.hal.dmr.macro.RecordingEvent;
+import org.jboss.hal.dmr.macro.*;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.EsParam;
@@ -62,6 +40,12 @@ import org.slf4j.LoggerFactory;
 import rx.Single;
 import rx.SingleSubscriber;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
 import static elemental2.dom.DomGlobal.navigator;
@@ -70,9 +54,7 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
-import static org.jboss.hal.dmr.dispatch.RequestHeader.ACCEPT;
-import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
-import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.*;
 
 /** Executes operations against the management endpoint. */
 @JsType(namespace = "hal.dmr")

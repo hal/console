@@ -119,7 +119,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     private List<HandlerRegistration> breadcrumbHandlers;
 
     @Inject
-    public HeaderView(Places places, AccessControl ac, Resources resources) {
+    public HeaderView(Environment environment, Places places, AccessControl ac, Resources resources) {
         this.places = places;
         this.resources = resources;
 
@@ -273,6 +273,11 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
         }
+
+        if (!environment.isPatchingEnabled() && topLevelCategories.contains(patching)) {
+            topLevelCategories.removeChild(patching);
+        }
+
         String accessControlNameToken = ac.isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
 
         // @formatter:off

@@ -74,6 +74,7 @@ import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
@@ -110,7 +111,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     static final String HOST_KEY = "/host=";
 
     static AddressTemplate serverConfigTemplate(Server server) {
-        return serverConfigTemplate(server.getHost());
+        return server.isStandalone() ? AddressTemplate.ROOT : serverConfigTemplate(server.getHost());
     }
 
     static AddressTemplate serverConfigTemplate(String host) {
@@ -146,7 +147,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             ItemActionFactory itemActionFactory,
             ServerActions serverActions,
             CrudOperations crud,
-            Resources resources) {
+            Resources resources,
+            MetadataRegistry metadataRegistry) {
 
         super(new Builder<Server>(finder, Ids.SERVER, Names.SERVER)
 
@@ -345,7 +347,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 .handler(itm -> serverActions.editUrl(itm, () -> refresh(RESTORE_SELECTION)))
                                 .build());
 
-                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())) {
+                        if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())
+                            && metadataRegistry.contains(AddressTemplate
+                                .of(HOST_KEY + item.getHost() + "/server=" + item.getName())
+                                .append(CONFIGURATION_CHANGES_ADDRESS))) {
                             Map<String, String> params = new HashMap<>();
                             params.put(HOST, item.getHost());
                             params.put(SERVER, item.getName());

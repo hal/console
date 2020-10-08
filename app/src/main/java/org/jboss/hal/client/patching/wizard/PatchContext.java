@@ -17,13 +17,10 @@ package org.jboss.hal.client.patching.wizard;
 
 import java.util.List;
 
-import elemental2.dom.File;
+import org.jboss.hal.client.shared.uploadwizard.UploadContext;
 import org.jboss.hal.dmr.Property;
 
-public class PatchContext {
-
-    // used only on apply patch wizard
-    public File file;
+public class PatchContext extends UploadContext {
 
     // used only on rollback wizard
     String patchId;

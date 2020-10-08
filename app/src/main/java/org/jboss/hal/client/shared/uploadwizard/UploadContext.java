@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ * Copyright 2015-2020 Red Hat, Inc, and individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment.wizard;
+package org.jboss.hal.client.shared.uploadwizard;
 
-import org.jboss.hal.client.shared.uploadwizard.UploadStep;
-import org.jboss.hal.resources.Resources;
+import elemental2.dom.File;
 
-public class UploadContentStep extends UploadStep<DeploymentContext, DeploymentState> {
-
-    public UploadContentStep(Resources resources) {
-        super(resources.constants().uploadContent(), resources.messages().noContent());
-    }
+public abstract class UploadContext {
+    public File file;
 }

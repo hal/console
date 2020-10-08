@@ -15,11 +15,10 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
-import elemental2.dom.File;
+import org.jboss.hal.client.shared.uploadwizard.UploadContext;
 
-public class UploadContext {
+public class DeploymentContext extends UploadContext {
 
-    public File file;
     public String name;
     public String runtimeName;
     public boolean enabled;

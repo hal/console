@@ -15,40 +15,12 @@
  */
 package org.jboss.hal.client.patching.wizard;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.HTMLElement;
-import org.jboss.hal.ballroom.wizard.WizardStep;
+import org.jboss.hal.client.shared.uploadwizard.UploadStep;
+import org.jboss.hal.resources.Resources;
 
-public class UploadPatchStep extends WizardStep<PatchContext, PatchState> {
+public class UploadPatchStep extends UploadStep<PatchContext, PatchState> {
 
-    private final PatchElement uploadElement;
-
-    public UploadPatchStep(String title, SafeHtml onError) {
-        super(title);
-        this.uploadElement = new PatchElement(onError);
-    }
-
-    @Override
-    public HTMLElement element() {
-        return uploadElement.element();
-    }
-
-    @Override
-    public void reset(PatchContext context) {
-        context.file = null;
-    }
-
-    @Override
-    protected void onShow(PatchContext context) {
-        uploadElement.reset();
-    }
-
-    @Override
-    protected boolean onNext(PatchContext context) {
-        if (uploadElement.validate()) {
-            context.file = uploadElement.getFiles().item(0);
-            return true;
-        }
-        return false;
+    public UploadPatchStep(Resources resources) {
+        super(resources.constants().uploadPatch(), resources.messages().noSelectedPatch());
     }
 }
