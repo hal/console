@@ -991,6 +991,10 @@ public interface Ids {
         return substringAfterLast(id, "umc-");
     }
 
+    static String extractUndertowModclusterBalancer(String id) {
+        return substringAfterLast(id, "undertow-modcluster-balancer-");
+    }
+
     static String undertowServer(String name) {
         return build("us", name);
     }
