@@ -39,7 +39,10 @@ class HomepageModule implements IsElement<HTMLDivElement> {
                                 .add(img(image.getSafeUri().asString())))
                         .add(moduleBody = div().css(eapHomeModuleContainer)
                                 .add(div().css(eapHomeModuleHeader)
-                                        .add(h(2).add(a(historyToken(places, token)).id(id).textContent(header)))
+                                        .add(h(2).add(a(historyToken(places, token))
+                                                .css(eapHomeModuleLink)
+                                                .id(id)
+                                                .textContent(header)))
                                         .add(p().textContent(intro)))
                                 .element()))
                 .element();

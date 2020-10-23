@@ -126,6 +126,7 @@ public interface CSS {
     String eapHomeModuleContainer = "eap-home-module-container";
     String eapHomeModuleCol = "eap-home-module-col";
     String eapHomeModuleHeader = "eap-home-module-header";
+    String eapHomeModuleLink = "eap-home-module-link";
     String eapHomeModuleIcon = "eap-home-module-icon";
     String eapHomeRow = "eap-home-row";
     String eapHomeSectionIcon = "eap-home-section-icon";

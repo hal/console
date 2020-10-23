@@ -55,6 +55,7 @@ public interface Ids {
     String ASSIGNMENT_EXCLUDE = "assignement-exclude";
     String ASSIGNMENT_INCLUDE = "assignement-include";
     String ATTRIBUTES = "attributes";
+    String BADEGE_ICON = "badge-icon";
     String BOOT_ERRORS_ADDRESS_COLUMN = "boot-errors-address-column";
     String BOOT_ERRORS_EMPTY = "boot-errors-empty";
     String BOOT_ERRORS_FORM = "boot-errors-form";
@@ -471,6 +472,7 @@ public interface Ids {
     String LOGGING_FORMATTER_ITEM = "logging-formatter-item";
     String LOGGING_PROFILE = "logging-profile";
     String LOGGING_PROFILE_ADD = "logging-profile-add";
+    String LOGOUT_LINK = "logout-link";
     String MACRO_EDITOR = "macro-editor";
     String MACRO_EMPTY = "macro-empty";
     String MACRO_LIST = "macro-list";
@@ -493,6 +495,7 @@ public interface Ids {
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_EXCLUDE = "membership-exclude";
     String MEMBERSHIP_INCLUDE = "membership-include";
+    String MESSAGES_LINK = "messages-link";
     String MESSAGING_ACCEPTOR = "messaging-acceptor";
     String MESSAGING_ADDRESS_SETTING = "messaging-address-setting";
     String MESSAGING_BRIDGE = "messaging-bridge";
@@ -601,6 +604,7 @@ public interface Ids {
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = "model-browser-create-singleton-form";
     String MODEL_BROWSER_ROOT = "model-browser-root";
     String NO_MATCH = "no-match";
+    String NONE_PROGRESSING_LINK = "none-progressing-link";
     String NATIVE_INTERFACE_ITEM = "native-interface-item";
     String NEAR_CACHE_NONE = "near-cache-none";
     String NEAR_CACHE_INVALIDATION = "near-cache-invalidation";
@@ -623,6 +627,7 @@ public interface Ids {
     String PROFILE_REFRESH = "profile-refresh";
     String REFERENCE_SERVER_EMPTY = "reference-server-empty";
     String REFRESH = "refresh";
+    String RELOAD_LINK = "reload-link";
     String REMOTE_CACHE_CONTAINER_ADD = "rcc-add";
     String REMOTE_CACHE_CONTAINER_CONFIGURATION_FORM = "rcc-configuration-form";
     String REMOTE_CACHE_CONTAINER_CONFIGURATION_TAB = "rcc-configuration-tab";
