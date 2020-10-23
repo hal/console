@@ -1,4 +1,4 @@
-FROM jboss/wildfly
+FROM jboss/wildfly:latest
 
 LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
 
