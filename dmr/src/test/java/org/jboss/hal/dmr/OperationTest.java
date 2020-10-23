@@ -15,18 +15,19 @@
  */
 package org.jboss.hal.dmr;
 
-import java.util.Collections;
-
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class OperationTest {
 
     @Test
-    public void fromModelNode() throws Exception {
+    public void fromModelNode() {
         ModelNode address = new ModelNode();
         address.add().set("subsystem", "datasources");
         address.add().set("data-source", "foo");
@@ -41,7 +42,7 @@ public class OperationTest {
     }
 
     @Test
-    public void fromBuilder() throws Exception {
+    public void fromBuilder() {
         ResourceAddress address = new ResourceAddress()
                 .add("subsystem", "datasources")
                 .add("data-source", "foo");
@@ -55,7 +56,24 @@ public class OperationTest {
     }
 
     @Test
-    public void runAs() throws Exception {
+    public void fromBuilderResolveExpression() {
+        ResourceAddress address = new ResourceAddress()
+                .add("subsystem", "datasources")
+                .add("data-source", "foo");
+
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION, true)
+                .header("header1", "value1")
+                .build();
+
+        ModelNode parameter = new ModelNode();
+        parameter.get(RESOLVE_EXPRESSION).set(true);
+        assertEquals(parameter, operation.getParameter());
+
+        assertTrue(operation.getParameter().asBoolean());
+    }
+
+    @Test
+    public void runAs() {
         ResourceAddress address = new ResourceAddress()
                 .add("subsystem", "datasources")
                 .add("data-source", "foo");

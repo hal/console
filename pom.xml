@@ -22,12 +22,12 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>35</version>
+        <version>37</version>
     </parent>
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.2.10.Final</version>
+    <version>3.3.0.Final</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -91,7 +91,7 @@
         <gwt.moduleTemplate>${project.basedir}/src/main/module.gwt.xml</gwt.moduleTemplate>
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>DETAILED</gwt.style>
-        <gwt.devmode.hostname>0.0.0.0</gwt.devmode.hostname>
+        <gwt.devmode.hostname>localhost</gwt.devmode.hostname>
         <hal.version>${project.version}</hal.version>
 
         <linkXRef>false</linkXRef>
@@ -100,7 +100,7 @@
 
         <plugin.buildhelper.version>3.0.0</plugin.buildhelper.version>
         <plugin.degraph.version>3.0.1</plugin.degraph.version>
-        <plugin.docker.version>0.30.0</plugin.docker.version>
+        <plugin.docker.version>0.34.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
