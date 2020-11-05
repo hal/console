@@ -53,6 +53,8 @@ import org.jboss.hal.spi.Requires;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.patching.PatchTasks.patches;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 import static org.jboss.hal.flow.Flow.series;
 
@@ -130,7 +132,11 @@ public class HostPatchesColumn extends FinderColumn<Host> implements HostActionE
 
             @Override
             public String nextColumn() {
-                return Ids.PATCHING;
+                if (item.get(CORE_SERVICE).keys().contains(PATCHING)) {
+                    return Ids.PATCHING;
+                } else {
+                    return null;
+                }
             }
         });
 
