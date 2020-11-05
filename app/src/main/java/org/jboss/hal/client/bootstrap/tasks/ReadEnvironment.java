@@ -146,7 +146,7 @@ public class ReadEnvironment implements BootstrapTask {
                     logger.debug("User info: {} {}", user.getName(), user.getRoles());
 
                     ModelNode step = result.step(2).get(RESULT);
-                    environment.setPatchingEnabled(step.get(PATCHING).isDefined());
+                    environment.setPatchingEnabled(!environment.isStandalone() || step.get(PATCHING).isDefined());
                 })
                 .toCompletable();
     }
