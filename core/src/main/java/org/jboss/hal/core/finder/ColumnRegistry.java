@@ -17,6 +17,7 @@ package org.jboss.hal.core.finder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -66,29 +67,21 @@ public class ColumnRegistry {
     }
 
     void lookup(String id, LookupCallback callback) {
+        Set<String> resources = requiredResources.getResources(id);
         if (resolvedColumns.containsKey(id)) {
+            if (resources.stream().anyMatch(r -> r.contains("{selected."))) {
+                // resources dependent on selected.host/server are processed for the current selection only
+                // if the column is already resolved resources need to be processed for the new selection
+                logger.debug("Column '{}' has the following required resources attached to it: {}", id, resources);
+                metadataProcessor.process(id, progress.get(), createAsyncCallback(id, callback, false));
+            }
             callback.found(resolvedColumns.get(id));
-
         } else {
             logger.debug("Try to lookup column '{}'", id);
-            if (!requiredResources.getResources(id).isEmpty()) {
+            if (!resources.isEmpty()) {
                 // first of all process the required resources attached to this column
-                logger.debug("Column '{}' has the following required resources attached to it: {}", id,
-                        requiredResources.getResources(id));
-                metadataProcessor.process(id, progress.get(), new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(final Throwable throwable) {
-                        //noinspection HardCodedStringLiteral
-                        callback.error("Unable to load required resources for column '" + id +
-                                ((throwable != null) ? "': " + throwable.getMessage() : "'"));
-                    }
-
-                    @Override
-                    public void onSuccess(final Void aVoid) {
-                        lookupInternal(id, callback);
-                    }
-                });
-
+                logger.debug("Column '{}' has the following required resources attached to it: {}", id, resources);
+                metadataProcessor.process(id, progress.get(), createAsyncCallback(id, callback, true));
             } else {
                 logger.debug("No required resources attached to column '{}'", id);
                 lookupInternal(id, callback);
@@ -134,6 +127,23 @@ public class ColumnRegistry {
         resolvedColumns.put(id, column);
     }
 
+    private AsyncCallback<Void> createAsyncCallback(String id, LookupCallback callback, boolean lookUpOnSuccess) {
+        return new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(final Throwable throwable) {
+                //noinspection HardCodedStringLiteral
+                callback.error("Unable to load required resources for column '" + id +
+                        ((throwable != null) ? "': " + throwable.getMessage() : "'"));
+            }
+
+            @Override
+            public void onSuccess(final Void aVoid) {
+                if (lookUpOnSuccess) {
+                    lookupInternal(id, callback);
+                }
+            }
+        };
+    }
 
     interface LookupCallback {
 
