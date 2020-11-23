@@ -993,6 +993,7 @@ public interface ModelDescriptionConstants {
     String USERS_PROPERTIES = "users-properties";
     String VALID_CONNECTION_CHECKER_CLASS_NAME = "valid-connection-checker-class-name";
     String VALIDATE = "validate";
+    String VALIDATE_ON_MATCH = "validate-on-match";
     String VALIDITY = "validity";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";

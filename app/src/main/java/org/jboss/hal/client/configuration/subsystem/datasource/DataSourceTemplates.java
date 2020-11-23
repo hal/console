@@ -148,9 +148,10 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:mysql://localhost:3306/mysqldb");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker");
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter");
                     return dataSource;
