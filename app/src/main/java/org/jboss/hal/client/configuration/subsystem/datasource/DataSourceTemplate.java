@@ -34,7 +34,8 @@ public class DataSourceTemplate {
         ORACLE("Oracle"),
         SQL_SERVER("Microsoft SQLServer"),
         DB2("IBM DB2"),
-        SYBASE("Sybase");
+        SYBASE("Sybase"),
+        MARIA_DB("MariaDB");
 
         public final String label;
 

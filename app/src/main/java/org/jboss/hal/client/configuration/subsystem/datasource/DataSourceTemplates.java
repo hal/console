@@ -39,6 +39,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
     private static final String DATABASE_NAME = "DatabaseName";
     private static final String H2 = "h2";
     private static final String LOCALHOST = "localhost";
+    private static final String MARIADB = "mariadb";
     private static final String MYSQL = "mysql";
     private static final String ORACLE = "oracle";
     private static final String POSTGRESQL = "postgresql";
@@ -46,6 +47,10 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
     private static final String SERVER_NAME = "ServerName";
     private static final String SQLSERVER = "sqlserver";
     private static final String SYBASE = "sybase";
+
+    // For Checkstyle MultipleStringLiterals: The String "org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker" appears 4 times in the file.
+    private static final String MySQL_VALID_CONNECTION_CHECKER = "org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker";
+    private static final String MySQL_EXCEPTION_SORTER = "org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter";
 
     private final List<DataSourceTemplate> pool;
 
@@ -150,9 +155,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker");
+                            .set(MySQL_VALID_CONNECTION_CHECKER);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter");
+                            .set(MySQL_EXCEPTION_SORTER);
                     return dataSource;
                 },
                 mySqlDriver));
@@ -165,14 +170,58 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker");
+                            .set(MySQL_VALID_CONNECTION_CHECKER);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter");
+                            .set(MySQL_EXCEPTION_SORTER);
                     return dataSource;
                 },
                 mySqlDriver,
                 properties(SERVER_NAME, LOCALHOST, DATABASE_NAME, "mysqldb")));
 
+
+        // ------------------------------------------------------ MariaDB
+
+        Supplier<JdbcDriver> mariaDBDriver = () -> {
+            JdbcDriver driver = new JdbcDriver(MARIADB);
+            driver.get(DRIVER_MODULE_NAME).set("org.mariadb");
+            driver.get(DRIVER_CLASS_NAME).set("org.mariadb.jdbc.Driver");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("org.mariadb.jdbc.MariaDbDataSource");
+            return driver;
+        };
+        setup.add(new DataSourceTemplate(MARIADB, DataSourceTemplate.Vendor.MARIA_DB,
+                () -> {
+                    DataSource dataSource = new DataSource("MariaDB", false);
+                    dataSource.get(JNDI_NAME).set("java:/MariaDB");
+                    dataSource.get(DRIVER_NAME).set(MARIADB);
+                    dataSource.get(CONNECTION_URL).set("jdbc:mariadb://localhost:3306/db");
+                    dataSource.get(USER_NAME).set(ADMIN);
+                    dataSource.get(PASSWORD).set(ADMIN);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
+                            .set(MySQL_VALID_CONNECTION_CHECKER);
+                    dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
+                            .set(MySQL_EXCEPTION_SORTER);
+                    return dataSource;
+                },
+                mariaDBDriver));
+        setup.add(new DataSourceTemplate("mariadb-xa", DataSourceTemplate.Vendor.MARIA_DB,
+                () -> {
+                    DataSource dataSource = new DataSource("MariaDBXADS", true);
+                    dataSource.get(JNDI_NAME).set("java:/MariaDBXADS");
+                    dataSource.get(DRIVER_NAME).set(MARIADB);
+                    dataSource.get(USER_NAME).set(ADMIN);
+                    dataSource.get(PASSWORD).set(ADMIN);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
+                            .set(MySQL_VALID_CONNECTION_CHECKER);
+                    dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
+                            .set(MySQL_EXCEPTION_SORTER);
+                    return dataSource;
+                },
+                mariaDBDriver,
+                properties(SERVER_NAME, LOCALHOST, DATABASE_NAME, "mariadb")));
 
         // ------------------------------------------------------ Oracle
 
