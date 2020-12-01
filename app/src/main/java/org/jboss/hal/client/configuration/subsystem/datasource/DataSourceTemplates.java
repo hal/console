@@ -238,7 +238,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(JNDI_NAME).set("java:/MSSQLDS");
                     dataSource.get(DRIVER_NAME).set(SQLSERVER);
                     dataSource.get(CONNECTION_URL)
-                            .set("jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=MyDatabase");
+                            .set("jdbc:sqlserver://localhost:1433;DatabaseName=MyDatabase");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(BACKGROUND_VALIDATION).set(true);
