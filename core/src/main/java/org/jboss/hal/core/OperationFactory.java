@@ -162,7 +162,7 @@ public class OperationFactory {
             });
 
             write.forEach(w -> {
-                operations.putIfAbsent(w, writeAttribute(address, w, changeSet.get(w), resourceDescription));
+                operations.putIfAbsent(w, writeAttribute(address, w, changeSet.get(w), resourceDescription, true));
                 localChanges.remove(w);
                 List<String> writeAlternatives = resourceDescription.findAlternatives(ATTRIBUTES, w);
                 // process alternatives of the current write attribute
@@ -176,7 +176,7 @@ public class OperationFactory {
         // handle the remaining attributes
         logger.debug("Process remaining attributes [{}]", String.join(", ", localChanges.keySet()));
         localChanges.forEach((name, value) ->
-                operations.putIfAbsent(name, writeAttribute(address, name, value, resourceDescription)));
+                operations.putIfAbsent(name, writeAttribute(address, name, value, resourceDescription, false)));
         return new Composite(operations.values().stream().filter(Objects::nonNull).collect(toList()));
     }
 
@@ -260,6 +260,7 @@ public class OperationFactory {
         return new Composite(operations);
     }
 
+    @SuppressWarnings("rawtypes")
     private boolean isNullOrEmpty(Object value) {
         return (value == null
                 || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
@@ -275,8 +276,9 @@ public class OperationFactory {
     }
 
     private Operation writeAttribute(ResourceAddress address, String name, Object value,
-            ResourceDescription resourceDescription) {
-        if (isNullOrEmpty(value) || resourceDescription.isDefaultValue(ATTRIBUTES, name, value)) {
+            ResourceDescription resourceDescription, boolean useUndefineForDefault) {
+        if (isNullOrEmpty(value) ||
+                (useUndefineForDefault && resourceDescription.isDefaultValue(ATTRIBUTES, name, value))) {
             return undefineAttribute(address, name);
 
         } else {
@@ -299,6 +301,7 @@ public class OperationFactory {
         return name;
     }
 
+    @SuppressWarnings("rawtypes")
     private ModelNode asValueNode(String name, Object value, ResourceDescription resourceDescription) {
         ModelNode valueNode = new ModelNode();
 
