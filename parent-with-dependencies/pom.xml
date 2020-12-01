@@ -48,7 +48,7 @@
         <jboss.dmr.version>1.5.0.Final</jboss.dmr.version>
         <jdom.version>2.0.2</jdom.version>
         <jetbrains.annotations.version>16.0.1</jetbrains.annotations.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <mockito.version>2.18.3</mockito.version>
         <node.version>v8.16.0</node.version>
         <npm.version>6.9.0</npm.version>
