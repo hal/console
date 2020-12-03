@@ -331,6 +331,12 @@ public class Dispatcher implements RecordingHandler {
             });
         }
 
+        // 4. bearer token
+        String token = getBearerToken();
+        if (token != null) {
+            builder.append("&access_token=").append(token);
+        }
+
         // TODO operation headers
         return builder.toString();
     }
