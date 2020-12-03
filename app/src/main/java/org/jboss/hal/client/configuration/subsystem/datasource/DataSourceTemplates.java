@@ -282,13 +282,12 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:db2:yourdatabase");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker");
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2ExceptionSorter");
-                    dataSource.get(STALE_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2StaleConnectionChecker");
                     dataSource.get(MIN_POOL_SIZE).set(0);
                     dataSource.get(MAX_POOL_SIZE).set(50);
                     return dataSource;
