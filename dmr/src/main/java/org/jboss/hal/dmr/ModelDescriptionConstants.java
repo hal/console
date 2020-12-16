@@ -994,6 +994,7 @@ public interface ModelDescriptionConstants {
     String VALID_CONNECTION_CHECKER_CLASS_NAME = "valid-connection-checker-class-name";
     String VALIDATE = "validate";
     String VALIDITY = "validity";
+    String VALIDATE_ON_MATCH = "validate-on-match";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
