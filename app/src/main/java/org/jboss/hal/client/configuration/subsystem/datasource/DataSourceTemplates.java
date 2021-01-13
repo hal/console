@@ -70,6 +70,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
                     dataSource.get(USER_NAME).set(SA);
                     dataSource.get(PASSWORD).set(SA);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(BACKGROUND_VALIDATION).set(false);
                     return dataSource;
                 },
@@ -81,6 +82,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(H2);
                     dataSource.get(USER_NAME).set(SA);
                     dataSource.get(PASSWORD).set(SA);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(BACKGROUND_VALIDATION).set(false);
                     return dataSource;
                 },
@@ -105,7 +107,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:postgresql://localhost:5432/postgresdb");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -120,7 +123,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(POSTGRESQL);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -148,7 +152,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:mysql://localhost:3306/mysqldb");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -163,7 +168,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(MYSQL);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -191,13 +197,13 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:oracle:thin:@localhost:1521:orcalesid");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker");
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter");
-                    dataSource.get(STALE_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker");
                     return dataSource;
                 },
                 oracleDriver));
@@ -208,13 +214,13 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(ORACLE);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker");
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter");
-                    dataSource.get(STALE_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker");
                     dataSource.get(NO_TX_SEPARATE_POOL).set(true);
                     dataSource.get(SAME_RM_OVERRIDE).set(false);
                     return dataSource;
@@ -241,7 +247,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                             .set("jdbc:sqlserver://localhost:1433;DatabaseName=MyDatabase");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker");
                     return dataSource;
@@ -254,7 +261,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(SQLSERVER);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker");
                     dataSource.get(SAME_RM_OVERRIDE).set(false);
@@ -281,7 +289,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:db2:yourdatabase");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -300,7 +309,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set("ibmdb2");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -334,7 +344,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(CONNECTION_URL).set("jdbc:sybase:Tds:localhost:5000/mydatabase?JCONNECT_VERSION=6");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
@@ -349,7 +360,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(DRIVER_NAME).set(SYBASE);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
-                    dataSource.get(BACKGROUND_VALIDATION).set(true);
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
+                    dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
