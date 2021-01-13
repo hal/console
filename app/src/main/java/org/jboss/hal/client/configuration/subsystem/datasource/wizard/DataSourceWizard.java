@@ -210,7 +210,7 @@ public class DataSourceWizard {
 
         builder.addStep(CHOOSE_TEMPLATE, new ChooseTemplateStep(templates, resources, xa));
         builder.addStep(NAMES, new NamesStep(dataSources, dataSourceMetadata, resources, xa));
-        builder.addStep(DRIVER, new DriverStep(drivers, driverMetadata, resources));
+        builder.addStep(DRIVER, new DriverStep(drivers, driverMetadata, resources, xa));
         if (xa) {
             builder.addStep(XA_PROPERTIES, new PropertiesStep(dispatcher, statementContext, environment, progress,
                     xaDataSourcePropertiesMetadata, resources));
