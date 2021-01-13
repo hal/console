@@ -119,7 +119,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     private List<HandlerRegistration> breadcrumbHandlers;
 
     @Inject
-    public HeaderView(Places places, AccessControl ac, Resources resources) {
+    public HeaderView(Environment environment, Places places, AccessControl ac, Resources resources) {
         this.places = places;
         this.resources = resources;
 
@@ -151,6 +151,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         .add(ul().css(nav, navbarNav, navbarUtility)
                                 .add(nonProgressingOperationContainer = li()
                                         .add(nonProgressingOperationLink = a().css(clickable)
+                                                .id(Ids.NONE_PROGRESSING_LINK)
                                                 .data(TOGGLE, TOOLTIP)
                                                 .data(PLACEMENT, "bottom")
                                                 .data(CONTAINER, BODY)
@@ -161,6 +162,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                         .element())
                                 .add(reloadContainer = li()
                                         .add(reloadLink = a().css(clickable)
+                                                .id(Ids.RELOAD_LINK)
                                                 .data(TOGGLE, TOOLTIP)
                                                 .data(PLACEMENT, "bottom")
                                                 .data(CONTAINER, BODY)
@@ -171,11 +173,12 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                         .element())
                                 .add(li().css(drawerPfTrigger, dropdown)
                                         .add(messages = a().css(navItemIconic, drawerPfTriggerIcon)
+                                                .id(Ids.MESSAGES_LINK)
                                                 .title(resources.messages().notifications(0))
                                                 .add(span()
                                                         .css(fontAwesome("bell"))
                                                         .style("padding-right: 0"))
-                                                .add(badgeIcon = span().css(badge).element())
+                                                .add(badgeIcon = span().css(badge).id(Ids.BADEGE_ICON).element())
                                                 .element()))
                                 .add(li().css(dropdown, hidden).id(Ids.HEADER_EXTENSIONS_DROPDOWN)
                                         .add(a().css(clickable, dropdownToggle)
@@ -192,6 +195,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                         .add(userDropdown = ul().css(dropdownMenu, CSS.userDropdown)
                                                 .add(logoutItem = li()
                                                         .add(logout = a().css(clickable)
+                                                                .id(Ids.LOGOUT_LINK)
                                                                 .textContent(resources.constants().logout())
                                                                 .element())
                                                         .element())
@@ -273,6 +277,11 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
         }
+
+        if (!environment.isPatchingEnabled() && topLevelCategories.contains(patching)) {
+            topLevelCategories.removeChild(patching);
+        }
+
         String accessControlNameToken = ac.isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
 
         // @formatter:off

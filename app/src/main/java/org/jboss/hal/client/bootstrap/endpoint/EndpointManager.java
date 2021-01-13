@@ -15,14 +15,12 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import java.util.function.Consumer;
-
-import javax.inject.Inject;
-
 import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLScriptElement;
 import elemental2.dom.XMLHttpRequest;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.keycloak.Keycloak;
@@ -32,6 +30,9 @@ import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.util.function.Consumer;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
@@ -124,6 +125,14 @@ public class EndpointManager {
                             });
                         }
                         break;
+                    case 403:
+                        Elements.removeChildrenFrom(document.body);
+                        document.body.appendChild(new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
+                        break;
+                    case 503:
+                        Elements.removeChildrenFrom(document.body);
+                        document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText, Endpoints.INSTANCE).element());
+                        break;
                     // TODO Show an error page!
                     // case 500:
                     //     break;
@@ -191,6 +200,10 @@ public class EndpointManager {
                 wildflyCallback.execute();
             }
         };
+        xhr.addEventListener("error", event -> {
+            logger.error("Keycloak adapter '{}' failed: {}", keycloakAdapterUrl, event);
+            wildflyCallback.execute();
+        });
         xhr.open(GET.name(), keycloakAdapterUrl, true);
         xhr.send();
     }

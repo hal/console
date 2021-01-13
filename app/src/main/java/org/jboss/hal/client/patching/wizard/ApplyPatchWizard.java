@@ -62,7 +62,7 @@ public class ApplyPatchWizard extends PatchWizard {
                 wb.addStep(CHECK_SERVERS, new CheckRunningServersStep(resources, servers,
                         statementContext.selectedHost()));
             }
-            wb.addStep(UPLOAD, new UploadPatchStep(resources.constants().uploadPatch(), messages.noSelectedPatch()))
+            wb.addStep(UPLOAD, new UploadPatchStep(resources))
                     .addStep(CONFIGURE, new ConfigurationStep(metadata, resources))
 
                     .onBack((context, currentState) -> {

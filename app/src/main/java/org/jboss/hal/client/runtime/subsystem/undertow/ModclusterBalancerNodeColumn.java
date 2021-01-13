@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
-import java.util.Iterator;
-
 import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -36,7 +34,6 @@ import org.jboss.hal.spi.AsyncColumn;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.MODCLUSTER_BALANCER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE)
 public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
@@ -53,15 +50,17 @@ public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
 
                     String modcluster = "";
                     String balancer = "";
-                    for (Iterator<FinderSegment> iter = context.getPath().iterator(); iter.hasNext(); ) {
-                        FinderSegment finderSegment = iter.next();
-                        if ("undertow-runtime-modcluster".equals(finderSegment.getColumnId())) {
-                            modcluster = substringAfterLast(finderSegment.getItemId(), "undertow-modcluster-");
-                        }
-                        if ("undertow-runtime-modcluster-balancer".equals(finderSegment.getColumnId())) {
-                            balancer = substringAfterLast(finderSegment.getItemId(), "undertow-modcluster-balancer-");
-                        }
+
+                    FinderSegment<?> modclusterSegment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER);
+                    if (modclusterSegment != null) {
+                        modcluster = Ids.extractUndertowModcluster(modclusterSegment.getItemId());
                     }
+
+                    FinderSegment<?> balancerSegment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER);
+                    if (balancerSegment != null) {
+                        balancer = Ids.extractUndertowModclusterBalancer(balancerSegment.getItemId());
+                    }
+
                     ResourceAddress address = MODCLUSTER_BALANCER_TEMPLATE.resolve(statementContext, modcluster,
                             balancer);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)

@@ -80,6 +80,10 @@ public class ReadEnvironment implements BootstrapTask {
                 .param(INCLUDE_RUNTIME, true)
                 .build());
         ops.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
+        ops.add(new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
+                .param(CHILD_TYPE, CORE_SERVICE)
+                .param(RECURSIVE, false)
+                .build());
 
         return dispatcher.execute(new Composite(ops))
                 .doOnSuccess((CompositeResult result) -> {
@@ -140,6 +144,9 @@ public class ReadEnvironment implements BootstrapTask {
                     }
                     user.setAuthenticated(true);
                     logger.debug("User info: {} {}", user.getName(), user.getRoles());
+
+                    ModelNode step = result.step(2).get(RESULT);
+                    environment.setPatchingEnabled(!environment.isStandalone() || step.get(PATCHING).isDefined());
                 })
                 .toCompletable();
     }

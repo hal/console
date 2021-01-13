@@ -15,9 +15,10 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
+import org.jboss.hal.client.shared.uploadwizard.UploadStep;
 import org.jboss.hal.resources.Resources;
 
-public class UploadDeploymentStep extends UploadStep {
+public class UploadDeploymentStep extends UploadStep<DeploymentContext,DeploymentState> {
 
     public UploadDeploymentStep(final Resources resources) {
         super(resources.constants().uploadDeployment(), resources.messages().noDeployment());

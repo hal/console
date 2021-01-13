@@ -539,6 +539,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_VERSION = "management-version";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPED_ROLE_MAPPER = "mapped-role-mapper";
+    String MAPPED_ROLES = "mapped-roles";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
     String MATCH_ALL = "match-all";
@@ -993,6 +994,7 @@ public interface ModelDescriptionConstants {
     String USERS_PROPERTIES = "users-properties";
     String VALID_CONNECTION_CHECKER_CLASS_NAME = "valid-connection-checker-class-name";
     String VALIDATE = "validate";
+    String VALIDATE_ON_MATCH = "validate-on-match";
     String VALIDITY = "validity";
     String VALIDATE_ON_MATCH = "validate-on-match";
     String VALUE = "value";

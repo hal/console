@@ -201,10 +201,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker");
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter");
-                    dataSource.get(STALE_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker");
                     return dataSource;
                 },
                 oracleDriver));
@@ -219,10 +218,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(BACKGROUND_VALIDATION).set(false);
                     dataSource.get(VALID_CONNECTION_CHECKER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker");
+                    dataSource.get(VALIDATE_ON_MATCH).set(true);
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter");
-                    dataSource.get(STALE_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker");
                     dataSource.get(NO_TX_SEPARATE_POOL).set(true);
                     dataSource.get(SAME_RM_OVERRIDE).set(false);
                     return dataSource;
@@ -246,7 +244,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(JNDI_NAME).set("java:/MSSQLDS");
                     dataSource.get(DRIVER_NAME).set(SQLSERVER);
                     dataSource.get(CONNECTION_URL)
-                            .set("jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=MyDatabase");
+                            .set("jdbc:sqlserver://localhost:1433;DatabaseName=MyDatabase");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
