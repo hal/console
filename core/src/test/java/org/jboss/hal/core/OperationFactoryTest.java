@@ -97,7 +97,7 @@ public class OperationFactoryTest {
         Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("enlistment", true), metadata);
 
         assertEquals(1, composite.size());
-        assertUndefine(composite, "enlistment");
+        assertWrite(composite, "enlistment", true);
     }
 
     @Test
