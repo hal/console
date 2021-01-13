@@ -996,6 +996,7 @@ public interface ModelDescriptionConstants {
     String VALIDATE = "validate";
     String VALIDATE_ON_MATCH = "validate-on-match";
     String VALIDITY = "validity";
+    String VALIDATE_ON_MATCH = "validate-on-match";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
