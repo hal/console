@@ -20,4 +20,4 @@ jobs:
         version: 8
         impl: hotspot
     - name: Build
-      run: mvn -U -B -fae -Dgwt.skipCompilation clean install
+      run: mvn -U -B -fae -P skip-gwt clean install

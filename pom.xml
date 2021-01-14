@@ -90,6 +90,7 @@
         <gwt.logLevel>FINE</gwt.logLevel>
         <gwt.moduleTemplate>${project.basedir}/src/main/module.gwt.xml</gwt.moduleTemplate>
         <gwt.optimize>0</gwt.optimize>
+        <gwt.skipCompilation>false</gwt.skipCompilation>
         <gwt.style>DETAILED</gwt.style>
         <gwt.devmode.hostname>localhost</gwt.devmode.hostname>
         <hal.version>${project.version}</hal.version>
@@ -251,6 +252,12 @@
             <id>i18n</id>
             <properties>
                 <gwt.moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
+            </properties>
+        </profile>
+        <profile>
+            <id>skip-gwt</id>
+            <properties>
+                <gwt.skipCompilation>true</gwt.skipCompilation>
             </properties>
         </profile>
         <profile>

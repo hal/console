@@ -305,6 +305,7 @@
                     <moduleShortName>hal</moduleShortName>
                     <moduleTemplate>${gwt.moduleTemplate}</moduleTemplate>
                     <optimize>${gwt.optimize}</optimize>
+                    <skipCompilation>${gwt.skipCompilation}</skipCompilation>
                     <style>${gwt.style}</style>
                 </configuration>
             </plugin>

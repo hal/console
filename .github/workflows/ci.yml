@@ -26,7 +26,7 @@ jobs:
         version: 8
         impl: hotspot
     - name: Build
-      run: mvn -U -B -fae -Dgwt.skipCompilation clean install
+      run: mvn -U -B -fae -P skip-gwt clean install
     - name: Tar Maven Repo
       shell: bash
       run: tar -czf maven-repo.tgz -C ~ .m2/repository
@@ -68,7 +68,7 @@ jobs:
       shell: bash
       run: tar -xzf maven-repo.tgz -C ~
     - name: Run Tests
-      run: mvn -U -B -fae -Dgwt.skipCompilation test
+      run: mvn -U -B -fae -P skip-gwt test
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
