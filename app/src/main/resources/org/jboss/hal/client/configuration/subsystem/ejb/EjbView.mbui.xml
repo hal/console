@@ -192,9 +192,10 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="connector-ref">
+                            <attribute name="connectors">
                                 <suggest-handler>
                                     <templates>
+                                        <template address="/{selected.profile}/subsystem=remoting/connector=*"/>
                                         <template address="/{selected.profile}/subsystem=remoting/http-connector=*"/>
                                     </templates>
                                 </suggest-handler>
