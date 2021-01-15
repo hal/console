@@ -363,8 +363,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                             .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker");
                     dataSource.get(EXCEPTION_SORTER_CLASS_NAME)
                             .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2ExceptionSorter");
-                    dataSource.get(STALE_CONNECTION_CHECKER_CLASS_NAME)
-                            .set("org.jboss.jca.adapters.jdbc.extensions.db2.DB2StaleConnectionChecker");
                     dataSource.get(RECOVERY_PLUGIN_CLASS_NAME)
                             .set("org.jboss.jca.core.recovery.ConfigurableRecoveryPlugin");
                     // TODO Add missing recovery plugin properties
