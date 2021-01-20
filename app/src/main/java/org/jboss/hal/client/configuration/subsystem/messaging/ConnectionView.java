@@ -30,7 +30,6 @@ import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
@@ -104,8 +103,6 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                         pooledConnectionFactoryTable.hasSelection() ? pooledConnectionFactoryTable.selectedRow()
                                 .getName() : null),
                 () -> presenter.reload());
-        crForm.addFormValidation(
-                new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()));
 
         pooledConnectionFactoryTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, Ids.TABLE), metadata)

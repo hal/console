@@ -204,6 +204,7 @@ public class CredentialReference {
 
         Form<ModelNode> form = formBuilder.build();
         form.addFormValidation(new CrFormValidation(alternativeName, alternativeValue, resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
         return form;
     }
 

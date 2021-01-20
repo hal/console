@@ -135,7 +135,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
         // complex attributes of type OBJECT
         coForms = new HashMap<>();
-        if (!builder.coAttributes.isEmpty()) {
+        if (!builder.coAttributes.isEmpty() || !builder.coAttributeForms.isEmpty()) {
             Tabs tabs = new Tabs(Ids.build(builder.baseId, Ids.TAB_CONTAINER));
             tabs.add(Ids.build(builder.baseId, ATTRIBUTES, Ids.TAB),
                     builder.mbuiContext.resources().constants().attributes(), form.element());
@@ -204,6 +204,13 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     form.addFormValidation(coFormValidation);
                 }
 
+                tabs.add(Ids.build(builder.baseId, complexAttribute, Ids.TAB), type, form.element());
+                coForms.put(complexAttribute, form);
+            }
+
+            for (String complexAttribute : builder.coAttributeForms.keySet()) {
+                Form<ModelNode> form = builder.coAttributeForms.get(complexAttribute);
+                String type = labelBuilder.label(complexAttribute);
                 tabs.add(Ids.build(builder.baseId, complexAttribute, Ids.TAB), type, form.element());
                 coForms.put(complexAttribute, form);
             }
@@ -373,6 +380,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         private String type;
         private Map<String, FormItemProvider> customFormItems = new HashMap<>();
         private Map<String, FormValidation> coAttributes; // co = complex object
+        private Map<String, Form<ModelNode>> coAttributeForms; // co = complex object
         private String clAttribute; // cl = complex list
         private final List<String> clColumns;
         private final List<String> clAddAttributes;
@@ -389,6 +397,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             this.tableBuilder = new ModelNodeTable.Builder<>(Ids.build(baseId, Ids.TABLE), metadata);
             this.type = new LabelBuilder().label(resource);
             this.coAttributes = new HashMap<>();
+            this.coAttributeForms = new HashMap<>();
             this.clAttribute = null;
             this.clColumns = new ArrayList<>();
             this.clAddAttributes = new ArrayList<>();
@@ -423,6 +432,14 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
          */
         public Builder addComplexObjectAttribute(String name) {
             coAttributes.put(name, null);
+            return this;
+        }
+
+        /**
+         * Adds a custom form for a complex attribute of type {@code OBJECT}
+         */
+        public Builder addComplexObjectAttributeForm(String name, Form<ModelNode> form) {
+            coAttributeForms.put(name, form);
             return this;
         }
 
