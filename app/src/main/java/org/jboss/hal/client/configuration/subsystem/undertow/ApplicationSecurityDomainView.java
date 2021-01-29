@@ -18,9 +18,9 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
-import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -39,7 +39,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SETTING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SINGLE_SIGN_ON;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.resources.CSS.fontAwesome;
 
 public class ApplicationSecurityDomainView extends HalViewImpl implements ApplicationSecurityDomainPresenter.MyView {
 
@@ -49,7 +48,7 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
     private ApplicationSecurityDomainPresenter presenter;
 
     @Inject
-    public ApplicationSecurityDomainView(MetadataRegistry metadataRegistry, Resources resources) {
+    public ApplicationSecurityDomainView(MetadataRegistry metadataRegistry, Resources resources, CredentialReference cr) {
 
         // ------------------------------------------------------ main attributes
 
@@ -72,7 +71,9 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
 
         // ------------------------------------------------------ credential reference
 
-        crForm = credentialReferenceForm(ssoMetadata, resources);
+        crForm = cr.form(Ids.UNDERTOW_APP_SECURITY_DOMAIN, ssoMetadata, null, null,
+                () -> presenter.resolveSingleSignOn(),
+                () -> presenter.reload());
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB, resources.constants().attributes(),
@@ -90,24 +91,6 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
 
         initElement(htmlSection);
 
-    }
-
-    private Form<ModelNode> credentialReferenceForm(Metadata metadata, Resources resources) {
-        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE);
-        String emptyId = Ids.build(Ids.UNDERTOW_APP_SECURITY_DOMAIN, CREDENTIAL_REFERENCE, Ids.EMPTY);
-        String formId = Ids.build(Ids.UNDERTOW_APP_SECURITY_DOMAIN, CREDENTIAL_REFERENCE, Ids.FORM);
-
-        EmptyState noCredentialReference = new EmptyState.Builder(emptyId, resources.constants().noResource())
-                .description(resources.messages().credentialReferenceParentNoResource(Names.SINGLE_SIGN_ON))
-                .icon(fontAwesome("warning"))
-                .build();
-
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(formId, crMetadata)
-                .singleton(() -> presenter.checkSingleSignOn(), noCredentialReference)
-                .onSave((f, changedValues) -> presenter.saveCredentialReference(changedValues))
-                .build();
-
-        return form;
     }
 
     @Override

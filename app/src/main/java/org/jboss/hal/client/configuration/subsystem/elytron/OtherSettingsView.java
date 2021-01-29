@@ -24,13 +24,16 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.configuration.PathsAutoComplete;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
-import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
@@ -73,7 +76,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private OtherSettingsPresenter presenter;
 
     @Inject
-    OtherSettingsView(MbuiContext mbuiContext) {
+    OtherSettingsView(MbuiContext mbuiContext, CredentialReference cr) {
 
         elements = new HashMap<>();
         navigation = new VerticalNavigation();
@@ -93,8 +96,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 () -> presenter.reload(CREDENTIAL_STORE.resource,
                         nodes -> updateResourceElement(CREDENTIAL_STORE.resource, nodes)))
                 .onAdd(() -> presenter.addCredentialStore())
-                .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
-                        new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
+                .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, CREDENTIAL_STORE))
                 .build();
         credentialStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(CREDENTIAL_STORE, credentialStoreElement, Ids.ELYTRON_STORE_ITEM,
@@ -113,8 +115,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 () -> presenter.reload(KEY_STORE.resource,
                         nodes -> updateResourceElement(KEY_STORE.resource, nodes)))
                 .onAdd(() -> presenter.addKeyStore())
-                .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
-                        new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), mbuiContext.resources()))
+                .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, KEY_STORE))
                 .build();
         keyStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         addResourceElement(KEY_STORE,
@@ -153,9 +154,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         () -> presenter.reload(KEY_MANAGER.resource,
                                 nodes -> updateResourceElement(KEY_MANAGER.resource, nodes)))
                         .onAdd(() -> presenter.addKeyManager())
-                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE,
-                                new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT),
-                                        mbuiContext.resources()))
+                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, KEY_MANAGER))
                         .build(),
                 Ids.ELYTRON_SSL_ITEM,
                 Ids.build(KEY_MANAGER.baseId, Ids.ITEM),
@@ -218,7 +217,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 AUTHENTICATION_CONFIGURATION.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(AUTHENTICATION_CONFIGURATION.resource,
                                 nodes -> updateResourceElement(AUTHENTICATION_CONFIGURATION.resource, nodes)))
-                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, AUTHENTICATION_CONFIGURATION))
                         .build(),
                 Ids.ELYTRON_AUTHENTICATION_ITEM,
                 Ids.build(AUTHENTICATION_CONFIGURATION.baseId, Ids.ITEM),
@@ -303,7 +302,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 CERTIFICATE_AUTHORITY_ACCOUNT.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(CERTIFICATE_AUTHORITY_ACCOUNT.resource,
                                 nodes -> updateResourceElement(CERTIFICATE_AUTHORITY_ACCOUNT.resource, nodes)))
-                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, CERTIFICATE_AUTHORITY_ACCOUNT))
                         .build(),
                 Ids.ELYTRON_OTHER_ITEM,
                 Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT.baseId, Ids.ITEM),
@@ -313,7 +312,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 DIR_CONTEXT.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(DIR_CONTEXT.resource,
                                 nodes -> updateResourceElement(DIR_CONTEXT.resource, nodes)))
-                        .addComplexObjectAttribute(CREDENTIAL_REFERENCE)
+                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, DIR_CONTEXT))
                         .build(),
                 Ids.ELYTRON_OTHER_ITEM,
                 Ids.build(DIR_CONTEXT.baseId, Ids.ITEM),
@@ -367,6 +366,15 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         navigation.addSecondary(primaryId, secondaryId, text, element.element());
     }
 
+    private Form<ModelNode> createCrForm(CredentialReference cr, MbuiContext mbuiContext, ElytronResource er) {
+        return cr.form(er.baseId, mbuiContext.metadataRegistry().lookup(er.template), null, null,
+                () -> {
+                    Table<NamedNode> table = elements.get(er.resource).getTable();
+                    return table.hasSelection() ? presenter.resolveTemplate(er, table.selectedRow().getName()) : null;
+                },
+                () -> presenter.reload()
+        );
+    }
 
     @Override
     public void updateResourceElement(String resource, List<NamedNode> nodes) {
