@@ -224,7 +224,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     return dataSource;
                 },
                 oracleDriver,
-                properties("URL", "jdbc:oracle:oci8:@tc")));
+                properties("URL", "jdbc:oracle:thin:@SERVER_NAME:PORT:ORACLE_SID")));
 
 
         // ------------------------------------------------------ Microsoft SQL Server
