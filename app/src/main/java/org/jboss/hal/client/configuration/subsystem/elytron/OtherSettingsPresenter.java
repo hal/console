@@ -420,6 +420,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .build();
     }
 
+    ResourceAddress resolveTemplate(ElytronResource er, String selectedItem) {
+        return er.template.resolve(statementContext, selectedItem);
+    }
+
     void saveNewItemTemplate(String ldapKeyStore, Map<String, Object> changedValues) {
         ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
                 changedValues, this::reloadLdapKeyStores);

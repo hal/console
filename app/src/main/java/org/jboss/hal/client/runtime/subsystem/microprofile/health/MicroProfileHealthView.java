@@ -61,7 +61,7 @@ public class MicroProfileHealthView extends HalViewImpl implements MicroProfileH
         checkTable = new ModelNodeTable.Builder<>(Ids.build(MICRO_PROFILE_HEALTH, TABLE), metadata)
                 .button(resources.constants().refresh(), table -> presenter.reload())
                 .column(Names.NAME, (cell, type, row, meta) -> row.get(NAME).asString())
-                .column(Names.STATE, (cell, type, row, meta) -> row.get(STATE).asString())
+                .column(Names.STATUS, (cell, type, row, meta) -> row.get(STATUS).asString())
                 .build();
 
         checkForm = new ModelNodeForm.Builder<>(Ids.build(MICRO_PROFILE_HEALTH, FORM), metadata)
@@ -100,7 +100,7 @@ public class MicroProfileHealthView extends HalViewImpl implements MicroProfileH
     public void update(ModelNode result) {
         checkForm.clear();
 
-        String outcome = result.get(OUTCOME).asString();
+        String outcome = result.get(STATUS).asString();
         Elements.setVisible(outcomeUp.element(), UP.equals(outcome));
         Elements.setVisible(outcomeDown.element(), DOWN.equals(outcome));
         checkTable.update(result.get(CHECKS).asList());

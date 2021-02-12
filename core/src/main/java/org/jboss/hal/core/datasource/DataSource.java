@@ -83,7 +83,11 @@ public class DataSource extends NamedNode {
 
     public void setDriver(JdbcDriver driver) {
         get(DRIVER_NAME).set(driver.getName());
-        get(DRIVER_CLASS).set(driver.get(DRIVER_CLASS_NAME));
+        if (isXa()) {
+            get(XA_DATASOURCE_CLASS).set(driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME));
+        } else {
+            get(DRIVER_CLASS).set(driver.get(DRIVER_CLASS_NAME));
+        }
     }
 
     public boolean fromDeployment() {

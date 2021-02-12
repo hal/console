@@ -361,7 +361,7 @@ public interface Names {
     String STORES = "Stores";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
-    String STATE = "State";
+    String STATUS = "Status";
     String STATEFUL_SESSION_BEAN = "Stateful Session Bean";
     String STATELESS_SESSION_BEAN = "Stateless Session Bean";
     String SUB_RESOURCE_LOCATORS = "Sub Resource Locators";

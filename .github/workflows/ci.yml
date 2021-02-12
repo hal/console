@@ -1,14 +1,13 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-name: HAL - Console CI
+---
+name: HAL Console CI
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  build-all:
-    name: Compile (no tests) with JDK 8
+  quick-build:
+    name: HAL build w/o GWT compilation on JDK 8
     runs-on: ubuntu-latest
     steps:
     - uses: n1hility/cancel-previous-runs@v2
@@ -27,7 +26,7 @@ jobs:
         version: 8
         impl: hotspot
     - name: Build
-      run: mvn -U -B -fae -DskipTests clean install
+      run: mvn -U -B -fae -P skip-gwt clean install
     - name: Tar Maven Repo
       shell: bash
       run: tar -czf maven-repo.tgz -C ~ .m2/repository
@@ -42,13 +41,12 @@ jobs:
         name: surefire-reports-build
         path: '**/surefire-reports/*'
   test-matrix:
-    name: ${{ matrix.module }}-jdk${{ matrix.jdk }}-${{ matrix.os }}
+    name: HAL-jdk${{ matrix.jdk }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: build-all
+    needs: quick-build
     strategy:
       fail-fast: false
       matrix:
-        module: [core, config, dmr, meta, ballroom]
         os: [ubuntu-20.04, windows-latest]
         jdk: [8, 11]
     steps:
@@ -70,7 +68,7 @@ jobs:
       shell: bash
       run: tar -xzf maven-repo.tgz -C ~
     - name: Run Tests
-      run: mvn -U -B -fae test -pl ${{ matrix.module }}
+      run: mvn -U -B -fae -P skip-gwt test
     - uses: actions/upload-artifact@v2
       if: failure()
       with:

@@ -167,10 +167,14 @@ public class ApplicationSecurityDomainPresenter extends
     // ------------------------------------------------------ single sign on
 
     Operation checkSingleSignOn() {
-        ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
+        ResourceAddress address = resolveSingleSignOn();
         return new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SETTING)
                 .build();
+    }
+
+    ResourceAddress resolveSingleSignOn() {
+        return SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
     }
 
     void addSingleSignOn() {
@@ -227,14 +231,6 @@ public class ApplicationSecurityDomainPresenter extends
                 reload();
             }
         });
-    }
-
-    // ------------------------------------------------------ single sign-on credential-reference
-
-    void saveCredentialReference(Map<String, Object> changedValues) {
-        ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
-        Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
-        ca.save(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, address, changedValues, metadata, this::reload);
     }
 
     // ------------------------------------------------------ getter

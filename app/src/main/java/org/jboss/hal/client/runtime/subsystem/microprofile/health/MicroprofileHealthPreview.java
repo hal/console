@@ -47,7 +47,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
 import static org.jboss.hal.resources.CSS.listGroupItem;
-import static org.jboss.hal.resources.Names.STATE;
 
 public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata> {
 
@@ -86,7 +85,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
         Elements.removeChildrenFrom(section);
 
         dispatcher.execute(operation, result -> {
-            String outcome = result.get(OUTCOME).asString();
+            String outcome = result.get(STATUS).asString();
             if (UP.equals(outcome)) {
                 section.appendChild(outcomeUp.element());
             } else {
@@ -109,7 +108,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
                 for (int i = 0; i < max; i++) {
                     ModelNode check = checks.get(i);
                     String name = check.get(NAME).asString();
-                    String state = check.get("state").asString();
+                    String state = check.get(STATUS).asString();
                     section.appendChild(h(2, name).element());
 
                     Map<String, String> dataMap = new HashMap<>();
@@ -133,7 +132,7 @@ public class MicroprofileHealthPreview extends PreviewContent<SubsystemMetadata>
     private HTMLElement checkElement(String state, Map<String, String> data) {
 
         HTMLLIElement liState = li().css(listGroupItem)
-                .add(span().css(key).textContent(STATE))
+                .add(span().css(key).textContent(Names.STATUS))
                 .add(span().css(CSS.value).textContent(state).element()).element();
 
         HtmlContentBuilder<HTMLUListElement> ulBuilder = ul().css(listGroup)

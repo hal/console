@@ -22,8 +22,10 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
@@ -37,13 +39,15 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 class DriverStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<JdbcDriver> form;
+    private final Map<String, JdbcDriver> driversByName;
+    private boolean firstTime = false;
 
-    DriverStep(List<JdbcDriver> drivers, Metadata metadata, Resources resources) {
+    DriverStep(List<JdbcDriver> drivers, Metadata metadata, Resources resources, boolean xa) {
 
         super(resources.constants().jdbcDriver());
-        Map<String, JdbcDriver> driversByName = Maps.uniqueIndex(drivers, JdbcDriver::getName);
+        driversByName = Maps.uniqueIndex(drivers, JdbcDriver::getName);
         this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM, adjustMetadata(metadata))
-                .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME)
+                .include(DRIVER_NAME, DRIVER_MODULE_NAME, xa ? DRIVER_XA_DATASOURCE_CLASS_NAME : DRIVER_CLASS_NAME)
                 .unsorted()
                 .onSave((form, changedValues) -> wizard().getContext().driver = form.getModel())
                 .build();
@@ -56,6 +60,13 @@ class DriverStep extends WizardStep<Context, State> {
                             driversByName.keySet().contains(value) ? ValidationResult.OK : ValidationResult.invalid(
                                     "Invalid driver name")
                     );
+            if (xa) {
+                // assign a value change handler that modfies the xa-datasource-class using jdbcDriver conf or template
+                form.getFormItem(DRIVER_NAME).addValueChangeHandler(event ->
+                    assignFromJdbcDriverOrTemplate(String.valueOf(event.getValue()), DRIVER_XA_DATASOURCE_CLASS_NAME)
+                );
+                firstTime = true;
+            }
         }
         registerAttachable(form);
     }
@@ -65,7 +76,7 @@ class DriverStep extends WizardStep<Context, State> {
         for (Property property : metadata.getDescription().get(ATTRIBUTES).asPropertyList()) {
             ModelNode value = property.getValue().clone();
             value.get(ACCESS_TYPE).set(READ_WRITE);
-            value.get(NILLABLE).set(!DRIVER_NAME.equals(property.getName()));
+            value.get(NILLABLE).set(!DRIVER_NAME.equals(property.getName()) && !DRIVER_XA_DATASOURCE_CLASS_NAME.equals(property.getName()));
             newAttributes.get(property.getName()).set(value);
         }
 
@@ -79,9 +90,34 @@ class DriverStep extends WizardStep<Context, State> {
         return form.element();
     }
 
+    private void assignFromJdbcDriverOrTemplate(String driverName, String propName) {
+        FormItem formItem = form.getFormItem(propName);
+        if (formItem != null) {
+            JdbcDriver driver = driversByName.get(driverName);
+            DataSourceTemplate template = this.wizard().getContext().template;
+            if (driver != null && driver.hasDefined(propName)
+                    && !driver.get(propName).asString().isEmpty()) {
+                // assign the value inside the driver
+                formItem.setModified(true);
+                formItem.setValue(driver.get(propName).asString());
+            } else if (template != null && template.getDriver() != null
+                    && template.getDriver().hasDefined(propName)
+                    && !template.getDriver().get(propName).asString().isEmpty()) {
+                // assign the value in the template
+                formItem.setModified(true);
+                formItem.setValue(this.wizard().getContext().template.getDriver().get(propName).asString());
+            }
+            // let the current value at it is now
+        }
+    }
+
     @Override
     protected void onShow(Context context) {
         form.edit(context.driver);
+        if (firstTime) {
+            firstTime = false;
+            assignFromJdbcDriverOrTemplate(context.driver.getName(), DRIVER_XA_DATASOURCE_CLASS_NAME);
+        }
     }
 
     @Override
@@ -92,7 +128,11 @@ class DriverStep extends WizardStep<Context, State> {
             context.dataSource.setDriver(driver);
             if (context.isCreated()) {
                 context.recordChange(DRIVER_NAME, driver.getName());
-                context.recordChange(DRIVER_CLASS, driver.get(DRIVER_CLASS_NAME).asString());
+                if (context.isXa()) {
+                    context.recordChange(XA_DATASOURCE_CLASS, driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).asString());
+                } else {
+                    context.recordChange(DRIVER_CLASS, driver.get(DRIVER_CLASS_NAME).asString());
+                }
             }
         }
         return valid;
