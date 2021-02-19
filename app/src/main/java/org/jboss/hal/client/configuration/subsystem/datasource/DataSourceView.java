@@ -79,7 +79,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // connection
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(new Group(Ids.CONNECTION, CONSTANTS.connection()), asList(
+        attributes.putAll(new Group(Ids.CONNECTION, Names.CONNECTION), asList(
                 new Attribute(CONNECTION_URL, NON_XA),
                 new Attribute("connection-listener-class"),
                 new Attribute("connection-listener-property"),
@@ -98,7 +98,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // pool
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(new Group(Ids.POOL, CONSTANTS.pool()), asList(
+        attributes.putAll(new Group(Ids.POOL, Names.POOL), asList(
                 new Attribute("initial-pool-size"),
                 new Attribute(MIN_POOL_SIZE),
                 new Attribute(MAX_POOL_SIZE),
@@ -117,7 +117,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         // security
         //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-        attributes.putAll(new Group(Ids.SECURITY, CONSTANTS.security()), asList(
+        attributes.putAll(new Group(Ids.SECURITY, Names.SECURITY), asList(
                 new Attribute("user-name"),
                 new Attribute("password"),
                 new Attribute("authentication-context"),

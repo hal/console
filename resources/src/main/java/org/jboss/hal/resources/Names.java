@@ -79,7 +79,6 @@ public interface Names {
     String CONNECTORS = "Connectors";
     String CONSUMERS = "Consumers";
     String CONSOLE_ACTION_HANDLER = "Console ActionHandler";
-    String CONTENT = "Content";
     String CONTEXT = "Context";
     String CONTEXT_ROOT = "Context Root";
     String CONTEXT_ROOTS = "Context Roots";
@@ -129,7 +128,6 @@ public interface Names {
     String FILE = "File";
     String FILE_ACTION_HANDLER = "File ActionHandler";
     String FILESYSTEM_REALM = "Filesystem Realm";
-    String FILTER = "Filter";
     String FILTERING_KEY_STORE = "Filtering Key Store";
     String FILTERS = "Filters";
     String FORK = "Fork";
@@ -166,7 +164,7 @@ public interface Names {
     String IN_VM_ACCEPTOR = "In VM Acceptor";
     String IN_VM_CONNECTOR = "In VM Connector";
     String INBOUND = "Inbound";
-    String INCLUDES = "Includes";
+    String INCLUDES_ATTRIBUTE = "Includes";
     String INFINISPAN = "Infinispan";
     String INSTANCE_ID = "Instance ID";
     String INTERFACE = "Interface";
@@ -247,7 +245,6 @@ public interface Names {
     String MODCLUSTER = "Modcluster";
     String MODULE = "Module";
 
-    String NAME = "Name";
     String NEAR_CACHE = "Near Cache";
     String NEW_ITEM_TEMPLATE = "New Item Template";
     String NODE = "Node";
@@ -271,7 +268,6 @@ public interface Names {
     String PATCHES = "Patches";
     String PATCHING = "Patching";
     String PATHS = "Paths";
-    String PATTERN = "Pattern";
     String PATTERN_FORMATTER = "Pattern Formatter";
     String PERIODIC_ACTION_HANDLER = "Periodic ActionHandler";
     String PERIODIC_SIZE_ACTION_HANDLER = "Periodic Size ActionHandler";
@@ -352,12 +348,11 @@ public interface Names {
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
     String SOCKET_BINDINGS = "Socket Bindings";
-    String SOURCE = "Source";
     String SSL = "SSL";
     String STANDALONE_EXTENSION = "Standalone Extension";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
-    String STORE = "Store";
+    String STORE_RESOURCE = "Store";
     String STORES = "Stores";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";

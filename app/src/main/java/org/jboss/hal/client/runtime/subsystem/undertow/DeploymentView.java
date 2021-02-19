@@ -88,7 +88,7 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                 .add(table().css(table, tableStriped, attributes)
                         .add(thead()
                                 .add(tr()
-                                        .add(th().textContent(Names.NAME))
+                                        .add(th().textContent(resources.constants().name()))
                                         .add(th().textContent(Names.VALUE))))
                         .add(attributesTableBody = tbody().element())).element();
         Elements.setVisible(attributesElement, false);

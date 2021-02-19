@@ -301,11 +301,11 @@ public class ServerPresenter
                 .build();
         form.getFormItem(NAME)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
-        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.FILTER), form,
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(resources.constants().filter()), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + EQUALS + name)
                             .resolve(statementContext);
-                    crud.add(Names.FILTER, name, address, model, (n, a) -> reloadFilterRef());
+                    crud.add(resources.constants().filter(), name, address, model, (n, a) -> reloadFilterRef());
                 });
         dialog.show();
     }
@@ -314,14 +314,14 @@ public class ServerPresenter
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + EQUALS + name).resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
-        crud.save(Names.FILTER, name, address, changedValues, metadata, this::reloadFilterRef);
+        crud.save(resources.constants().filter(), name, address, changedValues, metadata, this::reloadFilterRef);
     }
 
     void resetFilterRef(Form<NamedNode> form) {
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + EQUALS + name).resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
-        crud.reset(Names.FILTER, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+        crud.reset(resources.constants().filter(), name, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
             public void afterReset(Form<NamedNode> form) {
                 reloadFilterRef();
@@ -331,7 +331,7 @@ public class ServerPresenter
 
     void removeFilterRef(String name) {
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + EQUALS + name).resolve(statementContext);
-        crud.remove(Names.FILTER, name, address, this::reloadFilterRef);
+        crud.remove(resources.constants().filter(), name, address, this::reloadFilterRef);
     }
 
     private void reloadFilterRef() {
@@ -395,7 +395,7 @@ public class ServerPresenter
         ResourceAddress address = SELECTED_HOST_TEMPLATE
                 .append(LOCATION + EQUALS + encodeValue(name))
                 .resolve(statementContext);
-        crud.remove(Names.FILTER, name, address, this::reloadLocation);
+        crud.remove(resources.constants().filter(), name, address, this::reloadLocation);
     }
 
     private void reloadLocation() {
@@ -431,13 +431,13 @@ public class ServerPresenter
         form.getFormItem(NAME)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
         AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(Names.FILTER), form,
+                resources.messages().addResourceTitle(resources.constants().filter()), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HOST_TEMPLATE
                             .append(LOCATION + EQUALS + encodeValue(locationName))
                             .append(FILTER_REF + EQUALS + name)
                             .resolve(statementContext);
-                    crud.add(Names.FILTER, name, address, model, (n, a) -> reloadLocationFilterRef());
+                    crud.add(resources.constants().filter(), name, address, model, (n, a) -> reloadLocationFilterRef());
                 });
         dialog.show();
     }
@@ -449,7 +449,7 @@ public class ServerPresenter
                 .append(FILTER_REF + EQUALS + name)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
-        crud.save(Names.FILTER, name, address, changedValues, metadata, this::reloadLocationFilterRef);
+        crud.save(resources.constants().filter(), name, address, changedValues, metadata, this::reloadLocationFilterRef);
 
     }
 
@@ -460,7 +460,7 @@ public class ServerPresenter
                 .append(FILTER_REF + EQUALS + name)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
-        crud.reset(Names.FILTER, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+        crud.reset(resources.constants().filter(), name, address, form, metadata, new FinishReset<NamedNode>(form) {
             @Override
             public void afterReset(Form<NamedNode> form) {
                 reloadLocationFilterRef();
@@ -474,7 +474,7 @@ public class ServerPresenter
                 .append(LOCATION + EQUALS + encodeValue(locationName))
                 .append(FILTER_REF + EQUALS + name)
                 .resolve(statementContext);
-        crud.remove(Names.FILTER, name, address, this::reloadLocationFilterRef);
+        crud.remove(resources.constants().filter(), name, address, this::reloadLocationFilterRef);
     }
 
     private void reloadLocationFilterRef() {

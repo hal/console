@@ -27,7 +27,6 @@ import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.li;
@@ -61,7 +60,7 @@ class OperationsTable implements IsElement {
                 .css(table, tableBordered, tableStriped, CSS.operations)
                 .add(thead()
                         .add(tr()
-                                .add(th().textContent(Names.NAME))
+                                .add(th().textContent(resources.constants().name()))
                                 .add(th().textContent(resources.constants().input()))
                                 .add(th().textContent(resources.constants().output()))))
                 .add(tbody = tbody().element()).element();

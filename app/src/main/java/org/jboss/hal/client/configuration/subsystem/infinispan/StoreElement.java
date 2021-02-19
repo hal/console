@@ -124,7 +124,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                 .apply(l -> l.htmlFor = selectStoreId)
                                 .textContent(resources.constants().switchStore()))
                         .add(selectStore).element())
-                .add(h(1).textContent(Names.STORE)
+                .add(h(1).textContent(Names.STORE_RESOURCE)
                         .add(currentStore = span().element()))
                 .add(p().textContent(resources.constants().cacheStore()))
                 .add(emptyState)

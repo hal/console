@@ -103,7 +103,7 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
                 .build();
 
         Options<Property> options = new OptionsBuilder<Property>()
-                .column(NAME, Names.NAME, (cell, t, row, meta) -> row.getName())
+                .column(NAME, resources.constants().name(), (cell, t, row, meta) -> row.getName())
                 .column(new ColumnBuilder<Property>(VALUE, Names.VALUE,
                         (cell, t, row, meta) -> row.getValue().asString())
                         .width("66%")
