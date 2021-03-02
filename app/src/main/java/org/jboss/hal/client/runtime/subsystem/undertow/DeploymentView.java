@@ -78,9 +78,9 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
                         Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, INVALIDATE_SESSION))
                 .column(SESSION_ID, Names.SESSION_ID, (cell, type, row, meta) -> row.getName())
                 .column(CREATION_TIME, resources.constants().creationTime(),
-                        (cell, type, row, meta) -> Format.shortDateTime(row.getCreationTime()))
+                        (cell, type, row, meta) -> Format.mediumDateTime(row.getCreationTime()))
                 .column(LAST_ACCESSED_TIME, resources.constants().lastAccessedTime(),
-                        (cell, type, row, meta) -> Format.shortDateTime(row.getLastAccessTime()))
+                        (cell, type, row, meta) -> Format.mediumDateTime(row.getLastAccessTime()))
                 .build();
 
         attributesElement = div().css(marginTopLarge)
