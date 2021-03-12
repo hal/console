@@ -50,8 +50,11 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
     private final HTMLElement jvm;
     private final HTMLElement jvmVersion;
     private final HTMLElement uptime;
+    private final HTMLElement nonHeapTitle;
     private final Utilization usedHeap;
+    private final Utilization usedNonHeap;
     private final Utilization committedHeap;
+    private final Utilization committedNonHeap;
     private final Utilization threads;
 
     public ServerRuntimePreview(Dispatcher dispatcher, StatementContext statementContext, Resources resources) {
@@ -62,6 +65,8 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
 
         this.usedHeap = new Utilization(resources.constants().used(), Names.MB, false, true);
         this.committedHeap = new Utilization(resources.constants().committed(), Names.MB, false, true);
+        this.usedNonHeap = new Utilization(resources.constants().used(), Names.MB, false, true);
+        this.committedNonHeap = new Utilization(resources.constants().committed(), Names.MB, false, true);
         this.threads = new Utilization("Daemon", Names.THREADS, false, false); //NON-NLS
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
@@ -78,6 +83,9 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
                 .add(h(2).textContent(Names.HEAP))
                 .add(usedHeap)
                 .add(committedHeap)
+                .add(nonHeapTitle = h(2).element())
+                .add(usedNonHeap)
+                .add(committedNonHeap)
                 .add(h(2).textContent(Names.THREADS))
                 .add(threads);
     }
@@ -129,6 +137,18 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
             long max = heapMemoryNode.get("max").asLong() / 1024 / 1024;
             usedHeap.update(used, max);
             committedHeap.update(committed, max);
+
+            ModelNode nonHeapMemoryNode = result.step(2).get(RESULT).get("non-heap-memory-usage");
+            used = nonHeapMemoryNode.get("used").asLong() / 1024 / 1024;
+            committed = nonHeapMemoryNode.get("committed").asLong() / 1024 / 1024;
+            long nonHeapMax = nonHeapMemoryNode.get("max").asLong() / 1024 / 1024;
+            nonHeapTitle.textContent = Names.NON_HEAP;
+            if (nonHeapMax == 0) {
+                nonHeapMax = committed * 2;
+                nonHeapTitle.textContent += " (unlimited)";
+            }
+            usedNonHeap.update(used, nonHeapMax);
+            committedNonHeap.update(committed, nonHeapMax);
 
             // threads
             ModelNode threadsNode = result.step(3).get(RESULT);
