@@ -44,8 +44,9 @@ public abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
     @Override
     protected void onReveal() {
         super.onReveal();
-        if (headerMode() != null) {
-            getEventBus().fireEvent(headerMode());
+        HeaderModeEvent headerMode = headerMode();
+        if (headerMode != null) {
+            getEventBus().fireEvent(headerMode);
         }
         getView().attach();
     }
