@@ -59,7 +59,6 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
     private final Map<EjbNode.Type, Form<EjbNode>> forms;
     private final Table<ModelNode> timersTable;
     private final Table<ModelNode> methodsTable;
-    private final Table<ModelNode> removeMethodsTable;
     private final Form<ModelNode> scheduleForm;
     private final Tabs tabs;
 
@@ -79,7 +78,6 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
          *  the metadata are the same regardless of type
          */
         Metadata methodsMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.MDB)).forComplexAttribute("methods");
-        Metadata removeMethodsMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.STATEFUL)).forComplexAttribute("remove-methods");
         Metadata timersMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.MDB)).forComplexAttribute("timers");
         Metadata scheduleMetadata = timersMetadata.forComplexAttribute("schedule");
 
@@ -90,12 +88,8 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
                 .columns("name","execution-time", "invocations", "wait-time")
                 .build();
 
-        removeMethodsTable = new ModelNodeTable.Builder<>("ejb-bean-remove-methods-table", removeMethodsMetadata)
-                .columns("bean-method", "retain-if-exception")
-                .build();
-
         timersTable = new ModelNodeTable.Builder<>("ejb-bean-timers-table", timersMetadata)
-                .columns("info", "time-remaining", "next-timeout", "calendar-timer", "persistent")
+                .columns("time-remaining", "next-timeout", "calendar-timer", "persistent")
                 .build();
 
         HTMLElement scheduleHeader = h(4).element();
@@ -108,10 +102,11 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
         tabs = new Tabs(Ids.build("ejb", Ids.TAB_CONTAINER));
         tabs.add(Ids.build("ejb-attributes", Ids.TAB), "Attributes", forms.values().stream().map(Form::element).collect(Collectors.toList()));
         tabs.add(Ids.build("ejb-methods", Ids.TAB), "Methods", methodsTable.element());
-        tabs.add(Ids.build("ejb-remove-methods", Ids.TAB), "Remove Methods", removeMethodsTable.element());
         tabs.add(Ids.build("ejb-timers", Ids.TAB), "Timers", timersTable.element(), scheduleHeader, scheduleForm.element());
 
-        registerAttachable(methodsTable, removeMethodsTable, timersTable, scheduleForm);
+        registerAttachable(methodsTable);
+        registerAttachable(timersTable);
+        registerAttachable(scheduleForm);
 
         initElement(row()
                 .add(column()
@@ -138,7 +133,6 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
 
         timersTable.update(formatTimers(ModelNodeHelper.failSafeList(ejb, TIMERS)));
         methodsTable.update(flattenMethods(ModelNodeHelper.failSafePropertyList(ejb, "methods")));
-        removeMethodsTable.update(ModelNodeHelper.failSafeList(ejb, "remove-methods"));
     }
 
     @Override
