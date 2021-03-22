@@ -572,7 +572,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String jobExecutionColumnFilterDescription();
     String jpaColumnFilterDescription();
     String kill(String name);
-    String locationRequired();
     String logfileColumnFilterDescription();
     String logFileFullStatus(int lines, String lastUpdate);
     String logFilePartStatus(int lines, String lastUpdate);
@@ -593,6 +592,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String operations(int size);
     String patchLatestInstalledLabel();
     String patchStopAllServersTitle();
+    String pathRequired();
     String profileIncludes(String includes);
     String proxyColumnFilterDescription();
     String readDatasourcePropertiesErrorDomain(String profile);

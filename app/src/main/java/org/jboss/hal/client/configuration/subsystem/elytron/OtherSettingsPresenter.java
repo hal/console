@@ -227,7 +227,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(CREATE, LOCATION, RELATIVE_TO, STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .include(CREATE, PATH, RELATIVE_TO, STORE, ALIAS, TYPE, CLEAR_TEXT)
                 .unboundFormItem(typeItem, 3, typeHelp)
                 .unsorted()
                 .build();
@@ -236,12 +236,12 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         form.addFormValidation(form1 -> {
             ValidationResult result = ValidationResult.OK;
             String typeValue = typeItem.getValue();
-            FormItem<String> locationAttr = form1.getFormItem(LOCATION);
+            FormItem<String> locationAttr = form1.getFormItem(PATH);
             boolean invalidLocation = locationAttr.isEmpty() &&
                     (typeItem.isEmpty() || Collections.binarySearch(FILE_BASED_CS, typeValue) > -1);
             if (invalidLocation) {
-                form1.getFormItem(LOCATION).showError(resources.constants().requiredField());
-                result = ValidationResult.invalid(resources.messages().locationRequired());
+                form1.getFormItem(PATH).showError(resources.constants().requiredField());
+                result = ValidationResult.invalid(resources.messages().pathRequired());
             }
             return result;
         });
