@@ -19,14 +19,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTableElement;
+import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.CallbackUnionType;
 import org.jboss.hal.ballroom.table.Api.DrawCallback;
 import org.jboss.hal.ballroom.table.Api.SelectCallback;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.ElementGuard;
+import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
@@ -43,6 +48,7 @@ import static org.jboss.hal.resources.CSS.tableBordered;
 import static org.jboss.hal.resources.CSS.tableHover;
 import static org.jboss.hal.resources.CSS.tableStriped;
 import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.UIConstants.data;
 
 /**
  * Table element which implements the DataTables plugin for jQuery. Using the data table consists of these steps:
@@ -329,5 +335,13 @@ public class DataTable<T> implements Table<T> {
                 api().rows(rows).select();
             }
         }
+    }
+
+    public void applySecurity(Map<Integer, String> buttonConstraints, AuthorisationDecision authorisationDecision) {
+        buttonConstraints.forEach((index, constraint) -> {
+            buttonElement(index).attr(data(UIConstants.CONSTRAINT), constraint);
+        });
+        NodeList<Element> elements = element().querySelectorAll("[" + data(UIConstants.CONSTRAINT + "]"));
+        Elements.stream(elements).forEach(new ElementGuard.Toggle(authorisationDecision));
     }
 }
