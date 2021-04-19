@@ -15,17 +15,15 @@
  */
 package org.jboss.hal.dmr;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation. The address consists of 0-n segments
@@ -47,12 +45,16 @@ public class ResourceAddress extends ModelNode {
         }
         String safeAddress = address.startsWith("/") ? address.substring(1) : address;
         ResourceAddress ra = new ResourceAddress();
-        Map<String, String> segments = Splitter.on('/')
-                .omitEmptyStrings()
-                .withKeyValueSeparator('=')
-                .split(safeAddress);
-        for (Map.Entry<String, String> entry : segments.entrySet()) {
-            ra.add(entry.getKey(), entry.getValue());
+        String[] parts = safeAddress.split("/");
+        if (parts.length == 0) {
+            throw new IllegalArgumentException("Malformed address: " + address);
+        }
+        for (String part : parts) {
+            String[] kv = part.split("=");
+            if (kv.length != 2) {
+                throw new IllegalArgumentException("Malformed part '" + part + "' in address: " + address);
+            }
+            ra.add(kv[0], kv[1]);
         }
         return ra;
     }
