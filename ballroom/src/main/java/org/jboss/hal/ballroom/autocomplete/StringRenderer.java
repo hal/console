@@ -18,6 +18,7 @@ package org.jboss.hal.ballroom.autocomplete;
 import java.util.function.Function;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import static org.jboss.hal.ballroom.autocomplete.ItemRenderer.highlight;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
@@ -32,7 +33,7 @@ public final class StringRenderer<T> implements ItemRenderer<T> {
 
     @Override
     public String render(T item, String query) {
-        String itm = toString.apply(item);
+        String itm = SafeHtmlUtils.fromString(toString.apply(item)).asString();
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant(
                 "<div class=\"" + autocompleteSuggestion + "\" data-val=\"" + itm + "\">")
