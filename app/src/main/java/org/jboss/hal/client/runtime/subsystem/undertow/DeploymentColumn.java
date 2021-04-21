@@ -104,7 +104,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                     public List<ItemAction<DeploymentResource>> actions() {
                         List<ItemAction<DeploymentResource>> actions = new ArrayList<>();
                         actions.add(itemActionFactory.view(
-                                places.selectedProfile(NameTokens.UNDERTOW_RUNTIME_DEPLOYMENT_VIEW)
+                                places.selectedServer(NameTokens.UNDERTOW_RUNTIME_DEPLOYMENT_VIEW)
                                         .with(DEPLOYMENT, item.getDeployment())
                                         .with(SUBDEPLOYMENT, item.getSubdeployment())
                                         .build()));
