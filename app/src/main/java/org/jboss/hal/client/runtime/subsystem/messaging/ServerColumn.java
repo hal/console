@@ -151,8 +151,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             public List<ItemAction<NamedNode>> actions() {
                 List<ItemAction<NamedNode>> actions = new ArrayList<>();
                 if (item.get(STARTED).asBoolean(false)) {
-                    actions.add(itemActionFactory.view(NameTokens.MESSAGING_SERVER_RUNTIME,
-                            Ids.MESSAGING_SERVER, getTitle()));
+                    actions.add(itemActionFactory.view(places.selectedServer(NameTokens.MESSAGING_SERVER_RUNTIME)
+                            .with(Ids.MESSAGING_SERVER, getTitle()).build()));
                     actions.add(new ItemAction.Builder<NamedNode>()
                             .title(resources.constants().forceFailover())
                             .constraint(Constraint.executable(MESSAGING_SERVER_TEMPLATE, FORCE_FAILOVER))
