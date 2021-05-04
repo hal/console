@@ -15,17 +15,14 @@
  */
 package org.jboss.hal.dmr;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation. The address consists of 0-n segments
@@ -42,17 +39,38 @@ public class ResourceAddress extends ModelNode {
 
     /** Creates a new resource address from the specified string. */
     public static ResourceAddress from(String address) {
-        if (Strings.isNullOrEmpty(address)) {
-            throw new IllegalArgumentException("Address must not be null or empty");
+        if (address == null) {
+            throw new IllegalArgumentException("Address must not be null");
         }
-        String safeAddress = address.startsWith("/") ? address.substring(1) : address;
-        ResourceAddress ra = new ResourceAddress();
-        Map<String, String> segments = Splitter.on('/')
-                .omitEmptyStrings()
-                .withKeyValueSeparator('=')
-                .split(safeAddress);
-        for (Map.Entry<String, String> entry : segments.entrySet()) {
-            ra.add(entry.getKey(), entry.getValue());
+
+        ResourceAddress ra;
+        if (address.trim().length() == 0) {
+            ra = ResourceAddress.root();
+        } else {
+            String safeAddress = address.startsWith("/") ? address.substring(1) : address;
+            if (safeAddress.length() == 0) {
+                ra = ResourceAddress.root();
+            } else if (!safeAddress.contains("/")) {
+                ra = new ResourceAddress();
+                String[] parts = safeAddress.split("=");
+                if (parts.length != 2) {
+                    throw new IllegalArgumentException("Malformed address: " + address);
+                }
+                ra.add(parts[0], parts[1]);
+            } else {
+                ra = new ResourceAddress();
+                String[] parts = safeAddress.split("/");
+                if (parts.length == 0) {
+                    throw new IllegalArgumentException("Malformed address: " + address);
+                }
+                for (String part : parts) {
+                    String[] kv = part.split("=");
+                    if (kv.length != 2) {
+                        throw new IllegalArgumentException("Malformed part '" + part + "' in address: " + address);
+                    }
+                    ra.add(kv[0], kv[1]);
+                }
+            }
         }
         return ra;
     }
