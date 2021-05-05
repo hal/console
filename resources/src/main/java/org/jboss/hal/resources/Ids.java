@@ -708,6 +708,11 @@ public interface Ids {
     String SERVER_RUNTIME_JVM_ATTRIBUTES_FORM = "server-runtime-jvm-attributes-form";
     String SERVER_RUNTIME_PROPERTIES_TABLE = "server-runtime-properties-table";
     String SERVER_RUNTIME_STATUS = "server-runtime-status";
+    String SERVER_RUNTIME_STATUS_HEAP_COMMITED = "server-runtime-status-heap-commited";
+    String SERVER_RUNTIME_STATUS_HEAP_USED = "server-runtime-status-heap-used";
+    String SERVER_RUNTIME_STATUS_NON_HEAP_COMMITED = "server-runtime-status-non-heap-commited";
+    String SERVER_RUNTIME_STATUS_NON_HEAP_USED = "server-runtime-status-non-heap-used";
+    String SERVER_RUNTIME_STATUS_THREADS = "server-runtime-status-threads";
     String SERVER_STATUS_BOOTSTRAP_ITEM = "server-runtime-bootstrap-item";
     String SERVER_STATUS_MAIN_ATTRIBUTES_ITEM = "server-runtime-main-attributes-item";
     String SERVER_STATUS_SYSTEM_PROPERTIES_ITEM = "server-runtime-system-properties-item";

@@ -27,6 +27,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -64,10 +65,15 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
         this.resources = resources;
 
         this.usedHeap = new Utilization(resources.constants().used(), Names.MB, false, true);
+        this.usedHeap.element().id = Ids.SERVER_RUNTIME_STATUS_HEAP_USED;
         this.committedHeap = new Utilization(resources.constants().committed(), Names.MB, false, true);
+        this.committedHeap.element().id = Ids.SERVER_RUNTIME_STATUS_HEAP_COMMITED;
         this.usedNonHeap = new Utilization(resources.constants().used(), Names.MB, false, true);
+        this.usedNonHeap.element().id = Ids.SERVER_RUNTIME_STATUS_NON_HEAP_USED;
         this.committedNonHeap = new Utilization(resources.constants().committed(), Names.MB, false, true);
+        this.committedNonHeap.element().id = Ids.SERVER_RUNTIME_STATUS_NON_HEAP_COMMITED;
         this.threads = new Utilization("Daemon", Names.THREADS, false, false); //NON-NLS
+        this.threads.element().id = Ids.SERVER_RUNTIME_STATUS_THREADS;
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()
