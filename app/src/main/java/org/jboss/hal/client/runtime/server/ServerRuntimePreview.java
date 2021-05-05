@@ -67,11 +67,11 @@ public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
         this.usedHeap = new Utilization(resources.constants().used(), Names.MB, false, true);
         this.usedHeap.element().id = Ids.SERVER_RUNTIME_STATUS_HEAP_USED;
         this.committedHeap = new Utilization(resources.constants().committed(), Names.MB, false, true);
-        this.committedHeap.element().id = Ids.SERVER_RUNTIME_STATUS_HEAP_COMMITED;
+        this.committedHeap.element().id = Ids.SERVER_RUNTIME_STATUS_HEAP_COMMITTED;
         this.usedNonHeap = new Utilization(resources.constants().used(), Names.MB, false, true);
         this.usedNonHeap.element().id = Ids.SERVER_RUNTIME_STATUS_NON_HEAP_USED;
         this.committedNonHeap = new Utilization(resources.constants().committed(), Names.MB, false, true);
-        this.committedNonHeap.element().id = Ids.SERVER_RUNTIME_STATUS_NON_HEAP_COMMITED;
+        this.committedNonHeap.element().id = Ids.SERVER_RUNTIME_STATUS_NON_HEAP_COMMITTED;
         this.threads = new Utilization("Daemon", Names.THREADS, false, false); //NON-NLS
         this.threads.element().id = Ids.SERVER_RUNTIME_STATUS_THREADS;
 

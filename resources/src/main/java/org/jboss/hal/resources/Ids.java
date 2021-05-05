@@ -708,9 +708,9 @@ public interface Ids {
     String SERVER_RUNTIME_JVM_ATTRIBUTES_FORM = "server-runtime-jvm-attributes-form";
     String SERVER_RUNTIME_PROPERTIES_TABLE = "server-runtime-properties-table";
     String SERVER_RUNTIME_STATUS = "server-runtime-status";
-    String SERVER_RUNTIME_STATUS_HEAP_COMMITED = "server-runtime-status-heap-commited";
+    String SERVER_RUNTIME_STATUS_HEAP_COMMITTED = "server-runtime-status-heap-committed";
     String SERVER_RUNTIME_STATUS_HEAP_USED = "server-runtime-status-heap-used";
-    String SERVER_RUNTIME_STATUS_NON_HEAP_COMMITED = "server-runtime-status-non-heap-commited";
+    String SERVER_RUNTIME_STATUS_NON_HEAP_COMMITTED = "server-runtime-status-non-heap-committed";
     String SERVER_RUNTIME_STATUS_NON_HEAP_USED = "server-runtime-status-non-heap-used";
     String SERVER_RUNTIME_STATUS_THREADS = "server-runtime-status-threads";
     String SERVER_STATUS_BOOTSTRAP_ITEM = "server-runtime-bootstrap-item";
