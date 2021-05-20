@@ -251,6 +251,7 @@ public interface Names {
     String NEAR_CACHE = "Near Cache";
     String NEW_ITEM_TEMPLATE = "New Item Template";
     String NODE = "Node";
+    String NON_HEAP = "Non-heap";
     String NONE = "None";
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
