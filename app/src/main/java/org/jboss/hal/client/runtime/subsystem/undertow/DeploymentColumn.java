@@ -36,6 +36,7 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -68,22 +69,29 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
         super(new Builder<DeploymentResource>(finder, Ids.UNDERTOW_RUNTIME_DEPLOYMENT, Names.DEPLOYMENT)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_RUNTIME_REFRESH))
                 .itemsProvider((context, callback) -> {
-                    ResourceAddress addressDeploy = WEB_DEPLOYMENT_TEMPLATE.resolve(statementContext);
+                    // workaround for HAL-1750 before WFCORE-4839 is fixed
+                    ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}").resolve(statementContext);
+                    Composite composite = new Composite(baseAddress);
+
+                    ResourceAddress addressDeploy = WEB_DEPLOYMENT_TEMPLATE.subTemplate(2, WEB_DEPLOYMENT_TEMPLATE.size()).resolve(statementContext);
                     Operation operationDeploy = new Operation.Builder(addressDeploy, READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    ResourceAddress addressSubdeploy = WEB_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext);
+                    ResourceAddress addressSubdeploy = WEB_SUBDEPLOYMENT_TEMPLATE.subTemplate(2, WEB_SUBDEPLOYMENT_TEMPLATE.size()).resolve(statementContext);
                     Operation operationSubDeploy = new Operation.Builder(addressSubdeploy, READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.execute(new Composite(operationDeploy, operationSubDeploy), (CompositeResult result) -> {
+                    composite.add(operationDeploy).add(operationSubDeploy);
+                    dispatcher.execute(composite, (CompositeResult result) -> {
                         List<DeploymentResource> deployments = new ArrayList<>();
                         result.step(0).get(RESULT).asList().forEach(r -> {
-                            ResourceAddress _address = new ResourceAddress(r.get(ADDRESS));
+                            ResourceAddress _address = baseAddress.isDefined() ?  new ResourceAddress().add(baseAddress).add(new ResourceAddress(r.get(ADDRESS))) : new ResourceAddress(r.get(ADDRESS));
+
                             deployments.add(new DeploymentResource(_address, r.get(RESULT)));
                         });
                         result.step(1).get(RESULT).asList().forEach(r -> {
-                            ResourceAddress _address = new ResourceAddress(r.get(ADDRESS));
+                            ResourceAddress _address = baseAddress.isDefined() ? new ResourceAddress().add(baseAddress).add(new ResourceAddress(r.get(ADDRESS))) : new ResourceAddress(r.get(ADDRESS));
+
                             deployments.add(new DeploymentResource(_address, r.get(RESULT)));
                         });
                         callback.onSuccess(deployments);
