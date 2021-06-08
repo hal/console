@@ -178,7 +178,18 @@ public class ServerPresenter
 
     @Override
     protected void reload() {
-        reload(result -> getView().update(result));
+        reload(result -> {
+            getView().update(result);
+            // HAL-1753
+            if (hostName != null) {
+                // if hostName is null or no hostName is selected, no need to update filter-ref and location
+                getView().updateLocation(asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, LOCATION))), false);
+                if (locationName != null) {
+                    getView().updateLocationFilterRef(asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, LOCATION, encodeValue(locationName), FILTER_REF))), false);
+                }
+                getView().updateFilterRef(asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, FILTER_REF))), false);
+            }
+        });
     }
 
     private void reload(Consumer<ModelNode> payload) {
@@ -290,7 +301,7 @@ public class ServerPresenter
 
     void showFilterRef(NamedNode host) {
         selectHost(host.getName());
-        getView().updateFilterRef(asNamedNodes(failSafePropertyList(host, FILTER_REF)));
+        getView().updateFilterRef(asNamedNodes(failSafePropertyList(host, FILTER_REF)), true);
     }
 
     void addFilterRef() {
@@ -338,7 +349,7 @@ public class ServerPresenter
         reload(modelNode -> {
             getView().update(modelNode);
             getView().updateFilterRef(
-                    asNamedNodes(failSafePropertyList(modelNode, String.join("/", HOST, hostName, FILTER_REF))));
+                    asNamedNodes(failSafePropertyList(modelNode, String.join("/", HOST, hostName, FILTER_REF))), true);
         });
     }
 
@@ -346,7 +357,7 @@ public class ServerPresenter
 
     void showLocation(NamedNode host) {
         selectHost(host.getName());
-        getView().updateLocation(asNamedNodes(failSafePropertyList(host, LOCATION)));
+        getView().updateLocation(asNamedNodes(failSafePropertyList(host, LOCATION)), true);
     }
 
     void addLocation() {
@@ -402,7 +413,7 @@ public class ServerPresenter
         reload(modelNode -> {
             getView().update(modelNode);
             getView().updateLocation(asNamedNodes(failSafePropertyList(modelNode,
-                    String.join("/", HOST, hostName, LOCATION))));
+                    String.join("/", HOST, hostName, LOCATION))), true);
         });
     }
 
@@ -419,7 +430,7 @@ public class ServerPresenter
 
     void showLocationFilterRef(NamedNode location) {
         selectLocation(location.getName());
-        getView().updateLocationFilterRef(asNamedNodes(failSafePropertyList(location, FILTER_REF)));
+        getView().updateLocationFilterRef(asNamedNodes(failSafePropertyList(location, FILTER_REF)), true);
     }
 
     void addLocationFilterRef() {
@@ -481,7 +492,7 @@ public class ServerPresenter
         reload(modelNode -> {
             getView().update(modelNode);
             getView().updateLocationFilterRef(asNamedNodes(failSafePropertyList(modelNode,
-                    String.join("/", HOST, hostName, LOCATION, encodeValue(locationName), FILTER_REF))));
+                    String.join("/", HOST, hostName, LOCATION, encodeValue(locationName), FILTER_REF))), true);
         });
     }
 
@@ -663,9 +674,9 @@ public class ServerPresenter
 
     public interface MyView extends HalView, HasPresenter<ServerPresenter> {
         void update(ModelNode payload);
-        void updateFilterRef(List<NamedNode> filters);
-        void updateLocation(List<NamedNode> locations);
-        void updateLocationFilterRef(List<NamedNode> filters);
+        void updateFilterRef(List<NamedNode> filters, boolean showPage);
+        void updateLocation(List<NamedNode> locations, boolean showPage);
+        void updateLocationFilterRef(List<NamedNode> filters, boolean showPage);
     }
     // @formatter:on
 }
