@@ -132,14 +132,14 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 .exclude(STATISTICS_ENABLED)
                 .exclude(XA_ATTRIBUTES)
                 .build();
-        nonXaTabs.add(Ids.DATA_SOURCE_RUNTIME_POOL_TAB, resources.constants().pool(), poolForm.element());
+        nonXaTabs.add(Ids.DATA_SOURCE_RUNTIME_POOL_TAB, Names.POOL, poolForm.element());
 
         xaPoolForm = new ModelNodeForm.Builder<>(Ids.XA_DATA_SOURCE_RUNTIME_POOL_FORM, poolMeta)
                 .readOnly()
                 .includeRuntime()
                 .exclude(STATISTICS_ENABLED)
                 .build();
-        xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_POOL_TAB, resources.constants().pool(), xaPoolForm.element());
+        xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_POOL_TAB, Names.POOL, xaPoolForm.element());
 
         jdbcForm = new ModelNodeForm.Builder<>(Ids.DATA_SOURCE_RUNTIME_JDBC_FORM, jdbcMeta)
                 .readOnly()

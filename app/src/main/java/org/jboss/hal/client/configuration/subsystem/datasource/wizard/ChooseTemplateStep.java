@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
@@ -39,7 +40,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
         super(resources.constants().chooseTemplate());
 
         root = div()
-                .add(p().textContent(resources.messages().chooseTemplate(resources.constants().custom()))).element();
+                .add(p().textContent(resources.messages().chooseTemplate(Names.CUSTOM))).element();
 
         root.appendChild(div().css(CSS.radio)
                 .add(label()
@@ -47,7 +48,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
                                 .attr("name", "template") //NON-NLS
                                 .attr("value", "custom")
                                 .on(click, event -> wizard().getContext().template = null))
-                        .add(span().textContent(resources.constants().custom()))).element());
+                        .add(span().textContent(Names.CUSTOM))).element());
 
         List<DataSourceTemplate> matchingTemplates = stream(templates.spliterator(), false)
                 .filter(t -> t.getDataSource().isXa() == xa).collect(toList());

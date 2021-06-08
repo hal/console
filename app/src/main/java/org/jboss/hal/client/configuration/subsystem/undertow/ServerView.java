@@ -143,7 +143,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.add(FILTER_REF_TEMPLATE, table -> presenter.addFilterRef()))
                 .button(tableButtonFactory.remove(FILTER_REF_TEMPLATE,
                         table -> presenter.removeFilterRef(table.selectedRow().getName())))
-                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(FILTER_REF, resources.constants().filter(), (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();
 
@@ -190,7 +190,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         table -> presenter.addLocationFilterRef()))
                 .button(tableButtonFactory.remove(LOCATION_FILTER_REF_TEMPLATE,
                         table -> presenter.removeLocationFilterRef(table.selectedRow().getName())))
-                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(FILTER_REF, resources.constants().filter(), (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();
 

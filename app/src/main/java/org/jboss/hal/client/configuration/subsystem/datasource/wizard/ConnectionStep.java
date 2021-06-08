@@ -24,6 +24,7 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
@@ -37,7 +38,7 @@ class ConnectionStep extends WizardStep<Context, State> {
     private final ModelNodeForm<DataSource> form;
 
     ConnectionStep(Metadata metadata, Resources resources, boolean xa) {
-        super(resources.constants().connection());
+        super(Names.CONNECTION);
 
         List<String> attributes = new ArrayList<>();
         if (!xa) {

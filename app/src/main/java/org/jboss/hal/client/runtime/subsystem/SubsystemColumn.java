@@ -55,6 +55,7 @@ import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
@@ -127,7 +128,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 if (environment.isStandalone()) {
                     // HAL-1564: For domain we already have the management operations in the "Browse By" column
                     items.add(new SubsystemMetadata.Builder(Ids.MANAGEMENT_OPERATIONS,
-                            resources.constants().managementOperations())
+                            Names.MANAGEMENT_OPERATIONS)
                             .token(NameTokens.MANAGEMENT_OPERATIONS)
                             .preview(resources.previews().runtimeManagementOperations())
                             .build());

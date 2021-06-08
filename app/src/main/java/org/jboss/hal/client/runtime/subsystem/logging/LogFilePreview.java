@@ -22,6 +22,7 @@ import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -67,7 +68,7 @@ class LogFilePreview extends PreviewContent<LogFile> {
                 .append(model ->
                         new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()));
         if (logFile.getLoggingProfile() != null) {
-            previewAttributes.append(mode -> new PreviewAttribute(resources.constants().loggingProfile(),
+            previewAttributes.append(mode -> new PreviewAttribute(Names.LOGGING_PROFILE,
                     logFile.getLoggingProfile()));
         }
         previewBuilder().addAll(previewAttributes);

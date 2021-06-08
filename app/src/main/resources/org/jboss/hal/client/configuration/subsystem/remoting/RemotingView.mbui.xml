@@ -35,7 +35,7 @@
                             <attribute name="worker"/>
                         </group>
                         <group id="remoting-configuration-security"
-                               title="${mbuiContext.resources().constants().security()}">
+                               title="Security">
                             <attribute name="auth-realm"/>
                             <attribute name="authentication-retries"/>
                             <attribute name="authorize-id"/>

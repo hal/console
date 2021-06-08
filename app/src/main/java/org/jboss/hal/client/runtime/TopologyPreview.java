@@ -207,7 +207,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(model -> {
                     String token = lazyToken(NameTokens.RUNTIME, model, ModelNode::isDefined,
                             m -> finderPathFactory.runtimeHostPath(m.getAddressName()));
-                    return new PreviewAttribute(Names.NAME, model.getName(), token);
+                    return new PreviewAttribute(resources.constants().name(), model.getName(), token);
                 })
                 .append(RELEASE_CODENAME)
                 .append(RELEASE_VERSION)
@@ -230,7 +230,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(model -> {
                     String token = lazyToken(NameTokens.RUNTIME, model, ModelNode::isDefined,
                             m -> finderPathFactory.runtimeServerGroupPath(m.getName()));
-                    return new PreviewAttribute(Names.NAME, model.getName(), token);
+                    return new PreviewAttribute(resources.constants().name(), model.getName(), token);
                 })
                 .append(model -> {
                     String token = lazyToken(NameTokens.CONFIGURATION, model, ModelNode::isDefined,
@@ -255,7 +255,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(model -> {
                     String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),
                             m -> finderPathFactory.runtimeServerPath(model.getHost(), model.getName()));
-                    return new PreviewAttribute(Names.NAME, model.getName(), token);
+                    return new PreviewAttribute(resources.constants().name(), model.getName(), token);
                 })
                 .append(model -> {
                     String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),

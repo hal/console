@@ -180,7 +180,7 @@ public class DestinationPresenter
 
     void addSecuritySettingRole() {
         Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
-        TextBoxItem patternItem = new TextBoxItem(PATTERN, Names.PATTERN);
+        TextBoxItem patternItem = new TextBoxItem(PATTERN, resources.constants().pattern());
         patternItem.setRequired(true);
         TextBoxItem roleItem = new TextBoxItem(ROLE, resources.constants().role());
         roleItem.setRequired(true);

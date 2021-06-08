@@ -160,9 +160,9 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 resources.constants().enable(), event -> column.enableDataSource(dataSource),
                 Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), STATISTICS_ENABLED));
 
-        activeConnections = new Utilization(resources.constants().active(), resources.constants().connections(),
+        activeConnections = new Utilization(resources.constants().active(), Names.CONNECTIONS,
                 environment.isStandalone(), true);
-        maxUsedConnections = new Utilization(resources.constants().maxUsed(), resources.constants().connections(),
+        maxUsedConnections = new Utilization(resources.constants().maxUsed(), Names.CONNECTIONS,
                 environment.isStandalone(), true);
         hitCount = new Utilization(resources.constants().hitCount(), resources.constants().count(),
                 environment.isStandalone(), false);
@@ -176,7 +176,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 .add(needsReloadWarning)
                 .add(needsRestartWarning)
                 .add(disabledWarning)
-                .add(poolHeader = h(2).css(underline).textContent(resources.constants().connectionPool()).element())
+                .add(poolHeader = h(2).css(underline).textContent(Names.CONNECTION_POOL).element())
                 .add(activeConnections)
                 .add(maxUsedConnections)
                 .add(cacheHeader = h(2).css(underline)

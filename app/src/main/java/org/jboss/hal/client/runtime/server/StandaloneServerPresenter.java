@@ -62,6 +62,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -216,7 +217,7 @@ public class StandaloneServerPresenter
 
     public void disableSSLWizard() {
         Constants constants = resources.constants();
-        String serverName = environment.isStandalone() ? constants.standaloneServer() : constants.domainController();
+        String serverName = environment.isStandalone() ? Names.STANDALONE_SERVER : Names.DOMAIN_CONTROLLER;
         String label = constants.reload() + " " + serverName;
         SwitchItem reload = new SwitchItem(RELOAD, label);
         reload.setExpressionAllowed(false);
@@ -347,7 +348,7 @@ public class StandaloneServerPresenter
                 .param(START_MODE, startMode)
                 .build();
 
-        String type = resources.constants().standaloneServer();
+        String type = Names.STANDALONE_SERVER;
         String name = Server.STANDALONE.getName();
         reloadBlocking(dispatcher, getEventBus(), operation, type, name, urlConsole, resources);
     }

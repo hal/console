@@ -217,7 +217,7 @@ public class ServerView extends HalViewImpl implements MyView {
                 .readOnly()
                 .build();
         HTMLElement transactionSection = section()
-                .add(h(1).textContent(resources.constants().transactions()))
+                .add(h(1).textContent(Names.TRANSACTIONS))
                 .add(transactionTable)
                 .add(transactionForm).element();
 
@@ -241,7 +241,7 @@ public class ServerView extends HalViewImpl implements MyView {
                 pfIcon("plugged"), connectorSection);
         navigation.addPrimary(Ids.MESSAGING_SERVER_ROLE_ITEM, resources.constants().roles(),
                 pfIcon("users"), roleSection);
-        navigation.addPrimary(Ids.MESSAGING_SERVER_TRANSACTION_ITEM, resources.constants().transactions(),
+        navigation.addPrimary(Ids.MESSAGING_SERVER_TRANSACTION_ITEM, Names.TRANSACTIONS,
                 fontAwesome("handshake-o"), transactionSection);
 
         registerAttachable(navigation,
