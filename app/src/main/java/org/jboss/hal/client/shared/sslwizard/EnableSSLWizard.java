@@ -39,6 +39,7 @@ import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -410,9 +411,8 @@ public class EnableSSLWizard {
                                                 context1 -> presenter.reloadView(), true);
                                     } else {
                                         // constructs the http management console url
-                                        String serverName = environment.isStandalone() ? resources.constants()
-                                                .standaloneServer()
-                                                : resources.constants().domainController();
+                                        String serverName = environment.isStandalone() ? Names.STANDALONE_SERVER
+                                                : Names.DOMAIN_CONTROLLER;
                                         String label = resources.constants().reload() + " " + serverName;
                                         SafeHtml description;
                                         StringBuilder location = new StringBuilder(

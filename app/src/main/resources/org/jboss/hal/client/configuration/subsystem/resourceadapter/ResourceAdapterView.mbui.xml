@@ -87,7 +87,7 @@
                                     form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}'/>
                         </group>
                         <group id="resource-adapter-connection-definition-pool"
-                               title="${mbuiContext.resources().constants().pool()}">
+                               title="Pool">
                             <attribute name="min-pool-size"/>
                             <attribute name="max-pool-size"/>
                             <attribute name="initial-pool-size"/>
@@ -101,7 +101,7 @@
                             <attribute name="capacity-incrementer-properties"/>
                         </group>
                         <group id="resource-adapter-connection-definition-security"
-                               title="${mbuiContext.resources().constants().security()}">
+                               title="Security">
                             <attribute name="elytron-enabled"/>
                             <attribute name="authentication-context"/>
                             <attribute name="authentication-context-and-application"/>

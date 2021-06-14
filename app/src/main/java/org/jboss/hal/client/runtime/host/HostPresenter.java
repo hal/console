@@ -274,7 +274,7 @@ public class HostPresenter
 
     void disableSSLWizard() {
         Constants constants = resources.constants();
-        String serverName = environment.isStandalone() ? constants.standaloneServer() : constants.domainController();
+        String serverName = environment.isStandalone() ? Names.STANDALONE_SERVER : Names.DOMAIN_CONTROLLER;
         String label = constants.reload() + " " + serverName;
         SwitchItem reload = new SwitchItem(RELOAD, label);
         reload.setExpressionAllowed(false);
@@ -398,7 +398,7 @@ public class HostPresenter
                 .param(RESTART_SERVERS, false)
                 .param(ADMIN_ONLY, host.isAdminMode())
                 .build();
-        String type = resources.constants().domainController();
+        String type = Names.DOMAIN_CONTROLLER;
         String name = host.getName();
         reloadBlocking(dispatcher, getEventBus(), operation, type, name, urlConsole, resources);
     }

@@ -132,11 +132,14 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
             public List<ItemAction<ModelNode>> actions() {
 
                 List<ItemAction<ModelNode>> actions = new ArrayList<>();
-                actions.add(new ItemAction.Builder<ModelNode>()
-                        .title(resources.constants().rollback())
-                        .handler(item1 -> rollback(item1.get(PATCH_ID).asString()))
-                        .constraint(Constraint.executable(PATCHING_TEMPLATE, ROLLBACK_OPERATION))
-                        .build());
+
+                if (item.equals(getCurrentItems().get(0))) {
+                    actions.add(new ItemAction.Builder<ModelNode>()
+                            .title(resources.constants().rollback())
+                            .handler(item1 -> rollback(item1.get(PATCH_ID).asString()))
+                            .constraint(Constraint.executable(PATCHING_TEMPLATE, ROLLBACK_OPERATION))
+                            .build());
+                }
 
                 return actions;
             }

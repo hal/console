@@ -106,7 +106,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
         LabelBuilder labelBuilder = new LabelBuilder();
         Tabs tabs = new Tabs(Ids.build(Ids.JMS_BRIDGE, Ids.TAB_CONTAINER));
         tabs.add(Ids.JMS_BRIDGE_TAB, mbuiContext.resources().constants().attributes(), attributesForm.element());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), Names.SOURCE, sourceForm.element());
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), mbuiContext.resources().constants().source(), sourceForm.element());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE_CREDENTIAL_REFERENCE, Ids.TAB),
                 labelBuilder.label(SOURCE_CREDENTIAL_REFERENCE), crSource.element());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET, Ids.TAB), Names.TARGET, targetForm.element());

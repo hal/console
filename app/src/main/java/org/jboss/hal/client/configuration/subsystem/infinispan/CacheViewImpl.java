@@ -121,7 +121,7 @@ abstract class CacheViewImpl<P extends CachePresenter<?, ?>> extends HalViewImpl
 
     private void initStore(CacheType cacheType, MetadataRegistry metadataRegistry, Resources resources) {
         storeElement = new StoreElement(cacheType, metadataRegistry, resources);
-        navigation.addPrimary(Ids.build(cacheType.baseId, STORE, Ids.ITEM), Names.STORE, fontAwesome("shopping-basket"),
+        navigation.addPrimary(Ids.build(cacheType.baseId, STORE, Ids.ITEM), Names.STORE_RESOURCE, fontAwesome("shopping-basket"),
                 storeElement);
         registerAttachable(storeElement);
     }

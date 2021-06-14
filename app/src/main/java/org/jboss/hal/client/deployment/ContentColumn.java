@@ -339,7 +339,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                     refresh(Ids.content(name));
                                     wzd.showSuccess(resources.constants().uploadSuccessful(),
                                             resources.messages().uploadSuccessful(name),
-                                            resources.messages().view(Names.CONTENT),
+                                            resources.messages().view(resources.constants().content()),
                                             cxt -> { /* nothing to do, content is already selected */ });
                                 }
                             });

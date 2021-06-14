@@ -29,6 +29,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -60,9 +61,9 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
         String attributesFormId = Ids.build(Ids.STANDALONE_SERVER_COLUMN, Ids.ATTRIBUTES, FORM);
         attributesForm = new ModelNodeForm.Builder<>(attributesFormId, metadata)
                 .includeRuntime()
-                .onSave((form, changedValues) -> presenter.save(resources.constants().standaloneServer(), ROOT_TEMPLATE,
+                .onSave((form, changedValues) -> presenter.save(Names.STANDALONE_SERVER, ROOT_TEMPLATE,
                         changedValues))
-                .prepareReset(form -> presenter.reset(resources.constants().standaloneServer(), ROOT_TEMPLATE, form,
+                .prepareReset(form -> presenter.reset(Names.STANDALONE_SERVER, ROOT_TEMPLATE, form,
                         metadata))
                 .unsorted()
                 .build();

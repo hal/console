@@ -92,9 +92,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String configurationSslManagement();
     String confirmation();
     String connectedTo();
-    String connection();
-    String connectionPool();
-    String connections();
     String connectToServer();
     String consoleVersion();
     String consumersForAddress();
@@ -109,7 +106,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String createAccount();
     String creationTime();
     String currentPage();
-    String custom();
     String data();
     String day();
     String days();
@@ -137,7 +133,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String disconnectedUpper();
     String domainConfigurationChanged();
     String domainConfigurationChangedTooltip();
-    String domainController();
     String download();
     String dropSubscriptions();
     String duplicateMacro();
@@ -314,7 +309,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String invalidJson();
     String invalidMetadata();
     String jcaConfiguration();
-    String jdbcDriver();
     String jgroupsRelayAlias();
     String jndiNames();
     String jndiTree();
@@ -329,12 +323,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logFile();
     String logFilePreviewError();
     String logFiles();
-    String loggingProfile();
     String logout();
     String macroEditor();
     String mainAttributes();
     String managed();
-    String managementOperations();
     String managementVersion();
     String managementVersionMismatchDescription();
     String manyMessages();
@@ -424,8 +416,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String ping();
     String platform();
     String play();
-    String policy();
-    String pool();
     String preparedStatementCache();
     String preview();
     String previous();
@@ -463,7 +453,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String replaceContent();
     String replaceDeployment();
     String request();
-    String requests();
     String required();
     String requiredField();
     String reset();
@@ -500,7 +489,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String search();
     String second();
     String seconds();
-    String security();
     String selectAll();
     String sendToDeadLetter();
     String serverGroupScopedRole();
@@ -521,7 +509,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String source();
     String specifyNames();
     String specifyParameters();
-    String standaloneServer();
     String start();
     String startDelivery();
     String starting();
@@ -568,7 +555,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String tools();
     String totalProcessingTime();
     String tracking();
-    String transactions();
     String type();
     String undeploy();
     String undeployContent();

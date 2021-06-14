@@ -90,7 +90,7 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
         totalProcessingTimeAttribute.append(model -> msAttribute(TOTAL_PROCESSING_TIME, model));
 
         requests = new Donut.Builder(Names.REQUESTS)
-                .add(REQUEST_COUNT, resources.constants().requests(), PatternFly.colors.green)
+                .add(REQUEST_COUNT, Names.REQUESTS, PatternFly.colors.green)
                 .add(FAULT_COUNT, resources.constants().failed(), PatternFly.colors.red)
                 .legend(Donut.Legend.BOTTOM)
                 .responsive(true)

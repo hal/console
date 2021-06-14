@@ -55,7 +55,7 @@ class CachePreview extends PreviewContent<Cache> {
         previewBuilder().addAll(basicAttributes);
 
         PreviewAttributes<Cache> memoryAndStoreAttributes = new PreviewAttributes<>(cache,
-                Names.MEMORY + " / " + Names.STORE);
+                Names.MEMORY + " / " + Names.STORE_RESOURCE);
         memoryAndStoreAttributes.append(c -> {
             String resource = definedSingleton(c, MEMORY);
             Memory memory = Memory.fromResource(resource);
@@ -68,9 +68,9 @@ class CachePreview extends PreviewContent<Cache> {
             String resource = definedSingleton(c, STORE);
             Store store = Store.fromResource(resource);
             if (store != null) {
-                return new PreviewAttribute(Names.STORE, store.type);
+                return new PreviewAttribute(Names.STORE_RESOURCE, store.type);
             }
-            return new PreviewAttribute(Names.STORE, Strings.capitalize(resource));
+            return new PreviewAttribute(Names.STORE_RESOURCE, Strings.capitalize(resource));
         });
         previewBuilder().addAll(memoryAndStoreAttributes);
     }

@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -135,12 +137,12 @@ class ChildrenPanel implements Iterable<HTMLElement>, Attachable {
                         new MetadataProcessor.MetadataCallback() {
                             @Override
                             public void onMetadata(Metadata metadata) {
-                                table.enableButton(0, AuthorisationDecision.from(environment,
-                                        constraint -> Optional.of(metadata.getSecurityContext()))
-                                        .isAllowed(Constraint.executable(template, ADD)));
-                                table.enableButton(1, AuthorisationDecision.from(environment,
-                                        constraint -> Optional.of(metadata.getSecurityContext()))
-                                        .isAllowed(Constraint.executable(template, REMOVE)));
+                                Map<Integer, String> buttonConstraints = new HashMap<>();
+                                buttonConstraints.put(0, Constraint.executable(template, ADD).data());
+                                buttonConstraints.put(1, Constraint.executable(template, REMOVE).data());
+
+                                ((DataTable) table).applySecurity(buttonConstraints,
+                                        AuthorisationDecision.from(environment, constraint -> Optional.of(metadata.getSecurityContext())));
                             }
 
                             @Override

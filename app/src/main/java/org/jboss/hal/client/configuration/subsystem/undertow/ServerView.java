@@ -143,7 +143,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.add(FILTER_REF_TEMPLATE, table -> presenter.addFilterRef()))
                 .button(tableButtonFactory.remove(FILTER_REF_TEMPLATE,
                         table -> presenter.removeFilterRef(table.selectedRow().getName())))
-                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(FILTER_REF, resources.constants().filter(), (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();
 
@@ -190,7 +190,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         table -> presenter.addLocationFilterRef()))
                 .button(tableButtonFactory.remove(LOCATION_FILTER_REF_TEMPLATE,
                         table -> presenter.removeLocationFilterRef(table.selectedRow().getName())))
-                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(FILTER_REF, resources.constants().filter(), (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();
 
@@ -310,23 +310,29 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     }
 
     @Override
-    public void updateFilterRef(List<NamedNode> filters) {
+    public void updateFilterRef(List<NamedNode> filters, boolean showPage) {
         filterRefForm.clear();
         filterRefTable.update(filters);
-        hostPages.showPage(Ids.UNDERTOW_HOST_FILTER_REF_PAGE);
+        if (showPage) {
+            hostPages.showPage(Ids.UNDERTOW_HOST_FILTER_REF_PAGE);
+        }
     }
 
     @Override
-    public void updateLocation(List<NamedNode> locations) {
+    public void updateLocation(List<NamedNode> locations, boolean showPage) {
         locationForm.clear();
         locationTable.update(locations);
-        hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_PAGE);
+        if (showPage) {
+            hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_PAGE);
+        }
     }
 
     @Override
-    public void updateLocationFilterRef(List<NamedNode> filters) {
+    public void updateLocationFilterRef(List<NamedNode> filters, boolean showPage) {
         locationFilterRefForm.clear();
         locationFilterRefTable.update(filters);
-        hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE);
+        if (showPage) {
+            hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE);
+        }
     }
 }

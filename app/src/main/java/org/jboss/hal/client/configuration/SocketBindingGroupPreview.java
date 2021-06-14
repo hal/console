@@ -71,9 +71,9 @@ class SocketBindingGroupPreview extends PreviewContent<NamedNode> {
                                 html.appendEscaped(", ");
                             }
                         }
-                        return new PreviewAttribute(Names.INCLUDES, html.toSafeHtml());
+                        return new PreviewAttribute(Names.INCLUDES_ATTRIBUTE, html.toSafeHtml());
                     } else {
-                        return new PreviewAttribute(Names.INCLUDES, Names.NOT_AVAILABLE);
+                        return new PreviewAttribute(Names.INCLUDES_ATTRIBUTE, Names.NOT_AVAILABLE);
                     }
                 });
         previewBuilder().addAll(attributes);
