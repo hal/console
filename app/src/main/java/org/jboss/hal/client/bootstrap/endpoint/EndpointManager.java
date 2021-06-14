@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.function.Consumer;
+import java.util.Optional;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
@@ -62,7 +63,7 @@ public class EndpointManager {
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
-    private KeycloakHolder keycloakHolder;
+    private final KeycloakHolder keycloakHolder;
 
     private Callback callback;
 
@@ -82,71 +83,66 @@ public class EndpointManager {
             Endpoint endpoint = storage.get(connect);
             if (endpoint != null) {
                 logger.info("Try to connect to endpoint '{}'", endpoint.getUrl());
-                pingServer(endpoint, new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        logger.error("Unable to connect to specified endpoint '{}'", endpoint.getUrl());
-                        openDialog();
-                    }
-
-                    @Override
-                    public void onSuccess(Void whatever) {
-                        logger.info("Successfully connected to '{}'", endpoint.getUrl());
-                        onConnect(endpoint);
-                    }
-                });
+                connect(Optional.of(endpoint));
             } else {
                 logger.error("Unable to get URL for named endpoint '{}' from local storage", connect);
                 openDialog();
             }
-
         } else {
-            // Test whether this console is served from a WildFly / EAP instance
-            String baseUrl = Endpoints.getBaseUrl();
-            String managementEndpoint = baseUrl + MANAGEMENT;
-            XMLHttpRequest xhr = new XMLHttpRequest();
-            xhr.onload = event -> {
-                int status = xhr.status;
-                switch (status) {
-                    case 0:
-                    case 200:
-                    case 401:
-                        if (keycloakPresentAndValid()) {
-                            endpoints.useBase(baseUrl);
-                            callback.execute();
-                        } else {
-                            checkKeycloakAdapter(baseUrl, keycloakServerJsUrl -> {
-                                // if there is a keycloak adapter, call keycloak authentication
-                                authKeycloak(getKeycloakAdapterUrl(baseUrl), keycloakServerJsUrl, callback::execute);
-                            }, () -> {
-                                // if there is no keycloak adapter for wildfly-console, proceed with regular authentication
-                                endpoints.useBase(baseUrl);
-                                callback.execute();
-                            });
-                        }
-                        break;
-                    case 403:
-                        Elements.removeChildrenFrom(document.body);
-                        document.body.appendChild(new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
-                        break;
-                    case 503:
-                        Elements.removeChildrenFrom(document.body);
-                        document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText, Endpoints.INSTANCE).element());
-                        break;
-                    // TODO Show an error page!
-                    // case 500:
-                    //     break;
-                    default:
-                        logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
-                                managementEndpoint);
-                        openDialog();
-                        break;
-                }
-            };
-            xhr.open(GET.name(), managementEndpoint, true);
-            xhr.withCredentials = true;
-            xhr.send();
+            connect(Optional.empty());
         }
+    }
+
+    private void connect(Optional<Endpoint> endpoint) {
+        String baseUrl = endpoint.map(Endpoint::getUrl)
+                .orElse(Endpoints.getBaseUrl());
+        endpoints.useBase(baseUrl);
+        String managementEndpoint = baseUrl + MANAGEMENT;
+        XMLHttpRequest xhr = new XMLHttpRequest();
+        xhr.onload = event -> {
+            int status = xhr.status;
+            switch (status) {
+                case 0:
+                case 200:
+                case 401:
+                    if (keycloakPresentAndValid()) {
+                        callback.execute();
+                    } else {
+                        checkKeycloakAdapter(baseUrl, keycloakServerJsUrl -> {
+                            // if there is a keycloak adapter, call keycloak authentication
+                            authKeycloak(getKeycloakAdapterUrl(baseUrl), keycloakServerJsUrl, callback::execute);
+                        }, () -> {
+                            // if there is no keycloak adapter for wildfly-console, proceed with regular authentication
+                            callback.execute();
+                        });
+                    }
+                    break;
+                case 403:
+                    Elements.removeChildrenFrom(document.body);
+                    document.body.appendChild(new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
+                    break;
+                case 503:
+                    Elements.removeChildrenFrom(document.body);
+                    document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText, Endpoints.INSTANCE).element());
+                    break;
+                // TODO Show an error page!
+                // case 500:
+                //     break;
+                default:
+                    logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
+                            managementEndpoint);
+                    openDialog();
+                    break;
+            }
+        };
+        xhr.onerror = (event) -> {
+            Elements.removeChildrenFrom(document.body);
+            document.body.appendChild(new BootstrapFailed("Failed connecting to a management interface", Endpoints.INSTANCE).element());
+            return null;
+        };
+        xhr.open(GET.name(), managementEndpoint, true);
+        xhr.withCredentials = true;
+        xhr.send();
     }
 
     private void openDialog() {
@@ -174,6 +170,10 @@ public class EndpointManager {
                         callback.onFailure(new IllegalStateException());
                     }
                 };
+                xhr.onerror = event -> {
+                    callback.onFailure(null);
+                    return null;
+                };
                 xhr.open(GET.name(), managementEndpoint, true);
                 xhr.withCredentials = true;
                 xhr.send();
@@ -182,8 +182,6 @@ public class EndpointManager {
                 callback.onFailure(e);
             }
         });
-
-
     }
 
     private void checkKeycloakAdapter(String baseUrl, Consumer<String> kcExistsCallback, Callback wildflyCallback) {
@@ -243,18 +241,6 @@ public class EndpointManager {
 
     void onConnect(Endpoint endpoint) {
         storage.saveSelection(endpoint);
-        endpoints.useBase(endpoint.getUrl());
-
-        if (keycloakPresentAndValid()) {
-            callback.execute();
-        } else {
-            checkKeycloakAdapter(endpoint.getUrl(), keycloakServerJsUrl -> {
-                // if there is a keycloak adapter, call keycloak authentication
-                authKeycloak(getKeycloakAdapterUrl(endpoint.getUrl()), keycloakServerJsUrl, () -> callback.execute());
-            }, () -> {
-                // if there is no keycloak adapter for wildfly-console, proceed with regular authentication
-                callback.execute();
-            });
-        }
+        connect(Optional.of(endpoint));
     }
 }
