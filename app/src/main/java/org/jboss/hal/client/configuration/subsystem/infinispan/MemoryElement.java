@@ -111,7 +111,7 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         return select;
     }
 
-    private void appendChild (Memory memory) {
+    private void appendChild(Memory memory) {
         selectMemory.appendChild(option()
                 .apply(o -> {
                     o.value = memory.resource;
