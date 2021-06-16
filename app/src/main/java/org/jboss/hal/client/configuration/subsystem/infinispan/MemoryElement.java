@@ -32,6 +32,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.MissingMetadataException;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -66,7 +67,13 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
         selectMemory.id = selectMemoryId;
 
         for (Memory memory : Memory.values()) {
-            Metadata metadata = metadataRegistry.lookup(cacheType.template.append(MEMORY + "=" + memory.resource));
+            Metadata metadata;
+            try {
+                metadata = metadataRegistry.lookup(cacheType.template.append(MEMORY + "=" + memory.resource));
+            } catch (MissingMetadataException ex) {
+                continue;
+            }
+            appendChild(memory);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cacheType.baseId, memory.baseId, Ids.FORM),
                     metadata)
                     .onSave((f, changedValues) -> presenter.saveMemory(memory, changedValues))
@@ -95,14 +102,21 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                     s.size = 1;
                 }).element();
 
-        for (Memory memory : Memory.values()) {
-            select.appendChild(option()
-                    .apply(o -> {
-                        o.value = memory.resource;
-                        o.text = memory.type;
-                    }).element());
-        }
+        SelectBoxBridge.Single.element(select).onChange((event, index) -> {
+            String value = SelectBoxBridge.Single.element(select).getValue();
+            Memory memory = Memory.fromResource(value);
+            presenter.switchMemory(memory);
+        });
+
         return select;
+    }
+
+    private void appendChild (Memory memory) {
+        selectMemory.appendChild(option()
+                .apply(o -> {
+                    o.value = memory.resource;
+                    o.text = memory.type;
+                }).element());
     }
 
     @Override
@@ -114,12 +128,6 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
     public void attach() {
         SelectBoxBridge.Options options = SelectBoxBridge.Defaults.get();
         $(HASH + selectMemoryId).selectpicker(options);
-        SelectBoxBridge.Single.element(selectMemory).onChange((event, index) -> {
-            String value = SelectBoxBridge.Single.element(selectMemory).getValue();
-            Memory memory = Memory.fromResource(value);
-            presenter.switchMemory(memory);
-        });
-        // selectMemory.previousElementSibling.classList.add(dropdownMenuRight);
         autoWidth(headerForm);
         memoryForms.values().forEach(Attachable::attach);
     }
