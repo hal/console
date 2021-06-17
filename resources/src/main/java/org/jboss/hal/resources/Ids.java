@@ -92,6 +92,7 @@ public interface Ids {
     String CACHE_CONTAINER_TRANSPORT_FORM = "cc-transport-form";
     String CACHE_CONTAINER_TRANSPORT_ITEM = "cc-transport-item";
     String CACHE_MEMORY_BINARY = "cache-memory-binary";
+    String CACHE_MEMORY_HEAP = "cache-memory-heap";
     String CACHE_MEMORY_OBJECT = "cache-memory-object";
     String CACHE_MEMORY_OFF_HEAP = "cache-memory-off-heap";
     String CACHE_STORE_BINARY_JDBC = "cache-store-binary-jdbc";

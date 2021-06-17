@@ -25,6 +25,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MEMORY;
 enum Memory {
 
     BINARY(Ids.CACHE_MEMORY_BINARY, Names.BINARY, ModelDescriptionConstants.BINARY),
+    HEAP(Ids.CACHE_MEMORY_HEAP, Names.HEAP, ModelDescriptionConstants.HEAP),
     OBJECT(Ids.CACHE_MEMORY_OBJECT, Names.OBJECT, ModelDescriptionConstants.OBJECT),
     OFF_HEAP(Ids.CACHE_MEMORY_OFF_HEAP, Names.OFF_HEAP, ModelDescriptionConstants.OFF_HEAP);
 
