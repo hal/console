@@ -382,6 +382,7 @@ public interface ModelDescriptionConstants {
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HEADER_NAME = "header-name";
+    String HEAP = "heap";
     String HIBERNATE_PERSISTENCE_UNIT = "hibernate-persistence-unit";
     String HOMEPAGE = "homepage";
     String HOST = "host";
@@ -650,6 +651,7 @@ public interface ModelDescriptionConstants {
     String PERMISSION = "permission";
     String PERMISSION_MAPPINGS = "permission-mappings";
     String PERMISSION_SET = "permission-set";
+    String PERMISSION_SETS = "permission-sets";
     String PERMISSIONS = "permissions";
     String PERSISTENCE = "persistence";
     String PERSISTENT_SESSIONS = "persistent-sessions";
