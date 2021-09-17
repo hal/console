@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -26,7 +25,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
@@ -43,8 +41,6 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -65,7 +61,6 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private final Dispatcher dispatcher;
     private final Resources resources;
     private ComplexAttributeOperations ca;
     private MetadataRegistry metadataRegistry;
@@ -79,7 +74,6 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             ComplexAttributeOperations ca,
             FinderPathFactory finderPathFactory,
             StatementContext statementContext,
-            Dispatcher dispatcher,
             MetadataRegistry metadataRegistry,
             Resources resources) {
         super(eventBus, view, proxy, finder);
@@ -87,7 +81,6 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         this.ca = ca;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
-        this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
     }
@@ -242,10 +235,6 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             // :add(role-map=[role1 => [role2,role3],role2 => [mane,m2n3]])
             crud.add(title, name, MAPPED_ROLE_MAPPER_TEMPLATE, payload, (name1, address) -> reload());
         }).show();
-    }
-
-    ReadChildrenAutoComplete getAutocomplete(AddressTemplate template) {
-        return new ReadChildrenAutoComplete(dispatcher, statementContext, template);
     }
 
     @ProxyCodeSplit
