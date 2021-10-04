@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.jboss.hal.ballroom.form.NumberDoubleItem;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
+import org.jboss.hal.core.ui.TuplesListItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -56,6 +58,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 class DefaultFormItemProvider implements FormItemProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFormItemProvider.class);
+
+    private static final List<String> allowedTupleTypes = Arrays.asList("BIG_INTEGER","BOOLEAN","DOUBLE","INT","LONG","STRING");
 
     private final Metadata metadata;
     private final LabelBuilder labelBuilder;
@@ -153,6 +157,9 @@ class DefaultFormItemProvider implements FormItemProvider {
                             formItem = listItem;
                             checkCapabilityReference(attributeDescription, formItem);
                         }
+                    } else if (isSimpleTuple(attributeDescription)) {
+                        // process OBJECT type attribute if all of its subattributes are simple types
+                        formItem = new TuplesListItem(name, label, metadata.forComplexAttribute(property.getName()));
                     } else {
                         logger.warn(
                                 "Unsupported model type {} for attribute {} in metadata {}. Unable to create a form item. Attribute will be skipped.",
@@ -270,5 +277,14 @@ class DefaultFormItemProvider implements FormItemProvider {
             return nodes.stream().map(ModelNode::asString).collect(toList());
         }
         return emptyList();
+    }
+
+    private boolean isSimpleTuple(ModelNode attributeDescription) {
+        if (!attributeDescription.has(VALUE_TYPE) || attributeDescription.get(VALUE_TYPE).getType() != ModelType.OBJECT) {
+            return false;
+        }
+
+        return attributeDescription.get(VALUE_TYPE).asPropertyList().stream()
+                .allMatch(subAttr -> allowedTupleTypes.contains(subAttr.getValue().get(TYPE).asString()));
     }
 }
