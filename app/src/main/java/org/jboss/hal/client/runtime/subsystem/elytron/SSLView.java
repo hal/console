@@ -109,7 +109,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        caaMetadata = new PreTextItem(METADATA);
+        caaMetadata = new PreTextItem(METADATA, null);
         caaMetadata.setEnabled(false);
         caaForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT, FORM), certAuthorityMeta)
                 .readOnly()

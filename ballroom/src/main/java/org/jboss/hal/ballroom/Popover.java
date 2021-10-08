@@ -16,6 +16,7 @@
 package org.jboss.hal.ballroom;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -38,7 +39,11 @@ public class Popover {
         }
         options.title = builder.title;
         options.trigger = builder.trigger.id;
-        bridge = Bridge.$(builder.selector).popover(options);
+        if (builder.selector != null) {
+            bridge = Bridge.$(builder.selector).popover(options);
+        } else {
+            bridge = Bridge.$(builder.htmlElement).popover(options);
+        }
     }
 
     public void show() {
@@ -72,12 +77,21 @@ public class Popover {
 
     public static class Builder {
 
-        private final String selector;
+        private String selector;
+        private HTMLElement htmlElement;
         private final String title;
         private final SafeHtml content;
         private SafeHtml template;
         private Placement placement;
         private Trigger trigger;
+
+        public Builder(HTMLElement htmlElement, String title, SafeHtml content) {
+            this.htmlElement = htmlElement;
+            this.title = title;
+            this.content = content;
+            this.placement = Placement.RIGHT;
+            this.trigger = Trigger.CLICK;
+        }
 
         public Builder(String selector, String title, SafeHtml content) {
             this.selector = selector;
@@ -135,6 +149,9 @@ public class Popover {
 
         @JsMethod(namespace = GLOBAL)
         static native Bridge $(String selector);
+
+        @JsMethod(namespace = GLOBAL)
+        static native Bridge $(HTMLElement htmlElement);
 
         native Bridge popover(Options options);
 

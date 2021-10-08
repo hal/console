@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.expression;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
@@ -24,8 +25,8 @@ import org.jboss.hal.resources.Resources;
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public class ExpressionItem extends TextBoxItem {
 
-    ExpressionItem(final Resources resources) {
-        super("expression", new LabelBuilder().label("expression"), null);
+    ExpressionItem(final Resources resources, SafeHtml helpText) {
+        super("expression", new LabelBuilder().label("expression"), null, helpText);
 
         setExpressionAllowed(false);
         addValidationHandler(value -> {

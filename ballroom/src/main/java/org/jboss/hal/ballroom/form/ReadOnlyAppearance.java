@@ -18,14 +18,17 @@ package org.jboss.hal.ballroom.form;
 import java.util.Set;
 
 import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.HelpPopover;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -70,6 +73,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     private final HTMLElement defaultValue;
     private final HTMLElement expressionLink;
     private final HTMLElement restrictedMarker;
+    private final HTMLElement helpElement;
+    private final HTMLElement labelGroup;
     private HTMLElement peekLink;
     private boolean masked;
     private String backupValue;
@@ -80,12 +85,23 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         masked = false;
 
         root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).element())
+                .add(labelGroup = div()
+                        .css(controlLabel, halFormLabel).element())
                 .add(div().css(halFormInput)
                         .add(valueContainer = p().css(formControlStatic)
                                 .add(valueElement = span().element()).element())).element();
 
         hintElement = span().css(hint).element();
+        labelElement = (label().css("label-text").element());
+        labelGroup.appendChild(labelElement);
+
+        helpElement = a()
+                .css("popover-pf-info")
+                .attr("role", "button")
+                .attr("data-toggle", "popover")
+                .attr("tabindex", "-1") // Prevents focusing the button by pressing Tab
+                .add(span().css("pficon pficon-info")).
+                element();
         defaultValue = span()
                 .css(CSS.defaultValue)
                 .title(CONSTANTS.defaultValue()).element();
@@ -197,6 +213,12 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     protected <C> void safeApply(Decoration decoration, C context) {
         switch (decoration) {
 
+            case HELP:
+                HelpPopover helpPopover = new HelpPopover(labelElement.title, (SafeHtml) context, helpElement);
+                labelElement.setAttribute("class", labelElement.getAttribute("class") + " help-padding");
+                labelGroup.appendChild(helpElement);
+                break;
+
             case DEFAULT:
                 defaultValue.textContent = String.valueOf(context);
                 if (isApplied(HINT)) {
@@ -270,6 +292,10 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                     expressionHandler = null;
                 }
                 Elements.failSafeRemove(valueContainer, expressionLink);
+                break;
+
+            case HELP:
+                Elements.failSafeRemove(labelGroup, helpElement);
                 break;
 
             case HINT:

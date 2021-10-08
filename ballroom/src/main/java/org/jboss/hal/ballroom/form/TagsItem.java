@@ -32,6 +32,7 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.HELP;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.resources.CSS.*;
@@ -45,13 +46,14 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
     private final TagsEditingAppearance editingAppearance;
 
     protected TagsItem(String name, String label, SafeHtml inputHelp,
-            Set<Decoration> editingDecorations, TagsMapping<T> mapping) {
-        this(name, label, inputHelp, editingDecorations, mapping, null);
+            Set<Decoration> editingDecorations, TagsMapping<T> mapping, SafeHtml helpText) {
+        this(name, label, inputHelp, editingDecorations, mapping, null, helpText);
     }
 
     protected TagsItem(String name, String label, SafeHtml inputHelp,
-                       Set<Decoration> editingDecorations, TagsMapping<T> mapping, HTMLElement button) {
-        super(name, label, null);
+                       Set<Decoration> editingDecorations, TagsMapping<T> mapping, HTMLElement button, SafeHtml helpText) {
+        super(name, label, null, helpText);
+
 
         this.editingDecorations = editingDecorations;
         this.mapping = mapping;
@@ -87,7 +89,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
     private class TagsReadOnlyAppearance extends ReadOnlyAppearance<T> {
 
         TagsReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, HELP, RESTRICTED));
         }
 
         @Override

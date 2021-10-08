@@ -18,6 +18,7 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
@@ -42,8 +43,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
     private final SwitchEditingAppearance editingAppearance;
 
-    public SwitchItem(String name, String label) {
-        super(name, label, null);
+    public SwitchItem(String name, String label, SafeHtml helpText) {
+        super(name, label, null, helpText);
 
         // read-only appearance
         addAppearance(Form.State.READONLY, new SwitchReadOnlyAppearance());
@@ -73,7 +74,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     private static class SwitchReadOnlyAppearance extends ReadOnlyAppearance<Boolean> {
 
         SwitchReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HELP, RESTRICTED));
         }
 
         @Override
@@ -100,7 +101,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         // ------------------------------------------------------ ui code
 
         SwitchEditingAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, INVALID, REQUIRED, RESTRICTED),
+            super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, HELP, INVALID, REQUIRED, RESTRICTED),
                     input(checkbox).element());
 
             inputElement.classList.add(bootstrapSwitch);

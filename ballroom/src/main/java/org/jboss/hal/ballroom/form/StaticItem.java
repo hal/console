@@ -27,7 +27,7 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 public class StaticItem extends AbstractFormItem<String> {
 
     public StaticItem(final String name, final String label) {
-        super(name, label, null);
+        super(name, label, null, null);
         addAppearance(Form.State.READONLY, new StaticAppearance());
         addAppearance(Form.State.EDITING, new StaticAppearance());
     }

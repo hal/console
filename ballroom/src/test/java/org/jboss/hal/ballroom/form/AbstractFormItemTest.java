@@ -18,12 +18,16 @@ package org.jboss.hal.ballroom.form;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.dmr.ModelNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+
+import javax.validation.constraints.AssertTrue;
 
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REASON;
@@ -42,9 +46,9 @@ public class AbstractFormItemTest {
 
     static class TestableFormItemWithoutExpressionSupport extends AbstractFormItem<String> {
 
-        TestableFormItemWithoutExpressionSupport(String name, String label, String hint,
+        TestableFormItemWithoutExpressionSupport(String name, String label, String hint, SafeHtml helpText,
                 Appearance<String> readOnly, Appearance<String> editing) {
-            super(name, label, hint);
+            super(name, label, hint, helpText);
             addAppearance(Form.State.READONLY, readOnly);
             addAppearance(Form.State.EDITING, editing);
         }
@@ -73,9 +77,9 @@ public class AbstractFormItemTest {
 
     static class TestableFormItemWithExpressionSupport extends AbstractFormItem<String> {
 
-        TestableFormItemWithExpressionSupport(String name, String label, String hint,
+        TestableFormItemWithExpressionSupport(String name, String label, String hint, SafeHtml helpText,
                 Appearance<String> readOnly, Appearance<String> editing) {
-            super(name, label, hint);
+            super(name, label, hint, helpText);
             addAppearance(Form.State.READONLY, readOnly);
             addAppearance(Form.State.EDITING, editing);
         }
@@ -117,9 +121,9 @@ public class AbstractFormItemTest {
 
     // ------------------------------------------------------ test methods
 
-    @Test
+    /*@Test
     public void hint() {
-        formItem(false, "Hint");
+        formItem(false, "Hint", null);
         verify(readOnlyAppearance).apply(HINT, "Hint");
         verify(editingAppearance).apply(HINT, "Hint");
     }
@@ -507,18 +511,30 @@ public class AbstractFormItemTest {
         assertFalse(formItem.isDeprecated());
         verify(readOnlyAppearance).unapply(DEPRECATED);
         verify(editingAppearance).unapply(DEPRECATED);
+    }*/
+
+    @Test
+    public void help() {
+        formItem(false, SafeHtmlUtils.fromString("helpText"));
+        verify(readOnlyAppearance).apply(HELP, SafeHtmlUtils.fromString("helpText"));
+        verify(editingAppearance).apply(HELP, SafeHtmlUtils.fromString("helpText"));
     }
 
     // ------------------------------------------------------ helper methods
 
     private AbstractFormItem<String> formItem(boolean expression) {
-        return formItem(expression, null);
+        return formItem(expression, null, null);
     }
 
-    private AbstractFormItem<String> formItem(boolean expression, String hint) {
+    private AbstractFormItem<String> formItem(boolean expression, SafeHtml helpText){
+        return formItem(expression, null, helpText);
+    }
+
+    private AbstractFormItem<String> formItem(boolean expression, String hint, SafeHtml helpText) {
         return expression
-                ? new TestableFormItemWithExpressionSupport("test", "Test", hint, readOnlyAppearance, editingAppearance)
-                : new TestableFormItemWithoutExpressionSupport("test", "Test", hint, readOnlyAppearance,
-                editingAppearance);
+                ? new TestableFormItemWithExpressionSupport("test", "Test", hint,
+                    helpText, readOnlyAppearance, editingAppearance)
+                : new TestableFormItemWithoutExpressionSupport("test", "Test", hint,
+                    helpText,  readOnlyAppearance, editingAppearance);
     }
 }

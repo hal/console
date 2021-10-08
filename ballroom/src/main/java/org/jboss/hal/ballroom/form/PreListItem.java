@@ -17,16 +17,17 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.hal.ballroom.LabelBuilder;
 
 public class PreListItem extends ListItem {
 
     public PreListItem(String name) {
-        this(name, new LabelBuilder().label(name));
+        this(name, new LabelBuilder().label(name), null);
     }
 
-    public PreListItem(String name, String label) {
-        super(name, label);
+    public PreListItem(String name, String label, SafeHtml helpText) {
+        super(name, label, helpText);
 
         // replace read-only appearance
         addAppearance(Form.State.READONLY, new PreReadOnlyAppearance<List<String>>() {

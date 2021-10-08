@@ -111,7 +111,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         Metadata handlerMetadata = metadataRegistry.lookup(AUDIT_LOG_HANDLER_TEMPLATE);
         SafeHtml handlerDescription = SafeHtmlUtils.fromString(handlerMetadata.getDescription().getDescription());
 
-        handlerItem = new ListItem(HANDLER, labelBuilder.label(HANDLER));
+        handlerItem = new ListItem(HANDLER, labelBuilder.label(HANDLER), handlerDescription);
         List<AddressTemplate> templates = asList(
                 AddressTemplate.of("{domain.controller}/core-service=management/access=audit/file-handler=*"),
                 AddressTemplate.of("{domain.controller}/core-service=management/access=audit/syslog-handler=*"));

@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.ballroom.form.TagsItem;
@@ -40,9 +41,9 @@ class RoleMapListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public RoleMapListItem(final String name, final String label) {
-        super(name, label, MESSAGES.multiValueListHint(), EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
-                new RoleMapListItem.MapMapping());
+    public RoleMapListItem(final String name, final String label, SafeHtml helpText) {
+        super(name, label, MESSAGES.multiValueListHint(), EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED),
+                new RoleMapListItem.MapMapping(), helpText);
     }
 
     @Override

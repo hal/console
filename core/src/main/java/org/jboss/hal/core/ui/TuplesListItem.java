@@ -16,6 +16,7 @@
 package org.jboss.hal.core.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -64,14 +65,14 @@ public class TuplesListItem extends TagsItem<ModelNode> implements ModelNodeItem
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public TuplesListItem(String name, String label, Metadata metadata) {
-        this(name, label, metadata, createButton(), new TuplesListMapping(metadata));
+    public TuplesListItem(String name, String label, Metadata metadata, SafeHtml helpText) {
+        this(name, label, metadata, createButton(), new TuplesListMapping(metadata), helpText);
     }
 
-    private TuplesListItem(String name, String label, Metadata metadata, HTMLElement addButton, TuplesListMapping mapping) {
+    private TuplesListItem(String name, String label, Metadata metadata, HTMLElement addButton, TuplesListMapping mapping, SafeHtml helpText) {
         super(name, label, MESSAGES.tuplesHint(String.join(",", getAttributeNames(metadata, true))),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
-                mapping, addButton);
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                mapping, addButton, helpText);
 
         Dialog addTupleDialog;
         ModelNodeForm dialogForm;

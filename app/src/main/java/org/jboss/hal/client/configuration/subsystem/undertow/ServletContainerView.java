@@ -91,7 +91,8 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
         ModelNode mimeMappingDescription = failSafeGet(configurationMetadata.getDescription(),
                 "children/mime-mapping/description"); //NON-NLS
-        mimeMappingItem = new PropertiesItem(MIME_MAPPING, Names.MIME_MAPPING);
+        mimeMappingItem = new PropertiesItem(MIME_MAPPING, Names.MIME_MAPPING, SafeHtmlUtils.fromString(
+                configurationMetadata.getDescription().get(ATTRIBUTES).get(MIME_MAPPING).get(DESCRIPTION).asString()));
         mimeMappingForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_FORM, emptyMetadata)
                 .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription.asString()))
                 .exclude(VALUE)
@@ -101,7 +102,8 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
         ModelNode welcomeFileDescription = failSafeGet(configurationMetadata.getDescription(),
                 "children/welcome-file/description"); //NON-NLS
-        welcomeFileItem = new ListItem(WELCOME_FILE, Names.WELCOME_FILE);
+        welcomeFileItem = new ListItem(WELCOME_FILE, Names.WELCOME_FILE, SafeHtmlUtils.fromString(
+                configurationMetadata.getDescription().get(ATTRIBUTES).get(WELCOME_FILE).get(DESCRIPTION).asString()));
         welcomeFileForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM, emptyMetadata)
                 .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription.asString()))
                 .onSave((form, changedValues) -> presenter.saveWelcomeFile(welcomeFileItem.getValue().stream()

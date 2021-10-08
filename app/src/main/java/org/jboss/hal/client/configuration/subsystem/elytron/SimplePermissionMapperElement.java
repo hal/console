@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -106,7 +107,8 @@ public class SimplePermissionMapperElement
         pmForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_PERMISSION_MAPPINGS_FORM, pmMetadata)
                 .onSave(((form, changedValues) -> presenter.savePermissionMappings(selectedSimplePermissionMapper,
                         form.getModel().get(HAL_INDEX).asInt(), changedValues)))
-                .customFormItem(PERMISSION_SETS, attributeDescription -> new PermissionSetsItem())
+                .customFormItem(PERMISSION_SETS, attributeDescription -> new PermissionSetsItem(SafeHtmlUtils.fromString
+                        (pmMetadata.getDescription().get(ATTRIBUTES).get(PERMISSION_SETS).get(DESCRIPTION).asString())))
                 .unsorted()
                 .build();
 

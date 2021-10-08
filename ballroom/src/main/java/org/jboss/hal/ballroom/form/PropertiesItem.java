@@ -39,17 +39,21 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
     public PropertiesItem(String name) {
-        this(name, new LabelBuilder().label(name), MESSAGES.propertiesHint());
+        this(name, new LabelBuilder().label(name), MESSAGES.propertiesHint(), null);
     }
 
     public PropertiesItem(String name, String label) {
-        this(name, label, MESSAGES.propertiesHint());
+        this(name, label, MESSAGES.propertiesHint(), null);
     }
 
-    public PropertiesItem(String name, String label, SafeHtml inputHelp) {
+    public PropertiesItem(String name, String label, SafeHtml helpText) {
+        this(name, label, MESSAGES.propertiesHint(), helpText);
+    }
+
+    public PropertiesItem(String name, String label, SafeHtml inputHelp, SafeHtml helpText) {
         super(name, label, inputHelp,
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
-                new MapMapping());
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                new MapMapping(), helpText);
     }
 
     @Override

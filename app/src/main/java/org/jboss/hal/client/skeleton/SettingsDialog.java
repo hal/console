@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -42,6 +43,7 @@ import static org.jboss.hal.config.Settings.Key.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 
 class SettingsDialog {
 
@@ -86,7 +88,8 @@ class SettingsDialog {
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SETTINGS_FORM, metadata)
                 .include(attributes)
                 .customFormItem(PAGE_SIZE.key(),
-                        attributeDescription -> new NumberSelectItem(PAGE_SIZE.key(), values))
+                        attributeDescription -> new NumberSelectItem(PAGE_SIZE.key(), values, SafeHtmlUtils.fromString(
+                                metadata.getDescription().get(ATTRIBUTES).get(PAGE_SIZE.key()).get(DESCRIPTION).asString())))
                 .build();
         form.<Boolean>getFormItem(POLL.key()).addValueChangeHandler(ev -> togglePollTime(ev.getValue()));
         pollTimeFormItem = form.getFormItem(POLL_TIME.key());

@@ -472,7 +472,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
                                         FORM);
                                 SingleSelectBoxItem hostFormItem = new SingleSelectBoxItem(HOST, Names.HOST, hosts,
-                                        false);
+                                        false, null);
                                 hostFormItem.setRequired(true);
                                 NameItem nameItem = new NameItem();
 

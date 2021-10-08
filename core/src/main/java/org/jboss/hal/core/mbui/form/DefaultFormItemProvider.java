@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
@@ -75,6 +77,10 @@ class DefaultFormItemProvider implements FormItemProvider {
 
         String name = property.getName();
         String label = labelBuilder.label(property);
+
+        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
+        SafeHtml helpText = helpTextBuilder.helpText(property);
+
         ModelNode attributeDescription = property.getValue();
         // don't use 'required' here!
         boolean required = attributeDescription.hasDefined(NILLABLE) && !attributeDescription.get(NILLABLE).asBoolean();
@@ -95,7 +101,7 @@ class DefaultFormItemProvider implements FormItemProvider {
 
             switch (type) {
                 case BOOLEAN: {
-                    SwitchItem switchItem = new SwitchItem(name, label);
+                    SwitchItem switchItem = new SwitchItem(name, label, helpText);
                     if (attributeDescription.hasDefined(DEFAULT)) {
                         switchItem.assignDefaultValue(attributeDescription.get(DEFAULT).asBoolean());
                     }
@@ -114,7 +120,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                         min = attributeDescription.get(MIN).asLong(MIN_SAFE_LONG);
                         max = attributeDescription.get(MAX).asLong(MAX_SAFE_LONG);
                     }
-                    NumberItem numberItem = new NumberItem(name, label, unit, min, max);
+                    NumberItem numberItem = new NumberItem(name, label, unit, min, max, helpText);
                     if (attributeDescription.hasDefined(DEFAULT)) {
                         long defaultValue = attributeDescription.get(DEFAULT).asLong();
                         numberItem.assignDefaultValue(defaultValue);
@@ -125,7 +131,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case DOUBLE: {
                     long min = attributeDescription.get(MIN).asLong(MIN_SAFE_LONG);
                     long max = attributeDescription.get(MAX).asLong(MAX_SAFE_LONG);
-                    NumberDoubleItem numberItem = new NumberDoubleItem(name, label, unit, min, max);
+                    NumberDoubleItem numberItem = new NumberDoubleItem(name, label, unit, min, max, helpText);
                     if (attributeDescription.hasDefined(DEFAULT)) {
                         double defaultValue = attributeDescription.get(DEFAULT).asDouble();
                         numberItem.assignDefaultValue(defaultValue);
@@ -138,7 +144,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                     if (valueType != null && ModelType.STRING == valueType) {
                         List<String> allowedValues = stringValues(attributeDescription, ALLOWED);
                         if (!allowedValues.isEmpty()) {
-                            MultiSelectBoxItem multiSelectBoxItem = new MultiSelectBoxItem(name, label, allowedValues);
+                            MultiSelectBoxItem multiSelectBoxItem = new MultiSelectBoxItem(name, label, allowedValues, helpText);
                             if (attributeDescription.hasDefined(DEFAULT)) {
                                 List<String> defaultValues = stringValues(attributeDescription, DEFAULT);
                                 if (!defaultValues.isEmpty()) {
@@ -147,7 +153,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                             }
                             formItem = multiSelectBoxItem;
                         } else {
-                            ListItem listItem = new ListItem(name, label);
+                            ListItem listItem = new ListItem(name, label, helpText);
                             if (attributeDescription.hasDefined(DEFAULT)) {
                                 List<String> defaultValues = stringValues(attributeDescription, DEFAULT);
                                 if (!defaultValues.isEmpty()) {
@@ -159,7 +165,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                         }
                     } else if (isSimpleTuple(attributeDescription)) {
                         // process OBJECT type attribute if all of its subattributes are simple types
-                        formItem = new TuplesListItem(name, label, metadata.forComplexAttribute(property.getName()));
+                        formItem = new TuplesListItem(name, label, metadata.forComplexAttribute(property.getName()), helpText);
                     } else {
                         logger.warn(
                                 "Unsupported model type {} for attribute {} in metadata {}. Unable to create a form item. Attribute will be skipped.",
@@ -171,7 +177,7 @@ class DefaultFormItemProvider implements FormItemProvider {
 
                 case OBJECT: {
                     if (valueType != null && ModelType.STRING == valueType) {
-                        PropertiesItem propertiesItem = new PropertiesItem(name, label);
+                        PropertiesItem propertiesItem = new PropertiesItem(name, label, helpText);
                         List<Property> properties = ModelNodeHelper.getOrDefault(attributeDescription, DEFAULT,
                                 () -> attributeDescription.get(DEFAULT).asPropertyList(), emptyList());
                         if (!properties.isEmpty()) {
@@ -189,7 +195,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case STRING: {
                     List<String> allowedValues = stringValues(attributeDescription, ALLOWED);
                     if (allowedValues.isEmpty()) {
-                        FormItem<String> textBoxItem = new TextBoxItem(name, label, null);
+                        FormItem<String> textBoxItem = new TextBoxItem(name, label, null, helpText);
                         boolean sensitive = failSafeGet(attributeDescription,
                                 ACCESS_CONSTRAINTS + "/" + SENSITIVE).isDefined();
                         if (PASSWORD.equals(name) || sensitive) {
@@ -202,7 +208,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                         checkCapabilityReference(attributeDescription, formItem);
                     } else {
                         SingleSelectBoxItem singleSelectBoxItem = new SingleSelectBoxItem(name, label,
-                                allowedValues, !required);
+                                allowedValues, !required, helpText);
                         if (attributeDescription.hasDefined(DEFAULT)) {
                             singleSelectBoxItem.assignDefaultValue(attributeDescription.get(DEFAULT).asString());
                         }

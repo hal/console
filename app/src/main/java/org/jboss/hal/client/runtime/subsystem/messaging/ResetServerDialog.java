@@ -70,8 +70,8 @@ class ResetServerDialog {
         }
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.RESET_MESSAGE_COUNTERS, Metadata.empty())
-                .unboundFormItem(new SwitchItem(RESET_ALL_MESSAGE_COUNTERS, l1))
-                .unboundFormItem(new SwitchItem(RESET_ALL_MESSAGE_COUNTER_HISTORIES, l2))
+                .unboundFormItem(new SwitchItem(RESET_ALL_MESSAGE_COUNTERS, l1, null))
+                .unboundFormItem(new SwitchItem(RESET_ALL_MESSAGE_COUNTER_HISTORIES, l2, null))
                 .onSave((f, changedValues) -> column.resetServer(messagingServer,
                         !f.getFormItem(RESET_ALL_MESSAGE_COUNTERS).isEmpty(),
                         !f.getFormItem(RESET_ALL_MESSAGE_COUNTER_HISTORIES).isEmpty()))

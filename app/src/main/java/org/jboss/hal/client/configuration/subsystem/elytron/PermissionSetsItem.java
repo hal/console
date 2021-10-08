@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.ballroom.form.TagsItem;
@@ -38,9 +39,10 @@ public class PermissionSetsItem extends TagsItem<ModelNode> implements ModelNode
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    protected PermissionSetsItem() {
+    protected PermissionSetsItem(SafeHtml helpText) {
         super(PERMISSION_SETS, new LabelBuilder().label(PERMISSION_SETS), MESSAGES.listHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS), new PermissionSetsMapping());
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                new PermissionSetsMapping(), helpText);
     }
 
     @Override

@@ -225,7 +225,7 @@ public class JcaPresenter
                 FormItem<String> typeItem;
                 if (!lrtPresent && !srtPresent) {
                     typeItem = new SingleSelectBoxItem(TYPE, resources.constants().type(), asList(
-                            Names.LONG_RUNNING, Names.SHORT_RUNNING), false);
+                            Names.LONG_RUNNING, Names.SHORT_RUNNING), false, null);
                     typeItem.setRequired(true);
 
                 } else {

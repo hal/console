@@ -33,7 +33,7 @@ import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 public class RadioItem extends AbstractFormItem<String> {
 
     public RadioItem(String name, String label, List<String> options, boolean inline) {
-        super(name, label, null);
+        super(name, label, null, null);
 
         LabelBuilder labelBuilder = new LabelBuilder();
         LinkedHashMap<String, String> map = new LinkedHashMap<>();

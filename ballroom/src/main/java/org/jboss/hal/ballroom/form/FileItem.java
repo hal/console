@@ -41,7 +41,7 @@ public class FileItem extends AbstractFormItem<File> {
     private final HTMLInputElement fileInput;
 
     public FileItem(String name, String label) {
-        super(name, label, null);
+        super(name, label, null, null);
         addAppearance(Form.State.READONLY, new FileReadOnlyAppearance());
 
         fileInput = input(file).css(formControl).element();

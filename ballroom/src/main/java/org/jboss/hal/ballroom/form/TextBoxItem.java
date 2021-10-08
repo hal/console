@@ -18,6 +18,7 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 
@@ -35,15 +36,15 @@ public class TextBoxItem extends AbstractFormItem<String> {
     private HTMLInputElement inputElement;
 
     public TextBoxItem(String name) {
-        this(name, new LabelBuilder().label(name), null);
+        this(name, new LabelBuilder().label(name), null, null);
     }
 
     public TextBoxItem(String name, String label) {
-        this(name, label, null);
+        this(name, label, null, null);
     }
 
-    public TextBoxItem(String name, String label, String hint) {
-        super(name, label, hint);
+    public TextBoxItem(String name, String label, String hint, SafeHtml helpText) {
+        super(name, label, hint, helpText);
 
         // read-only appearance
         addAppearance(Form.State.READONLY, new TextBoxReadOnlyAppearance());
@@ -90,7 +91,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
     private static class TextBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
 
         TextBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED, SENSITIVE));
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, HELP, RESTRICTED, SENSITIVE));
         }
 
         @Override

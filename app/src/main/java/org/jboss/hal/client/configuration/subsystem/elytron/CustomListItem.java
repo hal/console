@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
@@ -59,10 +60,10 @@ class CustomListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    CustomListItem(String attribute, String propAttribute, String valueAttribute) {
+    CustomListItem(String attribute, String propAttribute, String valueAttribute, SafeHtml helpText) {
         super(attribute, new LabelBuilder().label(attribute), MESSAGES.customListItemHint(propAttribute, valueAttribute),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
-                new MapMapping(propAttribute, valueAttribute));
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED),
+                new MapMapping(propAttribute, valueAttribute), helpText);
     }
 
     @Override

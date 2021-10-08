@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -78,7 +79,8 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
 
         Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING);
         identityMappingForm = new ModelNodeForm.Builder<>(id(IDENTITY_MAPPING, FORM), imMetadata)
-                .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES))
+                .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES, SafeHtmlUtils.fromString(
+                        imMetadata.getDescription().get(Ids.ATTRIBUTES).get(NEW_IDENTITY_ATTRIBUTES).get(DESCRIPTION).asString())))
                 .onSave((form, changedValues) -> presenter.saveIdentityMapping(selectedLdapRealm, changedValues))
                 .prepareReset(form -> presenter.resetIdentityMapping(selectedLdapRealm, form))
                 .build();

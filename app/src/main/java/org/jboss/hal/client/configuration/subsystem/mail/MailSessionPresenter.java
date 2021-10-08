@@ -175,7 +175,7 @@ public class MailSessionPresenter
 
                 } else {
                     serverTypeItem = new SingleSelectBoxItem(ModelDescriptionConstants.SERVER_TYPE,
-                            resources.constants().type(), new ArrayList<>(availableServers), false);
+                            resources.constants().type(), new ArrayList<>(availableServers), false, null);
                     serverTypeItem.setRequired(true);
                 }
                 Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);

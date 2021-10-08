@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.hal.resources.Messages;
 
 import static org.jboss.hal.ballroom.form.Decoration.*;
@@ -29,10 +30,10 @@ public class ListItem extends TagsItem<List<String>> {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    public ListItem(String name, String label) {
+    public ListItem(String name, String label, SafeHtml helpText) {
         super(name, label, MESSAGES.listHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
-                new ListMapping());
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                new ListMapping(), helpText);
     }
 
     @Override

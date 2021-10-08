@@ -68,7 +68,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     private final List<HandlerRegistration> handlers;
 
     public CompositeFormItem(String name, String label) {
-        super(name, label, null);
+        super(name, label, null, null);
         this.handlers = new ArrayList<>();
     }
 

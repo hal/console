@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -134,7 +135,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .build();
 
         mappedRoleMapperForm = new ModelNodeForm.Builder<NamedNode>(build(mappedId, FORM), mappedMetadata)
-                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, labelBuilder.label(ROLE_MAP)))
+                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, labelBuilder.label(ROLE_MAP), SafeHtmlUtils.fromString(
+                        mappedMetadata.getDescription().get(ATTRIBUTES).get(ROLE_MAP).get(DESCRIPTION).asString())))
                 .onSave((form, changedValues) -> {
                     String name = form.getModel().getName();
                     ResourceAddress address = MAPPED_ROLE_MAPPER_TEMPLATE.resolve(mbuiContext.statementContext(), name);

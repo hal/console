@@ -58,7 +58,7 @@ public class MicroProfileMetricsView extends HalViewImpl implements MicroProfile
     @Inject
     public MicroProfileMetricsView(MetadataRegistry metadataRegistry, Dispatcher dispatcher,
             StatementContext statementContext, Resources resources) {
-        exposeAll = new SwitchItem("expose-all-subsystems", "Expose All Subsystems");
+        exposeAll = new SwitchItem("expose-all-subsystems", "Expose All Subsystems", null);
         exposeAll.addValueChangeHandler(event -> toggleSubsystems(event.getValue()));
 
         Metadata metadata = metadataRegistry.lookup(MICRO_PROFILE_METRICS_TEMPLATE);

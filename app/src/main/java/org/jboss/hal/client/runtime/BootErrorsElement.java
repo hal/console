@@ -91,12 +91,12 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
 
         form = new ModelNodeForm.Builder<>(Ids.BOOT_ERRORS_FORM, metadata)
                 .readOnly()
-                .customFormItem(FAILURE_DESCRIPTION, attributeDescription -> new PreTextItem(FAILURE_DESCRIPTION))
+                .customFormItem(FAILURE_DESCRIPTION, attributeDescription -> new PreTextItem(FAILURE_DESCRIPTION, null))
                 .customFormItem(FAILED_SERVICES, attributeDescription -> new PreListItem(FAILED_SERVICES))
                 .customFormItem(SERVICES_MISSING_DEPENDENCIES, attributeDescription ->
-                        new PreListItem(SERVICES_MISSING_DEPENDENCIES, Names.MISSING_DEPENDENCIES))
+                        new PreListItem(SERVICES_MISSING_DEPENDENCIES, Names.MISSING_DEPENDENCIES, null))
                 .unboundFormItem(new PreListItem(SERVICES_MISSING_TRANSITIVE_DEPENDENCIES,
-                        Names.MISSING_TRANSITIVE_DEPENDENCIES))
+                        Names.MISSING_TRANSITIVE_DEPENDENCIES, null))
                 .unboundFormItem(new PreListItem(POSSIBLE_CAUSES))
                 .unsorted()
                 .build();

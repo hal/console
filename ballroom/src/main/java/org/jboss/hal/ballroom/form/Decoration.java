@@ -25,6 +25,7 @@ public enum Decoration {
     DEPRECATED, // Deprecation deprecationInfo
     ENABLED, // null
     EXPRESSION, // ExpressionContext(String expressionValue, ExpressionCallback callback)
+    HELP, // SafeHtml help
     HINT, // String hint
     INVALID, // String errorMessage
     REQUIRED, // null

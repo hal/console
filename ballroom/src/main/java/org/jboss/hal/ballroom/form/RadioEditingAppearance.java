@@ -236,7 +236,7 @@ class RadioEditingAppearance extends AbstractAppearance<String> {
     @Override
     public void setFocus(boolean focused) {
         if (focused) {
-            inputElements.get(0).focus();
+            //inputElements.get(0).focus();
         } else {
             inputElements.get(0).blur();
         }

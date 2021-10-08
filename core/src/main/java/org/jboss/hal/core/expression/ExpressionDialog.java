@@ -44,6 +44,8 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.keydown;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.formControl;
@@ -72,7 +74,8 @@ public class ExpressionDialog {
         Metadata metadata = Metadata.staticDescription(RESOURCES.expression());
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(Ids.RESOLVE_EXPRESSION_FORM, metadata)
                 .addOnly()
-                .customFormItem(EXPRESSION, attributeDescription -> new ExpressionItem(resources))
+                .customFormItem(EXPRESSION, attributeDescription -> new ExpressionItem(resources, SafeHtmlUtils.fromString(
+                        metadata.getDescription().get(ATTRIBUTES).get(EXPRESSION).get(DESCRIPTION).asString())))
                 .onSave((f, changedValues) -> resolve(f.getModel()));
         resolvedValue = new StaticItem(VALUE, resources.constants().resolvedValue());
         builder.unboundFormItem(resolvedValue);

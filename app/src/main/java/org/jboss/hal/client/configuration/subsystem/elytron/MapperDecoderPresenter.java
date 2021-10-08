@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -234,7 +235,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         String id = Ids.build(Ids.ELYTRON_MAPPED_ROLE_MAPPER, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, new LabelBuilder().label(ROLE_MAP)))
+                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, new LabelBuilder().label(ROLE_MAP), SafeHtmlUtils.fromString(
+                        metadata.getDescription().get(ATTRIBUTES).get(ROLE_MAP).get(DESCRIPTION).asString())))
                 .addOnly()
                 .build();
         String title = new LabelBuilder().label(MAPPED_ROLE_MAPPER);

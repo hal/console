@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -88,7 +89,8 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
 
         pqForm = new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, Ids.ATTRIBUTES, FORM), pqMetadata)
                 .include(SQL, DATA_SOURCE)
-                .customFormItem(ATTRIBUTE_MAPPING, (ad) -> new CustomListItem(ATTRIBUTE_MAPPING, TO, INDEX))
+                .customFormItem(ATTRIBUTE_MAPPING, (ad) -> new CustomListItem(ATTRIBUTE_MAPPING, TO, INDEX, SafeHtmlUtils.fromString(
+                        pqMetadata.getDescription().get(Ids.ATTRIBUTES).get(ATTRIBUTE_MAPPING).get(DESCRIPTION).asString())))
                 .unsorted()
                 .onSave((f, changedValues) -> presenter.savePrincipalQuery(selectedJdbcRealm, pqIndex, changedValues))
                 .build();

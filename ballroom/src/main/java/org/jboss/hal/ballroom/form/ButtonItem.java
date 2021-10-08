@@ -41,7 +41,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
     private final HTMLButtonElement button;
 
     public ButtonItem(String name, String label) {
-        super(name, label, null);
+        super(name, label, null, null);
 
         addAppearance(Form.State.READONLY, new ButtonReadOnlyAppearance(label));
 
@@ -207,7 +207,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
         @Override
         public void setFocus(boolean focused) {
             if (focused) {
-                button.focus();
+                //button.focus();
             } else {
                 button.blur();
             }

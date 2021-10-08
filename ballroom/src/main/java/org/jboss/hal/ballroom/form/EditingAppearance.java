@@ -17,12 +17,14 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.Set;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.CSSProperties.MarginLeftUnionType;
 import elemental2.dom.CSSProperties.MarginRightUnionType;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.HelpPopover;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
@@ -65,6 +67,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     HTMLElement peekButton;
     HTMLElement peekIcon;
     HTMLElement peekContainer;
+    HTMLElement helpElement;
+    HTMLElement labelGroup;
     boolean masked;
     boolean attached;
     HandlerRegistration expressionHandler;
@@ -75,9 +79,20 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         this.inputType = inputElement.type;
         this.masked = false;
         this.root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).element())
+                .add(labelGroup = div()
+                        .css(controlLabel, halFormLabel).element())
                 .add(inputContainer = div().css(halFormInput)
                         .add(inputElement).element()).element();
+        labelElement = (label().css("label-text").element());
+        labelGroup.appendChild(labelElement);
+
+        this.helpElement = a()
+                .css("popover-pf-info")
+                .attr("role", "button")
+                .attr("data-toggle", "popover")
+                .attr("tabindex", "-1") // Prevents focusing the button by pressing Tab
+                .add(span().css("pficon pficon-info")).
+                element();
         this.inputGroup = Appearance.inputGroup();
         this.helpBlock = Appearance.helpBlock();
     }
@@ -148,6 +163,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             case EXPRESSION:
                 applyExpression((ExpressionContext) context);
                 break;
+            case HELP:
+                applyHelp((SafeHtml) context);
+                break;
             case HINT:
                 applyHint(String.valueOf(context));
                 break;
@@ -217,6 +235,12 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         hintMarker.textContent = hint;
         inputElement.setAttribute(UIConstants.ARIA_DESCRIBEDBY, hintMarker.id);
         inputGroup.insertBefore(hintMarker, inputElement.nextElementSibling);
+    }
+
+    private void applyHelp(SafeHtml context) {
+        HelpPopover helpPopover = new HelpPopover(labelElement.title, (SafeHtml) context, helpElement);
+        labelElement.setAttribute("class", labelElement.getAttribute("class") + " help-padding");
+        labelGroup.appendChild(helpElement);
     }
 
     void applyInvalid(String errorMessage) {

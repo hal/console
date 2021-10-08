@@ -22,6 +22,6 @@ import org.jboss.hal.resources.Messages;
 class MappingsItem extends PropertiesItem {
 
     MappingsItem(final String name, final Messages messages) {
-        super(name, new LabelBuilder().label(name), messages.mappingHint());
+        super(name, new LabelBuilder().label(name), messages.mappingHint(), null);
     }
 }

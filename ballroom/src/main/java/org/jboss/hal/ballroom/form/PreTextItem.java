@@ -15,12 +15,13 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.hal.ballroom.LabelBuilder;
 
 public class PreTextItem extends TextBoxItem {
 
-    public PreTextItem(String name) {
-        super(name, new LabelBuilder().label(name));
+    public PreTextItem(String name, SafeHtml helpText) {
+        super(name, new LabelBuilder().label(name), null, helpText);
 
         // replace read-only appearance
         addAppearance(Form.State.READONLY, new PreReadOnlyAppearance<>());

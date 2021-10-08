@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -70,7 +71,8 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
         newItemTemplate = new ModelNodeForm.Builder<>(id(NEW_ITEM_TEMPLATE, FORM), nitMetadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
                 .customFormItem(NEW_ITEM_ATTRIBUTES,
-                        (attributeDescription) -> new MultiValueListItem(NEW_ITEM_ATTRIBUTES))
+                        (attributeDescription) -> new MultiValueListItem(NEW_ITEM_ATTRIBUTES, SafeHtmlUtils.fromString(
+                                nitMetadata.getDescription().get(ATTRIBUTES).get(NEW_ITEM_ATTRIBUTES).get(DESCRIPTION).asString())))
                 .unsorted()
                 .singleton(
                         () -> {

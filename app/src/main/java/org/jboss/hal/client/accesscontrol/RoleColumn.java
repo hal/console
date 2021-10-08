@@ -277,12 +277,12 @@ public class RoleColumn extends FinderColumn<Role> {
         Form<ModelNode> form = new ModelNodeForm.Builder<>(formId, metadata)
                 .addOnly()
                 .unboundFormItem(new NameItem(), 0)
-                .unboundFormItem(new SwitchItem(INCLUDE_ALL, new LabelBuilder().label(INCLUDE_ALL)), 3,
+                .unboundFormItem(new SwitchItem(INCLUDE_ALL, new LabelBuilder().label(INCLUDE_ALL), null), 3,
                         resources.messages().includeAllHelpText())
                 .include(BASE_ROLE, scopeAttribute)
                 .customFormItem(BASE_ROLE, attributeDescription -> {
                     SingleSelectBoxItem item = new SingleSelectBoxItem(BASE_ROLE,
-                            new LabelBuilder().label(BASE_ROLE), standardRoleNames, false);
+                            new LabelBuilder().label(BASE_ROLE), standardRoleNames, false, null);
                     item.setRequired(true);
                     return item;
                 })
@@ -364,11 +364,11 @@ public class RoleColumn extends FinderColumn<Role> {
                 .include(BASE_ROLE, scopeAttribute)
                 .customFormItem(BASE_ROLE, attributeDescription -> {
                     SingleSelectBoxItem item = new SingleSelectBoxItem(BASE_ROLE,
-                            new LabelBuilder().label(BASE_ROLE), standardRoleNames, false);
+                            new LabelBuilder().label(BASE_ROLE), standardRoleNames, false, null);
                     item.setRequired(true);
                     return item;
                 })
-                .unboundFormItem(new SwitchItem(INCLUDE_ALL, new LabelBuilder().label(INCLUDE_ALL)), 2,
+                .unboundFormItem(new SwitchItem(INCLUDE_ALL, new LabelBuilder().label(INCLUDE_ALL), null), 2,
                         resources.messages().includeAllHelpText())
                 .build();
         form.getFormItem(scopeAttribute).setRequired(true);

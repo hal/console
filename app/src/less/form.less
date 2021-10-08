@@ -32,6 +32,29 @@
   .make-sm-column-offset(@hal-form-label-columns);
 }
 
+.label-text {
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 20px;
+  padding-left: 0px;
+  width: max-content;
+  @media (min-width: @screen-sm-min) {
+    width: calc(100% - 16px);
+  }
+}
+
+.help-popover {
+  max-width: max-content;
+  min-width: 220px;
+}
+
+.help-padding {
+    padding-right: 8px;
+  }
+
 .form {
   .restricted {
     cursor: not-allowed;
@@ -71,10 +94,6 @@
 
   &.readonly, &.editing {
     padding-top: 10px;
-  }
-
-  .control-label {
-    .text-overflow();
   }
 }
 

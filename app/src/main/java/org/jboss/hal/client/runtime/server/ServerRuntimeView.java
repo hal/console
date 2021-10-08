@@ -21,6 +21,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Splitter;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -91,14 +92,20 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
                 .unsorted()
                 .build();
 
+        ModelNode metadataAttributes = metadata.getDescription().get(ATTRIBUTES);
         bootstrapAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_RUNTIME_BOOTSTRAP_FORM, metadata)
                 .readOnly()
                 .includeRuntime()
                 .include(BOOTSTRAP_ATTRIBUTES)
-                .customFormItem(BOOT_CLASS_PATH, attributeDescription -> new PreTextItem(BOOT_CLASS_PATH))
-                .customFormItem(CLASS_PATH, attributeDescription -> new PreTextItem(CLASS_PATH))
-                .customFormItem(LIBRARY_PATH, attributeDescription -> new PreTextItem(LIBRARY_PATH))
-                .customFormItem(INPUT_ARGUMENTS, attributeDescription -> new PreListItem(INPUT_ARGUMENTS))
+                .customFormItem(BOOT_CLASS_PATH, attributeDescription -> new PreTextItem(BOOT_CLASS_PATH,
+                        SafeHtmlUtils.fromString(metadataAttributes.get(BOOT_CLASS_PATH).get(DESCRIPTION).asString())))
+                .customFormItem(CLASS_PATH, attributeDescription -> new PreTextItem(CLASS_PATH,
+                        SafeHtmlUtils.fromString(metadataAttributes.get(CLASS_PATH).get(DESCRIPTION).asString())))
+                .customFormItem(LIBRARY_PATH, attributeDescription -> new PreTextItem(LIBRARY_PATH,
+                        SafeHtmlUtils.fromString(metadataAttributes.get(LIBRARY_PATH).get(DESCRIPTION).asString())))
+                .customFormItem(INPUT_ARGUMENTS, attributeDescription -> new PreListItem(INPUT_ARGUMENTS,
+                        new LabelBuilder().label(INPUT_ARGUMENTS),
+                        SafeHtmlUtils.fromString(metadataAttributes.get(INPUT_ARGUMENTS).get(DESCRIPTION).asString())))
                 .unsorted()
                 .build();
 

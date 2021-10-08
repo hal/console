@@ -19,18 +19,20 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
 import static org.jboss.gwt.elemento.core.Elements.select;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.HELP;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
-    public MultiSelectBoxItem(String name, String label, List<String> options) {
-        super(name, label, null);
+    public MultiSelectBoxItem(String name, String label, List<String> options, SafeHtml helpText) {
+        super(name, label, null, helpText);
 
         // read-only appearance
         addAppearance(Form.State.READONLY, new MultiSelectBoxReadOnlyAppearance());
@@ -58,7 +60,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     private static class MultiSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<List<String>> {
 
         MultiSelectBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, HELP, RESTRICTED));
         }
 
         @Override

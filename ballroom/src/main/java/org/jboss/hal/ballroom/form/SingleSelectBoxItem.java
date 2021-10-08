@@ -19,12 +19,14 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Single;
 
 import static org.jboss.gwt.elemento.core.Elements.select;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.HELP;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 public class SingleSelectBoxItem extends AbstractFormItem<String> {
@@ -32,8 +34,8 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     private final boolean allowEmpty;
     private SingleSelectBoxEditingAppearance singleSelectBoxEditingAppearance;
 
-    public SingleSelectBoxItem(String name, String label, List<String> options, boolean allowEmpty) {
-        super(name, label, null);
+    public SingleSelectBoxItem(String name, String label, List<String> options, boolean allowEmpty, SafeHtml helpText) {
+        super(name, label, null, helpText);
         this.allowEmpty = allowEmpty;
 
         setUndefined(allowEmpty);
@@ -94,7 +96,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     private static class SingleSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
 
         SingleSelectBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, HELP, RESTRICTED));
         }
 
         @Override

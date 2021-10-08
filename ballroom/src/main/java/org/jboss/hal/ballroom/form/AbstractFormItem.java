@@ -27,6 +27,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -61,6 +62,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private String name;
     private final String label;
     private final String hint;
+    private SafeHtml help;
     private T value;
     private T defaultValue;
     private String expressionValue;
@@ -81,10 +83,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private final List<ResolveExpressionHandler> resolveExpressionHandlers;
     private final List<com.google.web.bindery.event.shared.HandlerRegistration> handlers;
 
-    AbstractFormItem(String name, String label, String hint) {
+    AbstractFormItem(String name, String label, String hint, SafeHtml helpText) {
         this.name = name;
         this.label = label;
         this.hint = hint;
+        this.help = helpText;
         this.value = null;
         this.defaultValue = null;
         this.expressionValue = null;
@@ -111,6 +114,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         appearance.setLabel(label);
         if (hint != null) {
             appearance.apply(HINT, hint);
+        }
+        if (help != null && !help.asString().equals("undefined")) {
+            appearance.apply(HELP, help);
         }
     }
 

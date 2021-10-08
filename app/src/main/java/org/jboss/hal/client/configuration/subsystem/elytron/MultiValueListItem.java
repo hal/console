@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
@@ -62,9 +63,9 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    MultiValueListItem(String attribute) {
+    MultiValueListItem(String attribute, SafeHtml helpText) {
         super(attribute, new LabelBuilder().label(attribute), MESSAGES.multiValueListHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED), new MapMapping(), helpText);
     }
 
     @Override

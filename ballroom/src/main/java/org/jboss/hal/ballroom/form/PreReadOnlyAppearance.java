@@ -21,6 +21,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 
 import static org.jboss.gwt.elemento.core.Elements.pre;
+import static org.jboss.hal.ballroom.form.Decoration.HELP;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.wrap;
@@ -28,7 +29,7 @@ import static org.jboss.hal.resources.CSS.wrap;
 class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
 
     PreReadOnlyAppearance() {
-        super(EnumSet.of(RESTRICTED));
+        super(EnumSet.of(HELP, RESTRICTED));
 
         HTMLElement parent = (HTMLElement) valueContainer.parentNode;
         Elements.removeChildrenFrom(parent);
@@ -47,6 +48,9 @@ class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
         if (decoration == RESTRICTED) {
             valueElement.textContent = "";
             valueElement.textContent = CONSTANTS.restricted();
+        }
+        if (decoration == HELP) {
+            super.safeApply(decoration, context);
         }
     }
 }

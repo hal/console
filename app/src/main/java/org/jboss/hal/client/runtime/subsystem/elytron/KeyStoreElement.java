@@ -125,7 +125,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .column(ALIAS, (cell, t, row, meta) -> row.asString())
                 .build();
 
-        aliasDetails = new PreTextItem(CERTIFICATE_DETAILS);
+        aliasDetails = new PreTextItem(CERTIFICATE_DETAILS, null);
         aliasDetails.setEnabled(false);
         formAlias = new ModelNodeForm.Builder<>(id(ALIAS, FORM), Metadata.empty())
                 .readOnly()

@@ -22,6 +22,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -35,6 +37,7 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -43,6 +46,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_PROVIDERS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AUTHENTICATION_CONFIGURATION;
@@ -168,12 +172,16 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(PROVIDER_LOADER.baseId, Ids.ITEM),
                 labelBuilder.label(PROVIDER_LOADER.resource));
 
+        Property defaultRealmProperty = mbuiContext.metadataRegistry().lookup(SECURITY_DOMAIN_TEMPLATE).getDescription().getAttributes(ATTRIBUTES).get(0);
+        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
+        SafeHtml helpText = helpTextBuilder.helpText(defaultRealmProperty);
+
         securityDomainElement = SECURITY_DOMAIN.resourceElementBuilder(mbuiContext,
                 () -> presenter.reload(SECURITY_DOMAIN.resource,
                         nodes -> updateResourceElement(SECURITY_DOMAIN.resource, nodes)))
                 .customFormItem(DEFAULT_REALM,
                         ad -> new SingleSelectBoxItem(DEFAULT_REALM, labelBuilder.label(DEFAULT_REALM),
-                                Collections.emptyList(), false))
+                                Collections.emptyList(), false,  helpText))
                 .onAdd(() -> presenter.addSecurityDomain())
                 .setComplexListAttribute(REALMS, REALM)
                 .build();

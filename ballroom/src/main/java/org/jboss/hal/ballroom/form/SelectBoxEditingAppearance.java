@@ -20,18 +20,22 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLOptionElement;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.HelpPopover;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 
 import static com.google.common.base.Strings.emptyToNull;
+import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.input;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -44,6 +48,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     private final HTMLElement root;
     private final HTMLElement inputContainer;
     private final HTMLElement helpBlock;
+    private final HTMLElement labelGroup;
     private HTMLElement inputGroup;
     private HTMLInputElement restrictedInput;
     private HTMLElement restrictedMarker;
@@ -51,7 +56,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     boolean attached;
 
     SelectBoxEditingAppearance(HTMLSelectElement selectElement, List<String> options, boolean allowEmpty) {
-        super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED));
+        super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, HELP, INVALID, REQUIRED, RESTRICTED));
 
         this.selectElement = selectElement;
         this.selectElement.classList.add(formControl);
@@ -59,10 +64,11 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
         this.allowEmpty = allowEmpty;
         this.helpBlock = Appearance.helpBlock();
         this.root = div().css(formGroup)
-                .add(labelElement = label().css(controlLabel, halFormLabel).element())
+                .add(labelGroup = label().css(controlLabel, halFormLabel).element())
                 .add(inputContainer = div().css(halFormInput)
                         .add(selectElement).element()).element();
-
+        this.labelElement = (label().css("label-text").element());
+        this.labelGroup.appendChild(labelElement);
         List<String> localOptions = options;
         if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
             localOptions = new ArrayList<>(options);
@@ -132,6 +138,19 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
                 if (attached) {
                     refresh();
                 }
+                break;
+
+            case HELP:
+                HTMLElement helpElement = a()
+                        .css("popover-pf-info")
+                        .attr("role", "button")
+                        .attr("data-toggle", "popover")
+                        .attr("tabindex", "0")
+                        .add(span().css("pficon pficon-info")).
+                        element();
+                HelpPopover helpPopover = new HelpPopover(labelElement.title, (SafeHtml) context, helpElement);
+                labelElement.setAttribute("class", labelElement.getAttribute("class") + " help-padding");
+                labelGroup.appendChild(helpElement);
                 break;
 
             case INVALID:
@@ -255,7 +274,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     @Override
     public void setFocus(boolean focused) {
         if (focused) {
-            selectElement.focus();
+            //selectElement.focus();
         } else {
             selectElement.blur();
         }

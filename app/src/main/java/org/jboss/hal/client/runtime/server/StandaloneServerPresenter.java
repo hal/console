@@ -219,7 +219,7 @@ public class StandaloneServerPresenter
         Constants constants = resources.constants();
         String serverName = environment.isStandalone() ? Names.STANDALONE_SERVER : Names.DOMAIN_CONTROLLER;
         String label = constants.reload() + " " + serverName;
-        SwitchItem reload = new SwitchItem(RELOAD, label);
+        SwitchItem reload = new SwitchItem(RELOAD, label, null);
         reload.setExpressionAllowed(false);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(RELOAD, FORM), Metadata.empty())
                 .unboundFormItem(reload)

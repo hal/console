@@ -220,7 +220,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 metadata.getDescription().get(ATTRIBUTES).get(TYPE).get(DESCRIPTION).asString());
         Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
         crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
-        TextBoxItem typeItem = new TextBoxItem("type-", resources.constants().type());
+        TextBoxItem typeItem = new TextBoxItem("type-", resources.constants().type(), null, typeHelp);
 
         String id = Ids.build(Ids.ELYTRON_CREDENTIAL_STORE, Ids.ADD);
         NameItem nameItem = new NameItem();
@@ -403,7 +403,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
                 .customFormItem(NEW_ITEM_ATTRIBUTES,
-                        (attributeDescription) -> new MultiValueListItem(NEW_ITEM_ATTRIBUTES))
+                        (attributeDescription) -> new MultiValueListItem(NEW_ITEM_ATTRIBUTES, SafeHtmlUtils.fromString(
+                                metadata.getDescription().get(ATTRIBUTES).get(NEW_ITEM_ATTRIBUTES).get(DESCRIPTION).asString())))
                 .unsorted()
                 .addOnly()
                 .build();

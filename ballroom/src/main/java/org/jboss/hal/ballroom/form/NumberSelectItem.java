@@ -19,17 +19,21 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.HelpPopover;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -39,12 +43,12 @@ import static org.jboss.hal.resources.CSS.*;
 /** A form item to select from a small set of distinct numbers using a button group. */
 public class NumberSelectItem extends AbstractFormItem<Long> {
 
-    public NumberSelectItem(String name, long[] numbers) {
-        this(name, new LabelBuilder().label(name), numbers);
+    public NumberSelectItem(String name, long[] numbers, SafeHtml helpText) {
+        this(name, new LabelBuilder().label(name), numbers, helpText);
     }
 
-    private NumberSelectItem(String name, String label, long[] numbers) {
-        super(name, label, null);
+    private NumberSelectItem(String name, String label, long[] numbers, SafeHtml helpText) {
+        super(name, label, null, helpText);
 
         // read-only appearance
         addAppearance(READONLY, new NumberSelectReadOnlyAppearance());
@@ -67,7 +71,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
     private static class NumberSelectReadOnlyAppearance extends ReadOnlyAppearance<Long> {
 
         NumberSelectReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, HINT, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, HINT, HELP, RESTRICTED));
         }
 
         @Override
@@ -86,16 +90,19 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         private final HTMLElement helpBlock;
         private final HTMLElement inputContainer;
         private final HTMLElement root;
+        private final HTMLElement labelGroup;
 
         NumberSelectEditingAppearance(long[] numbers) {
-            super(EnumSet.of(DEPRECATED, ENABLED, INVALID, REQUIRED));
+            super(EnumSet.of(DEPRECATED, ENABLED, HELP, INVALID, REQUIRED));
             this.buttons = new HashMap<>();
 
             root = div().css(formGroup)
-                    .add(labelElement = label().css(controlLabel, halFormLabel).element())
+                    .add(labelGroup = div().css(controlLabel, halFormLabel).element())
                     .add(inputContainer = div().css(halFormInput)
                             .add(buttonGroup = div().css(btnGroup)
                                     .attr(UIConstants.ROLE, UIConstants.GROUP).element()).element()).element();
+            labelElement = (label().css("label-text").element());
+            labelGroup.appendChild(labelElement);
             for (long number : numbers) {
                 String value = String.valueOf(number);
                 HTMLButtonElement button = button().css(btn, btnDefault)
@@ -167,6 +174,19 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
 
                 case ENABLED:
                     buttons.values().forEach(button -> button.disabled = false);
+                    break;
+
+                case HELP:
+                    HTMLElement helpElement = a()
+                            .css("popover-pf-info")
+                            .attr("role", "button")
+                            .attr("data-toggle", "popover")
+                            .attr("tabindex", "0")
+                            .add(span().css("pficon pficon-info")).
+                            element();
+                    HelpPopover helpPopover = new HelpPopover(labelElement.title, (SafeHtml) context, helpElement);
+                    labelElement.setAttribute("class", labelElement.getAttribute("class") + " help-padding");
+                    labelGroup.appendChild(helpElement);
                     break;
 
                 case INVALID:

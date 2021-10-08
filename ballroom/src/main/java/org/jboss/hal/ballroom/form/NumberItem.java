@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
@@ -56,8 +57,8 @@ public class NumberItem extends AbstractFormItem<Long> {
     private long min;
     private long max;
 
-    public NumberItem(String name, String label, String unit, long min, long max) {
-        super(name, label, unit);
+    public NumberItem(String name, String label, String unit, long min, long max, SafeHtml helpText) {
+        super(name, label, unit, helpText);
         setRange(min, max);
 
         // read-only appearance
@@ -133,7 +134,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     private static class NumberReadOnlyAppearance extends ReadOnlyAppearance<Long> {
 
         NumberReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, HELP, RESTRICTED));
         }
 
         @Override

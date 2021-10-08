@@ -72,7 +72,7 @@ public class AccessControlSsoView extends HalViewImpl implements AccessControlSs
         TextBoxItem realm = new TextBoxItem(REALM);
         URLItem accountUrl = new URLItem("account-url");
         accountUrl.setValue(keycloakHolder.getKeycloak().createAccountUrl());
-        PreTextItem realmPublicKey = new PreTextItem(REALM_PUBLIC_KEY);
+        PreTextItem realmPublicKey = new PreTextItem(REALM_PUBLIC_KEY, null);
 
         form = new ModelNodeForm.Builder<>(Ids.build(KEYCLOAK, FORM), Metadata.empty())
                 .readOnly()
