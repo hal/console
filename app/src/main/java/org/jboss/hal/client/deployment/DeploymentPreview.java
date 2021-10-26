@@ -101,13 +101,16 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
     }
 
     void hash(PreviewAttributes<T> attributes, Deployment deployment) {
-        ModelNode content = deployment.get(CONTENT);
-        StringBuilder hashString = new StringBuilder();
-
         // for compatibility reasons "content" is a list but there is only one element in it
-        byte[] hash = content.get(0).get(HASH).asBytes();
-        for (byte b : hash) {
-            String hex = Integer.toHexString(b);
+        ModelNode content = deployment.get(CONTENT);
+        byte[] hashBytes = content.get(0).get(HASH).asBytes();
+        StringBuilder hashString = new StringBuilder();
+        for (byte b : hashBytes) {
+            int i = b;
+            if (i < 0) {
+                i = i & 0xff;
+            }
+            String hex = Integer.toHexString(i);
             if (hex.length() == 1) {
                 hashString.append('0');
             }
