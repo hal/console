@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.core.elytron;
 
+import java.util.Map;
 import java.util.function.Supplier;
-
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;
@@ -118,23 +118,23 @@ public class CredentialReference {
 
         if (crMetadata.getSecurityContext().isWritable()) {
             emptyStateBuilder.primaryAction(resources.constants().add(), () -> {
-                        if (alternativeName != null && alternativeValue != null &&
-                                !Strings.isNullOrEmpty(alternativeValue.get())) {
-                            String alternativeLabel = new LabelBuilder().label(alternativeName);
-                            DialogFactory.showConfirmation(
-                                    resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
-                                    resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
-                                    () -> setTimeout(
-                                            o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
-                                                    alternativeName,
-                                                    address, callback),
-                                            SHORT_TIMEOUT));
-                        } else {
-                            addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
-                                    callback);
-                        }
-                    },
-                    Constraint.executable(metadata.getTemplate(), ADD))
+                                if (alternativeName != null && alternativeValue != null &&
+                                        !Strings.isNullOrEmpty(alternativeValue.get())) {
+                                    String alternativeLabel = new LabelBuilder().label(alternativeName);
+                                    DialogFactory.showConfirmation(
+                                            resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
+                                            resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
+                                            () -> setTimeout(
+                                                    o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
+                                                            alternativeName,
+                                                            address, callback),
+                                                    SHORT_TIMEOUT));
+                                } else {
+                                    addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
+                                            callback);
+                                }
+                            },
+                            Constraint.executable(metadata.getTemplate(), ADD))
                     .description(resources.messages().noResource());
         } else {
             emptyStateBuilder.description(resources.constants().restricted());
@@ -159,8 +159,9 @@ public class CredentialReference {
                 .onSave(((f, changedValues) -> {
                     ResourceAddress fqa = address.get();
                     if (fqa != null) {
-                        ca.save(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqa, changedValues,
-                                crMetadata, callback);
+                        // Do not use ca.save(...) here. Updating a credential reference needs special handling
+                        // See also https://docs.wildfly.org/25/WildFly_Elytron_Security.html#automatic-updates-of-credential-stores
+                        updateCredentialReference(credentialReferenceName, fqa, f, changedValues, callback);
                     } else {
                         MessageEvent.fire(eventBus,
                                 Message.error(resources.messages().credentialReferenceAddressError()));
@@ -248,6 +249,66 @@ public class CredentialReference {
         }
     }
 
+    /**
+     * When updating the credential-reference, we need to follow the following rules:
+     * <ul>
+     *     <li>either 'clear-text' must be specified on its own, or</li>
+     *     <li>
+     *         'store' needs to be specified with at least one of
+     *         <ul>
+     *             <li>'clear-text' or</li>
+     *             <li>'alias'</li>
+     *         </ul>
+     *     </li>
+     * </ul>
+     */
+    private void updateCredentialReference(String complexAttribute, ResourceAddress address,
+            Form<ModelNode> form, Map<String, Object> changedValues, Callback callback) {
+        Operation operation;
+
+        if (changedValues.size() == 1 && changedValues.containsKey(CLEAR_TEXT)) {
+            // only clear-text is given
+            operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
+                    .param(NAME, complexAttribute + "." + CLEAR_TEXT)
+                    .param(VALUE, String.valueOf(changedValues.get(CLEAR_TEXT)))
+                    .build();
+        } else {
+            ModelNode currentModel = form.getModel();
+            ModelNode updatedModel = new ModelNode();
+            // store is mandatory
+            if (changedValues.containsKey(STORE)) {
+                updatedModel.get(STORE).set(String.valueOf(changedValues.get(STORE)));
+            } else {
+                updatedModel.get(STORE).set(currentModel.get(STORE));
+            }
+            // at least one of alias or clear-text has to be given
+            copyCredentialReferenceProperty(ALIAS, changedValues, currentModel, updatedModel);
+            copyCredentialReferenceProperty(CLEAR_TEXT, changedValues, currentModel, updatedModel);
+            copyCredentialReferenceProperty(TYPE, changedValues, currentModel, updatedModel);
+
+            operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
+                    .param(NAME, complexAttribute)
+                    .param(VALUE, updatedModel)
+                    .build();
+        }
+
+        dispatcher.execute(operation, (ModelNode result) -> {
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.messages().modifySingleResourceSuccess(Names.CREDENTIAL_REFERENCE)));
+            callback.execute();
+        });
+    }
+
+    private void copyCredentialReferenceProperty(String name, Map<String, Object> changedValues,
+            ModelNode currentModel, ModelNode updatedModel) {
+        if (changedValues.containsKey(name) && !Strings.isNullOrEmpty(String.valueOf(changedValues.get(name)))) {
+            updatedModel.get(name).set(String.valueOf(changedValues.get(name)));
+        } else {
+            if (currentModel.get(name).isDefined()) {
+                updatedModel.get(name).set(currentModel.get(name));
+            }
+        }
+    }
 
     /**
      * Form validation which validates that only one of {@code credential-reference} and {@code <alternativeName>} is
@@ -295,7 +356,7 @@ public class CredentialReference {
         @Override
         public ValidationResult validate(Form<ModelNode> form) {
             if (alternativeName != null && alternativeValue != null && !Strings.isNullOrEmpty(alternativeValue.get())) {
-                ValidationResult.invalid(resources.messages()
+                return ValidationResult.invalid(resources.messages()
                         .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
             }
             return ValidationResult.OK;
