@@ -15,14 +15,16 @@
  */
 package org.jboss.hal.client.runtime.server;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.Button;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.client.runtime.managementinterface.ConstantHeadersElement;
+import org.jboss.hal.client.runtime.managementinterface.HttpManagementInterfaceElement;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -32,24 +34,30 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.server.StandaloneServerPresenter.HTTP_INTERFACE_TEMPLATE;
 import static org.jboss.hal.client.runtime.server.StandaloneServerPresenter.ROOT_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSTANT_HEADERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAMESPACES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SCHEMA_LOCATIONS;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
-import static org.jboss.hal.resources.CSS.pullRight;
-import static org.jboss.hal.resources.Ids.*;
+import static org.jboss.hal.resources.Ids.CONSTANT_HEADERS_ITEM;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.HTTP_INTERFACE_ITEM;
+import static org.jboss.hal.resources.Ids.ITEM;
 
 public class StandaloneServerView extends HalViewImpl implements StandaloneServerPresenter.MyView {
 
     private Form<ModelNode> attributesForm;
-    private Form<ModelNode> httpInterfaceForm;
-    private HTMLButtonElement enableSslButton;
-    private HTMLButtonElement disableSslButton;
+    private HttpManagementInterfaceElement httpManagementInterfaceElement;
+    private ConstantHeadersElement constantHeadersElement;
     private StandaloneServerPresenter presenter;
 
     @Inject
@@ -82,36 +90,16 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
         navigation.addPrimary(attributesItemId, resources.constants().configuration(), pfIcon("settings"),
                 attributesElement);
 
-        String httpTitle = resources.constants().httpManagementInterface();
-        Metadata httpMetadata = metadataRegistry.lookup(HTTP_INTERFACE_TEMPLATE);
-        String httpId = Ids.build(HTTP_INTERFACE, FORM);
-        httpInterfaceForm = new ModelNodeForm.Builder<>(httpId, httpMetadata)
-                .onSave((form, changedValues) -> presenter.save(httpTitle, HTTP_INTERFACE_TEMPLATE, changedValues))
-                .prepareReset(form -> presenter.reset(httpTitle, HTTP_INTERFACE_TEMPLATE, form, httpMetadata))
-                .unsorted()
-                .build();
-
-        enableSslButton = button().id(ENABLE_SSL)
-                .textContent(resources.constants().enableSSL())
-                .css(Button.DEFAULT_CSS, pullRight).element();
-        bind(enableSslButton, click, ev -> presenter.launchEnableSSLWizard());
-
-        disableSslButton = button().id(DISABLE_SSL)
-                .textContent(resources.constants().disableSSL())
-                .css(Button.DEFAULT_CSS, pullRight).element();
-        bind(disableSslButton, click, ev -> presenter.disableSSLWizard());
-
-        HTMLElement httpMgmtItemElement = section()
-                .add(div()
-                        .add(h(1).textContent(httpTitle).element())
-                        .add(p().textContent(httpMetadata.getDescription().getDescription()).element())
-                        .add(enableSslButton)
-                        .add(disableSslButton))
-                .add(httpInterfaceForm).element();
-        registerAttachable(httpInterfaceForm);
-
+        httpManagementInterfaceElement = new HttpManagementInterfaceElement(metadataRegistry, HTTP_INTERFACE_TEMPLATE,
+                resources);
+        registerAttachable(httpManagementInterfaceElement);
         navigation.addPrimary(HTTP_INTERFACE_ITEM, resources.constants().httpManagementInterface(),
-                pfIcon("virtual-machine"), httpMgmtItemElement);
+                pfIcon("virtual-machine"), httpManagementInterfaceElement);
+
+        constantHeadersElement = new ConstantHeadersElement(metadataRegistry, HTTP_INTERFACE_TEMPLATE, resources);
+        registerAttachable(constantHeadersElement);
+        navigation.addPrimary(CONSTANT_HEADERS_ITEM, new LabelBuilder().label(CONSTANT_HEADERS), fontAwesome("bars"),
+                constantHeadersElement);
 
         initElement(row()
                 .add(column()
@@ -124,20 +112,19 @@ public class StandaloneServerView extends HalViewImpl implements StandaloneServe
     }
 
     @Override
-    public void updateHttpInterface(ModelNode model) {
-        httpInterfaceForm.view(model);
-        boolean isSslEnabled = model.hasDefined(SSL_CONTEXT) && model.get(SSL_CONTEXT).asString() != null;
-        toggleSslButton(isSslEnabled);
-    }
-
-    private void toggleSslButton(boolean enable) {
-        Elements.setVisible(enableSslButton, !enable);
-        Elements.setVisible(disableSslButton, enable);
+    public void updateHttpInterface(ModelNode model, int pathIndex) {
+        httpManagementInterfaceElement.update(model);
+        List<ModelNode> constantHeaders = failSafeList(model, CONSTANT_HEADERS);
+        constantHeadersElement.update(constantHeaders);
+        if (pathIndex >= 0 && pathIndex < constantHeaders.size()) {
+            constantHeadersElement.showHeaders(constantHeaders.get(pathIndex));
+        }
     }
 
     @Override
     public void setPresenter(StandaloneServerPresenter presenter) {
         this.presenter = presenter;
+        httpManagementInterfaceElement.setPresenter(presenter);
+        constantHeadersElement.setPresenter(presenter);
     }
-
 }
