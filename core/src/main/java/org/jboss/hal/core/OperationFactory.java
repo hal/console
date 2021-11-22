@@ -252,7 +252,7 @@ public class OperationFactory {
                             case INT:
                             case LONG:
                                 if (hasDefault) {
-                                    operations.add(undefineAttribute(address, attributeName(property.getName())));
+                                    operations.add(undefineAttribute(address, property.getName()));
                                 }
                                 break;
                             case EXPRESSION:
@@ -260,7 +260,7 @@ public class OperationFactory {
                             case OBJECT:
                             case PROPERTY:
                             case STRING:
-                                operations.add(undefineAttribute(address, attributeName(property.getName())));
+                                operations.add(undefineAttribute(address, property.getName()));
                                 break;
                             case TYPE:
                             case UNDEFINED:

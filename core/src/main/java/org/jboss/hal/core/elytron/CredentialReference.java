@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.core.elytron;
 
-import java.util.Map;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 
@@ -31,7 +30,6 @@ import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -48,7 +46,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static elemental2.dom.DomGlobal.setTimeout;
-import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
@@ -159,29 +156,18 @@ public class CredentialReference {
                 .onSave(((f, changedValues) -> {
                     ResourceAddress fqa = address.get();
                     if (fqa != null) {
-                        // Do not use ca.save(...) here. Updating a credential reference needs special handling
-                        // See also https://docs.wildfly.org/25/WildFly_Elytron_Security.html#automatic-updates-of-credential-stores
-                        updateCredentialReference(credentialReferenceName, fqa, f, changedValues, callback);
+                        if (changedValues.isEmpty()) {
+                            MessageEvent.fire(eventBus, Message.warning(resources.messages().noChanges()));
+                            callback.execute();
+                        } else {
+                            ca.save(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqa, f.getModel(), callback);
+                        }
                     } else {
                         MessageEvent.fire(eventBus,
                                 Message.error(resources.messages().credentialReferenceAddressError()));
                     }
-                }))
-                .prepareReset(f -> {
-                    ResourceAddress faAddress = address.get();
-                    if (faAddress != null) {
-                        ca.reset(credentialReferenceName, Names.CREDENTIAL_REFERENCE, faAddress, crMetadata, f,
-                                new Form.FinishReset<ModelNode>(f) {
-                                    @Override
-                                    public void afterReset(Form<ModelNode> form) {
-                                        callback.execute();
-                                    }
-                                });
-                    } else {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().credentialReferenceAddressError()));
-                    }
-                });
+                }));
+
 
         // some credential-reference attributes are nillable=false, so only nillable=true may be removed
         if (crMetadata.getDescription().get(NILLABLE).asBoolean()) {
@@ -205,7 +191,7 @@ public class CredentialReference {
 
         Form<ModelNode> form = formBuilder.build();
         form.addFormValidation(new CrFormValidation(alternativeName, alternativeValue, resources));
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+        form.addFormValidation(new CrFormValuesValidation(resources));
         return form;
     }
 
@@ -220,7 +206,7 @@ public class CredentialReference {
                     .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
                     .unsorted()
                     .build();
-            form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+            form.addFormValidation(new CrFormValuesValidation(resources));
 
             new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
                     form, (name, model) -> {
@@ -246,67 +232,6 @@ public class CredentialReference {
         } else {
             MessageEvent.fire(eventBus,
                     Message.error(resources.messages().credentialReferenceAddressError()));
-        }
-    }
-
-    /**
-     * When updating the credential-reference, we need to follow the following rules:
-     * <ul>
-     *     <li>either 'clear-text' must be specified on its own, or</li>
-     *     <li>
-     *         'store' needs to be specified with at least one of
-     *         <ul>
-     *             <li>'clear-text' or</li>
-     *             <li>'alias'</li>
-     *         </ul>
-     *     </li>
-     * </ul>
-     */
-    private void updateCredentialReference(String complexAttribute, ResourceAddress address,
-            Form<ModelNode> form, Map<String, Object> changedValues, Callback callback) {
-        Operation operation;
-
-        if (changedValues.size() == 1 && changedValues.containsKey(CLEAR_TEXT)) {
-            // only clear-text is given
-            operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
-                    .param(NAME, complexAttribute + "." + CLEAR_TEXT)
-                    .param(VALUE, String.valueOf(changedValues.get(CLEAR_TEXT)))
-                    .build();
-        } else {
-            ModelNode currentModel = form.getModel();
-            ModelNode updatedModel = new ModelNode();
-            // store is mandatory
-            if (changedValues.containsKey(STORE)) {
-                updatedModel.get(STORE).set(String.valueOf(changedValues.get(STORE)));
-            } else {
-                updatedModel.get(STORE).set(currentModel.get(STORE));
-            }
-            // at least one of alias or clear-text has to be given
-            copyCredentialReferenceProperty(ALIAS, changedValues, currentModel, updatedModel);
-            copyCredentialReferenceProperty(CLEAR_TEXT, changedValues, currentModel, updatedModel);
-            copyCredentialReferenceProperty(TYPE, changedValues, currentModel, updatedModel);
-
-            operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
-                    .param(NAME, complexAttribute)
-                    .param(VALUE, updatedModel)
-                    .build();
-        }
-
-        dispatcher.execute(operation, (ModelNode result) -> {
-            MessageEvent.fire(eventBus,
-                    Message.success(resources.messages().modifySingleResourceSuccess(Names.CREDENTIAL_REFERENCE)));
-            callback.execute();
-        });
-    }
-
-    private void copyCredentialReferenceProperty(String name, Map<String, Object> changedValues,
-            ModelNode currentModel, ModelNode updatedModel) {
-        if (changedValues.containsKey(name) && !Strings.isNullOrEmpty(String.valueOf(changedValues.get(name)))) {
-            updatedModel.get(name).set(String.valueOf(changedValues.get(name)));
-        } else {
-            if (currentModel.get(name).isDefined()) {
-                updatedModel.get(name).set(currentModel.get(name));
-            }
         }
     }
 
@@ -360,6 +285,47 @@ public class CredentialReference {
                         .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
             }
             return ValidationResult.OK;
+        }
+    }
+
+    /**
+     * When adding or updating the credential-reference, we need to follow the following rules:
+     * <ul>
+     *     <li>either 'clear-text' must be specified on its own, or</li>
+     *     <li>'store' needs to be specified with at least one of
+     *         <ul>
+     *             <li>'clear-text' or</li>
+     *             <li>'alias'</li>
+     *         </ul>
+     *     </li>
+     * </ul>
+     * See also https://docs.wildfly.org/25/WildFly_Elytron_Security.html#automatic-updates-of-credential-stores
+     */
+    private static class CrFormValuesValidation implements FormValidation<ModelNode> {
+
+        private final Resources resources;
+
+        private CrFormValuesValidation(Resources resources) {
+            this.resources = resources;
+        }
+
+        @Override
+        public ValidationResult validate(Form<ModelNode> form) {
+            FormItem<Object> storeItem = form.getFormItem(STORE);
+            FormItem<Object> aliasItem = form.getFormItem(ALIAS);
+            FormItem<Object> clearTextItem = form.getFormItem(CLEAR_TEXT);
+            if (!clearTextItem.isEmpty() && storeItem.isEmpty() && aliasItem.isEmpty()) {
+                // clear-text only not recommended mode
+                return ValidationResult.OK;
+            } else if (!storeItem.isEmpty() && (!clearTextItem.isEmpty() || !aliasItem.isEmpty())) {
+                // store and alias, clear-text or both
+                return ValidationResult.OK;
+            } else {
+                storeItem.showError(resources.messages().credentialReferenceInvalidCombination());
+                aliasItem.showError(resources.messages().credentialReferenceInvalidCombination());
+                clearTextItem.showError(resources.messages().credentialReferenceInvalidCombination());
+                return ValidationResult.invalid(resources.messages().credentialReferenceValidationErrorValues());
+            }
         }
     }
 }
