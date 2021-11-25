@@ -70,7 +70,12 @@ class ConnectionStep extends WizardStep<Context, State> {
                 .include(attributes)
                 .unsorted()
                 .onSave((form, changedValues) -> {
-                    changedValues.forEach((k, v) -> wizard().getContext().recordChange(k, v));
+                    changedValues.forEach((k, v) -> {
+                        // record changes as long as it isn't related to cred-ref
+                        if (!credRefAttrs.contains(k)) {
+                            wizard().getContext().recordChange(k, v);
+                        }
+                    });
                     // re-create credential reference
                     for (String credRefAttr : credRefAttrs) {
                         move(form.getModel(), credRefAttr, CREDENTIAL_REFERENCE + "/" + credRefAttr);
