@@ -151,6 +151,8 @@ public class ConstantHeadersElement
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.CONSTANT_HEADERS, Ids.ADD), metadata)
                 .addOnly()
                 .include(PATH)
+                .exclude(HEADERS)
+                .dontVerifyExcludes()
                 .unboundFormItem(headerName)
                 .unboundFormItem(headerValue)
                 .build();

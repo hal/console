@@ -400,6 +400,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         boolean includeRuntime;
         boolean hideDeprecated;
         boolean singleton;
+        boolean verifyExcludes;
         Supplier<org.jboss.hal.dmr.Operation> ping;
         EmptyState emptyState;
         String attributePath;
@@ -427,6 +428,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             this.requiredOnly = false;
             this.includeRuntime = false;
             this.hideDeprecated = true;
+            this.verifyExcludes = true;
             this.attributePath = ATTRIBUTES;
         }
 
@@ -520,6 +522,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         @EsReturn("FormBuilder")
         public Builder<T> showDeprecated() {
             this.hideDeprecated = false;
+            return this;
+        }
+
+        public Builder<T> dontVerifyExcludes() {
+            this.verifyExcludes = false;
             return this;
         }
 
@@ -661,7 +668,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                 throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": readOnly && addOnly");
             }
 
-            if (!excludes.isEmpty() && !readOnly) {
+            if (!excludes.isEmpty() && !readOnly && verifyExcludes) {
                 List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
                 for (Property attribute : requiredAttributes) {
                     if (excludes.contains(attribute.getName())) {
