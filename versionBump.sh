@@ -13,7 +13,5 @@ else
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$2\",/" app/package.json
     sed -i.versionsBackup "s/name=\"hal\.version\" value=\".*\"/name=\"hal.version\" value=\"$1\"/" app/src/main/module.gwt.xml
     sed -i.versionsBackup "s/name=\"hal\.version\" value=\".*\"/name=\"hal.version\" value=\"$1\"/" app/src/main/module-i18n.gwt.xml
-    sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$2\",/" npm/src/main/resources/hal-console/package.json
-    sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$2\",/" npm/src/main/resources/hal-edk/package.json
     find . -name "*.versionsBackup" -exec rm {} \;
 fi
