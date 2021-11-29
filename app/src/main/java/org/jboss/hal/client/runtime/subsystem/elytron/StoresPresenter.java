@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -173,6 +172,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         AddressTemplate template = metadata.getTemplate();
         Metadata opMetadata = metadata.forOperation(ADD_ALIAS);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), ADD_ALIAS), opMetadata)
+                .addOnly()
                 .build();
         form.attach();
         AddResourceDialog dialog = new AddResourceDialog(resources.constants().addAlias(), form, (name1, model) -> {
@@ -213,31 +213,37 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         AddressTemplate template = metadata.getTemplate();
         String resource = Names.CREDENTIAL_STORE + SPACE + name;
         Metadata opMetadata = metadata.forOperation(SET_SECRET);
-        SafeHtml question = SafeHtmlUtils.fromString(opMetadata.getDescription().getDescription());
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), SET_SECRET), opMetadata)
                 .build();
         form.attach();
-        HTMLElement formElement = form.element();
-        ModelNode model = new ModelNode();
-        model.get(ALIAS).set(alias);
         form.getFormItem(ALIAS).setEnabled(false);
-        form.edit(model);
-        DialogFactory.buildConfirmation(resources.constants().setSecret(), question, formElement, Dialog.Size.MEDIUM,
-                () -> {
-                    ResourceAddress address = template.resolve(statementContext, name);
-                    Operation addOp = new Operation.Builder(address, REMOVE_ALIAS)
-                            .param(ALIAS, alias)
-                            .build();
-                    dispatcher.execute(addOp, result -> MessageEvent.fire(getEventBus(),
-                            Message.success(resources.messages().setSecretPasswordSuccess(alias, resource))),
-                            (operation, failure) -> MessageEvent.fire(getEventBus(),
-                                    Message.error(
-                                            resources.messages().setSecretPasswordError(alias, resource, failure))),
-                            (operation, ex) -> MessageEvent.fire(getEventBus(),
-                                    Message.error(resources.messages()
-                                            .setSecretPasswordError(alias, resource, ex.getMessage()))));
-
-                }).show();
+        form.setSaveCallback((f, changedValues) -> {
+                ResourceAddress address = template.resolve(statementContext, name);
+                Operation op = new Operation.Builder(address, SET_SECRET)
+                        .payload(f.getModel())
+                        .build();
+                dispatcher.execute(op, result -> MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().setSecretPasswordSuccess(alias, resource))),
+                        (operation, failure) -> MessageEvent.fire(getEventBus(),
+                                Message.error(
+                                        resources.messages().setSecretPasswordError(alias, resource, failure))),
+                        (operation, ex) -> MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages()
+                                        .setSecretPasswordError(alias, resource, ex.getMessage()))));
+        });
+        Dialog dialog = new Dialog.Builder(resources.constants().setSecret())
+                .add(p().textContent(opMetadata.getDescription().getDescription()).element())
+                .add(form.element())
+                .primary(resources.constants().setSecret(), form::save)
+                .size(Dialog.Size.MEDIUM)
+                .closeOnEsc(true)
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        ModelNode modelNode = new ModelNode();
+        modelNode.get(ALIAS).set(alias);
+        dialog.show();
+        form.edit(modelNode);
     }
 
     void loadKeyStore(String name) {
@@ -741,15 +747,6 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 return dispatcher.execute(operation)
                         .doOnError(ex -> MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().removeAliasError(alias, resource, ex.getMessage()))))
-                        .toCompletable();
-            });
-            tasks.add(flowContext -> {
-                Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
-                        .build();
-
-                return dispatcher.execute(operation)
-                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().storeError(resource, ex.getMessage()))))
                         .toCompletable();
             });
             tasks.add(flowContext -> {
