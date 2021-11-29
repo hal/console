@@ -75,7 +75,6 @@ public class Subsystems {
                 .preview(resources.previews().configurationEjb3())
                 .build());
         addConfiguration(new SubsystemMetadata.Builder(ELYTRON, Names.SECURITY)
-                .subtitle(Names.ELYTRON)
                 .nextColumn(Ids.ELYTRON)
                 .preview(resources.previews().configurationSecurityElytron())
                 .build());
@@ -225,8 +224,7 @@ public class Subsystems {
         addRuntime(new SubsystemMetadata.Builder(EJB3, Names.EJB3)
                 .nextColumn(Ids.EJB3)
                 .build());
-        addRuntime(new SubsystemMetadata.Builder(SECURITY, Names.SECURITY)
-                .subtitle(Names.ELYTRON)
+        addRuntime(new SubsystemMetadata.Builder(ELYTRON, Names.SECURITY)
                 .nextColumn(Ids.ELYTRON_RUNTIME)
                 .preview(resources.previews().runtimeSecurityElytron())
                 .build());

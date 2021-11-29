@@ -28,6 +28,7 @@ import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
@@ -45,6 +46,11 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
 
     protected TagsItem(String name, String label, SafeHtml inputHelp,
             Set<Decoration> editingDecorations, TagsMapping<T> mapping) {
+        this(name, label, inputHelp, editingDecorations, mapping, null);
+    }
+
+    protected TagsItem(String name, String label, SafeHtml inputHelp,
+                       Set<Decoration> editingDecorations, TagsMapping<T> mapping, HTMLElement button) {
         super(name, label, null);
 
         this.editingDecorations = editingDecorations;
@@ -55,7 +61,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
 
         // editing appearance
         editingAppearance = new TagsEditingAppearance(input(text).css(formControl, tags).element(), inputHelp,
-                editingDecorations, mapping);
+                editingDecorations, mapping, button);
         addAppearance(Form.State.EDITING, editingAppearance);
     }
 
@@ -100,13 +106,15 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
 
         private final HTMLElement tagsContainer;
         private final TagsMapping<T> mapping;
+        private final SafeHtml inputHelp;
 
         private boolean skipAdding;
 
         TagsEditingAppearance(HTMLInputElement inputElement, SafeHtml inputHelp,
-                Set<Decoration> supportedDecorations, TagsMapping<T> mapping) {
+                Set<Decoration> supportedDecorations, TagsMapping<T> mapping, HTMLElement button) {
             super(supportedDecorations, inputElement);
             this.mapping = mapping;
+            this.inputHelp = inputHelp;
 
             tagsContainer = div().css(tagManagerContainer)
                     .id(Ids.build("tags", "container", uniqueId())).element();
@@ -115,6 +123,13 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
             helpBlock.innerHTML = inputHelp.asString();
 
             inputContainer.appendChild(tagsContainer);
+
+            if (button != null) {
+                wrapInputElement();
+                HTMLElement buttonContainer = span().css(inputGroupBtn)
+                        .add(button).element();
+                inputGroup.appendChild(buttonContainer);
+            }
             inputContainer.appendChild(helpBlock);
             inputGroup.classList.add(properties);
 
@@ -193,7 +208,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         void unapplyInvalid() {
             root.classList.remove(hasError);
             helpBlock.classList.add(CSS.hint);
-            helpBlock.innerHTML = MESSAGES.propertiesHint().asString();
+            helpBlock.innerHTML = inputHelp.asString();
         }
     }
 }

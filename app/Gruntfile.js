@@ -24,17 +24,12 @@ module.exports = function (grunt) {
         theme: grunt.option('theme') || 'hal',
         config: {
             devmodeTarget: 'target/gwt/devmode/war/hal',
-            esdoc: {
-                source: 'target/generated-resources/esdoc',
-                destination: 'target/esdoc',
-                input: 'src/esdoc'
-            },
             js: 'src/js',
             less: 'src/less',
             node: 'node_modules',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
-            version: '3.3.7',
+            version: '3.4.0',
         },
 
         clean: {
@@ -254,30 +249,6 @@ module.exports = function (grunt) {
                 tasks: ['less']
             }
         },
-
-        esdoc: {
-            dist: {
-                options: {
-                    source: '<%= config.esdoc.source %>',
-                    excludes: [],
-                    destination: '<%= config.esdoc.destination %>',
-                    access: ['public'],
-                    index: '<%= config.esdoc.input %>/README.md',
-                    title: 'HAL JavaScript API',
-                    styles: ['<%= config.esdoc.input %>/style.css'],
-                    manual: {
-                        example: ['<%= config.esdoc.input %>/manual/example.md']
-                    },
-                    coverage: false,
-                    unexportIdentifier: true,
-                    undocumentIdentifier: true,
-                    experimentalProposal: {
-                        "classProperties": true,
-                        "objectRestSpread": true
-                    }
-                }
-            }
-        }
     });
 
     grunt.registerTask('css', [

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -33,10 +34,13 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SwitchItem;
+import org.jboss.hal.client.runtime.managementinterface.ConstantHeadersPresenter;
+import org.jboss.hal.client.runtime.managementinterface.HttpManagementInterfacePresenter;
 import org.jboss.hal.client.shared.sslwizard.EnableSSLPresenter;
 import org.jboss.hal.client.shared.sslwizard.EnableSSLWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -72,26 +76,55 @@ import org.jboss.hal.spi.Requires;
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.SOCKET_BINDING_GROUP_TEMPLATE;
 import static org.jboss.hal.core.runtime.TopologyTasks.reloadBlocking;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSTANT_HEADERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HEADERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INDEX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_ADD_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_REMOVE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVE_EXPRESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
 
 public class StandaloneServerPresenter
         extends MbuiPresenter<StandaloneServerPresenter.MyView, StandaloneServerPresenter.MyProxy>
-        implements EnableSSLPresenter, SupportsExpertMode {
+        implements EnableSSLPresenter, HttpManagementInterfacePresenter, ConstantHeadersPresenter, SupportsExpertMode {
 
     static final String ROOT_ADDRESS = "/";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
     static final String HTTP_INTERFACE_ADDRESS = "/core-service=management/management-interface=http-interface";
     static final AddressTemplate HTTP_INTERFACE_TEMPLATE = AddressTemplate.of(HTTP_INTERFACE_ADDRESS);
+    private static final String DOT = ".";
     private static final AddressTemplate ELYTRON_TEMPLATE = AddressTemplate.of("/subsystem=elytron");
 
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
-    private Provider<Progress> progress;
-    private Environment environment;
+    private final Provider<Progress> progress;
+    private final Environment environment;
     private final Resources resources;
 
     @Inject
@@ -133,7 +166,26 @@ public class StandaloneServerPresenter
     }
 
     @Override
+    public void reloadView() {
+        reload();
+    }
+
+    @Override
     protected void reload() {
+        dispatcher.execute(reloadComposite(), (CompositeResult result) -> {
+            getView().updateAttributes(result.step(0).get(RESULT));
+            getView().updateHttpInterface(result.step(1).get(RESULT), -1);
+        });
+    }
+
+    void reloadHeaders(int pathIndex) {
+        dispatcher.execute(reloadComposite(), (CompositeResult result) -> {
+            getView().updateAttributes(result.step(0).get(RESULT));
+            getView().updateHttpInterface(result.step(1).get(RESULT), pathIndex);
+        });
+    }
+
+    private Composite reloadComposite() {
         Operation attrOperation = new Operation.Builder(resourceAddress(), READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(ATTRIBUTES_ONLY, true)
@@ -141,18 +193,7 @@ public class StandaloneServerPresenter
         ResourceAddress coreServiceAddress = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
         Operation mgmtInterfacesOp = new Operation.Builder(coreServiceAddress, READ_RESOURCE_OPERATION)
                 .build();
-
-        dispatcher.execute(
-                new Composite(attrOperation, mgmtInterfacesOp),
-                (CompositeResult result) -> {
-                    getView().updateAttributes(result.step(0).get(RESULT));
-                    getView().updateHttpInterface(result.step(1).get(RESULT));
-                });
-    }
-
-    @Override
-    public void reloadView() {
-        reload();
+        return new Composite(attrOperation, mgmtInterfacesOp);
     }
 
     public void save(String type, AddressTemplate template, Map<String, Object> changedValues) {
@@ -163,7 +204,8 @@ public class StandaloneServerPresenter
         crud.resetSingleton(type, template, form, metadata, this::reload);
     }
 
-    public void launchEnableSSLWizard() {
+    @Override
+    public void enableSslForManagementInterface() {
         // load some elytron resources in advance for later use in the wizard for form validation
         List<Task<FlowContext>> tasks = new ArrayList<>();
 
@@ -195,7 +237,7 @@ public class StandaloneServerPresenter
     }
 
     private Task<FlowContext> loadResourceTask(String resourceName) {
-        Task<FlowContext> task = context -> {
+        return context -> {
             ResourceAddress address = ELYTRON_TEMPLATE.resolve(statementContext);
             Operation keyStoreOp = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, resourceName)
@@ -212,10 +254,11 @@ public class StandaloneServerPresenter
                     })
                     .toCompletable();
         };
-        return task;
     }
 
-    public void disableSSLWizard() {
+    @Override
+    @SuppressWarnings("DuplicatedCode")
+    public void disableSslForManagementInterface() {
         Constants constants = resources.constants();
         String serverName = environment.isStandalone() ? Names.STANDALONE_SERVER : Names.DOMAIN_CONTROLLER;
         String label = constants.reload() + " " + serverName;
@@ -233,103 +276,103 @@ public class StandaloneServerPresenter
         ResourceAddress httpAddress = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
 
         DialogFactory.buildConfirmation(constants.disableSSL(),
-                resources.messages().disableSSLManagementQuestion(serverName), formElement, Dialog.Size.MEDIUM, () -> {
+                        resources.messages().disableSSLManagementQuestion(serverName), formElement, Dialog.Size.MEDIUM, () -> {
 
-                    List<Task<FlowContext>> tasks = new ArrayList<>();
-                    // load the http-interface resource to get the port, there are differente attributes for
-                    // standalone and domain mode.
-                    Task<FlowContext> loadHttpInterface = flowContext -> {
-                        Operation readHttpInterface = new Operation.Builder(httpAddress, READ_RESOURCE_OPERATION)
-                                .build();
-                        return dispatcher.execute(readHttpInterface)
-                                .doOnSuccess(value -> {
-                                    if (value.hasDefined(SOCKET_BINDING)) {
-                                        // standalone mode uses a socket-binding for port
-                                        // store the socket-binding name in the flow context and on a later call
-                                        // read the socket-binding-group=<s-b-g>/socket-binding=<http-binding> to
-                                        // retrieve the port number
-                                        flowContext.set(SOCKET_BINDING, value.get(SOCKET_BINDING).asString());
-                                    }
-                                })
-                                .toCompletable();
+                            List<Task<FlowContext>> tasks = new ArrayList<>();
+                            // load the http-interface resource to get the port, there are differente attributes for
+                            // standalone and domain mode.
+                            Task<FlowContext> loadHttpInterface = flowContext -> {
+                                Operation readHttpInterface = new Operation.Builder(httpAddress, READ_RESOURCE_OPERATION)
+                                        .build();
+                                return dispatcher.execute(readHttpInterface)
+                                        .doOnSuccess(value -> {
+                                            if (value.hasDefined(SOCKET_BINDING)) {
+                                                // standalone mode uses a socket-binding for port
+                                                // store the socket-binding name in the flow context and on a later call
+                                                // read the socket-binding-group=<s-b-g>/socket-binding=<http-binding> to
+                                                // retrieve the port number
+                                                flowContext.set(SOCKET_BINDING, value.get(SOCKET_BINDING).asString());
+                                            }
+                                        })
+                                        .toCompletable();
 
-                    };
-                    tasks.add(loadHttpInterface);
+                            };
+                            tasks.add(loadHttpInterface);
 
-                    // if standalone mode, read the socket-binding-group=<s-b-g>/socket-binding=<http-binding>
-                    // to retrieve the port number
-                    Task<FlowContext> readHttpPortTask = flowContext -> {
-                        Operation op = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
-                                .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
-                                .build();
-                        return dispatcher.execute(op)
-                                .doOnSuccess(result -> {
-                                    String sbg = result.asList().get(0).asString();
-                                    String httpBinding = flowContext.get(SOCKET_BINDING);
-                                    ResourceAddress address = SOCKET_BINDING_GROUP_TEMPLATE.resolve(statementContext,
-                                            sbg, httpBinding);
-                                    Operation readPort = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                                            .param(NAME, PORT)
-                                            .param(RESOLVE_EXPRESSIONS, true)
-                                            .build();
-                                    dispatcher.execute(readPort,
-                                            portResult -> flowContext.set(PORT, portResult.asString()));
-                                })
-                                .toCompletable();
-                    };
-                    tasks.add(readHttpPortTask);
+                            // if standalone mode, read the socket-binding-group=<s-b-g>/socket-binding=<http-binding>
+                            // to retrieve the port number
+                            Task<FlowContext> readHttpPortTask = flowContext -> {
+                                Operation op = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
+                                        .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
+                                        .build();
+                                return dispatcher.execute(op)
+                                        .doOnSuccess(result -> {
+                                            String sbg = result.asList().get(0).asString();
+                                            String httpBinding = flowContext.get(SOCKET_BINDING);
+                                            ResourceAddress address = SOCKET_BINDING_GROUP_TEMPLATE.resolve(statementContext,
+                                                    sbg, httpBinding);
+                                            Operation readPort = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                                    .param(NAME, PORT)
+                                                    .param(RESOLVE_EXPRESSIONS, true)
+                                                    .build();
+                                            dispatcher.execute(readPort,
+                                                    portResult -> flowContext.set(PORT, portResult.asString()));
+                                        })
+                                        .toCompletable();
+                            };
+                            tasks.add(readHttpPortTask);
 
-                    // as part of the disable ssl task, undefine the secure-socket-binding
-                    // the attribute only exists in standalone mode
-                    Task<FlowContext> undefSslTask = flowContext -> {
-                        Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
-                                .param(NAME, SECURE_SOCKET_BINDING)
-                                .build();
-                        return dispatcher.execute(op)
-                                .toCompletable();
+                            // as part of the disable ssl task, undefine the secure-socket-binding
+                            // the attribute only exists in standalone mode
+                            Task<FlowContext> undefSslTask = flowContext -> {
+                                Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
+                                        .param(NAME, SECURE_SOCKET_BINDING)
+                                        .build();
+                                return dispatcher.execute(op)
+                                        .toCompletable();
 
-                    };
-                    tasks.add(undefSslTask);
+                            };
+                            tasks.add(undefSslTask);
 
-                    // as part of the disable ssl task, undefine the ssl-context
-                    Task<FlowContext> undefineSslContextTask = flowContext -> {
-                        Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
-                                .param(NAME, SSL_CONTEXT)
-                                .build();
-                        return dispatcher.execute(op)
-                                .toCompletable();
-                    };
-                    tasks.add(undefineSslContextTask);
+                            // as part of the disable ssl task, undefine the ssl-context
+                            Task<FlowContext> undefineSslContextTask = flowContext -> {
+                                Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
+                                        .param(NAME, SSL_CONTEXT)
+                                        .build();
+                                return dispatcher.execute(op)
+                                        .toCompletable();
+                            };
+                            tasks.add(undefineSslContextTask);
 
-                    series(new FlowContext(progress.get()), tasks)
-                            .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                                @Override
-                                public void onSuccess(FlowContext flowContext) {
-                                    if (reload.getValue() != null && reload.getValue()) {
-                                        String port = flowContext.get(PORT).toString();
-                                        // extracts the url search path, so the reload shows the same view the use is on
-                                        String urlSuffix = window.location.getHref();
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
-                                        // the location to redirect the browser to the unsecure URL
-                                        // TODO Replace hardcoded scheme
-                                        String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
-                                        reloadServer(null, location);
-                                    } else {
-                                        reload();
-                                        MessageEvent.fire(getEventBus(),
-                                                Message.success(resources.messages().disableSSLManagementSuccess()));
-                                    }
-                                }
+                            series(new FlowContext(progress.get()), tasks)
+                                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                                        @Override
+                                        public void onSuccess(FlowContext flowContext) {
+                                            if (reload.getValue() != null && reload.getValue()) {
+                                                String port = flowContext.get(PORT).toString();
+                                                // extracts the url search path, so the reload shows the same view the use is on
+                                                String urlSuffix = window.location.getHref();
+                                                urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
+                                                urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
+                                                // the location to redirect the browser to the unsecure URL
+                                                // TODO Replace hardcoded scheme
+                                                String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
+                                                reloadServer(null, location);
+                                            } else {
+                                                reload();
+                                                MessageEvent.fire(getEventBus(),
+                                                        Message.success(resources.messages().disableSSLManagementSuccess()));
+                                            }
+                                        }
 
-                                @Override
-                                public void onError(FlowContext context, Throwable throwable) {
-                                    MessageEvent.fire(getEventBus(),
-                                            Message.error(resources.messages()
-                                                    .disableSSLManagementError(throwable.getMessage())));
-                                }
-                            });
-                })
+                                        @Override
+                                        public void onError(FlowContext context, Throwable throwable) {
+                                            MessageEvent.fire(getEventBus(),
+                                                    Message.error(resources.messages()
+                                                            .disableSSLManagementError(throwable.getMessage())));
+                                        }
+                                    });
+                        })
                 .show();
     }
 
@@ -353,6 +396,104 @@ public class StandaloneServerPresenter
         reloadBlocking(dispatcher, getEventBus(), operation, type, name, urlConsole, resources);
     }
 
+    @Override
+    public void saveManagementInterface(AddressTemplate template, Map<String, Object> changedValues) {
+        String type = resources.constants().httpManagementInterface();
+        save(type, template, changedValues);
+    }
+
+    @Override
+    public void resetManagementInterface(AddressTemplate template, Form<ModelNode> form, Metadata metadata) {
+        String type = resources.constants().httpManagementInterface();
+        reset(type, template, form, metadata);
+    }
+
+    @Override
+    public void addConstantHeaderPath(ModelNode payload, SafeHtml successMessage) {
+        ResourceAddress address = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
+                .param(NAME, CONSTANT_HEADERS)
+                .param(VALUE, payload)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reload();
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    @Override
+    public void saveConstantHeaderPath(int index, String path, SafeHtml successMessage) {
+        ResourceAddress address = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
+                .param(NAME, constantsHeadersIndex(index) + DOT + PATH)
+                .param(VALUE, path)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reload();
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    @Override
+    public void removeConstantHeaderPath(int index, String path, SafeHtml successMessage) {
+        ResourceAddress address = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, LIST_REMOVE_OPERATION)
+                .param(NAME, CONSTANT_HEADERS)
+                .param(INDEX, index)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reload();
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    @Override
+    public void addHeader(int pathIndex, ModelNode model, SafeHtml successMessage) {
+        ResourceAddress address = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
+                .param(NAME, constantsHeadersIndex(pathIndex) + DOT + HEADERS)
+                .param(VALUE, model)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reloadHeaders(pathIndex);
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    @Override
+    public void saveHeader(int pathIndex, int index, String header, Metadata metadata,
+            Map<String, Object> changedValues, SafeHtml successMessage) {
+        ResourceAddress address = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
+        OperationFactory operationFactory = new OperationFactory(
+                name -> constantsHeadersIndex(pathIndex) + DOT + headersIndex(index) + DOT + name);
+        Composite composite = operationFactory.fromChangeSet(address, changedValues, metadata);
+        dispatcher.execute(composite, (CompositeResult result) -> {
+            reloadHeaders(pathIndex);
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    @Override
+    public void removeHeader(int pathIndex, int index, String header, SafeHtml successMessage) {
+        ResourceAddress address = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, LIST_REMOVE_OPERATION)
+                .param(NAME, CONSTANT_HEADERS + "[" + pathIndex + "]." + HEADERS)
+                .param(INDEX, index)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reloadHeaders(pathIndex);
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    private String constantsHeadersIndex(int index) {
+        return CONSTANT_HEADERS + "[" + index + "]";
+    }
+
+    private String headersIndex(int index) {
+        return HEADERS + "[" + index + "]";
+    }
+
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.STANDALONE_SERVER)
@@ -362,7 +503,7 @@ public class StandaloneServerPresenter
 
     public interface MyView extends MbuiView<StandaloneServerPresenter> {
         void updateAttributes(ModelNode attributes);
-        void updateHttpInterface(ModelNode httpModel);
+        void updateHttpInterface(ModelNode httpModel, int pathIndex);
     }
     // @formatter:on
 }

@@ -487,6 +487,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml tourStandaloneRuntimeSubsystem();
     SafeHtml transactionSetUuidOrSocket();
     SafeHtml transactionUnableSetProcessId();
+    SafeHtml tuplesHint(String names);
     SafeHtml unauthorized();
     SafeHtml undeployedContent(String name);
     SafeHtml unit(String unit);
@@ -528,6 +529,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String credentialReferenceConflict();
     String credentialReferenceParentNoResource(String parentResource);
     String credentialReferenceValidationError(String alternative);
+    String credentialReferenceValidationErrorValues();
+    String credentialReferenceInvalidCombination();
     String currentOfTotal(long current, long total);
     String datasourceFilterDescription();
     String datasourceRuntimeFilterDescription();
@@ -571,6 +574,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String jdbcDriverColumnFilterDescription();
     String jobExecutionColumnFilterDescription();
     String jpaColumnFilterDescription();
+    String keepDialogOpen();
     String kill(String name);
     String logfileColumnFilterDescription();
     String logFileFullStatus(int lines, String lastUpdate);

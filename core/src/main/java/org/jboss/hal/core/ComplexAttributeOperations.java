@@ -325,6 +325,28 @@ public class ComplexAttributeOperations {
         });
     }
 
+    /**
+     * Writes the full payload to the complex attribute in the specified resource. After the resource has been
+     * updated, a success message is fired and the specified callback is executed.
+     *
+     * @param complexAttribute the name of the complex attribute
+     * @param type             the human readable name of the complex attribute
+     * @param address          the fq address for the operation
+     * @param payload          the optional payload for the complex attribute (may be null or undefined)
+     * @param callback         the callback executed after the resource has been added
+     */
+    @JsIgnore
+    public void save(String complexAttribute, String type, ResourceAddress address, @Nullable ModelNode payload,
+            Callback callback) {
+        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
+                .param(NAME, complexAttribute)
+                .param(VALUE, payload == null ? new ModelNode().addEmptyObject() : payload)
+                .build();
+        dispatcher.execute(operation, result -> {
+            MessageEvent.fire(eventBus, Message.success(resources.messages().modifySingleResourceSuccess(type)));
+            callback.execute();
+        });
+    }
 
     // ------------------------------------------------------ (u)pdate using address
 

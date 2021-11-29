@@ -45,7 +45,20 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSIONS_ALLOWED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 public class OperationFactory {
@@ -239,7 +252,7 @@ public class OperationFactory {
                             case INT:
                             case LONG:
                                 if (hasDefault) {
-                                    operations.add(undefineAttribute(address, attributeName(property.getName())));
+                                    operations.add(undefineAttribute(address, property.getName()));
                                 }
                                 break;
                             case EXPRESSION:
@@ -247,7 +260,7 @@ public class OperationFactory {
                             case OBJECT:
                             case PROPERTY:
                             case STRING:
-                                operations.add(undefineAttribute(address, attributeName(property.getName())));
+                                operations.add(undefineAttribute(address, property.getName()));
                                 break;
                             case TYPE:
                             case UNDEFINED:
@@ -262,11 +275,21 @@ public class OperationFactory {
 
     @SuppressWarnings("rawtypes")
     private boolean isNullOrEmpty(Object value) {
-        return (value == null
-                || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
-                || (value instanceof ModelNode && !((ModelNode) value).isDefined())
-                || (value instanceof List && ((List) value).isEmpty())
-                || (value instanceof Map && ((Map) value).isEmpty()));
+        boolean nullOrEmpty;
+        if (value instanceof ModelNode) {
+            ModelNode node = (ModelNode) value;
+            if (node.getType() == ModelType.LIST) {
+                nullOrEmpty = node.asList().isEmpty();
+            } else {
+                nullOrEmpty = !node.isDefined();
+            }
+        } else {
+            nullOrEmpty = (value == null
+                    || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
+                    || (value instanceof List && ((List) value).isEmpty())
+                    || (value instanceof Map && ((Map) value).isEmpty()));
+        }
+        return nullOrEmpty;
     }
 
     private Operation undefineAttribute(ResourceAddress address, String name) {

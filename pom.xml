@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.3.7.Final</version>
+    <version>3.4.0.Final</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -108,7 +108,6 @@
         <plugin.processor.version>3.3.2</plugin.processor.version>
         <plugin.reports.version>2.9</plugin.reports.version>
         <plugin.github.site.version>0.12</plugin.github.site.version>
-        <plugin.swarm.version>60</plugin.swarm.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -166,11 +165,6 @@
                     <artifactId>gwt-maven-plugin</artifactId>
                     <version>${plugin.gwt.version}</version>
                     <extensions>true</extensions>
-                </plugin>
-                <plugin>
-                    <groupId>org.wildfly.swarm</groupId>
-                    <artifactId>wildfly-swarm-fraction-plugin</artifactId>
-                    <version>${plugin.swarm.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
