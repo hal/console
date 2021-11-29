@@ -132,17 +132,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
 
         table.bindForm(form);
 
-        // disable table buttons if there is no selected row
-        disableTableButtons();
-        table.onSelectionChange(table1 -> {
-            for (int i = 0; i < builder.buttonsHandler.size(); i++) {
-                table1.enableButton(i, table1.hasSelection());
-            }
-        });
         aliasesTable.onSelectionChange(table1 -> {
-            for (int i = 0; i < builder.aliasButtonsHandler.size(); i++) {
-                table1.enableButton(i, table1.hasSelection());
-            }
             if (table1.hasSelection()) {
                 String alias = table1.selectedRow().asString();
                 String value = aliasDetailsMapping.get(alias);
@@ -201,15 +191,6 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
         String value = details.toString();
         aliasDetails.setValue(value);
         aliasDetailsMapping.put(details.get(ALIAS).asString(), value);
-    }
-
-    private void disableTableButtons() {
-        for (int i = 0; i < builder.buttonsHandler.size(); i++) {
-            table.enableButton(i, false);
-        }
-        for (int i = 0; i < builder.aliasButtonsHandler.size(); i++) {
-            aliasesTable.enableButton(i, false);
-        }
     }
 
     static class Builder {

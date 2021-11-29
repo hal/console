@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -58,17 +59,21 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
         Metadata credentialStoreMetadata = metadataRegistry.lookup(CREDENTIAL_STORE_TEMPLATE);
         credentialStoreElement = new StoreElement.Builder(CREDENTIAL_STORE, Names.CREDENTIAL_STORE, resources,
                 credentialStoreMetadata)
-                .addButtonHandler(new Button<>(resources.constants().reload(),
+                .addButtonHandler(new Button<>(resources.constants().reload(), null,
                         table -> presenter.reloadCredentialStore(table.selectedRow().getName()),
+                        Scope.SELECTED_SINGLE,
                         Constraint.executable(CREDENTIAL_STORE_TEMPLATE, RELOAD)))
-                .addAliasButtonHandler(new Button<>(resources.constants().addAlias(),
+                .addAliasButtonHandler(new Button<>(resources.constants().addAlias(), null,
                         table -> addCredentialStoreAlias(credentialStoreMetadata),
+                        null,
                         Constraint.executable(CREDENTIAL_STORE_TEMPLATE, ADD_ALIAS)))
-                .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(),
+                .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(), null,
                         table -> removeCredentialStoreAlias(credentialStoreMetadata, table.selectedRow().asString()),
+                        Scope.SELECTED_SINGLE,
                         Constraint.executable(CREDENTIAL_STORE_TEMPLATE, REMOVE_ALIAS)))
-                .addAliasButtonHandler(new Button<>(resources.constants().setSecret(),
+                .addAliasButtonHandler(new Button<>(resources.constants().setSecret(), null,
                         table -> setCredentialStoreSecretAlias(credentialStoreMetadata, table.selectedRow().asString()),
+                        Scope.SELECTED_SINGLE,
                         Constraint.executable(CREDENTIAL_STORE_TEMPLATE, SET_SECRET)))
                 .build();
         // enable the add-alias button, even if there are no items
@@ -79,11 +84,13 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
         Metadata filteringMetadata = metadataRegistry.lookup(FILTERING_KEY_STORE_TEMPLATE);
         filteringStoreElement = new StoreElement.Builder(FILTERING_KEY_STORE, Names.FILTERING_KEY_STORE, resources,
                 filteringMetadata)
-                .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(),
+                .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(), null,
                         table -> removeFilteringKeyStoreAlias(filteringMetadata, table.selectedRow().asString()),
+                        Scope.SELECTED_SINGLE,
                         Constraint.executable(FILTERING_KEY_STORE_TEMPLATE, REMOVE_ALIAS)))
-                .addAliasButtonHandler(new Button<>(resources.constants().details(),
+                .addAliasButtonHandler(new Button<>(resources.constants().details(), null,
                         table -> readFilteringAlias(filteringMetadata, table.selectedRow().asString()),
+                        Scope.SELECTED_SINGLE,
                         Constraint.executable(FILTERING_KEY_STORE_TEMPLATE, READ_ALIAS)))
                 .build();
 
@@ -100,11 +107,13 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
         Metadata ldapKeystoreMetadata = metadataRegistry.lookup(LDAP_KEY_STORE_TEMPLATE);
         ldapKeystoreElement = new StoreElement.Builder(LDAP_KEY_STORE, Names.LDAP_KEY_STORE, resources,
                 ldapKeystoreMetadata)
-                .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(),
+                .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(), null,
                         table -> removeLdapKeyStoreAlias(ldapKeystoreMetadata, table.selectedRow().asString()),
+                        Scope.SELECTED_SINGLE,
                         Constraint.executable(LDAP_KEY_STORE_TEMPLATE, REMOVE_ALIAS)))
-                .addAliasButtonHandler(new Button<>(resources.constants().details(),
+                .addAliasButtonHandler(new Button<>(resources.constants().details(), null,
                         table -> readLdapKeystoreAlias(ldapKeystoreMetadata, table.selectedRow().asString()),
+                        Scope.SELECTED_SINGLE,
                         Constraint.executable(LDAP_KEY_STORE_TEMPLATE, READ_ALIAS)))
                 .build();
 
