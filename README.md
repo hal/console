@@ -1,3 +1,3 @@
-# HAL.Next
+# HAL
 
-Branch to host the compiled GWT app for HAL.Next.
+Branch to host the compiled management console.
