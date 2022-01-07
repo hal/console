@@ -9,11 +9,8 @@
 #   1. HAL version (optional)
 
 REPO=quay.io/halconsole/hal
+VERSION=${1-latest}
 
 # This requires a valid configuration in ~/.docker/config.json
 docker login quay.io
-if [[ "$#" -ne 1 ]]; then
-    docker push $REPO
-else
-    docker push $REPO:$1
-fi
+docker push $REPO:$VERSION

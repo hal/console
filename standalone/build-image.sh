@@ -8,17 +8,9 @@
 # Parameters
 #   1. HAL version (optional)
 
-
 REPO=quay.io/halconsole/hal
+VERSION=${1-latest}
 
-if [[ "$#" -ne 1 ]]; then
-    docker build \
-      --file src/main/docker/Dockerfile.native \
-      --tag $REPO \
-      .
-else
-    docker build \
-      --file src/main/docker/Dockerfile.native \
-      --tag $REPO:$1 \
-      .
-fi
+docker build \
+  --file src/main/docker/Dockerfile.native \
+  --tag $REPO:$VERSION \
