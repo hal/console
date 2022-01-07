@@ -55,7 +55,6 @@
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
-        <undertow.version>2.0.28.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
     </properties>
 
@@ -167,13 +166,6 @@
                         <artifactId>javax.el-api</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <!-- Undertow -->
-            <dependency>
-                <groupId>io.undertow</groupId>
-                <artifactId>undertow-core</artifactId>
-                <version>${undertow.version}</version>
             </dependency>
 
             <!-- Annotation Processing -->
