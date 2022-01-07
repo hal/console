@@ -14,3 +14,4 @@ VERSION=${1-latest}
 docker build \
   --file src/main/docker/Dockerfile.native \
   --tag $REPO:$VERSION \
+  .
