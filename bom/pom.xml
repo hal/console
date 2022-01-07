@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>3.4.2-SNAPSHOT</version>
+            <version>3.4.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>hal-bom</artifactId>
@@ -65,13 +65,13 @@
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-console</artifactId>
                 <version>${project.version}</version>
-                <classifier>resources</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-console</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
+                <classifier>webroot</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
