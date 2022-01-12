@@ -449,6 +449,7 @@ public interface ModelDescriptionConstants {
     String JDBC_REALM = "jdbc-realm";
     String JDR = "jdr";
     String JGROUPS = "jgroups";
+    String JGROUPS_CLUSTER = "jgroups-cluster";
     String JMS_BRIDGE = "jms-bridge";
     String JMS_DELIVERY_MODE = "JMSDeliveryMode";
     String JMS_EXPIRATION = "JMSExpiration";
