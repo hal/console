@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.4.2-SNAPSHOT</version>
+    <version>3.4.2.Final</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -106,7 +106,6 @@
         <!-- plugin versions -->
         <plugin.buildhelper.version>3.0.0</plugin.buildhelper.version>
         <plugin.degraph.version>3.0.1</plugin.degraph.version>
-        <plugin.docker.version>0.34.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
@@ -149,11 +148,6 @@
                     <groupId>com.github.ferstl</groupId>
                     <artifactId>depgraph-maven-plugin</artifactId>
                     <version>${plugin.degraph.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>${plugin.docker.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
@@ -236,12 +230,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>docker</id>
-            <modules>
-                <module>docker</module>
-            </modules>
-        </profile>
         <profile>
             <id>i18n</id>
             <properties>

@@ -22,12 +22,12 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>3.4.2-SNAPSHOT</version>
+        <version>3.4.2.Final</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
     <artifactId>hal-standalone</artifactId>
-    <version>3.4.2-SNAPSHOT</version>
+    <version>3.4.2.Final</version>
     <name>HAL :: Standalone</name>
     <description>Bootstraps HAL with a local web server to run in standalone mode</description>
 
