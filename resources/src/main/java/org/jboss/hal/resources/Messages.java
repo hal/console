@@ -627,5 +627,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String uptime(String uptime);
     String used(double value);
     String view(String type);
+    String jgroupsClusterOrSocketBindingMustBeSet();
     //@formatter:on
 }

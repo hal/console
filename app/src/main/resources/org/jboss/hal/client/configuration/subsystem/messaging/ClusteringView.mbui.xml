@@ -25,7 +25,7 @@
                        form-ref="messaging-broadcast-group-form">
                     <actions>
                         <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.add(ServerSubResource.BROADCAST_GROUP)}" constraint="add"/>
+                                handler="${presenter.addBroadcastGroup(ServerSubResource.BROADCAST_GROUP)}" constraint="add"/>
                         <action title="${mbuiContext.resources().constants().remove()}"
                                 handler="${presenter.remove(ServerSubResource.BROADCAST_GROUP, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
@@ -63,7 +63,7 @@
                        form-ref="messaging-discovery-group-form">
                     <actions>
                         <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.add(ServerSubResource.DISCOVERY_GROUP)}" constraint="add"/>
+                                handler="${presenter.addDiscoveryGroup(ServerSubResource.DISCOVERY_GROUP)}" constraint="add"/>
                         <action title="${mbuiContext.resources().constants().remove()}"
                                 handler="${presenter.remove(ServerSubResource.DISCOVERY_GROUP, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
