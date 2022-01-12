@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormValidation;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -161,6 +164,67 @@ public class ClusteringPresenter
 
     ResourceAddress bridgeAddress(String bridgeName) {
         return bridgeName != null ? SELECTED_BRIDGE_TEMPLATE.resolve(statementContext, bridgeName) : null;
+    }
+
+    // Include JGROUPS_CLUSTER and SOCKET_BINDING fields in the Add form, as one of these fields is required.
+    void addBroadcastGroup(ServerSubResource ssr) {
+        List<AddressTemplate> templates = asList(
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
+
+        showBroadcastOrDiscoveryGroupAddDialog(ssr,
+                formBuilderAugmentor -> {
+                    formBuilderAugmentor.include(CONNECTORS);
+                },
+                formAugmentor -> {
+                    formAugmentor.getFormItem(CONNECTORS).registerSuggestHandler(
+                            new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
+                });
+    }
+
+    // Include JGROUPS_CLUSTER and SOCKET_BINDING fields in the Add form, as one of these fields is required.
+    void addDiscoveryGroup(ServerSubResource ssr) {
+        showBroadcastOrDiscoveryGroupAddDialog(ssr, b -> { }, f -> { });
+    }
+
+    void showBroadcastOrDiscoveryGroupAddDialog(ServerSubResource ssr,
+            Consumer<ModelNodeForm.Builder<ModelNode>> formBuilderAugmenter,
+            Consumer<Form<ModelNode>> formAugmenter) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
+                .unboundFormItem(nameItem, 0)
+                .fromRequestProperties()
+                .include(JGROUPS_CLUSTER, SOCKET_BINDING)
+                .unsorted();
+        formBuilderAugmenter.accept(formBuilder);
+
+        Form<ModelNode> form = formBuilder.build();
+        formAugmenter.accept(form);
+
+        // validation that requires one of jgroups-cluster and socket-binding to be configured
+        FormValidation<ModelNode> jgroupsOrSocketValidation = new FormValidation<ModelNode>() {
+            @Override
+            public ValidationResult validate(Form<ModelNode> form) {
+                if (form.getFormItem(JGROUPS_CLUSTER).isEmpty() && form.getFormItem(SOCKET_BINDING).isEmpty()) {
+                    return ValidationResult.invalid(resources.messages().jgroupsClusterOrSocketBindingMustBeSet());
+                }
+                return ValidationResult.OK;
+            }
+        };
+
+        form.getFormItem(SOCKET_BINDING).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
+        form.addFormValidation(jgroupsOrSocketValidation);
+
+        new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            name = nameItem.getValue();
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
     }
 
 
