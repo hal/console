@@ -4,20 +4,21 @@ name: HAL Console Build
 on:
   push:
     branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
 
 jobs:
   quick-build:
-    name: HAL build w/o GWT compilation on JDK 8
+    name: HAL build w/o GWT compilation on JDK 11
     runs-on: ubuntu-latest
     steps:
-    - uses: n1hility/cancel-previous-runs@v2
-      with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-    - uses: actions/checkout@v2
-    - name: Set up JDK8
-      uses: AdoptOpenJDK/install-jdk@v1
-      with:
-        version: 8
-        impl: hotspot
-    - name: Build
-      run: mvn -U -B -fae -P skip-gwt clean install
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2.5.0
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn -B -ff -P skip-gwt package

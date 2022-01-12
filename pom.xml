@@ -22,12 +22,12 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>37</version>
+        <version>39</version>
     </parent>
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.4.1.Final</version>
+    <version>3.4.2.Final</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -83,36 +83,35 @@
     </issueManagement>
 
     <properties>
+        <!-- settings -->
         <github.global.server>github</github.global.server>
         <grunt-task>dev</grunt-task>
+        <gwt.devmode.hostname>localhost</gwt.devmode.hostname>
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>
         <gwt.logLevel>FINE</gwt.logLevel>
+        <gwt.moduleShortname>hal</gwt.moduleShortname>
         <gwt.moduleTemplate>${project.basedir}/src/main/module.gwt.xml</gwt.moduleTemplate>
         <gwt.optimize>0</gwt.optimize>
         <gwt.skipCompilation>false</gwt.skipCompilation>
         <gwt.style>DETAILED</gwt.style>
-        <gwt.devmode.hostname>localhost</gwt.devmode.hostname>
         <hal.version>${project.version}</hal.version>
-
         <linkXRef>false</linkXRef>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <theme.name>hal</theme.name>
 
+        <!-- plugin versions -->
         <plugin.buildhelper.version>3.0.0</plugin.buildhelper.version>
         <plugin.degraph.version>3.0.1</plugin.degraph.version>
-        <plugin.docker.version>0.34.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.6</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
         <plugin.processor.version>3.3.2</plugin.processor.version>
         <plugin.reports.version>2.9</plugin.reports.version>
         <plugin.github.site.version>0.12</plugin.github.site.version>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <theme.name>hal</theme.name>
     </properties>
 
     <modules>
@@ -149,11 +148,6 @@
                     <groupId>com.github.ferstl</groupId>
                     <artifactId>depgraph-maven-plugin</artifactId>
                     <version>${plugin.degraph.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>${plugin.docker.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
@@ -237,12 +231,6 @@
 
     <profiles>
         <profile>
-            <id>docker</id>
-            <modules>
-                <module>docker</module>
-            </modules>
-        </profile>
-        <profile>
             <id>i18n</id>
             <properties>
                 <gwt.moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
@@ -253,12 +241,6 @@
             <properties>
                 <gwt.skipCompilation>true</gwt.skipCompilation>
             </properties>
-        </profile>
-        <profile>
-            <id>npm</id>
-            <modules>
-                <module>npm</module>
-            </modules>
         </profile>
         <profile>
             <id>prod</id>

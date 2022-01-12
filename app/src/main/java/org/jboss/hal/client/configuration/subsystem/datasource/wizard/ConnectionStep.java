@@ -49,14 +49,14 @@ class ConnectionStep extends WizardStep<Context, State> {
     ConnectionStep(Metadata metadata, Resources resources, boolean xa) {
         super(Names.CONNECTION);
 
+        List<String> otherAttrs = new ArrayList<>();
+        if (!xa) {
+            otherAttrs.add(CONNECTION_URL);
+        }
+        otherAttrs.addAll(asList(USER_NAME, PASSWORD, SECURITY_DOMAIN));
         List<String> credRefAttrs = asList(STORE, ALIAS, CLEAR_TEXT, TYPE);
-        List<String> otherAttrs = asList(USER_NAME, PASSWORD, SECURITY_DOMAIN);
 
         List<String> attributes = new ArrayList<>();
-        if (!xa) {
-            attributes.add(CONNECTION_URL);
-        }
-
         attributes.addAll(otherAttrs);
         attributes.addAll(credRefAttrs);
 
