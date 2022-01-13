@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-gwt</artifactId>
-        <version>3.4.3.Final</version>
+        <version>3.4.4.Final</version>
         <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
@@ -243,6 +243,25 @@
                                     <directory>../themes/${theme.name}/src/main/resources</directory>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>resource-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>resources</classifier>
+                            <classesDirectory>
+                                ${project.build.directory}/${project.build.finalName}/${gwt.moduleShortname}
+                            </classesDirectory>
                         </configuration>
                     </execution>
                 </executions>
