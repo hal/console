@@ -65,6 +65,18 @@
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-console</artifactId>
                 <version>${project.version}</version>
+                <classifier>resources</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-console</artifactId>
+                <version>${project.version}</version>
                 <classifier>webroot</classifier>
                 <exclusions>
                     <exclusion>
