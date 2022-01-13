@@ -7,7 +7,7 @@ PROGNAME=`basename "$0"`
 if [ "$#" -ne 2 ]; then
     echo "Illegal number of arguments. Use '$PROGNAME <maven version> <semantic version>'"
 else
-    mvn versions:set -Pdocker -DnewVersion=$1
+    mvn versions:set -DnewVersion=$1
     sed -i.versionsBackup "s/.*/$1/" version.txt
     sed -i.versionsBackup "s/version: '.*',$/version: '$2',/" app/Gruntfile.js
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$2\",/" app/package.json

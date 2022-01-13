@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-theme-parent</artifactId>
-        <version>3.4.4-SNAPSHOT</version>
+        <version>3.4.4.Final</version>
     </parent>
 
     <artifactId>hal-theme-wildfly</artifactId>
