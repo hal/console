@@ -424,6 +424,7 @@ public interface Ids {
     String JMS_BRIDGE_FORM = "jms-bridge-form";
     String JMS_BRIDGE_ITEM = "jms-bridge-item";
     String JMS_BRIDGE_REFRESH = "jms-bridge-refresh";
+    String JMS_BRIDGE_RUNTIME = "jms-bridge-r";
     String JMS_BRIDGE_TAB = "jms-bridge-tab";
     String JMS_MESSAGE_CHANGE_PRIORITY = "jms-message-change-priority";
     String JMS_MESSAGE_CHANGE_PRIORITY_FORM = "jms-message-change-priority-form";
@@ -510,6 +511,7 @@ public interface Ids {
     String MESSAGING_BRIDGE = "messaging-bridge";
     String MESSAGING_BROADCAST_GROUP = "messaging-broadcast-group";
     String MESSAGING_CATEGORY = "messaging-category";
+    String MESSAGING_CATEGORY_RUNTIME = "messaging-category-r";
     String MESSAGING_CLUSTER_CONNECTION = "messaging-cluster-connection";
     String MESSAGING_CONNECTION_FACTORY = "messaging-connection-factory";
     String MESSAGING_CONNECTOR = "messaging-connector";

@@ -250,8 +250,8 @@ public class Subsystems {
                 .build());
         addRuntime(new SubsystemMetadata.Builder(MESSAGING_ACTIVEMQ, Names.MESSAGING)
                 .subtitle(Names.ACTIVE_MQ)
-                .nextColumn(Ids.MESSAGING_SERVER_RUNTIME)
-                .preview(resources.previews().runtimeMessagingServer())
+                .nextColumn(Ids.MESSAGING_CATEGORY_RUNTIME)
+                .preview(resources.previews().runtimeMessaging())
                 .build());
         addRuntime(new SubsystemMetadata.Builder(MICROPROFILE_HEALTH_SMALLRYE, Names.MICROPROFILE_HEALTH)
                 .subtitle(Names.SMALLRYE)
