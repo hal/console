@@ -20,6 +20,7 @@ import org.jboss.hal.dmr.NamedNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 
 class Endpoint extends NamedNode {
 
@@ -43,12 +44,16 @@ class Endpoint extends NamedNode {
     }
 
     public String getUrl() {
-        StringBuilder url = new StringBuilder();
-        url.append(get(SCHEME).asString()).append("://").append(get(HOST).asString());
-        ModelNode port = get(PORT);
-        if (port.isDefined() && port.asInt() != 0 && port.asInt() != 80) {
-            url.append(":").append(port);
+        if (hasDefined(URL)) {
+            return get(URL).asString();
+        } else {
+            StringBuilder url = new StringBuilder();
+            url.append(get(SCHEME).asString()).append("://").append(get(HOST).asString());
+            ModelNode port = get(PORT);
+            if (port.isDefined() && port.asInt() != 0 && port.asInt() != 80) {
+                url.append(":").append(port);
+            }
+            return url.toString();
         }
-        return url.toString();
     }
 }

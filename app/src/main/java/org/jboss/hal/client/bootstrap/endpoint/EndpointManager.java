@@ -15,6 +15,11 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import javax.inject.Inject;
+
 import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLScriptElement;
@@ -25,20 +30,20 @@ import org.jboss.hal.client.bootstrap.tasks.BootstrapTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.keycloak.Keycloak;
 import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.js.Json;
 import org.jboss.hal.js.JsonObject;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.util.function.Consumer;
-import java.util.Optional;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTH_SERVER_URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KEYCLOAK;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.js.JsHelper.requestParameter;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
@@ -79,14 +84,23 @@ public class EndpointManager {
 
         String connect = requestParameter(CONNECT_PARAMETER);
         if (Strings.emptyToNull(connect) != null) {
-            // Connect to a server given as a request parameter
-            Endpoint endpoint = storage.get(connect);
-            if (endpoint != null) {
-                logger.info("Try to connect to endpoint '{}'", endpoint.getUrl());
+            if (connect.contains("://")) {
+                logger.info("Use direct endpoint '{}'", connect);
+                ModelNode modelNode = new ModelNode();
+                modelNode.get(NAME).set(Ids.asId(connect));
+                modelNode.get(URL).set(connect);
+                Endpoint endpoint = new Endpoint(modelNode);
                 connect(Optional.of(endpoint));
             } else {
-                logger.error("Unable to get URL for named endpoint '{}' from local storage", connect);
-                openDialog();
+                // Connect to a server given as a request parameter
+                Endpoint endpoint = storage.get(connect);
+                if (endpoint != null) {
+                    logger.info("Try to connect to endpoint '{}'", endpoint.getUrl());
+                    connect(Optional.of(endpoint));
+                } else {
+                    logger.error("Unable to get URL for named endpoint '{}' from local storage", connect);
+                    openDialog();
+                }
             }
         } else {
             connect(Optional.empty());
@@ -119,11 +133,13 @@ public class EndpointManager {
                     break;
                 case 403:
                     Elements.removeChildrenFrom(document.body);
-                    document.body.appendChild(new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
+                    document.body.appendChild(
+                            new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
                     break;
                 case 503:
                     Elements.removeChildrenFrom(document.body);
-                    document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText, Endpoints.INSTANCE).element());
+                    document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText,
+                            Endpoints.INSTANCE).element());
                     break;
                 // TODO Show an error page!
                 // case 500:
@@ -137,7 +153,8 @@ public class EndpointManager {
         };
         xhr.onerror = (event) -> {
             Elements.removeChildrenFrom(document.body);
-            document.body.appendChild(new BootstrapFailed("Failed connecting to a management interface", Endpoints.INSTANCE).element());
+            document.body.appendChild(
+                    new BootstrapFailed("Failed connecting to a management interface", Endpoints.INSTANCE).element());
             return null;
         };
         xhr.open(GET.name(), managementEndpoint, true);
