@@ -117,12 +117,14 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         crud.readChildren(address, asList(
                 ElytronResource.ADD_PREFIX_ROLE_MAPPER.resource,
                 ElytronResource.ADD_SUFFIX_ROLE_MAPPER.resource,
+                ElytronResource.AGGREGATE_EVIDENCE_DECODER.resource,
                 ElytronResource.AGGREGATE_PRINCIPAL_DECODER.resource,
                 ElytronResource.AGGREGATE_ROLE_MAPPER.resource,
                 ElytronResource.CONCATENATING_PRINCIPAL_DECODER.resource,
                 ElytronResource.CONSTANT_PERMISSION_MAPPER.resource,
                 ElytronResource.CONSTANT_PRINCIPAL_DECODER.resource,
                 ElytronResource.CONSTANT_ROLE_MAPPER.resource,
+                ElytronResource.CUSTOM_EVIDENCE_DECODER.resource,
                 ElytronResource.CUSTOM_PERMISSION_MAPPER.resource,
                 ElytronResource.CUSTOM_PRINCIPAL_DECODER.resource,
                 ElytronResource.CUSTOM_ROLE_DECODER.resource,
@@ -132,18 +134,22 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 ElytronResource.MAPPED_ROLE_MAPPER.resource,
                 ElytronResource.SIMPLE_PERMISSION_MAPPER.resource,
                 ElytronResource.SIMPLE_ROLE_DECODER.resource,
-                ElytronResource.X500_ATTRIBUTE_PRINCIPAL_DECODER.resource),
+                ElytronResource.X500_ATTRIBUTE_PRINCIPAL_DECODER.resource,
+                ElytronResource.X500_SUBJECT_EVIDENCE_DECODER.resource,
+                ElytronResource.X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER.resource),
                 result -> {
                     // @formatter:off
                     int i = 0;
                     getView().updateAddPrefixRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateAddSuffixRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAggregateEvidenceDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateAggregatePrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateAggregateRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateConcatenatingPrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateConstantPermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateConstantPrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateConstantRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateCustomEvidenceDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateCustomPermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateCustomPrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateCustomRoleDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
@@ -154,6 +160,9 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                     getView().updateSimplePermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateSimpleRoleDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateX500AttributePrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateX500SubjectEvidenceDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateX509SubjectAltNameEvidenceDecoder(
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // @formatter:on
                 });
     }
@@ -253,12 +262,14 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     @Requires(value = {
             ADD_PREFIX_ROLE_MAPPER_ADDRESS,
             ADD_SUFFIX_ROLE_MAPPER_ADDRESS,
+            AGGREGATE_EVIDENCE_DECODER_ADDRESS,
             AGGREGATE_PRINCIPAL_DECODER_ADDRESS,
             AGGREGATE_ROLE_MAPPER_ADDRESS,
             CONCATENATING_PRINCIPAL_DECODER_ADDRESS,
             CONSTANT_PERMISSION_MAPPER_ADDRESS,
             CONSTANT_PRINCIPAL_DECODER_ADDRESS,
             CONSTANT_ROLE_MAPPER_ADDRESS,
+            CUSTOM_EVIDENCE_DECODER_ADDRESS,
             CUSTOM_PERMISSION_MAPPER_ADDRESS,
             CUSTOM_PRINCIPAL_DECODER_ADDRESS,
             CUSTOM_ROLE_DECODER_ADDRESS,
@@ -268,7 +279,9 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             MAPPED_ROLE_MAPPER_ADDRESS,
             SIMPLE_PERMISSION_MAPPER_ADDRESS,
             SIMPLE_ROLE_DECODER_ADDRESS,
-            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS })
+            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS,
+            X500_SUBJECT_EVIDENCE_DECODER_ADDRESS,
+            X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER_ADDRESS })
     @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
     public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {
     }
@@ -278,6 +291,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         void updateAddPrefixRoleMapper(List<NamedNode> model);
 
         void updateAddSuffixRoleMapper(List<NamedNode> model);
+
+        void updateAggregateEvidenceDecoder(List<NamedNode> model);
 
         void updateAggregatePrincipalDecoder(List<NamedNode> model);
 
@@ -290,6 +305,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         void updateConstantPrincipalDecoder(List<NamedNode> model);
 
         void updateConstantRoleMapper(List<NamedNode> model);
+
+        void updateCustomEvidenceDecoder(List<NamedNode> model);
 
         void updateCustomPermissionMapper(List<NamedNode> model);
 
@@ -310,6 +327,10 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         void updateSimpleRoleDecoder(List<NamedNode> model);
 
         void updateX500AttributePrincipalDecoder(List<NamedNode> model);
+
+        void updateX500SubjectEvidenceDecoder(List<NamedNode> model);
+
+        void updateX509SubjectAltNameEvidenceDecoder(List<NamedNode> model);
     }
     // @formatter:on
 }

@@ -55,6 +55,7 @@ public interface ModelDescriptionConstants {
     String AFFINITY = "affinity";
     String AGEOUT_HISTORY_OPERATION = "ageout-history";
     String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "aggregate-http-server-mechanism-factory";
+    String AGGREGATE_EVIDENCE_DECODER = "aggregate-evidence-decoder";
     String AGGREGATE_PRINCIPAL_DECODER = "aggregate-principal-decoder";
     String AGGREGATE_PRINCIPAL_TRANSFORMER = "aggregate-principal-transformer";
     String AGGREGATE_PROVIDERS = "aggregate-providers";
@@ -213,6 +214,7 @@ public interface ModelDescriptionConstants {
     String CURRENT_THREAD_COUNT = "current-thread-count";
     String CUSTOM = "custom";
     String CUSTOM_CREDENTIAL_SECURITY_FACTORY = "custom-credential-security-factory";
+    String CUSTOM_EVIDENCE_DECODER = "custom-evidence-decoder";
     String CUSTOM_FORMATTER = "custom-formatter";
     String CUSTOM_HANDLER = "custom-handler";
     String CUSTOM_MODIFIABLE_REALM = "custom-modifiable-realm";
@@ -1026,7 +1028,9 @@ public interface ModelDescriptionConstants {
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
     String WSDL_URL = "wsdl-url";
     String X500_ATTRIBUTE_PRINCIPAL_DECODER = "x500-attribute-principal-decoder";
+    String X500_SUBJECT_EVIDENCE_DECODER = "x500-subject-evidence-decoder";
     String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
+    String X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER = "x509-subject-alt-name-evidence-decoder";
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATASOURCE_CLASS = "xa-datasource-class";
     String XA_DATASOURCE_PROPERTIES = "xa-datasource-properties";
