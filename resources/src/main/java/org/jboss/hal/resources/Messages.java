@@ -528,6 +528,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String credentialReferenceConflict();
     String credentialReferenceParentNoResource(String parentResource);
     String credentialReferenceValidationError(String alternative);
+    String credentialReferenceValidationErrorValues();
+    String credentialReferenceInvalidCombination();
     String currentOfTotal(long current, long total);
     String datasourceFilterDescription();
     String datasourceRuntimeFilterDescription();
