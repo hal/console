@@ -67,7 +67,9 @@ class StandaloneDeploymentPreview extends DeploymentPreview<Deployment> {
 
         PreviewAttributes<Deployment> attributes = new PreviewAttributes<>(deployment, asList(NAME, RUNTIME_NAME));
         contextRoot(attributes, deployment);
-        hash(attributes, deployment);
+        if (deployment.isManaged()) {
+            hash(attributes, deployment);
+        }
         eme(attributes);
         status(attributes, deployment);
         attributes.append(model -> new PreviewAttribute(LAST_ENABLED_AT, deployment.getEnabledTime()));
