@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-interface AddressTemplates {
+public interface AddressTemplates {
 
     // @formatter:off
     String ELYTRON_SUBSYSTEM_ADDRESS = "{selected.profile}/subsystem=elytron";
