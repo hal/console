@@ -188,7 +188,6 @@ public class CredentialReference {
         }
 
         Form<ModelNode> form = formBuilder.build();
-        form.addFormValidation(new CrFormValidation(alternativeName, alternativeValue, resources));
         form.addFormValidation(new CrFormValuesValidation(resources));
         return form;
     }
@@ -257,28 +256,6 @@ public class CredentialReference {
                 formItem.showError(resources.messages()
                         .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
                 return ValidationResult.invalid(resources.messages().credentialReferenceConflict());
-            }
-            return ValidationResult.OK;
-        }
-    }
-
-    private static class CrFormValidation implements FormValidation<ModelNode> {
-
-        private final String alternativeName;
-        private final Supplier<String> alternativeValue;
-        private final Resources resources;
-
-        private CrFormValidation(String alternativeName, Supplier<String> alternativeValue, Resources resources) {
-            this.alternativeName = alternativeName;
-            this.alternativeValue = alternativeValue;
-            this.resources = resources;
-        }
-
-        @Override
-        public ValidationResult validate(Form<ModelNode> form) {
-            if (alternativeName != null && alternativeValue != null && !Strings.isNullOrEmpty(alternativeValue.get())) {
-                return ValidationResult.invalid(resources.messages()
-                        .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
             }
             return ValidationResult.OK;
         }
